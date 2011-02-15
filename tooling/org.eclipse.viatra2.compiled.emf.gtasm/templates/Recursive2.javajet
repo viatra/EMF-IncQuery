@@ -1,0 +1,8 @@
+<%@ jet package="generatedtemplates" class="Rec2" %>
+<%
+int recursive = (Integer)argument;
+if(recursive < 10){%>
+<% for(int i = 0; i< recursive;i++){%> <%}%>Meg bent vagyunk <%=recursive%>	<%Rec2 re = Rec2.create(null);%>
+<%=re.generate(recursive+1)%>
+<%}else{%>
+vege<%}%>
