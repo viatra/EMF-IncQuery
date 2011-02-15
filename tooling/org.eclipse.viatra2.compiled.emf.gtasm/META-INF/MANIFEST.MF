@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Compiled Plug-in
+Bundle-SymbolicName: org.eclipse.viatra2.compiled.emf.gtasm;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.viatra2.compiled.emf.gtasm.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.viatra2.core2;bundle-version="3.0.0",
+ org.eclipse.viatra2.gtasm.model;bundle-version="3.0.0",
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.viatra2.gui;bundle-version="3.0.0",
+ org.eclipse.viatra2.editor;bundle-version="3.0.0",
+ org.eclipse.ui,
+ org.eclipse.viatra2.compiled.emf.term;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

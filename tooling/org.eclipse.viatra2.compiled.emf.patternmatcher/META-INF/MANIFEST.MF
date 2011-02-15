@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ViatraEMF Code Generator Plug-in
+Bundle-SymbolicName: org.eclipse.viatra2.compiled.emf.patternmatcher;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.viatra2.compiled.emf.patternmatcher.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.viatra2.gui;bundle-version="3.0.0",
+ org.eclipse.viatra2.gtasm.patternmatcher.incremental;bundle-version="3.0.0";visibility:=reexport,
+ org.eclipse.viatra2.gtasm.model;bundle-version="3.0.0",
+ org.eclipse.viatra2.core2;bundle-version="3.0.0",
+ org.eclipse.viatra2.gtasm.patternmatcher;bundle-version="3.0.0";visibility:=reexport,
+ org.eclipse.viatra2.gtasm.interpreter;bundle-version="3.0.0",
+ org.eclipse.viatra2.compiled.emf.runtime;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.viatra2.compiled.emf.term;bundle-version="1.0.0",
+ org.eclipse.emf.transaction;bundle-version="1.2.1"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.viatra2.compiled.emf.patternmatcher,
+ org.eclipse.viatra2.compiled.emf.patternmatcher.mapping

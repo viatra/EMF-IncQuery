@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Term Plug-in
+Bundle-SymbolicName: org.eclipse.viatra2.compiled.emf.term
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.viatra2.compiled.emf.term.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.viatra2.gtasm.model;bundle-version="3.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.viatra2.compiled.emf.term,
+ org.eclipse.viatra2.compiled.emf.term.exception

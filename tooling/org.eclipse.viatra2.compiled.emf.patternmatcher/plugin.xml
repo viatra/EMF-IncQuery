@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="org.eclipse.viatra2.compiled.emf.metainfo" name="ViatraEMF Metamodel information" schema="schema/org.eclipse.viatra2.viatraemf.metainfo.exsd"/>
+   <extension
+         id="org.eclipse.viatra2.compiled.emf.metainfo.default"
+         name="Default metamodel information: built-in datatypes"
+         point="org.eclipse.viatra2.compiled.emf.metainfo">
+      <metamodel-advisor
+            advisor-class="org.eclipse.viatra2.compiled.emf.patternmatcher.mapping.ViatraEMFDatatypesMappingAdvisor"
+            metamodel-id="org.eclipse.viatra2.compiled.emf.metamodel-datatypes">
+      </metamodel-advisor>
+   </extension>
+
+   <extension
+         id="emfCodegenAction"
+         name="Generate EMF code"
+         point="org.eclipse.viatra2.gui.contributedAction">
+      <contributedAction
+            class="org.eclipse.viatra2.compiled.emf.patternmatcher.ModelspaceCodegenGUIAction"
+            enablesForType="org.eclipse.viatra2.framework.IFramework">
+      </contributedAction>
+   </extension>
+
+</plugin>

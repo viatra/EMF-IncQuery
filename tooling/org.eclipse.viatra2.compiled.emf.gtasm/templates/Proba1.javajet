@@ -1,0 +1,12 @@
+<%@ jet package="generatedtemplates" class="Probika1" imports="java.util.*" %>
+ 
+               
+ // getter accessor methods
+ <% for (int i = 0; i<10 ;i++ ) { %>
+ <%@ include file="nonrecursive.javajet" %>
+     <%=i%> <% } %>     
+ 
+     // lookup method omitted...
+     
+     
+ 
