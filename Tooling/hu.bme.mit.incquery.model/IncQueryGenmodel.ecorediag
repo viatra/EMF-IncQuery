@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_33diwa9yEd-HUKfyM7ahfg" type="EcoreTools" name="IncQueryGenmodel" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_-g5U4K9yEd-HUKfyM7ahfg" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_-g8YMK9yEd-HUKfyM7ahfg" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_-g_bgK9yEd-HUKfyM7ahfg" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_-g_bga9yEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_-g_bgq9yEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_-hACkK9yEd-HUKfyM7ahfg"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_-hApoK9yEd-HUKfyM7ahfg" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_-hApoa9yEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_-hApoq9yEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_-hApo69yEd-HUKfyM7ahfg"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_-g5U4a9yEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="IncQueryGenmodel.ecore#//IncQueryGenmodel"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-g5U4q9yEd-HUKfyM7ahfg" x="118" y="58"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_BtKckK9zEd-HUKfyM7ahfg" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_BtLDoK9zEd-HUKfyM7ahfg" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_BtLDoa9zEd-HUKfyM7ahfg" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_BtLDoq9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_BtLDo69zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_BtLDpK9zEd-HUKfyM7ahfg"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_BtLqsK9zEd-HUKfyM7ahfg" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_BtLqsa9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_BtLqsq9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_BtLqs69zEd-HUKfyM7ahfg"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_BtKcka9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="IncQueryGenmodel.ecore#//IncQueryMachine"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BtKckq9zEd-HUKfyM7ahfg" x="115" y="165"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_DtEe0K9zEd-HUKfyM7ahfg" type="1001">
+    <children xmi:type="notation:Node" xmi:id="_DtFF4K9zEd-HUKfyM7ahfg" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_DtFF4a9zEd-HUKfyM7ahfg" type="5001">
+      <children xmi:type="notation:Node" xmi:id="_Yld0kK90Ed-HUKfyM7ahfg" type="2001">
+        <element xmi:type="ecore:EAttribute" href="IncQueryGenmodel.ecore#//IncQueryPattern/generateQuery"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_Yld0ka90Ed-HUKfyM7ahfg"/>
+      </children>
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_DtFF4q9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_DtFF469zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_DtFF5K9zEd-HUKfyM7ahfg"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_DtFs8K9zEd-HUKfyM7ahfg" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_DtFs8a9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_DtFs8q9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_DtFs869zEd-HUKfyM7ahfg"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_DtEe0a9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="IncQueryGenmodel.ecore#//IncQueryPattern"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_DtEe0q9zEd-HUKfyM7ahfg" x="89" y="297"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_MeyMEK9zEd-HUKfyM7ahfg" type="1001">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Mgp0UK9zEd-HUKfyM7ahfg" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Mg99YK9zEd-HUKfyM7ahfg" key="modelID" value="EcoreTools"/>
+    </eAnnotations>
+    <children xmi:type="notation:Node" xmi:id="_MeyzIK9zEd-HUKfyM7ahfg" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_MeyzIa9zEd-HUKfyM7ahfg" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_MeyzIq9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_MeyzI69zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_MezaMK9zEd-HUKfyM7ahfg"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_Me0BQK9zEd-HUKfyM7ahfg" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_Me0BQa9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_Me0BQq9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_Me0BQ69zEd-HUKfyM7ahfg"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_MeyMEa9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="platform:/resource/org.eclipse.viatra2.gtasm.model/model/gtasmmodel.ecore#//gtasm/metamodel/gt/GTPattern"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MeyMEq9zEd-HUKfyM7ahfg" x="423" y="297"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_OfccQK9zEd-HUKfyM7ahfg" type="1001">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Oibe0K9zEd-HUKfyM7ahfg" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Oibe0a9zEd-HUKfyM7ahfg" key="modelID" value="EcoreTools"/>
+    </eAnnotations>
+    <children xmi:type="notation:Node" xmi:id="_OfdDUK9zEd-HUKfyM7ahfg" type="4001"/>
+    <children xmi:type="notation:Node" xmi:id="_OfdDUa9zEd-HUKfyM7ahfg" type="5001">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_OfdDUq9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_OfdDU69zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_OfdDVK9zEd-HUKfyM7ahfg"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_OfdqYK9zEd-HUKfyM7ahfg" type="5002">
+      <styles xmi:type="notation:DrawerStyle" xmi:id="_OfdqYa9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_OfdqYq9zEd-HUKfyM7ahfg"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_OfdqY69zEd-HUKfyM7ahfg"/>
+    </children>
+    <styles xmi:type="notation:ShapeStyle" xmi:id="_OfccQa9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10" fillColor="13761016" lineColor="8421504"/>
+    <element xmi:type="ecore:EClass" href="platform:/resource/org.eclipse.viatra2.gtasm.model/model/gtasmmodel.ecore#//gtasm/metamodel/asm/definitions/Machine"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_OfccQq9zEd-HUKfyM7ahfg" x="423" y="153"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_33lekK9yEd-HUKfyM7ahfg"/>
+  <element xmi:type="ecore:EPackage" href="IncQueryGenmodel.ecore#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_Og2xgK9zEd-HUKfyM7ahfg" type="3002" source="_MeyMEK9zEd-HUKfyM7ahfg" target="_OfccQK9zEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_Og3YkK9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_Og3Yka9zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_Og3Ykq9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_Og3Yk69zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_Og2xga9zEd-HUKfyM7ahfg" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_Og2xgq9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="platform:/resource/org.eclipse.viatra2.gtasm.model/model/gtasmmodel.ecore#//gtasm/metamodel/gt/GTPattern/namespace"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Og2xg69zEd-HUKfyM7ahfg" points="[-50, -29, 448, 266]$[-497, -295, 1, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ApeVgq90Ed-HUKfyM7ahfg" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ApeVg690Ed-HUKfyM7ahfg" id="(0.5,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_Qo-UkK9zEd-HUKfyM7ahfg" type="3002" source="_BtKckK9zEd-HUKfyM7ahfg" target="_-g5U4K9yEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_Qo-7oK9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_Qo-7oa9zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_Qo_isK9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_Qo_isa9zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_Qo-Uka9zEd-HUKfyM7ahfg" avoidObstructions="true" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_Qo-Ukq9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="IncQueryGenmodel.ecore#//IncQueryMachine/genmodel"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Qo-Uk69zEd-HUKfyM7ahfg" points="[-3, -20, 0, 84]$[12, -52, 15, 52]$[-3, -84, 0, 20]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ApdHYK90Ed-HUKfyM7ahfg" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ApdHYa90Ed-HUKfyM7ahfg" id="(0.42105263157894735,0.9523809523809523)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_VAnqQK9zEd-HUKfyM7ahfg" type="3002" source="_-g5U4K9yEd-HUKfyM7ahfg" target="_BtKckK9zEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_VAoRUK9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_VAoRUa9zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_VAoRUq9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_VAoRU69zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_VAnqQa9zEd-HUKfyM7ahfg" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_VAnqQq9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="IncQueryGenmodel.ecore#//IncQueryGenmodel/genMachines"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_VAnqQ69zEd-HUKfyM7ahfg" points="[0, 20, -3, -84]$[15, 52, 12, -52]$[0, 84, -3, -20]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_T9gK8K90Ed-HUKfyM7ahfg" id="(0.42105263157894735,0.9523809523809523)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_T9gK8a90Ed-HUKfyM7ahfg" id="(0.5,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_cos18K9zEd-HUKfyM7ahfg" type="3002" source="_BtKckK9zEd-HUKfyM7ahfg" target="_DtEe0K9zEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_cotdAK9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_cotdAa9zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_cotdAq9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_cotdA69zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_cos18a9zEd-HUKfyM7ahfg" routing="Rectilinear" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_cos18q9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="IncQueryGenmodel.ecore#//IncQueryMachine/patterns"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_cos1869zEd-HUKfyM7ahfg" points="[-1, 5, -7, -97]$[-44, 93, -50, -9]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SSNGwK90Ed-HUKfyM7ahfg" id="(0.5047619047619047,0.9761904761904762)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SSNGwa90Ed-HUKfyM7ahfg" id="(0.5,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_g7cdgK9zEd-HUKfyM7ahfg" type="3002" source="_DtEe0K9zEd-HUKfyM7ahfg" target="_BtKckK9zEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_g7dEkK9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_g7dEka9zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_g7dEkq9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_g7dEk69zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_g7cdga9zEd-HUKfyM7ahfg" routing="Rectilinear" avoidObstructions="true" closestDistance="true" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_g7cdgq9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="IncQueryGenmodel.ecore#//IncQueryPattern/machine"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_g7cdg69zEd-HUKfyM7ahfg" points="[-50, -9, -44, 93]$[-7, -97, -1, 5]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ApfjoK90Ed-HUKfyM7ahfg" id="(0.5,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Apfjoa90Ed-HUKfyM7ahfg" id="(0.5047619047619047,0.9761904761904762)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_1-A4YK9zEd-HUKfyM7ahfg" type="3002" source="_DtEe0K9zEd-HUKfyM7ahfg" target="_MeyMEK9zEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_1-BfcK9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_1-Bfca9zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_1-Bfcq9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_1-Bfc69zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_1-A4Ya9zEd-HUKfyM7ahfg" avoidObstructions="true" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_1-A4Yq9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="IncQueryGenmodel.ecore#//IncQueryPattern/gtPattern"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_1-A4Y69zEd-HUKfyM7ahfg" points="[21, -2, -214, 16]$[236, 11, 1, 29]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_1-FJ0K9zEd-HUKfyM7ahfg" id="(0.7941176470588235,0.40476190476190477)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_1-FJ0a9zEd-HUKfyM7ahfg" id="(0.09696969696969697,0.5245901639344263)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_7fQTYK9zEd-HUKfyM7ahfg" type="3002" source="_BtKckK9zEd-HUKfyM7ahfg" target="_OfccQK9zEd-HUKfyM7ahfg">
+    <children xmi:type="notation:Node" xmi:id="_7fQ6cq9zEd-HUKfyM7ahfg" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_7fQ6c69zEd-HUKfyM7ahfg" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_7fQ6dK9zEd-HUKfyM7ahfg" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_7fRhgK9zEd-HUKfyM7ahfg" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_7fQTYa9zEd-HUKfyM7ahfg" avoidObstructions="true" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_7fQ6cK9zEd-HUKfyM7ahfg" fontColor="4210752" fontName="Lucida Grande" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="IncQueryGenmodel.ecore#//IncQueryMachine/machine"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_7fQ6ca9zEd-HUKfyM7ahfg" points="[14, 0, -208, 10]$[223, 4, 1, 14]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_7fT9wK9zEd-HUKfyM7ahfg" id="(0.8666666666666667,0.5476190476190477)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_7fT9wa9zEd-HUKfyM7ahfg" id="(0.058823529411764705,0.7407407407407407)"/>
+  </edges>
+</notation:Diagram>
