@@ -1,0 +1,75 @@
+Index: src/org/eclipse/viatra2/gtasm/patternmatcher/incremental/rete/network/StandardNode.java
+===================================================================
+--- src/org/eclipse/viatra2/gtasm/patternmatcher/incremental/rete/network/StandardNode.java	(revision 1585)
++++ src/org/eclipse/viatra2/gtasm/patternmatcher/incremental/rete/network/StandardNode.java	(working copy)
+@@ -11,7 +11,7 @@
+ 
+ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
+ 
+-import java.util.LinkedList;
++import java.util.ArrayList;
+ import java.util.List;
+ 
+ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+@@ -30,12 +30,26 @@
+ 	public StandardNode(ReteContainer reteContainer) {
+ 		this.reteContainer = reteContainer;
+ 		this.nodeId = reteContainer.registerNode(this);
+-		children = new LinkedList<Receiver>();
++		children = new ArrayList<Receiver>();
+ 	}
++	
++//	static long zany√°dCounter = 0;
++//	private static final int _alot = 1000000;//-1;
+ 
+ 	protected void propagateUpdate(Direction direction, Tuple updateElement) {
++//		zany√°dCounter+=children.size();if (zany√°dCounter == _alot) {
++//			System.out.println("√?√?√?√?√?√?√?√?");
++//			while (true) try {
++//				Thread.sleep(_alot);
++//			} catch (InterruptedException e) {
++//				// TODO Auto-generated catch block
++//				e.printStackTrace();
++//			}
++//		}
+ 		for (Receiver r : children)
+-			reteContainer.sendUpdateInternal(r, direction, updateElement);
++			r.update(direction, updateElement);
++			//reteContainer.sendUpdateInternal(r, direction, updateElement);
++
+ 	}
+ 
+ 	public void appendChild(Receiver receiver) {
+Index: src/org/eclipse/viatra2/gtasm/patternmatcher/incremental/rete/single/TrimmerNode.java
+===================================================================
+--- src/org/eclipse/viatra2/gtasm/patternmatcher/incremental/rete/single/TrimmerNode.java	(revision 1585)
++++ src/org/eclipse/viatra2/gtasm/patternmatcher/incremental/rete/single/TrimmerNode.java	(working copy)
+@@ -11,9 +11,11 @@
+ 
+ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single;
+ 
++import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
++import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
+ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
+-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
+ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
++import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
+ 
+ /**
+  * Trims the matchings as specified by a mask.
+@@ -64,5 +66,15 @@
+ 	protected Tuple transform(Tuple input) {
+ 		return mask.transform(input);
+ 	}
++	
++	/* (non-Javadoc)
++	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode#propagateUpdate(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
++	 */
++	@Override
++	protected void propagateUpdate(Direction direction, Tuple updateElement) {
++		// TODO H√?K to avoid circularity problems with production node (where RETE can turn non-DAG)
++		for (Receiver r: children)
++			reteContainer.sendUpdateInternal(r, direction, updateElement);
++	}
+ 
+ }
