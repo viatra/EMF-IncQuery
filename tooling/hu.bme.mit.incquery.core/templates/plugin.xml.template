@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="§project-name§.generatedContribution"
+         point="org.eclipse.viatra2.compiled.emf.patternmatcher.builder">
+§generated-contributions§
+   </extension>
+</plugin>

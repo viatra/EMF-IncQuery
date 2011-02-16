@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.editors">
+      <editor
+            id="incquerygenmodel.presentation.IncquerygenmodelEditorID"
+            name="%_UI_IncquerygenmodelEditor_label"
+            icon="icons/full/obj16/IncquerygenmodelModelFile.gif"
+            extensions="incquery"
+            class="incquerygenmodel.presentation.IncquerygenmodelEditor"
+            contributorClass="incquerygenmodel.presentation.IncquerygenmodelActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>
