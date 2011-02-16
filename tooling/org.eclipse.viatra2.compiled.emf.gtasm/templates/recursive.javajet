@@ -1,4 +1,0 @@
-<%@ jet package="generatedtemplates" class="Recursive" %>
-
-<% Rec2 r = Rec2.create(null); %>
-<%=r.generate(2)%>
