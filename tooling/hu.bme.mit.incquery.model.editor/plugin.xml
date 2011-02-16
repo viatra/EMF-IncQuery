@@ -12,12 +12,12 @@
 
    <extension point="org.eclipse.ui.editors">
       <editor
-            id="incquerygenmodel.presentation.IncquerygenmodelEditorID"
+            id="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.presentation.IncquerygenmodelEditorID"
             name="%_UI_IncquerygenmodelEditor_label"
             icon="icons/full/obj16/IncquerygenmodelModelFile.gif"
             extensions="incquery"
-            class="incquerygenmodel.presentation.IncquerygenmodelEditor"
-            contributorClass="incquerygenmodel.presentation.IncquerygenmodelActionBarContributor">
+            class="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.presentation.IncquerygenmodelEditor"
+            contributorClass="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.presentation.IncquerygenmodelActionBarContributor">
       </editor>
    </extension>
 

@@ -5,7 +5,7 @@
       <description>
         This section shows how to use the IncQuery project. The first part describes how to generate a sample code, and use it to query an instance model. The second part describes how to use the generated code.
   <br/><br/>
-For a more complex example, refer to the distributed Papyrus demo. Besides the Sample UI project, the hu.bme.mit.incquery.demo.papyrus project also provides an example of using generated pattern matchers.</description>
+For a more complex example, refer to the distributed Papyrus demo. Besides the Sample UI project, the org.eclipse.viatra2.emf.incquery.demo.papyrus project also provides an example of using generated pattern matchers.</description>
    </intro>
    <item
          title="Run queries using the Sample UI project">

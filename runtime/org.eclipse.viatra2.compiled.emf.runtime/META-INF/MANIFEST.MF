@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Viatra2 Emf Context Runtime Plug-in
-Bundle-SymbolicName: org.eclipse.viatra2.compiled.emf.runtime;singleton:=true
+Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.runtime;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.viatra2.compiled.emf.runtime.Activator
+Bundle-Activator: org.eclipse.viatra2.emf.incquery.runtime.Activator
 Require-Bundle: org.eclipse.emf.transaction;bundle-version="1.2.0",
  org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete;bundle-version="3.0.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: BUTE-FTSRG
-Export-Package: org.eclipse.viatra2.compiled.emf.runtime,
- org.eclipse.viatra2.compiled.emf.runtime.api,
- org.eclipse.viatra2.compiled.emf.runtime.exception,
- org.eclipse.viatra2.compiled.emf.runtime.term
+Export-Package: org.eclipse.viatra2.emf.incquery.runtime,
+ org.eclipse.viatra2.emf.incquery.runtime.api,
+ org.eclipse.viatra2.emf.incquery.runtime.exception,
+ org.eclipse.viatra2.emf.incquery.runtime.term

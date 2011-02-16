@@ -7,7 +7,7 @@ package #java-package#;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra2.compiled.emf.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 
 /**
  * Domain specific Data transfer Object of the #pattern-fqn# pattern.

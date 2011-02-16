@@ -13,7 +13,7 @@
    <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
       <factory
             uri="http://incquerygenmodel/1.0"
-            class="incquerygenmodel.provider.IncquerygenmodelItemProviderAdapterFactory"
+            class="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.provider.IncquerygenmodelItemProviderAdapterFactory"
             supportedTypes=
               "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
                org.eclipse.emf.edit.provider.IStructuredItemContentProvider

@@ -13,7 +13,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="http://incquerygenmodel/1.0"
-            class="incquerygenmodel.IncquerygenmodelPackage"
+            class="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncquerygenmodelPackage"
             genModel="IncQueryGenmodel.genmodel"/>
    </extension>
 

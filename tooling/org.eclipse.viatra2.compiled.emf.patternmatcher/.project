@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.viatra2.compiled.emf.patternmatcher</name>
+	<name>org.eclipse.viatra2.emf.incquery.codegen.patternmatcher</name>
 	<comment></comment>
 	<projects>
 	</projects>
