@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.viatra2.compiled.emf.gtasm</name>
+	<name>org.eclipse.viatra2.emf.incquery.codegen.gtasm</name>
 	<comment></comment>
 	<projects>
 	</projects>

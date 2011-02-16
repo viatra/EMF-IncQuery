@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>hu.bme.mit.incquery.gui</name>
+	<name>org.eclipse.viatra2.emf.incquery.gui</name>
 	<comment></comment>
 	<projects>
 	</projects>

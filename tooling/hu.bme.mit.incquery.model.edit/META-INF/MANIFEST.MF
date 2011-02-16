@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: hu.bme.mit.incquery.model.edit;singleton:=true
+Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.model.edit;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: incquerygenmodel.provider.IncQueryGenmodelEditPlugin$Implementation
+Bundle-Activator: org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.provider.IncQueryGenmodelEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: incquerygenmodel.provider
+Export-Package: org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.provider
 Require-Bundle: org.eclipse.core.runtime,
- hu.bme.mit.incquery.model;visibility:=reexport,
+ org.eclipse.viatra2.emf.incquery.model;visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport,
  org.eclipse.viatra2.gtasm.model;visibility:=reexport,
  org.eclipse.viatra2.gtasm.model.edit;visibility:=reexport,

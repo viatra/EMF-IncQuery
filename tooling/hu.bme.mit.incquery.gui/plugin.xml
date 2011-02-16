@@ -4,23 +4,23 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="hu.bme.mit.incquery.gui.category"
+            id="org.eclipse.viatra2.emf.incquery.gui.category"
             name="EMF-IncQuery">
       </category>
       <wizard
-            category="hu.bme.mit.incquery.gui.category"
-            class="hu.bme.mit.incquery.gui.wizards.NewProjectWizard"
+            category="org.eclipse.viatra2.emf.incquery.gui.category"
+            class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
             finalPerspective="org.eclipse.viatra2.gui.perspective"
-            id="hu.bme.mit.incquery.gui.newproject"
+            id="org.eclipse.viatra2.emf.incquery.gui.newproject"
             name="Create Incremental Query Project"
             preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
       <wizard
             category="org.eclipse.ui.Examples"
-            class="hu.bme.mit.incquery.gui.wizards.NewSampleProjectWizard"
+            class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewSampleProjectWizard"
             finalPerspective="org.eclipse.viatra2.gui.perspective"
-            id="hu.bme.mit.incquery.gui.sampleprojectwizard"
+            id="org.eclipse.viatra2.emf.incquery.gui.sampleprojectwizard"
             name="EMF-IncQuery Sample Project"
             preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
@@ -29,15 +29,15 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            id="hu.bme.mit.incquery.gui.loadmodel"
+            id="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
             name="Load GenModels into EMF-IncQuery project">
       </command>
       <command
-            id="hu.bme.mit.incquery.gui.generate-source"
+            id="org.eclipse.viatra2.emf.incquery.gui.generate-source"
             name="Generate EMF-IncQuery Source Code">
       </command>
       <command
-            id="hu.bme.mit.incquery.gui.gensampleproject"
+            id="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
             name="Generate Sample UI project for EMF-IncQuery">
       </command>
    </extension>
@@ -47,7 +47,7 @@
             allPopups="false"
             locationURI="popup:incquerygenmodel.presentation.IncquerygenmodelEditorID">
          <command
-               commandId="hu.bme.mit.incquery.gui.loadmodel"
+               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -74,7 +74,7 @@
              <menu
                label="EMF-IncQuery">
             <command
-                  commandId="hu.bme.mit.incquery.gui.generate-source"
+                  commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                   style="push">
                               <visibleWhen
                   checkEnabled="false">
@@ -94,7 +94,7 @@
             </visibleWhen>
             </command>
          <command
-               commandId="hu.bme.mit.incquery.gui.gensampleproject"
+               commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -121,7 +121,7 @@
            <menu
                label="EMF-IncQuery">
             <command
-                  commandId="hu.bme.mit.incquery.gui.generate-source"
+                  commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                   style="push">
                                <visibleWhen
                   checkEnabled="false">
@@ -141,7 +141,7 @@
             </visibleWhen>
             </command>
             <command
-                  commandId="hu.bme.mit.incquery.gui.gensampleproject"
+                  commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -168,7 +168,7 @@
         <menu
                label="EMF-IncQuery">
          <command
-               commandId="hu.bme.mit.incquery.gui.generate-source"
+               commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                style="push">                              
                <visibleWhen
                   checkEnabled="false">
@@ -188,7 +188,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="hu.bme.mit.incquery.gui.gensampleproject"
+               commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -214,29 +214,29 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="hu.bme.mit.incquery.gui.handlers.FillVPMLHandler"
-            commandId="hu.bme.mit.incquery.gui.loadmodel">
+            class="org.eclipse.viatra2.emf.incquery.gui.handlers.FillVPMLHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel">
       </handler>
       <handler
-            class="hu.bme.mit.incquery.gui.handlers.GenerateSourceCodeHandler"
-            commandId="hu.bme.mit.incquery.gui.generate-source">
+            class="org.eclipse.viatra2.emf.incquery.gui.handlers.GenerateSourceCodeHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source">
       </handler>
       <handler
-            class="hu.bme.mit.incquery.gui.handlers.GenerateSampleProjectHandler"
-            commandId="hu.bme.mit.incquery.gui.gensampleproject">
+            class="org.eclipse.viatra2.emf.incquery.gui.handlers.GenerateSampleProjectHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
-            id="hu.bme.mit.incquery"
+            id="org.eclipse.viatra2.emf.incquery"
             name="EMF-IncQuery">
       </category>
       <cheatsheet
-            category="hu.bme.mit.incquery"
+            category="org.eclipse.viatra2.emf.incquery"
             composite="true"
             contentFile="cheatsheets/gettingstarted.xml"
-            id="hu.bme.mit.incquery.gui.cheatsheet"
+            id="org.eclipse.viatra2.emf.incquery.gui.cheatsheet"
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
    </extension>

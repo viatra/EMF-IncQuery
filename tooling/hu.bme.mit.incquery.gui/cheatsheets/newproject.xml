@@ -32,7 +32,7 @@ To create the example EMF metamodel, perform the following steps:<br/><br/>
             label="Issue File | New | Project | EMF-IncQuery | Create Incremental Query Project">
          <command
                required="false"
-               serialization="org.eclipse.ui.newWizard(newWizardId=hu.bme.mit.incquery.gui.newproject)"/>
+               serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.newproject)"/>
       </subitem>
       <subitem
             label="Give a name to the project (e.g. library.incQuery), then press Finish.">
