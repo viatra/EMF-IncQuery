@@ -7,7 +7,7 @@
          name="Default metamodel information: built-in datatypes"
          point="org.eclipse.viatra2.compiled.emf.metainfo">
       <metamodel-advisor
-            advisor-class="org.eclipse.viatra2.compiled.emf.patternmatcher.mapping.ViatraEMFDatatypesMappingAdvisor"
+            advisor-class="org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.mapping.ViatraEMFDatatypesMappingAdvisor"
             metamodel-id="org.eclipse.viatra2.compiled.emf.metamodel-datatypes">
       </metamodel-advisor>
    </extension>
@@ -17,7 +17,7 @@
          name="Generate EMF code"
          point="org.eclipse.viatra2.gui.contributedAction">
       <contributedAction
-            class="org.eclipse.viatra2.compiled.emf.patternmatcher.ModelspaceCodegenGUIAction"
+            class="org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.ModelspaceCodegenGUIAction"
             enablesForType="org.eclipse.viatra2.framework.IFramework">
       </contributedAction>
    </extension>

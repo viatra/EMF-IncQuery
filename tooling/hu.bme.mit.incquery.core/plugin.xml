@@ -2,11 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="hu.bme.mit.incquery.projectnature"
+         id="org.eclipse.viatra2.emf.incquery.projectnature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="hu.bme.mit.incquery.core.project.IncQueryNature">
+               class="org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature">
          </run>
       </runtime>
    </extension>
