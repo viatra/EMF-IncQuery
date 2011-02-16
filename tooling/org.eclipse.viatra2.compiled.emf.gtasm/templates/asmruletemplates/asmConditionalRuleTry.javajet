@@ -1,9 +1,0 @@
-<%@ jet package="viatra.gtasm.compiled.template.asm" class="AsmConditionalTryTemplate" imports="viatra.gtasm.compiled.template.asm.AsmConditionalTryData "%>
-<%AsmConditionalTryData data = (AsmConditionalTryData) argument;%>
-try{
-<%=data.getTrueB()%>
-} 
-catch(RuleFailedException e) {}
-finally{
-<%=data.getFalseB()%>
-}
