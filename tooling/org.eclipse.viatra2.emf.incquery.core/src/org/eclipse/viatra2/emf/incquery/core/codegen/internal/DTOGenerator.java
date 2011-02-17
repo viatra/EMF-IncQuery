@@ -89,7 +89,9 @@ public class DTOGenerator {
 		substitutions.put("hashcode-override", strs[6]);
 		substitutions.put("tostring-override", strs[7]);
 		substitutions.put("fields-list", strs[8]);
-
+		substitutions.put("parameters-list-quoted", strs[9]);
+		substitutions.put("java-reflective-getter-lines", strs[10]);
+		substitutions.put("java-reflective-setter-lines", strs[11]);
 
 		String generatedCode;
 		generatedCode = CodegenSupport.processTemplate(patternDTOTemplate, substitutions);
@@ -129,7 +131,7 @@ public class DTOGenerator {
 	}
 	/** Generates the given pattern's DTO specific attributes and getter setter methods for the template
 	 * @param pattern The GT pattern who's domain specific DTO class needs to be generated
-	 * @return A string array contaiing the proper tempaltre parameters to be used
+	 * @return A string array containing the proper template parameters to be used
 	 * string[0] is the private attibutes of the DTO
 	 * string[1] is the public setter methods
 	 * string[2] is the public getter methods
@@ -139,48 +141,62 @@ public class DTOGenerator {
 	 * string[6] is hashcode-override
 	 * string[7] is tostring-override
 	 * string[8] is the comma-separated list of fields
+	 * string[9] is the comma-separated list of quoted parameter names
+	 * string[10] is the reflective getter java code
+	 * string[11] is the reflective setter java code
 	 */
 	private String[] generateInputSpecificDTOAttributeTags(GTPattern pattern) {
 
-		String[] strings = {"","","","","","","","", ""};
+		String[] strings = {"","","","","","","","","","","",""};
 		//inits the Strings :-)
 
 		EList<PatternVariable> patternVars = pattern.getSymParameters();
 
 		for(int i= 0; i<patternVars.size(); i++) {
 			PatternVariable patternVar = patternVars.get(i);
-			strings[0] += "\tprivate "+generator.getElementType(patternVar)+" "+patternVar.getName()+";";
+			strings[0] += "\tprivate "+generator.getElementType(patternVar)+" f"+patternVar.getName()+";";
 
 			strings[1] += "\tpublic "+generator.getElementType(patternVar)+" get"+toCapitalLetter(patternVar.getName())
-					+"(){\n\t\t return "+patternVar.getName()+";\n\t}";
+					+"(){\n\t\t return f"+patternVar.getName()+";\n\t}";
 
 			strings[2] += "\tpublic void set"+toCapitalLetter(patternVar.getName())+"("+generator.getElementType(patternVar)+" "
-					+patternVar.getName()+"){\n\t\t this."+patternVar.getName()+"="+patternVar.getName()+";\n\t}";
+					+patternVar.getName()+"){\n\t\t this.f"+patternVar.getName()+"="+patternVar.getName()+";\n\t}";
 
 			strings[3] += generator.getElementType(patternVar)+" "+patternVar.getName();
-			strings[4] += "\t\tthis."+patternVar.getName()+" = "+patternVar.getName()+";";
-			strings[5] += "\t\tif (" + patternVar.getName() + " == null) "
-						+ "{if (other." + patternVar.getName() + " != null) return false;}\n"
-						+ "\t\telse if (!" + patternVar.getName() + ".equals(other." + patternVar.getName() + "))"
+			strings[4] += "\t\tthis.f"+patternVar.getName()+" = "+patternVar.getName()+";";
+			strings[5] += "\t\tif (f" + patternVar.getName() + " == null) "
+						+ "{if (other.f" + patternVar.getName() + " != null) return false;}\n"
+						+ "\t\telse if (!f" + patternVar.getName() + ".equals(other.f" + patternVar.getName() + "))"
 						+ " return false;";
-			strings[6] += "\t\tresult = prime * result + ((" + patternVar.getName()
-						+ " == null) ? 0 : " + patternVar.getName() + ".hashCode());";
-			strings[8] += patternVar.getName();
+			strings[6] += "\t\tresult = prime * result + ((f" + patternVar.getName()
+						+ " == null) ? 0 : f" + patternVar.getName() + ".hashCode());";
+			strings[7] += "\t\tresult.append(\"" + (i==0? "" : ", ") 
+				+ "\\\""+patternVar.getName()+"\\\"=\" + printValue(f" + patternVar.getName()  +"));";
+			strings[8] += "f" + patternVar.getName();
+			strings[9] += "\"" + patternVar.getName() + "\"";
+			strings[10] += "\t\tif (\"" + patternVar.getName() 
+				+ "\".equals(parameterName)) return f" + patternVar.getName() + ";";
+			strings[11] += "\t\tif (\"" + patternVar.getName() + "\".equals(parameterName)) {\n\t\t\tf"
+				+ patternVar.getName() + " = newValue;\n\t\t\treturn true;\n\t\t}";
 
 
 			if(i < patternVars.size()-1) {
-				strings[1] += "\n";
+				strings[0] += "\n";
 				strings[1] += "\n";
 				strings[2] += "\n";
 				strings[3] += ", ";
 				strings[4] += "\n";
 				strings[5] += "\n";
 				strings[6] += "\n";
+				strings[7] += "\n";
 				strings[8] += ", ";
+				strings[9] += ", ";
+				strings[10] += "\n";
+				strings[11] += "\n";
 			}
 		}
-		if(patternVars.size() > 0) //check that there are at least one parameter -> if no nothing to be generated for the DTO
-		strings[7] = generateDynamicEMFNameandIDgetter(patternVars,pattern);
+//		if(patternVars.size() > 0) //check that there are at least one parameter -> if no nothing to be generated for the DTO
+//		strings[7] = generateDynamicEMFNameandIDgetter(patternVars,pattern);
 
 		return strings;
 	}
@@ -190,30 +206,30 @@ public class DTOGenerator {
 		return Character.toUpperCase(name.charAt(0))+pName;
 	}
 
-	private String generateDynamicEMFNameandIDgetter(EList<PatternVariable> patternVars, GTPattern pattern){
-		String _temp = "";
-
-		_temp+= "\t@Override\n\tpublic String toString(){\n";
-		_temp+="\t\tEStructuralFeature feature = null;\n";
-		_temp+="\t\tString _temp = \" A(n) "+pattern.getName()+" signature object (\"+hashCode()+\")\\n\";\n";
-
-		for(int i= 0; i<patternVars.size(); i++)
-		{
-		PatternVariable patternVar = patternVars.get(i);
-		_temp += "\t\t// Checks that "+patternVar.getName()+" has a name attribute and uses if it has \n";
-		_temp += "\t\t_temp += \"\\t"+patternVar.getName()+" = \";\n";
-
-		//toString pretty verion
-		_temp+="\t\tfeature = null;\n";
-
-		_temp += "\t\tif("+patternVar.getName() +" instanceof EObject)\n";
-		_temp += "\t\t\tfeature = ((EObject)"+patternVar.getName()+").eClass().getEStructuralFeature(\"name\");\n\n";
-
-		_temp += "\t\tif(feature != null && ((EObject)"+patternVar.getName()+").eGet(feature) != null) _temp += ((EObject)"+patternVar.getName()+").eGet(feature).toString();\n";
-		_temp += "\t\telse _temp += "+patternVar.getName()+".toString();\n";
-		_temp += "\t\t_temp += \"\\n\";\n\n";
-		}
-		_temp += "\t\treturn _temp;\n\t}";
-		return _temp;
-	}
+//	private String generateDynamicEMFNameandIDgetter(EList<PatternVariable> patternVars, GTPattern pattern){
+//		String _temp = "";
+//
+//		_temp+= "\t@Override\n\tpublic String toString(){\n";
+//		_temp+="\t\tEStructuralFeature feature = null;\n";
+//		_temp+="\t\tString _temp = \" A(n) "+pattern.getName()+" signature object (\"+hashCode()+\")\\n\";\n";
+//
+//		for(int i= 0; i<patternVars.size(); i++)
+//		{
+//		PatternVariable patternVar = patternVars.get(i);
+//		_temp += "\t\t// Checks that "+patternVar.getName()+" has a name attribute and uses if it has \n";
+//		_temp += "\t\t_temp += \"\\t"+patternVar.getName()+" = \";\n";
+//
+//		//toString pretty verion
+//		_temp+="\t\tfeature = null;\n";
+//
+//		_temp += "\t\tif("+patternVar.getName() +" instanceof EObject)\n";
+//		_temp += "\t\t\tfeature = ((EObject)"+patternVar.getName()+").eClass().getEStructuralFeature(\"name\");\n\n";
+//
+//		_temp += "\t\tif(feature != null && ((EObject)"+patternVar.getName()+").eGet(feature) != null) _temp += ((EObject)"+patternVar.getName()+").eGet(feature).toString();\n";
+//		_temp += "\t\telse _temp += "+patternVar.getName()+".toString();\n";
+//		_temp += "\t\t_temp += \"\\n\";\n\n";
+//		}
+//		_temp += "\t\treturn _temp;\n\t}";
+//		return _temp;
+//	}
 }

@@ -13,8 +13,8 @@
 #javadoc-params#
 	 * @return matches represented as a #pattern-dto# object.
 	 */
-	public Collection<#pattern-dto#> getAllMatchesAsObject(#pattern-params#) {
-		return getAllMatchesAsObject(new Object[] {#pattern-params-value#});
+	public Collection<#pattern-dto#> getAllMatchesAsSignature(#pattern-params#) {
+		return getAllMatchesAsSignature(new Object[] {#pattern-params-value#});
 	}
 
 	/** 
@@ -33,8 +33,8 @@
 #javadoc-params#
 	 * @return a match represented as a #pattern-dto# object, or null if no match is found.
 	 */
-	public #pattern-dto# getOneMatchAsObject(#pattern-params#) {
-		return getOneMatchAsObject(new Object[] {#pattern-params-value#});
+	public #pattern-dto# getOneMatchAsSignature(#pattern-params#) {
+		return getOneMatchAsSignature(new Object[] {#pattern-params-value#});
 	}
 	
 	/**

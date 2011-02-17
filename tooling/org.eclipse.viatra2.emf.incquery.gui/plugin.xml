@@ -45,7 +45,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:incquerygenmodel.presentation.IncquerygenmodelEditorID">
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.presentation.IncquerygenmodelEditorID">
          <command
                commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
                style="push">
@@ -55,7 +55,7 @@
                      variable="selection">
                   <iterate>
                      <instanceof
-                           value="incquerygenmodel.IncQueryGenmodel">
+                           value="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel">
                      </instanceof>
                   </iterate>
                   <count

@@ -7,73 +7,36 @@ package #java-package#;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.viatra2.emf.incquery.runtime.api.BaseGeneratedMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.ViatraCompiledRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 import #java-dtoimport#;
 
 /**
- * Generated domain-specific pattern matcher API of of the #pattern-fqn# pattern
+ * Generated domain-specific pattern matcher API of of the #pattern-fqn# pattern.
+ * Please instantiate using the static field FACTORY.
  */
+@SuppressWarnings("unused")
 public class #java-class# extends BaseGeneratedMatcher<#pattern-dto#> implements IncQueryMatcher<#pattern-dto#>{
 
-	/**
-	 * Initializes the pattern matcher over a given EMF root. 
-	 * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon updates from the given EMF root and below.
-	 * @param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-	 * @param numThreads 0 for single-threaded execution (recommended), 
-	 *   or a positive number of separate threads of pattern matter execution (experimental).
-	 * @throws ViatraCompiledRuntimeException if an error occurs during pattern matcher creation
-	 */
-	public #java-class#(Notifier emfRoot, int numThreads) 
-			throws ViatraCompiledRuntimeException {
-		super(emfRoot, numThreads);
-	}
-
-	/**
-	 * Initializes the pattern matcher over a given EMF root. 
-	 * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon updates from the given EMF root and below.
-	 * @param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-	 * @throws ViatraCompiledRuntimeException if an error occurs during pattern matcher creation
-	 */
-	public #java-class#(Notifier emfRoot) 
-			throws ViatraCompiledRuntimeException {
-		super(emfRoot);
-	}
-
-	/**
-	 * Initializes the pattern matcher over a given EMF transactional editing domain. 
-	 * If a pattern matcher is already constructed with the same editing domain, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon committed EMF transactions.
-	 * @param trDomain the EMF transactional editing domain over which the pattern matcher will operate.
-	 * @param numThreads 0 for single-threaded execution (recommended), 
-	 *  or a positive number of separate threads of pattern matter execution (experimental).
-	 * @throws ViatraCompiledRuntimeException if an error occurs during pattern matcher creation
-	 */
-	public #java-class#(TransactionalEditingDomain trDomain, int numThreads) 
-			throws ViatraCompiledRuntimeException {
-		super(trDomain, numThreads);
-	}
-
-	/**
-	 * Initializes the pattern matcher over a given EMF transactional editing domain. 
-	 * If a pattern matcher is already constructed with the same editing domain, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon committed EMF transactions.
-	 * @param trDomain the EMF transactional editing domain over which the pattern matcher will operate.
-	 * @throws ViatraCompiledRuntimeException if an error occurs during pattern matcher creation
-	 */
-	public #java-class#(TransactionalEditingDomain trDomain)
-			throws ViatraCompiledRuntimeException {
-		super(trDomain);
-	}
-	
+	public final static IMatcherFactory<#pattern-dto#,#java-class#> FACTORY = new Factory();
+	public static class Factory extends BaseMatcherFactory<#pattern-dto#,#java-class#> {
+			@Override
+			public #java-class# instantiate(ReteEngine<String> reteEngine) throws IncQueryRuntimeException {
+				return new #java-class#(reteEngine);
+			}
+			@Override
+			public String getPatternName() {
+				return "#pattern-fqn#";
+			}
+		} 
+			
 #parameter-specific-methods#
 
 	/* (non-Javadoc)
@@ -94,7 +57,7 @@ public class #java-class# extends BaseGeneratedMatcher<#pattern-dto#> implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.BaseGeneratedMatcher#tupleToSignature(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher#tupleToSignature(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
 	 */
 	@Override
 	protected #pattern-dto# tupleToSignature(Tuple t) {
@@ -108,5 +71,9 @@ public class #java-class# extends BaseGeneratedMatcher<#pattern-dto#> implements
 	public #pattern-dto# arrayToSignature(Object[] signature) {
 		return new #pattern-dto#(#signature-params#);
 	}	
+	
+	private #java-class#(ReteEngine<String> engine) throws IncQueryRuntimeException {
+		super(engine, "#pattern-fqn#");
+	}
 		
 }
