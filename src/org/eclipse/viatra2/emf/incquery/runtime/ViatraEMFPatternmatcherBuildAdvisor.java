@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime;
 
-import org.eclipse.viatra2.emf.incquery.runtime.exception.ViatraCompiledRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
@@ -27,6 +27,6 @@ public interface ViatraEMFPatternmatcherBuildAdvisor {
 	
 	void applyBuilder(ReteEngine<String> engine,
 			ReteContainerBuildable<String> buildable,
-			IPatternMatcherContext<String> context) throws ViatraCompiledRuntimeException;
+			IPatternMatcherContext<String> context) throws IncQueryRuntimeException;
 
 }

@@ -31,6 +31,9 @@ public class Activator extends Plugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.runtime";
 
+	// The extension point ID
+	public static final String EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.patternmatcher.builder";
+	
 	// The shared instance
 	private static Activator plugin;
 	
@@ -81,7 +84,7 @@ public class Activator extends Plugin {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
 		IExtensionPoint poi;
 
-		poi = reg.getExtensionPoint("org.eclipse.viatra2.compiled.emf.patternmatcher.builder");	
+		poi = reg.getExtensionPoint(EXTENSION_POINT_ID);	
 		if (poi != null) 
 		{		
 			IExtension[] exts = poi.getExtensions();

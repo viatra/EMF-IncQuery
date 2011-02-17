@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.ViatraCompiledRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFTransactionalEditingDomainListener;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.MultiplexerPatternBuilder;
@@ -55,7 +55,7 @@ public class EngineManager {
 		engines = new WeakHashMap<Notifier, WeakReference<ReteEngine<String>>>();
 	}
 	
-	public ReteEngine<String> getReteEngine(Notifier emfRoot, int reteThreads) throws ViatraCompiledRuntimeException {
+	public ReteEngine<String> getReteEngine(Notifier emfRoot, int reteThreads) throws IncQueryRuntimeException {
 		WeakReference<ReteEngine<String>> weakReference = engines.get(emfRoot);
 		ReteEngine<String> engine = weakReference != null ? weakReference.get() : null;
 		if (engine == null) {
@@ -66,7 +66,7 @@ public class EngineManager {
 				context = new EMFPatternMatcherRuntimeContext.ForResource<String>((Resource)emfRoot);
 			else if (emfRoot instanceof ResourceSet) 
 				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<String>((ResourceSet)emfRoot);
-			else throw new ViatraCompiledRuntimeException(ViatraCompiledRuntimeException.INVALID_EMFROOT);
+			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 			
 			engine = buildReteEngine(context, reteThreads);
 			if (engine != null) engines.put(emfRoot, new WeakReference<ReteEngine<String>>(engine));
@@ -79,10 +79,10 @@ public class EngineManager {
 	 * @param reteThreads
 	 * @return
 	 * @throws RetePatternBuildException 
-	 * @throws ViatraCompiledRuntimeException 
+	 * @throws IncQueryRuntimeException 
 	 */
 	private ReteEngine<String> buildReteEngine(
-			IPatternMatcherRuntimeContext<String> context, int reteThreads) throws ViatraCompiledRuntimeException {
+			IPatternMatcherRuntimeContext<String> context, int reteThreads) throws IncQueryRuntimeException {
 		ReteEngine<String> engine;
 		engine = new ReteEngine<String>(context, reteThreads);
 		ReteContainerBuildable<String> buildable = new ReteContainerBuildable<String>(engine);
@@ -95,7 +95,7 @@ public class EngineManager {
 			try {
 				engine.buildMatchersCoalesced(patternSet);
 			} catch (RetePatternBuildException e) {
-				throw new ViatraCompiledRuntimeException(e);
+				throw new IncQueryRuntimeException(e);
 			}
 		} else {
 			advisors.iterator().next().applyBuilder(engine, buildable, context);
@@ -103,7 +103,7 @@ public class EngineManager {
 		return engine;
 	}
 			
-	public ReteEngine<String> getReteEngine(final TransactionalEditingDomain editingDomain, int reteThreads) throws ViatraCompiledRuntimeException {
+	public ReteEngine<String> getReteEngine(final TransactionalEditingDomain editingDomain, int reteThreads) throws IncQueryRuntimeException {
 		ResourceSet resourceSet = editingDomain.getResourceSet();
 		WeakReference<ReteEngine<String>> weakReference = engines.get(resourceSet);
 		ReteEngine<String> engine = weakReference != null ? weakReference.get() : null;

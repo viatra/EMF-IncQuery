@@ -30,11 +30,11 @@ public class EMFContainmentHierarchyTraversal {
 	Collection<EObject> containedElements = new LinkedHashSet<EObject>();
 	Collection<Resource> containedResources = new LinkedHashSet<Resource>();
 	
-//	public static EMFContainmentHierarchyTraversal create(Notifier emfRoot) throws ViatraCompiledRuntimeException {
+//	public static EMFContainmentHierarchyTraversal create(Notifier emfRoot) throws IncQueryRuntimeException {
 //		if (emfRoot instanceof ResourceSet) return new EMFContainmentHierarchyTraversal((ResourceSet)emfRoot);
 //		else if (emfRoot instanceof Resource) return new EMFContainmentHierarchyTraversal((Resource)emfRoot);
 //		else if (emfRoot instanceof EObject) return new EMFContainmentHierarchyTraversal((EObject)emfRoot);
-//		else throw new ViatraCompiledRuntimeException(ViatraCompiledRuntimeException.INVALID_EMFROOT);
+//		else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 //	}
 	
 	public EMFContainmentHierarchyTraversal(EObject topElement) {

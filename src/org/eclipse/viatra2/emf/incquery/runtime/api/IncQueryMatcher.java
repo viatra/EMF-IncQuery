@@ -16,7 +16,7 @@ import java.util.Collection;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
 /**
- * Generic interface for an EMF-IncQuery matcher associated with a graph pattern.
+ * Interface for an EMF-IncQuery matcher associated with a graph pattern.
  * 
  * @param <Signature> the IPatternSignature type representing a single match of this pattern.
  * @author Bergmann Gábor
@@ -41,7 +41,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * Returns the set of all pattern matches. 
 	 * @return matches represented as a Signature object.
 	 */
-	public abstract Collection<Signature> getAllMatchesAsObject();	
+	public abstract Collection<Signature> getAllMatchesAsSignature();	
 	// variant(s) with input binding as array
 	/** 
 	 * Returns the set of all pattern matches given some fixed parameters.
@@ -56,7 +56,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * @pre size of input array must be equal to the number of parameters.
 	 * @return matches represented as a Signature object.
 	 */
-	public abstract Collection<Signature> getAllMatchesAsObject(Object[] signature);
+	public abstract Collection<Signature> getAllMatchesAsSignature(Object[] signature);
 	// variant(s) with input binding as signature object
 	/** 
 	 * Returns the set of all pattern matches given some fixed parameters.
@@ -69,7 +69,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return matches represented as a Signature object.
 	 */
-	public abstract Collection<Signature> getAllMatchesAsObject(Signature signature);
+	public abstract Collection<Signature> getAllMatchesAsSignature(Signature signature);
 	// variant(s) with input binding as pattern-specific parameters: not declared in interface
 		
 	// SINGLE MATCH
@@ -85,7 +85,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * Neither determinism nor randomness of selection is guaranteed.  
 	 * @return a match represented as a Signature object, or null if no match is found.
 	 */
-	public abstract Signature getOneMatchAsObject();
+	public abstract Signature getOneMatchAsSignature();
 	// variant(s) with input binding as array
 	/** 
 	 * Returns an arbitrary pattern match given some fixed parameters.
@@ -102,7 +102,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * @pre size of input array must be equal to the number of parameters. 
 	 * @return a match represented as a Signature object, or null if no match is found.
 	 */
-	public abstract Signature getOneMatchAsObject(Object[] signature);
+	public abstract Signature getOneMatchAsSignature(Object[] signature);
 	// variant(s) with input binding as signature object
 	/** 
 	 * Returns an arbitrary pattern match given some fixed parameters.
@@ -117,7 +117,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return a match represented as a Signature object, or null if no match is found.
 	 */
-	public abstract Signature getOneMatchAsObject(Signature signature);
+	public abstract Signature getOneMatchAsSignature(Signature signature);
 	// variant(s) with input binding as pattern-specific parameters: not declared in interface
 	
 	// MATCH CHECKING

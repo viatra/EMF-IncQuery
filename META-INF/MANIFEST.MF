@@ -11,5 +11,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: BUTE-FTSRG
 Export-Package: org.eclipse.viatra2.emf.incquery.runtime,
  org.eclipse.viatra2.emf.incquery.runtime.api,
+ org.eclipse.viatra2.emf.incquery.runtime.api.impl,
  org.eclipse.viatra2.emf.incquery.runtime.exception,
  org.eclipse.viatra2.emf.incquery.runtime.term
