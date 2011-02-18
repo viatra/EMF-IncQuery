@@ -59,8 +59,8 @@ public class #java-class-name# extends AbstractHandler implements IHandler {
 		{	
 			try {
 				//get all matches of the pattern
-				#java-matcher# matcher = new #java-matcher#(res);
-				Collection<#java-signature#> matches = matcher.getAllMatchesAsObject();
+				#java-matcher# matcher = #java-matcher#.FACTORY.getMatcher(res);
+				Collection<#java-signature#> matches = matcher.getAllMatchesAsSignature();
 				//serialises the current match into the string builder
 				if(matches.size() > 0)
 					for(#java-signature# match: matches)
