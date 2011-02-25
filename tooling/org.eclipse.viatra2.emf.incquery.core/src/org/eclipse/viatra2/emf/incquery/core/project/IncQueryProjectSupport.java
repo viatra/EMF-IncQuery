@@ -1,6 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.core.project;
 
-import hu.optxware.emf2viatra.core.importer.EcoreImporter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +31,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.viatra2.emf.importer.generic.core.importer.EcoreImporter;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.errors.VPMCoreException;
 import org.eclipse.viatra2.framework.FrameworkException;
