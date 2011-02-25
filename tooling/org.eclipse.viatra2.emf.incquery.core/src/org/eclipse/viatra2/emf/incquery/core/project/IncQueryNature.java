@@ -15,7 +15,7 @@ public class IncQueryNature implements IProjectNature {
 	 */
 	public static final String NATURE_ID = "org.eclipse.viatra2.emf.incquery.projectnature"; //$NON-NLS-1$
 	public static final String BUNDLE_ID = "org.eclipse.viatra2.emf.incquery.core"; //$NON-NLS-1$
-	public static final String MODEL_BUNDLE_ID = "org.eclipse.viatra2.emf.importer.generic.core"; //$NON-NLS-1$
+	public static final String MODEL_BUNDLE_ID = "org.eclipse.viatra2.emf.importer.generic"; //$NON-NLS-1$
 	public static final String MODELS_DIR = "models"; //$NON-NLS-1$
 	public static final String VTCL_DIR = "models/vtcl"; //$NON-NLS-1$
 	public static final String SOURCE_VPML = "models/nemf_xml.vpml"; //$NON-NLS-1$

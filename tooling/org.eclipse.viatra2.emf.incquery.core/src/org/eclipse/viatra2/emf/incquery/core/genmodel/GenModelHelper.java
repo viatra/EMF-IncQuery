@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncquerygenmodelFactory;
@@ -59,6 +60,17 @@ public class GenModelHelper {
 					: null;
 		} else
 			return null;
+	}
+	/**
+	 * @param project
+	 *            the IncQuery project, or null.
+	 * @throws {@link RuntimeException}
+	 * @return the parsed IncQueryGenmodel, or null if not available
+	 */
+	public static IncQueryGenmodel parseGenModel(IProject project) {
+		if (project == null) return null;
+		IFile file = project.getFile(IncQueryNature.IC_GENMODEL);
+		return parseGenModel(file);
 	}
 	
 	public static void addEcoreGenModelToIncQueryGenModel(IncQueryGenmodel iqGen, GenModel genModel) {

@@ -14,6 +14,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.core.genmodel.GenModelHelper;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryProjectSupport;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
@@ -28,32 +29,66 @@ public class FillVPMLHandler extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
-		IEditorInput editorInput = HandlerUtil.getActiveEditor(event).getEditorInput();
-		IFile file = (IFile) editorInput.getAdapter(IFile.class);
-		if (file != null) {
-			IProject project = file.getProject();
-			VPMLCreatorJob job = new VPMLCreatorJob("Creating models", selection, project);
-			job.setUser(true);
-			job.schedule();
-		}
+		VPMLCreatorJob job = new VPMLCreatorJob("Creating models", selection, event);
+		job.setUser(true);
+		job.schedule();
 		return null;
 	}
 
 	class VPMLCreatorJob extends Job{
 
-		IStructuredSelection selection;
-		IProject project;
-		
-		public VPMLCreatorJob(String name, IStructuredSelection selection, IProject project) {
+		public VPMLCreatorJob(String name, IStructuredSelection selection, ExecutionEvent event) {
 			super(name);
-			this.project = project;
 			this.selection = selection;
+			this.event = event;
 		}
+		
+		IStructuredSelection selection;
+		ExecutionEvent event;
 		
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			IncQueryGenmodel iqModel = (IncQueryGenmodel) selection.getFirstElement();
-			monitor.beginTask("Loading models", iqModel.getEcoreModel().size());
+			Object firstElement = selection.getFirstElement();
+			if (firstElement instanceof IncQueryGenmodel) {
+				IncQueryGenmodel iqModel = (IncQueryGenmodel) firstElement;
+				IEditorInput editorInput = HandlerUtil.getActiveEditor(event).getEditorInput();
+				IFile file = (IFile) editorInput.getAdapter(IFile.class);
+				if (file != null) {
+					IProject project = file.getProject();
+					monitor.beginTask("Repopulating VPM with referenced EMF models", 100);
+					return doFillVPML(monitor, iqModel, project);
+				}
+			} else {
+				IProject project;
+
+				if (firstElement instanceof IProject) {
+					project = (IProject) firstElement;
+				} else {
+					IFile iFile = (IFile)firstElement;
+					project = iFile.getProject();
+				}
+				monitor.beginTask("Repopulating VPM with referenced EMF models", 110);
+				monitor.subTask("Loading IncQuery generator model");
+				IncQueryGenmodel iqModel = GenModelHelper.parseGenModel(project);
+				monitor.worked(10);
+				if (iqModel!=null) {
+					return doFillVPML(monitor, iqModel, project);
+				}
+				else {
+					monitor.done();
+					return new Status(Status.ERROR, IncQueryGUIPlugin.PLUGIN_ID, 
+							"Error loading IncQuery genmodel file");
+				}
+
+			}
+
+			return new Status(Status.ERROR, IncQueryGUIPlugin.PLUGIN_ID, 
+					"Error loading referenced EMF models: cannot interpret input; " 
+					+ "issue command on EMF-IncQuery project, generator or root element ofgenerator file.");	
+		}
+
+		private IStatus doFillVPML(IProgressMonitor monitor, IncQueryGenmodel iqModel, IProject project) {
+			monitor.subTask("Loading Ecore models"); //, iqModel.getEcoreModel().size());
 			for (EcoreModel ecore : iqModel.getEcoreModel()) {
 				GenModel genModel = ecore.getModels();
 				String modelPluginID = genModel.getModelPluginID();
@@ -61,7 +96,7 @@ public class FillVPMLHandler extends AbstractHandler {
 				for (GenPackage genPackage : genModel.getGenPackages()) {
 					try {
 						IncQueryProjectSupport.fillVPMLContent(genPackage.getEcorePackage(), project, modelPluginID);
-						monitor.worked(1);
+						monitor.worked(100/iqModel.getEcoreModel().size());
 					} 
 					catch (Exception e) {
 						String msg = e.getMessage();

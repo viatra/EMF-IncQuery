@@ -130,9 +130,10 @@ public class ExtensionsforSampleProjectGenerator {
 			for (Map.Entry<String,SampleHandlerGenerator.HandlerData> entry : handlers.entrySet()) {
 				IPluginElement builderElement = factory.createElement(contribExtension);
 				builderElement.setName("command");
-				builderElement.setAttribute("description", "Invokes the EMF-IncQuery engine to return all matches of the "+entry.getKey()+" pattern");
+				builderElement.setAttribute("description", 
+						"Invokes the EMF-IncQuery engine to return all matches of the "+entry.getValue().getPatternName()+" pattern");
 				builderElement.setAttribute("id", entry.getKey()+"ID");
-				builderElement.setAttribute("name", "Get all matches of the "+entry.getKey()+" pattern");
+				builderElement.setAttribute("name", "Get all matches of the "+entry.getValue().getPatternName()+" pattern");
 				
 				contribExtension.add(builderElement);
 			}

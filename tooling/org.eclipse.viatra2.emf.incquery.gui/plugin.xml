@@ -16,7 +16,7 @@
             preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
-      <wizard
+     <!-- <wizard
             category="org.eclipse.ui.Examples"
             class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewSampleProjectWizard"
             finalPerspective="org.eclipse.viatra2.gui.perspective"
@@ -24,13 +24,13 @@
             name="EMF-IncQuery Sample Project"
             preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
-      </wizard>
+      </wizard>-->
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
             id="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-            name="Load GenModels into EMF-IncQuery project">
+            name="Load/reload referenced EMF GenModels into EMF-IncQuery project">
       </command>
       <command
             id="org.eclipse.viatra2.emf.incquery.gui.generate-source"
@@ -113,6 +113,28 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <adapt
+                           type="org.eclipse.core.resources.IFile">
+                        <test
+                              property="org.eclipse.core.resources.name"
+                              value="*.incquery">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+               
+         </command>
+         
         </menu>
       </menuContribution>
       <menuContribution
@@ -160,6 +182,27 @@
                   </with>
                </visibleWhen>
             </command>
+	        <command
+	               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
+	               style="push">
+	            <visibleWhen
+	                  checkEnabled="false">
+	               <with
+	                     variable="selection">
+	                  <iterate
+	                        ifEmpty="false">
+	                     <adapt
+	                           type="org.eclipse.core.resources.IFile">
+	                        <test
+	                              property="org.eclipse.core.resources.name"
+	                              value="*.incquery">
+	                        </test>
+	                     </adapt>
+	                  </iterate>
+	               </with>
+	            </visibleWhen>
+	               
+	         </command>
            </menu>
       </menuContribution>
       <menuContribution
@@ -207,6 +250,27 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false">
+                     <adapt
+                           type="org.eclipse.core.resources.IFile">
+                        <test
+                              property="org.eclipse.core.resources.name"
+                              value="*.incquery">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>         
+         </command>
+         
         </menu>
       </menuContribution>
       

@@ -114,7 +114,7 @@ public class SampleHandlerGenerator {
 			String javaPackageName = packageLocation.getJavaPackageName();
 			substitutions.put("handler-package", javaPackageName);
 
-			handlers.put(className, new HandlerData(javaPackageName, className));
+			handlers.put(className, new HandlerData(javaPackageName, className, pattern.getName()));
 
 			String generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
 
@@ -154,14 +154,12 @@ public class SampleHandlerGenerator {
 
 	public static class HandlerData{
 
-		private String handlerPackage, handlerName;
+		private String handlerPackage, handlerName, patternName;
 
-		public HandlerData()
-		{}
-
-		public HandlerData(String handlerPackage, String handlerName) {
+		public HandlerData(String handlerPackage, String handlerName, String patternName) {
 			this.handlerName = handlerName;
 			this.handlerPackage = handlerPackage;
+			this.patternName = patternName;
 		}
 
 		public String getHandlerPackage() {
@@ -179,6 +177,16 @@ public class SampleHandlerGenerator {
 		public void setHandlerName(String handlerName) {
 			this.handlerName = handlerName;
 		}
+
+		public String getPatternName() {
+			return patternName;
+		}
+
+		public void setPatternName(String patternName) {
+			this.patternName = patternName;
+		}
+		
+		
 	}
 
 }

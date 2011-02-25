@@ -65,7 +65,7 @@ public class #java-class-name# extends AbstractHandler implements IHandler {
 				if(matches.size() > 0)
 					for(#java-signature# match: matches)
 						{builder.append(match.toString());
-						 builder.append("------------------------\n");
+						 builder.append("\n");
 						}
 				else
 					builder.append("The #pattern-name# pattern has an empty match set.");	
