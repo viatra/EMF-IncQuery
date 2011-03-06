@@ -87,7 +87,7 @@ public class DTOGenerator {
 		substitutions.put("java-setattributes", strs[4]);
 		substitutions.put("equals-override", strs[5]);
 		substitutions.put("hashcode-override", strs[6]);
-		substitutions.put("tostring-override", strs[7]);
+		substitutions.put("prettyprint-override", strs[7]);
 		substitutions.put("fields-list", strs[8]);
 		substitutions.put("parameters-list-quoted", strs[9]);
 		substitutions.put("java-reflective-getter-lines", strs[10]);
@@ -139,7 +139,7 @@ public class DTOGenerator {
 	 * string[4] is the java code that sets the initial values of the DTO in its constructor
 	 * string[5] is equals-override
 	 * string[6] is hashcode-override
-	 * string[7] is tostring-override
+	 * string[7] is prettyprint-override
 	 * string[8] is the comma-separated list of fields
 	 * string[9] is the comma-separated list of quoted parameter names
 	 * string[10] is the reflective getter java code
