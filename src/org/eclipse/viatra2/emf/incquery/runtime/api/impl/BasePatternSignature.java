@@ -23,6 +23,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 public abstract class BasePatternSignature implements IPatternSignature {
 
 	protected static String printValue(Object o) {
+		if (o == null) return "(null)";
 		if (o instanceof EObject) {
 			EStructuralFeature feature = ((EObject)o).eClass().getEStructuralFeature("name");
 			if (feature != null) {
@@ -54,4 +55,13 @@ public abstract class BasePatternSignature implements IPatternSignature {
 			return set(parameterNames()[position], newValue);
 		else return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Sig<" + patternName() + ">{" + prettyPrint() + "}";
+	}
+
 }

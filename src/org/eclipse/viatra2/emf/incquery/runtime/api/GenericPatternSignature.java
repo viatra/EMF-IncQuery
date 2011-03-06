@@ -96,20 +96,18 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 	}
 	
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#prettyPrint()
 	 */
 	@Override
-	public String toString() {
+	public String prettyPrint() {
 		StringBuilder result = new StringBuilder();
-		result.append("Sig<" + patternName + ">{");
 		for (int i=0; i<array.length; ++i) {
 			if (i!=0) result.append(", ");
 			result.append("\"" + parameterNames[i] + "\"=" + printValue(array[i]));
 		}
-		result.append("}");
 		return result.toString();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#patternName()
 	 */

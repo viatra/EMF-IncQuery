@@ -44,5 +44,8 @@ public interface IPatternSignature extends Cloneable {
 	public boolean set(int position, Object newValue);	
 	
 	/** Converts the signature to an array representation, with each pattern parameter at their respective position */
-	public abstract Object[] toArray();
+	public Object[] toArray();
+	
+	/** Prints the list of parameter-value pairs. */
+	public String prettyPrint();
 }
