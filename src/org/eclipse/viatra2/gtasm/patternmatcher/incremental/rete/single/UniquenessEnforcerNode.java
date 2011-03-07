@@ -69,8 +69,7 @@ public class UniquenessEnforcerNode extends SingleInputNode {
 				// TODO UGLY, but will it find our problems?
 				change = false;
 				System.err
-						.println("UniquenessEnforcer " + this + "has detected duplicate deletion of"
-								+ updateElement);
+						.println("Duplicate deletion of " + updateElement + " was detected in UniquenessEnforcer " + this);
 				ex.printStackTrace();
 			}
 		}
