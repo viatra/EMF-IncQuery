@@ -47,9 +47,24 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	/**
 	 * @param visitor
 	 */
-	protected void doVisit(EMFVisitor visitor) {
+	protected void doVisit(CustomizedEMFVisitor visitor) {
 		if (traversalCoalescing) waitingVisitors.add(visitor);
 		else newTraversal().accept(visitor);
+	}
+	
+	static class CustomizedEMFVisitor extends EMFVisitor {
+		@Override
+		public final void visitInternalReference(EObject source, EReference feature, EObject target) {
+			if (feature.getEOpposite() != null) {
+				if (feature.isContainment()) {
+					doVisitInternalReference(target, feature.getEOpposite(), source);
+				} else if (feature.getEOpposite().isContainment()) {
+					return;
+				}
+			}
+			doVisitInternalReference(source, feature, target);
+		}
+		void doVisitInternalReference(EObject source, EReference feature, EObject target) {}
 	}
 	
 	public static class ForResourceSet<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
@@ -127,7 +142,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 
 	@Override
 	public void enumerateAllBinaryEdges(final ModelElementPairCrawler crawler) {
-		EMFVisitor visitor = new EMFVisitor() {
+		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
 				if (target != null) // Exclude NULL attribute values from RETE
@@ -135,9 +150,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 				super.visitAttribute(source, feature, target);
 			}
 			@Override
-			public void visitInternalReference(EObject source, EReference feature, Object target) {
+			public void doVisitInternalReference(EObject source, EReference feature, EObject target) {
 				crawler.crawl(source, target);
-				super.visitInternalReference(source, feature, target);
 			}
 		};
 		doVisit(visitor);
@@ -151,7 +165,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	@Override
 	// Only direct instantiation of unaries is supported now
 	public void enumerateAllInstantiations(final ModelElementPairCrawler crawler) {
-		EMFVisitor visitor = new EMFVisitor() {
+		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
 				if (target != null) // Exclude NULL attribute values from RETE
@@ -172,7 +186,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 
 	@Override
 	public void enumerateAllUnaries(final ModelElementCrawler crawler) {
-		EMFVisitor visitor = new EMFVisitor() {
+		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
 				if (target != null) // Exclude NULL attribute values from RETE
@@ -190,7 +204,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 
 	@Override
 	public void enumerateAllUnaryContainments(final ModelElementPairCrawler crawler) {
-		EMFVisitor visitor = new EMFVisitor() {
+		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
 				if (target != null) // Exclude NULL attribute values from RETE
@@ -198,9 +212,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 				super.visitAttribute(source, feature, target);
 			}
 			@Override
-			public void visitInternalReference(EObject source, EReference feature, Object target) {
+			public void doVisitInternalReference(EObject source, EReference feature, EObject target) {
 				if (feature.isContainment()) crawler.crawl(source, target);
-				super.visitInternalReference(source, feature, target);
 			}
 		};
 		doVisit(visitor);
@@ -209,7 +222,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	@Override
 	public void enumerateDirectBinaryEdgeInstances(Object typeObject, final ModelElementPairCrawler crawler) {
 		final EStructuralFeature structural = (EStructuralFeature) typeObject;
-		EMFVisitor visitor = new EMFVisitor() {
+		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
 				if (structural.equals(feature) && target != null) // NULL attribute values excluded from RETE
@@ -217,9 +230,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 				super.visitAttribute(source, feature, target);
 			}
 			@Override
-			public void visitInternalReference(EObject source, EReference feature, Object target) {
+			public void doVisitInternalReference(EObject source, EReference feature, EObject target) {
 				if (structural.equals(feature)) crawler.crawl(source, target);
-				super.visitInternalReference(source, feature, target);
 			}
 		};
 		doVisit(visitor);
@@ -241,7 +253,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	@Override
 	public void enumerateDirectUnaryInstances(final Object typeObject, final ModelElementCrawler crawler) {
 		if (typeObject instanceof EClass) {
-			EMFVisitor visitor = new EMFVisitor() {
+			CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 				@Override
 				public void visitElement(EObject source) {			
 					if (source.eClass().equals(typeObject)) crawler.crawl(source);
@@ -250,7 +262,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 			};
 			doVisit(visitor);
 		} else if (typeObject instanceof EDataType) {
-			EMFVisitor visitor = new EMFVisitor() {
+			CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 				@Override
 				public void visitAttribute(EObject source, EAttribute feature, Object target) {
 					if (target != null && ((EDataType)typeObject).isInstance(target)) // Exclude NULL attribute values from RETE
@@ -264,7 +276,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	@Override
 	public void enumerateAllUnaryInstances(final Object typeObject, final ModelElementCrawler crawler) {
 		if (typeObject instanceof EClass) {
-			EMFVisitor visitor = new EMFVisitor() {
+			CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 				@Override
 				public void visitElement(EObject source) {			
 					if (((EClass)typeObject).isInstance(source)) crawler.crawl(source);
@@ -273,7 +285,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 			};
 			doVisit(visitor);
 		} else if (typeObject instanceof EDataType) {
-			EMFVisitor visitor = new EMFVisitor() {
+			CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 				@Override
 				public void visitAttribute(EObject source, EAttribute feature, Object target) {
 					if (target != null && ((EDataType)typeObject).isInstance(target)) // Exclude NULL attribute values from RETE

@@ -93,15 +93,14 @@ public class EMFContainmentHierarchyTraversal {
 	 * @param feature
 	 * @param target
 	 */
-	private void visitFeature(EMFVisitor visitor, EObject source,
-			EStructuralFeature feature, Object target) {
+	private void visitFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) {
 		if (feature instanceof EAttribute) {
 			visitor.visitAttribute(source, (EAttribute)feature, target);
 		} else if (feature instanceof EReference) {
 			if (containedElements.contains(target)) 
-				visitor.visitInternalReference(source, (EReference)feature, target);
+				visitor.visitInternalReference(source, (EReference)feature, (EObject)target);
 			else
-				visitor.visitExternalReference(source, (EReference)feature, target);
+				visitor.visitExternalReference(source, (EReference)feature, (EObject)target);
 		}
 	}
 

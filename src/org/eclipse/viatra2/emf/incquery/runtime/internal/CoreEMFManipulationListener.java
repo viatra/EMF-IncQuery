@@ -131,23 +131,19 @@ public class CoreEMFManipulationListener {
 		}
 	}
 	
-	void featureUpdate(Direction direction, Object oFeature, Object changedValue, EObject notifier) {
+	private void featureUpdate(Direction direction, Object oFeature, Object changedValue, EObject notifier) {
 		if (changedValue == null) return; // null-valued attributes are simply not stored
 		
-		boundary.updateBinaryEdge(direction, notifier, changedValue, oFeature);
-		boundary.updateBinaryEdge(direction, notifier, changedValue, null); // global supertype
 		if (oFeature instanceof EAttribute) {
-			boundary.updateContainment(direction, notifier, changedValue);
 			EAttribute feature = (EAttribute) oFeature;
-			boundary.updateUnary(direction, changedValue, feature.getEAttributeType()); // FIXME is this the correct, direct type?					
-			boundary.updateUnary(direction, changedValue, null); // global supertype	
-			boundary.updateInstantiation(direction, feature.getEAttributeType(), changedValue);
-		}
-		if (oFeature instanceof EReference) {
+			attributeReferenceUpdate(direction, feature, notifier, changedValue);
+		} else if (oFeature instanceof EReference) {
 			EReference feature = (EReference) oFeature;
 			if (feature.isContainment()) {
-				boundary.updateContainment(direction, notifier, changedValue);
+				containmentReferenceUpdate(direction, feature, notifier, changedValue);
 				attachedTree((EObject)changedValue, direction);
+			} else { 
+				nonContainmentReferenceUpdate(direction, feature, notifier, changedValue);
 			}
 		}
 	}
@@ -157,43 +153,64 @@ public class CoreEMFManipulationListener {
 
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
-				if (target!=null)  {
-					boundary.updateBinaryEdge(direction, source, target, feature);
-					boundary.updateBinaryEdge(direction, source, target, null); // global supertype
-					boundary.updateContainment(direction, source, target);
-					boundary.updateUnary(direction, target, feature.getEAttributeType()); // FIXME is this the correct, direct type?
-					boundary.updateUnary(direction, target, null); // global supertype
-					boundary.updateInstantiation(direction, feature.getEAttributeType(), target);
-				}
-
+				attributeReferenceUpdate(direction, feature, source, target);
 			}
 
 			@Override
 			public void visitElement(EObject source) {
-				boundary.updateUnary(direction, source, source.eClass());
-				boundary.updateUnary(direction, source, null); // global supertype
-				boundary.updateInstantiation(direction, source.eClass(), source);
+				nodeUpdateCore(direction, source.eClass(), source);
 			}
 
 			@Override
-			public void visitExternalReference(EObject source, EReference feature, Object target) {
-				if (target!=null) {
-					boundary.updateBinaryEdge(direction, source, target, feature);
-					boundary.updateBinaryEdge(direction, source, target, null); // global supertype
+			public void visitExternalReference(EObject source, EReference feature, EObject target) {
+				nonContainmentReferenceUpdate(direction, feature, source, target);	
+			}
+
+			@Override
+			public void visitInternalReference(EObject source, EReference feature, EObject target) {
+				if (feature.isContainment()) {
+					containmentReferenceUpdate(direction, feature, source, target);			
+				} else {
+					nonContainmentReferenceUpdate(direction, feature, source, target);	
 				}
-			}
-
-			@Override
-			public void visitInternalReference(EObject source,
-					EReference feature, Object target) {
-				if (target!=null) {
-					boundary.updateBinaryEdge(direction, source, target, feature);
-					boundary.updateBinaryEdge(direction, source, target, null); // global supertype
-					if (feature.isContainment()) boundary.updateContainment(direction, source, target);
-				}				
 			}
 		});
 	}
+	
+	private void nodeUpdateCore(Direction direction, Object nodeType, Object node) {
+		boundary.updateUnary(direction, node, nodeType);
+		boundary.updateUnary(direction, node, null); // global supertype
+		boundary.updateInstantiation(direction, nodeType, node);
+	}
+	private void edgeUpdateCore(Direction direction, Object oFeature, Object source, Object target) {
+		boundary.updateBinaryEdge(direction, source, target, oFeature);
+		boundary.updateBinaryEdge(direction, source, target, null); // global supertype
+	}
+	private void containmentReferenceUpdate(Direction direction, EReference reference, Object source, Object target) {
+		if (target != null) {
+			edgeUpdateCore(direction, reference, source, target);
+			boundary.updateContainment(direction, source, target);
+			if (reference.getEOpposite() != null) // update opposite also
+				edgeUpdateCore(direction, reference.getEOpposite(), target, source);			
+		}
+	}
+	private void nonContainmentReferenceUpdate(Direction direction, EReference reference, Object source, Object target) {
+		if (target != null) {
+			if (reference.getEOpposite() != null && reference.getEOpposite().isContainment()) {
+				return; // SKIP core update of containment's opposite, defer to when containment is updated		
+			} else {
+				edgeUpdateCore(direction, reference, source, target);	
+			}
+		}
+	}
+	private void attributeReferenceUpdate(Direction direction, EAttribute attribute, Object host, Object value) {
+		if (value != null) {
+			edgeUpdateCore(direction, attribute, host, value);
+			boundary.updateContainment(direction, host, value);
+			nodeUpdateCore(direction, attribute.getEAttributeType(), value); // FIXME is this the correct, direct type?
+		}
+	}
+
 	
 	public void registerSensitiveTerm(Object element, PredicateEvaluatorNode termEvaluatorNode) {
 		Set<PredicateEvaluatorNode> nodes = sensitiveTerms.get(element);
