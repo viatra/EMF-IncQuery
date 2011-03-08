@@ -3,7 +3,7 @@
       title="Creating an EMF-IncQuery Project">
    <intro>
       <description>
-         Creating an EMF-IncQuery project requires the existence of an EMF project which contains the <b>metamodel in Ecore format</b> and <b>queries formulated in VIATRA graph pattern language</b>. The cheat sheet also describes an example (library) metamodel and query besides creating the plug-in. Completing this sheet, the IncQuery <b>Eclipse plug-in</b> will be created, that provides <b>query functions in Java language</b>.
+         Creating an EMF-IncQuery project requires the existence of an EMF project which contains the <b>metamodel in Ecore format</b> and <b>queries formulated in VIATRA2 graph pattern language</b>. The cheat sheet also describes an example (library) metamodel and query besides creating the plug-in. Completing this sheet, the IncQuery <b>Eclipse plug-in</b> will be created, that provides <b>query functions in Java language</b>.
       </description>
    </intro>
    <item
@@ -42,7 +42,9 @@ To create the example EMF metamodel, perform the following steps:<br/><br/>
          title="Loading EMF metamodels">
       <description>
       You need to specify the EMF metamodels (Ecore models) that contain the types that your queries will use. These Ecore models will be loaded into the EMF-IncQuery project, more specifically into the VIATRA2 Model Space located at models/model.vpml. <br/>
-      Note, that EMF model code must be generated.
+      Note, that EMF model code must be generated.<br/><br/>
+      
+      Caution: you will need to repeat this task whenever you add references to new metamodels. <br/>Additionally, you will have to repeat the final step only whenever you modify the content of your (already referenced) Ecore models.
       </description>
                              <subitem
                                    label="Open the generator model of your new EMF-IncQuery project, found at models/generator.incquery.">
@@ -57,25 +59,42 @@ To create the example EMF metamodel, perform the following steps:<br/><br/>
                                    label="In the Properties view set the Models reference, then save the generator.incquery file.">
                              </subitem>
                              <subitem
-                                   label="Finally, select the Inc Query Genmodel root element, right-click and issue Load/reload referenced EMF GenModels into EMF-IncQuery project. This will initialize the VIATRA2 model space (located at models/model.vpml in your project) and import the Ecore metamodels.">
+                                   label="Finally, select the Inc Query Genmodel root element in the tree editor, or the genmodel.incquery file itself in Project Explorer, then right-click and issue Load/reload referenced EMF GenModels into EMF-IncQuery project. This will initialize the VIATRA2 model space (located at models/model.vpml in your project) and import the Ecore metamodels.">
                              </subitem>
        
    </item>
    <item
+         skip="true"
+         title="Learning about the query language">
+      <description>
+         Queries return a set of EMF instance objects, matching a given criteria. These criteria can be formulated in the graph pattern language of VIATRA2, and can be developed under VIATRA2. VIATRA2 is a general-purpose model transformation system, but EMF-IncQuery users are only required to known the pattern language (although knowing the rest can still be useful). To learn more about VIATRA2, visit:<br/><br/>
+http://wiki.eclipse.org/VIATRA2<br/><br/>
+To learn the basics of the language and see a Hello World example visit the <b>Creating Transformations</b> page. For more example transformations refer to the <b>Case Studies</b> page. The <b>Transformation language specification</b> and <b>User&apos;s guide</b> PDFs on the site are also fairly usable to start, although a bit dated.                                                                                                                                                                                                                                                                                                    <br/><br/>
+      </description>
+      <command
+            required="false"
+            serialization="org.eclipse.ui.browser.openBrowser(url=http://wiki.eclipse.org/VIATRA2)"/>
+   </item>
+   
+   <item
          title="Writing query patterns">
       <description>
-         Queries return a set of EMF instance objects, matching a given criteria. These criteria can be formulated in VIATRA graph pattern language, and can be developed under VIATRA. To learn more about VIATRA, visit:<br/><br/>
-http://wiki.eclipse.org/VIATRA2<br/><br/>
-The <b>Transformation language specification</b> and <b>User&apos;s guide</b> PDFs on the site are fairly usable to start. To learn the basics of the language and see a Hello World example visit the <b>Creating Transformations</b> page. For more example refer to the <b>Case Studies</b> page.                                                                                                                                                                                                                                                                                                    <br/><br/>
-To develop queries open models/model.vpml model space, and create a new <b>VIATRA2 Textual Command Language script</b> under models/vtcl. EMF-IncQuery machines must import nemf.packages, because the metamodel sits under this subtree. IncQuery transforms all VTCL <b>pattern</b>s into queries. Rules can be used during development, and they are ignored by IncQuery.
+To develop queries open the model space models/model.vpml, and create a new <b>VIATRA2 Textual Command Language script</b> under models/vtcl. EMF-IncQuery machines should import nemf.packages, the container of imported Ecore metamodels. IncQuery will transform all VTCL <b>pattern</b>s into EMF queries. 
 <br/><br/>
-For those who follow the library example, there is a query returning writers who have at least one book associated. Create the library.vtcl under models/vtcl, and paste the following code:<br/><br/>
+For those who follow the library example, we define a pattern that matches pairs of writers and their books. 
+You can determine which parameters are used as input and which are output at run-time when you actually issue the query, therefore the same pattern can be used to: <br/>
+(a) list the books of a writer (with Writer as an input parameter), <br/>
+(b) or to find the author of a book (Book is the input parameter),  <br/>
+(c) or to list all books with their respective authors (both are output parameters), <br/>
+(d) or to simply verify whether a given object is a writer, the other one is a book, and that the author has written the book (both are input parameters). 
+<br/><br/>
+Create the library.vtcl under models/vtcl, and paste the following code:<br/><br/>
 <br/>
 import nemf.packages;<br/>
 <br/>
-machine &apos;machineName&apos; {<br/>
+machine &apos;myMachine&apos; {<br/>
 <br/>
-  pattern getWriterBook(Writer, Book) = {<br/>
+  pattern Writes(Writer, Book) = {<br/>
     library.Writer(Writer);<br/>
     library.Book(Book);<br/>
     library.Writer.books(Ref, Writer, Book);<br/>
@@ -83,21 +102,23 @@ machine &apos;machineName&apos; {<br/>
 <br/>
 }<br/>
 <br/>
-If you opened the vpml model space, you can parse the code without error by pressing Alt+P. In the VIATRA2 Model spaces view the machine shows up, but can not be run, because it has no main rule.
+<br/>
+Alternatively, you can import "nemf.packages.library", and omit the "library." prefixes that specify the EPackage at the EClass / EReference declarations.  
+<br/><br/>
+Optionally, you can make sure that your .vtcl file is syntactically correct by opening the .vpml model space, and parsing the .vtcl code by pressing Alt+P in the VTCL editor. 
+In the VIATRA2 Model spaces view the machine shows up, but can not be run, because it has no entry point (main rule). As EMF-IncQuery is a query technology, it only uses the query features (i.e. patterns) of the VTCL language, so this is OK. 
+For pattern debugging, rules and other VTCL language features can be used during development, but they are ignored by EMF-IncQuery. Those of you familiar with VIATRA2 can import an instance model into the model space and add an entry point to the machine in order to test the behavior of the patterns under development. 
       </description>
-      <command
-            required="false"
-            serialization="org.eclipse.ui.browser.openBrowser(url=http://wiki.eclipse.org/VIATRA2)"/>
    </item>
    <item
          title="Generating the plug-in code">
       <description>
-         Right click on the models/generator.incquery and issue <b>EMF-IncQuery | Generate EMF-IncQuery Source Code</b>. The result of the generation will be visible under the src-gen folder. 
+         Right click on the models/generator.incquery and issue <b>EMF-IncQuery | Generate EMF-IncQuery Source Code</b>. The result of code generation will be visible under the src-gen folder. 
          <br/><br/>
          Congratulation! Your code is ready to perform incremental queries over EMF models. <br/>
-* Reference the created plug-in, and use the query functions generated in the <b>patternmatchers.machineName</b> package.<br/>
-* Use <b>signatures.machineName</b> for comparison and readable string output.<br/>
-* patternbuilders.machineName contains the parsed patterns. This package is used internally by the patternmatchers package.
+* Reference the created plug-in from your code, and use the user-friendly query functions generated in the <b>patternmatchers.myMachine</b> package.<br/>
+* Use signature classes in <b>signatures.myMachine</b> to represent a single match of a pattern, with handy overloads for comparison and readable string output.<br/>
+* The internally used patternbuilders.myMachine package contains a representation of the parsed patterns, responsible for the actual pattern matching. <br/><br/>
       </description>
    </item>
 </cheatsheet>
