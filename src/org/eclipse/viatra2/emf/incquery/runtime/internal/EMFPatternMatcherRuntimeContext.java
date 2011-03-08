@@ -57,14 +57,19 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		public final void visitInternalReference(EObject source, EReference feature, EObject target) {
 			if (feature.getEOpposite() != null) {
 				if (feature.isContainment()) {
-					doVisitInternalReference(target, feature.getEOpposite(), source);
+					doVisitReference(target, feature.getEOpposite(), source);
 				} else if (feature.getEOpposite().isContainment()) {
 					return;
 				}
 			}
-			doVisitInternalReference(source, feature, target);
+			doVisitReference(source, feature, target);
 		}
-		void doVisitInternalReference(EObject source, EReference feature, EObject target) {}
+		@Override
+		public void visitExternalReference(EObject source, EReference feature, EObject target) {
+			if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
+			doVisitReference(source, feature, target);
+		}
+		void doVisitReference(EObject source, EReference feature, EObject target) {}
 	}
 	
 	public static class ForResourceSet<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
@@ -150,7 +155,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 				super.visitAttribute(source, feature, target);
 			}
 			@Override
-			public void doVisitInternalReference(EObject source, EReference feature, EObject target) {
+			public void doVisitReference(EObject source, EReference feature, EObject target) {
 				crawler.crawl(source, target);
 			}
 		};
@@ -212,7 +217,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 				super.visitAttribute(source, feature, target);
 			}
 			@Override
-			public void doVisitInternalReference(EObject source, EReference feature, EObject target) {
+			public void doVisitReference(EObject source, EReference feature, EObject target) {
 				if (feature.isContainment()) crawler.crawl(source, target);
 			}
 		};
@@ -230,7 +235,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 				super.visitAttribute(source, feature, target);
 			}
 			@Override
-			public void doVisitInternalReference(EObject source, EReference feature, EObject target) {
+			public void doVisitReference(EObject source, EReference feature, EObject target) {
 				if (structural.equals(feature)) crawler.crawl(source, target);
 			}
 		};

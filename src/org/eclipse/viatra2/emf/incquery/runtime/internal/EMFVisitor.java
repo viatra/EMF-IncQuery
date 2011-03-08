@@ -20,6 +20,9 @@ import org.eclipse.emf.ecore.resource.Resource;
  * @author Bergmann Gábor
  *
  */
+// FIXME: 
+// - handle boundary of active emfRoot subtree
+// - more efficient traversal
 public class EMFVisitor {
 
 	/**
