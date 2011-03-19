@@ -55,6 +55,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	static class CustomizedEMFVisitor extends EMFVisitor {
 		@Override
 		public final void visitInternalReference(EObject source, EReference feature, EObject target) {
+			if (target == null) return; // null-valued attributes / references are simply not stored
 			if (feature.getEOpposite() != null) {
 				if (feature.isContainment()) {
 					doVisitReference(target, feature.getEOpposite(), source);
@@ -66,6 +67,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		}
 		@Override
 		public void visitExternalReference(EObject source, EReference feature, EObject target) {
+			if (target == null) return; // null-valued attributes / references are simply not stored
 			if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
 			doVisitReference(source, feature, target);
 		}

@@ -132,7 +132,7 @@ public class CoreEMFManipulationListener {
 	}
 	
 	private void featureUpdate(Direction direction, Object oFeature, Object changedValue, EObject notifier) {
-		if (changedValue == null) return; // null-valued attributes are simply not stored
+		if (changedValue == null) return; // null-valued attributes / references are simply not stored
 		
 		if (oFeature instanceof EAttribute) {
 			EAttribute feature = (EAttribute) oFeature;
