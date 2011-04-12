@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -33,10 +34,7 @@ import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.viatra2.emf.importer.generic.core.importer.EcoreImporter;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
-import org.eclipse.viatra2.errors.VPMCoreException;
-import org.eclipse.viatra2.framework.FrameworkException;
 import org.eclipse.viatra2.framework.FrameworkManager;
-import org.eclipse.viatra2.framework.FrameworkManagerException;
 import org.eclipse.viatra2.framework.IFramework;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -189,20 +187,15 @@ public class IncQueryProjectSupport {
 
 	/**
 	 * Fills the VPML file of the project with nEMF content generated according to the EPackage given.
-	 * @param ePackage the {@link EPackage} we are importing into the VPML
+	 * @param ePackages a collection of {@link EPackage}s we are importing into the VPML
 	 * @param project the INCQuery project we are targeting
 	 * @param modelPluginID the plugin ID of the emf.model project that will be added to the required bundles
-	 * @throws FrameworkManagerException 
-	 * @throws VPMCoreException 
+	 * @throws Exception 
 	 * @throws IOException 
-	 * @throws FrameworkException 
 	 * @throws CoreException 
 	 */
-	public static void fillVPMLContent(EPackage ePackage, IProject project, String modelPluginID) 
-	throws 
-	Exception,
-	//FrameworkManagerException, VPMCoreException, FrameworkException, 
-	IOException, CoreException 
+	public static void fillVPMLContent(Collection<EPackage> ePackages, IProject project, String modelPluginID) 
+	throws 	Exception, IOException, CoreException 
 	{
 		EcoreImporter importer = new EcoreImporter();
 		FrameworkManager fwManager = FrameworkManager.getInstance();
@@ -222,14 +215,16 @@ public class IncQueryProjectSupport {
 					break;
 				}
 			}
+			
 			// if not found, create a new one
 			if (framework == null) {
 				framework = fwManager.createFramework(fileName);
 			}
 			
+			framework.getTopmodel().getTransactionManager().beginTransaction();
 			// errors are also signalled here!
-			importer._processPackage(ePackage, framework, true);
-			
+			importer._processPackages(ePackages, framework, true);
+			framework.getTopmodel().getTransactionManager().commitTransaction();
 			
 			if (!frameworkFound) { // Only save framework, if it is not opened
 				framework.saveFile(fileName);
