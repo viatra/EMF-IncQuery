@@ -221,7 +221,7 @@ public class IncQueryProjectSupport {
 				framework = fwManager.createFramework(fileName);
 			}
 			
-			framework.getTopmodel().getTransactionManager().beginTransaction();
+			framework.getTopmodel().getTransactionManager().beginTransaction(Boolean.TRUE);
 			// errors are also signalled here!
 			importer._processPackages(ePackages, framework, true);
 			framework.getTopmodel().getTransactionManager().commitTransaction();
