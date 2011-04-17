@@ -1,13 +1,21 @@
 package org.eclipse.viatra2.emf.incquery.validation.core;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 
 public class ValidationUtil {
@@ -52,7 +60,30 @@ public class ValidationUtil {
 //		new Validator(UnreferencedClassConstraint.INSTANCE, eResource/*.getResourceSet()*/, file).startMonitoring();
 //		new Validator(ClassWithIDConstraint.INSTANCE, eResource/*.getResourceSet()*/, file).startMonitoring();
 		// instead: use extension point to instantiate constraints
-		// TODO
+		for (Constraint<?> c: getConstraints()) {
+			new Validator(c, eResource, file).startMonitoring();
+		}
+	}
+	
+	private static Collection<Constraint<?>> getConstraints() {
+		Vector<Constraint<?>> v = new Vector<Constraint<?>>();
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.validation.constraint");
+		for (IExtension e : ep.getExtensions()) {
+			for (IConfigurationElement ce : e.getConfigurationElements()) {
+				if (!ce.getName().equalsIgnoreCase("constraint"))
+					continue;
+				try {
+					Object o = ce.createExecutableExtension("class");
+					if (o instanceof Constraint<?>) {
+						v.add((Constraint<?>) o);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return v;
 	}
 	
 }
