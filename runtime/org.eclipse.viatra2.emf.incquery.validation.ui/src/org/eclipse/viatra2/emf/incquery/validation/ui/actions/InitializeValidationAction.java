@@ -97,9 +97,10 @@ public class InitializeValidationAction implements IViewActionDelegate, IEditorA
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 
-		action.setEnabled(false);
+	//	action.setEnabled(false);
 		//look for selected Element
 		Object e=((IStructuredSelection)selection).getFirstElement();
+		this.selectedElement=e;
 		//this is element an elementlink to an UML element?
 //		if (e instanceof EditPart ){
 //			Element element = ((IUMLElementEditPart)e).getUmlElement();
