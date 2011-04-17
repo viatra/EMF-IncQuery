@@ -63,7 +63,7 @@ public class InitializeValidationHandler extends AbstractHandler {
 				}
 			}
 		}
-		if (file==null) throw new ExecutionException("Must select a node or diagram representing an UML model or model element.");
+		if (resource==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
 	
 		try {
 			ValidationUtil.initValidators(resource, file);

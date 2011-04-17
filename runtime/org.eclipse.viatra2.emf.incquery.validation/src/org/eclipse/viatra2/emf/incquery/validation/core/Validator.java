@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -35,10 +35,10 @@ public class Validator<Signature extends IPatternSignature> {
 	private final Runnable processMatchesRunnable;
 
 
-	public Validator(Constraint<Signature> constraint, Resource resource, IFile f) throws IncQueryRuntimeException {
+	public Validator(Constraint<Signature> constraint, Notifier emfRoot, IFile f) throws IncQueryRuntimeException {
 		this.constraint = constraint;
 		this.f = f;
-		this.matcher = constraint.matcherFactory().getMatcher(resource);
+		this.matcher = constraint.matcherFactory().getMatcher(emfRoot);
 		this.dm = matcher.newDeltaMonitor(true);
 		this.processMatchesRunnable = new Runnable() {		
 			@Override

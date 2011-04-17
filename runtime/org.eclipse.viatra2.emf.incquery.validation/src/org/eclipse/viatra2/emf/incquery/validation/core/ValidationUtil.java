@@ -1,10 +1,12 @@
 package org.eclipse.viatra2.emf.incquery.validation.core;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -14,14 +16,15 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 
 public class ValidationUtil {
 
 	static Map<IFile, Map<ValidationProblem, IMarker>> problems = 
-		new HashMap<IFile, Map<ValidationProblem, IMarker>>();
+		new WeakHashMap<IFile, Map<ValidationProblem, IMarker>>();
+	private static Map<Notifier,WeakReference<Collection<Validator>>> activeRoots = 
+		new WeakHashMap<Notifier,WeakReference<Collection<Validator>>>();  
 	
 	public static Set<ValidationProblem> getProblems(IFile f) {
 		return problems.get(f).keySet();
@@ -31,7 +34,7 @@ public class ValidationUtil {
 		IMarker marker = vp.createMarker(f);
 		Map<ValidationProblem, IMarker> _problems = problems.get(f);
 		if (_problems == null) {
-			_problems = new HashMap<ValidationProblem, IMarker>();
+			_problems = new WeakHashMap<ValidationProblem, IMarker>();
 			problems.put(f, _problems);
 		}
 		_problems.put(vp, marker);
@@ -54,15 +57,24 @@ public class ValidationUtil {
 	}
 		
 	
-	public static void initValidators(Resource eResource, IFile file) throws IncQueryRuntimeException {
-//		new Validator(InheritanceDiamondConstraint.INSTANCE, eResource/*.getResourceSet()*/, file).startMonitoring();
-//		new Validator(MessageWithoutAssociationConstraint.INSTANCE, eResource/*.getResourceSet()*/, file).startMonitoring();					
-//		new Validator(UnreferencedClassConstraint.INSTANCE, eResource/*.getResourceSet()*/, file).startMonitoring();
-//		new Validator(ClassWithIDConstraint.INSTANCE, eResource/*.getResourceSet()*/, file).startMonitoring();
-		// instead: use extension point to instantiate constraints
+	/**
+	 * Initializes all registered validators on the specified EMF root (unless already initialized). 
+	 * @param emfRoot the EMF root where the violations will be searched
+	 * @param file the markers will be reported against this file
+	 * @return true if the initializaton was performed, or false if validators had previously been initialized for the same EMF root.  
+	 * @throws IncQueryRuntimeException
+	 */
+	public static boolean initValidators(Notifier emfRoot, IFile file) throws IncQueryRuntimeException {
+		WeakReference<Collection<Validator>> weakReference = activeRoots.get(emfRoot);
+		if (weakReference!=null && weakReference.get()!=null) return false;
+		Set<Validator> validators = new HashSet<Validator>();
 		for (Constraint<?> c: getConstraints()) {
-			new Validator(c, eResource, file).startMonitoring();
+			Validator validator = new Validator(c, emfRoot, file);
+			validators.add(validator);
+			validator.startMonitoring();
 		}
+		activeRoots.put(emfRoot, new WeakReference<Collection<Validator>>(validators));
+		return true;
 	}
 	
 	private static Collection<Constraint<?>> getConstraints() {
