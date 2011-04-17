@@ -18,11 +18,15 @@
    <extension
             point="org.eclipse.ui.commands">
          <command
-               categoryId="org.eclipse.viatra2.emf.incquery.validation"
+               categoryId="org.eclipse.viatra2.emf.incquery.validation.commands"
                defaultHandler="org.eclipse.viatra2.emf.incquery.validation.ui.actions.gmf.InitializeValidationHandler"
                id="org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation"
                name="Initialize IncQuery Validation">
          </command>
+         <category
+               id="org.eclipse.viatra2.emf.incquery.validation.commands"
+               name="EMF-IncQuery Valiation commands">
+         </category>
    </extension>
 
 </plugin>
