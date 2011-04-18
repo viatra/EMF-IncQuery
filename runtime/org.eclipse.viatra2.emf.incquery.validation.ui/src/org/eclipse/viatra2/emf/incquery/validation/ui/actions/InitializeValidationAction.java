@@ -1,7 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.validation.ui.actions;
 
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.IAction;
@@ -15,8 +15,8 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.viatra2.emf.incquery.validation.core.ValidationUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.validation.ui.editorlink.EditorBoundValidation;
 
 public class InitializeValidationAction implements IViewActionDelegate, IEditorActionDelegate {
 
@@ -48,15 +48,14 @@ public class InitializeValidationAction implements IViewActionDelegate, IEditorA
 	 */
 	public void run(IAction action) {
 		this.editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		final FileEditorInput f = (FileEditorInput) (editor).getEditorInput();
 		if (selectedElement instanceof EObject) {
-			Resource eResource = ((EObject)selectedElement).eResource();
-			IFile file = f.getFile();
+			EObject selectedElement2 = (EObject)selectedElement;
+			Resource eResource = selectedElement2.eResource();
+			Notifier emfRoot = eResource == null ? selectedElement2 : eResource;
 			
 			try {
-				ValidationUtil.initValidators(eResource, file);
-			}
-			catch (Exception e) {
+				EditorBoundValidation.INSTANCE.initializeValidatorsOnEditor(editor, emfRoot);
+			} catch (IncQueryRuntimeException e) {
 				e.printStackTrace();
 			}
 		}
@@ -67,19 +66,17 @@ public class InitializeValidationAction implements IViewActionDelegate, IEditorA
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-
-		
 		action.setEnabled(false);
 		//look for selected Element
 		try {
-		Object e=((IStructuredSelection)selection).getFirstElement();
-		System.out.println(e);
-		if (e instanceof EObject) {
-			// this action is only compatible with EObjects
-			action.setEnabled(true);
-			this.selectedElement=e;
-			
-		}
+			Object e=((IStructuredSelection)selection).getFirstElement();
+			System.out.println(e);
+			if (e instanceof EObject) {
+				// this action is only compatible with EObjects
+				action.setEnabled(true);
+				this.selectedElement=e;
+				
+			}
 		} catch (Throwable t) {
 			t.printStackTrace(); // TODO this is ugly
 		}

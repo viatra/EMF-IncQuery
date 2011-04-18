@@ -14,18 +14,17 @@ package org.eclipse.viatra2.emf.incquery.validation.ui.actions.gmf;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.viatra2.emf.incquery.validation.core.ValidationUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.validation.ui.editorlink.EditorBoundValidation;
 
 /**
  * @author Bergmann Gábor
@@ -38,17 +37,9 @@ public class InitializeValidationHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IFile file = null;
-		Resource resource = null;
+		Notifier emfRoot = null;
 		
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
-		if (activeEditor!=null) {
-			IEditorInput editorInput = activeEditor.getEditorInput();
-			if (editorInput != null && editorInput instanceof FileEditorInput) {
-				file = ((FileEditorInput)editorInput).getFile();
-			}
-		}
-		if (file==null) throw new ExecutionException("Must invoke on an editor with file input");
 		
 		ISelection selection =  HandlerUtil.getCurrentSelectionChecked(event);
 		Object firstElement = ((IStructuredSelection)selection).getFirstElement();
@@ -59,16 +50,19 @@ public class InitializeValidationHandler extends AbstractHandler {
 				View model2 = (View)model;
 				EObject element = model2.getElement();
 				if (element != null) {//  && element instanceof Element) {
-					resource = element.eResource();
+					Resource resource = element.eResource();
+					if (resource == null) 
+						emfRoot = element; 
+					else 
+						emfRoot = resource;
 				}
 			}
 		}
-		if (resource==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
+		if (emfRoot==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
 	
 		try {
-			ValidationUtil.initValidators(resource, file);
-		}
-		catch (Exception e) {
+			EditorBoundValidation.INSTANCE.initializeValidatorsOnEditor(activeEditor, emfRoot);
+		} catch (IncQueryRuntimeException e) {
 			e.printStackTrace();
 		}
 
