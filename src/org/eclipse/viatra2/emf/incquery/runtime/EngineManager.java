@@ -35,7 +35,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
 
 
 /**
- * TODO Exceptions?
+ * Global registry of active EMF-IncQuery engines.
  * @author Bergmann Gábor
  *
  */
@@ -43,7 +43,7 @@ public class EngineManager {
 	private static EngineManager instance = new EngineManager();
 
 	/**
-	 * @return the instance
+	 * @return the singleton instance
 	 */
 	public static EngineManager getInstance() {
 		return instance;
@@ -55,6 +55,13 @@ public class EngineManager {
 		engines = new WeakHashMap<Notifier, WeakReference<ReteEngine<String>>>();
 	}
 	
+	/**
+	 * Creates an EMF-IncQuery engine at an EMF root or retrieves an already existing one.
+	 * @param emfRoot the EMF root where this engine should operate
+	 * @param reteThreads experimental feature; 0 is recommended
+	 * @return a new or previously existing engine
+	 * @throws IncQueryRuntimeException
+	 */
 	public ReteEngine<String> getReteEngine(Notifier emfRoot, int reteThreads) throws IncQueryRuntimeException {
 		WeakReference<ReteEngine<String>> weakReference = engines.get(emfRoot);
 		ReteEngine<String> engine = weakReference != null ? weakReference.get() : null;
@@ -74,13 +81,6 @@ public class EngineManager {
 		return engine;
 	}
 	
-	/**
-	 * @param context
-	 * @param reteThreads
-	 * @return
-	 * @throws RetePatternBuildException 
-	 * @throws IncQueryRuntimeException 
-	 */
 	private ReteEngine<String> buildReteEngine(
 			IPatternMatcherRuntimeContext<String> context, int reteThreads) throws IncQueryRuntimeException {
 		ReteEngine<String> engine;
@@ -102,7 +102,14 @@ public class EngineManager {
 		}
 		return engine;
 	}
-			
+		
+	/**
+	 * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.
+	 * @param emfRoot the EMF root where this engine should operate
+	 * @param reteThreads experimental feature; 0 is recommended
+	 * @return a new or previously existing engine
+	 * @throws IncQueryRuntimeException
+	 */	
 	public ReteEngine<String> getReteEngine(final TransactionalEditingDomain editingDomain, int reteThreads) throws IncQueryRuntimeException {
 		ResourceSet resourceSet = editingDomain.getResourceSet();
 		WeakReference<ReteEngine<String>> weakReference = engines.get(resourceSet);
@@ -122,4 +129,21 @@ public class EngineManager {
 		return engine;
 	}	
 
+	/**
+	 * Disconnects the engine that was previously attached at the given root. 
+	 * Matcher objects will continue to return stale results. 
+	 * If no references are retained to the matchers or the engine, they can eventually be GC'ed, 
+	 * 	and they won't block the EMF model from being GC'ed anymore. 
+	 * @return true is an engine was found and disconnected, false if no engine was found for the given root.
+	 */
+	public boolean killEngine(Notifier emfRoot) {
+		WeakReference<ReteEngine<String>> weakReference = engines.get(emfRoot);
+		ReteEngine<String> engine = weakReference != null ? weakReference.get() : null;
+		if (engine == null) return false;
+		else {
+			engine.killEngine();
+			engines.remove(emfRoot);
+			return true;
+		}
+	}
 }
