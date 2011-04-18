@@ -1,12 +1,11 @@
 package org.eclipse.viatra2.emf.incquery.validation.core;
 
-import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -22,9 +21,9 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
 public class ValidationUtil {
 
 	static Map<IFile, Map<ValidationProblem, IMarker>> problems = 
-		new WeakHashMap<IFile, Map<ValidationProblem, IMarker>>();
-	private static Map<Notifier,WeakReference<Collection<Validator>>> activeRoots = 
-		new WeakHashMap<Notifier,WeakReference<Collection<Validator>>>();  
+		new HashMap<IFile, Map<ValidationProblem, IMarker>>();
+	private static Map<Notifier,Collection<Validator>> activeRoots = 
+		new HashMap<Notifier,Collection<Validator>>();  
 	
 	public static Set<ValidationProblem> getProblems(IFile f) {
 		return problems.get(f).keySet();
@@ -34,7 +33,7 @@ public class ValidationUtil {
 		IMarker marker = vp.createMarker(f);
 		Map<ValidationProblem, IMarker> _problems = problems.get(f);
 		if (_problems == null) {
-			_problems = new WeakHashMap<ValidationProblem, IMarker>();
+			_problems = new HashMap<ValidationProblem, IMarker>();
 			problems.put(f, _problems);
 		}
 		_problems.put(vp, marker);
@@ -65,30 +64,34 @@ public class ValidationUtil {
 	 * @throws IncQueryRuntimeException
 	 */
 	public static boolean initValidators(Notifier emfRoot, IFile file) throws IncQueryRuntimeException {
-		WeakReference<Collection<Validator>> weakReference = activeRoots.get(emfRoot);
-		if (weakReference!=null && weakReference.get()!=null) return false;
-		Set<Validator> validators = new HashSet<Validator>();
+		Collection<Validator> validators = activeRoots.get(emfRoot);
+		if (validators!=null) return false;
+		validators = new HashSet<Validator>();
 		for (Constraint<?> c: getConstraints()) {
 			Validator validator = new Validator(c, emfRoot, file);
 			validators.add(validator);
 			validator.startMonitoring();
 		}
-		activeRoots.put(emfRoot, new WeakReference<Collection<Validator>>(validators));
+		activeRoots.put(emfRoot, validators);
 		return true;
 	}
 	
-	public static boolean closeValidators(Notifier emfRoot, IFile file) throws IncQueryRuntimeException {
-		Map<ValidationProblem, IMarker> problemMap = problems.get(file);
-		if (problemMap != null) {
-			for (ValidationProblem problem : problemMap.keySet()) {
-				try {
-					removeProblem(file, problem);
-				} catch (CoreException e) {
-					e.printStackTrace();
+	public static boolean closeValidators(Notifier emfRoot, IFile file) {
+		if (activeRoots.remove(emfRoot) != null) {
+			Map<ValidationProblem, IMarker> problemMap = problems.get(file);
+			if (problemMap != null) {
+				for (ValidationProblem problem : new HashSet<ValidationProblem>(problemMap.keySet())) {
+					try {
+						removeProblem(file, problem);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
 				}
 			}
+			//EngineManager.getInstance().killEngine(emfRoot);
+			return true;
 		}
-		return activeRoots.remove(emfRoot) != null;
+		else return false;
 	}
 	
 	private static Collection<Constraint<?>> getConstraints() {
