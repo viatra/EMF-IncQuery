@@ -77,6 +77,20 @@ public class ValidationUtil {
 		return true;
 	}
 	
+	public static boolean closeValidators(Notifier emfRoot, IFile file) throws IncQueryRuntimeException {
+		Map<ValidationProblem, IMarker> problemMap = problems.get(file);
+		if (problemMap != null) {
+			for (ValidationProblem problem : problemMap.keySet()) {
+				try {
+					removeProblem(file, problem);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return activeRoots.remove(emfRoot) != null;
+	}
+	
 	private static Collection<Constraint<?>> getConstraints() {
 		Vector<Constraint<?>> v = new Vector<Constraint<?>>();
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
