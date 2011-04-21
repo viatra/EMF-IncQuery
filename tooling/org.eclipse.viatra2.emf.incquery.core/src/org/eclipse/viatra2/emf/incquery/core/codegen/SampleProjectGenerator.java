@@ -12,7 +12,10 @@
 
 package org.eclipse.viatra2.emf.incquery.core.codegen;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
@@ -35,6 +39,7 @@ import org.eclipse.viatra2.emf.incquery.core.codegen.internal.SampleHandlerGener
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.SampleHandlerGenerator.HandlerData;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.core.project.SampleProjectSupport;
+import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
 import org.eclipse.viatra2.framework.FrameworkException;
 import org.eclipse.viatra2.framework.FrameworkManagerException;
@@ -129,11 +134,18 @@ public class SampleProjectGenerator {
 //		return editorID+"."+modelName+"EditorID";
 //	}
 
-	private String getFileExtension(IncQueryGenmodel incqueryGenmodel) {
-		// TODO: works when only one genmodel is in the incquery models and it has only one valid file extension
-		String fileExtension = incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
+	private Collection<String> getFileExtension(IncQueryGenmodel incqueryGenmodel) {
+		//incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
 
-		return fileExtension;
+		// TODO: works only when the editor file extension is an GenPackage's file extension who has at leat one classifiers
+		List<String> fileExtensions = new ArrayList<String>(); 
+		
+		for(EcoreModel ecoreModel :incqueryGenmodel.getEcoreModel())
+			for(GenPackage genPackage: ecoreModel.getModels().getAllGenPackagesWithClassifiers()) 
+			{
+				fileExtensions.add(genPackage.getFileExtension());
+			}
+		return fileExtensions;
 	}
 
 	private Map<GTPattern, GTPatternJavaData> generateGTPatternJavaData(
