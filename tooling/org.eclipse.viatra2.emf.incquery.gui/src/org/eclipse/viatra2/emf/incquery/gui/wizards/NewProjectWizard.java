@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 
@@ -10,7 +11,9 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -22,6 +25,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.viatra2.emf.incquery.core.genmodel.GenModelHelper;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryProjectSupport;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 /**
  * A wizard class for creating an Incremental Query project with an IncQuery genmodel.
@@ -76,8 +80,12 @@ public class NewProjectWizard extends Wizard implements INewWizard {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             protected void execute(IProgressMonitor monitor)
                     throws CoreException {
-                IncQueryProjectSupport.createProject(description, projectHandle, monitor);
-                GenModelHelper.createGenmodel(new Path(IncQueryNature.IC_GENMODEL), projectHandle);
+                try {
+                	IncQueryProjectSupport.createProject(description, projectHandle, monitor);
+					GenModelHelper.createGenmodel(new Path(IncQueryNature.IC_GENMODEL), projectHandle);
+				} catch (IOException e) {
+					throw new CoreException(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Error creating project", e));
+				}
             }
         };
 
