@@ -11,12 +11,16 @@
 
 package org.eclipse.viatra2.emf.incquery.core.codegen;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.APIGenerator;
@@ -60,13 +64,15 @@ public class ProjectGenerator {
 		buildAfterClean(monitor);
 	}
 
-	public void clean(IProgressMonitor monitor) throws CodeGenerationException {
+	public void clean(final IProgressMonitor monitor) throws CodeGenerationException {
 		IProject project = getProject();
 		IFolder folder = project.getFolder(IncQueryNature.SRCGEN_DIR);
 		try {
 			folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			for (IResource res : folder.members()) {
-				res.delete(true, monitor);
+			CollectDeletedElement visitor = new CollectDeletedElement();
+			folder.accept(visitor);
+			for (IResource res : visitor.toDelete) {
+				res.delete(false, monitor);
 			}
 		} catch (CoreException e) {
 			throw new CodeGenerationException("Error during cleanup before code EMF-IncQuery code generation.", e);
@@ -99,4 +105,15 @@ public class ProjectGenerator {
 		return project;
 	}
 
+	private class CollectDeletedElement implements IResourceVisitor {
+		List<IResource> toDelete = new ArrayList<IResource>();
+		@Override
+		public boolean visit(IResource resource) throws CoreException {
+			if (resource instanceof IFile && "java".equals(((IFile)resource).getFileExtension().toLowerCase())) {
+				toDelete.add(resource);
+				return false;
+			}
+			return true;
+		}
+	};
 }

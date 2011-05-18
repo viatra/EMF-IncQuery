@@ -16,13 +16,12 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
 import org.eclipse.viatra2.emf.incquery.core.codegen.ProjectGenerator;
 import org.eclipse.viatra2.emf.incquery.core.genmodel.GenModelHelper;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
@@ -39,57 +38,52 @@ public class GenerateSourceCodeHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
-		CodeGenerationJob job = new CodeGenerationJob("IncQuery code generation", selection);
-		job.setUser(true);
-		job.schedule();
+		if (!selection.isEmpty()) {
+			CodeGenerationJob job = new CodeGenerationJob("IncQuery code generation", selection);
+			job.setUser(true);
+			job.schedule();
+		}
 		return null;
 	}
 	
-	private class CodeGenerationJob extends Job{
+	private class CodeGenerationJob extends WorkspaceJob{
 
 		public CodeGenerationJob(String name, IStructuredSelection selection) {
 			super(name);
 			this.selection = selection;
 		}
 		IStructuredSelection selection;
+		
 		@Override
-		protected IStatus run(IProgressMonitor monitor) {
+		public IStatus runInWorkspace(IProgressMonitor monitor) {
 			monitor.beginTask("Generating IncQuery source code", 2);
 			Object firstElement = selection.getFirstElement();
-			IProject project;
-			IFile iFile = null; 
-			if (firstElement instanceof IProject) {
-				project = (IProject) firstElement;
-			} else {
-				iFile = (IFile)firstElement;
-				project = iFile.getProject();
-			}
 			try {
 				monitor.subTask("Loading IncQuery genmodel file");
-				IncQueryGenmodel iqGen = GenModelHelper.parseGenModel(iFile);
+				IProject project;
+				IncQueryGenmodel iqGen;
+				if (firstElement instanceof IProject) {
+					project = (IProject) firstElement;
+					iqGen = GenModelHelper.parseGenModel(project);
+				} else {
+					IFile iFile = (IFile)firstElement;
+					project = iFile.getProject();
+					iqGen = GenModelHelper.parseGenModel(iFile);
+				}
 				monitor.worked(1);
 				if (iqGen!=null) {
 					monitor.subTask("Invoking code generator");
 					new ProjectGenerator(project, iqGen).fullBuild(monitor);
 					monitor.worked(2);
-				}
-				else {
-					monitor.done();
+				} else {
 					return new Status(Status.ERROR, IncQueryGUIPlugin.PLUGIN_ID, 
 							"Error loading IncQuery genmodel file");
 				}
-			} catch (CodeGenerationException e) {
-				monitor.done();
+			} catch (Exception e) {
 				return reportException(e);
-			} catch (RuntimeException e) {
+			} finally {
 				monitor.done();
-				return reportException(e);
 			}
-			catch (Exception e) {
-				monitor.done();
-				return reportException(e);
-			}
-			monitor.done();
 			return Status.OK_STATUS;
 		}
 	}
@@ -106,7 +100,6 @@ public class GenerateSourceCodeHandler extends AbstractHandler {
 							+ "\n Error class: " + e.getClass().getCanonicalName()
 							+ "\n\t (see Error Log for further details.)";
 		Status status = new Status(Status.ERROR, IncQueryGUIPlugin.PLUGIN_ID, errorMessage, e);
-		//Activator.log(status);
 		return status;
 	}
 
