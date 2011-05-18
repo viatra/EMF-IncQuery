@@ -77,40 +77,30 @@
                   commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                   style="push">
                               <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              value="*.incquery"
-                              property="org.eclipse.core.resources.name">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
-            </visibleWhen>
+                                    checkEnabled="false">
+                                 <with
+                                       variable="selection">
+                                    <iterate
+                                          ifEmpty="false">
+                                       <adapt
+                                             type="org.eclipse.core.resources.IFile">
+                                          <test
+                                                property="org.eclipse.core.resources.name"
+                                                value="*.incquery">
+                                          </test>
+                                       </adapt>
+                                    </iterate>
+                                 </with>
+                              </visibleWhen>
             </command>
          <command
                commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.incquery">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -118,19 +108,9 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.incquery">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+               </reference>
             </visibleWhen>
                
          </command>
@@ -147,19 +127,9 @@
                   style="push">
                                <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              value="*.incquery"
-                              property="org.eclipse.core.resources.name">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
+                                  <reference
+                                        definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+                                  </reference>
             </visibleWhen>
             </command>
             <command
@@ -167,19 +137,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <adapt
-                              type="org.eclipse.core.resources.IFile">
-                           <test
-                                 property="org.eclipse.core.resources.name"
-                                 value="*.incquery">
-                           </test>
-                        </adapt>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+                  </reference>
                </visibleWhen>
             </command>
 	        <command
@@ -187,19 +147,9 @@
 	               style="push">
 	            <visibleWhen
 	                  checkEnabled="false">
-	               <with
-	                     variable="selection">
-	                  <iterate
-	                        ifEmpty="false">
-	                     <adapt
-	                           type="org.eclipse.core.resources.IFile">
-	                        <test
-	                              property="org.eclipse.core.resources.name"
-	                              value="*.incquery">
-	                        </test>
-	                     </adapt>
-	                  </iterate>
-	               </with>
+                <reference
+                      definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+                </reference>
 	            </visibleWhen>
 	               
 	         </command>
@@ -215,19 +165,9 @@
                style="push">                              
                <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              value="*.incquery"
-                              property="org.eclipse.core.resources.name">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
+                  <reference
+                        definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+                  </reference>
             </visibleWhen>
          </command>
          <command
@@ -235,19 +175,9 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.incquery">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -255,19 +185,9 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="false">
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.incquery">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </with>
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+               </reference>
             </visibleWhen>         
          </command>
          
@@ -303,6 +223,25 @@
             id="org.eclipse.viatra2.emf.incquery.gui.cheatsheet"
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.genmodelfile">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false">
+               <adapt
+                     type="org.eclipse.core.resources.IFile">
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="*.incquery">
+                  </test>
+               </adapt>
+            </iterate>
+         </with>
+      </definition>
    </extension>
 
 </plugin>
