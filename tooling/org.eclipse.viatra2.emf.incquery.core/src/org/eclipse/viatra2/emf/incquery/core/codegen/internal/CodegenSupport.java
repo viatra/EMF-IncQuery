@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.asm.core.GTASMElement;
@@ -98,8 +99,8 @@ public class CodegenSupport {
 		InputStream stringStream = new ByteArrayInputStream(contents.getBytes(charset));
 		if (file.exists()) file.setContents(stringStream, true, true, monitor);
 			else file.create(stringStream, true, monitor);
-		file.setDerived(true, monitor);
-		file.setCharset(charset, monitor);
+		file.setDerived(true, new SubProgressMonitor(monitor, 1));
+		file.setCharset(charset, new SubProgressMonitor(monitor, 1));
 	}
 	
 	/**

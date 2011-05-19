@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.APIGenerator;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.ExtensionContributionsGenerator;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.ModulesLoader;
@@ -60,7 +61,9 @@ public class ProjectGenerator {
 	}
 
 	public void fullBuild(IProgressMonitor monitor) throws CodeGenerationException {
+		monitor.subTask("Removing existing code");
 		clean(monitor);
+		monitor.subTask("Generating Java code");
 		buildAfterClean(monitor);
 	}
 
@@ -72,7 +75,7 @@ public class ProjectGenerator {
 			CollectDeletedElement visitor = new CollectDeletedElement();
 			folder.accept(visitor);
 			for (IResource res : visitor.toDelete) {
-				res.delete(false, monitor);
+				res.delete(false, new SubProgressMonitor(monitor, 1));
 			}
 		} catch (CoreException e) {
 			throw new CodeGenerationException("Error during cleanup before code EMF-IncQuery code generation.", e);
