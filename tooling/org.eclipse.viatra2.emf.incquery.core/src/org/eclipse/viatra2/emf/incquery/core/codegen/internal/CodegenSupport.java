@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.axis.utils.JavaUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -46,8 +45,9 @@ public class CodegenSupport {
 	static final boolean useJavaKeywordSafety = true;
 	
 	static final String ensureJavasafety(String input) {
-		if (useJavaKeywordSafety && JavaUtils.isJavaKeyword(input)) {
-			return JavaUtils.makeNonJavaKeyword(input);
+		if ( useJavaKeywordSafety && (JavaKeywords.isJavaKeyword(input) || input.endsWith("_") ) ) {
+			//return JavaUtils.makeNonJavaKeyword(input);
+			return input+"_";
 		}
 		return input;
 	}
