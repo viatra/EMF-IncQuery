@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.core.codegen.internal;
+package org.eclipse.viatra2.emf.incquery.core.codegen.util;
 
 
 import java.io.ByteArrayInputStream;
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
+import org.eclipse.viatra2.emf.incquery.core.codegen.internal.JavaKeywords;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.asm.core.GTASMElement;
 import org.osgi.framework.Bundle;
 
@@ -44,7 +45,7 @@ public class CodegenSupport {
 	
 	static final boolean useJavaKeywordSafety = true;
 	
-	static final String ensureJavasafety(String input) {
+	public static final String ensureJavasafety(String input) {
 		if ( useJavaKeywordSafety && (JavaKeywords.isJavaKeyword(input) || input.endsWith("_") ) ) {
 			//return JavaUtils.makeNonJavaKeyword(input);
 			return input+"_";
@@ -60,7 +61,7 @@ public class CodegenSupport {
 	 * @param substitutions
 	 * @return
 	 */
-	static String processTemplate(String template, Map<String, String> substitutions) {
+	public static String processTemplate(String template, Map<String, String> substitutions) {
 		for(Map.Entry<String, String> substitution : substitutions.entrySet()) {
 			String from = java.util.regex.Pattern.quote("#"+substitution.getKey()+"#");
 			String to = java.util.regex.Pattern.quote(substitution.getValue());
@@ -77,7 +78,7 @@ public class CodegenSupport {
 	 * @return
 	 * @throws CodeGenerationException if template fill is missing
 	 */
-	static String loadTemplate(String templateFileName) throws CodeGenerationException {
+	public static String loadTemplate(String templateFileName) throws CodeGenerationException {
 		Bundle thisBundle = IncQueryPlugin.plugin.context.getBundle();
 		InputStream patternBuilderTemplateStream;
 		try {

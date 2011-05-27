@@ -18,6 +18,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.viatra2.gtasm.support;bundle-version="3.2.0",
  org.eclipse.emf.codegen.ecore;bundle-version="2.6.1"
 Export-Package: org.eclipse.viatra2.emf.incquery.core.codegen,
+ org.eclipse.viatra2.emf.incquery.core.codegen.util,
  org.eclipse.viatra2.emf.incquery.core.genmodel,
  org.eclipse.viatra2.emf.incquery.core.project
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin

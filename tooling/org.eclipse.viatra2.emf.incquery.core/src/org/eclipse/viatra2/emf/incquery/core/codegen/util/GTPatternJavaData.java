@@ -21,7 +21,7 @@
  *    Akos Horvath - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.core.codegen.internal;
+package org.eclipse.viatra2.emf.incquery.core.codegen.util;
 
 /**
  * Represents all the necessary information of the GTPatterns's Java reprsentation (matcherPackage, matcherName, signaturePackage, signatureName)

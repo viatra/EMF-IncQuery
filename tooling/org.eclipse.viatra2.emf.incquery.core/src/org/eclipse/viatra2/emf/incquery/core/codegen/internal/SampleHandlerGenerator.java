@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
+import org.eclipse.viatra2.emf.incquery.core.codegen.util.CodegenSupport;
+import org.eclipse.viatra2.emf.incquery.core.codegen.util.GTPatternJavaData;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.gtasm.support.helper.GTASMHelper;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;

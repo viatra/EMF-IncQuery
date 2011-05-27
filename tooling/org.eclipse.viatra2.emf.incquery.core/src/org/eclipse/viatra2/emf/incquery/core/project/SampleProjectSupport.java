@@ -54,18 +54,7 @@ public class SampleProjectSupport {
 
 	/**
 	 * <p>
-	 * Creates a new IncQuery project together with its default folder
-	 * structure:
-	 * </p>
-	 * <ul>
-	 * <li>models
-	 * <ul>
-	 * <li>vtcl</li>
-	 * </ul>
-	 * </li>
-	 * </ul>
-	 * <p>
-	 * It also creates a VPM model file in the models folder.
+	 * Creates a new IncQuery Sample UI project
 	 * </p>
 	 * @param monitor
 	 * @param correspondingIncQueryProjectID

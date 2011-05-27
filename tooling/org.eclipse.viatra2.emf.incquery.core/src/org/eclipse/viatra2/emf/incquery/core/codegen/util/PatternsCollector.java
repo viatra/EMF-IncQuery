@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.core.codegen.internal;
+package org.eclipse.viatra2.emf.incquery.core.codegen.util;
 
 import java.util.HashSet;
 import java.util.Map;

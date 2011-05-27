@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.EMFCodegenBuildable;
 import org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.EMFPatternMatcherBuilderContext;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
+import org.eclipse.viatra2.emf.incquery.core.codegen.util.CodegenSupport;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
