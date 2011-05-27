@@ -154,9 +154,13 @@ public class ExtensionsforSampleProjectGenerator {
 								+ entry.getValue().getPatternName()
 								+ " pattern");
 				builderElement.setAttribute("id", entry.getKey() + "ID");
-				builderElement.setAttribute("name", "Get all matches of the "
-						+ entry.getValue().getPatternName() + " pattern");
-
+				if(entry.getValue().getHandlerName().endsWith("Counter")){
+					builderElement.setAttribute("name", "Get number of matches of the "
+							+ entry.getValue().getPatternName() + " pattern");
+				} else {
+					builderElement.setAttribute("name", "Get all matches of the "
+							+ entry.getValue().getPatternName() + " pattern");
+				}
 				contribExtension.add(builderElement);
 			}
 			extensions.add(contribExtension);

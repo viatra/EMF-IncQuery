@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
+import org.eclipse.viatra2.gtasm.support.helper.GTASMHelper;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;
 
 public class SampleHandlerGenerator {
@@ -33,9 +34,11 @@ public class SampleHandlerGenerator {
 		"Handler.java.template";
 	static final String activatorTemplateFile =
 		"Activator.java.template";
+	static final String counterTemplateFile =
+		"Counter.java.template";
 
 	final String handlerTemplate,
-		activatorTemplate;
+		activatorTemplate,counterTemplate;
 
 	IProject sampleProject, incQueryProject;
 
@@ -55,6 +58,7 @@ public class SampleHandlerGenerator {
 
 		this.handlerTemplate = CodegenSupport.loadTemplate(handlerTemplateFile);
 		this.activatorTemplate = CodegenSupport.loadTemplate(activatorTemplateFile);
+		this.counterTemplate = CodegenSupport.loadTemplate(counterTemplateFile);
 	}
 
 
@@ -114,10 +118,35 @@ public class SampleHandlerGenerator {
 			String javaPackageName = packageLocation.getJavaPackageName();
 			substitutions.put("handler-package", javaPackageName);
 
+			
+
+			String generatedCode = null;
+			
+			// process annotation
+			String machinePatternMode = null;
+			Map<String, String> annotation = 
+				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@GenerationMode");
+			if (annotation != null){
+				machinePatternMode = annotation.get("mode");
+			
+				// counter pattern
+				if ("counter".equals(machinePatternMode)){
+					className = getCounterName(pattern);
+					substitutions.put("java-class-name", className);
+					generatedCode = CodegenSupport.processTemplate(counterTemplate, substitutions);
+				//} //else if("list".equals(machinePatternMode)){
+				 //	generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
+				} else // if("constraint".equals(machinePatternMode)){
+					continue; // constraints and warnings are handled in validation
+				//}
+			} 
+			// no annotation means default handler
+			if(generatedCode == null){
+				generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
+			}
+			
 			handlers.put(className, new HandlerData(javaPackageName, className, pattern.getName()));
-
-			String generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
-
+			
 			IFile file = packageLocation.getFolder().getFile(className+ ".java");
 
 			try {
@@ -142,6 +171,15 @@ public class SampleHandlerGenerator {
 	protected String getHandlerName(GTPattern pattern) {
 		String pName = pattern.getName().substring(1);
 		return Character.toUpperCase(pattern.getName().charAt(0))+pName+"Handler";
+	}
+	
+	/** Returns the name of the Java class representing the pattern's command counter
+	 * @param pattern
+	 * @return
+	 */
+	protected String getCounterName(GTPattern pattern) {
+		String pName = pattern.getName().substring(1);
+		return Character.toUpperCase(pattern.getName().charAt(0))+pName+"Counter";
 	}
 
 	protected CodegenSupport.PackageLocationFinder getHandlerPackage(GTPattern pattern, IProgressMonitor monitor) throws CodeGenerationException {
