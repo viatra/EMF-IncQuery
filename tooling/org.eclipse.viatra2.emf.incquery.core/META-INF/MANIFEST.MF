@@ -22,3 +22,4 @@ Export-Package: org.eclipse.viatra2.emf.incquery.core.codegen,
  org.eclipse.viatra2.emf.incquery.core.project
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin
 Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.axis.utils

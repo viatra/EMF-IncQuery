@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.axis.utils.JavaUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -147,37 +148,45 @@ public class DTOGenerator {
 	 */
 	private String[] generateInputSpecificDTOAttributeTags(GTPattern pattern) {
 
+		
+		
 		String[] strings = {"","","","","","","","","","","",""};
 		//inits the Strings :-)
 
 		EList<PatternVariable> patternVars = pattern.getSymParameters();
 
+		
+		
 		for(int i= 0; i<patternVars.size(); i++) {
 			PatternVariable patternVar = patternVars.get(i);
-			strings[0] += "\tprivate "+generator.getElementType(patternVar)+" f"+patternVar.getName()+";";
+			
+			String patternVarNamePlain = patternVar.getName();
+			String patternVarNameSafe = CodegenSupport.ensureJavasafety( patternVarNamePlain );
+			String patternVarNameMember = "f"+patternVarNamePlain;
+			
+			strings[0] += "\tprivate "+generator.getElementType(patternVar)+" "+patternVarNameMember+";"; // Java safe
 
-			strings[1] += "\tpublic "+generator.getElementType(patternVar)+" get"+toCapitalLetter(patternVar.getName())
-					+"(){\n\t\t return f"+patternVar.getName()+";\n\t}";
+			strings[1] += "\tpublic "+generator.getElementType(patternVar)+" getValueOf"+toCapitalLetter(patternVarNamePlain)
+					+"(){\n\t\t return "+patternVarNameMember+";\n\t}"; // Java safe
 
-			strings[2] += "\tpublic void set"+toCapitalLetter(patternVar.getName())+"("+generator.getElementType(patternVar)+" "
-					+patternVar.getName()+"){\n\t\t this.f"+patternVar.getName()+"="+patternVar.getName()+";\n\t}";
+			strings[2] += "\tpublic void setValueOf"+toCapitalLetter(patternVarNamePlain)+"("+generator.getElementType(patternVar)+" "
+					+patternVarNameSafe+")" + "{\n\t\t this."+patternVarNameMember+"="+patternVarNameSafe+";\n\t}";
 
-			strings[3] += generator.getElementType(patternVar)+" "+patternVar.getName();
-			strings[4] += "\t\tthis.f"+patternVar.getName()+" = "+patternVar.getName()+";";
-			strings[5] += "\t\tif (f" + patternVar.getName() + " == null) "
-						+ "{if (other.f" + patternVar.getName() + " != null) return false;}\n"
-						+ "\t\telse if (!f" + patternVar.getName() + ".equals(other.f" + patternVar.getName() + "))"
+			strings[3] += generator.getElementType(patternVar)+" "+patternVarNameSafe;
+			strings[4] += "\t\tthis."+patternVarNameMember+" = "+patternVarNameSafe+";";
+			strings[5] += "\t\tif (" + patternVarNameMember + " == null) "
+						+ "{if (other." + patternVarNameMember + " != null) return false;}\n"
+						+ "\t\telse if (!" + patternVarNameMember + ".equals(other." + patternVarNameMember+ "))"
 						+ " return false;";
-			strings[6] += "\t\tresult = prime * result + ((f" + patternVar.getName()
-						+ " == null) ? 0 : f" + patternVar.getName() + ".hashCode());";
+			strings[6] += "\t\tresult = prime * result + ((" + patternVarNameMember	+ " == null) ? 0 : " + patternVarNameMember + ".hashCode());";
 			strings[7] += "\t\tresult.append(\"" + (i==0? "" : ", ") 
-				+ "\\\""+patternVar.getName()+"\\\"=\" + printValue(f" + patternVar.getName()  +"));";
-			strings[8] += "f" + patternVar.getName();
-			strings[9] += "\"" + patternVar.getName() + "\"";
-			strings[10] += "\t\tif (\"" + patternVar.getName() 
-				+ "\".equals(parameterName)) return f" + patternVar.getName() + ";";
-			strings[11] += "\t\tif (\"" + patternVar.getName() + "\".equals(parameterName)) {\n\t\t\tf"
-				+ patternVar.getName() + " = newValue;\n\t\t\treturn true;\n\t\t}";
+				+ "\\\""+patternVarNamePlain+"\\\"=\" + printValue(" + patternVarNameMember  +"));";
+			strings[8] += patternVarNameMember;
+			strings[9] += "\"" + patternVarNamePlain + "\"";
+			strings[10] += "\t\tif (\"" + patternVarNamePlain 
+				+ "\".equals(parameterName)) return " + patternVarNameMember + ";";
+			strings[11] += "\t\tif (\"" + patternVarNamePlain + "\".equals(parameterName)) {\n\t\t\t"
+				+ patternVarNameMember + " = newValue;\n\t\t\treturn true;\n\t\t}";
 
 
 			if(i < patternVars.size()-1) {
@@ -205,6 +214,7 @@ public class DTOGenerator {
 		String pName = name.substring(1);
 		return Character.toUpperCase(name.charAt(0))+pName;
 	}
+
 
 //	private String generateDynamicEMFNameandIDgetter(EList<PatternVariable> patternVars, GTPattern pattern){
 //		String _temp = "";

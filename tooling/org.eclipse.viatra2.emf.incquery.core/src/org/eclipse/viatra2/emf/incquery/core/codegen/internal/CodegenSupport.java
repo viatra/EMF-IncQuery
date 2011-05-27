@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.axis.utils.JavaUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,12 +36,21 @@ import org.osgi.framework.Bundle;
 
 /**
  * @author Bergmann Gábor
- *
+ * minor fixes by Istvan Rath
  */
 public class CodegenSupport {
 	static final String pathToTemplatesDir = "templates/";
 	static final String charset = "UTF-8";
 
+	
+	static final boolean useJavaKeywordSafety = true;
+	
+	static final String ensureJavasafety(String input) {
+		if (useJavaKeywordSafety && JavaUtils.isJavaKeyword(input)) {
+			return JavaUtils.makeNonJavaKeyword(input);
+		}
+		return input;
+	}
 	
 	/**
 	 * Yet Another Very Simple Template Engine. 
@@ -107,7 +117,7 @@ public class CodegenSupport {
 	 * Given a base package name and its pre-existing path and a GTASMElement (e.g. a PatternContainer), navigates 
 	 * to the subpackage folder that corresponds to the namespace of the GTASMElement. 
 	 * Benefits:
-	 *  - ensures that the package forder exists
+	 *  - ensures that the package folder exists
 	 *  - returns an IFolder as well as a Java package name String
 	 *  - forms package names so that they are lowercase and not reserved Java identifiers
 	 *  
@@ -157,8 +167,9 @@ public class CodegenSupport {
 				if (!nameSegments[i].isEmpty()) { 
 					String packageLocalName = Character.toLowerCase(nameSegments[i].charAt(0))
 											+ nameSegments[i].substring(1)
-											//+ '_'
+											//+ '_' <-- Gaben's disabled "fix" for ensuring the generation of non-reserved Java keywords
 											;
+					packageLocalName = ensureJavasafety(packageLocalName); // <-- Istvan's fix using org.apache.axis.JavaUtils
 					packageName.append('.');
 					packageName.append(packageLocalName);
 					folder = folder.getFolder(packageLocalName);
