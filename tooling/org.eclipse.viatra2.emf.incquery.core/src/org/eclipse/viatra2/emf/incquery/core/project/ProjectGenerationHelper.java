@@ -14,6 +14,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -32,35 +35,88 @@ import org.eclipse.viatra2.framework.FrameworkManager;
  */
 public abstract class ProjectGenerationHelper {
 
-	public static final String[] allNatures = {IncQueryNature.NATURE_ID, JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature"};
-	public static final String[] generatedNatures = {JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature"};
-	public static final String[] sourceFolders = {"src", "src-gen"};
-	
 	/**
-	 * This method creates  new project using the input project description, and adds the following project natures to the project: 
+	 * The list of all natures used in an IncQuery project.
+	 */
+	public static final String[] allNatures = { IncQueryNature.NATURE_ID,
+			JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature" };
+	/**
+	 * The natures used in a generated sample project.
+	 */
+	public static final String[] generatedNatures = { JavaCore.NATURE_ID,
+			"org.eclipse.pde.PluginNature" };
+	/**
+	 * Two source folders: src to be manually written and src-gen to contain
+	 * generated code
+	 */
+	public static final String[] sourceFolders = { "src", "src-gen" };
+	/**
+	 * A single source folder named src
+	 */
+	public static final String[] singleSourceFolder = { "src" };
+
+	/**
+	 * This method initializes a new project with a selected name, but deletes
+	 * any existing project with the same name - it shall be called with care!
+	 * @param projectName
+	 * @param natures
+	 * @param monitor
+	 * @return the project description of the created 
+	 * @throws CoreException
+	 */
+	public static IProject initializeProject(String projectName,
+			String[] natures, IProgressMonitor monitor) throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject proj = root.getProject(projectName);
+
+		if (proj.exists()) {
+			proj.delete(true, true, monitor);
+		}
+
+		proj.create(new SubProgressMonitor(monitor, 1000));
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
+
+		proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor,
+				1000));
+		addNatures(proj, natures, new SubProgressMonitor(monitor, 500));
+		return proj;
+	}
+
+	/**
+	 * This method creates a new project using the input project description,
+	 * and adds the following project natures to the project:
 	 * @param description
 	 * @param proj
 	 * @param monitor
-	 * @return
+	 * @param natures
+	 * @return the final IProjectDescription
 	 * @throws CoreException
 	 */
 	public static IProjectDescription initializeProject(
 			IProjectDescription description, IProject proj,
 			IProgressMonitor monitor, String[] natures) throws CoreException {
-		proj.create(description, new SubProgressMonitor(monitor, 1000));
+		proj.create(description, new SubProgressMonitor(monitor, 500));
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-		
-		proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(
-				monitor, 1000));
+
+		proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor,
+				1000));
 		/* Adding project nature */
+		return addNatures(proj, natures, new SubProgressMonitor(monitor, 500));
+	}
+
+	private static IProjectDescription addNatures(IProject proj,
+			String[] natures, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription desc = proj.getDescription();
 		List<String> newNatures = new ArrayList<String>();
 		newNatures.addAll(Arrays.asList(desc.getNatureIds()));
 		newNatures.addAll(Arrays.asList(natures));
-		description.setNatureIds(newNatures.toArray(new String[] {}));
-		proj.setDescription(description, monitor);
+		desc.setNatureIds(newNatures.toArray(new String[] {}));
+		proj.setDescription(desc, monitor);
 		return desc;
 	}
 
@@ -94,19 +150,26 @@ public abstract class ProjectGenerationHelper {
 						.toArray(new IClasspathEntry[classpathEntries.size()]),
 						monitor);
 	}
-	
-	public static void initializeBuildProperties(IProject proj, IProgressMonitor monitor) throws FileNotFoundException, CoreException {
+
+	public static void initializeBuildProperties(IProject proj,
+			IProgressMonitor monitor) throws FileNotFoundException,
+			CoreException {
 		/* TODO UGLY: Add the build.properties to the project */
 		File buildProp = FrameworkManager.getFileFromBundle(
-				IncQueryNature.BUNDLE_ID, IncQueryNature.SOURCE_BUILD_PROPERTIES);
-		addFileToProject(proj, new Path("build.properties"), new FileInputStream(buildProp), monitor);
+				IncQueryNature.BUNDLE_ID,
+				IncQueryNature.SOURCE_BUILD_PROPERTIES);
+		addFileToProject(proj, new Path("build.properties"),
+				new FileInputStream(buildProp), monitor);
 	}
-	
+
 	/**
 	 * Adds a file to a container.
-	 * @param container the container to add the file to
-	 * @param path the path of the newly created file
-	 * @param contentStream the file will be filled with this stream's contents
+	 * @param container
+	 *            the container to add the file to
+	 * @param path
+	 *            the path of the newly created file
+	 * @param contentStream
+	 *            the file will be filled with this stream's contents
 	 * @param monitor
 	 * @throws CoreException
 	 */
