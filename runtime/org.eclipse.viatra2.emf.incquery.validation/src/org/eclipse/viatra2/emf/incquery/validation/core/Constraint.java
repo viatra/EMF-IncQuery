@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.validation.core;
 
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -21,14 +22,41 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
  *
  */
 public abstract class Constraint<Signature extends IPatternSignature> {
-	public abstract String getMessage();
+	
+	/**
+	 * Will be printed to the "message" field of the problem marker.
+	 * @return a user-friendly message to be displayed in the problem marker
+	 */
+	public abstract String getMessage(Signature signature);
+//	{
+//		return getMessage()+" "+prettyPrintSignature(signature);
+//	}
+	
+	/**
+	 * Override!
+	 * Will be printed to the location field of the problem marker.
+	 * @return an {@link EObject} which is the most important context of the validation
+	 */
+	public abstract EObject getLocationObject(Signature signature);
+//	{
+//		return null;
+//	}
+	
+	/**
+	 * Initialize the matcher factory used for pattern matching.
+	 * @return
+	 */
 	public abstract IMatcherFactory<Signature, ? extends IncQueryMatcher<Signature>> matcherFactory();
 		
-	// override if needed
+	/**
+	 * Override if needed!
+	 */
 	public String prettyPrintSignature(Signature signature) {
 		return signature.prettyPrint();
 	}
-	// override if needed
+	/**
+	 * Override if needed!
+	 */
 	public Object[] extractAffectedElements(Signature signature) {
 		return signature.toArray();
 	}

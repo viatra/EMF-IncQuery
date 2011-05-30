@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.validation.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 
 public class ValidationProblem<Signature extends IPatternSignature> {
@@ -21,8 +22,25 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		IMarker marker = file.createMarker(IMarker.PROBLEM);
 		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		marker.setAttribute(IMarker.TRANSIENT, true);
-		marker.setAttribute(IMarker.MESSAGE, kind.getMessage());    
-		marker.setAttribute(IMarker.LOCATION, kind.prettyPrintSignature(affectedElements));
+		
+		String message = kind.getMessage(affectedElements);
+//		if (message==null) {
+//			message = kind.getMessage();
+//		}
+		marker.setAttribute(IMarker.MESSAGE, message );    
+		
+		// marker.setAttribute(IMarker.LOCATION, kind.prettyPrintSignature(affectedElements));
+		/*
+		 * From: http://www.eclipse.org/forums/index.php/m/379775/
+		 * eObject.eResource().getURIFragment(eObject)
+		 */
+		EObject location = kind.getLocationObject(affectedElements);
+		if (location!=null) {
+			marker.setAttribute(IMarker.LOCATION, location.eResource().getURIFragment(location) );
+		} else {
+			marker.setAttribute(IMarker.LOCATION, kind.prettyPrintSignature(affectedElements));
+		}
+		
 		return marker;
 	}
 	
