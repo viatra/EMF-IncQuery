@@ -27,20 +27,19 @@ import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.CodegenSupport;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.GTPatternJavaData;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
+import org.eclipse.viatra2.emf.incquery.validation.codegen.ValidationCodegenPlugin;
 import org.eclipse.viatra2.gtasm.support.helper.GTASMHelper;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;
+import org.osgi.framework.Bundle;
 
 public class SampleConstraintGenerator {
 
-	static final String handlerTemplateFile =
-		"Handler.java.template";
 	static final String activatorTemplateFile =
 		"Activator.java.template";
-	static final String counterTemplateFile =
-		"Counter.java.template";
+	static final String constraintTemplateFile =
+		"Constraint.java.template";
 
-	final String handlerTemplate,
-		activatorTemplate,counterTemplate;
+	final String activatorTemplate,constraintTemplate;
 
 	IProject sampleProject, incQueryProject;
 
@@ -58,9 +57,9 @@ public class SampleConstraintGenerator {
 		this.incQueryProject = incQueryProject;
 		this.gtPatternJavaRepresentations = gtPatternJavaRepresentations;
 
-		this.handlerTemplate = CodegenSupport.loadTemplate(handlerTemplateFile);
-		this.activatorTemplate = CodegenSupport.loadTemplate(activatorTemplateFile);
-		this.counterTemplate = CodegenSupport.loadTemplate(counterTemplateFile);
+		Bundle thisBundle = ValidationCodegenPlugin.plugin.context.getBundle();
+		this.activatorTemplate = CodegenSupport.loadTemplate(activatorTemplateFile, thisBundle);
+		this.constraintTemplate = CodegenSupport.loadTemplate(constraintTemplateFile, thisBundle);
 	}
 
 
@@ -98,7 +97,7 @@ public class SampleConstraintGenerator {
 	 */
 	public Map<String,ConstraintData> generateHandlersForPatternMatcherCalls(IProgressMonitor monitor) throws CodeGenerationException {
 		Map<String, String> substitutions = new HashMap<String, String>();
-		Map<String,ConstraintData> handlers = new HashMap<String, SampleConstraintGenerator.ConstraintData>();
+		Map<String,ConstraintData> constraints = new HashMap<String, SampleConstraintGenerator.ConstraintData>();
 		for(Map.Entry<GTPattern, GTPatternJavaData> entry: gtPatternJavaRepresentations.entrySet())
 			{
 			GTPattern pattern = entry.getKey();
@@ -111,77 +110,74 @@ public class SampleConstraintGenerator {
 			substitutions.put("java-matcher", patternData.getMatcherName());
 			substitutions.put("java-signature", patternData.getSignatureName());
 
-			String className = getHandlerName(pattern);
+			String className = getConstraintName(pattern);
 			substitutions.put("java-class-name", className);
 
 			CodegenSupport.PackageLocationFinder packageLocation =
 				getHandlerPackage(pattern, monitor);
 
 			String javaPackageName = packageLocation.getJavaPackageName();
-			substitutions.put("handler-package", javaPackageName);
-
-			
+			substitutions.put("constraint-package", javaPackageName);
 
 			String generatedCode = null;
 			
 			// process annotation
-			String machinePatternMode = null;
-			Map<String, String> annotation = 
-				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@GenerationMode");
-			if (annotation != null){
-				machinePatternMode = annotation.get("mode");
 			
+			Map<String, String> annotation = 
+				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@Constraint");
+			if (annotation != null){
+				String constraintMode = annotation.get("mode");
+				String locationName = annotation.get("location");
+				if(locationName != null && !locationName.equals("")){
+					substitutions.put("location-param-name", locationName);
+				}
+				String message = annotation.get("message");
+				if(message != null && !message.equals("")){
+					substitutions.put("message-string", message);
+				}
 				// counter pattern
-				if ("counter".equals(machinePatternMode)){
-					className = getCounterName(pattern);
+				if ("problem".equals(constraintMode) || "warning".equals(constraintMode)){
+					className = getConstraintName(pattern);
 					substitutions.put("java-class-name", className);
-					generatedCode = CodegenSupport.processTemplate(counterTemplate, substitutions);
+					generatedCode = CodegenSupport.processTemplate(constraintTemplate, substitutions);
 				//} //else if("list".equals(machinePatternMode)){
 				 //	generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
-				} else // if("constraint".equals(machinePatternMode)){
+				} else 
 					continue; // constraints and warnings are handled in validation
 				//}
 			} 
-			// no annotation means default handler
+			// no annotation means default handler was generated
 			if(generatedCode == null){
-				generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
+				//generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
+				continue;
 			}
 			
-			handlers.put(className, new ConstraintData(javaPackageName, className, pattern.getName()));
+			constraints.put(className, new ConstraintData(javaPackageName, className, pattern.getName()));
 			
 			IFile file = packageLocation.getFolder().getFile(className+ ".java");
 
 			try {
 				CodegenSupport.printStringToFile(monitor, generatedCode, file);
 			} catch (UnsupportedEncodingException e) {
-				throw new CodeGenerationException("Error writing generated command handlers to file.", e);
+				throw new CodeGenerationException("Error writing generated command constraints to file.", e);
 			} catch (CoreException e) {
 				throw new CodeGenerationException(
-						"Error writing source code file for generated command handlers of "
+						"Error writing source code file for generated command constraint of "
 						+ pattern.getFqn(), e);
 			}
 
 			}
 
-		return handlers;
-	}
-
-	/** Returns the name of the Java class representing the pattern's command handler
-	 * @param pattern
-	 * @return
-	 */
-	protected String getHandlerName(GTPattern pattern) {
-		String pName = pattern.getName().substring(1);
-		return Character.toUpperCase(pattern.getName().charAt(0))+pName+"Handler";
+		return constraints;
 	}
 	
-	/** Returns the name of the Java class representing the pattern's command counter
+	/** Returns the name of the Java class representing the pattern's command constraint
 	 * @param pattern
 	 * @return
 	 */
-	protected String getCounterName(GTPattern pattern) {
+	protected String getConstraintName(GTPattern pattern) {
 		String pName = pattern.getName().substring(1);
-		return Character.toUpperCase(pattern.getName().charAt(0))+pName+"Counter";
+		return Character.toUpperCase(pattern.getName().charAt(0))+pName+"Constraint";
 	}
 
 	protected CodegenSupport.PackageLocationFinder getHandlerPackage(GTPattern pattern, IProgressMonitor monitor) throws CodeGenerationException {
@@ -202,20 +198,20 @@ public class SampleConstraintGenerator {
 			this.patternName = patternName;
 		}
 
-		public String getHandlerPackage() {
+		public String getConstraintPackage() {
 			return constraintPackage;
 		}
 
-		public void setHandlerPackage(String handlerPackage) {
-			this.constraintPackage = handlerPackage;
+		public void setConstraintPackage(String constraintPackage) {
+			this.constraintPackage = constraintPackage;
 		}
 
-		public String getHandlerName() {
+		public String getConstraintName() {
 			return constraintName;
 		}
 
-		public void setHandlerName(String handlerName) {
-			this.constraintName = handlerName;
+		public void setConstraintName(String constraintName) {
+			this.constraintName = constraintName;
 		}
 
 		public String getPatternName() {
@@ -225,8 +221,7 @@ public class SampleConstraintGenerator {
 		public void setPatternName(String patternName) {
 			this.patternName = patternName;
 		}
-		
-		
+
 	}
 
 }

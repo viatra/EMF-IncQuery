@@ -11,13 +11,16 @@
 
 package org.eclipse.viatra2.emf.incquery.validation.codegen.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -26,6 +29,8 @@ import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
+import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
+import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstraintGenerator.ConstraintData;
 
 /**
@@ -36,95 +41,108 @@ import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstr
 public class ExtensionsforSampleValidationProjectGenerator {
 
 	IProject project;
-
+	IncQueryGenmodel iqGen;
+	
 	/**
 	 * @param project
 	 * @throws CodeGenerationException
 	 */
-	public ExtensionsforSampleValidationProjectGenerator(IProject project)
+	public ExtensionsforSampleValidationProjectGenerator(IProject project, IncQueryGenmodel iqGen)
 			throws CodeGenerationException {
 		super();
+		this.iqGen = iqGen;
 		this.project = project;
 	}
 
+
 	private IPluginElement addIFileFilter(IExtensionsModelFactory factory,
-			IPluginExtension contribExtension, String fileExtension)
+			IPluginExtension contribExtension, String editorId)
 			throws CoreException {
 		// Creates the root for the filter
 		IPluginElement builderElement = factory.createElement(contribExtension);
 		builderElement.setName("visibleWhen");
-		builderElement.setAttribute("checkEnabled", "false");
+		//builderElement.setAttribute("checkEnabled", "false");
 		// Creates the with element
 		IPluginElement builderElementWith = factory
-				.createElement(contribExtension);
+				.createElement(builderElement);
+		builderElementWith.setName("with");
+		builderElementWith.setAttribute("variable", "activeEditorId");
+		IPluginElement builderElementEquals = factory.createElement(builderElementWith);
+		builderElementEquals.setName("equals");
+		builderElementEquals.setAttribute("value", editorId);
+		builderElementWith.add(builderElementEquals);
+		builderElement.add(builderElementWith);
+		
+		builderElementWith = factory.createElement(builderElement);
 		builderElementWith.setName("with");
 		builderElementWith.setAttribute("variable", "selection");
 		builderElement.add(builderElementWith);
 
 		// creates the iterate
-		IPluginElement builderElementIterate = factory
-				.createElement(contribExtension);
-		builderElementIterate.setName("iterate");
-		builderElementIterate.setAttribute("ifEmpty", "false");
-		builderElementWith.add(builderElementIterate);
+		IPluginElement builderElementCount = factory
+				.createElement(builderElement);
+		builderElementCount.setName("count");
+		builderElementCount.setAttribute("value", "+");
+		builderElementWith.add(builderElementCount);
 
 		// creates the adapt
-		IPluginElement builderElementAdapt = factory
+		/*IPluginElement builderElementAdapt = factory
 				.createElement(contribExtension);
 		builderElementAdapt.setName("adapt");
 		builderElementAdapt.setAttribute("type",
 				"org.eclipse.core.resources.IFile");
-		builderElementIterate.add(builderElementAdapt);
+		builderElementCount.add(builderElementAdapt);*/
 
 		// creates the test
-		IPluginElement builderElementTest = factory
+		/*IPluginElement builderElementTest = factory
 				.createElement(contribExtension);
 		builderElementTest.setName("test");
 		builderElementTest.setAttribute("value", "*." + fileExtension);
 		builderElementTest.setAttribute("property",
 				"org.eclipse.core.resources.name");
-		builderElementAdapt.add(builderElementTest);
+		builderElementAdapt.add(builderElementTest);*/
 
 		return builderElement;
 	}
 
 	private IPluginElement createMenuContribution(
 			IExtensionsModelFactory factory,
-			IPluginExtension contribExtensionMenuContrib, String fileExtension,
-			String menuID, Map<String, ConstraintData> handlers)
+			IPluginExtension contribExtensionMenuContrib, String editorID,
+			String menuID)
 			throws CoreException {
 
 		IPluginElement builderElement = factory
 				.createElement(contribExtensionMenuContrib);
 		// Creates the Project Explorer menu Contribution
 		builderElement.setName("menuContribution");
-		builderElement.setAttribute("allPopups", "false");
+		//builderElement.setAttribute("allPopups", "false");
 		builderElement.setAttribute("locationURI", menuID);
-		// Creates the menu itslef
-		IPluginElement builderElementMenu = factory
-				.createElement(contribExtensionMenuContrib);
-		builderElementMenu.setAttribute("label", "Sample EMF-IncQuery Queries");
-		builderElementMenu.setName("menu");
+		// Creates the menu itself
+		//IPluginElement builderElementMenu = factory
+		//		.createElement(contribExtensionMenuContrib);
+		//builderElementMenu.setAttribute("label", "Initialize Validation (powered by EMF-INCQuery)");
+		//builderElementMenu.setName("menu");
 
-		builderElement.add(builderElementMenu);
-		for (Map.Entry<String, ConstraintData> entry : handlers
-				.entrySet()) {
-			IPluginElement builderElementCommand = factory
-					.createElement(contribExtensionMenuContrib);
-			builderElementCommand.setName("command");
-			builderElementCommand.setAttribute("commandId", entry.getKey()
-					+ "ID");
-			builderElementCommand.setAttribute("style", "push");
-			builderElementCommand.add(this.addIFileFilter(factory,
-					contribExtensionMenuContrib, fileExtension));
-			builderElementMenu.add(builderElementCommand);
-		}
+		//builderElement.add(builderElementMenu);
+		//for (Map.Entry<String, ConstraintData> entry : handlers
+		//		.entrySet()) {
+		IPluginElement builderElementCommand = factory
+				.createElement(builderElement);
+		builderElementCommand.setName("command");
+		builderElementCommand.setAttribute("commandId",
+				"org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation");
+		builderElementCommand.setAttribute("label", "Initialize Validation (powered by EMF-INCQuery)");
+		builderElementCommand.setAttribute("style", "push");
+		builderElementCommand.add(this.addIFileFilter(factory,
+				contribExtensionMenuContrib, editorID));
+		builderElement.add(builderElementCommand);
+		//}
 		return builderElement;
 	}
 
 	@SuppressWarnings("restriction")
-	public void contributeToExtensionPoint(Map<String, ConstraintData> handlers,
-			Collection<String> fileExtensions, IProgressMonitor monitor)
+	public void contributeToExtensionPoint(Map<String, ConstraintData> constraints,
+			Collection<String> editorIDs, IProgressMonitor monitor)
 			throws CodeGenerationException {
 		IFile manifest = PDEProject.getManifest(project);
 		IFile pluginXml = PDEProject.getPluginXml(project);
@@ -137,14 +155,13 @@ public class ExtensionsforSampleValidationProjectGenerator {
 		try {
 			fModel.load();
 			IExtensions extensions = fModel.getExtensions();
-			String extensionID = "";
 			IExtensionsModelFactory factory = fModel.getFactory();
-			IPluginExtension contribExtension = factory.createExtension();
+			//IPluginExtension contribExtension = factory.createExtension();
 
 			// Generates the commands
-			contribExtension.setId(extensionID);
-			contribExtension.setPoint("org.eclipse.ui.commands");
-			for (Map.Entry<String,ConstraintData> entry : handlers
+			//contribExtension.setId(extensionID);
+			//contribExtension.setPoint("org.eclipse.ui.menus");
+			/*for (Map.Entry<String,ConstraintData> entry : handlers
 					.entrySet()) {
 				IPluginElement builderElement = factory
 						.createElement(contribExtension);
@@ -154,7 +171,7 @@ public class ExtensionsforSampleValidationProjectGenerator {
 								+ entry.getValue().getPatternName()
 								+ " pattern");
 				builderElement.setAttribute("id", entry.getKey() + "ID");
-				if(entry.getValue().getHandlerName().endsWith("Counter")){
+				if(entry.getValue().getConstraintName().endsWith("Counter")){
 					builderElement.setAttribute("name", "Get number of matches of the "
 							+ entry.getValue().getPatternName() + " pattern");
 				} else {
@@ -162,26 +179,25 @@ public class ExtensionsforSampleValidationProjectGenerator {
 							+ entry.getValue().getPatternName() + " pattern");
 				}
 				contribExtension.add(builderElement);
-			}
-			extensions.add(contribExtension);
-			contribExtension.setInTheModel(true);
+			}*/
+			//extensions.add(contribExtension);
+			//contribExtension.setInTheModel(true);
 
 			// Generates the menu contributions
 			IPluginExtension contribExtensionMenuContrib = factory
 					.createExtension();
-			contribExtensionMenuContrib.setId(extensionID);
+			contribExtensionMenuContrib.setId("context-menus");
 			contribExtensionMenuContrib.setPoint("org.eclipse.ui.menus");
 
 			//registers the different file extensions
-			for(String fileExtension: fileExtensions)
+			for(String editorId: editorIDs)
 			{
 				IPluginElement menuElement = this.createMenuContribution(factory,
-						contribExtensionMenuContrib, fileExtension,
-						"popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu",
-						handlers);
+						contribExtensionMenuContrib, editorId,
+						"popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu");
 				contribExtensionMenuContrib.add(menuElement);
 	
-				menuElement = this.createMenuContribution(factory,
+				/*menuElement = this.createMenuContribution(factory,
 						contribExtensionMenuContrib, fileExtension,
 						"popup:org.eclipse.ui.views.ResourceNavigator", handlers);
 				contribExtensionMenuContrib.add(menuElement);
@@ -189,34 +205,33 @@ public class ExtensionsforSampleValidationProjectGenerator {
 				menuElement = this.createMenuContribution(factory,
 						contribExtensionMenuContrib, fileExtension,
 						"popup:org.eclipse.jdt.ui.PackageExplorer", handlers);
-				contribExtensionMenuContrib.add(menuElement);
+				contribExtensionMenuContrib.add(menuElement);*/
 			}
 
 			extensions.add(contribExtensionMenuContrib);
 			contribExtensionMenuContrib.setInTheModel(true);
-
+			
 			// generates the handlers
-			IPluginExtension contribExtensionHandler = factory
+			IPluginExtension contribExtensionConstraint = factory
 					.createExtension();
-			contribExtensionHandler.setId(extensionID);
-			contribExtensionHandler.setPoint("org.eclipse.ui.handlers");
-			for (Map.Entry<String, ConstraintData> entry : handlers
+			contribExtensionConstraint.setId("");
+			contribExtensionConstraint.setPoint("org.eclipse.viatra2.emf.incquery.validation.constraint");
+			for (Map.Entry<String, ConstraintData> entry : constraints
 					.entrySet()) {
-				IPluginElement builderElementHandler = factory
-						.createElement(contribExtensionHandler);
-				builderElementHandler.setName("handler");
-				builderElementHandler.setAttribute("class", entry.getValue()
-						.getHandlerPackage() + "." + entry.getKey());
-				builderElementHandler.setAttribute("commandId", entry.getKey()
-						+ "ID");
-				contribExtensionHandler.add(builderElementHandler);
+				IPluginElement builderElementConstraint = factory
+						.createElement(contribExtensionConstraint);
+				builderElementConstraint.setName("constraint");
+				builderElementConstraint.setAttribute("class", entry.getValue()
+						.getConstraintPackage() + "." + entry.getKey());
+				builderElementConstraint.setAttribute("name", entry.getKey());
+				contribExtensionConstraint.add(builderElementConstraint);
 			}
-			extensions.add(contribExtensionHandler);
-			contribExtensionHandler.setInTheModel(true);
+			extensions.add(contribExtensionConstraint);
+			contribExtensionConstraint.setInTheModel(true);
 			fModel.save();
 		} catch (CoreException e1) {
 			throw new CodeGenerationException(
-					"Error during EMF-IncQuery Sample project generation. ", e1);
+					"Error during EMF-IncQuery Sample Validation project generation. ", e1);
 		}
 	}
 

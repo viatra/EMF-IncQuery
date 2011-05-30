@@ -25,7 +25,7 @@
          </command>
          <category
                id="org.eclipse.viatra2.emf.incquery.validation.commands"
-               name="EMF-IncQuery Valiation commands">
+               name="EMF-IncQuery Validation commands">
          </category>
    </extension>
 

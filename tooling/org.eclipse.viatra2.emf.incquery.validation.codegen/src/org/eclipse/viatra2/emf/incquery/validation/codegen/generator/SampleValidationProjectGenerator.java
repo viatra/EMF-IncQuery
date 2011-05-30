@@ -42,6 +42,7 @@ import org.eclipse.viatra2.emf.incquery.validation.codegen.ValidationCodegenPlug
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.ExtensionsforSampleValidationProjectGenerator;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstraintGenerator;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstraintGenerator.ConstraintData;
+import org.eclipse.viatra2.emf.incquery.validation.codegen.project.SampleValidationProjectSupport;
 import org.eclipse.viatra2.framework.FrameworkException;
 import org.eclipse.viatra2.framework.FrameworkManagerException;
 import org.eclipse.viatra2.framework.IFramework;
@@ -97,7 +98,7 @@ public class SampleValidationProjectGenerator {
 			IBundleProjectService service = (IBundleProjectService) context
 			.getService(ref);
 			IBundleProjectDescription bundleDesc = service.getDescription(incQueryProject);
-			this.sampleProject = SampleProjectSupport.createProject(monitor, bundleDesc.getBundleName(),incQueryProject.getName());
+			this.sampleProject = SampleValidationProjectSupport.createProject(monitor, bundleDesc.getBundleName(),incQueryProject.getName());
 		}
 		finally
 		{if(context != null && ref != null)
@@ -125,9 +126,9 @@ public class SampleValidationProjectGenerator {
 				Map<GTPattern, GTPatternJavaData> gtPatternJavaRepresentations = generateGTPatternJavaData(patterns, monitor);
 				SampleConstraintGenerator constraintGenerator = new SampleConstraintGenerator(gtPatternJavaRepresentations, getProject(), incQueryProject);
 				constraintGenerator.generateActivator(sampleProject.getName() , monitor);
-				Map<String,ConstraintData> handlers = constraintGenerator.generateHandlersForPatternMatcherCalls(monitor);
-				ExtensionsforSampleValidationProjectGenerator extensionGenerator = new ExtensionsforSampleValidationProjectGenerator(sampleProject);
-				extensionGenerator.contributeToExtensionPoint(handlers, getFileExtension(iqGen), monitor);
+				Map<String,ConstraintData> constraints = constraintGenerator.generateHandlersForPatternMatcherCalls(monitor);
+				ExtensionsforSampleValidationProjectGenerator extensionGenerator = new ExtensionsforSampleValidationProjectGenerator(sampleProject,iqGen);
+				extensionGenerator.contributeToExtensionPoint(constraints, getEditorIds(iqGen), monitor);
 							
 			} finally {
 				modulesLoader.disposeFramework(framework);
@@ -143,7 +144,7 @@ public class SampleValidationProjectGenerator {
 	private Collection<String> getFileExtension(IncQueryGenmodel incqueryGenmodel) {
 		//incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
 
-		// TODO: works only when the editor file extension is an GenPackage's file extension who has at leat one classifiers
+		// TODO: works only when the editor file extension is an GenPackage's file extension who has at least one classifiers
 		List<String> fileExtensions = new ArrayList<String>(); 
 		
 		for(EcoreModel ecoreModel :incqueryGenmodel.getEcoreModel())
@@ -152,6 +153,26 @@ public class SampleValidationProjectGenerator {
 				fileExtensions.add(genPackage.getFileExtension());
 			}
 		return fileExtensions;
+	}
+	
+	private Collection<String> getEditorIds(IncQueryGenmodel incqueryGenmodel) {
+		//incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
+		
+		// TODO: works only when the editor file extension is an GenPackage's file extension who has at least one classifiers
+		List<String> editorIDs = new ArrayList<String>(); 
+		
+		for(EcoreModel ecoreModel :incqueryGenmodel.getEcoreModel()){
+			editorIDs.add(ecoreModel.getModels().getEditorPluginID());
+			/*for(GenPackage genPackage: ecoreModel.getModels().getAllGenPackagesWithClassifiers()) 
+			{
+				editorIDs.add(genPackage.getFileExtension());
+			}*/
+		}
+		
+		// FIXME remove constant addition and find another solution to incorporate editor IDs
+		editorIDs.add("org.eclipse.papyrus.core.papyrusEditor");
+		
+		return editorIDs;
 	}
 
 	private Map<GTPattern, GTPatternJavaData> generateGTPatternJavaData(
@@ -163,7 +184,7 @@ public class SampleValidationProjectGenerator {
 			GTPatternJavaData data = new GTPatternJavaData();
 			data.setPatternName(pattern.getName());
 			
-			//mathcer
+			//matcher
 			IPath pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_MATCHERS_DIR).getFullPath();
 			String packageNameRoot = IncQueryNature.GENERATED_MATCHERS_PACKAGEROOT;
 			CodegenSupport.PackageLocationFinder matcherPLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);

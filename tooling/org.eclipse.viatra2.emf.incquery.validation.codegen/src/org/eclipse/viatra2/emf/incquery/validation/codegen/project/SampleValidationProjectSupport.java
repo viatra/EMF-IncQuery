@@ -45,6 +45,7 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
+import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.ValidationCodegenPlugin;
 import org.eclipse.viatra2.framework.FrameworkManager;
 import org.osgi.framework.BundleContext;
@@ -85,30 +86,11 @@ public class SampleValidationProjectSupport {
 		try {
 			monitor.beginTask("", 2000);
 
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			IProject proj = root.getProject(incQueryProjectName+".validation.sample");
-
-			if(proj.exists())
-				{
-				proj.delete(true, true, monitor);
-				}
-
-			proj.create(new SubProgressMonitor(monitor, 1000));
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-
-			proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(
-					monitor, 1000));
-			/* Adding project nature */
+			String validationProjectName = incQueryProjectName+".validation.sample";
+			IProject proj = ProjectGenerationHelper
+			.initializeProject(validationProjectName,
+					ProjectGenerationHelper.generatedNatures, monitor);
 			IProjectDescription desc = proj.getDescription();
-			List<String> newNatures = new ArrayList<String>();
-			newNatures.addAll(Arrays.asList(desc.getNatureIds()));
-			newNatures.add(JavaCore.NATURE_ID);
-			newNatures.add("org.eclipse.pde.PluginNature");
-			desc.setNatureIds(newNatures.toArray(new String[] {}));
-			proj.setDescription(desc, monitor);
 			/* Creating plug-in information */
 			context = ValidationCodegenPlugin.plugin.context;
 			ref = context
@@ -135,32 +117,9 @@ public class SampleValidationProjectSupport {
 			bundleDesc.apply(monitor);
 			context.ungetService(ref);
 			/* Creating Java folders */
-			final List<IClasspathEntry> classpathEntries = new ArrayList<IClasspathEntry>();
-			final IJavaProject javaProject = JavaCore.create(proj);
-			final IFolder srcContainer = proj.getFolder("src");
-			srcContainer.create(true, true, monitor);
-			final IClasspathEntry srcClasspathEntry = JavaCore
-					.newSourceEntry(srcContainer.getFullPath());
-			classpathEntries.add(srcClasspathEntry);
-//			final IFolder srcGenContainer = proj.getFolder("src-gen");
-//			srcGenContainer.create(true, true, monitor);
-//			final IClasspathEntry srcGenClasspathEntry = JavaCore
-//					.newSourceEntry(srcGenContainer.getFullPath());
-//			classpathEntries.add(srcGenClasspathEntry);
-			// Plug-in classpath
-			classpathEntries.add(JavaCore.newContainerEntry(new Path(
-					"org.eclipse.pde.core.requiredPlugins")));
-			classpathEntries.add(JavaRuntime.getDefaultJREContainerEntry());
-			javaProject.setRawClasspath(classpathEntries
-					.toArray(new IClasspathEntry[classpathEntries.size()]),
-					monitor);
-
-			/* TODO UGLY: Add the build.properties to the project */
-			File buildProp = FrameworkManager.getFileFromBundle(
-					IncQueryNature.BUNDLE_ID, IncQueryNature.SOURCE_BUILD_PROPERTIES);
-			addFileToProject(proj, new Path("build.properties"), new FileInputStream(buildProp), monitor);
-
-		return proj;
+			ProjectGenerationHelper.initializeClasspath(proj, monitor, ProjectGenerationHelper.singleSourceFolder);
+			ProjectGenerationHelper.initializeBuildProperties(proj, monitor);
+			return proj;
 		} catch (IOException ioe) {
 			IStatus status = new Status(IStatus.ERROR,
 					IncQueryNature.BUNDLE_ID, IStatus.ERROR,
@@ -172,25 +131,5 @@ public class SampleValidationProjectSupport {
 				context.ungetService(ref);
 		}
 
-	}
-
-	/**
-	 * Adds a file to a container.
-	 * @param container the container to add the file to
-	 * @param path the path of the newly created file
-	 * @param contentStream the file will be filled with this stream's contents
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	private static void addFileToProject(IContainer container, Path path,
-			InputStream contentStream, IProgressMonitor monitor)
-			throws CoreException {
-		final IFile file = container.getFile(path);
-
-		if (file.exists()) {
-			file.setContents(contentStream, true, true, monitor);
-		} else {
-			file.create(contentStream, true, monitor);
-		}
 	}
 }

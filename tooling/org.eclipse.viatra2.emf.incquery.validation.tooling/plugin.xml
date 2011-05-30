@@ -14,44 +14,21 @@
       
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-             <menu
-               label="EMF-IncQuery">
-                <command
-                      commandId="org.eclipse.viatra2.emf.incquery.validation.tooling.gensampleproject"
-                      style="push">
-                   <visibleWhen
-                         checkEnabled="false">
-                      <reference
-                            definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-                      </reference>
-                   </visibleWhen>
-                </command>
-         
-        </menu>
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.gui.menu.packageExplorer">
+             <command
+                   commandId="org.eclipse.viatra2.emf.incquery.validation.tooling.gensampleproject"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+                   </reference>
+                </visibleWhen>
+             </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
-           <menu
-               label="EMF-IncQuery">
-              <command
-                    commandId="org.eclipse.viatra2.emf.incquery.validation.tooling.gensampleproject"
-                    style="push">
-                 <visibleWhen
-                       checkEnabled="false">
-                    <reference
-                          definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-                    </reference>
-                 </visibleWhen>
-              </command>
-           </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.views.ResourceNavigator">
-        <menu
-               label="EMF-IncQuery">
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.gui.menu.projectExplorer">
            <command
                  commandId="org.eclipse.viatra2.emf.incquery.validation.tooling.gensampleproject"
                  style="push">
@@ -62,8 +39,20 @@
                  </reference>
               </visibleWhen>
            </command>
-         
-        </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.gui.menu.resourceNavigator">
+        <command
+              commandId="org.eclipse.viatra2.emf.incquery.validation.tooling.gensampleproject"
+              style="push">
+           <visibleWhen
+                 checkEnabled="false">
+              <reference
+                    definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
+              </reference>
+           </visibleWhen>
+        </command>
       </menuContribution>
       
    </extension>

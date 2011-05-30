@@ -1,0 +1,46 @@
+package #constraint-package#;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternSignature;
+import org.eclipse.viatra2.emf.incquery.validation.core.Constraint;
+
+import #java-matcher-package#;
+import #java-signature-package#;
+
+/**
+ * Constraint generated for #pattern-name#
+ *
+ */
+public class #java-class-name# extends Constraint<#java-signature#> {
+	public static #java-class-name# INSTANCE = new #java-class-name#();
+
+	@Override
+	public IMatcherFactory<#java-signature#, ? extends IncQueryMatcher<#java-signature#>> matcherFactory() {
+		return #java-matcher#.FACTORY;
+	}
+	
+	@Override
+	public String getMessage(#java-signature# signature) {
+		String message = "#message-string#";
+		
+		for (String paramName : signature.parameterNames()) {
+			Object param = signature.get(paramName);
+			String name = BasePatternSignature.prettyPrintValue(param);
+			message.replace("$"+paramName+"$", name);
+		}
+		
+		return message;
+	}
+
+	@Override
+	public EObject getLocationObject(#java-signature# signature) {
+		Object location = signature.get("#location-param-name#");
+		if(location instanceof EObject){
+			return (EObject) location;
+		}
+		return null;
+	}
+
+}

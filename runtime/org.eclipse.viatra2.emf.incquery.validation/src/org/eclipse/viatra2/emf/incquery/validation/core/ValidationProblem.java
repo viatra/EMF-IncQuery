@@ -36,6 +36,7 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		 */
 		EObject location = kind.getLocationObject(affectedElements);
 		if (location!=null) {
+			// TODO Uzi: what to do with uri fragment?
 			marker.setAttribute(IMarker.LOCATION, location.eResource().getURIFragment(location) );
 		} else {
 			marker.setAttribute(IMarker.LOCATION, kind.prettyPrintSignature(affectedElements));
