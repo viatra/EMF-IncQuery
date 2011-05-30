@@ -4,6 +4,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 
 public class ValidationProblem<Signature extends IPatternSignature> {
@@ -29,6 +31,8 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 //		}
 		marker.setAttribute(IMarker.MESSAGE, message );    
 		
+		
+		
 		// marker.setAttribute(IMarker.LOCATION, kind.prettyPrintSignature(affectedElements));
 		/*
 		 * From: http://www.eclipse.org/forums/index.php/m/379775/
@@ -37,7 +41,11 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		EObject location = kind.getLocationObject(affectedElements);
 		if (location!=null) {
 			// TODO Uzi: what to do with uri fragment?
-			marker.setAttribute(IMarker.LOCATION, location.eResource().getURIFragment(location) );
+			//marker.setAttribute(IMarker.LOCATION, location.eResource().getURIFragment(location) );
+			/*
+			 * Based on EMF Validation's MarkerUtil class inner attributes
+			 */
+			marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(location).toString());
 		} else {
 			marker.setAttribute(IMarker.LOCATION, kind.prettyPrintSignature(affectedElements));
 		}
