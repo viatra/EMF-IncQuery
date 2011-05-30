@@ -103,7 +103,7 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 		StringBuilder result = new StringBuilder();
 		for (int i=0; i<array.length; ++i) {
 			if (i!=0) result.append(", ");
-			result.append("\"" + parameterNames[i] + "\"=" + printValue(array[i]));
+			result.append("\"" + parameterNames[i] + "\"=" + prettyPrintValue(array[i]));
 		}
 		return result.toString();
 	}
