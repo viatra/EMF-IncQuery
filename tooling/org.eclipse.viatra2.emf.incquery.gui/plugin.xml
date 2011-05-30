@@ -72,7 +72,8 @@
             allPopups="false"
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
              <menu
-               label="EMF-IncQuery">
+                   id="org.eclipse.viatra2.emf.incquery.gui.menu.packageExplorer"
+                   label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                   style="push">
@@ -121,7 +122,8 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
            <menu
-               label="EMF-IncQuery">
+                 id="org.eclipse.viatra2.emf.incquery.gui.menu.projectExplorer"
+                 label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                   style="push">
@@ -159,7 +161,8 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.views.ResourceNavigator">
         <menu
-               label="EMF-IncQuery">
+              id="org.eclipse.viatra2.emf.incquery.gui.menu.resourceNavigator"
+              label="EMF-IncQuery">
          <command
                commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
                style="push">                              

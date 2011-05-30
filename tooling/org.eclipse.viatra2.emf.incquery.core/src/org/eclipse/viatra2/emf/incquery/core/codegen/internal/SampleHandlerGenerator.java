@@ -127,7 +127,7 @@ public class SampleHandlerGenerator {
 			// process annotation
 			String machinePatternMode = null;
 			Map<String, String> annotation = 
-				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@GenerationMode");
+				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@SampleUI");
 			if (annotation != null){
 				machinePatternMode = annotation.get("mode");
 			
@@ -136,8 +136,10 @@ public class SampleHandlerGenerator {
 					className = getCounterName(pattern);
 					substitutions.put("java-class-name", className);
 					generatedCode = CodegenSupport.processTemplate(counterTemplate, substitutions);
-				//} //else if("list".equals(machinePatternMode)){
-				 //	generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
+				} else if("list".equals(machinePatternMode)){
+				 	generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
+				//} else if("ignore".equals(machinePatternMode)){
+				 	//continue;
 				} else // if("constraint".equals(machinePatternMode)){
 					continue; // constraints and warnings are handled in validation
 				//}

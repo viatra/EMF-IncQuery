@@ -180,7 +180,7 @@ public class DTOGenerator {
 						+ " return false;";
 			strings[6] += "\t\tresult = prime * result + ((" + patternVarNameMember	+ " == null) ? 0 : " + patternVarNameMember + ".hashCode());";
 			strings[7] += "\t\tresult.append(\"" + (i==0? "" : ", ") 
-				+ "\\\""+patternVarNamePlain+"\\\"=\" + printValue(" + patternVarNameMember  +"));";
+				+ "\\\""+patternVarNamePlain+"\\\"=\" + prettyPrintValue(" + patternVarNameMember  +"));";
 			strings[8] += patternVarNameMember;
 			strings[9] += "\"" + patternVarNamePlain + "\"";
 			strings[10] += "\t\tif (\"" + patternVarNamePlain 

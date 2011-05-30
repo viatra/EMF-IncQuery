@@ -63,11 +63,12 @@ public class CodegenSupport {
 	 */
 	public static String processTemplate(String template, Map<String, String> substitutions) {
 		for(Map.Entry<String, String> substitution : substitutions.entrySet()) {
-			String from = java.util.regex.Pattern.quote("#"+substitution.getKey()+"#");
+			/*String from = java.util.regex.Pattern.quote("#"+substitution.getKey()+"#");
 			String to = java.util.regex.Pattern.quote(substitution.getValue());
 			to = to.substring(2, to.length()-2); // skip \Q in the beginning and \E at the and that would otherwise be printed verbatim to the output
 			to = to.replaceAll("\\\\", "\\\\\\\\");
-			template = template.replaceAll(from, to);
+			template = template.replaceAll(from, to);*/
+			template = template.replace("#"+substitution.getKey()+"#", substitution.getValue());
 		}
 		return template;
 	}
@@ -80,6 +81,11 @@ public class CodegenSupport {
 	 */
 	public static String loadTemplate(String templateFileName) throws CodeGenerationException {
 		Bundle thisBundle = IncQueryPlugin.plugin.context.getBundle();
+		return loadTemplate(templateFileName, thisBundle);
+	}
+
+	public static String loadTemplate(String templateFileName,
+			Bundle thisBundle) throws CodeGenerationException {
 		InputStream patternBuilderTemplateStream;
 		try {
 			Path pathToTemplate = new Path(pathToTemplatesDir + templateFileName);
