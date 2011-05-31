@@ -40,7 +40,7 @@ public class #java-class-name# extends AbstractHandler implements IHandler {
 		String matches = getMatches(res);
 		
 		//prints the match set to a dialog window 
-		MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the #pattern-name# pattern", 
+		MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the \"#pattern-name#\" pattern", 
 				matches);
 		
 	    return null;

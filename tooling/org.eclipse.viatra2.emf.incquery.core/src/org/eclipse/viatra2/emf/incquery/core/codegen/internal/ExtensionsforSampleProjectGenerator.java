@@ -150,16 +150,16 @@ public class ExtensionsforSampleProjectGenerator {
 						.createElement(contribExtension);
 				builderElement.setName("command");
 				builderElement.setAttribute("description",
-						"Invokes the EMF-IncQuery engine to return all matches of the "
+						"Invokes the EMF-IncQuery engine to return all matches of the \""
 								+ entry.getValue().getPatternName()
-								+ " pattern");
+								+ "\" pattern");
 				builderElement.setAttribute("id", entry.getKey() + "ID");
 				if(entry.getValue().getHandlerName().endsWith("Counter")){
-					builderElement.setAttribute("name", "Get number of matches of the "
-							+ entry.getValue().getPatternName() + " pattern");
+					builderElement.setAttribute("name", "Get number of matches of the \""
+							+ entry.getValue().getPatternName() + "\" pattern");
 				} else {
-					builderElement.setAttribute("name", "Get all matches of the "
-							+ entry.getValue().getPatternName() + " pattern");
+					builderElement.setAttribute("name", "Get all matches of the \""
+							+ entry.getValue().getPatternName() + "\" pattern");
 				}
 				contribExtension.add(builderElement);
 			}
