@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
@@ -35,7 +36,6 @@ import org.eclipse.viatra2.emf.incquery.core.codegen.util.GTPatternJavaData;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.ModulesLoader;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.PatternsCollector;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
-import org.eclipse.viatra2.emf.incquery.core.project.SampleProjectSupport;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.ValidationCodegenPlugin;
@@ -128,7 +128,7 @@ public class SampleValidationProjectGenerator {
 				constraintGenerator.generateActivator(sampleProject.getName() , monitor);
 				Map<String,ConstraintData> constraints = constraintGenerator.generateHandlersForPatternMatcherCalls(monitor);
 				ExtensionsforSampleValidationProjectGenerator extensionGenerator = new ExtensionsforSampleValidationProjectGenerator(sampleProject,iqGen);
-				extensionGenerator.contributeToExtensionPoint(constraints, getEditorIds(iqGen), monitor);
+				extensionGenerator.contributeToExtensionPoint(constraints, getEditorId2DomainMap(iqGen), monitor);
 							
 			} finally {
 				modulesLoader.disposeFramework(framework);
@@ -155,14 +155,19 @@ public class SampleValidationProjectGenerator {
 		return fileExtensions;
 	}
 	
-	private Collection<String> getEditorIds(IncQueryGenmodel incqueryGenmodel) {
+	private Map<String,String> getEditorId2DomainMap(IncQueryGenmodel incqueryGenmodel) {
 		//incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
 		
 		// TODO: works only when the editor file extension is an GenPackage's file extension who has at least one classifiers
-		List<String> editorIDs = new ArrayList<String>(); 
+		Map<String,String> editorIDs = new HashMap<String, String>(); 
 		
 		for(EcoreModel ecoreModel :incqueryGenmodel.getEcoreModel()){
-			editorIDs.add(ecoreModel.getModels().getEditorPluginID());
+			for(EObject genp : ecoreModel.getModels().eContents()){
+				if(genp instanceof GenPackage){
+					editorIDs.put(((GenPackage) genp).getQualifiedEditorClassName()+"ID", ((GenPackage) genp).getNSName());
+				}
+			}
+			
 			/*for(GenPackage genPackage: ecoreModel.getModels().getAllGenPackagesWithClassifiers()) 
 			{
 				editorIDs.add(genPackage.getFileExtension());
@@ -170,7 +175,7 @@ public class SampleValidationProjectGenerator {
 		}
 		
 		// FIXME remove constant addition and find another solution to incorporate editor IDs
-		editorIDs.add("org.eclipse.papyrus.core.papyrusEditor");
+		//editorIDs.put("org.eclipse.papyrus.core.papyrusEditor", "papyrusGMF");
 		
 		return editorIDs;
 	}

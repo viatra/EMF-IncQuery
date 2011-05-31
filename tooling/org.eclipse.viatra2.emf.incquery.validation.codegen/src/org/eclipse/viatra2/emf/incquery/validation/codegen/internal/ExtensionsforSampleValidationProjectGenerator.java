@@ -135,14 +135,37 @@ public class ExtensionsforSampleValidationProjectGenerator {
 		builderElementCommand.setAttribute("style", "push");
 		builderElementCommand.add(this.addIFileFilter(factory,
 				contribExtensionMenuContrib, editorID));
+		
 		builderElement.add(builderElementCommand);
 		//}
 		return builderElement;
 	}
+	
+	private IPluginElement createEditorContribution(IExtensionsModelFactory factory,
+			IPluginExtension contribExtensionEditorContrib, String editorID, String domain) throws CoreException {
+		
+		IPluginElement builderEditorContributionElement = factory
+			.createElement(contribExtensionEditorContrib);
+		builderEditorContributionElement.setName("editorContribution");
+		builderEditorContributionElement.setAttribute("id", project.getName() + "." + domain + ".editorContribution");
+		builderEditorContributionElement.setAttribute("targetID", editorID);
+		
+		IPluginElement builderActionElement = factory.createElement(builderEditorContributionElement);
+		builderActionElement.setName("action");
+		builderActionElement.setAttribute("class", "org.eclipse.viatra2.emf.incquery.validation.ui.actions.InitValidationActionDelegate");
+		builderActionElement.setAttribute("id", project.getName() + "." + domain + ".action");
+		builderActionElement.setAttribute("label", "EMF-IncQuery Validation for " + domain);
+		builderActionElement.setAttribute("style", "push");
+		builderActionElement.setAttribute("toolbarPath", "file/export");
+		
+		builderEditorContributionElement.add(builderActionElement);
+		
+		return builderEditorContributionElement;
+	}
 
 	@SuppressWarnings("restriction")
 	public void contributeToExtensionPoint(Map<String, ConstraintData> constraints,
-			Collection<String> editorIDs, IProgressMonitor monitor)
+			Map<String,String> editor2domain, IProgressMonitor monitor)
 			throws CodeGenerationException {
 		IFile manifest = PDEProject.getManifest(project);
 		IFile pluginXml = PDEProject.getPluginXml(project);
@@ -185,17 +208,29 @@ public class ExtensionsforSampleValidationProjectGenerator {
 
 			// Generates the menu contributions
 			IPluginExtension contribExtensionMenuContrib = factory
-					.createExtension();
+			.createExtension();
 			contribExtensionMenuContrib.setId("context-menus");
 			contribExtensionMenuContrib.setPoint("org.eclipse.ui.menus");
+			IPluginElement papyrusMenuElement = this.createMenuContribution(factory, contribExtensionMenuContrib,
+					"org.eclipse.papyrus.core.papyrusEditor",
+					"popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu");
+			contribExtensionMenuContrib.add(papyrusMenuElement);
+			extensions.add(contribExtensionMenuContrib);
+			
+			// Generates the menu contributions
+			IPluginExtension contribExtensionEditorContrib = factory
+					.createExtension();
+			//contribExtensionMenuContrib.setId("context-menus");
+			//contribExtensionMenuContrib.setPoint("org.eclipse.ui.menus");
+			contribExtensionEditorContrib.setPoint("org.eclipse.ui.editorActions");
 
 			//registers the different file extensions
-			for(String editorId: editorIDs)
+			for(String editorId: editor2domain.keySet())
 			{
-				IPluginElement menuElement = this.createMenuContribution(factory,
-						contribExtensionMenuContrib, editorId,
-						"popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu");
-				contribExtensionMenuContrib.add(menuElement);
+				IPluginElement menuElement = createEditorContribution(factory, contribExtensionEditorContrib, editorId, editor2domain.get(editorId)); 
+					//this.createMenuContribution(factory, contribExtensionMenuContrib, editorId,
+					//	"popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu");
+				contribExtensionEditorContrib.add(menuElement);
 	
 				/*menuElement = this.createMenuContribution(factory,
 						contribExtensionMenuContrib, fileExtension,
@@ -208,8 +243,8 @@ public class ExtensionsforSampleValidationProjectGenerator {
 				contribExtensionMenuContrib.add(menuElement);*/
 			}
 
-			extensions.add(contribExtensionMenuContrib);
-			contribExtensionMenuContrib.setInTheModel(true);
+			extensions.add(contribExtensionEditorContrib);
+			contribExtensionEditorContrib.setInTheModel(true);
 			
 			// generates the handlers
 			IPluginExtension contribExtensionConstraint = factory

@@ -111,7 +111,7 @@ public class SampleValidationProjectSupport {
 					service.newRequiredBundle("org.eclipse.emf.ecore", null, false, false),
 					service.newRequiredBundle("org.eclipse.ui", null, false, false),
 					service.newRequiredBundle("org.eclipse.core.runtime", null, false, false),
-					service.newRequiredBundle("org.eclipse.viatra2.emf.incquery.validation", null, false, true),
+					service.newRequiredBundle("org.eclipse.viatra2.emf.incquery.validation.ui", null, false, true),
 					service.newRequiredBundle(correspondingIncQueryProjectID, null, false, true)};
 			bundleDesc.setRequiredBundles(reqBundles);
 			bundleDesc.apply(monitor);
