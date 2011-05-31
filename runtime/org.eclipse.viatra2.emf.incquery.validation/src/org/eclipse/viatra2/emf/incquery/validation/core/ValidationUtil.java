@@ -43,8 +43,7 @@ public class ValidationUtil {
 		Map<ValidationProblem, IMarker> _problems = problems.get(f);
 		if (_problems != null) {
 			vp.dispose();
-			IMarker marker = _problems.remove(vp);
-			if (marker != null) marker.delete();
+			_problems.remove(vp);
 		}
 	}
 	

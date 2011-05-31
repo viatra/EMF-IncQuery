@@ -30,6 +30,8 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		
 		@Override
 		public void notifyChanged(Notification notification) {
+			//If the marker does not exists, no update is necessary (or possible)
+			if (!marker.exists()) return;
 			try {
 				switch(notification.getEventType()){
 				case Notification.REMOVE:
@@ -37,7 +39,6 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 				case Notification.REMOVING_ADAPTER:
 					break;
 				default:
-					// FIXME also problematic in other cases (e.g. Type == ADD, marker is removed (as match is no longer there, -> Marker not found...)
 					if (notification.getNewValue() != null) {
 						//This is needed because a deletion can cause  a set with null value
 						updateMarker();
@@ -132,12 +133,14 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 	
 	/**
 	 * A callback method when the validation problem is removed.
+	 * @throws CoreException 
 	 */
-	public void dispose() {
+	public void dispose() throws CoreException {
 		for (Object _o : affectedElements.toArray()) {
 			if (_o instanceof EObject) {
 				((EObject) _o).eAdapters().remove(eventHandler);
 			}
 		}
+		if (marker != null) marker.delete();
 	}
 }
