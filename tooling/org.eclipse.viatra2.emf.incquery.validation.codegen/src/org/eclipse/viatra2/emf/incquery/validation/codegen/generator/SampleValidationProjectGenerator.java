@@ -46,6 +46,7 @@ import org.eclipse.viatra2.emf.incquery.validation.codegen.project.SampleValidat
 import org.eclipse.viatra2.framework.FrameworkException;
 import org.eclipse.viatra2.framework.FrameworkManagerException;
 import org.eclipse.viatra2.framework.IFramework;
+import org.eclipse.viatra2.gtasm.support.helper.GTASMHelper;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -186,27 +187,31 @@ public class SampleValidationProjectGenerator {
 		Map<GTPattern, GTPatternJavaData>  datas = new HashMap<GTPattern, GTPatternJavaData>();
 		
 		for(GTPattern pattern: patterns) {
-			GTPatternJavaData data = new GTPatternJavaData();
-			data.setPatternName(pattern.getName());
 			
-			//matcher
-			IPath pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_MATCHERS_DIR).getFullPath();
-			String packageNameRoot = IncQueryNature.GENERATED_MATCHERS_PACKAGEROOT;
-			CodegenSupport.PackageLocationFinder matcherPLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
-			//sets the matcher and the matcher's package
-			data.setMatcherName(getMatcherName(pattern));
-			data.setMatcherPackage(matcherPLF.getJavaPackageName()+"."+getMatcherName(pattern));
-			
-			//singature
-			pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_DTO_DIR).getFullPath();
-			packageNameRoot = IncQueryNature.GENERATED_DTO_PACKAGEROOT;
-			CodegenSupport.PackageLocationFinder signaturePLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
-			//sets the matcher and the matcher's package
-			data.setSignatureName(getSignatureName(pattern));
-			data.setSignaturePackage(signaturePLF.getJavaPackageName()+"."+getSignatureName(pattern));
-			
-			datas.put(pattern, data);
-			
+			Map<String, String> annotation = 
+				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@Constraint");
+			if (annotation != null){
+				GTPatternJavaData data = new GTPatternJavaData();
+				data.setPatternName(pattern.getName());
+				
+				//matcher
+				IPath pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_MATCHERS_DIR).getFullPath();
+				String packageNameRoot = IncQueryNature.GENERATED_MATCHERS_PACKAGEROOT;
+				CodegenSupport.PackageLocationFinder matcherPLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
+				//sets the matcher and the matcher's package
+				data.setMatcherName(getMatcherName(pattern));
+				data.setMatcherPackage(matcherPLF.getJavaPackageName()+"."+getMatcherName(pattern));
+				
+				//singature
+				pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_DTO_DIR).getFullPath();
+				packageNameRoot = IncQueryNature.GENERATED_DTO_PACKAGEROOT;
+				CodegenSupport.PackageLocationFinder signaturePLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
+				//sets the matcher and the matcher's package
+				data.setSignatureName(getSignatureName(pattern));
+				data.setSignaturePackage(signaturePLF.getJavaPackageName()+"."+getSignatureName(pattern));
+				
+				datas.put(pattern, data);
+			}
 		}
 		return datas;
 	}

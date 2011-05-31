@@ -28,7 +28,17 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		@Override
 		public void notifyChanged(Notification notification) {
 			try {
-				updateMarker();
+				switch(notification.getEventType()){
+				case Notification.REMOVE:
+				case Notification.REMOVE_MANY:
+				case Notification.REMOVING_ADAPTER:
+					break;
+				default:
+					if (notification.getNewValue() != null) {
+						//This is needed because a deletion can cause  a set with null value
+						updateMarker();
+					}
+				}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
