@@ -3,6 +3,9 @@ package org.eclipse.viatra2.emf.incquery.validation.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -15,6 +18,34 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 	
 	Signature affectedElements;
 	
+	IMarker marker;
+	
+	Adapter eventHandler = new Adapter() {
+		
+		@Override
+		public void setTarget(Notifier newTarget) {}
+		
+		@Override
+		public void notifyChanged(Notification notification) {
+			try {
+				updateMarker();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		public boolean isAdapterForType(Object type) {
+			return false;
+		}
+		
+		@Override
+		public Notifier getTarget() {
+			return null;
+		}
+	};
+	
 	public ValidationProblem(Constraint<Signature> _kind, Signature _affectedElements) 
 	{
 		this.kind = _kind;
@@ -22,25 +53,33 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 	}
 	
 	public IMarker createMarker(IFile file) throws CoreException {
-		IMarker marker = file.createMarker("org.eclipse.emf.validation.problem");
+		marker = file.createMarker("org.eclipse.emf.validation.problem");
 		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		marker.setAttribute(IMarker.TRANSIENT, true);
 		
-		String message = kind.getMessage(affectedElements);
+		for (Object _o : affectedElements.toArray()) {
+			if (_o instanceof EObject) {
+				((EObject) _o).eAdapters().add(eventHandler);
+			}
+		}
 //		if (message==null) {
 //			message = kind.getMessage();
 //		}
-		marker.setAttribute(IMarker.MESSAGE, message );    
+		updateMarker();
+		
+		return marker;
+	}
+	
+	private void updateMarker() throws CoreException {
+		marker.setAttribute(IMarker.MESSAGE, kind.getMessage(affectedElements));    
 		EObject location = kind.getLocationObject(affectedElements);
 		if (location!=null) {
 			/*
 			 * Based on EMF Validation's MarkerUtil class inner attributes
 			 */
 			marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(location).toString());
-			marker.setAttribute(IMarker.LOCATION, BasePatternSignature.prettyPrintValue(location));//TODO find other place for this
+			marker.setAttribute(IMarker.LOCATION, location.eClass().getName() + " " + BasePatternSignature.prettyPrintValue(location));//TODO find other place for this
 		}
-		
-		return marker;
 	}
 	
 	/**
@@ -65,5 +104,16 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		int hash = 31 + this.kind.hashCode();
 		hash = 31*hash + affectedElements.hashCode();
 		return hash;
+	}
+	
+	/**
+	 * A callback method when the validation problem is removed.
+	 */
+	public void dispose() {
+		for (Object _o : affectedElements.toArray()) {
+			if (_o instanceof EObject) {
+				((EObject) _o).eAdapters().remove(eventHandler);
+			}
+		}
 	}
 }

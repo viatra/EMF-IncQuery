@@ -42,6 +42,7 @@ public class ValidationUtil {
 	static void removeProblem(IFile f, ValidationProblem vp) throws CoreException {
 		Map<ValidationProblem, IMarker> _problems = problems.get(f);
 		if (_problems != null) {
+			vp.dispose();
 			IMarker marker = _problems.remove(vp);
 			if (marker != null) marker.delete();
 		}
