@@ -28,7 +28,7 @@ public class #java-class-name# extends Constraint<#java-signature#> {
 		for (String paramName : signature.parameterNames()) {
 			Object param = signature.get(paramName);
 			String name = BasePatternSignature.prettyPrintValue(param);
-			message.replace("$"+paramName+"$", name);
+			message = message.replace("$"+paramName+"$", name);
 		}
 		
 		return message;
