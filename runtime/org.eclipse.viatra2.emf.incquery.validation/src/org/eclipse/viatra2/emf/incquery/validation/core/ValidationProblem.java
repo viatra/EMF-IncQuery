@@ -37,6 +37,7 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 				case Notification.REMOVING_ADAPTER:
 					break;
 				default:
+					// FIXME also problematic in other cases (e.g. Type == ADD, marker is removed (as match is no longer there, -> Marker not found...)
 					if (notification.getNewValue() != null) {
 						//This is needed because a deletion can cause  a set with null value
 						updateMarker();
