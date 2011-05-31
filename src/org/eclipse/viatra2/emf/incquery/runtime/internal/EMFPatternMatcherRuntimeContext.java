@@ -212,12 +212,13 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	@Override
 	public void enumerateAllUnaryContainments(final ModelElementPairCrawler crawler) {
 		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-			@Override
-			public void visitAttribute(EObject source, EAttribute feature, Object target) {
-				if (target != null) // Exclude NULL attribute values from RETE
-					crawler.crawl(source, target);
-				super.visitAttribute(source, feature, target);
-			}
+			// FIXME: containment no longer holds between EObject and its raw attribute values.
+//			@Override
+//			public void visitAttribute(EObject source, EAttribute feature, Object target) {
+//				if (target != null) // Exclude NULL attribute values from RETE
+//					crawler.crawl(source, target);
+//				super.visitAttribute(source, feature, target);
+//			}
 			@Override
 			public void doVisitReference(EObject source, EReference feature, EObject target) {
 				if (feature.isContainment()) crawler.crawl(source, target);
