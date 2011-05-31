@@ -206,7 +206,8 @@ public class CoreEMFManipulationListener {
 	private void attributeReferenceUpdate(Direction direction, EAttribute attribute, Object host, Object value) {
 		if (value != null) {
 			edgeUpdateCore(direction, attribute, host, value);
-			boundary.updateContainment(direction, host, value);
+			// TODO Workaround, Gaben: fix this (NPE on deletion, duplicate containment with identical attribute values)
+			//boundary.updateContainment(direction, host, value);
 			nodeUpdateCore(direction, attribute.getEAttributeType(), value); // FIXME is this the correct, direct type?
 		}
 	}
