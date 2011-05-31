@@ -2,10 +2,13 @@ package org.eclipse.viatra2.emf.incquery.validation.core;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -63,15 +66,24 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 	}
 	
 	public IMarker createMarker(IFile file) throws CoreException {
-		marker = file.createMarker("org.eclipse.emf.validation.problem");
-		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-		marker.setAttribute(IMarker.TRANSIENT, true);
-		
 		for (Object _o : affectedElements.toArray()) {
 			if (_o instanceof EObject) {
 				((EObject) _o).eAdapters().add(eventHandler);
 			}
 		}
+		EObject location = kind.getLocationObject(affectedElements);
+		URI uri = location.eResource().getURI();
+		IResource markerLoc = null;
+		if (uri.isPlatformResource()) {
+			String platformString = uri.toPlatformString(true);
+			 markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+		} else {
+			markerLoc = file;
+		}
+		marker = markerLoc.createMarker("org.eclipse.emf.validation.problem");
+		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+		marker.setAttribute(IMarker.TRANSIENT, true);
+		
 //		if (message==null) {
 //			message = kind.getMessage();
 //		}
@@ -87,7 +99,8 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 			/*
 			 * Based on EMF Validation's MarkerUtil class inner attributes
 			 */
-			marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(location).toString());
+			String uri = EcoreUtil.getURI(location).toString();
+			marker.setAttribute(EValidator.URI_ATTRIBUTE, uri);
 			marker.setAttribute(IMarker.LOCATION, location.eClass().getName() + " " + BasePatternSignature.prettyPrintValue(location));//TODO find other place for this
 		}
 	}
