@@ -24,14 +24,29 @@ public abstract class BasePatternSignature implements IPatternSignature {
 
 	public static String prettyPrintValue(Object o) {
 		if (o == null) return "(null)";
-		if (o instanceof EObject) {
+		String name = prettyPrintFeature(o, "name");
+		if(name != null){
+			return name;
+		}
+		/*if (o instanceof EObject) {
 			EStructuralFeature feature = ((EObject)o).eClass().getEStructuralFeature("name");
 			if (feature != null) {
 				Object name = ((EObject)o).eGet(feature);
 				if (name != null) return name.toString();
 			}
-		}
+		}*/
 		return o.toString();
+	}
+	
+	public static String prettyPrintFeature(Object o, String featureName) {
+		if (o != null && o instanceof EObject) {
+			EStructuralFeature feature = ((EObject)o).eClass().getEStructuralFeature(featureName);
+			if (feature != null) {
+				Object value = ((EObject)o).eGet(feature);
+				if (value != null) return value.toString();
+			}
+		}
+		return null;
 	}
 	
 	// TODO performance can be improved here somewhat
