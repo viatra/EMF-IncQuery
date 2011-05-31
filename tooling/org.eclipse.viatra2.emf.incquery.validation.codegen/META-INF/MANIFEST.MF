@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IncQuery Validation Codegenerator
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.validation.codegen
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.codegen.ValidationCodegenPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.6.1",
