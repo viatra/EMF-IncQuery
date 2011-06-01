@@ -85,17 +85,17 @@ public class Validator<Signature extends IPatternSignature> {
 	
 	public void markProblem(Signature affectedElements) throws CoreException {
 		// check if it already exists
-		ValidationProblem vp = new ValidationProblem<Signature>(constraint, affectedElements);
-		if (!ValidationUtil.knownProblem(f, vp)) {
+		//ValidationProblem vp = new ValidationProblem<Signature>(constraint, affectedElements);
+		if (!ValidationUtil.knownProblem(f, constraint, affectedElements)) {
 			// if it does not exist yet
-			ValidationUtil.putProblem(f, vp);
+			ValidationUtil.putProblem(f, constraint, affectedElements);
 		}
 	}
 	
 	public void unmarkProblem(Signature affectedElements) throws CoreException {
-		ValidationProblem vp = new ValidationProblem<Signature>(constraint, affectedElements);
-		if (ValidationUtil.knownProblem(f, vp)) {
-			ValidationUtil.removeProblem(f, vp);
+		//ValidationProblem vp = new ValidationProblem<Signature>(constraint, affectedElements);
+		if (ValidationUtil.knownProblem(f, constraint, affectedElements)) {
+			ValidationUtil.removeProblem(f, constraint, affectedElements);
 		}
 	}
 

@@ -21,7 +21,7 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 	
 	Signature affectedElements;
 	
-	IMarker marker;
+	private IMarker marker;
 	
 	Adapter eventHandler = new Adapter() {
 		
