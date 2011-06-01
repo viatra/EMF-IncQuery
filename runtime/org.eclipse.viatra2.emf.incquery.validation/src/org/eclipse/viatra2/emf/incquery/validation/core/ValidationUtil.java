@@ -148,7 +148,7 @@ public class ValidationUtil {
 	
 	public static boolean closeValidators(Notifier emfRoot, IFile file) {
 		if (activeRoots.remove(emfRoot) != null) {
-			Set<ValidationProblem> problemSet = file2problemListMap.get(file);
+			Set<ValidationProblem> problemSet = new HashSet<ValidationProblem>(file2problemListMap.get(file));
 			if (problemSet != null) {
 				for (ValidationProblem problem : problemSet) {
 					try {
