@@ -33,17 +33,17 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 			//If the marker does not exists, no update is necessary (or possible)
 			if (!marker.exists()) return;
 			try {
-				switch(notification.getEventType()){
+				/*switch(notification.getEventType()){
 				case Notification.REMOVE:
 				case Notification.REMOVE_MANY:
 				case Notification.REMOVING_ADAPTER:
 					break;
-				default:
+				default:*/
 					if (notification.getNewValue() != null) {
 						//This is needed because a deletion can cause  a set with null value
 						updateMarker();
 					}
-				}
+				//}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
