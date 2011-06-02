@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+
 /**
  * 
  * @author Bergmann Gábor
@@ -23,12 +25,12 @@ public interface IPatternMatcherBuilderContext<PatternDescription> extends
 	//	String retrieveTernaryEdgeTypeFQN(Object typeObject);	
 	//	String retrieveBinaryEdgeTypeFQN(Object typeObject);
 		
-	Object resolveConstant(String fullyQualifiedName); //Type? Instance? Entity? Relation? Who knows?
+	Object resolveConstant(String fullyQualifiedName) throws RetePatternBuildException; //Type? Instance? Entity? Relation? Who knows?
 
-	Object retrieveBinaryEdgeType(String fullyQualifiedName);
+	Object retrieveBinaryEdgeType(String fullyQualifiedName) throws RetePatternBuildException;
 
-	Object retrieveTernaryEdgeType(String fullyQualifiedName);
+	Object retrieveTernaryEdgeType(String fullyQualifiedName) throws RetePatternBuildException;
 
-	Object retrieveUnaryType(String fullyQualifiedName);
+	Object retrieveUnaryType(String fullyQualifiedName) throws RetePatternBuildException;
 
 }
