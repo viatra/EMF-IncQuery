@@ -18,8 +18,7 @@ import #java-signature-package#;
  *
  */
 public class #java-class-name# extends Constraint<#java-signature#> {
-	public static #java-class-name# INSTANCE = new #java-class-name#();
-
+	
 	@Override
 	public IMatcherFactory<#java-signature#, ? extends IncQueryMatcher<#java-signature#>> matcherFactory() {
 		return #java-matcher#.FACTORY;
