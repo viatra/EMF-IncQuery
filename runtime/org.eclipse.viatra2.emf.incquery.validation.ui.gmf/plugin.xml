@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-  
-
   <extension
             point="org.eclipse.ui.menus">
          <menuContribution
@@ -10,10 +8,20 @@
                locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContribution">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation"
-                  label="Initialize Validation (powered by EMF-INCQuery)"
+                  label="Initialize Validation (powered by EMF-IncQuery)"
                   style="push">
             </command>
          </menuContribution>
+         
+         <menuContribution
+            locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation"
+               label="Initialize Validation (powered by EMF-IncQuery)"
+               style="push">
+         </command>
+         </menuContribution>
+         
    </extension>
    <extension
             point="org.eclipse.ui.commands">
