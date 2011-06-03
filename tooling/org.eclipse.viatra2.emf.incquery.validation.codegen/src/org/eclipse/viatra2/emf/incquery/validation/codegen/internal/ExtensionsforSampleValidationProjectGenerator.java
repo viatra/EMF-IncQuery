@@ -11,16 +11,12 @@
 
 package org.eclipse.viatra2.emf.incquery.validation.codegen.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -29,7 +25,6 @@ import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
-import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstraintGenerator.ConstraintData;
 
@@ -55,7 +50,7 @@ public class ExtensionsforSampleValidationProjectGenerator {
 	}
 
 
-	private IPluginElement addIFileFilter(IExtensionsModelFactory factory,
+	/*private IPluginElement addIFileFilter(IExtensionsModelFactory factory,
 			IPluginExtension contribExtension, String editorId)
 			throws CoreException {
 		// Creates the root for the filter
@@ -84,7 +79,7 @@ public class ExtensionsforSampleValidationProjectGenerator {
 		builderElementCount.setName("count");
 		builderElementCount.setAttribute("value", "+");
 		builderElementWith.add(builderElementCount);
-
+		*/
 		// creates the adapt
 		/*IPluginElement builderElementAdapt = factory
 				.createElement(contribExtension);
@@ -101,11 +96,11 @@ public class ExtensionsforSampleValidationProjectGenerator {
 		builderElementTest.setAttribute("property",
 				"org.eclipse.core.resources.name");
 		builderElementAdapt.add(builderElementTest);*/
-
+/*
 		return builderElement;
 	}
-
-	private IPluginElement createMenuContribution(
+*/
+	/*private IPluginElement createMenuContribution(
 			IExtensionsModelFactory factory,
 			IPluginExtension contribExtensionMenuContrib, String editorID,
 			String menuID)
@@ -139,7 +134,7 @@ public class ExtensionsforSampleValidationProjectGenerator {
 		builderElement.add(builderElementCommand);
 		//}
 		return builderElement;
-	}
+	}*/
 	
 	private IPluginElement createEditorContribution(IExtensionsModelFactory factory,
 			IPluginExtension contribExtensionEditorContrib, String editorID, String domain) throws CoreException {
@@ -207,7 +202,7 @@ public class ExtensionsforSampleValidationProjectGenerator {
 			//contribExtension.setInTheModel(true);
 
 			// Generates the menu contributions
-			IPluginExtension contribExtensionMenuContrib = factory
+			/*IPluginExtension contribExtensionMenuContrib = factory
 			.createExtension();
 			contribExtensionMenuContrib.setId("context-menus");
 			contribExtensionMenuContrib.setPoint("org.eclipse.ui.menus");
@@ -216,7 +211,7 @@ public class ExtensionsforSampleValidationProjectGenerator {
 					"popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu");
 			contribExtensionMenuContrib.add(papyrusMenuElement);
 			extensions.add(contribExtensionMenuContrib);
-			
+			*/
 			// Generates the menu contributions
 			IPluginExtension contribExtensionEditorContrib = factory
 					.createExtension();
