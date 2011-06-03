@@ -46,6 +46,7 @@ public class Validator<Signature extends IPatternSignature> {
 				// after each model update, check the delta monitor
 				// FIXME should be: after each complete transaction, check the delta monitor
 				try {
+					System.out.print("");
 					dm.matchFoundEvents.removeAll( processNewMatches(dm.matchFoundEvents) );
 					dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );		
 				} catch (CoreException e) {

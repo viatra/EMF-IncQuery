@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternSignature;
 
-public class ValidationProblem<Signature extends IPatternSignature> {
+public class ConstraintViolation<Signature extends IPatternSignature> {
 
 	Constraint<Signature> kind;
 	
@@ -61,7 +61,7 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 		}
 	};
 	
-	public ValidationProblem(Constraint<Signature> _kind, Signature _affectedElements) 
+	public ConstraintViolation(Constraint<Signature> _kind, Signature _affectedElements) 
 	{
 		this.kind = _kind;
 		this.affectedElements = _affectedElements;
@@ -114,9 +114,9 @@ public class ValidationProblem<Signature extends IPatternSignature> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ValidationProblem) {
+		if (obj instanceof ConstraintViolation) {
 			@SuppressWarnings("unchecked")
-			ValidationProblem<? extends IPatternSignature> vp2 = (ValidationProblem<? extends IPatternSignature>)obj;
+			ConstraintViolation<? extends IPatternSignature> vp2 = (ConstraintViolation<? extends IPatternSignature>)obj;
 			return this.kind.equals(vp2.kind) && 
 				affectedElements.equals(vp2.affectedElements);
 		}

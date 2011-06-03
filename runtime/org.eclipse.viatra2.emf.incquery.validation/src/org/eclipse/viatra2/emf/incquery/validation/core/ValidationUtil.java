@@ -23,38 +23,38 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
 
 public class ValidationUtil {
 
-	static Map<IFile, Set<ValidationProblem>> file2problemListMap = 
-		new HashMap<IFile, Set<ValidationProblem>>();
-	static Map<Constraint, Map<IPatternSignature, ValidationProblem>> constraint2sigAndVPMap = new HashMap<Constraint, Map<IPatternSignature,ValidationProblem>>();
+	static Map<IFile, Set<ConstraintViolation>> file2problemListMap = 
+		new HashMap<IFile, Set<ConstraintViolation>>();
+	static Map<Constraint, Map<IPatternSignature, ConstraintViolation>> constraint2sigAndVPMap = new HashMap<Constraint, Map<IPatternSignature,ConstraintViolation>>();
 	private static Map<Notifier,Collection<Validator>> activeRoots = 
 		new HashMap<Notifier,Collection<Validator>>();  
 	
-	/*public static Set<ValidationProblem> getProblems(IFile f) {
+	/*public static Set<ConstraintViolation> getProblems(IFile f) {
 		return problems.get(f).keySet();
 	}*/
 	
-	/*static void putProblem(IFile f, ValidationProblem vp) throws CoreException {
+	/*static void putProblem(IFile f, ConstraintViolation vp) throws CoreException {
 		System.out.println("PUT: " + f + " - " + vp.affectedElements.toString());
 		IMarker marker = vp.createMarker(f);
-		Map<ValidationProblem, IMarker> _problems = problems.get(f);
+		Map<ConstraintViolation, IMarker> _problems = problems.get(f);
 		if (_problems == null) {
-			_problems = new HashMap<ValidationProblem, IMarker>();
+			_problems = new HashMap<ConstraintViolation, IMarker>();
 			problems.put(f, _problems);
 		}
 		_problems.put(vp, marker);
 	}
 	
-	static void removeProblem(IFile f, ValidationProblem vp) throws CoreException {
+	static void removeProblem(IFile f, ConstraintViolation vp) throws CoreException {
 		System.out.println("REMOVE: " + f + " - " + vp.affectedElements.toString());
-		Map<ValidationProblem, IMarker> _problems = problems.get(f);
+		Map<ConstraintViolation, IMarker> _problems = problems.get(f);
 		if (_problems != null) {
 			vp.dispose();
 			_problems.remove(vp);
 		}
 	}
 	
-	static boolean knownProblem(IFile f, ValidationProblem _vp) {
-		Map<ValidationProblem, IMarker> _problems = problems.get(f);
+	static boolean knownProblem(IFile f, ConstraintViolation _vp) {
+		Map<ConstraintViolation, IMarker> _problems = problems.get(f);
 		if (_problems!=null) {
 			return _problems.containsKey(_vp);
 		}
@@ -72,16 +72,16 @@ public class ValidationUtil {
 	 * @throws CoreException
 	 */
 	static <Signature extends IPatternSignature> void putProblem(IFile f, Constraint<Signature> constraint, Signature affectedElements) throws CoreException {
-		ValidationProblem<Signature> vp = new ValidationProblem<Signature>(constraint, affectedElements);
-		IMarker marker = vp.createMarker(f);
+		ConstraintViolation<Signature> vp = new ConstraintViolation<Signature>(constraint, affectedElements);
+		vp.createMarker(f);
 		// add validation problem to the list corresponding to the file
 		if(!file2problemListMap.containsKey(f)){
-			file2problemListMap.put(f, new HashSet<ValidationProblem>());
+			file2problemListMap.put(f, new HashSet<ConstraintViolation>());
 		}
 		file2problemListMap.get(f).add(vp);
 		// add validation problem to the map of constraints to signatures and validation problems
 		if (!constraint2sigAndVPMap.containsKey(constraint)) {
-			Map<IPatternSignature, ValidationProblem> sig2VP = new HashMap<IPatternSignature, ValidationProblem>();
+			Map<IPatternSignature, ConstraintViolation> sig2VP = new HashMap<IPatternSignature, ConstraintViolation>();
 			constraint2sigAndVPMap.put(constraint, sig2VP);
 		} else if(constraint2sigAndVPMap.get(constraint).containsKey(affectedElements)){
 			System.err.println("The impossible has happened (putProblem called without knownProblem)");
@@ -100,7 +100,7 @@ public class ValidationUtil {
 	 */
 	static <Signature extends IPatternSignature> void removeProblem(IFile f, Constraint<Signature> constraint, Signature affectedElements) throws CoreException {
 		if (constraint2sigAndVPMap.containsKey(constraint)) {
-			ValidationProblem<Signature> vp = constraint2sigAndVPMap.get(constraint).get(affectedElements);
+			ConstraintViolation<Signature> vp = constraint2sigAndVPMap.get(constraint).get(affectedElements);
 			if(vp != null){
 				vp.dispose();
 				constraint2sigAndVPMap.get(constraint).remove(affectedElements);
@@ -148,9 +148,9 @@ public class ValidationUtil {
 	
 	public static boolean closeValidators(Notifier emfRoot, IFile file) {
 		if (activeRoots.remove(emfRoot) != null) {
-			Set<ValidationProblem> problemSet = new HashSet<ValidationProblem>(file2problemListMap.get(file));
+			Set<ConstraintViolation> problemSet = new HashSet<ConstraintViolation>(file2problemListMap.get(file));
 			if (problemSet != null) {
-				for (ValidationProblem problem : problemSet) {
+				for (ConstraintViolation problem : problemSet) {
 					try {
 						removeProblem(file, problem.kind, problem.affectedElements);
 					} catch (CoreException e) {
