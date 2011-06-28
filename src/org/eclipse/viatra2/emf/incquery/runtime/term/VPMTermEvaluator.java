@@ -331,6 +331,23 @@ public class VPMTermEvaluator {
 		
 	}
 	
+	/** The method executes the -op1 operation according to the type of the operands. If not possible the method throws a IncQueryRuntimeException exception
+	 * @param op1 First operand
+	 * @return The result of the minus operation
+	 * @throws IncQueryRuntimeException
+	 */
+	public static Object minus(Object op1) throws IncQueryRuntimeException {
+		if (op1 instanceof Double) 
+		{ 
+			return -1*(Double)op1;
+		} else if (op1 instanceof Integer) 
+		{ 
+			return -1*(Integer)op1;
+		}
+		else throw new IncQueryRuntimeException (IncQueryRuntimeException .PARAM_NOT_SUITABLE_WITH_NO+"1");
+		
+	}
+	
 	/** The method executes the op1 * op2 operation according to the type of the operands. If not possible the method throws a IncQueryRuntimeException exception
 	 * @param op1 First operand
 	 * @param op2 Second operand

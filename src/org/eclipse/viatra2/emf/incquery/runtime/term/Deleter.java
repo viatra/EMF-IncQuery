@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
- * @author akinator
+ * @author Akos Horvath
  *
  */
 public class Deleter {
