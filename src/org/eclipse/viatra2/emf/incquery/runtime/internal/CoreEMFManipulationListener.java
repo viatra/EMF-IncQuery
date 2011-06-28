@@ -120,7 +120,8 @@ public class CoreEMFManipulationListener {
 				featureUpdate(Direction.REVOKE, oFeature, oldElement, notifier);
 			break;
 		//case Notification.REMOVING_ADAPTER: break;
-		case Notification.RESOLVE:  //TODO Fallthrough? 
+		case Notification.RESOLVE:  //TODO is it safe to ignore all of them? 
+			break;
 		case Notification.UNSET:  //TODO Fallthrough?			
 		case Notification.SET:
 			featureUpdate(Direction.REVOKE, oFeature, oldValue, notifier);
