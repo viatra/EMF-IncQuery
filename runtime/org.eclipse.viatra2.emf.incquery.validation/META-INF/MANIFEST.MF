@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.Activator
 Bundle-Vendor: Gabor Bergmann, Istvan Rath
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources;bundle-version="3.6.0";visibility:=reexport,
+ org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.3.0";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
