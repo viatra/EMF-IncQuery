@@ -12,7 +12,6 @@
 package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -23,12 +22,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
+ * Does not visit derived links.
  * @author Bergmann Gábor
  */
 public class EMFContainmentHierarchyTraversal {
-	Object topElement;
-	Collection<EObject> containedElements = new LinkedHashSet<EObject>();
-	Collection<Resource> containedResources = new LinkedHashSet<Resource>();
+//	Collection<EObject> containedElements = new LinkedHashSet<EObject>();
+	Collection<EObject> rootElements = new LinkedHashSet<EObject>();
+	Collection<Resource> rootResources = new LinkedHashSet<Resource>();
 	
 //	public static EMFContainmentHierarchyTraversal create(Notifier emfRoot) throws IncQueryRuntimeException {
 //		if (emfRoot instanceof ResourceSet) return new EMFContainmentHierarchyTraversal((ResourceSet)emfRoot);
@@ -38,51 +38,58 @@ public class EMFContainmentHierarchyTraversal {
 //	}
 	
 	public EMFContainmentHierarchyTraversal(EObject topElement) {
-		this.topElement = topElement;
-
-		containedElements.add(topElement);
-		for (Iterator<EObject> iContained = topElement.eAllContents(); iContained.hasNext(); ) {
-			containedElements.add(iContained.next());
-		}
+		rootElements.add(topElement);
+//		containedElements.add(topElement);
+//		for (Iterator<EObject> iContained = topElement.eAllContents(); iContained.hasNext(); ) {
+//			containedElements.add(iContained.next());
+//		}
 	}
 	public EMFContainmentHierarchyTraversal(Resource resource) {
-		this.topElement = resource;
-
-		containedResources.add(resource);
-		for (Iterator<EObject> iContained = resource.getAllContents(); iContained.hasNext(); ) {
-			containedElements.add(iContained.next());
-		}
+		rootResources.add(resource);
+//		for (Iterator<EObject> iContained = resource.getAllContents(); iContained.hasNext(); ) {
+//			containedElements.add(iContained.next());
+//		}
 	}
 	public EMFContainmentHierarchyTraversal(ResourceSet resourceSet) {
-		this.topElement = resourceSet;
-		
 		for (Resource resource: resourceSet.getResources()) {
-			containedResources.add(resource);
-			for (Iterator<EObject> iContained = resource.getAllContents(); iContained.hasNext(); ) {
-				containedElements.add(iContained.next());
-			}			
+			rootResources.add(resource);
+//			for (Iterator<EObject> iContained = resource.getAllContents(); iContained.hasNext(); ) {
+//				containedElements.add(iContained.next());
+//			}			
 		}
 
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void accept(EMFVisitor visitor) {
-		for (Resource resource : containedResources) {
+		for (Resource resource : rootResources) {
 			visitor.visitResource(resource);
-			for (EObject element : resource.getContents()) visitor.visitTopElementInResource(resource, element);
+			for (EObject element : resource.getContents()) {
+				visitor.visitTopElementInResource(resource, element);
+				visitObject(visitor, element);
+			}
 		}
-		for (EObject source : containedElements) {
-			visitor.visitElement(source);
-			for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
-				if (feature.isMany()) {
-					Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(feature);
-					for (Object target : targets) {
-						visitFeature(visitor, source, feature, target);	
-					}
-				} else {
-					Object target = source.eGet(feature);
-					visitFeature(visitor, source, feature, target);
+		for (EObject source : rootElements) {
+			visitObject(visitor, source);
+		}
+	}
+	/**
+	 * @param visitor
+	 * @param source
+	 */
+	private void visitObject(EMFVisitor visitor, EObject source) {
+		if (source == null) return;
+		visitor.visitElement(source);
+		for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
+			if (feature.isDerived()) continue;
+			if (feature.isMany()) {
+				Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(feature);
+				for (Object target : targets) {
+					visitFeature(visitor, source, feature, target);	
 				}
+			} else {
+				Object target = source.eGet(feature);
+				visitFeature(visitor, source, feature, target);
 			}
 		}
 	}
@@ -97,10 +104,16 @@ public class EMFContainmentHierarchyTraversal {
 		if (feature instanceof EAttribute) {
 			visitor.visitAttribute(source, (EAttribute)feature, target);
 		} else if (feature instanceof EReference) {
-			if (containedElements.contains(target)) 
-				visitor.visitInternalReference(source, (EReference)feature, (EObject)target);
-			else
-				visitor.visitExternalReference(source, (EReference)feature, (EObject)target);
+			EReference reference = (EReference)feature;
+			EObject targetObject = (EObject)target;
+			if (reference.isContainment()) {
+				visitor.visitInternalContainment(source, reference, targetObject);
+				visitObject(visitor, targetObject);
+			}
+//			if (containedElements.contains(target)) 
+				visitor.visitInternalReference(source, reference, targetObject);
+//			else
+//				visitor.visitExternalReference(source, reference, targetObject);
 		}
 	}
 

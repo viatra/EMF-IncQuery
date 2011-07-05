@@ -59,13 +59,13 @@ public class MultiplexerVisitor extends EMFVisitor {
 		for (EMFVisitor visitor : visitors) visitor.visitElement(source);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitExternalReference(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference, java.lang.Object)
-	 */
-	@Override
-	public void visitExternalReference(EObject source, EReference feature, EObject target) {
-		for (EMFVisitor visitor : visitors) visitor.visitExternalReference(source, feature, target);
-	}
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitExternalReference(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference, java.lang.Object)
+//	 */
+//	@Override
+//	public void visitExternalReference(EObject source, EReference feature, EObject target) {
+//		for (EMFVisitor visitor : visitors) visitor.visitExternalReference(source, feature, target);
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitInternalReference(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference, java.lang.Object)
@@ -75,6 +75,15 @@ public class MultiplexerVisitor extends EMFVisitor {
 		for (EMFVisitor visitor : visitors) visitor.visitInternalReference(source, feature, target);
 	}
 
+/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitInternalContainment(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference, org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	public void visitInternalContainment(EObject source, EReference feature,
+			EObject target) {
+		for (EMFVisitor visitor : visitors) visitor.visitInternalContainment(source, feature, target);
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitAttribute(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EAttribute, java.lang.Object)
 	 */

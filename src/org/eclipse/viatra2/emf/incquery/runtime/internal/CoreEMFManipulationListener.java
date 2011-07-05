@@ -18,10 +18,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
@@ -67,86 +69,120 @@ public class CoreEMFManipulationListener {
 	}
 	
 	// TODO deferred notifications from TransactionalEditingDomains?
-	public void handleEMFNotification(Notification noti) {
-		final Object oFeature = noti.getFeature();
-		final Object oldValue = noti.getOldValue();
-		final Object newValue = noti.getNewValue();
-		final Object notifier = noti.getNotifier();		
-		final int eventType = noti.getEventType();
-		
-		if (notifier instanceof EObject && oFeature != null) {
-			if (activeResources == null || activeResources.contains(((EObject)notifier).eResource()))
-				handleRegularNotification(oFeature, oldValue, newValue, (EObject)notifier, eventType);
-		} else if (notifier instanceof Resource && activeResources!= null) {
-			Resource resource = (Resource) notifier;
-			if (resource.getTimeStamp()==-1 && activeResources.contains(resource)) {
-				activeResources.remove(resource);
-				for (EObject topContent : resource.getContents())
-					attachedTree(topContent, Direction.REVOKE); 
-			}
-			if (resource.getTimeStamp()!=0 && 
-					resource.getTimeStamp()!=-1 && 
-					!activeResources.contains(resource)) 
-			{
-				activeResources.add(resource);
-				for (EObject topContent : resource.getContents())
-					attachedTree(topContent, Direction.INSERT); 
-			}
-			
-		}
-	}
-
 	@SuppressWarnings("deprecation")
-	// TODO handle instantiation update? - no generics supported yet
-	private void handleRegularNotification(final Object oFeature,
-			final Object oldValue, final Object newValue,
-			final EObject notifier, final int eventType) {
+	public void handleEMFNotification(final Notification notification) {
+		
+//		final Object oFeature = noti.getFeature();
+//		final Object oldValue = noti.getOldValue();
+//		final Object newValue = noti.getNewValue();
+//		final Object notifier = noti.getNotifier();		
+//		final int eventType = noti.getEventType();
+//		
+//		if (notifier instanceof EObject && oFeature != null) {
+//			if (activeResources == null || activeResources.contains(((EObject)notifier).eResource()))
+//				handleRegularNotification(oFeature, oldValue, newValue, (EObject)notifier, eventType);
+//		} else if (notifier instanceof Resource && activeResources!= null) {
+//			Resource resource = (Resource) notifier;
+//			if (resource.getTimeStamp()==-1 && activeResources.contains(resource)) {
+//				activeResources.remove(resource);
+//				for (EObject topContent : resource.getContents())
+//					attachedTree(topContent, Direction.REVOKE); 
+//			}
+//			if (resource.getTimeStamp()!=0 && 
+//					resource.getTimeStamp()!=-1 && 
+//					!activeResources.contains(resource)) 
+//			{
+//				activeResources.add(resource);
+//				for (EObject topContent : resource.getContents())
+//					attachedTree(topContent, Direction.INSERT); 
+//			}
+//			
+//		}
+//	}
+//
+//
+//	@SuppressWarnings("deprecation")
+//	// TODO handle instantiation update? - no generics supported yet
+//	private void handleRegularNotification(final Notification notification) {
+		final Object oldValue = notification.getOldValue();
+		final Object newValue = notification.getNewValue();
+		final int eventType = notification.getEventType();
 		switch(eventType) {
 		case Notification.ADD: 
-			featureUpdate(Direction.INSERT, oFeature, newValue, notifier);
+			featureUpdate(Direction.INSERT, newValue, notification);
 			break;
 		case Notification.ADD_MANY: 
 			for (Object newElement: (Collection<?>)newValue) 
-				featureUpdate(Direction.INSERT, oFeature, newElement, notifier);
+				featureUpdate(Direction.INSERT, newElement, notification);
 			break;
 		case Notification.CREATE: 
 			break;
 		case Notification.MOVE: break; // currently no support for ordering
 		case Notification.REMOVE: 
-			featureUpdate(Direction.REVOKE, oFeature, oldValue, notifier);
+			featureUpdate(Direction.REVOKE, oldValue, notification);
 			break;
 		case Notification.REMOVE_MANY:
 			for (Object oldElement: (Collection<?>)oldValue) 
-				featureUpdate(Direction.REVOKE, oFeature, oldElement, notifier);
+				featureUpdate(Direction.REVOKE, oldElement, notification);
 			break;
 		//case Notification.REMOVING_ADAPTER: break;
 		case Notification.RESOLVE:  //TODO is it safe to ignore all of them? 
 			break;
 		case Notification.UNSET:  //TODO Fallthrough?			
 		case Notification.SET:
-			featureUpdate(Direction.REVOKE, oFeature, oldValue, notifier);
-			featureUpdate(Direction.INSERT, oFeature, newValue, notifier);			
+			featureUpdate(Direction.REVOKE, oldValue, notification);
+			featureUpdate(Direction.INSERT, newValue, notification);			
 			break;
 		case Notification.REMOVING_ADAPTER:
 			break;
 		}
 	}
 	
-	private void featureUpdate(Direction direction, Object oFeature, Object changedValue, EObject notifier) {
+	private void featureUpdate(Direction direction, Object changedValue, Notification notification) {
+		final Object notifier = notification.getNotifier();		
+
 		if (changedValue == null) return; // null-valued attributes / references are simply not stored
-		
-		if (oFeature instanceof EAttribute) {
-			EAttribute feature = (EAttribute) oFeature;
-			attributeReferenceUpdate(direction, feature, notifier, changedValue);
-		} else if (oFeature instanceof EReference) {
-			EReference feature = (EReference) oFeature;
-			if (feature.isContainment()) {
-				containmentReferenceUpdate(direction, feature, notifier, changedValue);
-				attachedTree((EObject)changedValue, direction);
-			} else { 
-				nonContainmentReferenceUpdate(direction, feature, notifier, changedValue);
+	
+		if (notifier instanceof ResourceSet)
+		{
+			if (notification.getFeatureID(ResourceSet.class) == ResourceSet.RESOURCE_SET__RESOURCES)
+			{
+				Resource resourceChanged = (Resource)changedValue;
+				EList<EObject> contents = resourceChanged.getContents();
+				for (EObject eObject : contents) {
+					attachedTree(eObject, direction);
+				}		
 			}
 		}
+		else if (notifier instanceof Resource)
+		{
+			if (notification.getFeatureID(Resource.class) == Resource.RESOURCE__CONTENTS)
+			{
+				EObject eObjectChanged = (EObject)changedValue;
+				attachedTree(eObjectChanged, direction);
+			}
+		}
+		else if (notifier instanceof EObject)
+		{
+			Object oFeature = notification.getFeature();
+			if (oFeature instanceof EAttribute) {
+				EAttribute feature = (EAttribute) oFeature;
+				if (!feature.isDerived()) {
+					attributeReferenceUpdate(direction, feature, notifier, changedValue);
+				}
+			} else if (oFeature instanceof EReference) {
+				EReference feature = (EReference) oFeature;
+				if (!feature.isDerived()) {
+					if (feature.isContainment()) {
+						containmentReferenceUpdate(direction, feature, notifier, changedValue);
+						attachedTree((EObject)changedValue, direction);
+					} else { 
+						nonContainmentReferenceUpdate(direction, feature, notifier, changedValue);
+					}
+				}
+			}
+		}
+
 	}
 
 	private void attachedTree(EObject root, final Direction direction) {
@@ -162,18 +198,22 @@ public class CoreEMFManipulationListener {
 				nodeUpdateCore(direction, source.eClass(), source);
 			}
 
-			@Override
-			public void visitExternalReference(EObject source, EReference feature, EObject target) {
-				nonContainmentReferenceUpdate(direction, feature, source, target);	
-			}
+//			@Override
+//			public void visitExternalReference(EObject source, EReference feature, EObject target) {
+//				nonContainmentReferenceUpdate(direction, feature, source, target);	
+//			}
 
 			@Override
 			public void visitInternalReference(EObject source, EReference feature, EObject target) {
-				if (feature.isContainment()) {
-					containmentReferenceUpdate(direction, feature, source, target);			
-				} else {
-					nonContainmentReferenceUpdate(direction, feature, source, target);	
-				}
+				nonContainmentReferenceUpdate(direction, feature, source, target);	
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitInternalContainment(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference, org.eclipse.emf.ecore.EObject)
+			 */
+			@Override
+			public void visitInternalContainment(EObject source, EReference feature, EObject target) {
+				containmentReferenceUpdate(direction, feature, source, target);
 			}
 		});
 	}

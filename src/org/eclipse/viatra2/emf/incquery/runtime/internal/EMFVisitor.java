@@ -41,12 +41,12 @@ public class EMFVisitor {
 	 */
 	public  void visitElement(EObject source) {}
 
-	/**
-	 * @param source
-	 * @param feature
-	 * @param target
-	 */
-	public  void visitExternalReference(EObject source, EReference feature, EObject target) {}
+//	/**
+//	 * @param source
+//	 * @param feature
+//	 * @param target
+//	 */
+//	public  void visitExternalReference(EObject source, EReference feature, EObject target) {}
 
 	/**
 	 * @param source
@@ -54,6 +54,13 @@ public class EMFVisitor {
 	 * @param target
 	 */
 	public  void visitInternalReference(EObject source, EReference feature, EObject target) {}
+
+	/**
+	 * @param source
+	 * @param feature
+	 * @param target
+	 */
+	public  void visitInternalContainment(EObject source, EReference feature, EObject target) {}
 
 	/**
 	 * @param current

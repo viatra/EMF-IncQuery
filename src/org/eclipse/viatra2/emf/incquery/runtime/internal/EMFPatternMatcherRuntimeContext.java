@@ -56,21 +56,24 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		@Override
 		public final void visitInternalReference(EObject source, EReference feature, EObject target) {
 			if (target == null) return; // null-valued attributes / references are simply not stored
-			if (feature.getEOpposite() != null) {
-				if (feature.isContainment()) {
-					doVisitReference(target, feature.getEOpposite(), source);
-				} else if (feature.getEOpposite().isContainment()) {
-					return;
-				}
-			}
-			doVisitReference(source, feature, target);
-		}
-		@Override
-		public void visitExternalReference(EObject source, EReference feature, EObject target) {
-			if (target == null) return; // null-valued attributes / references are simply not stored
 			if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
 			doVisitReference(source, feature, target);
 		}
+
+		@Override
+		public void visitInternalContainment(EObject source,EReference feature, EObject target) {
+			if (target == null) return; // null-valued attributes / references are simply not stored
+			if (feature.getEOpposite() != null) {
+				doVisitReference(target, feature.getEOpposite(), source);			
+			}
+			doVisitReference(source, feature, target);
+		}
+//		@Override
+//		public void visitExternalReference(EObject source, EReference feature, EObject target) {
+//			if (target == null) return; // null-valued attributes / references are simply not stored
+//			if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
+//			doVisitReference(source, feature, target);
+//		}
 		void doVisitReference(EObject source, EReference feature, EObject target) {}
 	}
 	
