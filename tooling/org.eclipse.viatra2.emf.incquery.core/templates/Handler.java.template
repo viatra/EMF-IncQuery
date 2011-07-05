@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.URI;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -35,9 +36,9 @@ public class #java-class-name# extends AbstractHandler implements IHandler {
 		ResourceSet resourceSet = new ResourceSetImpl();
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
 				.toString(), false);
-		Resource res = resourceSet.getResource(fileURI, true);
+		Resource resource = resourceSet.getResource(fileURI, true);
 	
-		String matches = getMatches(res);
+		String matches = getMatches(#matching-scope#);
 		
 		//prints the match set to a dialog window 
 		MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the \"#pattern-name#\" pattern", 
@@ -48,18 +49,18 @@ public class #java-class-name# extends AbstractHandler implements IHandler {
 	
 	/**
 	 * Returns the match set of the #pattern-name# pattern on the input EMF resource
-	 * @param res the container of the EMF model on which the pattern matching is invoked
+	 * @param emfRoot the container of the EMF model on which the pattern matching is invoked
 	 * @return The serialised form of the match set
 	 */
-	private String getMatches(Resource res){
+	private String getMatches(Notifier emfRoot){
 		//the match set will be serialised into a string builder
 		StringBuilder builder = new StringBuilder();
 		
-		if(res != null)
+		if(emfRoot != null)
 		{	
 			try {
 				//get all matches of the pattern
-				#java-matcher# matcher = #java-matcher#.FACTORY.getMatcher(res);
+				#java-matcher# matcher = #java-matcher#.FACTORY.getMatcher(emfRoot);
 				Collection<#java-signature#> matches = matcher.getAllMatchesAsSignature();
 				//serialises the current match into the string builder
 				if(matches.size() > 0)

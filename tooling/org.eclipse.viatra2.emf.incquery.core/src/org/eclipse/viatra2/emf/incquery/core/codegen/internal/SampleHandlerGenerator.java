@@ -110,7 +110,8 @@ public class SampleHandlerGenerator {
 			substitutions.put("java-signature-package", patternData.getSignaturePackage());
 			substitutions.put("java-matcher", patternData.getMatcherName());
 			substitutions.put("java-signature", patternData.getSignatureName());
-
+			substitutions.put("matching-scope", "resource");
+			
 			String className = getHandlerName(pattern);
 			substitutions.put("java-class-name", className);
 
@@ -125,18 +126,27 @@ public class SampleHandlerGenerator {
 			String generatedCode = null;
 			
 			// process annotation
-			String machinePatternMode = null;
 			Map<String, String> annotation = 
 				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@SampleUI");
 			if (annotation != null){
-				machinePatternMode = annotation.get("mode");
+				String machinePatternScope = annotation.get("scope");
+				if (machinePatternScope == null) {
+				} else if ("resourceset".equals(machinePatternScope.toLowerCase())){
+					substitutions.put("matching-scope", "resourceSet");
+				} else if ("resource".equals(machinePatternScope.toLowerCase())){
+					substitutions.put("matching-scope", "resource");
+				}
+			} 
+			if (annotation != null){
+				String machinePatternMode = annotation.get("mode");
 			
 				// counter pattern
-				if ("counter".equals(machinePatternMode)){
+				if (machinePatternMode == null) {
+				} else if("counter".equals(machinePatternMode.toLowerCase())){
 					className = getCounterName(pattern);
 					substitutions.put("java-class-name", className);
 					generatedCode = CodegenSupport.processTemplate(counterTemplate, substitutions);
-				} else if("list".equals(machinePatternMode)){
+				} else if("list".equals(machinePatternMode.toLowerCase())){
 				 	generatedCode = CodegenSupport.processTemplate(handlerTemplate, substitutions);
 				//} else if("ignore".equals(machinePatternMode)){
 				 	//continue;
