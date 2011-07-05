@@ -1,0 +1,91 @@
+grammar org.eclipse.viatra2.gtasm.PatternLanguage with org.eclipse.xtext.common.Terminals
+
+generate patternLanguage "http://www.eclipse.org/viatra2/gtasm/PatternLanguage"
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore" as xbase
+
+PatternModel:
+	imports+=Import*
+	patterns+=Pattern*;
+
+Import:
+	'import' ePackage=[ecore::EPackage|STRING]// ('as' alias=ID)?
+	//'import' importURI=STRING
+;
+	
+Pattern:
+	annotations+=Annotation*
+	modifiers+=Modifiers*
+	'pattern'
+	name=ID
+	'('
+	(parameters+=Parameter (',' parameters+=Parameter)*)?
+	')'
+	'='
+	bodies+=PatternBody	('or' bodies+=PatternBody)*
+;
+
+Annotation:
+	'@'
+	name=ID
+;
+
+Modifiers:
+	shareable?='shareable' 
+;
+
+Variable:
+	Parameter | LocalVariable
+;
+
+Parameter: 
+	name=ID
+	(':' type=Type)?
+;
+
+LocalVariable returns Variable:
+	name=ID
+;
+
+VariableReference:
+	var = [Variable]
+;
+
+Type returns EMFType:
+	//(package=[Import] '::')?
+	typename=[ecore::EClassifier]
+;
+
+
+PatternBody returns PatternBody:
+{PatternBody}
+    (name=ID)?
+	'{'
+	  (constraints += Constraint ';')+
+	'}'
+;
+
+Constraint:
+	EClassConstraint | CheckConstraint | PatternCompositionConstraint
+;
+
+
+
+EClassConstraint:
+	class = Type '(' var=VariableReference ')'
+;
+
+
+PatternCompositionConstraint:
+	negative?='neg'?
+	'find'
+	patternRef = [Pattern]
+	'('
+	  (parameters+=VariableReference (',' parameters+=VariableReference)*)?
+	')'
+;
+
+CheckConstraint:{CheckConstraint}
+	'check' '(' ')'
+;
