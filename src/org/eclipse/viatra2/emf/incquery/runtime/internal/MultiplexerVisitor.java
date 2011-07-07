@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  * Multiplexes between a collection of EMF visitors.
  * @author Bergmann Gábor
  *
+ * TODO eliminate and replace with better visitor that is aware of requests
  */
 public class MultiplexerVisitor extends EMFVisitor {
 	
@@ -71,8 +72,8 @@ public class MultiplexerVisitor extends EMFVisitor {
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#visitInternalReference(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference, java.lang.Object)
 	 */
 	@Override
-	public void visitInternalReference(EObject source, EReference feature, EObject target) {
-		for (EMFVisitor visitor : visitors) visitor.visitInternalReference(source, feature, target);
+	public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
+		for (EMFVisitor visitor : visitors) visitor.visitNonContainmentReference(source, feature, target);
 	}
 
 /* (non-Javadoc)

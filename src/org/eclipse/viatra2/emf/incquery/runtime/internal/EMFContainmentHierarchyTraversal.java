@@ -59,6 +59,10 @@ public class EMFContainmentHierarchyTraversal {
 		}
 
 	}
+	public EMFContainmentHierarchyTraversal(ResourceSet resourceSet, Collection<Resource> additionalResources) {
+		this(resourceSet);
+		rootResources.addAll(additionalResources);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public void accept(EMFVisitor visitor) {
@@ -109,9 +113,10 @@ public class EMFContainmentHierarchyTraversal {
 			if (reference.isContainment()) {
 				visitor.visitInternalContainment(source, reference, targetObject);
 				visitObject(visitor, targetObject);
-			}
+			} else {
 //			if (containedElements.contains(target)) 
-				visitor.visitInternalReference(source, reference, targetObject);
+				visitor.visitNonContainmentReference(source, reference, targetObject);
+			}
 //			else
 //				visitor.visitExternalReference(source, reference, targetObject);
 		}

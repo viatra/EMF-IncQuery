@@ -13,8 +13,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.viatra2.emf.incquery.runtime.EMFPatternMatcherContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
@@ -42,7 +43,11 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	implements IPatternMatcherRuntimeContext<PatternDescription>
 {
 	protected abstract EMFContainmentHierarchyTraversal newTraversal();
-	protected abstract Notifier getRoot();	
+	protected abstract ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine);
+	
+	protected Collection<EMFVisitor> waitingVisitors;
+	boolean traversalCoalescing;
+	protected ExtensibleEMFManipulationListener listener;
 	
 	/**
 	 * @param visitor
@@ -52,11 +57,12 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		else newTraversal().accept(visitor);
 	}
 	
-	static class CustomizedEMFVisitor extends EMFVisitor {
+	class CustomizedEMFVisitor extends EMFVisitor {
 		@Override
-		public final void visitInternalReference(EObject source, EReference feature, EObject target) {
+		public final void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
 			if (target == null) return; // null-valued attributes / references are simply not stored
 			if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
+			considerForExpansion(target);
 			doVisitReference(source, feature, target);
 		}
 
@@ -79,18 +85,32 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	
 	public static class ForResourceSet<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
 		ResourceSet root;
+		Collection<Resource> additionalResources;
 		public ForResourceSet(ResourceSet root) {
 			super();
 			this.root = root;
+			this.additionalResources = new HashSet<Resource>();
 		}
 		@Override
 		protected EMFContainmentHierarchyTraversal newTraversal() {
-			return new EMFContainmentHierarchyTraversal(root);
+			return new EMFContainmentHierarchyTraversal(root, additionalResources);
 		}
 		@Override
-		protected Notifier getRoot() {
-			return root;
+		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
+			ExtensibleEMFManipulationListener emfContentTreeViralListener = new EMFContentTreeViralListener(engine, root, this);
+			for (Resource resource : additionalResources) {
+				emfContentTreeViralListener.addRoot(resource);
+			}
+			return emfContentTreeViralListener;
 		}	
+		@Override
+		public void considerForExpansion(EObject obj) {
+			Resource eResource = obj.eResource();
+			if (eResource != null && eResource.getResourceSet() == null && !additionalResources.contains(eResource)) {
+				additionalResources.add(eResource);
+				listener.addRoot(eResource);
+			}
+		}
 	}
 	public static class ForResource<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
 		Resource root;
@@ -103,9 +123,11 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 			return new EMFContainmentHierarchyTraversal(root);
 		}	
 		@Override
-		protected Notifier getRoot() {
-			return root;
+		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
+			return new EMFContentTreeViralListener(engine, root, this);
 		}	
+		@Override
+		public void considerForExpansion(EObject obj) {}
 	}
 	public static class ForEObject<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
 		EObject root;
@@ -118,19 +140,36 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 			return new EMFContainmentHierarchyTraversal(root);
 		}	
 		@Override
-		protected Notifier getRoot() {
-			return root;
+		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
+			return new EMFContentTreeViralListener(engine, root, this);
 		}	
+		@Override
+		public void considerForExpansion(EObject obj) {}
+	}
+	public static class ForTransactionalEditingDomain<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
+		TransactionalEditingDomain domain;
+		public ForTransactionalEditingDomain(TransactionalEditingDomain domain) {
+			super();
+			this.domain = domain;
+		}
+		@Override
+		protected EMFContainmentHierarchyTraversal newTraversal() {
+			return new EMFContainmentHierarchyTraversal(domain.getResourceSet());
+		}
+		@Override
+		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
+			return new EMFTransactionalEditingDomainListener(engine, domain, this);
+		}
+		@Override
+		public void considerForExpansion(EObject obj) {}
+
 	}
 	
-	protected Collection<EMFVisitor> waitingVisitors;
-	boolean traversalCoalescing;
-
 	/**
 	 * Notifier must be EObject, Resource or ResourceSet
 	 * @param notifier
 	 */
-	private EMFPatternMatcherRuntimeContext() {
+	protected EMFPatternMatcherRuntimeContext() {
 		this.waitingVisitors = new ArrayList<EMFVisitor>();
 		this.traversalCoalescing = false;
 	}
@@ -340,7 +379,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	// TODO Transactional?
 	public IManipulationListener subscribePatternMatcherForUpdates(
 			ReteEngine<PatternDescription> engine) {
-		return new EMFContentTreeViralListener(engine, getRoot());
+		if (listener == null) listener = newListener(engine);
+		return listener;
 	}
 
 	@Override
@@ -374,4 +414,10 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		};
 	}
 	
+	/**
+	 * Consider expanding the notification scope to this object and surroundings.
+	 * Hack added primarily to handle EPackage instances referenced by nsUri
+	 * @param obj
+	 */
+	public abstract void considerForExpansion(EObject obj);
 }

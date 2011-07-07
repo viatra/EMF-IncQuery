@@ -11,13 +11,20 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 
 /**
  * Uses an EContentAdapter to virally spread in an EMF containment tree (up to ResourceSet) and forward notifications 
@@ -25,8 +32,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
  * @author Bergmann Gábor
  *
  */
-public class EMFContentTreeViralListener extends EContentAdapter implements IManipulationListener {	
-	protected Notifier rootNotifier;	
+public class EMFContentTreeViralListener extends EContentAdapter implements ExtensibleEMFManipulationListener {	
+	protected Set<Notifier> rootNotifiers;
 	CoreEMFManipulationListener coreListener;
 	
 	/**
@@ -35,13 +42,48 @@ public class EMFContentTreeViralListener extends EContentAdapter implements IMan
 	 * 
 	 * @param engine
 	 */
-	public EMFContentTreeViralListener(ReteEngine<?> engine, Notifier rootNotifier) {
+	public EMFContentTreeViralListener(ReteEngine<?> engine, Notifier rootNotifier, EMFPatternMatcherRuntimeContext<?> context) {
+		this(engine, Collections.singletonList(rootNotifier), context);
+	}
+	/**
+	 * Prerequisite: engine has its network, framework and boundary fields
+	 * initialized
+	 * 
+	 * @param engine
+	 */
+	public EMFContentTreeViralListener(ReteEngine<?> engine, Collection<Notifier> rootNotifiers, EMFPatternMatcherRuntimeContext<?> context) {
 		super();
-			
-		this.rootNotifier = rootNotifier;
-		this.coreListener = new CoreEMFManipulationListener(engine, rootNotifier instanceof ResourceSet);
+		
+		this.rootNotifiers = new HashSet<Notifier>(rootNotifiers);
+		this.coreListener = new CoreEMFManipulationListener(engine, context); //, rootNotifier instanceof ResourceSet);
+		for (Notifier notifier : rootNotifiers) {
+			notifier.eAdapters().add(this);
+		}
 		engine.addDisconnectable(this);	
-		rootNotifier.eAdapters().add(this);
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.ExtensibleEMFManipulationListener#addRoot(org.eclipse.emf.common.notify.Notifier)
+	 */
+	@Override
+	public void addRoot(Notifier notifier) {
+		if (rootNotifiers.add(notifier)) {
+			notifier.eAdapters().add(this);
+			if (notifier instanceof EObject) {
+				coreListener.attachedTree((EObject) notifier, Direction.INSERT);
+			} else if (notifier instanceof Resource) {
+				for (EObject eObj : ((Resource) notifier).getContents()) {
+					coreListener.attachedTree(eObj, Direction.INSERT);
+				}
+			} else if (notifier instanceof ResourceSet) {
+				for (Resource r : ((ResourceSet) notifier).getResources()) {
+					for (EObject eObj : r.getContents()) {
+						coreListener.attachedTree(eObj, Direction.INSERT);
+					}
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -49,7 +91,9 @@ public class EMFContentTreeViralListener extends EContentAdapter implements IMan
 	 */
 	@Override
 	public void disconnect() {
-		rootNotifier.eAdapters().remove(this);
+		for (Notifier notifier : rootNotifiers) {
+			notifier.eAdapters().remove(this);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -13,13 +13,13 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.NotificationFilter;
 import org.eclipse.emf.transaction.ResourceSetChangeEvent;
 import org.eclipse.emf.transaction.ResourceSetListener;
 import org.eclipse.emf.transaction.RollbackException;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 
@@ -28,7 +28,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
  * Forwards notifications from a TransactionalEditingDomain to a CoreEMFManipualtionListener.
  * @author Bergmann Gábor
  */
-public class EMFTransactionalEditingDomainListener implements ResourceSetListener, IManipulationListener {
+public class EMFTransactionalEditingDomainListener implements ResourceSetListener, ExtensibleEMFManipulationListener {
 
 	protected TransactionalEditingDomain domain;	
 	protected ResourceSet resourceSet;
@@ -42,12 +42,12 @@ public class EMFTransactionalEditingDomainListener implements ResourceSetListene
 	 * @param engine
 	 */
 	public EMFTransactionalEditingDomainListener(ReteEngine<?> engine,
-			TransactionalEditingDomain domain) {
+			TransactionalEditingDomain domain, EMFPatternMatcherRuntimeContext<?> context) {
 		super();
 			
 		this.domain = domain;
 		this.resourceSet = domain.getResourceSet();
-		this.coreListener = new CoreEMFManipulationListener(engine, true /*TODO DEFERRED Tree traversals? */);
+		this.coreListener = new CoreEMFManipulationListener(engine, context); //, true /*TODO DEFERRED Tree traversals? */);
 		engine.addDisconnectable(this);		
 		domain.addResourceSetListener(this);
 	}
@@ -110,5 +110,11 @@ public class EMFTransactionalEditingDomainListener implements ResourceSetListene
 		domain.removeResourceSetListener(this);
 	}
 	
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.ExtensibleEMFManipulationListener#addRoot(org.eclipse.emf.common.notify.Notifier)
+	 */
+	@Override
+	public void addRoot(Notifier notifier) {
+		throw new UnsupportedOperationException();
+	}
 }

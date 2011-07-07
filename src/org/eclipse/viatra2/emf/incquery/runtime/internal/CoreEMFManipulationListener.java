@@ -41,13 +41,14 @@ public class CoreEMFManipulationListener {
 	protected ReteEngine<?> engine;
 	protected ReteBoundary<?> boundary;
 	protected ReteContainer headContainer;
+	protected EMFPatternMatcherRuntimeContext<?> context;
 	
-	/** 
-	 * Contains the set of resources that have finished loading and are not unloaded yet.
-	 * Notification is accepted only from these resources.
-	 * If null, no check is performed and the collection is not maintained. 
-	 */
-	protected Collection<Resource> activeResources;
+//	/** 
+//	 * Contains the set of resources that have finished loading and are not unloaded yet.
+//	 * Notification is accepted only from these resources.
+//	 * If null, no check is performed and the collection is not maintained. 
+//	 */
+//	protected Collection<Resource> activeResources;
 
 	/** TermEvaluatorNodes that have to be notified on changes affecting a given ModelElement */
 	protected Map<Object, Set<PredicateEvaluatorNode>> sensitiveTerms;
@@ -58,52 +59,20 @@ public class CoreEMFManipulationListener {
 	 * 
 	 * @param engine
 	 */
-	public CoreEMFManipulationListener(ReteEngine<?> engine, boolean resourceLoadingFilter) {
+	public CoreEMFManipulationListener(ReteEngine<?> engine, EMFPatternMatcherRuntimeContext<?> context){ //, boolean resourceLoadingFilter) {
 		super();
 		this.engine = engine;
+		this.context = context;
 		this.boundary = engine.getBoundary();
 		this.headContainer = engine.getReteNet().getHeadContainer();
 
 		this.sensitiveTerms = new HashMap<Object, Set<PredicateEvaluatorNode>>();
-		if (resourceLoadingFilter) this.activeResources = new HashSet<Resource>();
+//		if (resourceLoadingFilter) this.activeResources = new HashSet<Resource>();
 	}
 	
 	// TODO deferred notifications from TransactionalEditingDomains?
 	@SuppressWarnings("deprecation")
 	public void handleEMFNotification(final Notification notification) {
-		
-//		final Object oFeature = noti.getFeature();
-//		final Object oldValue = noti.getOldValue();
-//		final Object newValue = noti.getNewValue();
-//		final Object notifier = noti.getNotifier();		
-//		final int eventType = noti.getEventType();
-//		
-//		if (notifier instanceof EObject && oFeature != null) {
-//			if (activeResources == null || activeResources.contains(((EObject)notifier).eResource()))
-//				handleRegularNotification(oFeature, oldValue, newValue, (EObject)notifier, eventType);
-//		} else if (notifier instanceof Resource && activeResources!= null) {
-//			Resource resource = (Resource) notifier;
-//			if (resource.getTimeStamp()==-1 && activeResources.contains(resource)) {
-//				activeResources.remove(resource);
-//				for (EObject topContent : resource.getContents())
-//					attachedTree(topContent, Direction.REVOKE); 
-//			}
-//			if (resource.getTimeStamp()!=0 && 
-//					resource.getTimeStamp()!=-1 && 
-//					!activeResources.contains(resource)) 
-//			{
-//				activeResources.add(resource);
-//				for (EObject topContent : resource.getContents())
-//					attachedTree(topContent, Direction.INSERT); 
-//			}
-//			
-//		}
-//	}
-//
-//
-//	@SuppressWarnings("deprecation")
-//	// TODO handle instantiation update? - no generics supported yet
-//	private void handleRegularNotification(final Notification notification) {
 		final Object oldValue = notification.getOldValue();
 		final Object newValue = notification.getNewValue();
 		final int eventType = notification.getEventType();
@@ -185,7 +154,7 @@ public class CoreEMFManipulationListener {
 
 	}
 
-	private void attachedTree(EObject root, final Direction direction) {
+	public void attachedTree(EObject root, final Direction direction) {
 		new EMFContainmentHierarchyTraversal(root).accept(new EMFVisitor(){
 
 			@Override
@@ -204,7 +173,7 @@ public class CoreEMFManipulationListener {
 //			}
 
 			@Override
-			public void visitInternalReference(EObject source, EReference feature, EObject target) {
+			public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
 				nonContainmentReferenceUpdate(direction, feature, source, target);	
 			}
 			
@@ -240,6 +209,7 @@ public class CoreEMFManipulationListener {
 			if (reference.getEOpposite() != null && reference.getEOpposite().isContainment()) {
 				return; // SKIP core update of containment's opposite, defer to when containment is updated		
 			} else {
+				if (direction==Direction.INSERT) context.considerForExpansion((EObject) target);
 				edgeUpdateCore(direction, reference, source, target);	
 			}
 		}

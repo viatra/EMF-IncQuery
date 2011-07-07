@@ -53,7 +53,7 @@ public class EMFVisitor {
 	 * @param feature
 	 * @param target
 	 */
-	public  void visitInternalReference(EObject source, EReference feature, EObject target) {}
+	public  void visitNonContainmentReference(EObject source, EReference feature, EObject target) {}
 
 	/**
 	 * @param source

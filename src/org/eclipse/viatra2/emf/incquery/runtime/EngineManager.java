@@ -24,9 +24,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFTransactionalEditingDomainListener;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.MultiplexerPatternBuilder;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
@@ -57,6 +55,10 @@ public class EngineManager {
 	
 	/**
 	 * Creates an EMF-IncQuery engine at an EMF root or retrieves an already existing one.
+	 * 
+	 * Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the resourceSet but are referenced. 
+	 * 	This is mainly to support nsURI-based instance-level references to registered EPackages.
+	 * 
 	 * @param emfRoot the EMF root where this engine should operate
 	 * @param reteThreads experimental feature; 0 is recommended
 	 * @return a new or previously existing engine
@@ -111,18 +113,11 @@ public class EngineManager {
 	 * @throws IncQueryRuntimeException
 	 */	
 	public ReteEngine<String> getReteEngine(final TransactionalEditingDomain editingDomain, int reteThreads) throws IncQueryRuntimeException {
-		ResourceSet resourceSet = editingDomain.getResourceSet();
+		final ResourceSet resourceSet = editingDomain.getResourceSet();
 		WeakReference<ReteEngine<String>> weakReference = engines.get(resourceSet);
 		ReteEngine<String> engine = weakReference != null ? weakReference.get() : null;
 		if (engine == null) {
-			IPatternMatcherRuntimeContext<String> context = new 
-				EMFPatternMatcherRuntimeContext.ForResourceSet<String>(resourceSet) {
-					@Override
-					public IManipulationListener subscribePatternMatcherForUpdates(
-							ReteEngine<String> engine) {
-						return new EMFTransactionalEditingDomainListener(engine, editingDomain);
-					}
-				};
+			IPatternMatcherRuntimeContext<String> context = new EMFPatternMatcherRuntimeContext.ForTransactionalEditingDomain<String>(editingDomain);
 			engine = buildReteEngine(context, reteThreads);
 			if (engine != null) engines.put(resourceSet, new WeakReference<ReteEngine<String>>(engine));
 		}
