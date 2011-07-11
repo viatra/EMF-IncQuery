@@ -72,8 +72,9 @@ Constraint:
 
 
 
-EClassConstraint:
-	class = Type '(' var=VariableReference ')'
+EClassConstraint returns Variable:
+	{EClassConstraint}
+	type = Type '(' name=ID ')'
 ;
 
 
