@@ -53,8 +53,13 @@ VariableReference:
 ;
 
 Type returns EMFType:
-	//(package=[Import] '::')?
-	typename=[ecore::EClassifier]
+	{ClassType}
+	typename=[ecore::EClass]
+;
+
+RefType returns EMFType:
+	{ReferenceType}
+	typename=[ecore::EReference]
 ;
 
 
@@ -67,10 +72,8 @@ PatternBody returns PatternBody:
 ;
 
 Constraint:
-	EClassConstraint | CheckConstraint | PatternCompositionConstraint
+	EClassConstraint | CheckConstraint | PatternCompositionConstraint | ExpressionConstraint
 ;
-
-
 
 EClassConstraint returns Variable:
 	{EClassConstraint}
@@ -78,7 +81,8 @@ EClassConstraint returns Variable:
 ;
 
 
-PatternCompositionConstraint:
+PatternCompositionConstraint returns Constraint:
+	{PatternCompositionConstraint}
 	negative?='neg'?
 	'find'
 	patternRef = [Pattern]
@@ -87,6 +91,22 @@ PatternCompositionConstraint:
 	')'
 ;
 
-CheckConstraint:{CheckConstraint}
+CheckConstraint returns Constraint:
+	{CheckConstraint}
 	'check' '(' ')'
 ;
+
+ExpressionConstraint returns Constraint:
+	{ExpressionConstraint}
+	negative?='neg'?
+	head=ExpressionHead
+;
+
+ExpressionHead:
+	type = Type '.' tail = ExpressionTail '('src=VariableReference ',' dst=VariableReference ')'
+;
+
+ExpressionTail:
+	type = RefType ('[' index=INT ']')? closure?='*'? ('.' tail = ExpressionTail)?
+;
+

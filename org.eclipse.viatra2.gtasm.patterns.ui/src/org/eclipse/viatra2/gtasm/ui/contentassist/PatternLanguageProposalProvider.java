@@ -12,11 +12,11 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.viatra2.gtasm.patternLanguage.EClassConstraint;
 import org.eclipse.viatra2.gtasm.patternLanguage.EMFType;
 import org.eclipse.viatra2.gtasm.patternLanguage.Import;
 import org.eclipse.viatra2.gtasm.patternLanguage.Parameter;
 import org.eclipse.viatra2.gtasm.patternLanguage.PatternModel;
+import org.eclipse.viatra2.gtasm.patternLanguage.Variable;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -78,10 +78,8 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 		ContentAssistContext.Builder myContextBuilder = context.copy();
 		myContextBuilder.setMatcher(new ClassifierPrefixMatcher(context.getMatcher(), getQualifiedNameConverter()));
 		EMFType type = null;
-		if (model instanceof Parameter) {
-			type = ((Parameter) model).getType();
-		} else if (model instanceof EClassConstraint) {
-			type = ((EClassConstraint) model).getClass_();
+		if (model instanceof Variable) {
+			type = ((Variable) model).getType();
 		} else {
 			return;
 		}
