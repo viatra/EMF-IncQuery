@@ -132,7 +132,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 	}
 	
 	protected String gen(Stub<String> stub) {
-		return stub.handle;
+		return stub.getHandle();
 	}
 	protected String gen(boolean bool) {
 		return bool? "true": "false";
@@ -207,8 +207,8 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 		};
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildBetaNode", arguments);
 		
-		Tuple newCalibrationPattern = negative ? primaryStub.calibrationPattern
-				: complementer.combine(primaryStub.calibrationPattern, sideStub.calibrationPattern, Options.enableInheritance, true);
+		Tuple newCalibrationPattern = negative ? primaryStub.getVariablesTuple()
+				: complementer.combine(primaryStub.getVariablesTuple(), sideStub.getVariablesTuple(), Options.enableInheritance, true);
 
 		return new Stub<String>(newCalibrationPattern, resultVar);
 	}
@@ -225,7 +225,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 			};
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildCountCheckBetaNode", arguments);
 
-		return new Stub<String>(primaryStub.calibrationPattern, resultVar);
+		return new Stub<String>(primaryStub.getVariablesTuple(), resultVar);
 	}
 
 	public Stub<String> buildCounterBetaNode(Stub<String> primaryStub,
@@ -242,7 +242,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildCounterBetaNode", arguments);
 		
 		Object[] newCalibrationElement = {aggregateResultCalibrationElement}; 
-		Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryStub.calibrationPattern, newCalibrationElement);
+		Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryStub.getVariablesTuple(), newCalibrationElement);
 		
 		return new Stub<String>(newCalibrationPattern, resultVar);
 	}
@@ -294,7 +294,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 			gen(stub), gen(trimMask)
 		};
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildTrimmer", arguments);
-		return new Stub<String>(trimMask.transform(stub.calibrationPattern), resultVar);
+		return new Stub<String>(trimMask.transform(stub.getVariablesTuple()), resultVar);
 	}
 
 

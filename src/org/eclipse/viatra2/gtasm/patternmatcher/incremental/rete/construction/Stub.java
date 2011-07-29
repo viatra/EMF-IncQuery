@@ -12,7 +12,9 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction;
 
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 
@@ -20,38 +22,66 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  * @author Bergmann Gábor
  *
- * @param <HandleType> the type of RETE node handle this stub type will augment
+ * @param <HandleType> the buildable-specific representation of RETE node handle this stub type will augment
  */
 public class Stub<HandleType> {
-	public HandleType handle;
-	public Tuple calibrationPattern;
-	public Map<Object, Integer> calibrationIndex;
+	private HandleType handle;
+	private Tuple variablesTuple;
+	private Map<Object, Integer> variablesIndex;
+	private Set<PConstraint> constraints;
 
-
-	public Stub(Map<Object, Integer> calibrationIndex, Tuple calibrationPattern, HandleType handle) {
+	private Stub(Map<Object, Integer> calibrationIndex, Tuple variablesIndex, HandleType handle) {
 		super();
-		this.calibrationIndex = calibrationIndex;
-		this.calibrationPattern = calibrationPattern;
+		this.variablesIndex = calibrationIndex;
+		this.variablesTuple = variablesIndex;
 		this.handle = handle;
 	}
-	public Stub(Tuple calibrationPattern, HandleType handle) {
-		super();
-		this.calibrationIndex = calibrationPattern.invertIndex();
-		this.calibrationPattern = calibrationPattern;
-		this.handle = handle;
+	public Stub(Tuple variablesTuple, HandleType handle) {
+		this(variablesTuple.invertIndex(), variablesTuple, handle);
 	}
-	public Stub(Stub<HandleType> template) {
-		this(template.calibrationIndex, template.calibrationPattern, template.handle);
-	}	
+//	public Stub(Stub<HandleType> template) {
+//		this(template.variablesIndex, template.variablesTuple, template.getHandle());
+//	}	
 	public Stub(Stub<HandleType> template, HandleType handle) {
-		this(template.calibrationIndex, template.calibrationPattern, handle);
+		this(template.variablesIndex, template.variablesTuple, handle);
+		constraints.addAll(template.getConstraints());
 	}	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Stub("+handle+")";
+		return "Stub("+getHandle()+")";
 	}
+	/**
+	 * @return the tuple of variables that define the schame emanating from the handle
+	 */
+	public Tuple getVariablesTuple() {
+		return variablesTuple;
+	}
+	/**
+	 * @return the handle of a RETE supplier node that hosts a certain relation (set of tuples)  
+	 */
+	public HandleType getHandle() {
+		return handle;
+	}
+	/**
+	 * @return the index of variablesTuple
+	 */
+	public Map<Object, Integer> getVariablesIndex() {
+		return variablesIndex;
+	}
+	/**
+	 * @return the constraints already enforced at this handle
+	 */
+	public Set<PConstraint> getConstraints() {
+		return constraints;
+	}
+	/**
+	 * @return the constraints
+	 */
+	public void addConstraint(PConstraint constraint) {
+		constraints.add(constraint);
+	}	
 	
 }

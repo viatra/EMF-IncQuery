@@ -84,12 +84,12 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 	}
 	
 	public Stub<Address<? extends Supplier>> buildTrimmer(Stub<Address<? extends Supplier>> stub, TupleMask trimMask) { 
-		Address<TrimmerNode> bodyTerminator = library.accessTrimmerNode(stub.handle, trimMask); 
-		return new Stub<Address<? extends Supplier>>(trimMask.transform(stub.calibrationPattern), bodyTerminator);
+		Address<TrimmerNode> bodyTerminator = library.accessTrimmerNode(stub.getHandle(), trimMask); 
+		return new Stub<Address<? extends Supplier>>(trimMask.transform(stub.getVariablesTuple()), bodyTerminator);
 	}
 
 	public void buildConnection(Stub<Address<? extends Supplier>> stub, Address<? extends Receiver> collector) {
-		reteNet.connectRemoteNodes(stub.handle, collector, true);
+		reteNet.connectRemoteNodes(stub.getHandle(), collector, true);
 	}
 
 	public Stub<Address<? extends Supplier>> buildStartStub(Object[] constantValues, Object[] constantNames) {
@@ -98,15 +98,15 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 	}
 
 	public Stub<Address<? extends Supplier>> buildEqualityChecker(Stub<Address<? extends Supplier>> stub, int[] indices) {
-		Address<EqualityFilterNode> checker = library.accessEqualityFilterNode(stub.handle, indices);
+		Address<EqualityFilterNode> checker = library.accessEqualityFilterNode(stub.getHandle(), indices);
 		return new Stub<Address<? extends Supplier>>(stub, checker);
 	}
 
 	public Stub<Address<? extends Supplier>> buildInjectivityChecker(Stub<Address<? extends Supplier>> stub, int subject, int[] inequalIndices) 
 	{
 		Address<InequalityFilterNode> checker = 
-			library.accessInequalityFilterNode(stub.handle, subject, 
-					new TupleMask(inequalIndices, stub.calibrationPattern.getSize()));
+			library.accessInequalityFilterNode(stub.getHandle(), subject, 
+					new TupleMask(inequalIndices, stub.getVariablesTuple().getSize()));
 		return new Stub<Address<? extends Supplier>>(stub, checker);
 	}
 
@@ -160,15 +160,15 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 			TupleMask complementer, 
 			boolean negative) 
 			{
-				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.handle,primaryMask);
-				Address<? extends Indexer> sideSlot = library.accessProjectionIndexer(sideStub.handle, sideMask);
+				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.getHandle(),primaryMask);
+				Address<? extends Indexer> sideSlot = library.accessProjectionIndexer(sideStub.getHandle(), sideMask);
 			
 				Address<? extends DualInputNode> checker = negative ? library
 						.accessExistenceNode(primarySlot, sideSlot, true) : library
 						.accessJoinNode(primarySlot, sideSlot, complementer);
 						
-				Tuple newCalibrationPattern = negative ? primaryStub.calibrationPattern
-						: complementer.combine(primaryStub.calibrationPattern, sideStub.calibrationPattern, 
+				Tuple newCalibrationPattern = negative ? primaryStub.getVariablesTuple()
+						: complementer.combine(primaryStub.getVariablesTuple(), sideStub.getVariablesTuple(), 
 								Options.enableInheritance, true);
 			
 				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(newCalibrationPattern, checker);
@@ -184,15 +184,15 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 			TupleMask complementer,
 			Object aggregateResultCalibrationElement)  
 			{
-				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.handle,primaryMask);
-				Address<? extends Indexer> sideSlot = library.accessCountOuterIndexer(sideStub.handle, originalSideMask);
+				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.getHandle(),primaryMask);
+				Address<? extends Indexer> sideSlot = library.accessCountOuterIndexer(sideStub.getHandle(), originalSideMask);
 			
 				Address<? extends DualInputNode> checker = library
 						.accessJoinNode(primarySlot, sideSlot, 
 								TupleMask.selectSingle(originalSideMask.indices.length, originalSideMask.indices.length+1));
 						
 				Object[] newCalibrationElement = {aggregateResultCalibrationElement}; 
-				Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryStub.calibrationPattern, newCalibrationElement);
+				Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryStub.getVariablesTuple(), newCalibrationElement);
 			
 				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(newCalibrationPattern, checker);
 			
@@ -205,13 +205,13 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 			TupleMask originalSideMask,
 			int resultPositionInSignature) 
 			{
-				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.handle,primaryMask);
-				Address<? extends Indexer> sideSlot = library.accessCountOuterIdentityIndexer(sideStub.handle, originalSideMask, resultPositionInSignature);
+				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.getHandle(),primaryMask);
+				Address<? extends Indexer> sideSlot = library.accessCountOuterIdentityIndexer(sideStub.getHandle(), originalSideMask, resultPositionInSignature);
 			
 				Address<? extends DualInputNode> checker = library
 						.accessJoinNode(primarySlot, sideSlot, TupleMask.empty(originalSideMask.indices.length+1));
 						
-				Tuple newCalibrationPattern = primaryStub.calibrationPattern;
+				Tuple newCalibrationPattern = primaryStub.getVariablesTuple();
 			
 				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(newCalibrationPattern, checker);
 			
@@ -226,10 +226,10 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 		) 
 	{
 		PredicateEvaluatorNode ten =  new PredicateEvaluatorNode(engine, targetContainer, 
-				rhsIndex, affectedIndices, stub.calibrationPattern.getSize(), evaluator);
+				rhsIndex, affectedIndices, stub.getVariablesTuple().getSize(), evaluator);
 		Address<PredicateEvaluatorNode> checker = Address.of(ten);
 		
-		reteNet.connectRemoteNodes(stub.handle, checker, true);
+		reteNet.connectRemoteNodes(stub.getHandle(), checker, true);
 		
 		Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(stub, checker);
 		
@@ -257,8 +257,8 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 			targetContainer.getLibrary().accessProjectionIndexer(filteredRoot, new TupleMask(secondaryIndices, 2));
 		// build primary indexer
 		int[] primaryIndices = {constrainedIndex};
-		TupleMask primaryMask = new TupleMask(primaryIndices, stub.calibrationPattern.getSize());
-		Address<? extends IterableIndexer> primary = targetContainer.getLibrary().accessProjectionIndexer(stub.handle, primaryMask);
+		TupleMask primaryMask = new TupleMask(primaryIndices, stub.getVariablesTuple().getSize());
+		Address<? extends IterableIndexer> primary = targetContainer.getLibrary().accessProjectionIndexer(stub.getHandle(), primaryMask);
 		// build checker
 		stub = new Stub<Address<? extends Supplier>>(stub, targetContainer.getLibrary().accessExistenceNode(primary, secondary, false));
 		return stub;
