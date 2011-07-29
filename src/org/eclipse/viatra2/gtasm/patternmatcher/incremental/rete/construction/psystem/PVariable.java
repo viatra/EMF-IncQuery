@@ -11,6 +11,9 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Bergmann Gábor
  *
@@ -25,6 +28,15 @@ public class PVariable {
 	 * variables; they represent constants or Term substitutes
 	 */
 	private boolean virtual;
+	/**
+	 * whether this is an exported symbolic parameter
+	 */
+	private boolean exportedParameter;	
+	
+	/**
+	 * Set of constraints that mention this variable
+	 */
+	private Set<PConstraint> referringConstraints;
 	
 	
 	public PVariable(String name) {
@@ -35,6 +47,16 @@ public class PVariable {
 		super();
 		this.name = name;
 		this.virtual = virtual;
+		this.exportedParameter = false;
+		this.referringConstraints = new HashSet<PConstraint>();
+	}
+	
+	/**
+	 * Register that this variable is referred by the given constraint.
+	 * @param constraint
+	 */
+	public void refer(PConstraint constraint) {
+		referringConstraints.add(constraint);
 	}
 	
 	/**
@@ -50,10 +72,31 @@ public class PVariable {
 		return virtual;
 	}
 
+	/**
+	 * @return the exportedParameter
+	 */
+	public boolean isExportedParameter() {
+		return exportedParameter;
+	}
+
+	/**
+	 * @param exportedParameter the exportedParameter to set
+	 */
+	public void setExportedParameter(boolean exportedParameter) {
+		this.exportedParameter = exportedParameter;
+	}
+
+	/**
+	 * @return the referringConstraints
+	 */
+	public Set<PConstraint> getReferringConstraints() {
+		return referringConstraints;
+	}	
+
 	@Override
 	public String toString() {
 		return name;// + ":PatternNode";
 	}
-	
+
 	
 }

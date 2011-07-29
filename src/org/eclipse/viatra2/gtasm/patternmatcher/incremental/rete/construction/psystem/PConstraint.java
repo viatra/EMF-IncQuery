@@ -17,15 +17,8 @@ import java.util.Set;
  * @author Bergmann Gábor
  *
  */
-public abstract class PConstraint {
+public abstract interface PConstraint {
 
 	public abstract Set<PVariable> getAffectedVariables();
-	
-	
-	@Override
-	public String toString() {
-		return "PC["+getClass().getSimpleName()+":"+toStringRest()+"]";
-	}
 
-	protected abstract String toStringRest();
 }

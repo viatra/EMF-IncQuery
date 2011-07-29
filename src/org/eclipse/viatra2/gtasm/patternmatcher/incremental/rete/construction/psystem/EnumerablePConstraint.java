@@ -12,8 +12,11 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -22,13 +25,12 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Bergmann Gábor
  *
  */
-public abstract class EnumerablePConstraint<StubHandle> extends PConstraint {
+public abstract class EnumerablePConstraint<PatternDescription, StubHandle> extends BasePConstraint<PatternDescription, StubHandle> {
 	protected Tuple variablesTuple;
 	private Stub<StubHandle> stub;
-	private Set<PVariable> affectedVariables;
 	
-	protected EnumerablePConstraint(Tuple variablesTuple) {
-		super();
+	protected EnumerablePConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Tuple variablesTuple) {
+		super(buildable, extractAffectedVariables(variablesTuple));
 		this.variablesTuple = variablesTuple;
 	}
 	
@@ -36,20 +38,35 @@ public abstract class EnumerablePConstraint<StubHandle> extends PConstraint {
 		if (stub == null) {
 			stub = doCreateStub();
 			stub.addConstraint(this);
+			
+			// check for any variable coincidences
+			Map<Object, List<Integer>> indexWithMupliplicity = 
+				stub.getVariablesTuple().invertIndexWithMupliplicity();
+			for (PVariable var : getAffectedVariables()) {
+				List<Integer> indices = indexWithMupliplicity.get(var);
+				if (indices.size() > 1) { 
+					int[] indexArray = new int[indices.size()];
+					int m = 0;
+					for (Integer index : indices)
+						indexArray[m++] = index;
+					stub = buildable.buildEqualityChecker(stub, indexArray);
+				}
+			}
 		}
 		return stub;
 	}
 	
 	public abstract Stub<StubHandle> doCreateStub() throws RetePatternBuildException;
-	
-	@Override
-	public Set<PVariable> getAffectedVariables() {
-		if (affectedVariables == null) {
-			affectedVariables = new HashSet<PVariable>();
-			Object[] elements = variablesTuple.getElements();
-			for (Object object : elements) {
-				affectedVariables.add((PVariable) object);
-			}
+
+
+	/**
+	 * 
+	 */
+	private static Set<PVariable> extractAffectedVariables(Tuple variablesTuple) {
+		Set<PVariable> affectedVariables = new HashSet<PVariable>();
+		Object[] elements = variablesTuple.getElements();
+		for (Object object : elements) {
+			affectedVariables.add((PVariable) object);
 		}
 		return affectedVariables;
 	}
@@ -60,8 +77,8 @@ public abstract class EnumerablePConstraint<StubHandle> extends PConstraint {
 	@Override
 	protected String toStringRest() {
 		String stringRestRest = toStringRestRest();
-		String tupleString = variablesTuple.toString();
-		return stringRestRest == null ? tupleString : stringRestRest + "@" + tupleString;
+		String tupleString = "@" + variablesTuple.toString();
+		return stringRestRest == null ? tupleString : ":" + stringRestRest + tupleString;
 	}
 	protected String toStringRestRest() {
 		return null;

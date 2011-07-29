@@ -18,9 +18,10 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Bergmann Gábor
  *
  */
-public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, StubHandle> extends EnumerablePConstraint<StubHandle> {
+public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, StubHandle> 
+	extends EnumerablePConstraint<PatternDescription, StubHandle> 
+{
 
-	protected Buildable<PatternDescription, StubHandle, ?> buildable;
 	protected KeyType supplierKey;
 
 	/**
@@ -29,8 +30,7 @@ public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, St
 	 * @param supplierKey
 	 */
 	public KeyedEnumerablePConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Tuple variablesTuple, KeyType supplierKey) {
-		super(variablesTuple);
-		this.buildable = buildable;
+		super(buildable, variablesTuple);
 		this.supplierKey = supplierKey;
 	}
 

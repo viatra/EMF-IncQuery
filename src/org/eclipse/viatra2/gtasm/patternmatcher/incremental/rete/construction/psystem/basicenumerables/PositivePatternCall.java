@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -20,23 +21,27 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Bergmann Gábor
  *
  */
-public class TypeUnaryPConstraint<PatternDescription, StubHandle> extends KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> {
+public class PositivePatternCall<PatternDescription, StubHandle>
+		extends
+		KeyedEnumerablePConstraint<PatternDescription, PatternDescription, StubHandle> {
+
 	/**
 	 * @param buildable
 	 * @param variablesTuple
-	 * @param supplierKey
+	 * @param pattern
 	 */
-	public TypeUnaryPConstraint(
+	public PositivePatternCall(
 			Buildable<PatternDescription, StubHandle, ?> buildable,
-			Tuple variablesTuple, Object supplierKey) {
-		super(buildable, variablesTuple, supplierKey);
+			Tuple variablesTuple, PatternDescription pattern) {
+		super(buildable, variablesTuple, pattern);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
 	 */
 	@Override
-	public Stub<StubHandle> doCreateStub() {	
-		return buildable.unaryTypeStub(variablesTuple, supplierKey);
+	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
+		return buildable.patternCallStub(variablesTuple, supplierKey);
 	}
+
 }

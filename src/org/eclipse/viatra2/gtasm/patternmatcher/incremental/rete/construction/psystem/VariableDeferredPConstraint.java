@@ -13,13 +13,20 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.p
 
 import java.util.Set;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public abstract class VariableDeferredPConstraint<StubHandle> extends DeferredPConstraint<StubHandle> {
+public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle> extends DeferredPConstraint<PatternDescription, StubHandle> {
+	/**
+	 * @param affectedVariables
+	 */
+	public VariableDeferredPConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Set<PVariable> affectedVariables) {
+		super(buildable, affectedVariables);
+	}
 	protected abstract Set<PVariable> getDeferringVariables();
 	/**
 	 * Refine further if needed

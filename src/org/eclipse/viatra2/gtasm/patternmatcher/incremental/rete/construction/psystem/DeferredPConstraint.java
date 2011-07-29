@@ -11,14 +11,32 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem;
 
+import java.util.Set;
+
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public abstract class DeferredPConstraint<StubHandle> extends PConstraint {
+public abstract class DeferredPConstraint<PatternDescription, StubHandle> extends BasePConstraint<PatternDescription, StubHandle> {
+
+	public DeferredPConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Set<PVariable> affectedVariables) {
+		super(buildable, affectedVariables);
+	}
 
 	public abstract boolean isReadyAt(Stub<StubHandle> stub);
+	
+	/**
+	 * @pre this.isReadyAt(stub);
+	 */
+	public Stub<StubHandle> checkOn(Stub<StubHandle> stub) throws RetePatternBuildException {
+		Stub<StubHandle> newStub = doCheckOn(stub);
+		newStub.addConstraint(this);
+		return newStub;
+	}
+	protected abstract Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException;
 
 }

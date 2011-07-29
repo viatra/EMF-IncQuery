@@ -12,15 +12,18 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public class TypeTernaryPConstraint<PatternDescription, StubHandle> extends
+public class ConstantValue<PatternDescription, StubHandle>
+		extends
 		KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> {
 
 	/**
@@ -28,19 +31,19 @@ public class TypeTernaryPConstraint<PatternDescription, StubHandle> extends
 	 * @param variablesTuple
 	 * @param supplierKey
 	 */
-	public TypeTernaryPConstraint(
+	public ConstantValue(
 			Buildable<PatternDescription, StubHandle, ?> buildable,
-			Tuple variablesTuple, Object supplierKey) {
-		super(buildable, variablesTuple, supplierKey);
-		// TODO Auto-generated constructor stub
+			PVariable variable, Object value) 
+	{
+		super(buildable, new FlatTuple(variable), value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
 	 */
 	@Override
-	public Stub<StubHandle> doCreateStub() {
-		return buildable.ternaryEdgeTypeStub(variablesTuple, supplierKey);
+	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
+		return buildable.buildStartStub(new Object[]{supplierKey}, this.variablesTuple.getElements());
 	}
 
 }

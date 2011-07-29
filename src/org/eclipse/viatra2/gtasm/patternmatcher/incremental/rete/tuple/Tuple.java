@@ -11,7 +11,9 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,7 +83,28 @@ public abstract class Tuple {
 			result.put(get(i), i);
 		return result;
 	}
-
+	
+	/**
+	 * Calculates an inverted index of the elements of this pattern. For each
+	 * element, the index of all of its occurrences is calculated.
+	 * 
+	 * @return the inverted index mapping each element of this pattern to its
+	 *         index in the array
+	 */
+	public Map<Object, List<Integer>> invertIndexWithMupliplicity() {
+		Map<Object, List<Integer>> result = new HashMap<Object, List<Integer>>();
+		for (int i = 0; i < getSize(); i++) {
+			Object value = get(i);
+			List<Integer> indices = result.get(value);
+			if (indices == null) {
+				indices = new ArrayList<Integer>();
+				result.put(value, indices);
+			}
+			indices.add(i);
+		}
+		return result;
+	}
+	
 	// public int compareTo(Object arg0) {
 	// Tuple other = (Tuple) arg0;
 	//		

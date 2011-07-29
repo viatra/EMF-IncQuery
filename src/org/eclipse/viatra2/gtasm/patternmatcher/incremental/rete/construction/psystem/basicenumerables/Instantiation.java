@@ -13,33 +13,41 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.p
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public class TypeBinaryPConstraint<PatternDescription, StubHandle> extends
-		KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> {
+public class Instantiation<PatternDescription, StubHandle> extends
+		CoreModelRelationship<PatternDescription, StubHandle> {
 
 	/**
 	 * @param buildable
-	 * @param variablesTuple
-	 * @param supplierKey
+	 * @param parent
+	 * @param child
+	 * @param transitive
 	 */
-	public TypeBinaryPConstraint(
+	public Instantiation(
 			Buildable<PatternDescription, StubHandle, ?> buildable,
-			Tuple variablesTuple, Object supplierKey) {
-		super(buildable, variablesTuple, supplierKey);
+			PVariable parent, PVariable child, boolean transitive) {
+		super(buildable, parent, child, transitive);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.CoreModelRelationship#doCreateTransitiveStub()
 	 */
 	@Override
-	public Stub<StubHandle> doCreateStub() {
-		return buildable.binaryEdgeTypeStub(variablesTuple, supplierKey);
+	protected Stub<StubHandle> doCreateTransitiveStub() {
+		return buildable.instantiationTransitiveStub(variablesTuple);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.CoreModelRelationship#doCreateDirectStub()
+	 */
+	@Override
+	protected Stub<StubHandle> doCreateDirectStub() {
+		return buildable.instantiationDirectStub(variablesTuple);
 	}
 
 }

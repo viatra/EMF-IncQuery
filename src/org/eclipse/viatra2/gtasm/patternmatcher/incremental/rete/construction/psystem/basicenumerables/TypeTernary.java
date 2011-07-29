@@ -12,36 +12,36 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public class PatternCallPConstraint<PatternDescription, StubHandle>
-		extends
-		KeyedEnumerablePConstraint<PatternDescription, PatternDescription, StubHandle> {
+public class TypeTernary<PatternDescription, StubHandle> extends
+		KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> {
 
 	/**
 	 * @param buildable
 	 * @param variablesTuple
 	 * @param supplierKey
 	 */
-	public PatternCallPConstraint(
+	public TypeTernary(
 			Buildable<PatternDescription, StubHandle, ?> buildable,
-			Tuple variablesTuple, PatternDescription supplierKey) {
-		super(buildable, variablesTuple, supplierKey);
+			PVariable edge, PVariable source, PVariable target, 
+			Object supplierKey) {
+		super(buildable, new FlatTuple(edge, source, target), supplierKey);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
 	 */
 	@Override
-	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
-		return buildable.patternCallStub(variablesTuple, supplierKey);
+	public Stub<StubHandle> doCreateStub() {
+		return buildable.ternaryEdgeTypeStub(variablesTuple, supplierKey);
 	}
 
 }
