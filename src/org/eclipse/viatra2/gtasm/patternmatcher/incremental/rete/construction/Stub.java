@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,11 +31,12 @@ public class Stub<HandleType> {
 	private Map<Object, Integer> variablesIndex;
 	private Set<PConstraint> constraints;
 
-	private Stub(Map<Object, Integer> calibrationIndex, Tuple variablesIndex, HandleType handle) {
+	private Stub(Map<Object, Integer> variablesIndex, Tuple variablesTuple, HandleType handle) {
 		super();
-		this.variablesIndex = calibrationIndex;
-		this.variablesTuple = variablesIndex;
+		this.variablesIndex = variablesIndex;
+		this.variablesTuple = variablesTuple;
 		this.handle = handle;
+		this.constraints = new HashSet<PConstraint>();
 	}
 	public Stub(Tuple variablesTuple, HandleType handle) {
 		this(variablesTuple.invertIndex(), variablesTuple, handle);
