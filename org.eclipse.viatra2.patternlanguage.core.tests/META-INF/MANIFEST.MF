@@ -3,10 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.viatra2.gtasm.patterns.tests
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0
-Bundle-SymbolicName: org.eclipse.viatra2.gtasm.patterns.tests; singleton:=true
+Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.core.tests;singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.viatra2.gtasm.patterns,
- org.eclipse.viatra2.gtasm.patterns.ui,
+Require-Bundle: org.eclipse.viatra2.patternlanguage.core,
+ org.eclipse.viatra2.patternlanguage.core.ui,
  org.eclipse.core.runtime,
  org.eclipse.xtext,
  org.eclipse.xtext.junit4,

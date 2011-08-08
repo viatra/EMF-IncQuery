@@ -5,11 +5,12 @@
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
-       uri = "http://www.eclipse.org/viatra2/gtasm/PatternLanguage" 
-       class = "org.eclipse.viatra2.gtasm.patternLanguage.PatternLanguagePackage"
-       genModel = "org/eclipse/viatra2/gtasm/PatternLanguage.genmodel" /> 
+       uri = "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage" 
+       class = "org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage"
+       genModel = "org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel" /> 
 	
   </extension>
+
 
 
 

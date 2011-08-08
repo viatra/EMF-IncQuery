@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.viatra2.gtasm.patterns
+Bundle-Name: org.eclipse.viatra2.patternlanguage.core
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0
-Bundle-SymbolicName: org.eclipse.viatra2.gtasm.patterns; singleton:=true
+Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.core;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.apache.log4j;bundle-version="1.2.15";visibility:=reexport,
@@ -24,12 +24,13 @@ Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtext.xtend2.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.viatra2.gtasm,
- org.eclipse.viatra2.gtasm.services,
- org.eclipse.viatra2.gtasm.patternLanguage,
- org.eclipse.viatra2.gtasm.patternLanguage.impl,
- org.eclipse.viatra2.gtasm.patternLanguage.util,
- org.eclipse.viatra2.gtasm.serializer,
- org.eclipse.viatra2.gtasm.parser.antlr,
- org.eclipse.viatra2.gtasm.parser.antlr.internal,
- org.eclipse.viatra2.gtasm.validation
+Export-Package: org.eclipse.viatra2.patternlanguage.core.patternLanguage,
+ org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl,
+ org.eclipse.viatra2.patternlanguage.core.patternLanguage.util,
+ org.eclipse.viatra2.patternlanguage.core.services,
+ org.eclipse.viatra2.patternlanguage.core,
+ org.eclipse.viatra2.patternlanguage.core.serializer,
+ org.eclipse.viatra2.patternlanguage.core.validation,
+ org.eclipse.viatra2.patternlanguage.core.parser.antlr,
+ org.eclipse.viatra2.patternlanguage.core.parser.antlr.internal
+
