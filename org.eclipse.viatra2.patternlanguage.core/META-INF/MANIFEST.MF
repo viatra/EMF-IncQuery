@@ -24,13 +24,14 @@ Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtext.xtend2.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.viatra2.patternlanguage.core.patternLanguage,
+Export-Package: org.eclipse.viatra2.patternlanguage.core,
+ org.eclipse.viatra2.patternlanguage.core.parser.antlr,
+ org.eclipse.viatra2.patternlanguage.core.parser.antlr.internal,
+ org.eclipse.viatra2.patternlanguage.core.patternLanguage,
  org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl,
  org.eclipse.viatra2.patternlanguage.core.patternLanguage.util,
- org.eclipse.viatra2.patternlanguage.core.services,
- org.eclipse.viatra2.patternlanguage.core,
+ org.eclipse.viatra2.patternlanguage.core.scoping,
  org.eclipse.viatra2.patternlanguage.core.serializer,
- org.eclipse.viatra2.patternlanguage.core.validation,
- org.eclipse.viatra2.patternlanguage.core.parser.antlr,
- org.eclipse.viatra2.patternlanguage.core.parser.antlr.internal
+ org.eclipse.viatra2.patternlanguage.core.services,
+ org.eclipse.viatra2.patternlanguage.core.validation
 
