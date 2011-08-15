@@ -14,7 +14,7 @@ PackageImport:
 	'import' ePackage=[ecore::EPackage|STRING]// ('as' alias=ID)?
 ;
 
-Constraint returns Constraint:
+Constraint returns core::Constraint:
 	CheckConstraint | PatternCompositionConstraint | ExpressionConstraint // Copied from PatternLanguage
 	| EClassConstraint 													  // Additions
 ;
@@ -32,29 +32,4 @@ Type returns Type:
 RefType returns RefType:
 	{ReferenceType}
 	refname=[ecore::EReference]
-;
-
-
-// Copied from PatternLanguage.xtext
-PatternCompositionConstraint returns Constraint:
-	{PatternCompositionConstraint}
-	negative?='neg'?
-	'find'
-	patternRef = [core::Pattern]
-	'('
-	  (parameters+=VariableReference (',' parameters+=VariableReference)*)?
-	')'
-;
-
-// Copied from PatternLanguage.xtext
-CheckConstraint returns Constraint:
-	{CheckConstraint}
-	'check' '(' expression = XExpression ')'
-;
-
-// Copied from PatternLanguage.xtext
-ExpressionConstraint returns Constraint:
-	{ExpressionConstraint}
-	negative?='neg'?
-	head=ExpressionHead
 ;
