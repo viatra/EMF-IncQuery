@@ -6,11 +6,55 @@ import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 
 generate eMFPatternLanguage "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
 
-PatternModel:
-	imports+=Import*
+EMFPatternModel:
+	importPackages+=PackageImport*
 	patterns+=Pattern*;
 	
-Import:
+PackageImport:
 	'import' ePackage=[ecore::EPackage|STRING]// ('as' alias=ID)?
-	//'import' importURI=STRING
+;
+
+Constraint returns Constraint:
+	CheckConstraint | PatternCompositionConstraint | ExpressionConstraint // Copied from PatternLanguage
+	| EClassConstraint 													  // Additions
+;
+
+EClassConstraint returns Variable:
+	{EClassConstraint}
+	type = Type '(' name=ID ')'
+;
+
+Type returns Type:
+	{ClassType}
+	classname=[ecore::EClass]
+;
+
+RefType returns RefType:
+	{ReferenceType}
+	refname=[ecore::EReference]
+;
+
+
+// Copied from PatternLanguage.xtext
+PatternCompositionConstraint returns Constraint:
+	{PatternCompositionConstraint}
+	negative?='neg'?
+	'find'
+	patternRef = [core::Pattern]
+	'('
+	  (parameters+=VariableReference (',' parameters+=VariableReference)*)?
+	')'
+;
+
+// Copied from PatternLanguage.xtext
+CheckConstraint returns Constraint:
+	{CheckConstraint}
+	'check' '(' expression = XExpression ')'
+;
+
+// Copied from PatternLanguage.xtext
+ExpressionConstraint returns Constraint:
+	{ExpressionConstraint}
+	negative?='neg'?
+	head=ExpressionHead
 ;
