@@ -11,14 +11,15 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint;
 
@@ -31,31 +32,49 @@ public class Inequality<PatternDescription, StubHandle>
 //	implements IFoldablePConstraint 
 {
 
-	private PVariable subject;
-	private Set<PVariable> inequals;
+	private PVariable who;
+	private PVariable withWhom;
 //	private IFoldablePConstraint incorporator;
 	
+	/**
+	 * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is undeducible.
+	 */
+	private boolean weak; 
+	
+	
 	public Inequality(
-			Buildable<PatternDescription, StubHandle, ?> buildable,
+			PSystem<PatternDescription, StubHandle, ?> pSystem,
 			PVariable who, PVariable withWhom) 
 	{
-		this(buildable, who, Collections.singleton(withWhom));
+		this(pSystem, who, withWhom, false);
 	}
-
-	private Inequality(
-			Buildable<PatternDescription, StubHandle, ?> buildable,
-			PVariable subject, Set<PVariable> inequals) 
+	
+	public Inequality(
+			PSystem<PatternDescription, StubHandle, ?> pSystem,
+			PVariable who, PVariable withWhom,
+			boolean weak) 
 	{
-		super(buildable, include(inequals, subject));
-		this.subject = subject;
-		this.inequals = inequals;
+		super(pSystem, new HashSet<PVariable>(Arrays.asList(new PVariable[]{who, withWhom})));
+		// this(pSystem, who, Collections.singleton(withWhom));
+		this.who = who;
+		this.withWhom = withWhom;
+		this.weak = weak;
 	}
 
-	private static HashSet<PVariable> include(Set<PVariable> inequals, PVariable subject) {
-		HashSet<PVariable> hashSet = new HashSet<PVariable>(inequals);
-		hashSet.add(subject);
-		return hashSet;
-	}
+//	private Inequality(
+//			PSystem<PatternDescription, StubHandle, ?> pSystem,
+//			PVariable subject, Set<PVariable> inequals) 
+//	{
+//		super(pSystem, include(inequals, subject));
+//		this.subject = subject;
+//		this.inequals = inequals;
+//	}
+
+//	private static HashSet<PVariable> include(Set<PVariable> inequals, PVariable subject) {
+//		HashSet<PVariable> hashSet = new HashSet<PVariable>(inequals);
+//		hashSet.add(subject);
+//		return hashSet;
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#getDeferringVariables()
@@ -71,17 +90,17 @@ public class Inequality<PatternDescription, StubHandle>
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		Map<Object, Integer> variablesIndex = stub.getVariablesIndex();
-		return buildable.buildInjectivityChecker(stub, variablesIndex.get(subject), mapIndices(variablesIndex, inequals));
+		return buildable.buildInjectivityChecker(stub, variablesIndex.get(who), new int[]{variablesIndex.get(withWhom)});
 	}
 
-	private static int[] mapIndices(Map<Object, Integer> variablesIndex, Set<PVariable> keys) {
-		int[] result = new int[keys.size()];
-		int k = 0;
-		for (PVariable key : keys) {
-			result[k++] = variablesIndex.get(key);
-		}
-		return result;
-	}
+//	private static int[] mapIndices(Map<Object, Integer> variablesIndex, Set<PVariable> keys) {
+//		int[] result = new int[keys.size()];
+//		int k = 0;
+//		for (PVariable key : keys) {
+//			result[k++] = variablesIndex.get(key);
+//		}
+//		return result;
+//	}
 
 //	/* (non-Javadoc)
 //	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.IFoldablePConstraint#getIncorporator()
@@ -116,11 +135,46 @@ public class Inequality<PatternDescription, StubHandle>
 	 */
 	@Override
 	protected String toStringRest() {
-		String result = subject.toString() + "!=";
-		for (PVariable other : inequals) {
-			result += other + ",";
-		}
-		return null;
+		return who.toString() + (isWeak() ? "!=?" : "!=") + withWhom.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#replaceVariable(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
+	 */
+	@Override
+	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+		if (obsolete.equals(who)) who = replacement;
+		if (obsolete.equals(withWhom)) withWhom = replacement;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
+	 */
+	@Override
+	public Set<PVariable> getDeducedVariables() {
+		return Collections.emptySet();
+	}
+
+	/**
+	 * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is undeducible.
+	 * @return the weak
+	 */
+	public boolean isWeak() {
+		return weak;
+	}
+
+	/**
+	 * A weak inequality constraint is eliminable if who is the same as withWhom, or if any if them is undeducible.
+	 */
+	public boolean isEliminable() {
+		return isWeak() && (who.equals(withWhom) || !who.isDeducable() || !withWhom.isDeducable());
+	}
+	
+	/**
+	 * Eliminates a weak inequality constraint if it can be ignored when who is the same as withWhom, or if any if them is undeducible.
+	 */	
+	public void eliminateWeak() {
+		if (isEliminable()) delete();
+	}
+	
 }

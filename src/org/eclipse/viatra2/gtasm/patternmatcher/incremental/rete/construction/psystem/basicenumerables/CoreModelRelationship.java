@@ -15,7 +15,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Bu
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable; import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 
 /**
@@ -38,12 +38,12 @@ public abstract class CoreModelRelationship<PatternDescription, StubHandle>
 	 * @param variablesTuple
 	 */
 	public CoreModelRelationship(
-			Buildable<PatternDescription, StubHandle, ?> buildable, 
+			PSystem<PatternDescription, StubHandle, ?> pSystem, 
 			PVariable parent, 
 			PVariable child, 
 			boolean transitive) 
 	{
-		super(buildable, new FlatTuple(parent, child));
+		super(pSystem, new FlatTuple(parent, child));
 		this.transitive = transitive;
 	}
 

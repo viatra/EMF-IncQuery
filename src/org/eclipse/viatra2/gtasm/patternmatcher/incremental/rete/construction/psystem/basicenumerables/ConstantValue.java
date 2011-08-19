@@ -15,7 +15,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Bu
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable; import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 
 /**
@@ -32,10 +32,10 @@ public class ConstantValue<PatternDescription, StubHandle>
 	 * @param supplierKey
 	 */
 	public ConstantValue(
-			Buildable<PatternDescription, StubHandle, ?> buildable,
+			PSystem<PatternDescription, StubHandle, ?> pSystem,
 			PVariable variable, Object value) 
 	{
-		super(buildable, new FlatTuple(variable), value);
+		super(pSystem, new FlatTuple(variable), value);
 	}
 
 	/* (non-Javadoc)

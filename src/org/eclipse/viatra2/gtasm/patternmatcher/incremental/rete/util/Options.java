@@ -44,4 +44,10 @@ public class Options {
 	public final static int firstFreeContainer = 0; // 0 if head container is
 													// free to contain pattern
 													// bodies, 1 otherwise
+	
+	public enum BuilderMethod {
+		LEGACY, // ONLY with GTASM
+		PSYSTEM_BASIC_LINEAR
+	}
+	public final static BuilderMethod builderMethod = BuilderMethod.PSYSTEM_BASIC_LINEAR;
 }

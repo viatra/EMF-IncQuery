@@ -11,10 +11,10 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
@@ -31,9 +31,9 @@ public class PositivePatternCall<PatternDescription, StubHandle>
 	 * @param pattern
 	 */
 	public PositivePatternCall(
-			Buildable<PatternDescription, StubHandle, ?> buildable,
+			PSystem<PatternDescription, StubHandle, ?> pSystem,
 			Tuple variablesTuple, PatternDescription pattern) {
-		super(buildable, variablesTuple, pattern);
+		super(pSystem, variablesTuple, pattern);
 	}
 
 	/* (non-Javadoc)

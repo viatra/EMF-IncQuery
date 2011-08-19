@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
@@ -29,8 +28,8 @@ public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, St
 	 * @param buildable
 	 * @param supplierKey
 	 */
-	public KeyedEnumerablePConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Tuple variablesTuple, KeyType supplierKey) {
-		super(buildable, variablesTuple);
+	public KeyedEnumerablePConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple, KeyType supplierKey) {
+		super(pSystem, variablesTuple);
 		this.supplierKey = supplierKey;
 	}
 
@@ -39,7 +38,7 @@ public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, St
 	 */
 	@Override
 	protected String toStringRestRest() {
-		return supplierKey.toString();
+		return supplierKey == null ? "$any(null)" : supplierKey.toString();
 	}
 
 	/**

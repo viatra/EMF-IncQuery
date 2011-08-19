@@ -13,7 +13,6 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.p
 
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 
@@ -23,8 +22,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.St
  */
 public abstract class DeferredPConstraint<PatternDescription, StubHandle> extends BasePConstraint<PatternDescription, StubHandle> {
 
-	public DeferredPConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Set<PVariable> affectedVariables) {
-		super(buildable, affectedVariables);
+	public DeferredPConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Set<PVariable> affectedVariables) {
+		super(pSystem, affectedVariables);
 	}
 
 	public abstract boolean isReadyAt(Stub<StubHandle> stub);
@@ -39,4 +38,11 @@ public abstract class DeferredPConstraint<PatternDescription, StubHandle> extend
 	}
 	protected abstract Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException;
 
+	/**
+	 * Called when the constraint is not ready, but cannot be deferred further. 
+	 * @param stub
+	 * @throws RetePatternBuildException to indicate the error in detail.
+	 * PRE: !isReady(stub)
+	 */
+	public abstract void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException;
 }

@@ -13,6 +13,8 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction;
 
 import java.util.HashMap;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
+
 
 
 /**
@@ -64,7 +66,14 @@ public interface IRetePatternBuilder<PatternDescription, StubHandle, Collector> 
 //			Collector production)
 //			throws PatternMatcherCompileTimeException;
 	
-
+//	/**
+//	 * Returns the buildable associated with this builder.
+//	 */
+//	public Buildable<PatternDescription, StubHandle, Collector> getBuildable();
+	/**
+	 * Returns the context associated with this builder.
+	 */
+	public IPatternMatcherContext<PatternDescription> getContext();
 	/**
 	 * After the ReteEngine is reinitialized, the pattern builder has to be
 	 * notified about the change.

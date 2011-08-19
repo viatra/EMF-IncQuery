@@ -56,6 +56,9 @@ public class RetePatternBuildException extends Exception {
 	public Object getPatternDescription() {
 		return patternDescription;
 	}
+	public void setPatternDescription(Object patternDescription) {
+		this.patternDescription = patternDescription;
+	}	
 
 	public String getTemplateMessage() {
 		return templateMessage;

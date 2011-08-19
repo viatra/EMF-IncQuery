@@ -72,7 +72,9 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
 			coll = new TupleMemory();
 			matchings.put(signature, coll);
 		}
-		coll.add(ps);
+		if (!coll.add(ps)) {
+			throw new IllegalStateException();
+		}
 
 		return change;
 	}
@@ -94,7 +96,9 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
 	 */
 	public boolean remove(Tuple ps, Tuple signature) {
 		Collection<Tuple> coll = matchings.get(signature);
-		coll.remove(ps);
+		if (!coll.remove(ps)) {
+			throw new IllegalStateException();
+		}
 
 		boolean change = coll.isEmpty();
 		if (change)

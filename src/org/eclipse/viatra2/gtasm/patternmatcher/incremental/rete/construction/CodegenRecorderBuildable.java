@@ -207,10 +207,15 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 		};
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildBetaNode", arguments);
 		
-		Tuple newCalibrationPattern = negative ? primaryStub.getVariablesTuple()
-				: complementer.combine(primaryStub.getVariablesTuple(), sideStub.getVariablesTuple(), Options.enableInheritance, true);
+		if (negative) {
+			return new Stub<String>(primaryStub, resultVar);
+		} else {
+			Tuple newCalibrationPattern = negative ? 
+				primaryStub.getVariablesTuple() : 
+				complementer.combine(primaryStub.getVariablesTuple(), sideStub.getVariablesTuple(), Options.enableInheritance, true);
 
-		return new Stub<String>(newCalibrationPattern, resultVar);
+			return new Stub<String>(primaryStub, sideStub, newCalibrationPattern, resultVar);
+		}
 	}
 
 
@@ -225,7 +230,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 			};
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildCountCheckBetaNode", arguments);
 
-		return new Stub<String>(primaryStub.getVariablesTuple(), resultVar);
+		return new Stub<String>(primaryStub, primaryStub.getVariablesTuple(), resultVar);
 	}
 
 	public Stub<String> buildCounterBetaNode(Stub<String> primaryStub,
@@ -244,7 +249,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 		Object[] newCalibrationElement = {aggregateResultCalibrationElement}; 
 		Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryStub.getVariablesTuple(), newCalibrationElement);
 		
-		return new Stub<String>(newCalibrationPattern, resultVar);
+		return new Stub<String>(primaryStub, newCalibrationPattern, resultVar);
 	}
 	public void buildConnection(Stub<String> stub, String collector) {
 		String[] arguments = {
@@ -294,7 +299,7 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 			gen(stub), gen(trimMask)
 		};
 		String resultVar = emitFunctionCall(coordinator.stubType, "buildTrimmer", arguments);
-		return new Stub<String>(trimMask.transform(stub.getVariablesTuple()), resultVar);
+		return new Stub<String>(stub, trimMask.transform(stub.getVariablesTuple()), resultVar);
 	}
 
 

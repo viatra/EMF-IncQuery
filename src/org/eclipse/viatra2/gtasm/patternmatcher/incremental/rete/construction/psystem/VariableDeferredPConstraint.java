@@ -11,9 +11,10 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 
 /**
@@ -24,8 +25,8 @@ public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle
 	/**
 	 * @param affectedVariables
 	 */
-	public VariableDeferredPConstraint(Buildable<PatternDescription, StubHandle, ?> buildable, Set<PVariable> affectedVariables) {
-		super(buildable, affectedVariables);
+	public VariableDeferredPConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Set<PVariable> affectedVariables) {
+		super(pSystem, affectedVariables);
 	}
 	protected abstract Set<PVariable> getDeferringVariables();
 	/**
@@ -34,5 +35,18 @@ public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle
 	@Override
 	public boolean isReadyAt(Stub<StubHandle> stub) {
 		return stub.getVariablesIndex().keySet().containsAll(getDeferringVariables());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#raiseForeverDeferredError(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
+	 */
+	@Override
+	public void raiseForeverDeferredError(Stub<StubHandle> stub)
+			throws RetePatternBuildException {
+		Set<PVariable> missing = new HashSet<PVariable>(getDeferringVariables());
+		missing.removeAll(stub.getVariablesIndex().keySet());
+		String[] args = {toString(), missing.toArray().toString()};
+		String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. " + 
+			"HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
+		throw new RetePatternBuildException(msg, args, null);
 	}
 }

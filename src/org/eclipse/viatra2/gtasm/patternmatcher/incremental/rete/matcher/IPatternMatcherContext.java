@@ -50,10 +50,13 @@ public interface IPatternMatcherContext<PatternDescription> {
 		BOTH /*VPM*/
 	}	
 	
+	boolean isUnaryType(Object typeObject);
 	Collection<? extends Object> enumerateDirectUnarySubtypes(Object typeObject);
 	Collection<? extends Object> enumerateDirectUnarySupertypes(Object typeObject);
+	boolean isTernaryEdgeType(Object typeObject);
 	Collection<? extends Object> enumerateDirectTernaryEdgeSubtypes(Object typeObject);
 	Collection<? extends Object> enumerateDirectTernaryEdgeSupertypes(Object typeObject);
+	boolean isBinaryEdgeType(Object typeObject);
 	Collection<? extends Object> enumerateDirectBinaryEdgeSubtypes(Object typeObject);	
 	Collection<? extends Object> enumerateDirectBinaryEdgeSupertypes(Object typeObject);
 	
@@ -71,6 +74,7 @@ public interface IPatternMatcherContext<PatternDescription> {
 	void logWarning(String message);
 	void logWarning(String message, Throwable cause);
 	void logDebug(String message);
+
 
 
 

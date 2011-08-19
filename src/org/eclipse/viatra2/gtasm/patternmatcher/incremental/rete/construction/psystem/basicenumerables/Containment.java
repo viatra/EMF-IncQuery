@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 
 /**
@@ -24,13 +24,13 @@ public class Containment<PatternDescription, StubHandle> extends CoreModelRelati
 	/**
 	 * @param variablesTuple
 	 */
-	protected Containment(
-			Buildable<PatternDescription, StubHandle, ?> buildable, 
+	public Containment(
+			PSystem<PatternDescription, StubHandle, ?> pSystem, 
 			PVariable parent, 
 			PVariable child, 
 			boolean transitive) 
 	{
-		super(buildable, parent, child, transitive);
+		super(pSystem, parent, child, transitive);
 	}
 
 	/**

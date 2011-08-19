@@ -13,8 +13,10 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Gabor Bergmann
@@ -55,7 +57,19 @@ public abstract class Tuple {
 			allElements[i] = get(i);
 		return allElements;
 	}
-
+	
+	/**
+	 * @return the set containing all distinct elements of this Tuple, cast as type T
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> Set<T> getDistinctElements() {
+		Set<T> result = new HashSet<T>();
+		Object[] elements = getElements();
+		for (Object object : elements) {
+			result.add((T) object);
+		}
+		return result;
+	}
 	/**
 	 * Hash calculation. Overrides should keep semantics.
 	 */
@@ -180,6 +194,22 @@ public abstract class Tuple {
 		}
 		s.append(')');
 		return s.toString();
+	}
+
+	/**
+	 * @param obsolete
+	 * @param replacement
+	 * @return
+	 */
+	public Tuple replaceAll(Object obsolete, Object replacement) {
+		Object[] oldElements = getElements();
+		Object[] newElements = new Object[oldElements.length];
+		for (int i=0; i<oldElements.length; ++i) {
+			newElements[i] = obsolete.equals(oldElements[i]) ?
+					replacement :
+					oldElements[i];
+		}
+		return new FlatTuple(newElements);
 	}
 
 }

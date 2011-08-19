@@ -48,12 +48,24 @@ public class Stub<HandleType> {
 		this(template.variablesIndex, template.variablesTuple, handle);
 		constraints.addAll(template.getConstraints());
 	}	
+	public Stub(Stub<HandleType> template, Tuple variablesTuple, HandleType handle) {
+		this(variablesTuple.invertIndex(), variablesTuple, handle);
+		constraints.addAll(template.getConstraints());
+	}	
+	public Stub(Stub<HandleType> template1, Stub<HandleType> template2, Tuple variablesTuple, HandleType handle) {
+		this(variablesTuple.invertIndex(), variablesTuple, handle);
+		constraints.addAll(template1.getConstraints());
+		constraints.addAll(template2.getConstraints());
+	}	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Stub("+getHandle()+")";
+		StringBuilder sb = new StringBuilder("Stub("+getVariablesTuple()+"@"+getHandle()+"|");
+		for (PConstraint constraint : constraints) sb.append(constraint.toString() + "&");
+		sb.append(")");
+		return sb.toString();
 	}
 	/**
 	 * @return the tuple of variables that define the schame emanating from the handle

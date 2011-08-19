@@ -85,7 +85,7 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 	
 	public Stub<Address<? extends Supplier>> buildTrimmer(Stub<Address<? extends Supplier>> stub, TupleMask trimMask) { 
 		Address<TrimmerNode> bodyTerminator = library.accessTrimmerNode(stub.getHandle(), trimMask); 
-		return new Stub<Address<? extends Supplier>>(trimMask.transform(stub.getVariablesTuple()), bodyTerminator);
+		return new Stub<Address<? extends Supplier>>(stub, trimMask.transform(stub.getVariablesTuple()), bodyTerminator);
 	}
 
 	public void buildConnection(Stub<Address<? extends Supplier>> stub, Address<? extends Receiver> collector) {
@@ -163,17 +163,17 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 				Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(primaryStub.getHandle(),primaryMask);
 				Address<? extends Indexer> sideSlot = library.accessProjectionIndexer(sideStub.getHandle(), sideMask);
 			
-				Address<? extends DualInputNode> checker = negative ? library
-						.accessExistenceNode(primarySlot, sideSlot, true) : library
-						.accessJoinNode(primarySlot, sideSlot, complementer);
-						
-				Tuple newCalibrationPattern = negative ? primaryStub.getVariablesTuple()
-						: complementer.combine(primaryStub.getVariablesTuple(), sideStub.getVariablesTuple(), 
-								Options.enableInheritance, true);
-			
-				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(newCalibrationPattern, checker);
-			
-				return result;
+				if (negative) {
+					Address<? extends DualInputNode> checker = library.accessExistenceNode(primarySlot, sideSlot, true);
+					return new Stub<Address<? extends Supplier>>(primaryStub, checker);
+				} else {
+					Address<? extends DualInputNode> checker = library.accessJoinNode(primarySlot, sideSlot, complementer);
+					Tuple newCalibrationPattern = complementer.combine(
+							primaryStub.getVariablesTuple(), 
+							sideStub.getVariablesTuple(), 
+							Options.enableInheritance, true);
+					return new Stub<Address<? extends Supplier>>(primaryStub, sideStub, newCalibrationPattern, checker);
+				}			
 			}
 	
 	public Stub<Address<? extends Supplier>> buildCounterBetaNode(
@@ -194,7 +194,7 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 				Object[] newCalibrationElement = {aggregateResultCalibrationElement}; 
 				Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryStub.getVariablesTuple(), newCalibrationElement);
 			
-				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(newCalibrationPattern, checker);
+				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(primaryStub, newCalibrationPattern, checker);
 			
 				return result;
 			}	
@@ -213,7 +213,7 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 						
 				Tuple newCalibrationPattern = primaryStub.getVariablesTuple();
 			
-				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(newCalibrationPattern, checker);
+				Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(primaryStub, newCalibrationPattern, checker);
 			
 				return result;
 			}
