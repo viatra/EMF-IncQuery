@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -56,6 +57,13 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 		else throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#isUnaryType(java.lang.Object)
+	 */
+	@Override
+	public boolean isUnaryType(Object typeObject) {
+		return typeObject instanceof EClassifier;
+	}	
 	@Override
 	public Collection<? extends Object> enumerateDirectUnarySubtypes(Object typeObject) {
 		if (typeObject instanceof EClass) 
@@ -74,7 +82,13 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 			return Collections.emptyList();// no subtyping between EDataTypes?		
 		} else throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
 	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#isBinaryType(java.lang.Object)
+	 */
+	@Override
+	public boolean isBinaryEdgeType(Object typeObject) {
+		return typeObject instanceof EStructuralFeature;
+	}
 	@Override
 	public Collection<? extends Object> enumerateDirectBinaryEdgeSubtypes(
 			Object typeObject) {
@@ -92,7 +106,14 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 			Object typeObject) {
 		throw new UnsupportedOperationException();
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#isTernaryType(java.lang.Object)
+	 */
+	@Override
+	public boolean isTernaryEdgeType(Object typeObject) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	@Override
 	public Collection<? extends Object> enumerateDirectTernaryEdgeSupertypes(
 			Object typeObject) {

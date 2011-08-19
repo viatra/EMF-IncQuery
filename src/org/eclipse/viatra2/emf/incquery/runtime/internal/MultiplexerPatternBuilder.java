@@ -32,17 +32,17 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 public class MultiplexerPatternBuilder implements
 		IRetePatternBuilder<String, Address<? extends Supplier>, Address<? extends Receiver>>
 {
-	ReteContainerBuildable<String> buildable;
+	ReteContainerBuildable<String> baseBuildable;
 	IPatternMatcherContext<String> context;
 
 	/**
-	 * @param buildable
+	 * @param baseBuildable
 	 * @param context
 	 */
-	public MultiplexerPatternBuilder(ReteContainerBuildable<String> buildable,
+	public MultiplexerPatternBuilder(ReteContainerBuildable<String> baseBuildable,
 			IPatternMatcherContext<String> context) {
 		super();
-		this.buildable = buildable;
+		this.baseBuildable = baseBuildable;
 		this.context = context;
 	}
 
@@ -53,7 +53,7 @@ public class MultiplexerPatternBuilder implements
 	public Address<? extends Receiver> construct(String gtPattern)
 			throws RetePatternBuildException {
 		IStatelessGeneratedRetePatternBuilder builder = Activator.getDefault().getContributedStatelessPatternBuilders().get(gtPattern);
-		if (builder != null) return builder.construct(buildable, context, gtPattern);
+		if (builder != null) return builder.construct(baseBuildable, context, gtPattern);
 		else throw new RetePatternBuildException("No RETE pattern builder generated for pattern {1}.",
 				new String[]{gtPattern}, gtPattern);
 	}
@@ -73,6 +73,22 @@ public class MultiplexerPatternBuilder implements
 	@Override
 	public void refresh() {
 		throw new UnsupportedOperationException();
+	}
+
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#getBuildable()
+//	 */
+//	@Override
+//	public Buildable<String, Address<? extends Supplier>, Address<? extends Receiver>> getBuildable() {
+//		return baseBuildable;
+//	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#getContext()
+	 */
+	@Override
+	public IPatternMatcherContext<String> getContext() {
+		return context;
 	}
 
 }
