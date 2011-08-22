@@ -11,4 +11,5 @@ package org.eclipse.viatra2.patternlanguage.core.scoping;
 public class PatternLanguageDeclarativeScopeProvider extends
 		MyAbstractDeclarativeScopeProvider {
 	
+	
 }

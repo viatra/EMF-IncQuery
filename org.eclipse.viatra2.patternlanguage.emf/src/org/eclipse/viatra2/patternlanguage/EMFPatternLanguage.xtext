@@ -19,11 +19,13 @@ Constraint returns core::Constraint:
 	| EClassConstraint 													  // Additions
 ;
 
-EClassConstraint returns Variable:
-	{EClassConstraint}
-	type = Type '(' name=ID ')'
+EClassConstraint:
+	var = Variable 
 ;
 
+Variable returns core::Variable:
+	type = Type '(' name=ID ')'
+; 
 Type returns Type:
 	{ClassType}
 	classname=[ecore::EClass]
