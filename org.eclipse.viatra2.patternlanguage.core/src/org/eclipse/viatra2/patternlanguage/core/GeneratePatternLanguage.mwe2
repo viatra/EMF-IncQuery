@@ -19,9 +19,11 @@ Workflow {
 
     component = DirectoryCleaner {
         directory = "${runtimeProject}/src-gen"
+        exclude = "keep.txt"
     }
 
     component = DirectoryCleaner {
+    	exclude = "keep.txt"
         directory = "${runtimeProject}.ui/src-gen"
     }
 	
