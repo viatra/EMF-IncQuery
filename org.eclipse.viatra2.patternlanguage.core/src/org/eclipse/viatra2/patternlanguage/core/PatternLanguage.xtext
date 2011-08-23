@@ -28,13 +28,21 @@ Modifiers:
 	shareable?='shareable' 
 ;
 
+terminal ID:
+	'^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+
+Variable: 
+	name=ID
+	(':' type=Type)?
+;
+
 Parameter returns Variable: 
 	name=ID
 	(':' type=Type)?
 ;
 
 VariableReference:
-	var = [Variable]
+	var = [Variable|ID]
 ;
 
 Type returns Type:
@@ -50,7 +58,7 @@ PatternBody returns PatternBody:
 {PatternBody}
     (name=ID)?
 	'{'
-	  (constraints += Constraint ';')+
+	  ((constraints += Constraint ';'))+
 	'}'
 ;
 

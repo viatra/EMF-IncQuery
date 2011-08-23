@@ -20,10 +20,10 @@ Constraint returns core::Constraint:
 ;
 
 EClassConstraint:
-	var = Variable 
+	var = EMFVariable 
 ;
 
-Variable returns core::Variable:
+EMFVariable returns core::Variable:
 	type = Type '(' name=ID ')'
 ; 
 Type returns Type:

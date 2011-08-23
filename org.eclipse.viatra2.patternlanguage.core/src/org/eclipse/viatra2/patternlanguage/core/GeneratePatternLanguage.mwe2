@@ -27,7 +27,7 @@ Workflow {
         directory = "${runtimeProject}.ui/src-gen"
     }
 	
-    component = Generator {
+    component = org.eclipse.viatra2.patternlanguage.core.ExtendedPatternLanguageGenerator {
         pathRtProject = runtimeProject
         pathUiProject = "${runtimeProject}.ui"
         pathTestProject = "${runtimeProject}.tests"
@@ -70,7 +70,11 @@ Workflow {
 
             // scoping and exporting API
             //fragment = scoping.ImportURIScopingFragment {}
-            fragment = scoping.ImportNamespacesScopingFragment {}
+            fragment = scoping.ImportNamespacesScopingFragment {
+            	//Avoids regenerating PatternLanguageScopeProvider.java
+            	//that conflicts with PatternLanguageScopeProvider.xtend
+            	generateStub = false 
+            }
             fragment = exporting.QualifiedNamesFragment {}
             fragment = builder.BuilderIntegrationFragment {}
 
@@ -78,6 +82,7 @@ Workflow {
             fragment = generator.GeneratorFragment {
                 generateMwe = true
                 generateJavaMain = true
+                generatorStub = false
             }
 
             // formatter API
@@ -127,4 +132,5 @@ Workflow {
 
         }
     }
+    
 }

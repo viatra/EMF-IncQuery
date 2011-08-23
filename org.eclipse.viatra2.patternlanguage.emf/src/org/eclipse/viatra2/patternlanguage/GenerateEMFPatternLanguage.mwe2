@@ -42,18 +42,10 @@ Workflow {
             fragment = grammarAccess.GrammarAccessFragment {}
 
             // generates Java API for the generated EPackages
-            fragment = ecore.EcoreGeneratorFragment {
-            // referencedGenModels = "
-            //  platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel,
-            //  platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel
-            // "
-            }
+            fragment = ecore.EcoreGeneratorFragment {}
 
             // Serializer 2.0
             fragment = serializer.SerializerFragment {}
-            
-            // the serialization component (1.0)
-            // fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
 
             // a custom ResourceFactory for use with EMF
             fragment = resourceFactory.ResourceFactoryFragment {
@@ -86,6 +78,7 @@ Workflow {
             fragment = generator.GeneratorFragment {
                 generateMwe = true
                 generateJavaMain = true
+                generatorStub = false
             }
 
             // formatter API
