@@ -3,6 +3,7 @@ grammar org.eclipse.viatra2.patternlanguage.core.PatternLanguage with org.eclips
 generate patternLanguage "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 import "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore" as xbase
+import "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore" as types
 
 PatternModel:
 	patterns+=Pattern*;
@@ -29,9 +30,11 @@ Modifiers:
 ;
 
 terminal ID:
-	'^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+	'^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+;
 
-Variable: 
+Variable returns types::JvmIdentifiableElement: 
+	{Variable}
 	name=ID
 	(':' type=Type)?
 ;
@@ -42,7 +45,7 @@ Parameter returns Variable:
 ;
 
 VariableReference:
-	var = [Variable|ID]
+	var = ID
 ;
 
 Type returns Type:
