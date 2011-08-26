@@ -63,23 +63,35 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
 	        map.key = "body"
 	        map.value = 
-	           "java.util.Iterator<org.eclipse.emf.ecore.EObject> it = eAllContents();
-				java.util.HashMap<String, org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference> variables = new java.util.HashMap<String, org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference>();
-				while(it.hasNext()) {
-					org.eclipse.emf.ecore.EObject obj = it.next(); 
-					if (obj instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference 
-						&& !variables.containsKey(((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj).getVar())) {
-						variables.put(((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference)obj).getVar(), (org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj);
-					}
-				}
-				EList<Variable> declarations = new org.eclipse.emf.common.util.BasicEList<Variable>();
-				for (String name : variables.keySet()) {
-					Variable decl = org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory.eINSTANCE.createVariable();
-					decl.setName(name);
-					declarations.add(decl);	
-				}
-				this.variables = declarations;
-    			return declarations;"
+	           "	if (variables == null)
+	{
+	    variables = new EObjectContainmentEList<Variable>(Variable.class, this, PatternLanguagePackage.PATTERN_BODY__VARIABLES);
+	}  
+    java.util.Iterator<org.eclipse.emf.ecore.EObject> it = eAllContents();
+            java.util.HashMap<String, org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference> variables = new java.util.HashMap<String, org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference>();
+            while(it.hasNext()) {
+              org.eclipse.emf.ecore.EObject obj = it.next(); 
+              if (obj instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference 
+                && !variables.containsKey(((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj).getVar())) {
+                variables.put(((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference)obj).getVar(), (org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj);
+              }
+            }
+            java.util.HashSet<String> oldKeys = new java.util.HashSet<String>();
+            if (this.variables != null) {
+	            for (Variable var : this.variables) {
+	            	if (variables.containsKey(var.getName())) {
+	            		oldKeys.add(var.getName());
+	            	}
+	            }
+            }
+            for (String name : variables.keySet()) {
+              if (!oldKeys.contains(name)) {
+            	  Variable decl = org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory.eINSTANCE.createVariable();
+            	  decl.setName(name);
+            	  this.variables.add(decl);
+              }
+            }
+        			return this.variables;"
 	        body.details.add(map)
 	        op.EAnnotations += body
 	        c.EOperations += op
