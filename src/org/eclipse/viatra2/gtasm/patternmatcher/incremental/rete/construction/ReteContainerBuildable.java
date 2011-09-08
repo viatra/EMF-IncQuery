@@ -90,6 +90,7 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 
 	public void buildConnection(Stub<Address<? extends Supplier>> stub, Address<? extends Receiver> collector) {
 		reteNet.connectRemoteNodes(stub.getHandle(), collector, true);
+		boundary.registerParentStubForReceiver(collector, stub);
 	}
 
 	public Stub<Address<? extends Supplier>> buildStartStub(Object[] constantValues, Object[] constantNames) {

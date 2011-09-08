@@ -18,6 +18,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Re
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 
 /**
+ * A kind of deferred constraint that can only be checked when a set of deferring variables are all present in a stub.
  * @author Bergmann Gábor
  *
  */

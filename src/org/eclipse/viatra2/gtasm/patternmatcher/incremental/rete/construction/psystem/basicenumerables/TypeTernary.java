@@ -32,7 +32,7 @@ public class TypeTernary<PatternDescription, StubHandle>
 	/**
 	 * @param buildable
 	 * @param variablesTuple
-	 * @param supplierKey
+	 * @param supplierKey type info
 	 */
 	public TypeTernary(
 			PSystem<PatternDescription, StubHandle, ?> pSystem,

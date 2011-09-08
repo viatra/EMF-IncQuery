@@ -9,21 +9,23 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicmisc;
+package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public class ExportedSymbolicParameter<PatternDescription, StubHandle> extends 
-	BasePConstraint<PatternDescription, StubHandle> 
+public class ExportedParameter<PatternDescription, StubHandle> extends 
+	VariableDeferredPConstraint<PatternDescription, StubHandle>  
 {
 	PVariable parameterVariable;
 	String parameterName;
@@ -33,7 +35,7 @@ public class ExportedSymbolicParameter<PatternDescription, StubHandle> extends
 	 * @param buildable
 	 * @param parameterVariable
 	 */
-	public ExportedSymbolicParameter(
+	public ExportedParameter(
 			PSystem<PatternDescription, StubHandle, ?> pSystem,
 			PVariable parameterVariable,
 			String parameterName) {
@@ -82,6 +84,51 @@ public class ExportedSymbolicParameter<PatternDescription, StubHandle> extends
 	 */
 	public PVariable getParameterVariable() {
 		return parameterVariable;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#getDeferringVariables()
+	 */
+	@Override
+	protected Set<PVariable> getDeferringVariables() {
+		return Collections.singleton(parameterVariable);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
+	 */
+	@Override
+	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
+		return stub;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#checkSanity()
+	 */
+	@Override
+	public void checkSanity() throws RetePatternBuildException {
+		super.checkSanity();
+		if (!parameterVariable.isDeducable()){
+			String[] args = {parameterName};
+			String msg = "Impossible to match pattern: "
+				+ "exported pattern variable {1} can not be determined based on the pattern constraints. "
+				+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
+			throw new RetePatternBuildException(msg, args, null);
+		}					
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#raiseForeverDeferredError(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
+	 */
+	@Override
+	public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException 
+	{
+			String[] args = {parameterName};
+			String msg = "Pattern Graph Search terminated incompletely: "
+				+ "exported pattern variable {1} could not be determined based on the pattern constraints. "
+				+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
+			throw new RetePatternBuildException(msg, args, null);
 	}
 	
 }

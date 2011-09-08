@@ -30,6 +30,8 @@ public class Stub<HandleType> {
 	private Tuple variablesTuple;
 	private Map<Object, Integer> variablesIndex;
 	private Set<PConstraint> constraints;
+	private Stub<HandleType> primaryParentStub;
+	private Stub<HandleType> secondaryParentStub;
 
 	private Stub(Map<Object, Integer> variablesIndex, Tuple variablesTuple, HandleType handle) {
 		super();
@@ -44,18 +46,22 @@ public class Stub<HandleType> {
 //	public Stub(Stub<HandleType> template) {
 //		this(template.variablesIndex, template.variablesTuple, template.getHandle());
 //	}	
-	public Stub(Stub<HandleType> template, HandleType handle) {
-		this(template.variablesIndex, template.variablesTuple, handle);
-		constraints.addAll(template.getConstraints());
+	public Stub(Stub<HandleType> primaryParent, HandleType handle) {
+		this(primaryParent.variablesIndex, primaryParent.variablesTuple, handle);
+		this.primaryParentStub = primaryParent;
+		constraints.addAll(primaryParent.getAllEnforcedConstraints());
 	}	
-	public Stub(Stub<HandleType> template, Tuple variablesTuple, HandleType handle) {
+	public Stub(Stub<HandleType> secondaryParent, Tuple variablesTuple, HandleType handle) {
 		this(variablesTuple.invertIndex(), variablesTuple, handle);
-		constraints.addAll(template.getConstraints());
+		this.primaryParentStub = secondaryParent;
+		constraints.addAll(secondaryParent.getAllEnforcedConstraints());
 	}	
-	public Stub(Stub<HandleType> template1, Stub<HandleType> template2, Tuple variablesTuple, HandleType handle) {
+	public Stub(Stub<HandleType> primaryParent, Stub<HandleType> secondaryParent, Tuple variablesTuple, HandleType handle) {
 		this(variablesTuple.invertIndex(), variablesTuple, handle);
-		constraints.addAll(template1.getConstraints());
-		constraints.addAll(template2.getConstraints());
+		this.primaryParentStub = primaryParent;
+		this.secondaryParentStub = secondaryParent;
+		constraints.addAll(primaryParent.getAllEnforcedConstraints());
+		constraints.addAll(secondaryParent.getAllEnforcedConstraints());
 	}	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -86,16 +92,37 @@ public class Stub<HandleType> {
 		return variablesIndex;
 	}
 	/**
-	 * @return the constraints already enforced at this handle
+	 * @return all constraints already enforced at this handle
 	 */
-	public Set<PConstraint> getConstraints() {
+	public Set<PConstraint> getAllEnforcedConstraints() {
 		return constraints;
+	}
+	/**
+	 * @return the new constraints enforced at this handle, that aren't yet enforced at parents
+	 */
+	public Set<PConstraint> getDeltaEnforcedConstraints() {
+		Set<PConstraint> result = new HashSet<PConstraint>(constraints);
+		if (primaryParentStub != null) result.removeAll(primaryParentStub.getAllEnforcedConstraints());
+		if (secondaryParentStub != null) result.removeAll(secondaryParentStub.getAllEnforcedConstraints());
+		return result;
 	}
 	/**
 	 * @return the constraints
 	 */
 	public void addConstraint(PConstraint constraint) {
 		constraints.add(constraint);
+	}
+	/**
+	 * @return the primaryParentStub
+	 */
+	public Stub<HandleType> getPrimaryParentStub() {
+		return primaryParentStub;
+	}
+	/**
+	 * @return the secondaryParentStub
+	 */
+	public Stub<HandleType> getSecondaryParentStub() {
+		return secondaryParentStub;
 	}	
 	
 }

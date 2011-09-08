@@ -15,21 +15,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.BuildHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IReteLayoutStrategy;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.LayoutHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.Inequality;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.TypeUnary;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicmisc.ExportedSymbolicParameter;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
 
@@ -56,46 +52,17 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
 			context.logDebug(getClass().getSimpleName() + ": patternbody build started");
 			
 			// UNIFICATION AND WEAK INEQUALITY ELMINATION
-			pSystem.unifyVariablesAlongEqualities();
-			for (Inequality inequality : pSystem.getConstraintsOfType(Inequality.class)) inequality.eliminateWeak();
+			LayoutHelper.unifyVariablesAlongEqualities(pSystem);
+			LayoutHelper.eliminateWeakInequalities(pSystem);
 		
 			// UNARY ELIMINATION WITH TYPE INFERENCE
 			if (Options.calcImpliedTypes) {
-				Set<TypeUnary> constraintsOfType = pSystem.getConstraintsOfType(TypeUnary.class);
-				for (TypeUnary<PatternDescription, StubHandle> typeUnary : constraintsOfType) {
-					PVariable var = (PVariable) typeUnary.getVariablesTuple().get(0);
-					Object expressedType = typeUnary.getTypeInfo(var);
-					Set<ITypeInfoProviderConstraint> typeRestrictors = var.getReferringConstraintsOfType(ITypeInfoProviderConstraint.class);
-					typeRestrictors.remove(typeUnary);
-					for (ITypeInfoProviderConstraint iTypeRestriction : typeRestrictors) {
-						Object typeInfo = iTypeRestriction.getTypeInfo(var);
-						if (typeInfo != ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED) {
-							Set<Object> typeClosure = 
-								BuildHelper.typeClosure(Collections.singleton(typeInfo), context);
-							if (typeClosure.contains(expressedType)) {
-								typeUnary.delete();								
-								break;
-							}
-						}
-					}
-				}
+				LayoutHelper.eliminateInferrableUnaryTypes(pSystem, context);
 			}
 			
 			// PREVENTIVE CHECKS
-			for (PConstraint pConstraint : pSystem.getConstraints()) pConstraint.checkSanity();
-		
-			Set<ExportedSymbolicParameter> exports = pSystem.getConstraintsOfType(ExportedSymbolicParameter.class);
-			for (ExportedSymbolicParameter<PatternDescription, StubHandle> export : exports) {
-				PVariable var = export.getParameterVariable();
-				if (!var.isDeducable()){
-					String[] args = {var.toString()};
-					String msg = "Exported pattern variable {1} can not be determined based on the pattern constraints. "
-						+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
-//						+ "pattern variable {1} in pattern {2} could not be reached";
-					throw new RetePatternBuildException(msg, args, pattern);
-				}					
-			}
-			
+			LayoutHelper.checkSanity(pSystem);
+					
 			// STARTING THE LINE
 			Stub<StubHandle> stub = buildable.buildStartStub(new Object[]{}, new Object[]{});
 			
@@ -105,10 +72,10 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
 //				stub = BuildHelper.naturalJoin(buildable, stub, sideStub);
 //			}
 			
-			Set<PConstraint> pQueue = new HashSet<PConstraint>(); //TreeSet<PConstraint>(new OrderingHeuristics());
-			pQueue.addAll(pSystem.getConstraintsOfType(EnumerablePConstraint.class));
-			pQueue.addAll(pSystem.getConstraintsOfType(DeferredPConstraint.class));
-			// omitted: symbolic & equality
+			Set<PConstraint> pQueue = new HashSet<PConstraint>(pSystem.getConstraints()); //TreeSet<PConstraint>(new OrderingHeuristics());
+//			pQueue.addAll(pSystem.getConstraintsOfType(EnumerablePConstraint.class));
+//			pQueue.addAll(pSystem.getConstraintsOfType(DeferredPConstraint.class));
+//			// omitted: symbolic & equality -- not anymore
 			
 			// MAIN LOOP
 			while (!pQueue.isEmpty()) {
@@ -134,25 +101,8 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
 			}
 			
 			// FINAL CHECK, whether all exported variables are present
-			for (ExportedSymbolicParameter<PatternDescription, StubHandle> export : exports) {
-				PVariable var = export.getParameterVariable();
-				if (!stub.getVariablesIndex().containsKey(var)){
-					String[] args = {var.toString()};
-					String msg = "Pattern Graph Search terminated incompletely, "
-						+ "exported pattern variable {1} could not be reached. "
-						+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
-;
-//						+ "pattern variable {1} in pattern {2} could not be reached";
-					throw new RetePatternBuildException(msg, args, pattern);
-				}					
-			}
-//			for (PVariable var : pSystem.getVariables())
-//				if (
-//						var.getDirectUnifiedInto()==null && 
-//						(var.isDeducable()) && 
-//						!stub.getVariablesIndex().containsKey(var)
-//					) 
-
+			LayoutHelper.finalCheck(pSystem, stub);
+			
 
 //			// output
 //			int paramNum = patternScaffold.gtPattern.getSymParameters().size();
@@ -178,6 +128,8 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
 			throw ex;
 		}	
 	}
+
+
 
 
 }

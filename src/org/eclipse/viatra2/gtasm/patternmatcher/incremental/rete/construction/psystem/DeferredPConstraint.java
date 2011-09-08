@@ -17,6 +17,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Re
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 
 /**
+ * Any constraint that can only be checked on certain stubs (e.g. those stubs that already contain some variables).
  * @author Bergmann Gábor
  *
  */

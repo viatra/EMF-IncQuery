@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.BuildHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.TypeHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint;
@@ -78,9 +78,9 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
 	protected PVariable checkTypeSafety(Stub<StubHandle> stub) {
 		for (PVariable pVariable : getAffectedVariables()) {
 			Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
-			Set<Object> checkedTypeRestrictions = BuildHelper.inferTypes(pVariable, stub.getConstraints());
+			Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, stub.getAllEnforcedConstraints());
 			Set<Object> uncheckedTypeRestrictions = 
-				BuildHelper.subsumeTypes(
+				TypeHelper.subsumeTypes(
 						allTypeRestrictionsForVariable, 
 						checkedTypeRestrictions, 
 						this.pSystem.getBuilder().getContext());
@@ -98,7 +98,7 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
 			for (PVariable pVariable : getAffectedVariables()) {
 				allTypeRestrictions.put(
 						pVariable, 
-						BuildHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));
+						TypeHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));
 			}		
 		}
 		return allTypeRestrictions;

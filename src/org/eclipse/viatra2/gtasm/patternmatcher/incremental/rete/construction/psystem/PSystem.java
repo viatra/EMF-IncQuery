@@ -18,10 +18,7 @@ import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.ConstantValue;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicmisc.Equality;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicmisc.ExportedSymbolicParameter;
 
 /**
  * @author Bergmann Gábor
@@ -93,39 +90,7 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 		}
 		return result;
 	}
-	
-	public boolean completelyEnforcedBy(Stub<StubHandle> stub) {
-		Set<PConstraint> enforced = stub.getConstraints();
-		for (PConstraint constraint : constraints) {
-			if (
-					enforced.contains(constraint) || 
-					constraint instanceof ExportedSymbolicParameter<?, ?> ||
-					(
-							constraint instanceof Equality<?, ?> && 
-							((Equality<?, ?>)constraint).isMoot()
-					)
-				)
-				continue;
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Unifies allVariables along equalities so that they can be handled as one.
-	 * @param pSystem
-	 */
-	public void unifyVariablesAlongEqualities() 
-	{
-		Set<Equality> equals = getConstraintsOfType(Equality.class);
-		for (Equality<PatternDescription, StubHandle> equality : equals) {
-			if (!equality.isMoot()) {
-				equality.getWho().unifyInto(equality.getWithWhom());
-			}
-			// equality.delete();
-		}
-	}
-	
+			
 	public PVariable newVirtualVariable() {
 		String name;
 		do {

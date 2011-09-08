@@ -12,10 +12,14 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IterableIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.JoinNode;
@@ -84,6 +88,12 @@ public class ReteBoundary<PatternDescription> {
 	protected Address<? extends Supplier> instantiationTransitiveRoot;
 	protected Address<? extends Tunnel> generalizationRoot;
 	protected Address<? extends Supplier> generalizationTransitiveRoot;
+	
+	/**
+	 * Stubs of parent nodes that have the key node as their child.
+	 * For RETE --> Stub traceability, mainly at production nodes.
+	 */
+	protected Map<Address<? extends Receiver>, Set<Stub<Address<? extends Supplier>>>> parentStubsOfReceiver; 
 
 	/**
 	 * Prerequisite: engine has its network and framework fields initialized
@@ -98,6 +108,7 @@ public class ReteBoundary<PatternDescription> {
 		
 		this.context = engine.getContext();
 		this.generalizationQueryDirection = this.context.allowedGeneralizationQueryDirection();
+		this.parentStubsOfReceiver = new HashMap<Address<? extends Receiver>, Set<Stub<Address<? extends Supplier>>>>();
 
 		unaryRoots = new HashMap<Object, Address<? extends Tunnel>>();
 		ternaryEdgeRoots = new HashMap<Object, Address<? extends Tunnel>>();
@@ -653,5 +664,19 @@ public class ReteBoundary<PatternDescription> {
 		network.sendExternalUpdate(receiver, Direction.INSERT, tuple);
 		if (!engine.isParallelExecutionEnabled())
 			network.waitForReteTermination();
+	}
+	
+	public void registerParentStubForReceiver(Address<? extends Receiver> receiver, Stub<Address<? extends Supplier>> parentStub) {
+		Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
+		if (parents == null) {
+			parents = new HashSet<Stub<Address<? extends Supplier>>>();
+			parentStubsOfReceiver.put(receiver, parents);
+		}
+		parents.add(parentStub);
+	}
+	public Set<Stub<Address<? extends Supplier>>> getParentStubsOfReceiver(Address<? extends Receiver> receiver) {
+		Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
+		if (parents == null) parents = Collections.emptySet();
+		return parents;
 	}
 }

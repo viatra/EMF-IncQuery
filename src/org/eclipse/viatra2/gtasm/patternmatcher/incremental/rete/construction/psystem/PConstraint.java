@@ -19,14 +19,14 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Re
  * @author Bergmann Gábor
  *
  */
-public abstract interface PConstraint {
+public interface PConstraint {
 
-	public abstract Set<PVariable> getAffectedVariables();
-	public abstract Set<PVariable> getDeducedVariables();
+	public Set<PVariable> getAffectedVariables();
+	public Set<PVariable> getDeducedVariables();
 	
-	public abstract void replaceVariable(PVariable obsolete, PVariable replacement);
+	public void replaceVariable(PVariable obsolete, PVariable replacement);
 	
-	public abstract void delete();
+	public void delete();
 	
-	public abstract void checkSanity() throws RetePatternBuildException;
+	public void checkSanity() throws RetePatternBuildException;
 }

@@ -13,12 +13,13 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.p
 
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.BuildHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
+ * A constraint for which all satisfying tuples of variable values can be enumerated at any point during run-time.
  * @author Bergmann Gábor
  *
  */
