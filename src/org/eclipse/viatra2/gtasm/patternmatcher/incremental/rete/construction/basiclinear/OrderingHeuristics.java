@@ -21,6 +21,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ps
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.ConstantValue;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.OrderingCompareAgent;
 
 /**
  * @author Bergmann Gábor
@@ -36,34 +37,32 @@ public class OrderingHeuristics<PatternDescription, StubHandle, Collector> imple
 		super();
 		this.stub = stub;
 	}
-	
-	static int preferTrue(boolean b1, boolean b2) {
-		return (b1^b2) ? (b1 ? -1: +1) : 0; 
-	}
-	static <T> int preferLess(Comparable<T> c1, T c2) {
-		return c1.compareTo(c2); 
-	}
-	static int lexi(int moreSignificant, int lessSignificant) {
-		return (moreSignificant == 0) ? lessSignificant : moreSignificant;
-	}	
-	
+		
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public int compare(PConstraint o1, PConstraint o2) {
-		int result = 0;
-		result = lexi(result, preferTrue(isConstant(o1), isConstant(o2)));
-		result = lexi(result, preferTrue(isReady(o1), isReady(o2)));
-		
-		Set<PVariable> bound1 = boundVariables(o1);
-		Set<PVariable> bound2 = boundVariables(o2);
-		result = lexi(result, preferTrue(isBound(o1, bound1), isBound(o2, bound2)));
-		result = lexi(result, -preferLess(degreeBound(o1, bound1), degreeBound(o2, bound2)));
-		result = lexi(result, preferLess(degreeFree(o1, bound1), degreeFree(o2, bound2)));
-		
-		result = lexi(result, preferLess(o1.toString(), o2.toString()));
-		return result;
+		return new OrderingCompareAgent<PConstraint>(o1, o2) {
+			@Override
+			protected void doCompare() {
+				boolean temp = true
+				&& consider(preferTrue(isConstant(a), isConstant(b)))
+				&& consider(preferTrue(isReady(a), isReady(b)))
+				;
+				if (!temp) return;
+				
+				Set<PVariable> bound1 = boundVariables(a);
+				Set<PVariable> bound2 = boundVariables(b);
+				swallowBoolean(temp 				
+				&& consider(preferTrue(isBound(a, bound1), isBound(b, bound2)))
+				&& consider(preferMore(degreeBound(a, bound1), degreeBound(b, bound2)))
+				&& consider(preferLess(degreeFree(a, bound1), degreeFree(b, bound2)))
+				
+				&& consider(preferLess(a.toString(), b.toString()))
+				);
+			}		
+		}.compare();
 	}
 
 

@@ -120,6 +120,8 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
 //			TupleMask trim = new TupleMask(tI, tiW);
 //			Stub<StubHandle> trimmer = buildable.buildTrimmer(stub, trim);
 //			buildable.buildConnection(trimmer, collector);
+
+			context.logDebug(getClass().getSimpleName() + ": patternbody build concluded");
 	
 			return stub;
 			

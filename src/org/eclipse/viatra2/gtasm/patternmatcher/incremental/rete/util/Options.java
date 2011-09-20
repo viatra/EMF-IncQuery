@@ -11,6 +11,10 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IReteLayoutStrategy;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.basiclinear.BasicLinearLayout;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.quasitree.QuasiTreeLayout;
+
 public class Options {
 
 	public enum NodeSharingOption {
@@ -47,7 +51,18 @@ public class Options {
 	
 	public enum BuilderMethod {
 		LEGACY, // ONLY with GTASM
-		PSYSTEM_BASIC_LINEAR
+		PSYSTEM_BASIC_LINEAR,
+		PSYSTEM_QUASITREE;
+		public <PatternDescription, StubHandle, Collector> IReteLayoutStrategy<PatternDescription, StubHandle, Collector> layoutStrategy() {
+			switch (this) {
+			case PSYSTEM_BASIC_LINEAR:
+				return new BasicLinearLayout<PatternDescription, StubHandle, Collector>();
+			case PSYSTEM_QUASITREE:
+				return new QuasiTreeLayout<PatternDescription, StubHandle, Collector>();
+			default:
+				return null;
+			}
+		}
 	}
 	public final static BuilderMethod builderMethod = BuilderMethod.PSYSTEM_BASIC_LINEAR;
 }

@@ -86,11 +86,17 @@ public class Stub<HandleType> {
 		return handle;
 	}
 	/**
-	 * @return the index of variablesTuple
+	 * @return the index of the variable within variablesTuple
 	 */
 	public Map<Object, Integer> getVariablesIndex() {
 		return variablesIndex;
 	}
+	/**
+	 * @return the set of variables involved
+	 */
+	public Set<Object> getVariablesSet() {
+		return variablesIndex.keySet();
+	}	
 	/**
 	 * @return all constraints already enforced at this handle
 	 */
