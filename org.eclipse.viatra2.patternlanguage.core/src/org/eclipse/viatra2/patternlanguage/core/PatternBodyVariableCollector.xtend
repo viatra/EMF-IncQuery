@@ -70,7 +70,7 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 		variable.transient = true
 		variable.derived = true
 		variable.name = "variable"
-		variable.lowerBound = 1
+		variable.lowerBound = 0
 		variable.upperBound = 1
 		variable.EType = PatternLanguagePackage::eINSTANCE.variable
 		variable.containment = false
