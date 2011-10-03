@@ -15,6 +15,10 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	private TypeReferences typeReferences;
 	
 	protected JvmTypeReference _typeForIdentifiable(Variable variable, boolean rawType) {
-		return typeReferences.getTypeForName(variable.getType().getTypename(), variable);
+		if (variable.getType() != null) {
+			return typeReferences.getTypeForName(variable.getType().getTypename(), variable);
+		} else {
+			return typeReferences.createAnyTypeReference(variable);
+		}
 	}
 }
