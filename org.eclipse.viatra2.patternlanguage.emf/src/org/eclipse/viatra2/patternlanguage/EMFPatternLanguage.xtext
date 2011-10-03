@@ -16,7 +16,8 @@ PackageImport:
 ;
 
 Constraint returns core::Constraint:
-	CheckConstraint | PatternCompositionConstraint | ExpressionConstraint // Copied from PatternLanguage
+	//CheckConstraint	| 
+	PatternCompositionConstraint | ExpressionConstraint // Copied from PatternLanguage
 	| EClassConstraint 													  // Additions
 ;
 

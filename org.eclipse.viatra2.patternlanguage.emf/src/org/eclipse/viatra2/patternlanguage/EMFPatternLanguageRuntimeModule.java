@@ -11,6 +11,7 @@ import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.xbase.scoping.XbaseImportedNamespaceScopeProvider;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
@@ -34,7 +35,7 @@ public class EMFPatternLanguageRuntimeModule extends org.eclipse.viatra2.pattern
 	
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
 	@Override
-	public Class<? extends org.eclipse.xtext.xbase.typing.ITypeProvider> bindITypeProvider() {
+	public Class<? extends ITypeProvider> bindITypeProvider() {
 			return EMFPatternTypeProvider.class;
 	}
 }
