@@ -67,7 +67,7 @@ PatternBody returns PatternBody:
 
 Constraint returns Constraint:
 	//CheckConstraint |
-	PatternCompositionConstraint | ExpressionConstraint
+	PatternCompositionConstraint | PathExpressionConstraint
 ;
 
 
@@ -86,17 +86,17 @@ CheckConstraint returns Constraint:
 	'check' '(' expression = XExpression ')'
 ;
 
-ExpressionConstraint returns Constraint:
+PathExpressionConstraint returns Constraint:
 	{ExpressionConstraint}
 	negative?='neg'?
-	head=ExpressionHead
+	head=PathExpressionHead
 ;
 
-ExpressionHead:
-	type = Type '.' tail = ExpressionTail '('src=VariableReference ',' dst=VariableReference ')'
+PathExpressionHead:
+	type = Type '.' tail = PathExpressionTail '('src=VariableReference ',' dst=VariableReference ')'
 ;
 
-ExpressionTail:
-	type = RefType ('[' index=INT ']')? closure?='*'? ('.' tail = ExpressionTail)?
+PathExpressionTail:
+	type = RefType ('[' index=INT ']')? closure?='*'? ('.' tail = PathExpressionTail)?
 ;
 

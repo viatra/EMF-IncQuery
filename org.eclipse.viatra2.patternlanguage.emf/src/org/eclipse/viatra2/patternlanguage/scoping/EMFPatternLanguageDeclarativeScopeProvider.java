@@ -16,8 +16,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionHead;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionTail;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.MyAbstractDeclarativeScopeProvider;
@@ -120,25 +120,25 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		return createClassifierScope(allClassifiers);
 	}
 	
-	public IScope scope_EReference(ExpressionHead ctx, EReference ref) {
+	public IScope scope_EReference(PathExpressionHead ctx, EReference ref) {
 		// This is needed for content assist - in that case the ExpressionTail does not exists
 		return new ParentScopeProvider().doSwitch(ctx);
 	}
 	
-	public IScope scope_EReference(ExpressionTail ctx, EReference ref) {
+	public IScope scope_EReference(PathExpressionTail ctx, EReference ref) {
 		return new ParentScopeProvider().doSwitch(ctx.eContainer());
 	}
 	
 	class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
 
 		@Override
-		public IScope caseExpressionHead(ExpressionHead object) {
+		public IScope casePathExpressionHead(PathExpressionHead object) {
 			ClassType type = (ClassType) object.getType();
 			return calculateReferences(type);
 		}
 
 		@Override
-		public IScope caseExpressionTail(ExpressionTail object) {
+		public IScope casePathExpressionTail(PathExpressionTail object) {
 			return calculateReferences((ClassType) object.getType());
 		}
 		
