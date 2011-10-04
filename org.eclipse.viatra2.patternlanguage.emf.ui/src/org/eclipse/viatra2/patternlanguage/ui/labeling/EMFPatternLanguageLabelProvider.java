@@ -4,6 +4,8 @@
 package org.eclipse.viatra2.patternlanguage.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
 import com.google.inject.Inject;
@@ -20,6 +22,13 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		super(delegate);
 	}
 
+	String text(PatternModel model) {
+		return "Pattern Model";
+	}
+	
+	String text(PackageImport ele) {
+		return String.format("import %s", ele.getEPackage().getName());
+	}
 /*
 	//Labels and icons can be computed like this:
 	
