@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionTail;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
@@ -84,6 +85,15 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		return current;
 	}
 	
+	public IScope scope_EClass(PatternBody ctx, EReference ref) {
+		// This is needed for content assist - in that case the ClassType does not exists
+		EObject root = getRootContainer(ctx);
+		if (root instanceof EMFPatternModel){
+			return createReferencedPackagesScope((EMFPatternModel) root);
+		} else 
+			return IScope.NULLSCOPE;
+	}
+	
 	public IScope scope_EClass(ClassType ctx, EReference ref) {
 		EObject root = getRootContainer(ctx);
 		if (root instanceof EMFPatternModel){
@@ -108,6 +118,11 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 				allClassifiers.addAll(decl.getEPackage().getEClassifiers());
 		}
 		return createClassifierScope(allClassifiers);
+	}
+	
+	public IScope scope_EReference(ExpressionHead ctx, EReference ref) {
+		// This is needed for content assist - in that case the ExpressionTail does not exists
+		return new ParentScopeProvider().doSwitch(ctx);
 	}
 	
 	public IScope scope_EReference(ExpressionTail ctx, EReference ref) {
