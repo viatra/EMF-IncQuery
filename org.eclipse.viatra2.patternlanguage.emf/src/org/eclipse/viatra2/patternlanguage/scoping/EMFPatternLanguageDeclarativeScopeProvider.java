@@ -22,8 +22,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -88,16 +88,16 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	public IScope scope_EClass(PatternBody ctx, EReference ref) {
 		// This is needed for content assist - in that case the ClassType does not exists
 		EObject root = getRootContainer(ctx);
-		if (root instanceof EMFPatternModel){
-			return createReferencedPackagesScope((EMFPatternModel) root);
+		if (root instanceof PatternModel){
+			return createReferencedPackagesScope((PatternModel) root);
 		} else 
 			return IScope.NULLSCOPE;
 	}
 	
 	public IScope scope_EClass(ClassType ctx, EReference ref) {
 		EObject root = getRootContainer(ctx);
-		if (root instanceof EMFPatternModel){
-			return createReferencedPackagesScope((EMFPatternModel) root);
+		if (root instanceof PatternModel){
+			return createReferencedPackagesScope((PatternModel) root);
 		} else 
 			return IScope.NULLSCOPE;
 	}
@@ -111,7 +111,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 				}));
 	}
 	
-	protected IScope createReferencedPackagesScope(EMFPatternModel model) {
+	protected IScope createReferencedPackagesScope(PatternModel model) {
 		final Collection<EClassifier> allClassifiers = new ArrayList<EClassifier>();
 		for(PackageImport decl: model.getImportPackages()) {
 			if (decl.getEPackage() != null)

@@ -14,8 +14,8 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -67,10 +67,10 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 	
 	@Override
 	public void completeType_Typename(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		EMFPatternModel pModel = null;
+		PatternModel pModel = null;
 		EObject root = getRootContainer(model);
-		if (root instanceof EMFPatternModel){
-			pModel = (EMFPatternModel) root;
+		if (root instanceof PatternModel){
+			pModel = (PatternModel) root;
 		}
 		ContentAssistContext.Builder myContextBuilder = context.copy();
 		myContextBuilder.setMatcher(new ClassifierPrefixMatcher(context.getMatcher(), getQualifiedNameConverter()));
