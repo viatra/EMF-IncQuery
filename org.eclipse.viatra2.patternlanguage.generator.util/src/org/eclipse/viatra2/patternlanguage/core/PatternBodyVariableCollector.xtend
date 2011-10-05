@@ -28,19 +28,21 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
            	 case "VariableReference": varRefClass = c
            }
        }
-       bodyClass.generateEReference
+       bodyClass.generateEReference(varClass)
        varClass.generateReferenceToVariableDecl(varRefClass)
-       bodyClass.generateEOperation
+       bodyClass.generateEOperation(varClass)
 	}
 	
-	def generateEReference(EClass bodyClass) {
+	def generateEReference(EClass bodyClass, EClass varClass) {
 		val varRef = EcoreFactory::eINSTANCE.createEReference
 		varRef.transient = true
 		varRef.derived = true
 		varRef.name = "variables"
 		varRef.lowerBound = 0
 		varRef.upperBound = -1
-		varRef.EType = PatternLanguagePackage::eINSTANCE.variable
+		varRef.EType = varClass 
+		//PatternLanguageClassResolver::variableType
+		//PatternLanguagePackage::eINSTANCE.variable
 		varRef.changeable = false
 		varRef.containment = true
 		
@@ -62,7 +64,9 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 		varRefs.name = "references"
 		varRefs.lowerBound = 0
 		varRefs.upperBound = -1
-		varRefs.EType = PatternLanguagePackage::eINSTANCE.variableReference
+		varRefs.EType = varRefClass 
+		//PatternLanguageClassResolver::variableReferenceType 
+		//PatternLanguagePackage::eINSTANCE.variableReference
 		varRefs.containment = false
 		varClass.EStructuralFeatures += varRefs
 		
@@ -72,7 +76,9 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 		variable.name = "variable"
 		variable.lowerBound = 0
 		variable.upperBound = 1
-		variable.EType = PatternLanguagePackage::eINSTANCE.variable
+		variable.EType = varClass 
+		//PatternLanguageClassResolver::variableType 
+		//PatternLanguagePackage::eINSTANCE.variable
 		variable.containment = false
 		varRefClass.EStructuralFeatures += variable
 		
@@ -80,10 +86,12 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 		variable.EOpposite = varRefs
 	}
 	
-	def generateEOperation(EClass bodyClass) {
+	def generateEOperation(EClass bodyClass, EClass varClass) {
 		val op = EcoreFactory::eINSTANCE.createEOperation
 		op.name = "getVariables"
-		op.EType = PatternLanguagePackage::eINSTANCE.variable
+		op.EType = varClass 
+		//PatternLanguageClassResolver::variableType 
+		//PatternLanguagePackage::eINSTANCE.variable
 		op.upperBound = -1
 		val body = EcoreFactory::eINSTANCE.createEAnnotation
 		body.source = GenModelPackage::eNS_URI
