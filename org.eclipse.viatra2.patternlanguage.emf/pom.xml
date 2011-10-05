@@ -40,9 +40,6 @@
 			<resource>
 				<directory>src</directory>
 			</resource>
-			<resource>
-				<directory>xtend-gen</directory>
-			</resource>
 		</resources>
 	</build>
 </project>
