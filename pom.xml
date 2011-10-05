@@ -48,4 +48,22 @@
 	</plugin>
    </plugins>
   </build>
+  <pluginRepositories>
+	<pluginRepository>
+		<id>fornax.plugin.repository</id>
+		<name>Fornax Plugin Repository</name>
+		<url>
+			http://www.fornax-platform.org/m2/repository
+		</url>
+	</pluginRepository>
+  </pluginRepositories>
+  <repositories>
+	<repository>
+		<id>fornax.repository</id>
+		<name>Fornax Repository</name>
+		<url>
+			http://www.fornax-platform.org/m2/repository
+		</url>
+	</repository>
+  </repositories>
 </project>

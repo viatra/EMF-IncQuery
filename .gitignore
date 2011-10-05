@@ -1,4 +1,5 @@
 */target
 .DS_Store
 */src-gen/**/*
+!*/xtend-gen/**
 !*/src-gen/keep.txt
