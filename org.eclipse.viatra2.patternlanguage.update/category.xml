@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.viatra2.patternlanguage.emf.feature_1.0.0.qualifier.jar" id="org.eclipse.viatra2.patternlanguage.emf.feature" version="1.0.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <category-def name="org.eclipse.viatra2.patternlanguage" label="EMF-IncQuery"/>
+</site>
