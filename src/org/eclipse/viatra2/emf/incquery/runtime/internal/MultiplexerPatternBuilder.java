@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.HashMap;
 
+import org.eclipse.viatra2.emf.incquery.runtime.BuilderRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
@@ -51,7 +52,7 @@ public class MultiplexerPatternBuilder implements
 	@Override
 	public Address<? extends Receiver> construct(String gtPattern)
 			throws RetePatternBuildException {
-		IStatelessGeneratedRetePatternBuilder builder = Activator.getDefault().getContributedStatelessPatternBuilders().get(gtPattern);
+		IStatelessGeneratedRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
 		if (builder != null) return builder.construct(baseBuildable, context, gtPattern);
 		else throw new RetePatternBuildException("No RETE pattern builder generated for pattern {1}.",
 				new String[]{gtPattern}, gtPattern);
@@ -62,7 +63,7 @@ public class MultiplexerPatternBuilder implements
 	 */
 	@Override
 	public HashMap<Object, Integer> getPosMapping(String gtPattern) {
-		IStatelessGeneratedRetePatternBuilder builder = Activator.getDefault().getContributedStatelessPatternBuilders().get(gtPattern);
+		IStatelessGeneratedRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
 		if (builder != null) return builder.getPosMapping(gtPattern); else return null;
 	}
 

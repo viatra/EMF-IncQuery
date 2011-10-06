@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.viatra2.emf.incquery.runtime.BuilderRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
@@ -88,10 +89,10 @@ public class EngineManager {
 		ReteContainerBuildable<String> buildable = new ReteContainerBuildable<String>(engine);
 
 		Collection<ViatraEMFPatternmatcherBuildAdvisor> advisors = 
-			Activator.getDefault().getContributedPatternBuildAdvisors();	
+			BuilderRegistry.getContributedPatternBuildAdvisors();	
 		if (advisors==null || advisors.isEmpty()) {
 			engine.setBuilder(new MultiplexerPatternBuilder(buildable, context));
-			Set<String> patternSet = Activator.getDefault().getContributedStatelessPatternBuilders().keySet(); 
+			Set<String> patternSet = BuilderRegistry.getContributedStatelessPatternBuilders().keySet(); 
 			try {
 				engine.buildMatchersCoalesced(patternSet);
 			} catch (RetePatternBuildException e) {

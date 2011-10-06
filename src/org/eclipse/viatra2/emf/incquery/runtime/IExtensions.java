@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 
-package org.eclipse.viatra2.emf.incquery.runtime.api;
+package org.eclipse.viatra2.emf.incquery.runtime;
 
 /**
  * Interface for storing string constants related to IncQuery's extension points.
