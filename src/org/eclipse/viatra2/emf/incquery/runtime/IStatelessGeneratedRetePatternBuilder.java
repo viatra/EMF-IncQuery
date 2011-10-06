@@ -22,7 +22,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 /**
  * Stateless version of IRetePatternBuilder: takes all parameters upon call.
  * Bound to serve generated code (PatternDescriptor = String).
- * Because code is generated, no BuilderContext required, only a simple Context.
+ * Because code is generated, no StringTypedContext required, only a simple Context.
  * @author Bergmann Gábor
  *
  */
