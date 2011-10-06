@@ -25,7 +25,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.EMFCodegenBuildable;
-import org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.EMFPatternMatcherBuilderContext;
+import org.eclipse.viatra2.emf.incquery.codegen.patternmatcher.NEMFPatternMatcherBuilderContext;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.CodegenSupport;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
@@ -36,7 +36,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.adapters.CodegenReco
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.CodegenRecordingCoordinator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherBuilderContext;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherStringTypedContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.simple.SimpleReteBuilder;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.asm.definitions.Machine;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;
@@ -97,7 +97,7 @@ public class PatternBuilderSourceGenerator {
 		String packageNameRoot = IncQueryNature.GENERATED_BUILDERS_PACKAGEROOT;
 
 
-		IPatternMatcherBuilderContext<GTPattern> context = new EMFPatternMatcherBuilderContext<GTPattern>(framework, collectEPackages());
+		IPatternMatcherStringTypedContext<GTPattern> context = new NEMFPatternMatcherBuilderContext<GTPattern>(framework, collectEPackages());
 		CodegenRecordingCoordinator<GTPattern> coordinator = new CodegenRecordingCoordinator<GTPattern>(context,
 				"Stub<Address<? extends Supplier>>", "Address<? extends Receiver>", "ReteContainerBuildable<String>");
 		CodegenRecorderGTASMBuildable buildable = new EMFCodegenBuildable(coordinator, null, "\t\t", "buildable", "");
