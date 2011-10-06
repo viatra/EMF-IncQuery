@@ -63,7 +63,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.runtime.ViatraEMFPatternmatcherBuildAdvisor"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.runtime.internal.ViatraEMFPatternmatcherBuildAdvisor"/>
                </appInfo>
             </annotation>
          </attribute>

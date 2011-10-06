@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime;
+package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -23,8 +23,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.MultiplexerPatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;

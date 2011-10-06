@@ -8,7 +8,7 @@
  * Contributors:
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.runtime;
+package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IExtensions;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -28,12 +30,6 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends Plugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.runtime";
-
-	// The extension point ID
-	public static final String EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.patternmatcher.builder";
-	
 	// The shared instance
 	private static Activator plugin;
 	
@@ -84,7 +80,7 @@ public class Activator extends Plugin {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
 		IExtensionPoint poi;
 
-		poi = reg.getExtensionPoint(EXTENSION_POINT_ID);	
+		poi = reg.getExtensionPoint(IExtensions.EXTENSION_POINT_ID);	
 		if (poi != null) 
 		{		
 			IExtension[] exts = poi.getExtensions();

@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.HashMap;
 
-import org.eclipse.viatra2.emf.incquery.runtime.Activator;
 import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;

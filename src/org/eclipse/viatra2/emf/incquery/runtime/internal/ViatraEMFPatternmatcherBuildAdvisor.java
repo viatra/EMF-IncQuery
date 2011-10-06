@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime;
+package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;

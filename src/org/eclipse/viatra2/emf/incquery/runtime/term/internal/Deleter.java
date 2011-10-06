@@ -8,7 +8,7 @@
  * Contributors:
  *    Akos Horvath - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.runtime.term;
+package org.eclipse.viatra2.emf.incquery.runtime.term.internal;
 
 import java.util.Collection;
 import java.util.Iterator;
