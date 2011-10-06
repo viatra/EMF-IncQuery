@@ -18,7 +18,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Re
  * @author Bergmann Gábor
  *
  */
-public interface IPatternMatcherBuilderContext<PatternDescription> extends
+public interface IPatternMatcherStringTypedContext<PatternDescription> extends
 		IPatternMatcherContext<PatternDescription> {
 
 	//	String retrieveUnaryTypeFQN(Object typeObject);
