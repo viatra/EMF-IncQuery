@@ -78,7 +78,7 @@ public class ExtensionContributionsGenerator {
 			IExtensionsModelFactory factory = fModel.getFactory();
 			IPluginExtension contribExtension = factory.createExtension();
 			contribExtension.setId(extensionID);
-			contribExtension.setPoint(org.eclipse.viatra2.emf.incquery.runtime.Activator.EXTENSION_POINT_ID);
+			contribExtension.setPoint(org.eclipse.viatra2.emf.incquery.runtime.api.IExtensions.EXTENSION_POINT_ID);
 			for (Map.Entry<GTPattern, String> entry : contributionClassNames.entrySet()) {
 				IPluginElement builderElement = factory.createElement(contribExtension);
 				builderElement.setName("pattern-builder");
