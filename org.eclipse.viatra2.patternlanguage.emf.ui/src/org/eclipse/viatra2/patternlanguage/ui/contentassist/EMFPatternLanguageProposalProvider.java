@@ -9,15 +9,22 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
+import org.eclipse.viatra2.patternlanguage.ResolutionException;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EnumRule;
+import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
@@ -25,12 +32,14 @@ import org.eclipse.xtext.nodemodel.ILeafNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 
 import com.google.common.base.Function;
+import com.google.inject.Inject;
 /**
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
@@ -65,6 +74,42 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 
 	}
 	
+	@Inject
+	IScopeProvider scopeProvider;
+	
+	@Override
+	public void complete_ValueReference(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		super.complete_ValueReference(model, ruleCall, context, acceptor);
+		if (model instanceof PathExpressionHead) {
+			PathExpressionHead head = (PathExpressionHead) model;
+			try {
+				//XXX The following code re-specifies scoping instead of reusing the scope provider
+				EClassifier typeClassifier = EMFPatternLanguageScopeHelper.calculateExpressionType(head);
+				if (typeClassifier instanceof EEnum) {
+					//In case of EEnums add Enum Literal constants
+					EEnum type = (EEnum) typeClassifier;
+					for (EEnumLiteral literal : type.getELiterals()) {
+						acceptor.accept(createCompletionProposal(
+								"&" + literal.getName(), type.getName() + "::" + literal.getName(),
+								null, context));
+					}
+				}
+				//XXX The following code re-specifies scoping instead of reusing the scope provider
+				// Always refer to existing variables
+				PatternBody body = (PatternBody) head.eContainer()/*PathExpression*/.eContainer()/*PatternBody*/;
+				for (Variable var : body.getVariables()) {
+					acceptor.accept(createCompletionProposal(var.getName(), context));
+				}
+				Pattern pattern = (Pattern) body.eContainer();
+				for (Variable var : pattern.getParameters()) {
+					acceptor.accept(createCompletionProposal(var.getName(), context));
+				}
+			} catch (ResolutionException e) {
+			}
+		}
+	}
+
 	@Override
 	public void completeType_Typename(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		PatternModel pModel = null;

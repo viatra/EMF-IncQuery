@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.scoping;
+package org.eclipse.viatra2.patternlanguage;
 
 public class ResolutionException extends Exception {
 

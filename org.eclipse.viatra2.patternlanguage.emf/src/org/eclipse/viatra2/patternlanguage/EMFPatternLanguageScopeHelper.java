@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.scoping;
+package org.eclipse.viatra2.patternlanguage;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -17,13 +17,23 @@ public class EMFPatternLanguageScopeHelper {
 	}
 	
 	public static EEnum calculateEnumerationType(PathExpressionTail tail) throws ResolutionException{
+		EClassifier classifier = calculateExpressionType(tail);
+		if (classifier instanceof EEnum) {
+			return (EEnum) classifier;
+		}
+		throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+	}
+	
+	public static EClassifier calculateExpressionType(PathExpressionHead head) throws ResolutionException{
+		if (head.getTail() == null) throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+		return calculateExpressionType(head.getTail());
+	}
+
+	public static EClassifier calculateExpressionType(PathExpressionTail tail)
+			throws ResolutionException {
 		if (tail.getTail() == null) {
 			Type type = tail.getType();
-			EClassifier classifier = ((ReferenceType)type).getRefname().getEType();
-			if (classifier instanceof EEnum) {
-				return (EEnum) classifier;
-			}
-			throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+			return ((ReferenceType)type).getRefname().getEType();
 		} else {
 			return calculateEnumerationType(tail.getTail());
 		}

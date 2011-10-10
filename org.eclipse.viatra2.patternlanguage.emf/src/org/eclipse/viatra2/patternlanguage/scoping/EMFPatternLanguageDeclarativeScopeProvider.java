@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
+import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
@@ -153,9 +155,9 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		return calculateEnumLiteralScope(type);
 	}
 
-	public IScope scope_ValueReference(PathExpressionHead ctx, EReference ref) {
-		return IScope.NULLSCOPE;
-	}
+//	public IScope scope_ValueReference(PathExpressionHead ctx, EReference ref) {
+//		return IScope.NULLSCOPE;
+//	}
 //	private IScope calculateEnumLiteralScope(Type type) {
 //		if (type instanceof ReferenceType) {
 //			EClassifier classifier = ((ReferenceType)type).getRefname().getEType();
