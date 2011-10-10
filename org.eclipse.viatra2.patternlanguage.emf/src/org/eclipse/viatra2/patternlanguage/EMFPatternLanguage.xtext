@@ -25,12 +25,21 @@ EClassConstraint:
 	type = Type  '(' var = VariableReference ')'
 ; 
 
-Type returns Type:
+Type returns core::EntityType:
 	{ClassType}
 	classname=[ecore::EClass]
 ;
 
-RefType returns RefType:
+RefType returns core::RelationType:
 	{ReferenceType}
-	refname=[ecore::EReference]
+	refname=[ecore::EStructuralFeature]
+;
+
+ValueReference returns core::ValueReference:
+	IntValue | StringValue | VariableValue //Copied from PatternLanguage 
+	| EnumValue							   //Additions
+;
+
+EnumValue:
+	'&' /*enumeration = [ecore::EEnum] '.' */ literal = [ecore::EEnumLiteral]
 ;

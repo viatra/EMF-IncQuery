@@ -33,6 +33,7 @@ Workflow {
         pathTestProject = "${runtimeProject}.tests"
         projectNameRt = projectName
         projectNameUi = "${projectName}.ui"
+        
         language = {
             uri = grammarURI
             fileExtensions = file.extensions

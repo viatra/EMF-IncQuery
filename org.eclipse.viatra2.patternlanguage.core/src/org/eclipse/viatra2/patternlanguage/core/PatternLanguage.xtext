@@ -48,11 +48,15 @@ VariableReference:
 	var = ID
 ;
 
+//These types are not meant to be written directly, just in the desc languages
 Type returns Type:
+	{EntityType}
 	typename=ID
 ;
 
+//These types are not meant to be written directly, just in the desc languages
 RefType returns Type:
+	{RelationType}
 	typename=ID
 ;
 
@@ -93,10 +97,28 @@ PathExpressionConstraint returns Constraint:
 ;
 
 PathExpressionHead:
-	type = Type '.' tail = PathExpressionTail '('src=VariableReference ',' dst=VariableReference ')'
+	type = Type '.' tail = PathExpressionTail '('src=VariableReference ',' dst=ValueReference ')'
 ;
 
 PathExpressionTail:
 	type = RefType ('[' index=INT ']')? closure?='*'? ('.' tail = PathExpressionTail)?
 ;
 
+ValueReference:
+	IntValue | StringValue | VariableValue
+;
+
+IntValue returns ValueReference:
+	{IntValue}
+	value = INT
+;
+
+StringValue returns ValueReference:
+	{StringValue}
+	value = STRING
+;
+
+VariableValue returns ValueReference:
+	{VariableValue}
+	value = VariableReference
+;

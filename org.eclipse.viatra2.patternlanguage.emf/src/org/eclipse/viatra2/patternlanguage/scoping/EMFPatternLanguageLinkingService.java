@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.conversion.ValueConverterException;
@@ -31,7 +35,29 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) throws IllegalNodeException {
 		if (ref == EMFPatternLanguagePackage.eINSTANCE.getPackageImport_EPackage() && context instanceof PackageImport)
 			return getPackage((PackageImport)context, (ILeafNode) node);
+		else if (ref == EMFPatternLanguagePackage.eINSTANCE.getEnumValue_Literal() && context instanceof EnumValue) {
+			try {
+				EEnum type = EMFPatternLanguageScopeHelper.calculateEnumerationType(getExpressionHead(context.eContainer()));
+				String typename = ((ILeafNode)node).getText();
+				EEnumLiteral literal = type.getEEnumLiteral(typename);
+				if (literal != null) {
+					return Collections.<EObject>singletonList(literal);
+				} else return Collections.EMPTY_LIST;
+			} catch (ResolutionException e) {
+				throw new IllegalNodeException(node, e);
+			}
+		}
 		return super.getLinkedObjects(context, ref, node);
+	}
+	
+	private PathExpressionHead getExpressionHead(EObject obj) {
+		if (obj instanceof PathExpressionHead) {
+			return (PathExpressionHead) obj;
+		} else if (obj.eContainer() != null) {
+			return getExpressionHead(obj.eContainer());
+		} else {
+			return null;
+		}
 	}
 	
 	private List<EObject> getPackage(PackageImport context, ILeafNode text) {
