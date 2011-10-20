@@ -9,7 +9,7 @@
  *    Istvan Rath - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime;
+package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
+import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.ViatraEMFPatternmatcherBuildAdvisor;
 
 /**
@@ -32,7 +34,7 @@ public class BuilderRegistry {
 
 	private static Collection<ViatraEMFPatternmatcherBuildAdvisor> contributedPatternBuildAdvisors = new ArrayList<ViatraEMFPatternmatcherBuildAdvisor>();;
 
-	private static Map<String, IStatelessGeneratedRetePatternBuilder> contributedStatelessPatternBuilders = new HashMap<String, IStatelessGeneratedRetePatternBuilder>();
+	private static Map<String, IStatelessRetePatternBuilder> contributedStatelessPatternBuilders = new HashMap<String, IStatelessRetePatternBuilder>();
 
 	public static void initRegistry()
 	{
@@ -83,7 +85,7 @@ public class BuilderRegistry {
 		}
 	}
 
-	public static Map<String, IStatelessGeneratedRetePatternBuilder> getContributedStatelessPatternBuilders() {
+	public static Map<String, IStatelessRetePatternBuilder> getContributedStatelessPatternBuilders() {
 		return contributedStatelessPatternBuilders;
 	}	
 	

@@ -13,8 +13,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.HashMap;
 
-import org.eclipse.viatra2.emf.incquery.runtime.BuilderRegistry;
-import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IStatelessRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
@@ -24,7 +24,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplie
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 
 /**
- * Internal RetePatternBuilder that multiplexes build requests to contributions to the extension point.
+ * Internal RetePatternBuilder that multiplexes build requests to contributions to the BuilderRegistry.
  * Multiplexation is keyed by pattern fqn.
  * @author Bergmann Gábor
  *
@@ -52,7 +52,7 @@ public class MultiplexerPatternBuilder implements
 	@Override
 	public Address<? extends Receiver> construct(String gtPattern)
 			throws RetePatternBuildException {
-		IStatelessGeneratedRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
+		IStatelessRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
 		if (builder != null) return builder.construct(baseBuildable, context, gtPattern);
 		else throw new RetePatternBuildException("No RETE pattern builder generated for pattern {1}.",
 				new String[]{gtPattern}, gtPattern);
@@ -63,7 +63,7 @@ public class MultiplexerPatternBuilder implements
 	 */
 	@Override
 	public HashMap<Object, Integer> getPosMapping(String gtPattern) {
-		IStatelessGeneratedRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
+		IStatelessRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
 		if (builder != null) return builder.getPosMapping(gtPattern); else return null;
 	}
 

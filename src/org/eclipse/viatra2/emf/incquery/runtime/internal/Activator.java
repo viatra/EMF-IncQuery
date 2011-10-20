@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.viatra2.emf.incquery.runtime.BuilderRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
 import org.osgi.framework.BundleContext;
 
 /**

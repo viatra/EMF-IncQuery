@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime;
+package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
 import java.util.Collection;
 import java.util.Collections;
