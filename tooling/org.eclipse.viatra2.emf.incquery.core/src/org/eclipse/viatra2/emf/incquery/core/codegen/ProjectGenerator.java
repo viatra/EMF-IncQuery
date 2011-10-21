@@ -112,9 +112,11 @@ public class ProjectGenerator {
 		List<IResource> toDelete = new ArrayList<IResource>();
 		@Override
 		public boolean visit(IResource resource) throws CoreException {
-			if (resource instanceof IFile && "java".equals(((IFile)resource).getFileExtension().toLowerCase())) {
-				toDelete.add(resource);
-				return false;
+			if (resource instanceof IFile) {
+				if ("java".equalsIgnoreCase(((IFile)resource).getFileExtension())) {
+					toDelete.add(resource);
+					return false;
+				}
 			}
 			return true;
 		}
