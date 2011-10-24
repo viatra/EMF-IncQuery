@@ -36,6 +36,9 @@ public class BuilderRegistry {
 
 	private static Map<String, IStatelessRetePatternBuilder> contributedStatelessPatternBuilders = new HashMap<String, IStatelessRetePatternBuilder>();
 
+	/**
+	 * Called by Activator.
+	 */
 	public static void initRegistry()
 	{
 		contributedPatternBuildAdvisors.clear();
@@ -91,5 +94,13 @@ public class BuilderRegistry {
 	
 	public static Collection<ViatraEMFPatternmatcherBuildAdvisor> getContributedPatternBuildAdvisors() {
 		return contributedPatternBuildAdvisors;
+	}
+
+	/**
+	 * @param patternFQN
+	 * @param builder
+	 */
+	public static void registerStatelessPatternBuilder(String patternFQN,IStatelessRetePatternBuilder builder) {
+		contributedStatelessPatternBuilders.put(patternFQN, builder);
 	}
 }
