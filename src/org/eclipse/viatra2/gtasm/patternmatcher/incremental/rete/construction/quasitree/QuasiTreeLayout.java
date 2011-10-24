@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IReteLayoutStrategy;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
@@ -49,7 +48,6 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector>
 	public class Scaffold {
 		PSystem<PatternDescription, StubHandle, Collector> pSystem;
 		PatternDescription pattern;
-		IRetePatternBuilder<PatternDescription, StubHandle, Collector> builder;
 		IPatternMatcherContext<PatternDescription> context;
 		Buildable<PatternDescription, StubHandle, Collector> buildable;
 
@@ -59,8 +57,7 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector>
 		Scaffold(PSystem<PatternDescription, StubHandle, Collector> pSystem) {
 			this.pSystem = pSystem;
 			pattern = pSystem.getPattern();
-			builder = pSystem.getBuilder();
-			context = builder.getContext();
+			context = pSystem.getContext();
 			buildable = pSystem.getBuildable();
 		}
 

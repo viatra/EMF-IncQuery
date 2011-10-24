@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IReteLayoutStrategy;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
@@ -44,8 +43,7 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
 		throws RetePatternBuildException 
 	{
 		PatternDescription pattern = pSystem.getPattern();
-		IRetePatternBuilder<PatternDescription, StubHandle, Collector> builder = pSystem.getBuilder();
-		IPatternMatcherContext<PatternDescription> context = builder.getContext();
+		IPatternMatcherContext<PatternDescription> context = pSystem.getContext();
 		Buildable<PatternDescription, StubHandle, Collector> buildable = pSystem.getBuildable();
 		try {
 			

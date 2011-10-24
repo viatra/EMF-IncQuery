@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.ConstantValue;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 
 /**
  * @author Bergmann Gábor
@@ -26,7 +26,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ps
  */
 public class PSystem<PatternDescription, StubHandle, Collector> {
 	private PatternDescription pattern;
-	private IRetePatternBuilder<PatternDescription, StubHandle, Collector> builder;
+	private IPatternMatcherContext<PatternDescription> context;
 	private Buildable<PatternDescription, StubHandle, Collector> buildable;
 
 	private Set<PVariable> allVariables;
@@ -39,13 +39,13 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 	 * 
 	 */
 	public PSystem(
-			IRetePatternBuilder<PatternDescription, StubHandle, Collector> builder, 
+			IPatternMatcherContext<PatternDescription> context, 
 			Buildable<PatternDescription, StubHandle, Collector> buildable,
 			PatternDescription pattern) 
 	{
 		super();
 		this.pattern = pattern;
-		this.builder = builder;
+		this.context = context;
 		this.buildable = buildable;
 		allVariables = new HashSet<PVariable>();
 		uniqueVariables = new HashSet<PVariable>();
@@ -106,11 +106,12 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 		return virtual;
 	}
 	
+
 	/**
-	 * @return the builder
+	 * @return the context
 	 */
-	public IRetePatternBuilder<PatternDescription, StubHandle, Collector> getBuilder() {
-		return builder;
+	public IPatternMatcherContext<PatternDescription> getContext() {
+		return context;
 	}
 	/**
 	 * @return the buildable
@@ -163,6 +164,7 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 		assert(!pVariable.isUnique());
 		uniqueVariables.remove(pVariable);
 	}
+
 
 	
 	

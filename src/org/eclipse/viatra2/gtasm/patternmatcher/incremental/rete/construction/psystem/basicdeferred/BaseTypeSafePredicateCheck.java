@@ -83,7 +83,7 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
 				TypeHelper.subsumeTypes(
 						allTypeRestrictionsForVariable, 
 						checkedTypeRestrictions, 
-						this.pSystem.getBuilder().getContext());
+						this.pSystem.getContext());
 			if (!uncheckedTypeRestrictions.isEmpty()) return pVariable;
 		} 
 		return null;
