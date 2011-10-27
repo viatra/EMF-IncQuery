@@ -113,7 +113,7 @@ public class ProjectGenerator {
 		@Override
 		public boolean visit(IResource resource) throws CoreException {
 			if (resource instanceof IFile) {
-				if ("java".equalsIgnoreCase(((IFile)resource).getFileExtension())) {
+				if (resource!=null && "java".equalsIgnoreCase(((IFile)resource).getFileExtension())) {
 					toDelete.add(resource);
 					return false;
 				}
