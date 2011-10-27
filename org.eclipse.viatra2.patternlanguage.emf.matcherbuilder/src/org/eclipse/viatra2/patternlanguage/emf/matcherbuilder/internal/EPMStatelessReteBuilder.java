@@ -21,6 +21,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receive
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 
 /**
@@ -75,8 +76,8 @@ public class EPMStatelessReteBuilder implements IStatelessRetePatternBuilder {
 	public HashMap<Object, Integer> getPosMapping(Pattern pattern) {
 		HashMap<Object, Integer> posMapping = new HashMap<Object, Integer>();
 		int l = 0;
-		for (Object o : pattern.getParameters()) {
-			posMapping.put(o, l++);
+		for (Variable o : pattern.getParameters()) {
+			posMapping.put(o.getName(), l++);
 		}
 		return posMapping;
 	}
