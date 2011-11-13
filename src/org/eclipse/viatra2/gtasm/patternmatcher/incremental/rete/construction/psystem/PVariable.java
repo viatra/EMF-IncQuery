@@ -83,7 +83,9 @@ public class PVariable {
 			replacement.deducable |= this.deducable;
 		else 
 			replacement.deducable = null;
-		for (PConstraint constraint : this.referringConstraints) {
+		Set<PConstraint> snapshotConstraints = // avoid ConcurrentModificationX
+			new HashSet<PConstraint>(this.referringConstraints);
+		for (PConstraint constraint : snapshotConstraints) {
 			constraint.replaceVariable(this, replacement);
 		}
 		// replacementCheck() will fail from this point
