@@ -19,9 +19,7 @@ import org.eclipse.xtext.xbase.scoping.XbaseScopeProvider;
 
 @SuppressWarnings("all")
 public class PatternLanguageScopeProvider extends XbaseScopeProvider {
-  
   public IScope createLocalVarScope(final IScope parent, final LocalVariableScopeContext scopeContext) {
-    {
       EObject _context = scopeContext.getContext();
       final EObject context = _context;
       boolean matched = false;
@@ -52,9 +50,9 @@ public class PatternLanguageScopeProvider extends XbaseScopeProvider {
           {
             EList<Variable> _parameters = context_2.getParameters();
             final Function1<Variable,IEObjectDescription> _function_1 = new Function1<Variable,IEObjectDescription>() {
-                public IEObjectDescription apply(final Variable e_1) {
-                  IEObjectDescription _createIEObjectDescription_1 = PatternLanguageScopeProvider.this.createIEObjectDescription(e_1);
-                  return _createIEObjectDescription_1;
+                public IEObjectDescription apply(final Variable e) {
+                  IEObjectDescription _createIEObjectDescription = PatternLanguageScopeProvider.this.createIEObjectDescription(e);
+                  return _createIEObjectDescription;
                 }
               };
             List<IEObjectDescription> _map_1 = ListExtensions.<Variable, IEObjectDescription>map(_parameters, _function_1);
@@ -66,7 +64,6 @@ public class PatternLanguageScopeProvider extends XbaseScopeProvider {
       }
       IScope _createLocalVarScope_1 = super.createLocalVarScope(parent, scopeContext);
       return _createLocalVarScope_1;
-    }
   }
   
   public IEObjectDescription createIEObjectDescription(final XVariableDeclaration parameter) {

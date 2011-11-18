@@ -5,9 +5,7 @@ import org.eclipse.xtext.scoping.IScope
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.xbase.XExpression
-import org.eclipse.xtext.example.domainmodel.domainmodel.Entity
 import org.eclipse.xtext.common.types.JvmType
-import org.eclipse.xtext.example.domainmodel.domainmodel.Operation
 import org.eclipse.xtext.scoping.impl.SimpleScope
 import org.eclipse.xtext.resource.EObjectDescription
 import org.eclipse.xtext.util.Strings

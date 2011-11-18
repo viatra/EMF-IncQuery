@@ -33,4 +33,7 @@ Export-Package: org.eclipse.viatra2.patternlanguage,
  org.eclipse.viatra2.patternlanguage.serializer,
  org.eclipse.viatra2.patternlanguage.parser.antlr,
  org.eclipse.viatra2.patternlanguage.parser.antlr.internal,
- org.eclipse.viatra2.patternlanguage.validation
+ org.eclipse.viatra2.patternlanguage.validation,
+ org.eclipse.viatra2.patternlanguage.formatting,
+ org.eclipse.viatra2.patternlanguage.jvmmodel
+

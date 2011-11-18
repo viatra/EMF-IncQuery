@@ -34,5 +34,7 @@ Export-Package: org.eclipse.viatra2.patternlanguage.core,
  org.eclipse.viatra2.patternlanguage.core.scoping,
  org.eclipse.viatra2.patternlanguage.core.serializer,
  org.eclipse.viatra2.patternlanguage.core.services,
- org.eclipse.viatra2.patternlanguage.core.validation
+ org.eclipse.viatra2.patternlanguage.core.validation,
+ org.eclipse.viatra2.patternlanguage.core.formatting,
+ org.eclipse.viatra2.patternlanguage.core.jvmmodel
 

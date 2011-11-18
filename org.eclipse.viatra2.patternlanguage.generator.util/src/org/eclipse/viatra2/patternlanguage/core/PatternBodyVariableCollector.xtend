@@ -6,10 +6,8 @@ import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor
 import org.eclipse.xtext.GeneratedMetamodel
 import org.eclipse.emf.ecore.EcoreFactory
 import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.common.util.BasicEMap
-import org.eclipse.xtext.xbase.XbasePackage
 
 class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 	

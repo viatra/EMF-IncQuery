@@ -18,11 +18,11 @@ import org.eclipse.xtext.GeneratedMetamodel;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 
 @SuppressWarnings("all")
 public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
-  
   public void process(final GeneratedMetamodel metamodel) {
     EPackage _ePackage = metamodel.getEPackage();
     this.process(_ePackage);
@@ -41,19 +41,19 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
         final String __valOfSwitchOver = _name;
         boolean matched = false;
         if (!matched) {
-          if (org.eclipse.xtext.xbase.lib.ObjectExtensions.operator_equals(__valOfSwitchOver,"PatternBody")) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"PatternBody")) {
             matched=true;
             bodyClass = c;
           }
         }
         if (!matched) {
-          if (org.eclipse.xtext.xbase.lib.ObjectExtensions.operator_equals(__valOfSwitchOver,"Variable")) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"Variable")) {
             matched=true;
             varClass = c;
           }
         }
         if (!matched) {
-          if (org.eclipse.xtext.xbase.lib.ObjectExtensions.operator_equals(__valOfSwitchOver,"VariableReference")) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"VariableReference")) {
             matched=true;
             varRefClass = c;
           }
@@ -94,14 +94,13 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
       EList<EAnnotation> _eAnnotations = varRef.getEAnnotations();
       CollectionExtensions.<EAnnotation>operator_add(_eAnnotations, body);
       EList<EStructuralFeature> _eStructuralFeatures = bodyClass.getEStructuralFeatures();
-      boolean _operator_add = CollectionExtensions.<EStructuralFeature>operator_add(_eStructuralFeatures, varRef);
+      boolean _operator_add = CollectionExtensions.<EReference>operator_add(_eStructuralFeatures, varRef);
       _xblockexpression = (_operator_add);
     }
     return _xblockexpression;
   }
   
   public void generateReferenceToVariableDecl(final EClass varClass, final EClass varRefClass) {
-    {
       EReference _createEReference = EcoreFactory.eINSTANCE.createEReference();
       final EReference varRefs = _createEReference;
       varRefs.setTransient(true);
@@ -113,7 +112,7 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
       varRefs.setEType(varRefClass);
       varRefs.setContainment(false);
       EList<EStructuralFeature> _eStructuralFeatures = varClass.getEStructuralFeatures();
-      CollectionExtensions.<EStructuralFeature>operator_add(_eStructuralFeatures, varRefs);
+      CollectionExtensions.<EReference>operator_add(_eStructuralFeatures, varRefs);
       EReference _createEReference_1 = EcoreFactory.eINSTANCE.createEReference();
       final EReference variable = _createEReference_1;
       variable.setTransient(true);
@@ -124,10 +123,9 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
       variable.setEType(varClass);
       variable.setContainment(false);
       EList<EStructuralFeature> _eStructuralFeatures_1 = varRefClass.getEStructuralFeatures();
-      CollectionExtensions.<EStructuralFeature>operator_add(_eStructuralFeatures_1, variable);
+      CollectionExtensions.<EReference>operator_add(_eStructuralFeatures_1, variable);
       varRefs.setEOpposite(variable);
       variable.setEOpposite(varRefs);
-    }
   }
   
   public boolean generateEOperation(final EClass bodyClass, final EClass varClass) {
