@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RETE matcher builder for pattern language
+Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.emf.matcherbuilder
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.4.0";visibility:=reexport,
+ org.eclipse.viatra2.patternlanguage.emf;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.viatra2.patternlanguage.core;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.xtext.xbase;bundle-version="2.0.1"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime

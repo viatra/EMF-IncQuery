@@ -23,6 +23,13 @@ Pattern:
 Annotation:
 	'@'
 	name=ID
+	('(' parameters+=AnnotationParameter (',' parameters+=AnnotationParameter)* ')')?
+;
+
+AnnotationParameter:
+	name=ID
+	'='
+	value = STRING
 ;
 
 Modifiers:
