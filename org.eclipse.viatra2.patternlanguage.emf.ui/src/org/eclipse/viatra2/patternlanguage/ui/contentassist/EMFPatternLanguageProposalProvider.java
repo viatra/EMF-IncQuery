@@ -16,10 +16,12 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Assignment;
@@ -32,6 +34,7 @@ import org.eclipse.xtext.nodemodel.ILeafNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
@@ -39,16 +42,23 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 /**
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
 public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLanguageProposalProvider {
+	@Inject
+	IScopeProvider scopeProvider;
+	@Inject
+	ReferenceProposalCreator crossReferenceProposalCreator;
+	
 	public static class ClassifierPrefixMatcher extends PrefixMatcher {
 		private PrefixMatcher delegate;
 
 		private IQualifiedNameConverter qualifiedNameConverter;
 
+		
 		public ClassifierPrefixMatcher(PrefixMatcher delegate, IQualifiedNameConverter qualifiedNameConverter) {
 			this.delegate = delegate;
 			this.qualifiedNameConverter = qualifiedNameConverter;
@@ -74,8 +84,6 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 
 	}
 	
-	@Inject
-	IScopeProvider scopeProvider;
 	
 	@Override
 	public void complete_ValueReference(EObject model, RuleCall ruleCall,
@@ -191,4 +199,22 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 		}
 		return false;
 	}
+
+	public void complete_RefType(PathExpressionTail model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		IScope scope = scopeProvider.getScope(model.getTail(),
+				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
+		crossReferenceProposalCreator.lookupCrossReference(scope, model,
+				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME,
+				acceptor, Predicates.<IEObjectDescription> alwaysTrue(),
+				getProposalFactory(ruleCall.getRule().getName(), context));
+	}
+
+	@Override
+	public void completeRefType_Refname(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		// This method is deliberately empty.
+		// This override prohibits the content assist to suggest incorrect parameters. 
+	}
+	
 }

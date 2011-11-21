@@ -25,6 +25,7 @@ import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.PatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
@@ -36,6 +37,7 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 import org.eclipse.xtext.util.PolymorphicDispatcher;
 
@@ -64,7 +66,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	@Override
 	protected Predicate<Method> getPredicate(EObject context, EClass type) {
 		String methodName = "scope_" + type.getName();
-		//System.out.println(methodName);
+		//System.out.println(methodName + " ctx " + context.eClass().getName());
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 
@@ -75,7 +77,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	@Override
 	protected Predicate<Method> getPredicate(EObject context, EReference reference) {
 		String methodName = "scope_" + reference.getEContainingClass().getName() + "_" + reference.getName();
-		//System.out.println(methodName);
+		//System.out.println(methodName + " ctx " + context.eClass().getName());
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 	
@@ -109,12 +111,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	}
 	
 	protected IScope createClassifierScope(Iterable<EClassifier> classifiers) {
-		return new SimpleScope(
-				IScope.NULLSCOPE,Iterables.transform(classifiers, new Function<EClassifier, IEObjectDescription>() {
-					public IEObjectDescription apply(EClassifier param) {
-						return EObjectDescription.create(QualifiedName.create(param.getName()), param);
-					}
-				}));
+		return Scopes.scopeFor(classifiers);
 	}
 	
 	protected IScope createReferencedPackagesScope(PatternModel model) {
@@ -128,11 +125,11 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	
 	public IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
 		// This is needed for content assist - in that case the ExpressionTail does not exists
-		return new ParentScopeProvider().doSwitch(ctx);
+		return expressionParentScopeProvider.doSwitch(ctx);
 	}
 	
 	public IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
-		return new ParentScopeProvider().doSwitch(ctx.eContainer());
+		return expressionParentScopeProvider.doSwitch(ctx.eContainer());
 	}
 	
 	public IScope scope_EEnumLiteral(PathExpressionHead ctx, EReference ref) {
@@ -154,51 +151,27 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		}
 		return calculateEnumLiteralScope(type);
 	}
-
-//	public IScope scope_ValueReference(PathExpressionHead ctx, EReference ref) {
-//		return IScope.NULLSCOPE;
-//	}
-//	private IScope calculateEnumLiteralScope(Type type) {
-//		if (type instanceof ReferenceType) {
-//			EClassifier classifier = ((ReferenceType)type).getRefname().getEType();
-//			if (classifier instanceof EEnum) {
-//				return calculateEnumLiteralScope(classifier);
-//			}
-//		}
-//		return IScope.NULLSCOPE;
-//	}
-
+	
 	private IScope calculateEnumLiteralScope(EEnum enumeration) {
 		EList<EEnumLiteral> literals = enumeration.getELiterals();
-		return new SimpleScope(IScope.NULLSCOPE, Iterables.transform(
-				literals,
-				new Function<EEnumLiteral, IEObjectDescription>() {
-					public IEObjectDescription apply(EEnumLiteral param) {
-						return EObjectDescription.create(
-								QualifiedName.create(param.getName()),
-								param);
-					}
-				}));
+		return Scopes.scopeFor(literals);
 	}
 	
-	
-	
+	private ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();
 	
 	class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
 
 		@Override
 		public IScope casePathExpressionHead(PathExpressionHead object) {
-			ClassType type = (ClassType) object.getType();
-			return calculateReferences(type);
+			return calculateReferences(object.getType());
 		}
 
 		@Override
 		public IScope casePathExpressionTail(PathExpressionTail object) {
-			//TODO in case of longer paths the cast fails
-			return calculateReferences((ClassType) object.getType());
+			return calculateReferences(object.getType());
 		}
 		
-		private IScope calculateReferences(ClassType type) {
+		private IScope calculateReferences(Type type) {
 			List<EStructuralFeature> targetReferences = Collections.emptyList();
 			if (type instanceof ReferenceType) {
 				EClassifier referredType = ((ReferenceType) type).getRefname().getEType();
@@ -208,11 +181,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 			} else if (type instanceof ClassType) {
 				targetReferences = ((ClassType) type).getClassname().getEAllStructuralFeatures();
 			}
-			return new SimpleScope(IScope.NULLSCOPE, Iterables.transform(targetReferences, new Function<EStructuralFeature, IEObjectDescription>() {
-				public IEObjectDescription apply(EStructuralFeature param) {
-					return EObjectDescription.create(QualifiedName.create(param.getName()), param);
-				}
-			}));
+			return Scopes.scopeFor(targetReferences);
 		}
 	}
 }

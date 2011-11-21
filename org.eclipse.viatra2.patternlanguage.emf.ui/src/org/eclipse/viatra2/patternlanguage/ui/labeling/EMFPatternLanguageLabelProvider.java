@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.patternlanguage.ui.labeling;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionConstraint;
@@ -62,11 +63,13 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 	
 	String text(ExpressionConstraint constraint) {
 		String typename = ((ClassType)constraint.getHead().getType()).getClassname().getName();
-		return String.format("%s (%s)", typename, constraint.getHead().getSrc().getVar());
+		String varName = (constraint.getHead().getSrc() != null) ? constraint.getHead().getSrc().getVar() : "«type»";
+		return String.format("%s (%s)", typename, varName);
 	}
 	
 	String text(PathExpressionTail tail) {
-		String type = ((ReferenceType)tail.getType()).getRefname().getName();
+		EStructuralFeature refname = ((ReferenceType)tail.getType()).getRefname();
+		String type = (refname != null) ? refname.getName() : "«type»";
 		String varName = "";
 		if (tail.getTail() == null) {
 			PathExpressionHead head = EMFPatternLanguageScopeHelper.getExpressionHead(tail);
