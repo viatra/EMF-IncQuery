@@ -27,7 +27,8 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 	}
 	
 	String text(PackageImport ele) {
-		return String.format("import %s", ele.getEPackage().getName());
+		String name = (ele.getEPackage() != null) ? ele.getEPackage().getName() : "«package»";
+		return String.format("import %s", name);
 	}
 /*
 	//Labels and icons can be computed like this:
