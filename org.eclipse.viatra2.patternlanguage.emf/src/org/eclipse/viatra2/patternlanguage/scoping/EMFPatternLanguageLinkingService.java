@@ -46,7 +46,7 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 					return Collections.<EObject>singletonList(literal);
 				} else return Collections.EMPTY_LIST;
 			} catch (ResolutionException e) {
-				throw new IllegalNodeException(node, e);
+				return Collections.EMPTY_LIST;
 			}
 		}
 		return super.getLinkedObjects(context, ref, node);
