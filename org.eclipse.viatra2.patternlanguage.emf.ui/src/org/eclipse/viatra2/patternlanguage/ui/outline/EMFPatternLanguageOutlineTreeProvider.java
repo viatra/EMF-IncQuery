@@ -4,7 +4,15 @@
 package org.eclipse.viatra2.patternlanguage.ui.outline;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
 
@@ -23,5 +31,36 @@ public class EMFPatternLanguageOutlineTreeProvider extends
 				model.getImportPackages(), model.getPatterns())) {
 			createNode(parentNode, element);
 		}
+	}
+	
+	protected void _createChildren(IOutlineNode parentNode, Pattern model) {
+		if (model.getBodies().size() == 1) {
+			_createChildren(parentNode, model.getBodies().get(0));
+		} else {
+			for (PatternBody body : model.getBodies()) {
+				createNode(parentNode, body);
+			}
+		}
+	}
+	
+	protected void _createChildren(IOutlineNode parentNode, EClassConstraint constraint) {
+		// By leaving this method empty, the EClass Constraint will not have any children in the outline view
+	}
+	
+	protected void _createChildren(IOutlineNode parentNode, ExpressionConstraint constraint) {
+		PathExpressionHead head = constraint.getHead();
+		if (head.getTail() != null) {
+			createNode(parentNode, head.getTail());
+		}
+	}
+	
+	protected void _createChildren(IOutlineNode parentNode, PathExpressionTail tail) {
+		if (tail.getTail() != null) {
+			createNode(parentNode, tail.getTail());
+		}
+	}
+	
+	protected void _createChildren(IOutlineNode parentNode, PatternCompositionConstraint constraint) {
+		// By leaving this method empty, the Pattern Composition Constraint will not have any children in the outline view
 	}
 }

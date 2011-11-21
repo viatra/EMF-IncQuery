@@ -194,6 +194,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 
 		@Override
 		public IScope casePathExpressionTail(PathExpressionTail object) {
+			//TODO in case of longer paths the cast fails
 			return calculateReferences((ClassType) object.getType());
 		}
 		

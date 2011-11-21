@@ -38,4 +38,12 @@ public class EMFPatternLanguageScopeHelper {
 			return calculateEnumerationType(tail.getTail());
 		}
 	}
+	
+	public static PathExpressionHead getExpressionHead(PathExpressionTail tail) {
+		if (tail.eContainer() instanceof PathExpressionHead) {
+			return (PathExpressionHead) tail.eContainer();
+		} else {
+			return getExpressionHead((PathExpressionTail) tail.eContainer());
+		}
+	}
 }
