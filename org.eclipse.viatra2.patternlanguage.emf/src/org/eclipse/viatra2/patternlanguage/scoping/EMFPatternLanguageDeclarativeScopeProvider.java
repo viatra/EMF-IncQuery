@@ -64,7 +64,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	@Override
 	protected Predicate<Method> getPredicate(EObject context, EClass type) {
 		String methodName = "scope_" + type.getName();
-		System.out.println(methodName);
+		//System.out.println(methodName);
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 
@@ -75,7 +75,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	@Override
 	protected Predicate<Method> getPredicate(EObject context, EReference reference) {
 		String methodName = "scope_" + reference.getEContainingClass().getName() + "_" + reference.getName();
-		System.out.println(methodName);
+		//System.out.println(methodName);
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 	
