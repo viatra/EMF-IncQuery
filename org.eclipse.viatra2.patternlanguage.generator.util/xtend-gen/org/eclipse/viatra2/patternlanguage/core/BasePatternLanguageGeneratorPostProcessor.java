@@ -23,7 +23,7 @@ import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 
 @SuppressWarnings("all")
-public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
+public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProcessor {
   public void process(final GeneratedMetamodel metamodel) {
     EPackage _ePackage = metamodel.getEPackage();
     this.process(_ePackage);

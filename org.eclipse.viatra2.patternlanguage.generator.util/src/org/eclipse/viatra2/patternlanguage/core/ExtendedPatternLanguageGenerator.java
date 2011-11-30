@@ -17,7 +17,7 @@ public class ExtendedPatternLanguageGenerator extends Generator {
 			                return Guice.createInjector(new XtextRuntimeModule() {
 			                    @Override
 			                    public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
-			                        return PatternBodyVariableCollector.class;
+			                        return BasePatternLanguageGeneratorPostProcessor.class;
 			                    }
 			                });
 			            }

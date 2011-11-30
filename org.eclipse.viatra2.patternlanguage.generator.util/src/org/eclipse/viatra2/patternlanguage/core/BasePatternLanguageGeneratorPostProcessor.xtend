@@ -9,7 +9,7 @@ import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.common.util.BasicEMap
 
-class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
+class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProcessor {
 	
 	override void process(GeneratedMetamodel metamodel) {
 		metamodel.EPackage.process
