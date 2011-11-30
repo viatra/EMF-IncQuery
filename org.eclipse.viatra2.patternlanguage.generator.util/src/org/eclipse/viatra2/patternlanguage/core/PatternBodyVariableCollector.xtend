@@ -19,16 +19,27 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 	   var EClass bodyClass
 	   var EClass varClass 
 	   var EClass varRefClass
+	   var EClass pathExpressionConstraint
+	   var EClass pathExpressionElement
+	   var EClass pathExpressionHead
+	   var EClass pathExpressionTail
 		for (c : p.EClassifiers.filter(typeof(EClass))) {
            switch c.name {
            	 case "PatternBody": bodyClass = c
            	 case "Variable": varClass = c
            	 case "VariableReference": varRefClass = c
+           	 case "PathExpressionConstraint": pathExpressionConstraint = c
+           	 case "PathExpressionElement": pathExpressionElement = c
+           	 case "PathExpressionHead": pathExpressionHead = c
+           	 case "PathExpressionTail": pathExpressionTail = c
            }
        }
        bodyClass.generateEReference(varClass)
        varClass.generateReferenceToVariableDecl(varRefClass)
        bodyClass.generateEOperation(varClass)
+       
+       pathExpressionConstraint.changeHeadType(pathExpressionHead)
+       pathExpressionElement.changeTailType(pathExpressionTail)
 	}
 	
 	def generateEReference(EClass bodyClass, EClass varClass) {
@@ -144,5 +155,18 @@ class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
 	        body.details.add(map)
 	        op.EAnnotations += body
 	        bodyClass.EOperations += op
+	}
+	
+	
+	def changeHeadType(EClass constraint, EClass head){
+		constraint.EStructuralFeatures.findFirst(e | e.name == "head").EType = head
+	}
+	/**
+	 * The method updates the EClass element: it changes the type of the "tail" EStructuralFeature to the second parameter
+	 * @param element the EClass to change
+	 * @param tail the type to set
+	 */
+	def changeTailType(EClass element, EClass tail) {
+		element.EStructuralFeatures.findFirst(e | e.name == "tail").EType = tail
 	}
 }

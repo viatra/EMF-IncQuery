@@ -4,7 +4,7 @@
 package org.eclipse.viatra2.patternlanguage.ui.outline;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -47,7 +47,7 @@ public class EMFPatternLanguageOutlineTreeProvider extends
 		// By leaving this method empty, the EClass Constraint will not have any children in the outline view
 	}
 	
-	protected void _createChildren(IOutlineNode parentNode, ExpressionConstraint constraint) {
+	protected void _createChildren(IOutlineNode parentNode, PathExpressionConstraint constraint) {
 		PathExpressionHead head = constraint.getHead();
 		if (head.getTail() != null) {
 			createNode(parentNode, head.getTail());

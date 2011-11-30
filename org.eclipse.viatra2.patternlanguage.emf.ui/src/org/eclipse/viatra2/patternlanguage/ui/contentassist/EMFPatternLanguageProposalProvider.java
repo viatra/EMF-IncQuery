@@ -15,8 +15,8 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionElement;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -200,17 +200,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 		return false;
 	}
 
-	public void complete_RefType(PathExpressionHead model, RuleCall ruleCall,
-			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		IScope scope = scopeProvider.getScope(model.getTail(),
-				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
-		crossReferenceProposalCreator.lookupCrossReference(scope, model,
-				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME,
-				acceptor, Predicates.<IEObjectDescription> alwaysTrue(),
-				getProposalFactory(ruleCall.getRule().getName(), context));
-	}
-	
-	public void complete_RefType(PathExpressionTail model, RuleCall ruleCall,
+	public void complete_RefType(PathExpressionElement model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		IScope scope = scopeProvider.getScope(model.getTail(),
 				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);

@@ -32,8 +32,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -195,9 +195,9 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 				new NegativePatternCall<String, StubHandle>(pSystem, pNodeTuple, fqnOf);
 			else 
 				new PositivePatternCall<String, StubHandle>(pSystem, pNodeTuple, fqnOf);
-		} else if (constraint instanceof ExpressionConstraint) {
+		} else if (constraint instanceof PathExpressionConstraint) {
 			// TODO advanced features here
-			ExpressionConstraint pathExpression = (ExpressionConstraint) constraint;
+			PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;
 			PathExpressionHead head = pathExpression.getHead();
 			
 			PVariable currentSrc = getPNode(head.getSrc());

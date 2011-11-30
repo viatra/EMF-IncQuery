@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.xtext.GeneratedMetamodel;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
@@ -28,12 +29,14 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
     this.process(_ePackage);
   }
   
-  public boolean process(final EPackage p) {
-    boolean _xblockexpression = false;
-    {
+  public void process(final EPackage p) {
       EClass bodyClass = null;
       EClass varClass = null;
       EClass varRefClass = null;
+      EClass pathExpressionConstraint = null;
+      EClass pathExpressionElement = null;
+      EClass pathExpressionHead = null;
+      EClass pathExpressionTail = null;
       EList<EClassifier> _eClassifiers = p.getEClassifiers();
       Iterable<EClass> _filter = IterableExtensions.<EClass>filter(_eClassifiers, org.eclipse.emf.ecore.EClass.class);
       for (final EClass c : _filter) {
@@ -58,13 +61,36 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
             varRefClass = c;
           }
         }
+        if (!matched) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"PathExpressionConstraint")) {
+            matched=true;
+            pathExpressionConstraint = c;
+          }
+        }
+        if (!matched) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"PathExpressionElement")) {
+            matched=true;
+            pathExpressionElement = c;
+          }
+        }
+        if (!matched) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"PathExpressionHead")) {
+            matched=true;
+            pathExpressionHead = c;
+          }
+        }
+        if (!matched) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"PathExpressionTail")) {
+            matched=true;
+            pathExpressionTail = c;
+          }
+        }
       }
       this.generateEReference(bodyClass, varClass);
       this.generateReferenceToVariableDecl(varClass, varRefClass);
-      boolean _generateEOperation = this.generateEOperation(bodyClass, varClass);
-      _xblockexpression = (_generateEOperation);
-    }
-    return _xblockexpression;
+      this.generateEOperation(bodyClass, varClass);
+      this.changeHeadType(pathExpressionConstraint, pathExpressionHead);
+      this.changeTailType(pathExpressionElement, pathExpressionTail);
   }
   
   public boolean generateEReference(final EClass bodyClass, final EClass varClass) {
@@ -154,5 +180,36 @@ public class PatternBodyVariableCollector implements IXtext2EcorePostProcessor {
       _xblockexpression = (_operator_add);
     }
     return _xblockexpression;
+  }
+  
+  public void changeHeadType(final EClass constraint, final EClass head) {
+    EList<EStructuralFeature> _eStructuralFeatures = constraint.getEStructuralFeatures();
+    final Function1<EStructuralFeature,Boolean> _function = new Function1<EStructuralFeature,Boolean>() {
+        public Boolean apply(final EStructuralFeature e) {
+          String _name = e.getName();
+          boolean _operator_equals = ObjectExtensions.operator_equals(_name, "head");
+          return ((Boolean)_operator_equals);
+        }
+      };
+    EStructuralFeature _findFirst = IterableExtensions.<EStructuralFeature>findFirst(_eStructuralFeatures, _function);
+    _findFirst.setEType(head);
+  }
+  
+  /**
+   * The method updates the EClass element: it changes the type of the "tail" EStructuralFeature to the second parameter
+   * @param element the EClass to change
+   * @param tail the type to set
+   */
+  public void changeTailType(final EClass element, final EClass tail) {
+    EList<EStructuralFeature> _eStructuralFeatures = element.getEStructuralFeatures();
+    final Function1<EStructuralFeature,Boolean> _function = new Function1<EStructuralFeature,Boolean>() {
+        public Boolean apply(final EStructuralFeature e) {
+          String _name = e.getName();
+          boolean _operator_equals = ObjectExtensions.operator_equals(_name, "tail");
+          return ((Boolean)_operator_equals);
+        }
+      };
+    EStructuralFeature _findFirst = IterableExtensions.<EStructuralFeature>findFirst(_eStructuralFeatures, _function);
+    _findFirst.setEType(tail);
   }
 }

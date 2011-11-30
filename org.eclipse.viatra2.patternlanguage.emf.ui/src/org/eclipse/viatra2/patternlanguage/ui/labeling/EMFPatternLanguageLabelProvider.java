@@ -3,8 +3,8 @@ package org.eclipse.viatra2.patternlanguage.ui.labeling;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -61,7 +61,7 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		return String.format("find %s%s/%d", modifiers, constraint.getPatternRef().getName(), constraint.getParameters().size());
 	}
 	
-	String text(ExpressionConstraint constraint) {
+	String text(PathExpressionConstraint constraint) {
 		String typename = ((ClassType)constraint.getHead().getType()).getClassname().getName();
 		String varName = (constraint.getHead().getSrc() != null) ? constraint.getHead().getSrc().getVar() : "«type»";
 		return String.format("%s (%s)", typename, varName);

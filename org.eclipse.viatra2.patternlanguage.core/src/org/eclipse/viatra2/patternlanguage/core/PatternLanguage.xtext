@@ -97,16 +97,18 @@ CheckConstraint returns Constraint:
 ;
 
 PathExpressionConstraint returns Constraint:
-	{ExpressionConstraint}
+	{PathExpressionConstraint}
 	negative?='neg'?
 	head=PathExpressionHead
 ;
 
-PathExpressionHead:
+PathExpressionHead returns PathExpressionElement:
+	{PathExpressionHead}
 	type = Type '.' tail = PathExpressionTail '('src=VariableReference ',' dst=ValueReference ')'
 ;
 
-PathExpressionTail:
+PathExpressionTail returns PathExpressionElement:
+	{PathExpressionTail}
 	type = RefType ('[' index=INT ']')? closure?='*'? ('.' tail = PathExpressionTail)?
 ;
 
