@@ -200,6 +200,16 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 		return false;
 	}
 
+	public void complete_RefType(PathExpressionHead model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		IScope scope = scopeProvider.getScope(model.getTail(),
+				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
+		crossReferenceProposalCreator.lookupCrossReference(scope, model,
+				EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME,
+				acceptor, Predicates.<IEObjectDescription> alwaysTrue(),
+				getProposalFactory(ruleCall.getRule().getName(), context));
+	}
+	
 	public void complete_RefType(PathExpressionTail model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		IScope scope = scopeProvider.getScope(model.getTail(),
