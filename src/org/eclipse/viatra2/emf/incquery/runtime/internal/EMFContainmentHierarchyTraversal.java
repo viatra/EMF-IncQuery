@@ -14,10 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
@@ -70,55 +67,11 @@ public class EMFContainmentHierarchyTraversal {
 			visitor.visitResource(resource);
 			for (EObject element : resource.getContents()) {
 				visitor.visitTopElementInResource(resource, element);
-				visitObject(visitor, element);
+				EMFModelComprehension.visitObject(visitor, element);
 			}
 		}
 		for (EObject source : rootElements) {
-			visitObject(visitor, source);
-		}
-	}
-	/**
-	 * @param visitor
-	 * @param source
-	 */
-	private void visitObject(EMFVisitor visitor, EObject source) {
-		if (source == null) return;
-		visitor.visitElement(source);
-		for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
-			if (feature.isDerived()) continue;
-			if (feature.isMany()) {
-				Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(feature);
-				for (Object target : targets) {
-					visitFeature(visitor, source, feature, target);	
-				}
-			} else {
-				Object target = source.eGet(feature);
-				visitFeature(visitor, source, feature, target);
-			}
-		}
-	}
-	
-	/**
-	 * @param visitor
-	 * @param source
-	 * @param feature
-	 * @param target
-	 */
-	private void visitFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) {
-		if (feature instanceof EAttribute) {
-			visitor.visitAttribute(source, (EAttribute)feature, target);
-		} else if (feature instanceof EReference) {
-			EReference reference = (EReference)feature;
-			EObject targetObject = (EObject)target;
-			if (reference.isContainment()) {
-				visitor.visitInternalContainment(source, reference, targetObject);
-				visitObject(visitor, targetObject);
-			} else {
-//			if (containedElements.contains(target)) 
-				visitor.visitNonContainmentReference(source, reference, targetObject);
-			}
-//			else
-//				visitor.visitExternalReference(source, reference, targetObject);
+			EMFModelComprehension.visitObject(visitor, source);
 		}
 	}
 

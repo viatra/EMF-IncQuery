@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
@@ -134,28 +135,38 @@ public class CoreEMFManipulationListener {
 		else if (notifier instanceof EObject)
 		{
 			Object oFeature = notification.getFeature();
-			if (oFeature instanceof EAttribute) {
-				EAttribute feature = (EAttribute) oFeature;
-				if (!feature.isDerived()) {
-					attributeReferenceUpdate(direction, feature, notifier, changedValue);
-				}
-			} else if (oFeature instanceof EReference) {
-				EReference feature = (EReference) oFeature;
-				if (!feature.isDerived()) {
-					if (feature.isContainment()) {
-						containmentReferenceUpdate(direction, feature, notifier, changedValue);
-						attachedTree((EObject)changedValue, direction);
-					} else { 
-						nonContainmentReferenceUpdate(direction, feature, notifier, changedValue);
-					}
-				}
-			}
+			if (oFeature instanceof EStructuralFeature)
+				EMFModelComprehension.visitFeature(visitor(direction), (EObject) notifier, (EStructuralFeature) oFeature, changedValue);
+//			if (oFeature instanceof EAttribute) {
+//				EAttribute feature = (EAttribute) oFeature;
+//				if (!feature.isDerived()) {
+//					attributeReferenceUpdate(direction, feature, notifier, changedValue);
+//				}
+//			} else if (oFeature instanceof EReference) {
+//				EReference feature = (EReference) oFeature;
+//				if (!feature.isDerived()) {
+//					if (feature.isContainment()) {
+//						containmentReferenceUpdate(direction, feature, notifier, changedValue);
+//						attachedTree((EObject)changedValue, direction);
+//					} else { 
+//						nonContainmentReferenceUpdate(direction, feature, notifier, changedValue);
+//					}
+//				}
+//			}
 		}
 
 	}
 
 	public void attachedTree(EObject root, final Direction direction) {
-		new EMFContainmentHierarchyTraversal(root).accept(new EMFVisitor(){
+		new EMFContainmentHierarchyTraversal(root).accept(visitor(direction));
+	}
+
+	/**
+	 * @param direction
+	 * @return
+	 */
+	protected EMFVisitor visitor(final Direction direction) {
+		return new EMFVisitor(){
 
 			@Override
 			public void visitAttribute(EObject source, EAttribute feature, Object target) {
@@ -184,7 +195,7 @@ public class CoreEMFManipulationListener {
 			public void visitInternalContainment(EObject source, EReference feature, EObject target) {
 				containmentReferenceUpdate(direction, feature, source, target);
 			}
-		});
+		};
 	}
 	
 	private void nodeUpdateCore(Direction direction, Object nodeType, Object node) {
