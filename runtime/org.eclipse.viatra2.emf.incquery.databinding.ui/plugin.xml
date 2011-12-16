@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui"
+            name="MatchSetViewer">
+      </category>
+      <view
+            category="org.eclipse.viatra2.emf.incquery.databinding.ui"
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer"
+            icon="icons/sample.gif"
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer"
+            name="MatchSetViewer">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.viewContribution1"
+            targetID="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer">
+         <action
+               class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.LoadModelActionDelegate"
+               enablesFor="*"
+               icon="icons/load.gif"
+               id="org.eclipse.viatra2.emf.incquery.databinding.ui.loadModelAction"
+               label="Load model"
+               style="push"
+               toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.UnloadModelActionDelegate"
+               enablesFor="*"
+               icon="icons/unload.gif"
+               id="org.eclipse.viatra2.emf.incquery.databinding.ui.unloadModelAction"
+               label="Unload model"
+               style="push"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.viewerContribution2"
+            targetID="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer.treeViewerMenu">
+         <action
+               class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.ShowLocationActionDelegate"
+               id="org.eclipse.viatra2.emf.incquery.databinding.ui.action3"
+               label="Show location"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+
+</plugin>
