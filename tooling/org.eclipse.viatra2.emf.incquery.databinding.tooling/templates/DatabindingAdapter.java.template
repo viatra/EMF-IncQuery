@@ -1,0 +1,49 @@
+package #databinding-package#;
+
+import java.util.HashMap;
+
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import javax.annotation.Generated;
+import #java-signature-package#;
+
+/**
+ * Databinding extension generated for pattern: #pattern-name#
+ *
+ */
+@Generated(value = { "org.eclipse.viatra2.emf.incquery.databinding.tooling.DatabindingAdapterGenerator" })
+public class #java-class-name# extends DatabindingAdapter<#java-signature#> {
+
+	private HashMap<String, String> parameterMap;
+	
+	public #java-class-name#() {
+		parameterMap = new HashMap<String, String>();
+#parameterMap#
+	}
+
+	@Override
+	public String[] getParameterNames() {
+		return parameterMap.keySet().toArray(new String[parameterMap.keySet().size()]);
+	}
+
+	@Override
+	public IObservableValue getObservableParameter(#java-signature# signature, String parameterName) {
+		if (parameterMap.size() > 0) {
+			String expression = parameterMap.get(parameterName);
+			String[] tokens = expression.split("\\.");
+			
+			Object o = signature.get(tokens[0]);
+			if (o != null && o instanceof EObject) {
+				EObject eObj = (EObject) o;
+				EStructuralFeature feature = eObj.eClass().getEStructuralFeature(tokens[1]);
+				if (feature != null) {
+					return EMFProperties.value(feature).observe(eObj);
+				}
+			}
+		}
+		return null;
+	}
+}
