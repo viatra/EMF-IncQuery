@@ -11,7 +11,15 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
-
+/**
+ * Each IEditingDomainProvider will be associated a PatternMatcherRoot element in the tree viewer.
+ * PatterMatcherRoots are indexed with a ViewerRootKey.
+ * 
+ * It's children element will be PatterMatchers.
+ *  
+ * @author Tamas Szabo
+ *
+ */
 public class PatternMatcherRoot {
 	
 	private Map<IncQueryMatcher<?>, PatternMatcher> matchers;

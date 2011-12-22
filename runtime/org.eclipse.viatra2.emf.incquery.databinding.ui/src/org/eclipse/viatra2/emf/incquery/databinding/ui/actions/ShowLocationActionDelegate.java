@@ -13,6 +13,12 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatch;
 
+/**
+ * Responsible to handle the 'Show location' viewAction.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ShowLocationActionDelegate implements IViewActionDelegate {
 
 	Object selection;
@@ -24,17 +30,28 @@ public class ShowLocationActionDelegate implements IViewActionDelegate {
 			
 			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
 			Object[] locationObjects = pm.getLocationObjects();
+			TreePath[] paths = new TreePath[locationObjects.length];
+			int i = 0;
+			
 			for (Object o: locationObjects) {
 				TreePath path = createTreePath((EObject) o);
-				System.out.println(editorPart.getEditorSite());
-				editorPart.getEditorSite().getSelectionProvider().setSelection(new TreeSelection(path));
+				paths[i] = path;
+				i++;
 			}
+			
+			editorPart.getEditorSite().getSelectionProvider().setSelection(new TreeSelection(paths));
 		}
 	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof TreeSelection) {
+//			for (TreePath tp : ((TreeSelection) selection).getPaths()) {
+//				for (int i = 0;i<tp.getSegmentCount();i++) {
+//					System.out.print(tp.getSegment(i)+" ");
+//				}
+//				System.out.println();
+//			}
 			this.selection = ((TreeSelection) selection).getFirstElement();
 		}
 	}
@@ -53,7 +70,7 @@ public class ShowLocationActionDelegate implements IViewActionDelegate {
 			nodes.add(0, tmp);
 			tmp = tmp.eContainer();
 		}
-
+		
 		return new TreePath(nodes.toArray());
 	}
 }

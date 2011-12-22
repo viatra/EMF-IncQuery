@@ -39,6 +39,12 @@ import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 
+/**
+ * MatchSetViewer is used to display the match sets for those matchers which are annotated with PatternUI. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class MatchSetViewer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer";
@@ -132,6 +138,14 @@ public class MatchSetViewer extends ViewPart {
 		});
 	}
 	
+	/**
+	 * Creates a column for the table viewer with the given paramters.
+	 * 
+	 * @param viewer the viewer to create the column for
+	 * @param title the title of the column
+	 * @param index the index of the column
+	 * @return the column object
+	 */
 	private TableViewerColumn createTableViewerColumn(TableViewer viewer, String title, int index) {
 		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE, index);
 		final TableColumn column = viewerColumn.getColumn();
