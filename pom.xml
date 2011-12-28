@@ -8,9 +8,11 @@
   <packaging>pom</packaging>
   <modules>
     <module>org.eclipse.viatra2.patternlanguage.core</module>
+<!--    <module>org.eclipse.viatra2.patternlanguage.core.tests</module>-->
     <module>org.eclipse.viatra2.patternlanguage.core.ui</module>
     <module>org.eclipse.viatra2.patternlanguage.emf</module>
     <module>org.eclipse.viatra2.patternlanguage.emf.feature</module>
+<!--    <module>org.eclipse.viatra2.patternlanguage.emf.tests</module>-->
     <module>org.eclipse.viatra2.patternlanguage.emf.ui</module>
     <module>org.eclipse.viatra2.patternlanguage.generator.util</module>
     <module>org.eclipse.viatra2.patternlanguage.update</module>
@@ -47,30 +49,8 @@
 	</plugin>
    </plugins>
   </build>
-  
-  <repositories>
-    <repository>
-      <id>maven.eclipse.org</id>
-      <url>http://maven.eclipse.org/nexus/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>xtend</id>
-      <url>http://build.eclipse.org/common/xtend/maven/</url>
-    </repository>
-  	<repository>
-		<id>fornax.repository</id>
-		<name>Fornax Repository</name>
-		<url>
-			http://www.fornax-platform.org/m2/repository
-		</url>
-	</repository>
-  </repositories>
   <pluginRepositories>
-    <pluginRepository>
-      <id>xtend</id>
-      <url>http://build.eclipse.org/common/xtend/maven/</url>
-    </pluginRepository>
-    	<pluginRepository>
+	<pluginRepository>
 		<id>fornax.plugin.repository</id>
 		<name>Fornax Plugin Repository</name>
 		<url>
@@ -78,4 +58,13 @@
 		</url>
 	</pluginRepository>
   </pluginRepositories>
+  <repositories>
+	<repository>
+		<id>fornax.repository</id>
+		<name>Fornax Repository</name>
+		<url>
+			http://www.fornax-platform.org/m2/repository
+		</url>
+	</repository>
+  </repositories>
 </project>
