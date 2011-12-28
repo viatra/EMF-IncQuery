@@ -4,15 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.viatra2.patternlanguage</groupId>
   <artifactId>PatternLanguage</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>org.eclipse.viatra2.patternlanguage.core</module>
-<!--    <module>org.eclipse.viatra2.patternlanguage.core.tests</module>-->
     <module>org.eclipse.viatra2.patternlanguage.core.ui</module>
     <module>org.eclipse.viatra2.patternlanguage.emf</module>
     <module>org.eclipse.viatra2.patternlanguage.emf.feature</module>
-<!--    <module>org.eclipse.viatra2.patternlanguage.emf.tests</module>-->
     <module>org.eclipse.viatra2.patternlanguage.emf.ui</module>
     <module>org.eclipse.viatra2.patternlanguage.generator.util</module>
     <module>org.eclipse.viatra2.patternlanguage.update</module>
@@ -40,7 +38,7 @@
 				<artifact>
 					<groupId>org.eclipse.viatra2.patternlanguage</groupId>
 					<artifactId>org.eclipse.viatra2.patternlanguage.emf.feature</artifactId>
-					<version>1.0.0-SNAPSHOT</version>
+					<version>0.7.0-SNAPSHOT</version>
 					<classifier>emfpattern</classifier>
 				</artifact>
 			</target>
@@ -49,17 +47,17 @@
 	</plugin>
    </plugins>
   </build>
-  <pluginRepositories>
-	<pluginRepository>
-		<id>fornax.plugin.repository</id>
-		<name>Fornax Plugin Repository</name>
-		<url>
-			http://www.fornax-platform.org/m2/repository
-		</url>
-	</pluginRepository>
-  </pluginRepositories>
+  
   <repositories>
-	<repository>
+    <repository>
+      <id>maven.eclipse.org</id>
+      <url>http://maven.eclipse.org/nexus/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>xtend</id>
+      <url>http://build.eclipse.org/common/xtend/maven/</url>
+    </repository>
+  	<repository>
 		<id>fornax.repository</id>
 		<name>Fornax Repository</name>
 		<url>
@@ -67,4 +65,17 @@
 		</url>
 	</repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>xtend</id>
+      <url>http://build.eclipse.org/common/xtend/maven/</url>
+    </pluginRepository>
+    	<pluginRepository>
+		<id>fornax.plugin.repository</id>
+		<name>Fornax Plugin Repository</name>
+		<url>
+			http://www.fornax-platform.org/m2/repository
+		</url>
+	</pluginRepository>
+  </pluginRepositories>
 </project>

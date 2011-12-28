@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.viatra2.patternlanguage.core
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: Base Pattern Language Core
+Bundle-Vendor: Zoltan Ujhelyi/FTSRG
+Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.core;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="[2.2.0,3.0.0)";visibility:=reexport,
@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.2.0,3.0.0)";visibility:=ree
  org.eclipse.xtext.common.types;bundle-version="[2.2.0,3.0.0)",
  org.eclipse.xtext.xbase;bundle-version="[2.2.0,3.0.0)",
  org.eclipse.xtext.xtend2.lib;bundle-version="[2.2.0,3.0.0)",
- org.eclipse.viatra2.patternlanguage.generator.util;bundle-version="1.0.0",
+ org.eclipse.viatra2.patternlanguage.generator.util;bundle-version="0.7.0",
  org.eclipse.xtend2.lib;bundle-version="[2.2.0,3.0.0)"
 Import-Package: org.apache.log4j,
  org.apache.commons.logging,
