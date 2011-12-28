@@ -30,6 +30,7 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
   }
   
   public void process(final EPackage p) {
+      EClass patternClass = null;
       EClass bodyClass = null;
       EClass varClass = null;
       EClass varRefClass = null;
@@ -43,6 +44,12 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
         String _name = c.getName();
         final String __valOfSwitchOver = _name;
         boolean matched = false;
+        if (!matched) {
+          if (ObjectExtensions.operator_equals(__valOfSwitchOver,"Pattern")) {
+            matched=true;
+            patternClass = c;
+          }
+        }
         if (!matched) {
           if (ObjectExtensions.operator_equals(__valOfSwitchOver,"PatternBody")) {
             matched=true;
@@ -93,6 +100,20 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
       this.changeTailType(pathExpressionElement, pathExpressionTail);
   }
   
+  public void generateInverseContainerOfBody(final EClass bodyClass, final EClass patternClass) {
+      EReference _createEReference = EcoreFactory.eINSTANCE.createEReference();
+      final EReference patternRef = _createEReference;
+      patternRef.setTransient(true);
+      patternRef.setDerived(true);
+      patternRef.setName("pattern");
+      patternRef.setLowerBound(1);
+      patternRef.setUpperBound(1);
+      patternRef.setChangeable(true);
+      patternRef.setContainment(true);
+      EStructuralFeature _eStructuralFeature = patternClass.getEStructuralFeature("bodies");
+      patternRef.setEOpposite(((EReference) _eStructuralFeature));
+  }
+  
   public boolean generateEReference(final EClass bodyClass, final EClass varClass) {
     boolean _xblockexpression = false;
     {
@@ -126,6 +147,9 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
     return _xblockexpression;
   }
   
+  /**
+   * Genearates a variable reference (and its opposite) in the pattern body and its usages.
+   */
   public void generateReferenceToVariableDecl(final EClass varClass, final EClass varRefClass) {
       EReference _createEReference = EcoreFactory.eINSTANCE.createEReference();
       final EReference varRefs = _createEReference;
@@ -154,6 +178,10 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
       variable.setEOpposite(varRefs);
   }
   
+  /**
+   * Generates an EOperation that corresponds with the derived attribute called ''variables''
+   * of the PatternBody.
+   */
   public boolean generateEOperation(final EClass bodyClass, final EClass varClass) {
     boolean _xblockexpression = false;
     {
@@ -188,7 +216,7 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
         public Boolean apply(final EStructuralFeature e) {
           String _name = e.getName();
           boolean _operator_equals = ObjectExtensions.operator_equals(_name, "head");
-          return ((Boolean)_operator_equals);
+          return Boolean.valueOf(_operator_equals);
         }
       };
     EStructuralFeature _findFirst = IterableExtensions.<EStructuralFeature>findFirst(_eStructuralFeatures, _function);
@@ -206,7 +234,7 @@ public class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePo
         public Boolean apply(final EStructuralFeature e) {
           String _name = e.getName();
           boolean _operator_equals = ObjectExtensions.operator_equals(_name, "tail");
-          return ((Boolean)_operator_equals);
+          return Boolean.valueOf(_operator_equals);
         }
       };
     EStructuralFeature _findFirst = IterableExtensions.<EStructuralFeature>findFirst(_eStructuralFeatures, _function);
