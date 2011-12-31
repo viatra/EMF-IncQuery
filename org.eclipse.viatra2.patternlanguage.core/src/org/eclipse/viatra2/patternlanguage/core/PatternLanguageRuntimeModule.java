@@ -3,15 +3,16 @@
  */
 package org.eclipse.viatra2.patternlanguage.core;
 
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
-import org.eclipse.xtext.xtext.XtextQualifiedNameConverter;
+import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntimeModule {
 
-	public Class<? extends IQualifiedNameConverter> bindIQualifiedNameConverter() {
-		return XtextQualifiedNameConverter.class;
+	@Override
+	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+		return PatternNameProvider.class;
 	}
 }

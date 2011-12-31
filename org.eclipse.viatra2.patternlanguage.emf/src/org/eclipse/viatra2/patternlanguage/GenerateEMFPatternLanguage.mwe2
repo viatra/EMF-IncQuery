@@ -68,7 +68,7 @@ Workflow {
 
             // scoping and exporting API
             // fragment = scoping.ImportURIScopingFragment {}
-            // fragment = exporting.SimpleNamesFragment {}
+            fragment = exporting.SimpleNamesFragment {}
 
             // scoping and exporting API
             fragment = scoping.ImportNamespacesScopingFragment {}
@@ -76,11 +76,11 @@ Workflow {
             fragment = builder.BuilderIntegrationFragment {}
 
             // generator API
-            fragment = generator.GeneratorFragment {
-                generateMwe = true
-                generateJavaMain = true
-                generatorStub = false
-            }
+//            fragment = generator.GeneratorFragment {
+//                generateMwe = true
+//                generateJavaMain = true
+//                generatorStub = false
+//            }
 
             // formatter API
             fragment = formatting.FormatterFragment {}
