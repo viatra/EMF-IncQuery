@@ -5,18 +5,15 @@ import java.util.Arrays;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmMember;
-import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.util.IAcceptor;
-import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
-import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
@@ -35,7 +32,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   private JvmTypesBuilder _jvmTypesBuilder;
   
   /**
-   * Is called for each instance of the first argument's type contained in a resource.
+   * Is called for each Pattern instance in a resource.
    * 
    * @param element - the model to create one or more JvmDeclaredTypes from.
    * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
@@ -51,24 +48,8 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
         public void apply(final JvmGenericType it) {
           EList<JvmMember> _members = it.getMembers();
           JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
-          final Procedure1<JvmOperation> _function = new Procedure1<JvmOperation>() {
-              public void apply(final JvmOperation it) {
-                final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                    public CharSequence apply(final ImportManager it) {
-                      StringConcatenation _builder = new StringConcatenation();
-                      _builder.append("return \"Hello ");
-                      String _name = pattern.getName();
-                      _builder.append(_name, "");
-                      _builder.append("\";");
-                      _builder.newLineIfNotEmpty();
-                      return _builder;
-                    }
-                  };
-                EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
-              }
-            };
-          JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "getAllMatches", _newTypeRef, _function);
-          CollectionExtensions.<JvmOperation>operator_add(_members, _method);
+          JvmField _field = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toField(pattern, "desc", _newTypeRef);
+          CollectionExtensions.<JvmField>operator_add(_members, _field);
         }
       };
     JvmGenericType _class = this._jvmTypesBuilder.toClass(pattern, _operator_plus, _function);
