@@ -237,6 +237,37 @@
 			</command>
 		</menuContribution>
 	</extension>
+
+   <extension
+         point="org.eclipse.xtext.builder.participant">
+      <participant
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+      </participant>
+   </extension>
+   <extension
+            point="org.eclipse.ui.preferencePages">
+        <page
+            category="org.eclipse.viatra2.patternlanguage.core.PatternLanguage"
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.compiler.preferencePage"
+            name="Compiler">
+            <keywordReference id="org.eclipse.viatra2.patternlanguage.core.ui.keyword_PatternLanguage"/>
+        </page>
+    </extension>
+    <extension
+            point="org.eclipse.ui.propertyPages">
+        <page
+            category="org.eclipse.viatra2.patternlanguage.core.PatternLanguage"
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.compiler.propertyPage"
+            name="Compiler">
+            <keywordReference id="org.eclipse.viatra2.patternlanguage.core.ui.keyword_PatternLanguage"/>
+            <enabledWhen>
+	            <adapt type="org.eclipse.core.resources.IProject"/>
+			</enabledWhen>
+	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
+        </page>
+    </extension>
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
