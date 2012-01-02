@@ -5,8 +5,8 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.util.IAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -20,34 +20,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
      * convenience API to build and initialize JvmTypes and their members.
      */
 	@Inject extension JvmTypesBuilder
-
-	/**
-	 * Is called for each instance of the first argument's type contained in a resource.
-	 * 
-	 * @param element - the model to create one or more JvmDeclaredTypes from.
-	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
-	 *                   current resource.
-	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
-	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
-	 */
-//   	def dispatch void infer(PatternModel element, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
-   		
-   		// Here you explain how your model is mapped to Java elements, by writing the actual translation code.
-   		// An example based on the initial hellow world example could look like this:
-   		
-//   		acceptor.accept(element.toClass("my.company.greeting.MyGreetings") [
-//   			for (greeting : element.greetings) {
-//   				members += greeting.toMethod(greeting.name, greeting.newTypeRef(typeof(String))) [
-//   					it.body ['''
-//   						return "Hello «greeting.name»";
-//   					''']
-//   				]
-//   			}
-//   		])
-//   	}
    	
 	/**
-	 * Is called for each instance of the first argument's type contained in a resource.
+	 * Is called for each Pattern instance in a resource.
 	 * 
 	 * @param element - the model to create one or more JvmDeclaredTypes from.
 	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
@@ -56,11 +31,17 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
-   		// Here you explain how your model is mapped to Java elements, by writing the actual translation code.
-   		// An example based on the initial hellow world example could look like this:
    		
    		acceptor.accept(pattern.toClass(pattern.name.toFirstUpper + "Matcher") [
+   			superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
+   			
+   			//Adding type-safe matcher calls
    			members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(String))) [
+   				for (parameter : pattern.parameters){
+   					val javaType = pattern.newTypeRef(typeof(Object))
+					it.parameters += parameter.toParameter(parameter.name, javaType)				
+   				}
+   				
    				it.body = ['''
    					return "Hello «pattern.name»";
    				''']

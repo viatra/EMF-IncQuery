@@ -62,25 +62,19 @@ Workflow {
 
             // java-based API for validation
             fragment = validation.JavaValidatorFragment {
-                composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-                composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+                //composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
+                //composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
             }
 
             // scoping and exporting API
             // fragment = scoping.ImportURIScopingFragment {}
-            fragment = exporting.SimpleNamesFragment {}
+
+			fragment = exporting.QualifiedNamesFragment {}
 
             // scoping and exporting API
             fragment = scoping.ImportNamespacesScopingFragment {}
             fragment = exporting.QualifiedNamesFragment {}
             fragment = builder.BuilderIntegrationFragment {}
-
-            // generator API
-//            fragment = generator.GeneratorFragment {
-//                generateMwe = true
-//                generateJavaMain = true
-//                generatorStub = false
-//            }
 
             // formatter API
             fragment = formatting.FormatterFragment {}
@@ -115,12 +109,16 @@ Workflow {
 
             // generates the required bindings only if the grammar inherits from Xbase
             fragment = xbase.XbaseGeneratorFragment {}
+            
+            // Code generator
+			fragment = generator.GeneratorFragment {
+			}
 
             // provides a preference page for template proposals
             fragment = templates.CodetemplatesGeneratorFragment {}
 
-            // rename refactoring
-            fragment = refactoring.RefactorElementNameFragment {}
+			// rename refactoring
+			fragment = refactoring.RefactorElementNameFragment {}
 
             // provides a compare view
             fragment = compare.CompareFragment {
