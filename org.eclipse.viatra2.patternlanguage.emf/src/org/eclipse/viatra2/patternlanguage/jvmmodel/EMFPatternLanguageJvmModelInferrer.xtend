@@ -33,20 +33,19 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
    		
    		acceptor.accept(pattern.toClass(pattern.name.toFirstUpper + "Matcher") [
-   			members += pattern.toField("desc", pattern.newTypeRef(typeof(String)))
-   			//superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
+   			superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
    			
    			//Adding type-safe matcher calls
-//   			members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(String))) [
-//   				for (parameter : pattern.parameters){
-//   					val javaType = pattern.newTypeRef(typeof(Object))
-//					it.parameters += parameter.toParameter(parameter.name, javaType)				
-//   				}
-//   				
-//   				it.body = ['''
-//   					return "Hello «pattern.name»";
-//   				''']
-//   			]
+   			members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(String))) [
+   				for (parameter : pattern.parameters){
+   					val javaType = pattern.newTypeRef(typeof(Object))
+					it.parameters += parameter.toParameter(parameter.name, javaType)				
+   				}
+   				
+   				it.body = ['''
+   					return "Hello «pattern.name»";
+   				''']
+   			]
    		])
    	}
 }

@@ -5,15 +5,20 @@ import java.util.Arrays;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
-import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmMember;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.util.IAcceptor;
+import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
@@ -46,10 +51,44 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     String _operator_plus = StringExtensions.operator_plus(_firstUpper, "Matcher");
     final Procedure1<JvmGenericType> _function = new Procedure1<JvmGenericType>() {
         public void apply(final JvmGenericType it) {
-          EList<JvmMember> _members = it.getMembers();
-          JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
-          JvmField _field = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toField(pattern, "desc", _newTypeRef);
-          CollectionExtensions.<JvmField>operator_add(_members, _field);
+          {
+            EList<JvmTypeReference> _superTypes = it.getSuperTypes();
+            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher.class);
+            CollectionExtensions.<JvmTypeReference>operator_add(_superTypes, _newTypeRef);
+            EList<JvmMember> _members = it.getMembers();
+            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+            final Procedure1<JvmOperation> _function = new Procedure1<JvmOperation>() {
+                public void apply(final JvmOperation it) {
+                  {
+                    EList<Variable> _parameters = pattern.getParameters();
+                    for (final Variable parameter : _parameters) {
+                      {
+                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
+                        final JvmTypeReference javaType = _newTypeRef;
+                        EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                        String _name = parameter.getName();
+                        JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(parameter, _name, javaType);
+                        CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
+                      }
+                    }
+                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                        public CharSequence apply(final ImportManager it) {
+                          StringConcatenation _builder = new StringConcatenation();
+                          _builder.append("return \"Hello ");
+                          String _name = pattern.getName();
+                          _builder.append(_name, "");
+                          _builder.append("\";");
+                          _builder.newLineIfNotEmpty();
+                          return _builder;
+                        }
+                      };
+                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                  }
+                }
+              };
+            JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "getAllMatches", _newTypeRef_1, _function);
+            CollectionExtensions.<JvmOperation>operator_add(_members, _method);
+          }
         }
       };
     JvmGenericType _class = this._jvmTypesBuilder.toClass(pattern, _operator_plus, _function);
