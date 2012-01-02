@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EcoreFactory
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.common.util.BasicEMap
+import org.eclipse.emf.ecore.EReference
 
 class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProcessor {
 	
@@ -16,6 +17,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	}
 	
 	def process(EPackage p) {
+	   var EClass patternClass
 	   var EClass bodyClass
 	   var EClass varClass 
 	   var EClass varRefClass
@@ -25,6 +27,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	   var EClass pathExpressionTail
 		for (c : p.EClassifiers.filter(typeof(EClass))) {
            switch c.name {
+           	 case "Pattern": patternClass = c
            	 case "PatternBody": bodyClass = c
            	 case "Variable": varClass = c
            	 case "VariableReference": varRefClass = c
@@ -40,6 +43,18 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        
        pathExpressionConstraint.changeHeadType(pathExpressionHead)
        pathExpressionElement.changeTailType(pathExpressionTail)
+	}
+	
+	def generateInverseContainerOfBody(EClass bodyClass, EClass patternClass) {
+		val patternRef = EcoreFactory::eINSTANCE.createEReference
+		patternRef.transient = true
+		patternRef.derived = true
+		patternRef.name = "pattern"
+		patternRef.lowerBound = 1
+		patternRef.upperBound = 1
+		patternRef.changeable = true
+		patternRef.containment = true
+		patternRef.EOpposite = (patternClass.getEStructuralFeature("bodies") as EReference)
 	}
 	
 	def generateEReference(EClass bodyClass, EClass varClass) {
@@ -66,6 +81,9 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		bodyClass.EStructuralFeatures += varRef
 	}
 	
+	/**
+	 * Genearates a variable reference (and its opposite) in the pattern body and its usages.
+	 */
 	def generateReferenceToVariableDecl(EClass varClass, EClass varRefClass) {
 		val varRefs = EcoreFactory::eINSTANCE.createEReference
 		varRefs.transient = true
@@ -74,8 +92,6 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		varRefs.lowerBound = 0
 		varRefs.upperBound = -1
 		varRefs.EType = varRefClass 
-		//PatternLanguageClassResolver::variableReferenceType 
-		//PatternLanguagePackage::eINSTANCE.variableReference
 		varRefs.containment = false
 		varClass.EStructuralFeatures += varRefs
 		
@@ -86,8 +102,6 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		variable.lowerBound = 0
 		variable.upperBound = 1
 		variable.EType = varClass 
-		//PatternLanguageClassResolver::variableType 
-		//PatternLanguagePackage::eINSTANCE.variable
 		variable.containment = false
 		varRefClass.EStructuralFeatures += variable
 		
@@ -95,6 +109,10 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		variable.EOpposite = varRefs
 	}
 	
+	/**
+	 * Generates an EOperation that corresponds with the derived attribute called ''variables'' 
+	 * of the PatternBody.
+	 */
 	def generateEOperation(EClass bodyClass, EClass varClass) {
 		val op = EcoreFactory::eINSTANCE.createEOperation
 		op.name = "getVariables"

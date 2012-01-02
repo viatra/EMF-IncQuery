@@ -25,10 +25,10 @@ public class PatternLanguageScopeProvider extends XbaseScopeProvider {
       boolean matched = false;
       if (!matched) {
         if (context instanceof PatternBody) {
-          final PatternBody context_1 = (PatternBody) context;
+          final PatternBody _patternBody = (PatternBody)context;
           matched=true;
           {
-            EList<Variable> _variables = context_1.getVariables();
+            EList<Variable> _variables = _patternBody.getVariables();
             final Function1<Variable,IEObjectDescription> _function = new Function1<Variable,IEObjectDescription>() {
                 public IEObjectDescription apply(final Variable e) {
                   IEObjectDescription _createIEObjectDescription = PatternLanguageScopeProvider.this.createIEObjectDescription(e);
@@ -45,25 +45,25 @@ public class PatternLanguageScopeProvider extends XbaseScopeProvider {
       }
       if (!matched) {
         if (context instanceof Pattern) {
-          final Pattern context_2 = (Pattern) context;
+          final Pattern _pattern = (Pattern)context;
           matched=true;
           {
-            EList<Variable> _parameters = context_2.getParameters();
-            final Function1<Variable,IEObjectDescription> _function_1 = new Function1<Variable,IEObjectDescription>() {
+            EList<Variable> _parameters = _pattern.getParameters();
+            final Function1<Variable,IEObjectDescription> _function = new Function1<Variable,IEObjectDescription>() {
                 public IEObjectDescription apply(final Variable e) {
                   IEObjectDescription _createIEObjectDescription = PatternLanguageScopeProvider.this.createIEObjectDescription(e);
                   return _createIEObjectDescription;
                 }
               };
-            List<IEObjectDescription> _map_1 = ListExtensions.<Variable, IEObjectDescription>map(_parameters, _function_1);
-            final List<IEObjectDescription> descriptions_1 = _map_1;
-            IScope _createScope_1 = MapBasedScope.createScope(IScope.NULLSCOPE, descriptions_1);
-            return _createScope_1;
+            List<IEObjectDescription> _map = ListExtensions.<Variable, IEObjectDescription>map(_parameters, _function);
+            final List<IEObjectDescription> descriptions = _map;
+            IScope _createScope = MapBasedScope.createScope(IScope.NULLSCOPE, descriptions);
+            return _createScope;
           }
         }
       }
-      IScope _createLocalVarScope_1 = super.createLocalVarScope(parent, scopeContext);
-      return _createLocalVarScope_1;
+      IScope _createLocalVarScope = super.createLocalVarScope(parent, scopeContext);
+      return _createLocalVarScope;
   }
   
   public IEObjectDescription createIEObjectDescription(final XVariableDeclaration parameter) {

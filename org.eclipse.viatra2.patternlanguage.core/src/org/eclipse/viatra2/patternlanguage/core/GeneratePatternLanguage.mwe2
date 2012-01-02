@@ -80,11 +80,11 @@ Workflow {
             fragment = builder.BuilderIntegrationFragment {}
 
             // generator API
-            fragment = generator.GeneratorFragment {
-                generateMwe = true
-                generateJavaMain = true
-                generatorStub = false
-            }
+//            fragment = generator.GeneratorFragment {
+//                generateMwe = true
+//                generateJavaMain = true
+//                generatorStub = false
+//            }
 
             // formatter API
             fragment = formatting.FormatterFragment {}
