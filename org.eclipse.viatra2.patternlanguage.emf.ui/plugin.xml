@@ -238,6 +238,71 @@
 		</menuContribution>
 	</extension>
 
+   <extension
+         point="org.eclipse.xtext.builder.participant">
+      <participant
+            class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+      </participant>
+   </extension>
+   <extension
+            point="org.eclipse.ui.preferencePages">
+        <page
+            category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
+            class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.compiler.preferencePage"
+            name="Compiler">
+            <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
+        </page>
+    </extension>
+    <extension
+            point="org.eclipse.ui.propertyPages">
+        <page
+            category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
+            class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.compiler.propertyPage"
+            name="Compiler">
+            <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
+            <enabledWhen>
+	            <adapt type="org.eclipse.core.resources.IProject"/>
+			</enabledWhen>
+	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
+        </page>
+    </extension>
+   	<!-- Rename Refactoring -->
+	<extension point="org.eclipse.ui.handlers">
+		<handler 
+			class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
+			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
+			<activeWhen>
+				<reference
+					definitionId="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+	</extension>
+    <extension point="org.eclipse.ui.menus">
+         <menuContribution
+            locationURI="popup:#TextEditorContext?after=group.edit">
+         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.Editor.opened">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.ui.preferencePages">
+	    <page
+	        category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
+	        class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.refactoring"
+	        name="Refactoring">
+	        <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
+	    </page>
+	</extension>
+
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.compare.contentViewers"
             class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
