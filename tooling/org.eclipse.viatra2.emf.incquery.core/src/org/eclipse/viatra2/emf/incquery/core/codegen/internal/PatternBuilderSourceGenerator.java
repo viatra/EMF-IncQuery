@@ -38,6 +38,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IR
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherStringTypedContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.simple.SimpleReteBuilder;
+import org.eclipse.viatra2.gtasm.support.helper.GTASMHelper;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.asm.definitions.Machine;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPatternBody;
@@ -105,7 +106,23 @@ public class PatternBuilderSourceGenerator {
 
 		for (GTPattern gtPattern : patterns) {
 			try {
+				// process override annotation
+				String patternCodegenOverride = null;
+				Map<String, String> annotation = GTASMHelper.extractLowerCaseRuntimeAnnotation(gtPattern, "@CodeGeneration");
+				if (annotation != null)
+					patternCodegenOverride = annotation.get("override");
+				if ("allowDerived".equals(patternCodegenOverride))
+					((NEMFPatternMatcherBuilderContext<GTPattern>) builder.getContext())
+							.setOverrideDerivedFeauturesForbidden(true);
+				
+				// construct pattern
 				String collector = builder.construct(gtPattern);
+				
+				// revert override annotation
+				if ("allowDerived".equals(patternCodegenOverride))
+					((NEMFPatternMatcherBuilderContext<GTPattern>) builder.getContext())
+						.setOverrideDerivedFeauturesForbidden(false);
+				
 				coordinator.emitPatternBuilderLine(gtPattern, "\t\t", "return " + collector + ";");
 			} catch (RetePatternBuildException e) {
 				throw new CodeGenerationException(

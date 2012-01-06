@@ -11,25 +11,20 @@
 
 package org.eclipse.viatra2.emf.incquery.core.codegen;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.APIGenerator;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.ExtensionContributionsGenerator;
 import org.eclipse.viatra2.emf.incquery.core.codegen.internal.PatternBuilderSourceGenerator;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.ModulesLoader;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.PatternsCollector;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
+import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
 import org.eclipse.viatra2.framework.FrameworkException;
 import org.eclipse.viatra2.framework.FrameworkManagerException;
@@ -71,16 +66,13 @@ public class ProjectGenerator {
 		IProject project = getProject();
 		IFolder folder = project.getFolder(IncQueryNature.SRCGEN_DIR);
 		try {
-			folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			CollectDeletedElement visitor = new CollectDeletedElement();
-			folder.accept(visitor);
-			for (IResource res : visitor.toDelete) {
-				res.delete(false, new SubProgressMonitor(monitor, 1));
-			}
+			ProjectGenerationHelper.deleteJavaFiles(folder, monitor);
 		} catch (CoreException e) {
 			throw new CodeGenerationException("Error during cleanup before code EMF-IncQuery code generation.", e);
 		}
 	}
+
+
 
 	public void buildAfterClean(IProgressMonitor monitor) throws CodeGenerationException {
 		try {
@@ -107,18 +99,5 @@ public class ProjectGenerator {
 	public IProject getProject() {
 		return project;
 	}
-
-	private class CollectDeletedElement implements IResourceVisitor {
-		List<IResource> toDelete = new ArrayList<IResource>();
-		@Override
-		public boolean visit(IResource resource) throws CoreException {
-			if (resource instanceof IFile) {
-				if (resource!=null && "java".equalsIgnoreCase(((IFile)resource).getFileExtension())) {
-					toDelete.add(resource);
-					return false;
-				}
-			}
-			return true;
-		}
-	};
+	
 }

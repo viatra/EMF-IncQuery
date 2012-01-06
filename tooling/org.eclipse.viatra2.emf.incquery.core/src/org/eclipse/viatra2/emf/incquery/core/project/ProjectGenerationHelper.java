@@ -185,4 +185,21 @@ public abstract class ProjectGenerationHelper {
 		}
 
 	}
+	
+	
+
+	/**
+	 * @param folder
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public static void deleteJavaFiles(IFolder folder, final IProgressMonitor monitor) throws CoreException {
+		folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		CollectDeletedElement visitor = new CollectDeletedElement();
+		folder.accept(visitor);
+		for (IResource res : visitor.toDelete) {
+			res.delete(false, new SubProgressMonitor(monitor, 1));
+		}
+	};
+	
 }

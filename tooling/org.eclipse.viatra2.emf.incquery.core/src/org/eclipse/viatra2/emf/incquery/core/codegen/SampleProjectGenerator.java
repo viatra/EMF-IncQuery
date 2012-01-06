@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,6 +37,7 @@ import org.eclipse.viatra2.emf.incquery.core.codegen.util.GTPatternJavaData;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.ModulesLoader;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.PatternsCollector;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
+import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.core.project.SampleProjectSupport;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
@@ -50,9 +50,10 @@ import org.osgi.framework.ServiceReference;
 
 public class SampleProjectGenerator {
 	
-	IProject incQueryProject, sampleProject;
-	IncQueryGenmodel iqGen;
-	ModulesLoader modulesLoader;
+	protected IProject incQueryProject, sampleProject;
+	protected IncQueryGenmodel iqGen;
+	protected ModulesLoader modulesLoader;
+	protected String projectNameFragment;
 	
 	//SampleProjectGenerator sampleProjectGeneartor;
 	
@@ -61,13 +62,78 @@ public class SampleProjectGenerator {
 		this.incQueryProject = incQueryProject;
 		this.iqGen = iqGen;
 		this.modulesLoader = new ModulesLoader(incQueryProject);
+		this.projectNameFragment = ".ui.sample";
 	}
 
 	public void fullBuild(IProgressMonitor monitor) throws CodeGenerationException {
+		monitor.subTask("Crating project if non-existent");
+		buildProject(monitor);
+		monitor.subTask("Removing existing code");
+		clean(monitor);
+		monitor.subTask("Generating Java code");
+		buildAfterClean(monitor);
+	}
+
+	private void buildProject(IProgressMonitor monitor) throws CodeGenerationException {
+
+		BundleContext context = null;
+		ServiceReference ref = null;
+
 		try {
-			buildProject(monitor);
-			clean(monitor);
-			buildAfterClean(monitor);
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class.getName());
+			IBundleProjectService service = (IBundleProjectService) context.getService(ref);
+			IBundleProjectDescription bundleDesc = service.getDescription(incQueryProject);
+			sampleProject = SampleProjectSupport.checkforExistingProject(incQueryProject.getName(),projectNameFragment);
+			if(sampleProject == null) {
+				createProject(bundleDesc, monitor);
+			}
+		} catch (OperationCanceledException e) {
+			throw new CodeGenerationException("Error during project creation before EMF-IncQuery Sample project generation.", e);
+		} catch (CoreException e) {
+			throw new CodeGenerationException("Error during project creation before EMF-IncQuery Sample project generation.", e);
+		} finally {
+			if (context != null && ref != null)
+				context.ungetService(ref);
+		}
+	}
+
+	/**
+	 * @param bundleDesc
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	protected void createProject(IBundleProjectDescription bundleDesc, IProgressMonitor monitor) throws CoreException {
+		sampleProject = SampleProjectSupport.createProject(monitor, bundleDesc.getBundleName(),
+			incQueryProject.getName());
+	}
+
+	public void clean(IProgressMonitor monitor) throws CodeGenerationException {
+		IProject project = getProject();
+		IFolder folder = project.getFolder(IncQueryNature.SRCGEN_DIR);
+		try {
+			ProjectGenerationHelper.deleteJavaFiles(folder, monitor);
+		} catch (CoreException e) {
+			throw new CodeGenerationException("Error during cleanup before code EMF-IncQuery Sample project generation.", e);
+		}
+	}
+
+	public void buildAfterClean(IProgressMonitor monitor) throws CodeGenerationException {
+		try {
+			IFramework framework = modulesLoader.loadFramework(incQueryProject);
+			try {
+				modulesLoader.loadAllModules(framework);
+				Set<GTPattern> patterns = new PatternsCollector(framework).getCollectedPatterns();
+				Map<GTPattern, GTPatternJavaData> gtPatternJavaRepresentations = generateGTPatternJavaData(patterns, monitor);
+				SampleHandlerGenerator handlerGenerator = new SampleHandlerGenerator(gtPatternJavaRepresentations,
+						getProject(), incQueryProject);
+				handlerGenerator.generateActivator(sampleProject.getName(), monitor);
+				Map<String, HandlerData> handlers = handlerGenerator.generateHandlersForPatternMatcherCalls(monitor);
+				ExtensionsforSampleProjectGenerator extensionGenerator = new ExtensionsforSampleProjectGenerator(sampleProject);
+				extensionGenerator.contributeToExtensionPoint(handlers, getFileExtension(iqGen), monitor);
+			} finally {
+				modulesLoader.disposeFramework(framework);
+			}
 		} catch (OperationCanceledException e) {
 			throw new CodeGenerationException("Error during EMF-IncQuery Sample project generation. ", e);
 		} catch (CoreException e) {
@@ -77,55 +143,6 @@ public class SampleProjectGenerator {
 		} catch (FrameworkManagerException e) {
 			throw new CodeGenerationException("Error during EMF-IncQuery Sample project generation. ", e);
 		}
-	}
-
-	private void buildProject(IProgressMonitor monitor) throws OperationCanceledException, CoreException {
-
-		BundleContext context = null;
-		ServiceReference ref = null;
-
-		try {
-			context = IncQueryPlugin.plugin.context;
-			ref = context
-			.getServiceReference(IBundleProjectService.class.getName());
-			IBundleProjectService service = (IBundleProjectService) context
-			.getService(ref);
-			IBundleProjectDescription bundleDesc = service.getDescription(incQueryProject);
-			this.sampleProject = SampleProjectSupport.createProject(monitor, bundleDesc.getBundleName(),incQueryProject.getName());
-		}
-		finally
-		{if(context != null && ref != null)
-			context.ungetService(ref);}
-	}
-
-	public void clean(IProgressMonitor monitor) throws CodeGenerationException {
-		IProject project = getProject();
-		IFolder folder = project.getFolder(IncQueryNature.SRC_DIR);
-		try {
-			folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			for (IResource res : folder.members()) {
-				res.delete(true, monitor);
-			}
-		} catch (CoreException e) {
-			throw new CodeGenerationException("Error during cleanup before code EMF-IncQuery code generation.", e);
-		}
-	}
-
-	public void buildAfterClean(IProgressMonitor monitor) throws CodeGenerationException, FrameworkManagerException, CoreException, FrameworkException {
-			IFramework framework = modulesLoader.loadFramework(incQueryProject);
-			try {
-				modulesLoader.loadAllModules(framework);
-				Set<GTPattern> patterns = new PatternsCollector(framework).getCollectedPatterns();
-				Map<GTPattern, GTPatternJavaData> gtPatternJavaRepresentations = generateGTPatternJavaData(patterns, monitor);
-				SampleHandlerGenerator handlerGenerator = new SampleHandlerGenerator(gtPatternJavaRepresentations, getProject(), incQueryProject);
-				handlerGenerator.generateActivator(sampleProject.getName() , monitor);
-				Map<String,HandlerData> handlers = handlerGenerator.generateHandlersForPatternMatcherCalls(monitor);
-				ExtensionsforSampleProjectGenerator extensionGenerator = new ExtensionsforSampleProjectGenerator(sampleProject);
-				extensionGenerator.contributeToExtensionPoint(handlers, getFileExtension(iqGen), monitor);
-							
-			} finally {
-				modulesLoader.disposeFramework(framework);
-			}		
 	}
 
 //		
@@ -154,46 +171,55 @@ public class SampleProjectGenerator {
 		Map<GTPattern, GTPatternJavaData>  datas = new HashMap<GTPattern, GTPatternJavaData>();
 		
 		for(GTPattern pattern: patterns) {
-			GTPatternJavaData data = new GTPatternJavaData();
-			data.setPatternName(pattern.getName());
-			
-			//mathcer
-			IPath pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_MATCHERS_DIR).getFullPath();
-			String packageNameRoot = IncQueryNature.GENERATED_MATCHERS_PACKAGEROOT;
-			CodegenSupport.PackageLocationFinder matcherPLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
-			//sets the matcher and the matcher's package
-			data.setMatcherName(getMatcherName(pattern));
-			data.setMatcherPackage(matcherPLF.getJavaPackageName()+"."+getMatcherName(pattern));
-			
-			//singature
-			pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_DTO_DIR).getFullPath();
-			packageNameRoot = IncQueryNature.GENERATED_DTO_PACKAGEROOT;
-			CodegenSupport.PackageLocationFinder signaturePLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
-			//sets the matcher and the matcher's package
-			data.setSignatureName(getSignatureName(pattern));
-			data.setSignaturePackage(signaturePLF.getJavaPackageName()+"."+getSignatureName(pattern));
-			
-			datas.put(pattern, data);
+			genereteGTPatternJavaData(monitor, datas, pattern);
 			
 		}
 		return datas;
 	}
+
+	/**
+	 * @param monitor
+	 * @param datas
+	 * @param pattern
+	 * @throws CodeGenerationException
+	 */
+	protected void genereteGTPatternJavaData(IProgressMonitor monitor, Map<GTPattern, GTPatternJavaData> datas,
+			GTPattern pattern) throws CodeGenerationException {
+		GTPatternJavaData data = new GTPatternJavaData();
+		data.setPatternName(pattern.getName());
+		
+		//mathcer
+		IPath pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_MATCHERS_DIR).getFullPath();
+		String packageNameRoot = IncQueryNature.GENERATED_MATCHERS_PACKAGEROOT;
+		CodegenSupport.PackageLocationFinder matcherPLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
+		//sets the matcher and the matcher's package
+		data.setMatcherName(getMatcherName(pattern));
+		data.setMatcherPackage(matcherPLF.getJavaPackageName()+"."+getMatcherName(pattern));
+		
+		//singature
+		pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_DTO_DIR).getFullPath();
+		packageNameRoot = IncQueryNature.GENERATED_DTO_PACKAGEROOT;
+		CodegenSupport.PackageLocationFinder signaturePLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
+		//sets the matcher and the matcher's package
+		data.setSignatureName(getSignatureName(pattern));
+		data.setSignaturePackage(signaturePLF.getJavaPackageName()+"."+getSignatureName(pattern));
+		
+		datas.put(pattern, data);
+	}
 	
-	private String getMatcherName(GTPattern pattern) {
+	protected String getMatcherName(GTPattern pattern) {
 		String pName = pattern.getName().substring(1);
 		return Character.toUpperCase(pattern.getName().charAt(0))+pName +"Matcher";
 		
 	}
 	
-	private String getSignatureName(GTPattern pattern) {
+	protected String getSignatureName(GTPattern pattern) {
 		String pName = pattern.getName().substring(1);
 		return Character.toUpperCase(pattern.getName().charAt(0))+pName +"Signature";
 		
 	}
 
-	public IProject getProject() {
+	protected IProject getProject() {
 		return sampleProject;
 	}
-
-
 }

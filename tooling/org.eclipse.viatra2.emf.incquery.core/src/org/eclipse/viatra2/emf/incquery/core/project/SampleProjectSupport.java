@@ -17,6 +17,9 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -82,10 +85,10 @@ public class SampleProjectSupport {
 			bundleDesc.apply(monitor);
 			context.ungetService(ref);
 			/* Creating Java folders */
-			ProjectGenerationHelper.initializeClasspath(proj, monitor, ProjectGenerationHelper.singleSourceFolder);
+			ProjectGenerationHelper.initializeClasspath(proj, monitor, ProjectGenerationHelper.sourceFolders);
 			ProjectGenerationHelper.initializeBuildProperties(proj, monitor);
 
-		return proj;
+			return proj;
 		} catch (IOException ioe) {
 			IStatus status = new Status(IStatus.ERROR,
 					IncQueryNature.BUNDLE_ID, IStatus.ERROR,
@@ -97,5 +100,20 @@ public class SampleProjectSupport {
 				context.ungetService(ref);
 		}
 
+	}
+	
+	public static IProject checkforExistingProject(String incQueryProjectName, String projectNameFragment) {
+		
+		String genProjectName = incQueryProjectName + projectNameFragment;
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject proj = root.getProject(genProjectName);
+
+		if (proj.exists()) {
+			return proj;
+		}
+		
+		return null;
+		
 	}
 }

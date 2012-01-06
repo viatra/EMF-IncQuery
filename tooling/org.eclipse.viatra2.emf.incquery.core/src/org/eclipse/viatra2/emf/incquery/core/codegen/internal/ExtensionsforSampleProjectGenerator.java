@@ -22,6 +22,9 @@ import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -128,8 +131,7 @@ public class ExtensionsforSampleProjectGenerator {
 			throws CodeGenerationException {
 		IFile manifest = PDEProject.getManifest(project);
 		IFile pluginXml = PDEProject.getPluginXml(project);
-		// IPluginModel plugin =
-		// (IPluginModel)PDECore.getDefault().getModelManager().findModel(project);
+		IPluginModel plugin = (IPluginModel)PDECore.getDefault().getModelManager().findModel(project);
 		WorkspaceBundleModel bModel = new WorkspaceBundleModel(manifest);
 		bModel.setEditable(true);
 		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, true);
@@ -137,7 +139,19 @@ public class ExtensionsforSampleProjectGenerator {
 		try {
 			fModel.load();
 			IExtensions extensions = fModel.getExtensions();
-			String extensionID = "";
+			String extensionID = "generatedContribution";
+			//Storing a read-only plugin.xml model
+			IExtensions readExtension = plugin.getExtensions();
+			for (IPluginExtension extension : readExtension.getExtensions()) {
+				String id = extension.getId();
+				//The second contentEquals is needed as the returned id contains the project name twice 
+				if (id==null || !(id.contentEquals(extensionID) || id.contentEquals(project.getName() + "." + extensionID))) {
+					extensions.add(extension);
+				}
+			}
+			for (IPluginExtensionPoint point : readExtension.getExtensionPoints()) {
+				extensions.add(point);
+			}
 			IExtensionsModelFactory factory = fModel.getFactory();
 			IPluginExtension contribExtension = factory.createExtension();
 
