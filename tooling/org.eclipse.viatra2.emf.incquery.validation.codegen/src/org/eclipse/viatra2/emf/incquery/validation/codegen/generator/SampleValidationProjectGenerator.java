@@ -12,33 +12,23 @@
 
 package org.eclipse.viatra2.emf.incquery.validation.codegen.generator;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.viatra2.emf.incquery.core.codegen.CodeGenerationException;
-import org.eclipse.viatra2.emf.incquery.core.codegen.util.CodegenSupport;
+import org.eclipse.viatra2.emf.incquery.core.codegen.SampleProjectGenerator;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.GTPatternJavaData;
-import org.eclipse.viatra2.emf.incquery.core.codegen.util.ModulesLoader;
 import org.eclipse.viatra2.emf.incquery.core.codegen.util.PatternsCollector;
-import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.EcoreModel;
 import org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel;
-import org.eclipse.viatra2.emf.incquery.validation.codegen.ValidationCodegenPlugin;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.ExtensionsforSampleValidationProjectGenerator;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstraintGenerator;
 import org.eclipse.viatra2.emf.incquery.validation.codegen.internal.SampleConstraintGenerator.ConstraintData;
@@ -48,34 +38,34 @@ import org.eclipse.viatra2.framework.FrameworkManagerException;
 import org.eclipse.viatra2.framework.IFramework;
 import org.eclipse.viatra2.gtasm.support.helper.GTASMHelper;
 import org.eclipse.viatra2.gtasmmodel.gtasm.metamodel.gt.GTPattern;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 /**
  * 
  * @author Abel Hegedus
  *
  */
-public class SampleValidationProjectGenerator {
-	
-	IProject incQueryProject, sampleProject;
-	IncQueryGenmodel iqGen;
-	ModulesLoader modulesLoader;
-	
-	//SampleProjectGenerator sampleProjectGeneartor;
+public class SampleValidationProjectGenerator extends SampleProjectGenerator {
 	
 	public SampleValidationProjectGenerator(IProject incQueryProject,IncQueryGenmodel iqGen, IProgressMonitor monitor) throws CodeGenerationException {
-		super();
-		this.incQueryProject = incQueryProject;
-		this.iqGen = iqGen;
-		this.modulesLoader = new ModulesLoader(incQueryProject);
+		super(incQueryProject, iqGen, monitor);
+		projectNameFragment = ".validation.sample";
 	}
 
-	public void fullBuild(IProgressMonitor monitor) throws CodeGenerationException {
+	public void buildAfterClean(IProgressMonitor monitor) throws CodeGenerationException {
 		try {
-			buildProject(monitor);
-			clean(monitor);
-			buildAfterClean(monitor);
+			IFramework framework = modulesLoader.loadFramework(incQueryProject);
+			try {
+				modulesLoader.loadAllModules(framework);
+				Set<GTPattern> patterns = new PatternsCollector(framework).getCollectedPatterns();
+				Map<GTPattern, GTPatternJavaData> gtPatternJavaRepresentations = generateGTPatternJavaData(patterns, monitor);
+				SampleConstraintGenerator constraintGenerator = new SampleConstraintGenerator(gtPatternJavaRepresentations, getProject(), incQueryProject);
+				constraintGenerator.generateActivator(sampleProject.getName() , monitor);
+				Map<String,ConstraintData> constraints = constraintGenerator.generateHandlersForPatternMatcherCalls(monitor);
+				ExtensionsforSampleValidationProjectGenerator extensionGenerator = new ExtensionsforSampleValidationProjectGenerator(sampleProject,iqGen);
+				extensionGenerator.contributeToExtensionPoint(constraints, getEditorId2DomainMap(iqGen), monitor);
+			} finally {
+				modulesLoader.disposeFramework(framework);
+			}
 		} catch (OperationCanceledException e) {
 			throw new CodeGenerationException("Error during EMF-IncQuery Sample project generation. ", e);
 		} catch (CoreException e) {
@@ -87,75 +77,6 @@ public class SampleValidationProjectGenerator {
 		}
 	}
 
-	private void buildProject(IProgressMonitor monitor) throws OperationCanceledException, CoreException {
-
-		BundleContext context = null;
-		ServiceReference ref = null;
-
-		try {
-			context = ValidationCodegenPlugin.plugin.context;
-			ref = context
-			.getServiceReference(IBundleProjectService.class.getName());
-			IBundleProjectService service = (IBundleProjectService) context
-			.getService(ref);
-			IBundleProjectDescription bundleDesc = service.getDescription(incQueryProject);
-			this.sampleProject = SampleValidationProjectSupport.createProject(monitor, bundleDesc.getBundleName(),incQueryProject.getName());
-		}
-		finally
-		{if(context != null && ref != null)
-			context.ungetService(ref);}
-	}
-
-	public void clean(IProgressMonitor monitor) throws CodeGenerationException {
-		IProject project = getProject();
-		IFolder folder = project.getFolder(IncQueryNature.SRC_DIR);
-		try {
-			folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			for (IResource res : folder.members()) {
-				res.delete(true, monitor);
-			}
-		} catch (CoreException e) {
-			throw new CodeGenerationException("Error during cleanup before code EMF-IncQuery code generation.", e);
-		}
-	}
-
-	public void buildAfterClean(IProgressMonitor monitor) throws CodeGenerationException, FrameworkManagerException, CoreException, FrameworkException {
-			IFramework framework = modulesLoader.loadFramework(incQueryProject);
-			try {
-				modulesLoader.loadAllModules(framework);
-				Set<GTPattern> patterns = new PatternsCollector(framework).getCollectedPatterns();
-				Map<GTPattern, GTPatternJavaData> gtPatternJavaRepresentations = generateGTPatternJavaData(patterns, monitor);
-				SampleConstraintGenerator constraintGenerator = new SampleConstraintGenerator(gtPatternJavaRepresentations, getProject(), incQueryProject);
-				constraintGenerator.generateActivator(sampleProject.getName() , monitor);
-				Map<String,ConstraintData> constraints = constraintGenerator.generateHandlersForPatternMatcherCalls(monitor);
-				ExtensionsforSampleValidationProjectGenerator extensionGenerator = new ExtensionsforSampleValidationProjectGenerator(sampleProject,iqGen);
-				extensionGenerator.contributeToExtensionPoint(constraints, getEditorId2DomainMap(iqGen), monitor);
-							
-			} finally {
-				modulesLoader.disposeFramework(framework);
-			}		
-	}
-
-//		
-//		String editorID = incqueryGenmodel.getEcoreModel().get(0).getModels().getEditorPluginID();
-//		String modelName = incqueryGenmodel.getEcoreModel().get(0).getModels().getModelName();
-//		return editorID+"."+modelName+"EditorID";
-//	}
-
-	private Collection<String> getFileExtension(IncQueryGenmodel incqueryGenmodel) {
-		//incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
-
-		// TODO: works only when the editor file extension is an GenPackage's file extension who has at least one classifiers
-		List<String> fileExtensions = new ArrayList<String>(); 
-		
-		for(EcoreModel ecoreModel :incqueryGenmodel.getEcoreModel())
-			for(GenPackage genPackage: ecoreModel.getModels().getAllGenPackagesWithClassifiers()) 
-			{
-				fileExtensions.add(genPackage.getFileExtension());
-			}
-		return fileExtensions;
-	}
-	
 	private Map<String,String> getEditorId2DomainMap(IncQueryGenmodel incqueryGenmodel) {
 		//incqueryGenmodel.getEcoreModel().get(0).getModels().getGenPackages().get(0).getFileExtension();
 		
@@ -191,46 +112,18 @@ public class SampleValidationProjectGenerator {
 			Map<String, String> annotation = 
 				GTASMHelper.extractLowerCaseRuntimeAnnotation(pattern, "@Constraint");
 			if (annotation != null){
-				GTPatternJavaData data = new GTPatternJavaData();
-				data.setPatternName(pattern.getName());
-				
-				//matcher
-				IPath pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_MATCHERS_DIR).getFullPath();
-				String packageNameRoot = IncQueryNature.GENERATED_MATCHERS_PACKAGEROOT;
-				CodegenSupport.PackageLocationFinder matcherPLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
-				//sets the matcher and the matcher's package
-				data.setMatcherName(getMatcherName(pattern));
-				data.setMatcherPackage(matcherPLF.getJavaPackageName()+"."+getMatcherName(pattern));
-				
-				//singature
-				pathRoot = incQueryProject.getFolder(IncQueryNature.GENERATED_DTO_DIR).getFullPath();
-				packageNameRoot = IncQueryNature.GENERATED_DTO_PACKAGEROOT;
-				CodegenSupport.PackageLocationFinder signaturePLF= new CodegenSupport.PackageLocationFinder(pattern, pathRoot, packageNameRoot, monitor);
-				//sets the matcher and the matcher's package
-				data.setSignatureName(getSignatureName(pattern));
-				data.setSignaturePackage(signaturePLF.getJavaPackageName()+"."+getSignatureName(pattern));
-				
-				datas.put(pattern, data);
+				genereteGTPatternJavaData(monitor, datas, pattern);
 			}
 		}
 		return datas;
 	}
-	
-	private String getMatcherName(GTPattern pattern) {
-		String pName = pattern.getName().substring(1);
-		return Character.toUpperCase(pattern.getName().charAt(0))+pName +"Matcher";
-		
-	}
-	
-	private String getSignatureName(GTPattern pattern) {
-		String pName = pattern.getName().substring(1);
-		return Character.toUpperCase(pattern.getName().charAt(0))+pName +"Signature";
-		
-	}
 
-	public IProject getProject() {
-		return sampleProject;
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.core.codegen.SampleProjectGenerator#createProject(org.eclipse.pde.core.project.IBundleProjectDescription, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	protected void createProject(IBundleProjectDescription bundleDesc, IProgressMonitor monitor) throws CoreException {
+		sampleProject = SampleValidationProjectSupport.createProject(monitor, bundleDesc.getBundleName(),
+				incQueryProject.getName());
 	}
-
-
 }

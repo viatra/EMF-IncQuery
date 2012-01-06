@@ -20,13 +20,13 @@ import org.eclipse.viatra2.emf.incquery.validation.ui.editorlink.EditorBoundVali
 
 public class InitializeValidationAction implements IViewActionDelegate, IEditorActionDelegate {
 
-	private Object selectedElement=null;
+	protected Object selectedElement=null;
 
 	
 	/**
 	 * Reference to the currently active editor.
 	 */
-	private IEditorPart editor;
+	protected IEditorPart editor;
 	/**
 	 * Constructor for CreateMarkerAction.
 	 */
