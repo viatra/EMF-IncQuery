@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.WellbehavingDerivedFeatureRegistry;
 
 /**
  * @author Bergmann Gábor
@@ -30,8 +31,13 @@ public class EMFModelComprehension {
 
 	public static boolean unvisitable(EStructuralFeature feature) {
 		boolean suspect = feature.isDerived() || feature.isVolatile();
-		// TODO add override support here 
-		// (e.g. if manual notifications available, or no changes expected afterwards)
+		if(suspect) {
+			// override support here 
+			// (e.g. if manual notifications available, or no changes expected afterwards)
+			suspect = !WellbehavingDerivedFeatureRegistry.getContributedWellbehavingDerivedFeatures().contains(feature);
+			// TODO verbose flag somewhere to ease debugging (for such warnings)
+			// TODO add warning about not visited subtree (containment, FeatureMap and annotation didn't define otherwise)
+		}
 		return suspect;
 	}
 	

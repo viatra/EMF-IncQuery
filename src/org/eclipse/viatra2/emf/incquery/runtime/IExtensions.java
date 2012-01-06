@@ -23,5 +23,6 @@ public interface IExtensions {
 	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.runtime";
 	// The extension point ID
 	public static final String EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.patternmatcher.builder";
+	public static final String WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features";
 
 }

@@ -10,20 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
-import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.WellbehavingDerivedFeatureRegistry;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -50,6 +39,7 @@ public class Activator extends Plugin {
 		super.start(context);
 		plugin = this;
 		BuilderRegistry.initRegistry();
+		WellbehavingDerivedFeatureRegistry.initRegistry();
 	}
 
 	/*
