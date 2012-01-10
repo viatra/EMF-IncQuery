@@ -99,7 +99,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 					EEnum type = (EEnum) typeClassifier;
 					for (EEnumLiteral literal : type.getELiterals()) {
 						acceptor.accept(createCompletionProposal(
-								"&" + literal.getName(), type.getName() + "::" + literal.getName(),
+								"::" + literal.getName(), type.getName() + "::" + literal.getName(),
 								null, context));
 					}
 				}
