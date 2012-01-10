@@ -41,5 +41,5 @@ ValueReference returns core::ValueReference:
 ;
 
 EnumValue:
-	'&' /*enumeration = [ecore::EEnum] '.' */ literal = [ecore::EEnumLiteral]
+	'::' /*enumeration = [ecore::EEnum] '.' */ literal = [ecore::EEnumLiteral]
 ;
