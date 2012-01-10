@@ -74,8 +74,9 @@ public class SampleConstraintGenerator {
 
 		try {
 			IFolder rootFolder = sampleProject.getFolder(IncQueryNature.GENERATED_HANDLER_DIR);
-			rootFolder.create(true, true, monitor);
-			//String packageNameRoot = IncQueryNature.GENERATED_HANDLER_PACKAGEROOT;
+			if(!rootFolder.exists()) {
+				rootFolder.create(true, true, monitor);
+			}//String packageNameRoot = IncQueryNature.GENERATED_HANDLER_PACKAGEROOT;
 
 			IFile file = rootFolder.getFile("Activator.java");
 
