@@ -44,6 +44,8 @@ public class EMFModelComprehension {
 	public static void visitObject(EMFVisitor visitor, EObject source) {
 		if (source == null) return;
 		visitor.visitElement(source);
+		if(visitor.pruneSubtrees(source))
+			return;
 		for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
 			if (unvisitable(feature)) continue;
 			if (feature.isMany()) {

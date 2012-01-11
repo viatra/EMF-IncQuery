@@ -68,5 +68,15 @@ public class EMFVisitor {
 	 * @param value
 	 */
 	public  void visitAttribute(EObject source, EAttribute feature, Object target) {}
+	
+	/**
+	 * Returns false if the contents of an object should be pruned (and not explored by the visitor)
+	 * 
+	 * @param source
+	 * @param feature
+	 * @param target
+	 * @return
+	 */
+	public  boolean pruneSubtrees(EObject source) { return false;}
 
 }
