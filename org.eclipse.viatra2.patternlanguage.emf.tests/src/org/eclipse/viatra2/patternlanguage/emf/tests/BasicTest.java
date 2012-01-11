@@ -14,7 +14,7 @@ import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
 @InjectWith(EMFPatternLanguageInjectorProvider.class)
-public class BasicTests {
+public class BasicTest {
 
 	@Inject
 	private ParseHelper<PatternModel> parseHelper;
