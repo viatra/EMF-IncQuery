@@ -37,8 +37,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui.Activator;
 import org.eclipse.viatra2.patternlanguage.ui.internal.EMFPatternLanguageActivator;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Injector;
 
@@ -84,6 +83,7 @@ public class SelfRunHander extends AbstractHandler {
 
 			try {
 				PatternModel parsedEPM = parseEPM(iFile);
+				System.out.println("Pattern file loaded");
 				PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
 				ResourceSet resourceSet = parsedEPM.eResource()
 						.getResourceSet();
@@ -95,8 +95,10 @@ public class SelfRunHander extends AbstractHandler {
 							+ PatternRegistry.fqnOf(pattern) + ")");
 					IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> matcherFactory = PatternRegistry.INSTANCE
 							.getMatcherFactory(pattern);
+					System.out.println("Matcher factory available");
 					GenericPatternMatcher matcher = matcherFactory
 							.getMatcher(resourceSet);
+					System.out.println("Matcher available");
 					Collection<GenericPatternSignature> allMatches = matcher
 							.getAllMatchesAsSignature();
 					for (GenericPatternSignature signature : allMatches) {
@@ -120,12 +122,12 @@ public class SelfRunHander extends AbstractHandler {
 						EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA2_PATTERNLANGUAGE_EMFPATTERNLANGUAGE);
 		if (file == null)
 			return null;
-		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);//new ResourceSetImpl();
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		IResourceSetProvider provider = injector.getInstance(IResourceSetProvider.class);
+		ResourceSet resourceSet = provider.get(file.getProject());
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
 				.toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);
-		if (resource != null && resource.getContents().size() == 1) {
+		if (resource != null && resource.getContents().size() >= 1) {
 			EObject topElement = resource.getContents().get(0);
 			return topElement instanceof PatternModel ? (PatternModel) topElement
 					: null;
