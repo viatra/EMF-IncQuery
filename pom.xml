@@ -3,17 +3,22 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.viatra2.patternlanguage</groupId>
-	<artifactId>PatternLanguage</artifactId>
+	<groupId>org.eclipse.viatra2</groupId>
+	<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
+    <name>EMF-IncQuery</name>
+    <url>http://viatra.inf.mit.bme.hu/incquery</url>
 	<version>0.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
+	    <module>org.eclipse.viatra2.emf.incquery.runtime</module>
 		<module>org.eclipse.viatra2.patternlanguage.core</module>
 		<module>org.eclipse.viatra2.patternlanguage.core.ui</module>
 		<module>org.eclipse.viatra2.patternlanguage.emf</module>
-		<module>org.eclipse.viatra2.patternlanguage.emf.feature</module>
 		<module>org.eclipse.viatra2.patternlanguage.emf.ui</module>
+        <module>org.eclipse.viatra2.patternlanguage.emf.matcherbuilder</module>
+        <module>org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui</module>
 		<module>org.eclipse.viatra2.patternlanguage.generator.util</module>
+    	<module>org.eclipse.viatra2.patternlanguage.emf.feature</module>
 		<module>org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
 	<properties>
@@ -45,7 +50,7 @@
 					<resolver>p2</resolver>
 					<target>
 						<artifact>
-							<groupId>org.eclipse.viatra2.patternlanguage</groupId>
+							<groupId>org.eclipse.viatra2</groupId>
 							<artifactId>org.eclipse.viatra2.patternlanguage.emf.feature</artifactId>
 							<version>0.7.0-SNAPSHOT</version>
 							<classifier>emfpattern</classifier>

@@ -7,6 +7,8 @@
     <groupId>org.eclipse.viatra2</groupId>
     <version>0.7.0-SNAPSHOT</version>
   </parent>
-  <artifactId>org.eclipse.viatra2.patternlanguage.core.ui</artifactId>
+  <artifactId>org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <name>EMF-IncQuery</name>
+  <url>http://viatra.inf.mit.bme.hu/incquery</url>
 </project>

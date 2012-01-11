@@ -3,11 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>PatternLanguage</artifactId>
-    <groupId>org.eclipse.viatra2.patternlanguage</groupId>
+    <artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
+    <groupId>org.eclipse.viatra2</groupId>
     <version>0.7.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.eclipse.viatra2.patternlanguage</groupId>
   <artifactId>org.eclipse.viatra2.patternlanguage.emf</artifactId>
   <packaging>eclipse-plugin</packaging>
     <build>
