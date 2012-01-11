@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.patternlanguage.emf.feature"
       label="EMF-IncQuery Pattern Language"
-      version="0.7.0.qualifier"
+      version="0.6.0.qualifier"
       provider-name="Zoltan Ujhelyi/FTSRG">
 
    <description url="http://www.example.com/description">
