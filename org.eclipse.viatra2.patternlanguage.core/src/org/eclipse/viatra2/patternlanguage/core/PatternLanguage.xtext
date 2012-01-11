@@ -10,7 +10,7 @@ PatternModel:
 	
 Pattern:
 	annotations+=Annotation*
-	modifiers+=Modifiers*
+	//modifiers+=Modifiers*
 	'pattern'
 	name=ID
 	'('
@@ -32,8 +32,8 @@ AnnotationParameter:
 	value = STRING
 ;
 
-Modifiers:
-	shareable?='shareable' 
+Modifiers: 
+	injective?='injective'
 ;
 
 //terminal ID:
