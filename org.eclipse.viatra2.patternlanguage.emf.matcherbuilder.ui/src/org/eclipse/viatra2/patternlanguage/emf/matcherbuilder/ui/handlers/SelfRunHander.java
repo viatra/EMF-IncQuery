@@ -32,12 +32,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui.Activator;
-import org.eclipse.viatra2.patternlanguage.ui.internal.EMFPatternLanguageActivator;
-import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Injector;
 
@@ -83,7 +82,6 @@ public class SelfRunHander extends AbstractHandler {
 
 			try {
 				PatternModel parsedEPM = parseEPM(iFile);
-				System.out.println("Pattern file loaded");
 				PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
 				ResourceSet resourceSet = parsedEPM.eResource()
 						.getResourceSet();
@@ -95,10 +93,8 @@ public class SelfRunHander extends AbstractHandler {
 							+ PatternRegistry.fqnOf(pattern) + ")");
 					IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> matcherFactory = PatternRegistry.INSTANCE
 							.getMatcherFactory(pattern);
-					System.out.println("Matcher factory available");
 					GenericPatternMatcher matcher = matcherFactory
 							.getMatcher(resourceSet);
-					System.out.println("Matcher available");
 					Collection<GenericPatternSignature> allMatches = matcher
 							.getAllMatchesAsSignature();
 					for (GenericPatternSignature signature : allMatches) {
@@ -116,14 +112,12 @@ public class SelfRunHander extends AbstractHandler {
 	}
 
 	static PatternModel parseEPM(IFile file) {
-		Injector injector = EMFPatternLanguageActivator
-				.getInstance()
-				.getInjector(
-						EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA2_PATTERNLANGUAGE_EMFPATTERNLANGUAGE);
+		Injector injector = new EMFPatternLanguageStandaloneSetup()
+				.createInjectorAndDoEMFRegistration();
 		if (file == null)
 			return null;
-		IResourceSetProvider provider = injector.getInstance(IResourceSetProvider.class);
-		ResourceSet resourceSet = provider.get(file.getProject());
+
+		ResourceSet resourceSet = injector.getInstance(ResourceSet.class);
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
 				.toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);
