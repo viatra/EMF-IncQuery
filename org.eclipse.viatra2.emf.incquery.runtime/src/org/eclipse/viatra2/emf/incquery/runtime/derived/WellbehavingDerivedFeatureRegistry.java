@@ -8,7 +8,7 @@
  * Contributors:
  *    Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
+package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
 import java.util.ArrayList;
 import java.util.Collection;

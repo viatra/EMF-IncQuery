@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.WellbehavingDerivedFeatureRegistry;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 
 /**
  * @author Bergmann Gábor

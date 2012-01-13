@@ -11,8 +11,8 @@
 package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.WellbehavingDerivedFeatureRegistry;
 import org.osgi.framework.BundleContext;
 
 /**

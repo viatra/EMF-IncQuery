@@ -9,7 +9,7 @@
  *    pvmellor - original code (http://wiki.eclipse.org/EMF/Recipes#Recipe:_Derived_Attribute_Notifier)
  *    Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
+package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -326,6 +326,16 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	 */
 	private void sendRemoveManyNotification(EObject source, EStructuralFeature feature, Object oldTarget) {
 		source.eNotify(new ENotificationImpl((InternalEObject) source, Notification.REMOVE_MANY,
+				feature, oldTarget, null));
+	}
+	
+	/**
+	 * @param source
+	 * @param feature
+	 * @param target
+	 */
+	private void sendRemoveNotification(EObject source, EStructuralFeature feature, Object oldTarget) {
+		source.eNotify(new ENotificationImpl((InternalEObject) source, Notification.REMOVE,
 				feature, oldTarget, null));
 	}
 	
