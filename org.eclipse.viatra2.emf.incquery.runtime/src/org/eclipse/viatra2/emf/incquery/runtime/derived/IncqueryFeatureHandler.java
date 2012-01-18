@@ -45,7 +45,7 @@ public class IncqueryFeatureHandler {
 	private FeatureKind kind;
 	
 	private Object updateMemory;
-	private long counterMemory = 0;
+	private int counterMemory = 0;
 	private Object singleRefMemory = null;
 	
 	private final List<ENotificationImpl> notifications = new ArrayList<ENotificationImpl>();
@@ -141,7 +141,7 @@ public class IncqueryFeatureHandler {
 		return null;
 	}
 	
-	public Long getLongValue() {
+	public int getIntValue() {
 		return counterMemory;
 	}
 	
@@ -163,7 +163,7 @@ public class IncqueryFeatureHandler {
 						if(kind == FeatureKind.AGGREGATE) {
 							//if(aggregateMemory != null) {
 								// TODO update Aggregate
-							increaseCounter((Long) target);
+							increaseCounter((Integer) target);
 							//}
 						} else {
 							//source.eNotify(
@@ -195,9 +195,9 @@ public class IncqueryFeatureHandler {
 	/**
 	 * @throws CoreException
 	 */
-	private void increaseCounter(long delta) throws CoreException {
-		if(counterMemory <= Long.MAX_VALUE-delta) {
-			long tempMemory = counterMemory+delta;
+	private void increaseCounter(int delta) throws CoreException {
+		if(counterMemory <= Integer.MAX_VALUE-delta) {
+			int tempMemory = counterMemory+delta;
 			//source.eNotify(
 			notifications.add(
 					new ENotificationImpl((InternalEObject) source, Notification.SET,	feature, counterMemory, tempMemory));
@@ -217,7 +217,7 @@ public class IncqueryFeatureHandler {
 						if(kind == FeatureKind.AGGREGATE) {
 							//if(aggregateMemory != null) {
 								// TODO update Aggregate
-							decreaseCounter((Long) target);
+							decreaseCounter((Integer) target);
 							//}
 						} else {
 							//source.eNotify(
@@ -257,9 +257,9 @@ public class IncqueryFeatureHandler {
 	/**
 	 * @throws CoreException
 	 */
-	private void decreaseCounter(long delta) throws CoreException {
+	private void decreaseCounter(int delta) throws CoreException {
 		if(counterMemory >= delta) {
-			long tempMemory = counterMemory-delta;
+			int tempMemory = counterMemory-delta;
 			//source.eNotify(
 			notifications.add(
 					new ENotificationImpl((InternalEObject) source, Notification.SET,

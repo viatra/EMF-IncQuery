@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -25,13 +22,13 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
 
 /**
  * @author Abel Hegedus
- * 
+ * TODO remove sourceMap (memory leak) 
  */
-public class IncqueryFeatureMatcherFactory {
+public class IncqueryFeatureHelper {
 
-	private static final Map<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>> sourceMap = new HashMap<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>>();
+	//private static final Map<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>> sourceMap = new HashMap<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>>();
 
-	public static IncqueryFeatureHandler getHandler(
+	/*public static IncqueryFeatureHandler getHandler(
 			EObject source, EStructuralFeature feature) {
 
 		if (sourceMap.containsKey(source)) {
@@ -43,27 +40,28 @@ public class IncqueryFeatureMatcherFactory {
 		}
 
 		return null;
-	}
+	}*/
 
 	public static IncqueryFeatureHandler createHandler(
 			EObject source, EStructuralFeature feature,
 			IMatcherFactory matcherFactory, String sourceParamName,
 			String targetParamName, FeatureKind kind) {
 
-		Map<EStructuralFeature, IncqueryFeatureHandler> featureMap;
-		if (sourceMap.containsKey(source)) {
-			featureMap = sourceMap.get(source);
+		//Map<EStructuralFeature, IncqueryFeatureHandler> featureMap;
+		//if (sourceMap.containsKey(source)) {
+		//	featureMap = sourceMap.get(source);
 			// if(featureMap.containsKey(feature)) {
 			// overwriting handler
 			// TODO !!!
 			// } else {
 			// }
-		} else {
-			featureMap = new HashMap<EStructuralFeature, IncqueryFeatureHandler>();
-			sourceMap.put(source, featureMap);
-		}
-		createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, featureMap, kind);
-		return featureMap.get(feature);
+		//} else {
+		//	featureMap = new HashMap<EStructuralFeature, IncqueryFeatureHandler>();
+		//	sourceMap.put(source, featureMap);
+		//}
+		//createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, featureMap, kind);
+		return createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind);
+		//return featureMap.get(feature);
 	}
 
 	/**
@@ -74,20 +72,23 @@ public class IncqueryFeatureMatcherFactory {
 	 * @param targetParamName
 	 * @param featureMap
 	 */
-	private static void createFeatureHandler(EObject source, EStructuralFeature feature,
+	//private static void createFeatureHandler(EObject source, EStructuralFeature feature,
+	private static IncqueryFeatureHandler createFeatureHandler(EObject source, EStructuralFeature feature,
 			IMatcherFactory matcherFactory, String sourceParamName,
 			String targetParamName,
-			Map<EStructuralFeature, IncqueryFeatureHandler> featureMap, FeatureKind kind) {
+			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind) {
 		try {
 			IncQueryMatcher<IPatternSignature> matcher = matcherFactory.getMatcher(source);
 			IncqueryFeatureHandler handler = new IncqueryFeatureHandler(
 					(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind);
 			handler.startMonitoring();
-			featureMap.put(feature, handler);
+			//featureMap.put(feature, handler);
+			return handler;
 		} catch (IncQueryRuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 }
