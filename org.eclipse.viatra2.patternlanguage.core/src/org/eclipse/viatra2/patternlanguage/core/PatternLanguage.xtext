@@ -12,8 +12,8 @@ grammar org.eclipse.viatra2.patternlanguage.core.PatternLanguage with org.eclips
 
 generate patternLanguage "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-import "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore" as xbase
-import "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore" as types
+import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
 PatternModel:
 	patterns+=Pattern*;
@@ -134,6 +134,25 @@ IntValue returns ValueReference:
 StringValue returns ValueReference:
 	{StringValue}
 	value = STRING
+;
+
+BoolValue returns ValueReference:
+	{BoolValue}
+	value = BOOLEAN
+;
+
+enum BOOLEAN:
+	TRUE = 'true' | TRUE = 'TRUE' |
+	FALSE = 'false' | FALSE = 'FALSE'
+;
+
+DoubleValue returns ValueReference:
+	{DoubleValue}
+	value = DOUBLE
+;
+
+terminal DOUBLE:
+	INT '.' INT
 ;
 
 VariableValue returns ValueReference:
