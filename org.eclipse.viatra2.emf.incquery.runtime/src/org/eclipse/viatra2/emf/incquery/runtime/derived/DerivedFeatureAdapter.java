@@ -98,10 +98,10 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
 	@Override
 	public void notifyChanged(Notification notification) {
-		System.err.println("[Source: " + derivedFeature.getName() + "] New notification: " + notification);
+		//System.err.println("[Source: " + derivedFeature.getName() + "] New notification: " + notification);
 		for(DependentFeaturePath path : featurePaths) {
 			if (notification.getFeature().equals(path.getNavigationFeature())) {
-				System.err.println("Handling notification.");
+				//System.err.println("Handling notification.");
 				switch (notification.getEventType()) {
 				case Notification.SET:
 					EObject newValue = (EObject) notification.getNewValue();
@@ -150,14 +150,14 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 			}
 		}
 		if (localFeatures.contains(notification.getFeature())) {
-			System.err.println("Handling notification.");
+			//System.err.println("Handling notification.");
 			refreshDerivedFeature();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void refreshDerivedFeature() {
-		System.err.println("[Notify: " + derivedFeature.getName() + "] Derived refresh.");
+		//System.err.println("[Notify: " + derivedFeature.getName() + "] Derived refresh.");
 		if (source.eNotificationRequired()) {
 			if(type == null) {
 				type = derivedFeature.getEType();
@@ -198,9 +198,9 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 			
 			@Override
 			public void notifyChanged(Notification msg) {
-				System.err.println("[Dependant: " + derivedFeature.getName() + "] New notification: " + msg);
+				//System.err.println("[Dependant: " + derivedFeature.getName() + "] New notification: " + msg);
 				if (msg.getFeature().equals(dependantFeature) ) {
-					System.err.println("Handling notification.");
+					//System.err.println("Handling notification.");
 					switch (msg.getEventType()) {
 						case Notification.ADD:
 						case Notification.ADD_MANY:
@@ -262,7 +262,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
 		@Override
 		public void visitAttribute(EObject source, EAttribute feature, Object target) {
-			System.err.println("Attribute refresh.");
+			//System.err.println("Attribute refresh.");
 			// send set notification
 			sendSetNotification(source, feature, currentValue, target);
 			storeSingleValue(feature, target);
@@ -280,13 +280,13 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
 		@Override
 		public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
-			System.err.println("Non-containment reference refresh.");
+			//System.err.println("Non-containment reference refresh.");
 			sendNotificationForEReference(source, feature, target);
 		}
 
 		@Override
 		public void visitInternalContainment(EObject source, EReference feature, EObject target) {
-			System.err.println("Containment reference refresh.");
+			//System.err.println("Containment reference refresh.");
 			sendNotificationForEReference(source, feature, target);
 		}
 		
