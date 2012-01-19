@@ -19,6 +19,7 @@
         <module>org.eclipse.viatra2.patternlanguage.emf.matcherbuilder</module>
         <module>org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui</module>
 		<module>org.eclipse.viatra2.patternlanguage.generator.util</module>
+		<module>org.eclipse.viatra2.emf.incquery.runtime.feature</module>
     	<module>org.eclipse.viatra2.patternlanguage.emf.feature</module>
 		<module>org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
