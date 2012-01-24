@@ -31,7 +31,10 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext.EdgeInterpretation;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BOOLEAN;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
@@ -139,6 +142,16 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			return pSystem.newConstantVariable(((StringValue) reference).getValue());
 		else if (reference instanceof EnumValue) // EMF-specific
 			return pSystem.newConstantVariable(((EnumValue) reference).getLiteral().getInstance());
+		else if (reference instanceof DoubleValue) {
+			String dSVal = ((DoubleValue) reference).getValue();
+			Double dVal = Double.parseDouble(dSVal);
+			return pSystem.newConstantVariable(new Double(dVal));
+		}
+		else if (reference instanceof BoolValue) {
+			BOOLEAN bVal = ((BoolValue) reference).getValue();
+			Boolean b = (bVal.getLiteral().toLowerCase().matches("true")) ? true : false;
+			return pSystem.newConstantVariable(b);
+		}
 		else throw new RetePatternBuildException(
 				"Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
 				new String[]{
@@ -147,6 +160,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 						PatternRegistry.fqnOf(pattern)
 				}, PatternRegistry.fqnOf(pattern));
 	}
+	
 	protected PVariable newVirtual() {
 		return pSystem.newVirtualVariable();
 	}
