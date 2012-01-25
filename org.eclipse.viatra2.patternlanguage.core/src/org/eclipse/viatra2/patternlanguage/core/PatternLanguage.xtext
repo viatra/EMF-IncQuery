@@ -37,9 +37,7 @@ Annotation:
 ;
 
 AnnotationParameter:
-	name=ID
-	'='
-	value = STRING
+	name = ID '=' value = ValueReference
 ;
 
 Modifiers: 
@@ -123,7 +121,8 @@ PathExpressionTail returns PathExpressionElement:
 ;
 
 ValueReference:
-	IntValue | StringValue | VariableValue
+	IntValue | StringValue | VariableValue 
+  | DoubleValue | BoolValue | ListValue
 ;
 
 IntValue returns ValueReference:
@@ -158,4 +157,11 @@ terminal DOUBLE:
 VariableValue returns ValueReference:
 	{VariableValue}
 	value = VariableReference
+;
+
+ListValue returns ValueReference:
+	{ListValue}
+	'{'
+	  values += ValueReference (',' values += ValueReference)*
+	'}'
 ;

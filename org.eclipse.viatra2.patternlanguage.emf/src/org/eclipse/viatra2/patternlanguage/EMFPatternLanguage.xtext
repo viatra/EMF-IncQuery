@@ -46,8 +46,9 @@ RefType returns core::RelationType:
 ;
 
 ValueReference returns core::ValueReference:
-	IntValue | StringValue | VariableValue //Copied from PatternLanguage 
-	| EnumValue | DoubleValue | BoolValue							   //Additions
+	IntValue | StringValue | VariableValue 
+    | DoubleValue | BoolValue | ListValue  //Copied from PatternLanguage 
+	| EnumValue							   //Additions
 ;
 
 EnumValue:
