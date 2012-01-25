@@ -6,5 +6,8 @@
    <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.feature" version="0.6.0.qualifier">
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
+   <feature url="features/org.eclipse.viatra2.emf.incquery.sdk.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.sdk.feature" version="0.6.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
    <category-def name="org.eclipse.viatra2.patternlanguage" label="EMF-IncQuery"/>
 </site>
