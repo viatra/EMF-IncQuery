@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.databinding.ui.observable;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
@@ -14,12 +15,12 @@ import org.eclipse.ui.IEditorPart;
 public class ViewerRootKey {
 
 	private IEditorPart editor;
-	private ResourceSet resourceSet;
+	private Notifier notifier;
 
-	public ViewerRootKey(IEditorPart editor, ResourceSet resourceSet) {
+	public ViewerRootKey(IEditorPart editor, Notifier notifier) {
 		super();
 		this.editor = editor;
-		this.resourceSet = resourceSet;
+		this.notifier = notifier;
 	}
 
 	public IEditorPart getEditor() {
@@ -30,12 +31,12 @@ public class ViewerRootKey {
 		this.editor = editor;
 	}
 
-	public ResourceSet getResourceSet() {
-		return resourceSet;
+	public Notifier getNotifier() {
+		return notifier;
 	}
 
-	public void setResourceSet(ResourceSet resourceSet) {
-		this.resourceSet = resourceSet;
+	public void setNotifier(Notifier notifier) {
+		this.notifier = notifier;
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class ViewerRootKey {
 		if (obj instanceof ViewerRootKey) {
 			ViewerRootKey key = (ViewerRootKey) obj;
 			if (key.getEditor().equals(editor)
-					&& key.getResourceSet().equals(resourceSet))
+					&& key.getNotifier().equals(notifier))
 				return true;
 		}
 		return false;
@@ -51,7 +52,7 @@ public class ViewerRootKey {
 
 	@Override
 	public int hashCode() {
-		return editor.hashCode() + resourceSet.hashCode();
+		return editor.hashCode() + notifier.hashCode();
 	}
 
 	@Override
@@ -59,11 +60,22 @@ public class ViewerRootKey {
 		String uris = " (";
 		
 		int i = 0;
-		for (Resource r : resourceSet.getResources()) {
-			uris += r.getURI().toString();
-			if (i != resourceSet.getResources().size()-1) {
-				uris += " ,";
+		
+		if (notifier instanceof ResourceSet) {
+			ResourceSet rs = (ResourceSet) notifier;
+			
+			for (Resource r : rs.getResources()) {
+				uris += r.getURI().toString();
+				if (i != rs.getResources().size()-1) {
+					uris += " ,";
+				}
 			}
+		}
+		else if (notifier instanceof Resource) {
+			uris += ((Resource) notifier).getURI().toString();
+		}
+		else {
+			uris += notifier.toString();
 		}
 		
 		uris += ")";

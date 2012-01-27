@@ -16,6 +16,7 @@ import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 
 /**
  * The util contains several useful methods for the databinding operations.
@@ -56,10 +57,10 @@ public class DatabindingUtil {
 	}
 	
 	/**
-	 * Get the DatabindableMatcher generated for the pattern whose name is patternName
+	 * Get the DatabindingAdapter generated for the pattern whose name is patternName
 	 * 
 	 * @param patternName the name of the pattern
-	 * @return an instance of the DatabindableMatcher class generated for the pattern
+	 * @return an instance of the DatabindingAdapter class generated for the pattern
 	 */
 	@SuppressWarnings("unchecked")
 	public static DatabindingAdapter<IPatternSignature> getDatabindingAdapter(String patternName) {
@@ -138,10 +139,11 @@ public class DatabindingUtil {
 	 * @param key the key element (editorpart + resource set)
 	 * @return the PatternMatcherRoot element
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static PatternMatcherRoot createPatternMatcherRoot(ViewerRootKey key) {
 		PatternMatcherRoot result = new PatternMatcherRoot(key);
 
+		//generated matchers
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
 		for (IExtension e : ep.getExtensions()) {
@@ -151,13 +153,23 @@ public class DatabindingUtil {
 
 					if (obj instanceof IMatcherFactory<?, ?>) {
 						IMatcherFactory<IPatternSignature, IncQueryMatcher<IPatternSignature>> factory = (IMatcherFactory<IPatternSignature, IncQueryMatcher<IPatternSignature>>) obj;
-						IncQueryMatcher<IPatternSignature> matcher = factory.getMatcher(key.getResourceSet());
+						IncQueryMatcher<IPatternSignature> matcher = factory.getMatcher(key.getNotifier());
 
 						result.addMatcher(matcher);
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+			}
+		}
+		
+		//runtime matchers
+		for (IMatcherFactory factory : PatternMemory.INSTANCE.getAllFactories()) {
+			try {
+				result.addMatcher(factory.getMatcher(key.getNotifier()));
+			} 
+			catch (IncQueryRuntimeException e) {
+				e.printStackTrace();
 			}
 		}
 

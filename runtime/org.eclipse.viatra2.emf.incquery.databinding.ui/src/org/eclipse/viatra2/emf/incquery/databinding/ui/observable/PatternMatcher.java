@@ -22,14 +22,14 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
 public class PatternMatcher {
 	
 	private List<PatternMatch> matches;
-	private IncQueryMatcher<IPatternSignature> matcher;
-	private DeltaMonitor<IPatternSignature> deltaMonitor;
+	private IncQueryMatcher<? extends IPatternSignature> matcher;
+	private DeltaMonitor<? extends IPatternSignature> deltaMonitor;
 	private Runnable processMatchesRunnable;
 	private Map<IPatternSignature, PatternMatch> sigMap;
 	private PatternMatcherRoot parent;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this); 
 
-	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<IPatternSignature> matcher) {
+	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternSignature> matcher) {
 		this.parent = parent;
 		this.matches = new ArrayList<PatternMatch>();
 		this.sigMap = new HashMap<IPatternSignature, PatternMatch>();
@@ -65,13 +65,13 @@ public class PatternMatcher {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 	
-	private void processNewMatches(Collection<IPatternSignature> signatures) {
+	private void processNewMatches(Collection<? extends IPatternSignature> signatures) {
 		for (IPatternSignature s : signatures) {
 			addSignature(s);
 		}
 	}
 
-	private void processLostMatches(Collection<IPatternSignature> signatures) {
+	private void processLostMatches(Collection<? extends IPatternSignature> signatures) {
 		for (IPatternSignature s : signatures) {
 			removeSignature(s);
 		}

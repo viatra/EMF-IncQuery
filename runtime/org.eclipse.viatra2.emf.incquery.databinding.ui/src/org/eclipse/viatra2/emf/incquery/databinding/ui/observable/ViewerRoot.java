@@ -28,11 +28,13 @@ public class ViewerRoot {
 	
 	public void addPatternMatcherRoot(IEditorPart editorPart, ResourceSet res) {
 		ViewerRootKey key = new ViewerRootKey(editorPart, res);
-		PatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);	
-		List<PatternMatcherRoot> oldValue = new ArrayList<PatternMatcherRoot>(roots.values());
-		this.roots.put(key, root);
-		List<PatternMatcherRoot> newValue = new ArrayList<PatternMatcherRoot>(roots.values());
-		this.propertyChangeSupport.firePropertyChange("roots", oldValue, newValue);
+		if (!roots.containsKey(key)) {
+			PatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);	
+			List<PatternMatcherRoot> oldValue = new ArrayList<PatternMatcherRoot>(roots.values());
+			this.roots.put(key, root);
+			List<PatternMatcherRoot> newValue = new ArrayList<PatternMatcherRoot>(roots.values());
+			this.propertyChangeSupport.firePropertyChange("roots", oldValue, newValue);
+		}
 	}
 	
 	public void removePatternMatcherRoot(IEditorPart editorPart, ResourceSet res) {
@@ -48,6 +50,10 @@ public class ViewerRoot {
 	
 	public List<PatternMatcherRoot> getRoots() {
 		return new ArrayList<PatternMatcherRoot>(roots.values());
+	}
+	
+	public Map<ViewerRootKey, PatternMatcherRoot> getRootsMap() {
+		return roots;
 	}
 
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {

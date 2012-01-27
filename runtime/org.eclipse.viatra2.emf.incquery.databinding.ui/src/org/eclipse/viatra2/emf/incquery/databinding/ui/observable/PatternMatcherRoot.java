@@ -22,16 +22,16 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
  */
 public class PatternMatcherRoot {
 	
-	private Map<IncQueryMatcher<?>, PatternMatcher> matchers;
+	private Map<IncQueryMatcher<? extends IPatternSignature>, PatternMatcher> matchers;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ViewerRootKey key;
 	
 	public PatternMatcherRoot(ViewerRootKey key) {
-		matchers = new HashMap<IncQueryMatcher<?>, PatternMatcher>();
+		matchers = new HashMap<IncQueryMatcher<? extends IPatternSignature>, PatternMatcher>();
 		this.key = key;
 	}
 	
-	public void addMatcher(IncQueryMatcher<IPatternSignature> matcher) {
+	public void addMatcher(IncQueryMatcher<? extends IPatternSignature> matcher) {
 		List<PatternMatcher> oldValue = new ArrayList<PatternMatcher>(matchers.values());
 		PatternMatcher pm = new PatternMatcher(this, matcher);
 		this.matchers.put(matcher, pm);
@@ -39,7 +39,7 @@ public class PatternMatcherRoot {
 		this.propertyChangeSupport.firePropertyChange("matchers", oldValue, newValue);
 	}
 	
-	public void removeMatcher(IncQueryMatcher<?> matcher) {
+	public void removeMatcher(IncQueryMatcher<? extends IPatternSignature> matcher) {
 		List<PatternMatcher> oldValue = new ArrayList<PatternMatcher>(matchers.values());
 		this.matchers.get(matcher).dispose();
 		this.matchers.remove(matcher);

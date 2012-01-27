@@ -46,12 +46,6 @@ public class ShowLocationActionDelegate implements IViewActionDelegate {
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof TreeSelection) {
-//			for (TreePath tp : ((TreeSelection) selection).getPaths()) {
-//				for (int i = 0;i<tp.getSegmentCount();i++) {
-//					System.out.print(tp.getSegment(i)+" ");
-//				}
-//				System.out.println();
-//			}
 			this.selection = ((TreeSelection) selection).getFirstElement();
 		}
 	}
