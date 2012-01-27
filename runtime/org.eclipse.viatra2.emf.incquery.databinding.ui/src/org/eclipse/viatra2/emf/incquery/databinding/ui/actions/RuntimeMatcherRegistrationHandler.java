@@ -1,9 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.databinding.ui.actions;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -12,28 +8,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.DatabindingUIPluginActivator;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.util.PatternMemory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.databinding.ui.util.DatabindingUtil;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 
@@ -68,44 +53,18 @@ public class RuntimeMatcherRegistrationHandler extends AbstractHandler {
 			else {
 				IFile iFile = (IFile) firstElement;
 				ViewerRoot vr = MatchSetViewer.viewerRoot;
-				
-				try {
-					PatternModel parsedEPM = parseEPM(iFile);
-					PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
-					PatternMemory.INSTANCE.unregisterFactories(iFile);
+
+				PatternModel parsedEPM = parseEPM(iFile);
+				PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
 					
-					Map<IncQueryMatcher<? extends IPatternSignature>, Set<ViewerRootKey>> matchersToRemove = PatternMemory.INSTANCE.getMatchers(iFile);
-					if (matchersToRemove != null) {
-						for (IncQueryMatcher<? extends IPatternSignature> matcher : matchersToRemove.keySet()) {
-							for (ViewerRootKey vRoot : matchersToRemove.get(matcher)) {
-								vr.getRootsMap().get(vRoot).removeMatcher(matcher);
-								PatternMemory.INSTANCE.unregisterPattern(iFile, matcher, vRoot);
-							}
-						}
-					}
-					
-					EList<Pattern> patterns = parsedEPM.getPatterns();
-					for (Pattern pattern : patterns) {
-						
-						IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> matcherFactory = 
-								PatternRegistry.INSTANCE.getMatcherFactory(pattern);
-						PatternMemory.INSTANCE.registerFactory(iFile, matcherFactory);
-						
-						for (Entry<ViewerRootKey, PatternMatcherRoot> mroot : vr.getRootsMap().entrySet()) {
-							Notifier notifier = mroot.getKey().getNotifier();
-							IncQueryMatcher<GenericPatternSignature> matcher = matcherFactory.getMatcher(notifier);
-							
-							PatternMemory.INSTANCE.registerPattern(iFile, matcher, mroot.getKey());
-							mroot.getValue().addMatcher(matcher);
-						}
-					}
-				} 
-				catch (RuntimeException e) {
-					return reportException(e);
-				} 
-				catch (IncQueryRuntimeException e) {
-					return reportException(e);
+				if (!DatabindingUtil.registeredPatterModels.containsKey(iFile)) {
+					DatabindingUtil.registeredPatterModels.put(iFile, parsedEPM);
 				}
+				
+				for (PatternMatcherRoot root : vr.getRoots()) {
+					root.registerPatternsFromFile(iFile, parsedEPM);
+				}
+
 				return Status.OK_STATUS;
 			}
 		}
@@ -129,16 +88,4 @@ public class RuntimeMatcherRegistrationHandler extends AbstractHandler {
 			return null;
 		}
 	}
-
-	private static Status reportException(Exception e) {
-		String errorMessage = "An error occurred during runtime matcher registration. "
-				+ "\n Error message: "
-				+ e.getMessage()
-				+ "\n Error class: "
-				+ e.getClass().getCanonicalName()
-				+ "\n\t (see Error Log for further details.)";
-		Status status = new Status(Status.ERROR, DatabindingUIPluginActivator.PLUGIN_ID, errorMessage, e);
-		return status;
-	}
-
 }

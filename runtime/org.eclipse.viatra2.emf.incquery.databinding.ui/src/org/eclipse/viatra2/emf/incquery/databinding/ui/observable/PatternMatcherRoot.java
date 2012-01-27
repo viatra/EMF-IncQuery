@@ -4,12 +4,23 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 
 /**
  * Each IEditingDomainProvider will be associated a PatternMatcherRoot element in the tree viewer.
@@ -22,12 +33,14 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
  */
 public class PatternMatcherRoot {
 	
+	private Map<IFile, Set<IncQueryMatcher<? extends IPatternSignature>>> runtimeMatcherRegistry;
 	private Map<IncQueryMatcher<? extends IPatternSignature>, PatternMatcher> matchers;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ViewerRootKey key;
 	
 	public PatternMatcherRoot(ViewerRootKey key) {
 		matchers = new HashMap<IncQueryMatcher<? extends IPatternSignature>, PatternMatcher>();
+		runtimeMatcherRegistry = new HashMap<IFile, Set<IncQueryMatcher<? extends IPatternSignature>>>();
 		this.key = key;
 	}
 	
@@ -71,5 +84,40 @@ public class PatternMatcherRoot {
 	
 	public IEditorPart getEditorPart() {
 		return this.key.getEditor();
+	}
+	
+	public void registerPatternsFromFile(IFile file, PatternModel pm) {	
+		
+		try {
+			if (!runtimeMatcherRegistry.containsKey(file)) {
+				Set<IncQueryMatcher<? extends IPatternSignature>> setTmp = new HashSet<IncQueryMatcher<? extends IPatternSignature>>();
+				EList<Pattern> patterns = pm.getPatterns();
+				
+				for (Pattern pattern : patterns) {	
+					IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> matcherFactory = 
+						PatternRegistry.INSTANCE.getMatcherFactory(pattern);
+		
+					IncQueryMatcher<GenericPatternSignature> matcher = matcherFactory.getMatcher(key.getNotifier());
+					setTmp.add(matcher);
+					addMatcher(matcher);
+				}
+				
+				runtimeMatcherRegistry.put(file, setTmp);
+			}
+		}
+		catch (IncQueryRuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unregisterPatternsFromFile(IFile file) {
+		Set<IncQueryMatcher<? extends IPatternSignature>> setTmp = runtimeMatcherRegistry.get(file);
+		if (setTmp != null) {
+			for (IncQueryMatcher<? extends IPatternSignature> matcher : setTmp) {
+				removeMatcher(matcher);
+			}
+			
+			runtimeMatcherRegistry.remove(file);
+		}
 	}
 }

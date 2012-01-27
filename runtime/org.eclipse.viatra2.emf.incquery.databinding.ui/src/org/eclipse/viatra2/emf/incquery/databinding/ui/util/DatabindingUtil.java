@@ -1,7 +1,11 @@
 package org.eclipse.viatra2.emf.incquery.databinding.ui.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -16,7 +20,7 @@ import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 /**
  * The util contains several useful methods for the databinding operations.
@@ -26,6 +30,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
  */
 public class DatabindingUtil {
 
+	public static Map<IFile, PatternModel> registeredPatterModels = new HashMap<IFile, PatternModel>();
+	
 	/**
 	 * Get the PatternUI annotation's message attribute for the pattern whose name is patternName. 
 	 * 
@@ -139,7 +145,7 @@ public class DatabindingUtil {
 	 * @param key the key element (editorpart + resource set)
 	 * @return the PatternMatcherRoot element
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public static PatternMatcherRoot createPatternMatcherRoot(ViewerRootKey key) {
 		PatternMatcherRoot result = new PatternMatcherRoot(key);
 
@@ -164,13 +170,8 @@ public class DatabindingUtil {
 		}
 		
 		//runtime matchers
-		for (IMatcherFactory factory : PatternMemory.INSTANCE.getAllFactories()) {
-			try {
-				result.addMatcher(factory.getMatcher(key.getNotifier()));
-			} 
-			catch (IncQueryRuntimeException e) {
-				e.printStackTrace();
-			}
+		for (IFile file : registeredPatterModels.keySet()) {
+			result.registerPatternsFromFile(file, registeredPatterModels.get(file));
 		}
 
 		return result;

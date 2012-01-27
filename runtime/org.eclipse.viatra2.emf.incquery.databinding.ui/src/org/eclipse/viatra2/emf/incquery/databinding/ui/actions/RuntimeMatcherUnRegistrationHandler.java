@@ -1,8 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.databinding.ui.actions;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -14,11 +11,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.util.PatternMemory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.databinding.ui.util.DatabindingUtil;
 
 public class RuntimeMatcherUnRegistrationHandler extends AbstractHandler {
 
@@ -51,19 +46,10 @@ public class RuntimeMatcherUnRegistrationHandler extends AbstractHandler {
 				IFile iFile = (IFile) firstElement;
 				ViewerRoot vr = MatchSetViewer.viewerRoot;
 
-				PatternMemory.INSTANCE.unregisterFactories(iFile);
-
-				Map<IncQueryMatcher<? extends IPatternSignature>, Set<ViewerRootKey>> matchersToRemove = 
-						PatternMemory.INSTANCE.getMatchers(iFile);
-				if (matchersToRemove != null) {
-					for (IncQueryMatcher<? extends IPatternSignature> matcher : matchersToRemove.keySet()) {
-						for (ViewerRootKey vRoot : matchersToRemove.get(matcher)) {
-							vr.getRootsMap().get(vRoot).removeMatcher(matcher);
-							PatternMemory.INSTANCE.unregisterPattern(iFile,	matcher, vRoot);
-						}
-					}
+				for (PatternMatcherRoot root : vr.getRoots()) {
+					root.unregisterPatternsFromFile(iFile);
 				}
-
+				DatabindingUtil.registeredPatterModels.remove(iFile);
 				return Status.OK_STATUS;
 			}
 		}
