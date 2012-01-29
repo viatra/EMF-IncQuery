@@ -48,8 +48,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 public class MatchSetViewer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer";
-	private TreeViewer treeViewer;
-	private TableViewer tableViewer;
+	public static TreeViewer treeViewer;
+	public static TableViewer tableViewer;
 	public static ViewerRoot viewerRoot = new ViewerRoot();
 	
 	public MatchSetViewer() {

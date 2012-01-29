@@ -33,43 +33,6 @@
             file="contexts.xml">
       </contexts>
    </extension>
-   <extension point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="org.eclipse.viatra2.emf.incquery.databinding.ui.viewContribution1"
-            targetID="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer">
-         <action
-               class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.LoadModelActionDelegate"
-               enablesFor="*"
-               icon="icons/load.gif"
-               id="org.eclipse.viatra2.emf.incquery.databinding.ui.loadModelAction"
-               label="Load model"
-               style="push"
-               toolbarPath="additions">
-         </action>
-         <action
-               class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.UnloadModelActionDelegate"
-               enablesFor="*"
-               icon="icons/unload.gif"
-               id="org.eclipse.viatra2.emf.incquery.databinding.ui.unloadModelAction"
-               label="Unload model"
-               style="push"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="org.eclipse.viatra2.emf.incquery.databinding.ui.viewerContribution2"
-            targetID="org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer.treeViewerMenu">
-         <action
-               class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.ShowLocationActionDelegate"
-               id="org.eclipse.viatra2.emf.incquery.databinding.ui.action3"
-               label="Show location"
-               menubarPath="additions">
-         </action>
-      </viewerContribution>
-   </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
@@ -92,12 +55,24 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.RuntimeMatcherRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.databinding.ui.actions.RuntimeMatcherUnRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherUnRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherunreg">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.UnloadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.unloadmodel">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.LoadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.loadmodel">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.ShowLocationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.showlocation">
       </handler>
    </extension>
    <extension
@@ -206,6 +181,44 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.loadmodel"
+               icon="icons/load.gif"
+               label="Load model"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.unloadmodel"
+               icon="icons/unload.gif"
+               label="Unload model"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer.treeViewerMenu">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.showlocation"
+               label="Show location"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            class="org.eclipse.xtext.ui.editor.XtextEditor"
+            locationURI="popup:org.eclipse.viatra2.patternlanguage.EMFPatternLanguage">
+         <menu
+               id="org.eclipse.viatra2.emf.incquery.databinding.ui.menu.emfpatternlanguage"
+               label="EMF-IncQuery">
+            <command
+                  commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -216,6 +229,18 @@
       <command
             id="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherunreg"
             name="Unregister patterns from MatchSetViewer">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.loadmodel"
+            name="Load model">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.unloadmodel"
+            name="Unload model">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.showlocation"
+            name="Show location">
       </command>
    </extension>
 
