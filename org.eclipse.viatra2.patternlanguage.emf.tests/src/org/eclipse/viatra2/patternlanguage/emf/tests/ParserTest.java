@@ -16,7 +16,11 @@ public class ParserTest extends AbstractEMFPatternLanguageTest{
 	
 	@Test
 	public void simplePattern() {
-		testParserRule("pattern simplePattern(Name) = {Pattern(Name);}", PATTERN_RULE);
+		testParserRule("pattern simplePattern(p) = {Pattern(p);}", PATTERN_RULE);
+	}
+	@Test
+	public void typeParameter() {
+		testParserRule("pattern simplePattern(p : Pattern) = {Pattern(p);}", PATTERN_RULE);
 	}
 	@Test@Ignore(value="Injective patterns not supported in RETE")
 	public void injectivePattern() {
