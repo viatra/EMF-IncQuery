@@ -11,16 +11,25 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+
+import com.google.inject.Injector;
 
 /**
  * The util contains several useful methods for the databinding operations.
@@ -38,25 +47,45 @@ public class DatabindingUtil {
 	 * @param patternName the name of the pattern
 	 * @return the content of the message attribute
 	 */
-	public static String getMessage(String patternName) {
-		try {
-			IExtensionRegistry reg = Platform.getExtensionRegistry();
-			IExtensionPoint ep = reg
-					.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
-			for (IExtension e : ep.getExtensions()) {
-				for (IConfigurationElement ce : e.getConfigurationElements()) {
-					String[] tokens = patternName.split("\\.");
-					String pattern = tokens[tokens.length - 1];
-
-					if (ce.getName().equals("databinding")
-							&& ce.getAttribute("patternName").equalsIgnoreCase(
-									pattern)) {
-						return ce.getAttribute("message");
+	public static String getMessage(String patternName, boolean generatedMatcher) {
+		
+		if (generatedMatcher) {
+			try {
+				IExtensionRegistry reg = Platform.getExtensionRegistry();
+				IExtensionPoint ep = reg
+						.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
+				for (IExtension e : ep.getExtensions()) {
+					for (IConfigurationElement ce : e.getConfigurationElements()) {
+						String[] tokens = patternName.split("\\.");
+						String pattern = tokens[tokens.length - 1];
+	
+						if (ce.getName().equals("databinding")
+								&& ce.getAttribute("patternName").equalsIgnoreCase(
+										pattern)) {
+							return ce.getAttribute("message");
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			for (IFile key : registeredPatterModels.keySet()) {
+				for (Pattern p : registeredPatterModels.get(key).getPatterns()) {
+					if (p.getName().matches(patternName)) {
+						for (Annotation a : p.getAnnotations()) {
+							if (a.getName().matches("PatternUI")) {
+								for (AnnotationParameter ap : a.getParameters()) {
+									if (ap.getName().matches("message")) {
+										return ap.getValue();
+									}
+								}
+							}
+						}
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		return null;
@@ -118,8 +147,7 @@ public class DatabindingUtil {
 	 * @param changeListener the changle listener 
 	 * @param message the message which can be found in the appropriate PatternUI annotation
 	 */
-	public static void observeFeatures(IPatternSignature signature,
-			IValueChangeListener changeListener, String message) {
+	public static void observeFeatures(IPatternSignature signature,	IValueChangeListener changeListener, String message) {
 		if (message != null) {
 			String[] tokens = message.split("\\$");
 
@@ -161,7 +189,7 @@ public class DatabindingUtil {
 						IMatcherFactory<IPatternSignature, IncQueryMatcher<IPatternSignature>> factory = (IMatcherFactory<IPatternSignature, IncQueryMatcher<IPatternSignature>>) obj;
 						IncQueryMatcher<IPatternSignature> matcher = factory.getMatcher(key.getNotifier());
 
-						result.addMatcher(matcher);
+						result.addMatcher(matcher, true);
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -175,5 +203,23 @@ public class DatabindingUtil {
 		}
 
 		return result;
+	}
+	
+	public static PatternModel parseEPM(IFile file) {
+		Injector injector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		if (file == null) {
+			return null;
+		}
+
+		ResourceSet resourceSet = injector.getInstance(ResourceSet.class);
+		URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+		Resource resource = resourceSet.getResource(fileURI, true);
+		if (resource != null && resource.getContents().size() >= 1) {
+			EObject topElement = resource.getContents().get(0);
+			return topElement instanceof PatternModel ? (PatternModel) topElement : null;
+		} 
+		else {
+			return null;
+		}
 	}
 }

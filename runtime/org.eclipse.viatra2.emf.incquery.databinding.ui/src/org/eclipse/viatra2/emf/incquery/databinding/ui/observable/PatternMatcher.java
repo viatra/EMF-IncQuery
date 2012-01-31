@@ -28,12 +28,14 @@ public class PatternMatcher {
 	private Map<IPatternSignature, PatternMatch> sigMap;
 	private PatternMatcherRoot parent;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this); 
-
-	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternSignature> matcher) {
+	private boolean generated;
+	
+	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternSignature> matcher, boolean generated) {
 		this.parent = parent;
 		this.matches = new ArrayList<PatternMatch>();
 		this.sigMap = new HashMap<IPatternSignature, PatternMatch>();
 		this.matcher = matcher;
+		this.generated = generated;
 		this.deltaMonitor = this.matcher.newDeltaMonitor(true);
 		this.processMatchesRunnable = new Runnable() {		
 			@Override
@@ -96,7 +98,7 @@ public class PatternMatcher {
 	}
 
 	public String getText() {
-		return this.matcher.getPatternName();
+		return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)");
 	}
 
 	public List<PatternMatch> getMatches() {
@@ -105,5 +107,9 @@ public class PatternMatcher {
 
 	public void setMatches(List<PatternMatch> matches) {
 		this.matches = matches;
+	}
+
+	public boolean isGenerated() {
+		return generated;
 	}
 }

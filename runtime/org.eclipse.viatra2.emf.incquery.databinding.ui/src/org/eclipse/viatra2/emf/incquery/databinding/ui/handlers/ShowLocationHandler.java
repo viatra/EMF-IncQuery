@@ -1,12 +1,15 @@
 package org.eclipse.viatra2.emf.incquery.databinding.ui.handlers;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -15,7 +18,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatch;
 
 public class ShowLocationHandler extends AbstractHandler {
-
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
@@ -36,8 +39,21 @@ public class ShowLocationHandler extends AbstractHandler {
 					paths[i] = path;
 					i++;
 				}
+
+				TreeSelection treeSelection = new TreeSelection(paths);
+				ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
+				selectionProvider.setSelection(treeSelection);
 				
-				editorPart.getEditorSite().getSelectionProvider().setSelection(new TreeSelection(paths));
+				//Reflection API is used here!!!
+				try {
+					Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
+					m.invoke(editorPart, treeSelection.toList());
+				} 
+				catch (Exception e) {
+					System.out.println(e.getMessage());
+				} 
+
+				//System.out.println(selectionProvider.getSelection());
 			}
 			
 		}

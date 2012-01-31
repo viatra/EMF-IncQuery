@@ -108,6 +108,8 @@ public class MatchSetViewer extends ViewPart {
 		gridData.grabExcessVerticalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
 		tableViewer.getControl().setLayoutData(gridData);
+		
+		getSite().setSelectionProvider(treeViewer);
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {

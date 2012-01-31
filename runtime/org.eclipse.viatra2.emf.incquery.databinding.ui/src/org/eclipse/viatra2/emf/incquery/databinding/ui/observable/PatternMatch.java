@@ -29,7 +29,7 @@ public class PatternMatch {
 	public PatternMatch(PatternMatcher parent, IPatternSignature signature) {
 		this.parent = parent;
 		this.signature = signature;
-		this.message = DatabindingUtil.getMessage(signature.patternName());
+		this.message = DatabindingUtil.getMessage(signature.patternName(), parent.isGenerated());
 		this.listener = new ParameterValueChangedListener();
 		if (message != null) {
 			updateText();

@@ -44,9 +44,9 @@ public class PatternMatcherRoot {
 		this.key = key;
 	}
 	
-	public void addMatcher(IncQueryMatcher<? extends IPatternSignature> matcher) {
+	public void addMatcher(IncQueryMatcher<? extends IPatternSignature> matcher, boolean generated) {
 		List<PatternMatcher> oldValue = new ArrayList<PatternMatcher>(matchers.values());
-		PatternMatcher pm = new PatternMatcher(this, matcher);
+		PatternMatcher pm = new PatternMatcher(this, matcher, generated);
 		this.matchers.put(matcher, pm);
 		List<PatternMatcher> newValue = new ArrayList<PatternMatcher>(matchers.values());
 		this.propertyChangeSupport.firePropertyChange("matchers", oldValue, newValue);
@@ -99,7 +99,7 @@ public class PatternMatcherRoot {
 		
 					IncQueryMatcher<GenericPatternSignature> matcher = matcherFactory.getMatcher(key.getNotifier());
 					setTmp.add(matcher);
-					addMatcher(matcher);
+					addMatcher(matcher, false);
 				}
 				
 				runtimeMatcherRegistry.put(file, setTmp);

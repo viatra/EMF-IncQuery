@@ -55,11 +55,11 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherMenuRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherUnRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherMenuUnRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherunreg">
       </handler>
       <handler
@@ -73,6 +73,14 @@
       <handler
             class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.ShowLocationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.showlocation">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherEditorRegistrationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg_editor">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.databinding.ui.handlers.RuntimeMatcherEditorUnRegistrationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherunreg_editor">
       </handler>
    </extension>
    <extension
@@ -204,19 +212,46 @@
                commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.showlocation"
                label="Show location"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate
+                        ifEmpty="false">
+                     <instanceof
+                           value="org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatch">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
-            class="org.eclipse.xtext.ui.editor.XtextEditor"
-            locationURI="popup:org.eclipse.viatra2.patternlanguage.EMFPatternLanguage">
+            locationURI="popup:#TextEditorContext?after=group.edit">
          <menu
                id="org.eclipse.viatra2.emf.incquery.databinding.ui.menu.emfpatternlanguage"
                label="EMF-IncQuery">
             <command
-                  commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg"
+                  commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg_editor"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherunreg_editor"
+                  style="push">
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage">
+                  </equals>
+               </with>
+            </visibleWhen>
          </menu>
       </menuContribution>
    </extension>
@@ -241,6 +276,18 @@
       <command
             id="org.eclipse.viatra2.emf.incquery.databinding.ui.showlocation"
             name="Show location">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.command2"
+            name="name">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherreg_editor"
+            name="Register patterns in MatchSetViewer">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.databinding.ui.runtimematcherunreg_editor"
+            name="Unregister patterns from MatchSetViewer">
       </command>
    </extension>
 
