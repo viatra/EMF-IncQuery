@@ -14,8 +14,6 @@ package org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
@@ -71,12 +69,15 @@ public class PatternRegistry {
 		}
 	}
 	
-	// TODO(bergmann) replace with FQN once available
+	/**
+	 * Returns the fully qualified name of a pattern
+	 * TODO this code duplicates PatternNameProvider.java from the patternlanguage.core project
+	 * @param pattern
+	 * @return the fully qualified name of the pattern
+	 */
 	public static String fqnOf(Pattern pattern) {
-		Resource eResource = pattern.eResource();
-		String uriFragment = eResource.getURIFragment(pattern);
-		URI uri = eResource.getURI().appendFragment(uriFragment);
-		return uri.toString(); 
+		PatternModel model = (PatternModel) pattern.eContainer();
+		return model.getPackageName() + "." + pattern.getName();
 	}
 
 }
