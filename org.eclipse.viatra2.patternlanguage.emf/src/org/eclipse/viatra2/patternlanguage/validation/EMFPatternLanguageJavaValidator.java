@@ -9,15 +9,52 @@
  *    Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
- 
 
-public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-//	@Check
-//	public void checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.getName().charAt(0))) {
-//			warning("Name should start with a capital", MyDslPackage.Literals.GREETING__NAME);
-//		}
-//	}
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.validation.Check;
+
+/**
+ * Validators for EMFPattern Language.
+ * <p>
+ * Validators implemented:
+ * </p>
+ * <ul>
+ * <li>Duplicate import of EPackage</li>
+ * </ul>
+ * 
+ * @author Mark Czotter
+ * 
+ */
+public class EMFPatternLanguageJavaValidator extends
+		AbstractEMFPatternLanguageJavaValidator {
+
+	public static final String DUPLICATE_IMPORT = "Duplicate import of ";
+
+	@Check
+	public void checkPatternModelPackageImports(PatternModel patternModel) {
+		final Set<EPackage> importedPackages = new HashSet<EPackage>();
+		for (PackageImport pi : patternModel.getImportPackages()) {
+			if (importedPackages.contains(pi.getEPackage())) {
+				warning(DUPLICATE_IMPORT + pi.getEPackage().getName(), pi,
+						null, "");
+			} else {
+				importedPackages.add(pi.getEPackage());
+			}
+		}
+	}
+	
+	@Override
+	protected List<EPackage> getEPackages() {
+		// PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the validation process
+		List<EPackage> result = super.getEPackages();
+		result.add(org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.eINSTANCE);
+		return result;
+	}
 
 }
