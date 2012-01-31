@@ -13,7 +13,7 @@ import org.eclipse.xtext.diagnostics.Diagnostic
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class Composition2Test {
+class CompositionTest {
 	
 	@Inject
 	ParseHelper parseHelper
