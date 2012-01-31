@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
@@ -52,6 +53,9 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     final Procedure1<JvmGenericType> _function = new Procedure1<JvmGenericType>() {
         public void apply(final JvmGenericType it) {
           {
+            EObject _eContainer = pattern.eContainer();
+            String _packageName = ((PatternModel) _eContainer).getPackageName();
+            it.setPackageName(_packageName);
             EList<JvmTypeReference> _superTypes = it.getSuperTypes();
             JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher.class);
             CollectionExtensions.<JvmTypeReference>operator_add(_superTypes, _newTypeRef);

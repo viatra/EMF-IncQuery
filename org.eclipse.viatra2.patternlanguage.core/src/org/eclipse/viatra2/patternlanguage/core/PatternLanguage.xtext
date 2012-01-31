@@ -16,6 +16,7 @@ import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
 PatternModel:
+	('package' packageName = QualifiedName)?
 	patterns+=Pattern*;
 	
 Pattern:

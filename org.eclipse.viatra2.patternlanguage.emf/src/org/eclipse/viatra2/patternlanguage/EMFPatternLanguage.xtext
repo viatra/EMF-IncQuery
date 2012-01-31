@@ -17,7 +17,9 @@ import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
 generate eMFPatternLanguage "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
 
-EMFPatternModel returns PatternModel:
+EMFPatternModel returns core::PatternModel:
+	{PatternModel}
+	('package' packageName = QualifiedName)?
 	importPackages+=PackageImport*
 	patterns+=Pattern*;
 	

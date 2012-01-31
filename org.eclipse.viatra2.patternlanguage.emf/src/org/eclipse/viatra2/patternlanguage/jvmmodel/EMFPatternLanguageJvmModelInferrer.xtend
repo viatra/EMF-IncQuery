@@ -17,6 +17,7 @@ import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -43,6 +44,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
    		
    		acceptor.accept(pattern.toClass(pattern.name.toFirstUpper + "Matcher") [
+   			packageName = (pattern.eContainer as PatternModel).packageName
    			superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
    			
    			//Adding type-safe matcher calls

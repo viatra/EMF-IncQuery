@@ -3,7 +3,7 @@ package org.eclipse.viatra2.patternlanguage.core.jvmmodel;
 import com.google.inject.Inject;
 import java.util.Arrays;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
@@ -32,12 +32,12 @@ public class PatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
    *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
    */
-  protected void _infer(final PatternModel element, final IAcceptor<JvmDeclaredType> acceptor, final boolean isPrelinkingPhase) {
+  protected void _infer(final Pattern element, final IAcceptor<JvmDeclaredType> acceptor, final boolean isPrelinkingPhase) {
   }
   
   public void infer(final EObject element, final IAcceptor<JvmDeclaredType> acceptor, final boolean isPrelinkingPhase) {
-    if (element instanceof PatternModel) {
-      _infer((PatternModel)element, acceptor, isPrelinkingPhase);
+    if (element instanceof Pattern) {
+      _infer((Pattern)element, acceptor, isPrelinkingPhase);
     } else if (element != null) {
       _infer(element, acceptor, isPrelinkingPhase);
     } else {
