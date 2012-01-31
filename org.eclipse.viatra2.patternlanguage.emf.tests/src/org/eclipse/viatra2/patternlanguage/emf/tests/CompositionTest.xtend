@@ -49,6 +49,19 @@ class CompositionTest {
 	}
 	
 	@Test
+	def void testNegativeComposition() {
+		parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			} or {
+				neg find calledPattern(p);
+			}'
+		).assertNoErrors
+	}
+	
+	@Test
 	def void testMissingComposition() {
 		parseHelper.parse(
 			'
