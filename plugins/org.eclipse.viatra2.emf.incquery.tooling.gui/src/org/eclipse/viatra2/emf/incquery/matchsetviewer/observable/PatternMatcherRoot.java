@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.observable;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

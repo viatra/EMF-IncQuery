@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.util;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +18,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.RuntimeDatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.RuntimeDatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;

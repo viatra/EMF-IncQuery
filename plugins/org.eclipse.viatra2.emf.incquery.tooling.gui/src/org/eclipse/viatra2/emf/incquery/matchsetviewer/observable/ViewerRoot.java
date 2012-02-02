@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.observable;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
 
 /**
  * Top level element of the treeviewer.

@@ -1,11 +1,11 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.util;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.util;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetViewer;
 
 /**
  * The PartListener is used to observer EditorPart close actions.

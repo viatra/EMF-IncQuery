@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.handlers;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

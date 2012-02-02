@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.observable;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
 
 /**
  * This class represents a single row in the tableviewer and is associated to a single 

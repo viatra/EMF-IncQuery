@@ -1,7 +1,7 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.observable;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
 
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetViewer;
 
 /**
  * Custom tree structure advisor implementation.

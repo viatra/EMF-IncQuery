@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

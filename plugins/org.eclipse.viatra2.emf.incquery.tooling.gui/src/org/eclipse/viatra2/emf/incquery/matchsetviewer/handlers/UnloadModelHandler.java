@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.handlers;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetViewer;
 
 public class UnloadModelHandler extends AbstractHandler {
 

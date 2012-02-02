@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanListProperty;
@@ -28,15 +28,15 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.DetailElement;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.DetailObservable;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatch;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.TreeFactoryImpl;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.TreeLabelProviderImpl;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.TreeStructureAdvisorImpl;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.DetailElement;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.DetailObservable;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatch;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeFactoryImpl;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeLabelProviderImpl;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeStructureAdvisorImpl;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRoot;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 
 /**

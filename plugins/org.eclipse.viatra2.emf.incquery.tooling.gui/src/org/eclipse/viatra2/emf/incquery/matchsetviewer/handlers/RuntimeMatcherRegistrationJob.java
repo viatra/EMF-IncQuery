@@ -1,14 +1,14 @@
-package org.eclipse.viatra2.emf.incquery.databinding.ui.handlers;
+package org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.observable.ViewerRoot;
-import org.eclipse.viatra2.emf.incquery.databinding.ui.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRoot;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 

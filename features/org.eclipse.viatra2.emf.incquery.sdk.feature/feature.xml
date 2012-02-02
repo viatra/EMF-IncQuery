@@ -219,13 +219,17 @@ litigation.
          id="org.eclipse.viatra2.patternlanguage.emf.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.viatra2.emf.incquery.databinding.feature"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.viatra2.emf.incquery.runtime.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="org.eclipse.viatra2.patternlanguage.core.source"
          download-size="0"
@@ -263,6 +267,20 @@ litigation.
 
    <plugin
          id="org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.gui"
          download-size="0"
          install-size="0"
          version="0.0.0"
