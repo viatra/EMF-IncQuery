@@ -1,11 +1,14 @@
 package org.eclipse.viatra2.patternlanguage.emf.tests;
 
+import static org.junit.Assert.fail;
+
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Grammar;
@@ -13,6 +16,8 @@ import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.diagnostics.Diagnostic;
+import org.eclipse.xtext.junit4.InjectWith;
+import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.eclipse.xtext.nodemodel.INode;
@@ -20,11 +25,14 @@ import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
-public class ParserTest extends AbstractEMFPatternLanguageTest {
+@RunWith(XtextRunner.class)
+@InjectWith(EMFPatternLanguageInjectorProvider.class)
+public class ParserTest {
 
 	private static final String ANNOTATION_RULE = "Annotation";
 	private static final String PATTERN_COMPOSITION_RULE = "PatternCompositionConstraint";
