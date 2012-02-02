@@ -175,7 +175,8 @@ public class MatchSetViewer extends ViewPart {
 			
 			if (value != null && value instanceof PatternMatch) {
 				PatternMatch pm = (PatternMatch) value;
-				DatabindingAdapter<IPatternSignature> databindableMatcher = DatabindingUtil.getDatabindingAdapter(pm.getSignature().patternName());
+				DatabindingAdapter<IPatternSignature> databindableMatcher = 
+						DatabindingUtil.getDatabindingAdapter(pm.getSignature().patternName(), pm.getParent().isGenerated());
 				
 				if (databindableMatcher == null) {
 					tableViewer.setInput(null);
