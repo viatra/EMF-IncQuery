@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.viatra2.framework.FrameworkManager;
+import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 
 /**
  * A common helper class for generating IncQuery-related projects.
@@ -155,7 +155,7 @@ public abstract class ProjectGenerationHelper {
 			IProgressMonitor monitor) throws FileNotFoundException,
 			CoreException {
 		/* TODO UGLY: Add the build.properties to the project */
-		File buildProp = FrameworkManager.getFileFromBundle(
+		File buildProp = IncQueryPlugin.getFileFromBundle(
 				IncQueryNature.BUNDLE_ID,
 				IncQueryNature.SOURCE_BUILD_PROPERTIES);
 		addFileToProject(proj, new Path("build.properties"),

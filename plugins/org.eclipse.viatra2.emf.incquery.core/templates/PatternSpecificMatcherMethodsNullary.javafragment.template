@@ -1,8 +1,0 @@
-	/** 
-	 * Queries whether the parameter-less pattern matches or not.
-	 * @return true if the nullary pattern has a (single) match, false otherwise.
-	 */
-	public boolean doesMatch() {
-		return hasMatch(emptyArray);
-	}
-	private static final Object[] emptyArray = {};

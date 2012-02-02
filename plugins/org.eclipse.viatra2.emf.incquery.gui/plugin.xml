@@ -28,18 +28,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            id="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-            name="Load/reload referenced EMF GenModels into EMF-IncQuery project">
-      </command>
-      <command
-            id="org.eclipse.viatra2.emf.incquery.gui.generate-source"
-            name="Generate EMF-IncQuery Source Code">
-      </command>
-      <command
-            id="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
-            name="Generate Sample UI project for EMF-IncQuery">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -74,47 +62,6 @@
              <menu
                    id="org.eclipse.viatra2.emf.incquery.gui.menu.packageExplorer"
                    label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
-                  style="push">
-                              <visibleWhen
-                                    checkEnabled="false">
-                                 <with
-                                       variable="selection">
-                                    <iterate
-                                          ifEmpty="false">
-                                       <adapt
-                                             type="org.eclipse.core.resources.IFile">
-                                          <test
-                                                property="org.eclipse.core.resources.name"
-                                                value="*.incquery">
-                                          </test>
-                                       </adapt>
-                                    </iterate>
-                                 </with>
-                              </visibleWhen>
-            </command>
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-               </reference>
-            </visibleWhen>
-               
-         </command>
          
         </menu>
       </menuContribution>
@@ -124,37 +71,6 @@
            <menu
                  id="org.eclipse.viatra2.emf.incquery.gui.menu.projectExplorer"
                  label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
-                  style="push">
-                               <visibleWhen
-                  checkEnabled="false">
-                                  <reference
-                                        definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-                                  </reference>
-            </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-                  </reference>
-               </visibleWhen>
-            </command>
-	        <command
-	               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-	               style="push">
-	            <visibleWhen
-	                  checkEnabled="false">
-                <reference
-                      definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-                </reference>
-	            </visibleWhen>
-	               
-	         </command>
            </menu>
       </menuContribution>
       <menuContribution
@@ -163,36 +79,6 @@
         <menu
               id="org.eclipse.viatra2.emf.incquery.gui.menu.resourceNavigator"
               label="EMF-IncQuery">
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source"
-               style="push">                              
-               <visibleWhen
-                  checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-                  </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.genmodelfile">
-               </reference>
-            </visibleWhen>         
-         </command>
          
         </menu>
       </menuContribution>
@@ -200,18 +86,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.handlers.FillVPMLHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel">
-      </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.handlers.GenerateSourceCodeHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.gui.generate-source">
-      </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.handlers.GenerateSampleProjectHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.gui.gensampleproject">
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
@@ -229,22 +103,6 @@
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="org.eclipse.viatra2.emf.incquery.genmodelfile">
-         <with
-               variable="selection">
-            <iterate
-                  ifEmpty="false">
-               <adapt
-                     type="org.eclipse.core.resources.IFile">
-                  <test
-                        property="org.eclipse.core.resources.name"
-                        value="*.incquery">
-                  </test>
-               </adapt>
-            </iterate>
-         </with>
-      </definition>
    </extension>
 
 </plugin>
