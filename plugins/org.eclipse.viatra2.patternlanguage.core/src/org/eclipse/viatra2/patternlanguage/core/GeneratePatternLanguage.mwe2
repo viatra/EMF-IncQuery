@@ -41,7 +41,7 @@ Workflow {
     component = org.eclipse.viatra2.patternlanguage.core.ExtendedPatternLanguageGenerator {
         pathRtProject = runtimeProject
         pathUiProject = "${runtimeProject}.ui"
-        pathTestProject = "${runtimeProject}.tests"
+        pathTestProject = "../../tests/${projectName}.tests"
         projectNameRt = projectName
         projectNameUi = "${projectName}.ui"
         
