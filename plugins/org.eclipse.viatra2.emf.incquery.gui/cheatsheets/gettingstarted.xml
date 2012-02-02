@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compositeCheatsheet name="Getting Started with EMF-IncQuery">
+   <taskGroup kind="set" name="Query your models using IncQuery" skip="false">
+      <intro>
+         EMF-IncQuery is a technology, that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. Completing the tasks you will know how to create an IncQuery plug-in, how to use it, and where to look for further information. These sheets guide you through a library example, that works immediately.
+      </intro>
+      <onCompletion>
+      </onCompletion>
+      <task kind="cheatsheet" name="Creating an EMF-IncQuery Project" skip="false">
+         <intro>
+            This sheet describes how to create an EMF-IncQuery plug-in project from an EMF metamodel.
+         </intro>
+         <onCompletion>
+         </onCompletion>
+         <param name="path" value="newproject.xml">
+         </param>
+      </task>
+      <task kind="cheatsheet" name="Inspecting the Generated Code" skip="false">
+         <intro>
+            An EMF-IncQuery plugin provides only <b>the code base</b> to perform queries. This cheat sheet describes the automatic creation of a <b>sample project</b>, that can be used form the GUI. The generated code can also be inspected to write your own code.
+         </intro>
+         <onCompletion>
+         </onCompletion>
+         <param name="path" value="evaluation.xml">
+         </param>
+      </task>
+   </taskGroup>
+</compositeCheatsheet>

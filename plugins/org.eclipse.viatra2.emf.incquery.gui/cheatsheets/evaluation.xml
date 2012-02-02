@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet
+      title="Evaluating queries using the generated code">
+   <intro>
+      <description>
+        This section shows how to use the IncQuery project. The first part describes how to generate a sample code, and use it to query an instance model. The second part describes how to use the generated code.
+      </description>
+   </intro>
+   <item
+         title="Run queries using the Sample UI project">
+      <description>
+      </description>
+      <subitem
+            label="To create the Sample UI project, right click on models/generator.incquery, and issue EMF-IncQuery | Generate Sample UI project for EMF-IncQuery.">
+      </subitem>
+      <subitem
+            label="Create an EMF instance model. Following the library example, start a runtime Eclipse that contains the editor plug-in, as well as the generated EMF-IncQuery projects. Create a new Library Model in a project, and select Library as the Model Object (root element).">
+      </subitem>
+      <subitem
+            label="Fill up your model with writers and books, also associate some books to writers through writers&apos; books reference. Finally save the model.">
+      </subitem>
+      <subitem
+            label="Right click on the model file, and issue a command from the Sample EMF-IncQuery Queries category. This returns the pattern result in a pop up message box.">
+      </subitem>
+   </item>
+   <item
+         title="Information on using the generated pattern matcher code">
+      <description>
+      </description>
+      <subitem
+            label="To use the generated EMF-IncQuery pattern matchers, either create your own plug-in project and add a dependency on the generated EMF-IncQuery plug-in (the EMF plug-ins corresponding to the referenced metamodels are automatically re-exported and made available to your code), or simply put your own code in the src/ folder of the generated project.">
+      </subitem>
+      <subitem
+            label="To match a pattern on an EMF instance model, find the corresponding generated class from src-gen/patternmatchers/ and use the static FACTORY to instantiate it on your EMF ResourceSet. The object will have useful methods such as getAllMatches(), some of them declared in the class itself, some of them in the interface IncQueryMatcher. Refer to the Javadoc on method usage. Advanced tip: using only the (fully qualified) name of the pattern, you can instantiate org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory to attach a pattern matcher to your EMF Resource or ResourceSet without compile-time dependence on the generated project; the resulting generic matcher will be less user-friendly than the generated ones though. The (fully qualified) name of patterns are formed as machineNameSpace.machineSimpleName.patternSimpleName; in our library example, the machine did not have a namespace declaration, so the name of the pattern became myMachine.Writes. ">
+      </subitem>
+      <subitem
+            label="During the lifetime of the ResourceSet, the match sets will be incrementally maintained and therefore the pattern match retriever methods of the matcher object always return the up-to-date results virtually instantly. The actual (&quot;heavy&quot;) pattern matcher engine is constructed behind the scenes. The generated matcher class is only a lightweight wrapper; therefore you can instantiate it for the same ResourceSet multiple times without significant performance penalties.">
+      </subitem>
+      <subitem
+            label="Altogether, the public pattern query API can be used very simply to: (1) Initialize an incremental pattern matcher on any EMF Notifier (preferably Resource or ResourceSet, but can also be any EObject representing their respective containment subtrees). (2) Execute a query any time on the model, binding zero or more of the pattern parameters to input values, retrieving the result set immediately (3) Register a delta monitor to incrementally and efficiently track changes in the result sets of queries.">
+      </subitem>
+   </item>
+</cheatsheet>

@@ -1,0 +1,58 @@
+	
+	/** 
+	 * Returns the set of all pattern matches given some fixed parameters.
+#javadoc-params#
+	 * @return matches represented as an array containing the values of each parameter.
+	 */
+	public Collection<Object[]> getAllMatchesAsArray(#pattern-params#) {
+		return getAllMatchesAsArray(new Object[] {#pattern-params-value#});
+	}
+	
+	/** 
+	 * Returns the set of all pattern matches given some fixed parameters.
+#javadoc-params#
+	 * @return matches represented as a #pattern-dto# object.
+	 */
+	public Collection<#pattern-dto#> getAllMatchesAsSignature(#pattern-params#) {
+		return getAllMatchesAsSignature(new Object[] {#pattern-params-value#});
+	}
+
+	/** 
+	 * Returns an arbitrary pattern match given some fixed parameters.
+	 * Neither determinism nor randomness of selection is guaranteed.
+#javadoc-params#
+	 * @return a match represented as an array containing the values of each parameter, or null if no match is found.
+	 */
+	public Object[] getOneMatchAsArray(#pattern-params#) {
+		return getOneMatchAsArray(new Object[] {#pattern-params-value#});
+	}
+	
+	/** 
+	 * Returns an arbitrary pattern match given some fixed parameters.
+	 * Neither determinism nor randomness of selection is guaranteed.
+#javadoc-params#
+	 * @return a match represented as a #pattern-dto# object, or null if no match is found.
+	 */
+	public #pattern-dto# getOneMatchAsSignature(#pattern-params#) {
+		return getOneMatchAsSignature(new Object[] {#pattern-params-value#});
+	}
+	
+	/**
+	 * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
+	 * 	under any possible substitution of the unspecified parameters.
+#javadoc-params#
+	 * @return true if the input is a valid (partial) match of the pattern.
+	 */
+	public boolean hasMatch(#pattern-params#) {
+		return hasMatch(new Object[] {#pattern-params-value#});
+	}
+	
+	/** 
+	 * Returns the number of all pattern matches given some fixed parameters.
+#javadoc-params#
+	 * @return the number of pattern matches found.
+	 */	
+	public int countMatches(#pattern-params#) {
+		return countMatches(new Object[] {#pattern-params-value#});
+	}
+	
