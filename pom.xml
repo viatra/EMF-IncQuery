@@ -32,6 +32,7 @@
 		<tycho.version>0.13.0</tycho.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 	</properties>
 	<build>
 		<plugins>
@@ -47,6 +48,8 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<showWarnings>true</showWarnings>
+					<!-- <compilerArgument>-warn:+assertIdentifier,charConcat,compareIdentical,constructorName,deadCode,deprecation,discouraged,enumIdentifier,finalBound,finally,forbidden,intfAnnotation,intfNonInherited,maskedCatchBlock,noEffectAssign,pkgDefaultMethod,raw,serial,staticReceiver,suppress,typeHiding,unavoidableGenericProblems,unchecked,unusedImport,unusedLabel,unusedLocal,unusedPrivate,unusedTypeArgs,varargsCast,warningToken</compilerArgument>
+					 -->
 				</configuration>
 			</plugin>
 			<plugin>
