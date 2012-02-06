@@ -20,6 +20,7 @@ import java.util.Iterator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.xtext.validation.Check;
 
@@ -62,11 +63,11 @@ public class PatternLanguageJavaValidator extends
 			final int definitionParameterSize = constraint.getPatternRef().getParameters().size();
 			final int callParameterSize = constraint.getParameters().size();
 			if (definitionParameterSize != callParameterSize) {
-				error("The pattern " + constraint.getPatternRef().getName() + " is not applicable for the arguments("+getFormattedArgumentsList(constraint)+")", PATTERN_COMPOSITION_CONSTRAINT__PATTERN_REF, IssueCodes.WRONG_NUMBER_PATTERNCALL_PARAMETER);
+				error("The pattern " + getFormattedPattern(constraint.getPatternRef()) + " is not applicable for the arguments("+getFormattedArgumentsList(constraint)+")", PATTERN_COMPOSITION_CONSTRAINT__PATTERN_REF, IssueCodes.WRONG_NUMBER_PATTERNCALL_PARAMETER);
 			}
 		}
 	}
-	
+
 	@Check
 	public void checkPatterns(PatternModel model) {
 		if (model.getPatterns() != null && !model.getPatterns().isEmpty()) {
@@ -86,6 +87,20 @@ public class PatternLanguageJavaValidator extends
 		}
 	}
 
+	private String getFormattedPattern(Pattern pattern) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(pattern.getName());
+		builder.append("(");
+		for (Iterator<Variable> iter = pattern.getParameters().iterator(); iter.hasNext();) {
+			builder.append(iter.next().getName());
+			if (iter.hasNext()) {
+				builder.append(", ");
+			}
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+	
 	protected String getFormattedArgumentsList(
 			PatternCompositionConstraint constraint) {
 		StringBuilder builder = new StringBuilder();
