@@ -142,8 +142,8 @@ BoolValue returns ValueReference:
 ;
 
 enum BOOLEAN:
-	TRUE = 'true' | TRUE = 'TRUE' |
-	FALSE = 'false' | FALSE = 'FALSE'
+	TRUE = 'true' |
+	FALSE = 'false'
 ;
 
 DoubleValue returns ValueReference:
