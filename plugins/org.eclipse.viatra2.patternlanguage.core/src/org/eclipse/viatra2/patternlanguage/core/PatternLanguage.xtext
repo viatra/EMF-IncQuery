@@ -21,7 +21,7 @@ PatternModel:
 	
 Pattern:
 	annotations+=Annotation*
-	//modifiers+=Modifiers*
+	modifiers+=Modifiers*
 	'pattern'
 	name=ID
 	'('
@@ -42,7 +42,8 @@ AnnotationParameter:
 ;
 
 Modifiers: 
-	injective?='injective'
+	//injective?='injective' &
+	private?='private'
 ;
 
 //terminal ID:

@@ -108,12 +108,31 @@ public class ParserTest {
 		testParserRule("pattern simplePattern(p : Pattern) = {Pattern(p);}",
 				PATTERN_RULE);
 	}
+	@Test
+	public void privatePattern() {
+		testParserRule("private pattern simplePattern(p : Pattern) = {Pattern(p);}",
+				PATTERN_RULE);
+	}
 
 	@Test
 	@Ignore(value = "Injective patterns not supported in RETE")
 	public void injectivePattern() {
 		testParserRule(
 				"injective pattern simplePattern(Name) = {Pattern(Name);}",
+				PATTERN_RULE);
+	}
+	@Test
+	@Ignore(value = "Injective patterns not supported in RETE")
+	public void privateInjectivePattern() {
+		testParserRule(
+				"private injective pattern simplePattern(Name) = {Pattern(Name);}",
+				PATTERN_RULE);
+	}
+	@Test
+	@Ignore(value = "Injective patterns not supported in RETE")
+	public void injectivePrivatePattern() {
+		testParserRule(
+				"injective private pattern simplePattern(Name) = {Pattern(Name);}",
 				PATTERN_RULE);
 	}
 
