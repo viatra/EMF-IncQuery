@@ -10,6 +10,4 @@
   </parent>
   <artifactId>org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>EMF-IncQuery</name>
-  <url>http://viatra.inf.mit.bme.hu/incquery</url>
 </project>
