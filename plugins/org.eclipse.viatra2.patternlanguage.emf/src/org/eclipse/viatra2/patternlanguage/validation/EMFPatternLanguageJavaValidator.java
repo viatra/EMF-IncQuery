@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.validation.Check;
@@ -41,8 +42,8 @@ public class EMFPatternLanguageJavaValidator extends
 		final Set<EPackage> importedPackages = new HashSet<EPackage>();
 		for (PackageImport pi : patternModel.getImportPackages()) {
 			if (importedPackages.contains(pi.getEPackage())) {
-				warning(DUPLICATE_IMPORT + pi.getEPackage().getName(), pi,
-						null, "");
+				warning(DUPLICATE_IMPORT + pi.getEPackage().getName(), pi, EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE, 
+						EMFIssueCodes.DUPLICATE_IMPORT, "");
 			} else {
 				importedPackages.add(pi.getEPackage());
 			}

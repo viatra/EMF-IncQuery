@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.emf.tests
+package org.eclipse.viatra2.patternlanguage.emf.tests.composition
 
 import com.google.inject.Inject
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -13,12 +13,14 @@ import org.eclipse.xtext.diagnostics.Diagnostic
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class CompositionTest {
+class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
+	
 	
 	@Inject
 	ParseHelper parseHelper
 	
 	@Inject extension ValidationTestHelper
+
 	
 	@Test
 	def void testSimpleComposition() {
@@ -75,4 +77,5 @@ class CompositionTest {
 			"Couldn't resolve reference to Pattern 'calledPatternMissing'."
 		)
 	}
+
 }

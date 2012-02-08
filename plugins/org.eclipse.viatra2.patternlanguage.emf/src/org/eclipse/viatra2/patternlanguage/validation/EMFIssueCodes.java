@@ -3,7 +3,7 @@ package org.eclipse.viatra2.patternlanguage.validation;
 /**
  * @author Mark Czotter
  */
-public final class IssueCodes {
+public final class EMFIssueCodes {
 
 	protected static final String ISSUE_CODE_PREFIX = "org.eclipse.viatra2.patternlanguage.validation.IssueCodes.";
 	

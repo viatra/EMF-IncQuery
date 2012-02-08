@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.emf.tests
+package org.eclipse.viatra2.patternlanguage.emf.tests.resolution
 
 import org.eclipse.xtext.junit4.XtextRunner
 import org.junit.runner.RunWith
@@ -21,7 +21,7 @@ class VariableResolutionTest {
 	@Inject extension ValidationTestHelper
 	
 	@Test
-	def ParameterResolution() {
+	def parameterResolution() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
@@ -37,7 +37,7 @@ class VariableResolutionTest {
 	}
 	
 	@Test
-	def ParameterResolutionFailed() {
+	def parameterResolutionFailed() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
@@ -53,7 +53,7 @@ class VariableResolutionTest {
 	}
 	
 	@Test
-	def ConstraintVariableResolution() {
+	def constraintVariableResolution() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
