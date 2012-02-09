@@ -16,6 +16,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageP
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
+import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
@@ -94,6 +95,19 @@ public class EReferenceResolutionTest {
         EStructuralFeature _refname_1 = type.getRefname();
         EClassifier _eType_1 = _refname_1.getEType();
         Assert.assertEquals(_eType_1, Literals.CONSTRAINT);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void referenceResolutionInvalid() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern resolutionTest(Name : Pattern, Constraint) = {\n\t\t\t\tPattern.notExist(Name, Constraint);\n\t\t\t}\n\t\t");
+        final PatternModel model = ((PatternModel) _parse);
+        this._validationTestHelper.assertError(model, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.REFERENCE_TYPE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EStructuralFeature");
       }
     } catch (Exception _e) {
       throw Exceptions.sneakyThrow(_e);

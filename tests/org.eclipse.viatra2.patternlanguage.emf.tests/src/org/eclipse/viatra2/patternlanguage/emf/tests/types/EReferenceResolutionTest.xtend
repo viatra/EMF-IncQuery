@@ -61,4 +61,17 @@ class EReferenceResolutionTest {
 		val type = tail.type as ReferenceType
 		assertEquals(type.refname.EType, PatternLanguagePackage$Literals::CONSTRAINT)		
 	}
+	
+	@Test
+	def referenceResolutionInvalid(){
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern resolutionTest(Name : Pattern, Constraint) = {
+				Pattern.notExist(Name, Constraint);
+			}
+		') as PatternModel
+		model.assertError(EMFPatternLanguagePackage$Literals::REFERENCE_TYPE,
+			Diagnostic::LINKING_DIAGNOSTIC, "reference to EStructuralFeature")
+	}
 }
