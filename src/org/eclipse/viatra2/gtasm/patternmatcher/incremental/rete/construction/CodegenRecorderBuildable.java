@@ -267,7 +267,6 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 		return new Stub<String>(stub, resultVar);
 	}
 
-
 	public Stub<String> buildInjectivityChecker(Stub<String> stub, int subject, int[] inequalIndices) {
 		String[] arguments = {
 				gen(stub), gen(subject),
@@ -277,12 +276,19 @@ public abstract class CodegenRecorderBuildable<PatternDescription>
 		return new Stub<String>(stub, resultVar);
 	}
 
-
+	@Override
+	public Stub<String> buildTransitiveClosure(Stub<String> stub) {
+		String[] arguments = {
+				gen(stub)
+		};
+		String resultVar = emitFunctionCall(coordinator.stubType, "buildTransitiveClosure", arguments);
+		return new Stub<String>(stub, resultVar);
+	}
+	
 	public Stub<String> buildScopeConstrainer(Stub<String> stub, boolean transitive,
 			Object unwrappedContainer, int constrainedIndex) {
 		throw new UnsupportedOperationException("Code generation does not support external scoping as of now");
 	}
-
 
 	public Stub<String> buildStartStub(Object[] constantValues, Object[] constantNames) {
 		String[] arguments = {

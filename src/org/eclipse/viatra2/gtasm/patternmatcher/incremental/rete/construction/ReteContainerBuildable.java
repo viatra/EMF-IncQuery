@@ -110,6 +110,14 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 					new TupleMask(inequalIndices, stub.getVariablesTuple().getSize()));
 		return new Stub<Address<? extends Supplier>>(stub, checker);
 	}
+	
+	@Override
+	public Stub<Address<? extends Supplier>> buildTransitiveClosure(Stub<Address<? extends Supplier>> stub) {
+		throw new UnsupportedOperationException("Transitive closure not supported yet");
+// TODO(Tomi) uncomment after library method is implemented
+//		Address<TransitiveClosureNode> checker = library.accessTransitiveClosureNode(stub.getHandle());
+//		return new Stub<Address<? extends Supplier>>(stub, checker);
+	}
 
 	public Stub<Address<? extends Supplier>> patternCallStub(Tuple nodes, PatternDescription supplierKey)
 		throws RetePatternBuildException 

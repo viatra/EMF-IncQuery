@@ -45,6 +45,7 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
 	public Stub<StubHandle> buildStartStub(Object[] constantValues, Object[] constantNames);
 	public Stub<StubHandle> buildEqualityChecker(Stub<StubHandle> stub, int[] indices);
 	public Stub<StubHandle> buildInjectivityChecker(Stub<StubHandle> stub, int subject, int[] inequalIndices);
+	public Stub<StubHandle> buildTransitiveClosure(Stub<StubHandle> stub);
 	public Stub<StubHandle> buildTrimmer(Stub<StubHandle> stub, TupleMask trimMask);
 	public Stub<StubHandle> buildBetaNode(Stub<StubHandle> primaryStub, Stub<StubHandle> sideStub, TupleMask primaryMask,
 			TupleMask sideMask, TupleMask complementer, boolean negative);
@@ -53,6 +54,8 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
 	public Stub<StubHandle> buildCountCheckBetaNode(Stub<StubHandle> primaryStub, Stub<StubHandle> sideStub, 
 			TupleMask primaryMask, TupleMask originalSideMask, int resultPositionInSignature);
 	public Stub<StubHandle> buildScopeConstrainer(Stub<StubHandle> stub, boolean transitive, Object unwrappedContainer, int constrainedIndex);
+	
+	
 	/**
 	 * @return a buildable that potentially acts on a separate container
 	 */
