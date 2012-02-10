@@ -57,7 +57,6 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
-			} or {
 				neg find calledPattern(p);
 			}'
 		).assertNoErrors

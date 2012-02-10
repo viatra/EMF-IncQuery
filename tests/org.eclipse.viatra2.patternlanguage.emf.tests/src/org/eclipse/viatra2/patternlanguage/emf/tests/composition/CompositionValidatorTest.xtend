@@ -13,6 +13,7 @@ import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaVali
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra2.patternlanguage.emf.tests.AbstractValidatorTest
+import org.junit.Ignore
 
 
 @RunWith(typeof(XtextRunner))
@@ -91,5 +92,42 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 			}'
 		)
 		tester.validate(model).assertError(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER);
+	}
+	@Test
+	def void testSymbolicParameterSafe() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+				neg find calledPattern(p);
+			}'
+		)
+		tester.validate(model).assertOK;
+	}
+	@Test
+	def void testQuantifiedLocalVariable() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern calledPattern() = {
+				Pattern(p);
+				neg find calledPattern(p);
+			}'
+		)
+		tester.validate(model).assertOK;
+	}
+	@Test @Ignore
+	def void testSymbolicParameterUnsafe() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			} or {
+				neg find calledPattern(p);
+			}'
+		)
+		tester.validate(model).assertError(/*TODO*/IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER);
 	}
 }
