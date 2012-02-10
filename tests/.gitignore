@@ -4,5 +4,4 @@
 plugin.xml_gen
 .DS_Store
 */src-gen/**/*
-!*/xtend-gen/**
 !*/src-gen/keep.txt
