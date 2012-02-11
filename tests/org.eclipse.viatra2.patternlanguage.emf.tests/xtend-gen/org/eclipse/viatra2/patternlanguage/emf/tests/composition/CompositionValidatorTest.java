@@ -118,7 +118,7 @@ public class CompositionValidatorTest extends AbstractValidatorTest {
   public void testQuantifiedLocalVariable() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern calledPattern() = {\n\t\t\t\tPattern(p);\n\t\t\t\tneg find calledPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern calledPattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}\n\n\t\t\tpattern callerPattern() = {\n\t\t\t\tPattern(p);\n\t\t\t\tneg find calledPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertOK();

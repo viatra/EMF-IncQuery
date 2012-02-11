@@ -110,7 +110,11 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			pattern calledPattern() = {
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}
+
+			pattern callerPattern() = {
 				Pattern(p);
 				neg find calledPattern(p);
 			}'
