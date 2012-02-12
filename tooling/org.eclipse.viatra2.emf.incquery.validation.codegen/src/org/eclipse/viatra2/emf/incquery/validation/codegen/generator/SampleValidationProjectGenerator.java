@@ -123,7 +123,7 @@ public class SampleValidationProjectGenerator extends SampleProjectGenerator {
 	 */
 	@Override
 	protected void createProject(IBundleProjectDescription bundleDesc, IProgressMonitor monitor) throws CoreException {
-		sampleProject = SampleValidationProjectSupport.createProject(monitor, bundleDesc.getBundleName(),
+		sampleProject = SampleValidationProjectSupport.createProject(monitor, bundleDesc.getSymbolicName(),
 				incQueryProject.getName());
 	}
 }
