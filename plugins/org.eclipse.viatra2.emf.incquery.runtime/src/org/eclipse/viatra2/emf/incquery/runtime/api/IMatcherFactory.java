@@ -22,7 +22,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
  * @author Bergmann Gábor
  *
  */
-public interface IMatcherFactory<Signature extends IPatternSignature, Matcher extends IncQueryMatcher<Signature>> {
+public interface IMatcherFactory<Signature extends IPatternMatch, Matcher extends IncQueryMatcher<Signature>> {
 	
 	/**
 	 * Identifies the pattern for which matchers can be instantiated. 

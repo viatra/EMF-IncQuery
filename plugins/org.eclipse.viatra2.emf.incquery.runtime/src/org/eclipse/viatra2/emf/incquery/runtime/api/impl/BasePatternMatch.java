@@ -13,14 +13,14 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
- * Base implementation of IPatternSignature.
+ * Base implementation of IPatternMatch.
  * @author Bergmann Gábor
  *
  */
-public abstract class BasePatternSignature implements IPatternSignature {
+public abstract class BasePatternMatch implements IPatternMatch {
 
 	public static String prettyPrintValue(Object o) {
 		if (o == null) return "(null)";
@@ -52,7 +52,7 @@ public abstract class BasePatternSignature implements IPatternSignature {
 	// TODO performance can be improved here somewhat
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#get(int)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#get(int)
 	 */
 	@Override
 	public Object get(int position) {
@@ -62,7 +62,7 @@ public abstract class BasePatternSignature implements IPatternSignature {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#set(int, java.lang.Object)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#set(int, java.lang.Object)
 	 */
 	@Override
 	public boolean set(int position, Object newValue) {

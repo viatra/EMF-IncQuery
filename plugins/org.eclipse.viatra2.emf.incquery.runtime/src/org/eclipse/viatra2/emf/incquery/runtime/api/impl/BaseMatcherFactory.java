@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -24,7 +24,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
  * @author Bergmann Gábor
  *
  */
-public abstract class BaseMatcherFactory<Signature extends IPatternSignature, Matcher extends IncQueryMatcher<Signature>> 
+public abstract class BaseMatcherFactory<Signature extends IPatternMatch, Matcher extends IncQueryMatcher<Signature>> 
 	implements IMatcherFactory<Signature, Matcher> 
 {
 	public abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException;

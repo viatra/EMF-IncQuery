@@ -37,7 +37,7 @@ import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeLabelProvi
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeStructureAdvisorImpl;
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * MatchSetViewer is used to display the match sets for those matchers which are annotated with PatternUI. 
@@ -175,7 +175,7 @@ public class MatchSetViewer extends ViewPart {
 			
 			if (value != null && value instanceof PatternMatch) {
 				PatternMatch pm = (PatternMatch) value;
-				DatabindingAdapter<IPatternSignature> databindableMatcher = 
+				DatabindingAdapter<IPatternMatch> databindableMatcher = 
 						DatabindingUtil.getDatabindingAdapter(pm.getSignature().patternName(), pm.getParent().isGenerated());
 				
 				if (databindableMatcher == null) {

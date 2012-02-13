@@ -1,7 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * The class is used to observ given parameters of a match set.
@@ -10,7 +10,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
  *
  * @param <T> the type parameter of the signature
  */
-public abstract class DatabindingAdapter<T extends IPatternSignature> {
+public abstract class DatabindingAdapter<T extends IPatternMatch> {
 	
 	/**
 	 * Returns the array of observable valuess.

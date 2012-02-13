@@ -22,7 +22,7 @@ import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcher
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.RuntimeDatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
@@ -105,7 +105,7 @@ public class DatabindingUtil {
 	 * @return an instance of the DatabindingAdapter class generated for the pattern
 	 */
 	@SuppressWarnings("unchecked")
-	public static DatabindingAdapter<IPatternSignature> getDatabindingAdapter(String patternName, boolean generatedMatcher) {
+	public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName, boolean generatedMatcher) {
 		if (generatedMatcher) {
 			try {
 				IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -119,7 +119,7 @@ public class DatabindingUtil {
 							Object obj = ce.createExecutableExtension("class");
 	
 							if (obj != null && obj instanceof DatabindingAdapter) {
-								return (DatabindingAdapter<IPatternSignature>) obj;
+								return (DatabindingAdapter<IPatternMatch>) obj;
 							}
 						}
 					}
@@ -193,7 +193,7 @@ public class DatabindingUtil {
 	 * @param changeListener the changle listener 
 	 * @param message the message which can be found in the appropriate PatternUI annotation
 	 */
-	public static void observeFeatures(IPatternSignature signature,	IValueChangeListener changeListener, String message) {
+	public static void observeFeatures(IPatternMatch signature,	IValueChangeListener changeListener, String message) {
 		if (message != null) {
 			String[] tokens = message.split("\\$");
 
@@ -232,8 +232,8 @@ public class DatabindingUtil {
 					Object obj = ce.createExecutableExtension("matcherFactoryClass");
 
 					if (obj instanceof IMatcherFactory<?, ?>) {
-						IMatcherFactory<IPatternSignature, IncQueryMatcher<IPatternSignature>> factory = (IMatcherFactory<IPatternSignature, IncQueryMatcher<IPatternSignature>>) obj;
-						IncQueryMatcher<IPatternSignature> matcher = factory.getMatcher(key.getNotifier());
+						IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>) obj;
+						IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
 
 						result.addMatcher(matcher, true);
 					}

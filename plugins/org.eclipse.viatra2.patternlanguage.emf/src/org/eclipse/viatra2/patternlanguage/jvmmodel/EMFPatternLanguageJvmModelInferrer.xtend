@@ -13,8 +13,8 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel
 import com.google.inject.Inject
 import java.util.Arrays
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternSignature
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
@@ -81,8 +81,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		   		// infer a Signature class
    		acceptor.accept(pattern.toClass(pattern.signatureClassName) [
    			packageName = mainPackageName //+ ".signature"
-   			superTypes += pattern.newTypeRef(typeof (BasePatternSignature))
-   			superTypes += pattern.newTypeRef(typeof (IPatternSignature))
+   			superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch))
+   			superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
    			
    			// add fields
    			for (Variable variable : pattern.parameters) {

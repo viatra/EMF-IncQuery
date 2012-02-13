@@ -12,7 +12,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * The class is used to provide input for the tableviewer for a given PatternMatch.
@@ -29,7 +29,7 @@ public class DetailObservable extends AbstractObservableList {
 	private ValueChangeListener listener;
 	private Map<IObservableValue, DetailElement> valueMap;
 	
-	public DetailObservable(DatabindingAdapter<IPatternSignature> databindableMatcher, PatternMatch pm) {
+	public DetailObservable(DatabindingAdapter<IPatternMatch> databindableMatcher, PatternMatch pm) {
 		this.patternMatch = pm;
 		this.details = new ArrayList<DetailElement>();
 		this.valueMap = new HashMap<IObservableValue, DetailElement>();

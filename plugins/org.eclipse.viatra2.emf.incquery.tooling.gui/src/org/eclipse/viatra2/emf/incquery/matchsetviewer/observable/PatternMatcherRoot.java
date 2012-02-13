@@ -15,7 +15,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -33,18 +33,18 @@ import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternReg
  */
 public class PatternMatcherRoot {
 	
-	private Map<IFile, Set<IncQueryMatcher<? extends IPatternSignature>>> runtimeMatcherRegistry;
-	private Map<IncQueryMatcher<? extends IPatternSignature>, PatternMatcher> matchers;
+	private Map<IFile, Set<IncQueryMatcher<? extends IPatternMatch>>> runtimeMatcherRegistry;
+	private Map<IncQueryMatcher<? extends IPatternMatch>, PatternMatcher> matchers;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ViewerRootKey key;
 	
 	public PatternMatcherRoot(ViewerRootKey key) {
-		matchers = new HashMap<IncQueryMatcher<? extends IPatternSignature>, PatternMatcher>();
-		runtimeMatcherRegistry = new HashMap<IFile, Set<IncQueryMatcher<? extends IPatternSignature>>>();
+		matchers = new HashMap<IncQueryMatcher<? extends IPatternMatch>, PatternMatcher>();
+		runtimeMatcherRegistry = new HashMap<IFile, Set<IncQueryMatcher<? extends IPatternMatch>>>();
 		this.key = key;
 	}
 	
-	public void addMatcher(IncQueryMatcher<? extends IPatternSignature> matcher, boolean generated) {
+	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, boolean generated) {
 		List<PatternMatcher> oldValue = new ArrayList<PatternMatcher>(matchers.values());
 		PatternMatcher pm = new PatternMatcher(this, matcher, generated);
 		this.matchers.put(matcher, pm);
@@ -52,7 +52,7 @@ public class PatternMatcherRoot {
 		this.propertyChangeSupport.firePropertyChange("matchers", oldValue, newValue);
 	}
 	
-	public void removeMatcher(IncQueryMatcher<? extends IPatternSignature> matcher) {
+	public void removeMatcher(IncQueryMatcher<? extends IPatternMatch> matcher) {
 		List<PatternMatcher> oldValue = new ArrayList<PatternMatcher>(matchers.values());
 		this.matchers.get(matcher).dispose();
 		this.matchers.remove(matcher);
@@ -90,7 +90,7 @@ public class PatternMatcherRoot {
 		
 		try {
 			if (!runtimeMatcherRegistry.containsKey(file)) {
-				Set<IncQueryMatcher<? extends IPatternSignature>> setTmp = new HashSet<IncQueryMatcher<? extends IPatternSignature>>();
+				Set<IncQueryMatcher<? extends IPatternMatch>> setTmp = new HashSet<IncQueryMatcher<? extends IPatternMatch>>();
 				EList<Pattern> patterns = pm.getPatterns();
 				
 				for (Pattern pattern : patterns) {	
@@ -111,9 +111,9 @@ public class PatternMatcherRoot {
 	}
 	
 	public void unregisterPatternsFromFile(IFile file) {
-		Set<IncQueryMatcher<? extends IPatternSignature>> setTmp = runtimeMatcherRegistry.get(file);
+		Set<IncQueryMatcher<? extends IPatternMatch>> setTmp = runtimeMatcherRegistry.get(file);
 		if (setTmp != null) {
-			for (IncQueryMatcher<? extends IPatternSignature> matcher : setTmp) {
+			for (IncQueryMatcher<? extends IPatternMatch> matcher : setTmp) {
 				removeMatcher(matcher);
 			}
 			

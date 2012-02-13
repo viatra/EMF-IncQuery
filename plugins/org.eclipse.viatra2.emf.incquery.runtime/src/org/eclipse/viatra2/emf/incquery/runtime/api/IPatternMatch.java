@@ -11,15 +11,18 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
+
 /**
- * Interface for generated pattern signatures.
- * Each instance is a partial substitution of pattern parameters, usable e.g. to represent a match of the pattern.
- * Unsubstituted elements are represented by null.
+ * Generic interface for a single match of a pattern.
+ * Each instance is a (partial) substitution of pattern parameters, essentially a parameter to value mapping.
+ * 
+ * Can also represent a partial match; unsubstituted parameters are assigned to null. 
+ * Pattern matchers must never return a partial match, but they accept partial matches as method parameters. 
  * 
  * @author Bergmann Gábor
  */
-public interface IPatternSignature extends Cloneable {
-	/** Identifies the name of the pattern for which this is a signature. */
+public interface IPatternMatch extends Cloneable /*, Map<String, Object>*/ {
+	/** Identifies the name of the pattern for which this is a match. */
 	public String patternName();
 
 	/** Returns the list of symbolic parameter names. */
@@ -43,7 +46,7 @@ public interface IPatternSignature extends Cloneable {
 	 */
 	public boolean set(int position, Object newValue);	
 	
-	/** Converts the signature to an array representation, with each pattern parameter at their respective position */
+	/** Converts the match to an array representation, with each pattern parameter at their respective position */
 	public Object[] toArray();
 	
 	/** Prints the list of parameter-value pairs. */

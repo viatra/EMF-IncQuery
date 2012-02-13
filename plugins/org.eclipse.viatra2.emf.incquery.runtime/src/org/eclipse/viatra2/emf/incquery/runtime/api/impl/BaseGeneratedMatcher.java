@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
@@ -23,7 +23,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePat
  * @param <Signature>
  *
  */
-public abstract class BaseGeneratedMatcher<Signature extends IPatternSignature> extends BaseMatcher<Signature> {
+public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> extends BaseMatcher<Signature> {
 	
 	static RetePatternMatcher accessMatcher(IncQueryEngine engine, String patternName) throws IncQueryRuntimeException {
 		try {

@@ -8,7 +8,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * A PatternMatch is associated to every Signature of a matcher.
@@ -20,13 +20,13 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
 public class PatternMatch {
 
 	private String text;
-	private IPatternSignature signature;
+	private IPatternMatch signature;
 	private PatternMatcher parent;
 	private String message;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ParameterValueChangedListener listener;
 	
-	public PatternMatch(PatternMatcher parent, IPatternSignature signature) {
+	public PatternMatch(PatternMatcher parent, IPatternMatch signature) {
 		this.parent = parent;
 		this.signature = signature;
 		this.message = DatabindingUtil.getMessage(signature.patternName(), parent.isGenerated());
@@ -107,7 +107,7 @@ public class PatternMatch {
 		this.setText(newText);
 	}
 
-	public IPatternSignature getSignature() {
+	public IPatternMatch getSignature() {
 		return signature;
 	}
 	

@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -36,7 +36,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  *
  * @param <Signature>
  */
-public abstract class BaseMatcher<Signature extends IPatternSignature> implements IncQueryMatcher<Signature> {
+public abstract class BaseMatcher<Signature extends IPatternMatch> implements IncQueryMatcher<Signature> {
 
 	// FIELDS AND CONSTRUCTOR
 	
@@ -101,8 +101,8 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature()
 	 */
 	@Override
-	public Collection<Signature> getAllMatchesAsSignature() {
-		return getAllMatchesAsSignature(emptyArray());
+	public Collection<Signature> getAllMatches() {
+		return getAllMatches(emptyArray());
 	}
 
 	/* (non-Javadoc)
@@ -121,7 +121,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature(java.lang.Object[])
 	 */
 	@Override
-	public Collection<Signature> getAllMatchesAsSignature(Object[] signature) {
+	public Collection<Signature> getAllMatches(Object[] signature) {
 		ArrayList<Tuple> m = patternMatcher.matchAll(signature, notNull(signature));
 		ArrayList<Signature> matches = new ArrayList<Signature>();		
 		//clones the tuples into Object arrays to prevent the Tuples from modifications outside of the ReteMatcher 
@@ -130,7 +130,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
 	public Collection<Object[]> getAllMatchesAsArray(Signature signature) {
@@ -138,11 +138,11 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public Collection<Signature> getAllMatchesAsSignature(Signature signature) {
-		return getAllMatchesAsSignature(signature.toArray());
+	public Collection<Signature> getAllMatches(Signature signature) {
+		return getAllMatches(signature.toArray());
 	}
 	// with input binding as pattern-specific parameters: not declared in interface
 
@@ -158,8 +158,8 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature()
 	 */
 	@Override
-	public Signature getOneMatchAsSignature() {
-		return getOneMatchAsSignature(emptyArray());
+	public Signature getOneMatch() {
+		return getOneMatch(emptyArray());
 	}
 
 	/* (non-Javadoc)
@@ -178,7 +178,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature(java.lang.Object[])
 	 */
 	@Override
-	public Signature getOneMatchAsSignature(Object[] signature) {
+	public Signature getOneMatch(Object[] signature) {
 		Tuple t = patternMatcher.matchOne(signature, notNull(signature));
 		if(t != null) 
 			return tupleToSignature(t);
@@ -187,7 +187,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
 	public Object[] getOneMatchAsArray(Signature signature) {
@@ -195,11 +195,11 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public Signature getOneMatchAsSignature(Signature signature) {
-		return getOneMatchAsSignature(signature.toArray());
+	public Signature getOneMatch(Signature signature) {
+		return getOneMatch(signature.toArray());
 	}
 	// with input binding as pattern-specific parameters: not declared in interface
 
@@ -212,7 +212,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#hasMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#hasMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
 	public boolean hasMatch(Signature signature) {
@@ -237,7 +237,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#countMatches(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#countMatches(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
 	public int countMatches(Signature signature) {
@@ -277,7 +277,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#signatureToArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#signatureToArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
 	public Object[] signatureToArray(Signature signature) {

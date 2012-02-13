@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
@@ -35,8 +35,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  */
 public class IncqueryFeatureHandler {
 
-	private final IncQueryMatcher<IPatternSignature> matcher;
-	private final DeltaMonitor<IPatternSignature> dm;
+	private final IncQueryMatcher<IPatternMatch> matcher;
+	private final DeltaMonitor<IPatternMatch> dm;
 	private final Runnable processMatchesRunnable;
 	private final InternalEObject source;
 	private final EStructuralFeature feature;
@@ -153,9 +153,9 @@ public class IncqueryFeatureHandler {
 		return manyRefMemory;
 	}
 	
-	private Collection<IPatternSignature> processNewMatches(Collection<IPatternSignature> signatures) throws CoreException {
-		Vector<IPatternSignature> processed = new Vector<IPatternSignature>();
-		for (IPatternSignature signature : signatures) {
+	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws CoreException {
+		Vector<IPatternMatch> processed = new Vector<IPatternMatch>();
+		for (IPatternMatch signature : signatures) {
 			if(source.equals(signature.get(sourceParamName))) {
 				Object target = signature.get(targetParamName);
 				if(target != null) {
@@ -207,9 +207,9 @@ public class IncqueryFeatureHandler {
 		}
 	}
 
-	private Collection<IPatternSignature> processLostMatches(Collection<IPatternSignature> signatures) throws CoreException {
-		Vector<IPatternSignature> processed = new Vector<IPatternSignature>();
-		for (IPatternSignature signature : signatures) {
+	private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws CoreException {
+		Vector<IPatternMatch> processed = new Vector<IPatternMatch>();
+		for (IPatternMatch signature : signatures) {
 			if(source.equals(signature.get(sourceParamName))) {
 				Object target = signature.get(targetParamName);
 				if(target != null) {

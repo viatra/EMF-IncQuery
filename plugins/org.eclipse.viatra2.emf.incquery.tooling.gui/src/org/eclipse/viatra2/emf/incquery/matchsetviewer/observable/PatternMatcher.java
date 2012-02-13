@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
@@ -22,18 +22,18 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
 public class PatternMatcher {
 	
 	private List<PatternMatch> matches;
-	private IncQueryMatcher<? extends IPatternSignature> matcher;
-	private DeltaMonitor<? extends IPatternSignature> deltaMonitor;
+	private IncQueryMatcher<? extends IPatternMatch> matcher;
+	private DeltaMonitor<? extends IPatternMatch> deltaMonitor;
 	private Runnable processMatchesRunnable;
-	private Map<IPatternSignature, PatternMatch> sigMap;
+	private Map<IPatternMatch, PatternMatch> sigMap;
 	private PatternMatcherRoot parent;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this); 
 	private boolean generated;
 	
-	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternSignature> matcher, boolean generated) {
+	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternMatch> matcher, boolean generated) {
 		this.parent = parent;
 		this.matches = new ArrayList<PatternMatch>();
-		this.sigMap = new HashMap<IPatternSignature, PatternMatch>();
+		this.sigMap = new HashMap<IPatternMatch, PatternMatch>();
 		this.matcher = matcher;
 		this.generated = generated;
 		this.deltaMonitor = this.matcher.newDeltaMonitor(true);
@@ -67,19 +67,19 @@ public class PatternMatcher {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 	
-	private void processNewMatches(Collection<? extends IPatternSignature> signatures) {
-		for (IPatternSignature s : signatures) {
+	private void processNewMatches(Collection<? extends IPatternMatch> signatures) {
+		for (IPatternMatch s : signatures) {
 			addSignature(s);
 		}
 	}
 
-	private void processLostMatches(Collection<? extends IPatternSignature> signatures) {
-		for (IPatternSignature s : signatures) {
+	private void processLostMatches(Collection<? extends IPatternMatch> signatures) {
+		for (IPatternMatch s : signatures) {
 			removeSignature(s);
 		}
 	}
 	
-	private void addSignature(IPatternSignature signature) {
+	private void addSignature(IPatternMatch signature) {
 		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
 		PatternMatch pm = new PatternMatch(this, signature);
 		this.sigMap.put(signature, pm);
@@ -87,7 +87,7 @@ public class PatternMatcher {
 		this.propertyChangeSupport.firePropertyChange("matches", oldValue, matches);
 	}
 	
-	private void removeSignature(IPatternSignature signature) {
+	private void removeSignature(IPatternMatch signature) {
 		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
 		this.matches.remove(this.sigMap.remove(signature));
 		this.propertyChangeSupport.firePropertyChange("matches", oldValue, matches);

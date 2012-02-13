@@ -7,9 +7,9 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
-public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternSignature> {
+public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
 
 	private HashMap<String, String> parameterMap;
 	
@@ -23,7 +23,7 @@ public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternSignat
 	}
 
 	@Override
-	public IObservableValue getObservableParameter(IPatternSignature signature,	String parameterName) {
+	public IObservableValue getObservableParameter(IPatternMatch signature,	String parameterName) {
 		if (parameterMap.size() > 0) {
 			String expression = parameterMap.get(parameterName);
 			String[] tokens = expression.split("\\.");

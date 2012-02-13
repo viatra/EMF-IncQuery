@@ -123,10 +123,10 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
           {
             it.setPackageName(mainPackageName);
             EList<JvmTypeReference> _superTypes = it.getSuperTypes();
-            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternSignature.class);
+            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch.class);
             CollectionExtensions.<JvmTypeReference>operator_add(_superTypes, _newTypeRef);
             EList<JvmTypeReference> _superTypes_1 = it.getSuperTypes();
-            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature.class);
+            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch.class);
             CollectionExtensions.<JvmTypeReference>operator_add(_superTypes_1, _newTypeRef_1);
             EList<Variable> _parameters = pattern.getParameters();
             for (final Variable variable : _parameters) {

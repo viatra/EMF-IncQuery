@@ -18,10 +18,10 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
 /**
  * Interface for an EMF-IncQuery matcher associated with a graph pattern.
  * 
- * @param <Signature> the IPatternSignature type representing a single match of this pattern.
+ * @param <Match> the IPatternMatch type representing a single match of this pattern.
  * @author Bergmann Gábor
  */
-public interface IncQueryMatcher<Signature extends IPatternSignature> {
+public interface IncQueryMatcher<Match extends IPatternMatch> {
 	// REFLECTION
 	/** Fully qualified name of pattern. */
 	public abstract String getPatternName();
@@ -41,35 +41,35 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * Returns the set of all pattern matches. 
 	 * @return matches represented as a Signature object.
 	 */
-	public abstract Collection<Signature> getAllMatchesAsSignature();	
+	public abstract Collection<Match> getAllMatches();	
 	// variant(s) with input binding as array
 	/** 
 	 * Returns the set of all pattern matches given some fixed parameters.
-	 * @param signature array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
 	 * @pre size of input array must be equal to the number of parameters. 
 	 * @return matches represented as an array containing the values of each parameter.
 	 */
-	public abstract Collection<Object[]> getAllMatchesAsArray(Object[] signature);
+	public abstract Collection<Object[]> getAllMatchesAsArray(Object[] parameters);
 	/** 
 	 * Returns the set of all pattern matches given some fixed parameters.
-	 * @param signature array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
 	 * @pre size of input array must be equal to the number of parameters.
 	 * @return matches represented as a Signature object.
 	 */
-	public abstract Collection<Signature> getAllMatchesAsSignature(Object[] signature);
-	// variant(s) with input binding as signature object
+	public abstract Collection<Match> getAllMatches(Object[] parameters);
+	// variant(s) with input binding as partial match object
 	/** 
 	 * Returns the set of all pattern matches given some fixed parameters.
-	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @param match a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return matches represented as an array containing the values of each parameter.
 	 */
-	public abstract Collection<Object[]> getAllMatchesAsArray(Signature signature);
+	public abstract Collection<Object[]> getAllMatchesAsArray(Match match);
 	/** 
 	 * Returns the set of all pattern matches given some fixed parameters.
-	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @param match a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return matches represented as a Signature object.
 	 */
-	public abstract Collection<Signature> getAllMatchesAsSignature(Signature signature);
+	public abstract Collection<Match> getAllMatches(Match match);
 	// variant(s) with input binding as pattern-specific parameters: not declared in interface
 		
 	// SINGLE MATCH
@@ -85,39 +85,39 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * Neither determinism nor randomness of selection is guaranteed.  
 	 * @return a match represented as a Signature object, or null if no match is found.
 	 */
-	public abstract Signature getOneMatchAsSignature();
+	public abstract Match getOneMatch();
 	// variant(s) with input binding as array
 	/** 
 	 * Returns an arbitrary pattern match given some fixed parameters.
 	 * Neither determinism nor randomness of selection is guaranteed.
-	 * @param signature array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
 	 * @pre size of input array must be equal to the number of parameters. 
 	 * @return a match represented as an array containing the values of each parameter, or null if no match is found.
 	 */
-	public abstract Object[] getOneMatchAsArray(Object[] signature);
+	public abstract Object[] getOneMatchAsArray(Object[] parameters);
 	/** 
 	 * Returns an arbitrary pattern match given some fixed parameters.
 	 * Neither determinism nor randomness of selection is guaranteed.
-	 * @param signature array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
 	 * @pre size of input array must be equal to the number of parameters. 
 	 * @return a match represented as a Signature object, or null if no match is found.
 	 */
-	public abstract Signature getOneMatchAsSignature(Object[] signature);
-	// variant(s) with input binding as signature object
+	public abstract Match getOneMatch(Object[] parameters);
+	// variant(s) with input binding as partial match object
 	/** 
 	 * Returns an arbitrary pattern match given some fixed parameters.
 	 * Neither determinism nor randomness of selection is guaranteed.
-	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @param match a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return a match represented as an array containing the values of each parameter, or null if no match is found.
 	 */
-	public abstract Object[] getOneMatchAsArray(Signature signature);
+	public abstract Object[] getOneMatchAsArray(Match match);
 	/** 
 	 * Returns an arbitrary pattern match given some fixed parameters.
 	 * Neither determinism nor randomness of selection is guaranteed.
-	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @param match a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return a match represented as a Signature object, or null if no match is found.
 	 */
-	public abstract Signature getOneMatchAsSignature(Signature signature);
+	public abstract Match getOneMatch(Match match);
 	// variant(s) with input binding as pattern-specific parameters: not declared in interface
 	
 	// MATCH CHECKING
@@ -125,18 +125,18 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	/**
 	 * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
 	 * 	under any possible substitution of the unspecified parameters.
-	 * @param signature array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
 	 * @return true if the input is a valid (partial) match of the pattern.
 	 */
-	public abstract boolean hasMatch(Object[] signature);
-	// variant(s) with input binding as signature object
+	public abstract boolean hasMatch(Object[] parameters);
+	// variant(s) with input binding as partial match object
 	/**
 	 * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
 	 * 	under any possible substitution of the unspecified parameters.
-	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @param match a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return true if the input is a valid (partial) match of the pattern.
 	 */
-	public abstract boolean hasMatch(Signature signature);
+	public abstract boolean hasMatch(Match match);
 	// variant(s) with input binding as pattern-specific parameters: not declared in interface
 
 	// NUMBER OF MATCHES
@@ -149,18 +149,18 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	// variant(s) with input binding as array
 	/** 
 	 * Returns the number of all pattern matches given some fixed parameters.
-	 * @param signature array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
 	 * @pre size of input array must be equal to the number of parameters. 
 	 * @return the number of pattern matches found.
 	 */
-	public abstract int countMatches(Object[] signature);
-	// variant(s) with input binding as signature object
+	public abstract int countMatches(Object[] parameters);
+	// variant(s) with input binding as partial match object
 	/** 
 	 * Returns the number of all pattern matches given some fixed parameters.
-	 * @param signature a Signature object where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @param match a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
 	 * @return the number of pattern matches found.
 	 */
-	public abstract int countMatches(Signature signature);
+	public abstract int countMatches(Match match);
 	// variant(s) with input binding as pattern-specific parameters: not declared in interface
 	
 	// CHANGE MONITORING
@@ -174,7 +174,7 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	 * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty. 
 	 * @return the delta monitor.
 	 */
-	public abstract DeltaMonitor<Signature> newDeltaMonitor(boolean fillAtStart);
+	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
 	/**
 	 * Registers a callback that will be run each time EMF-IncQuery match sets are refreshed after a model update.
 	 * Typically useful to check delta monitors. 
@@ -197,8 +197,8 @@ public interface IncQueryMatcher<Signature extends IPatternSignature> {
 	
 	// HELPER
 	/** Converts the array representation of a pattern match to a signature object. */
-	public Signature arrayToSignature(Object[] signature);
+	public Match arrayToSignature(Object[] parameters);
 	/** Converts the signature object of a pattern match to the array representation. */
-	public Object[] signatureToArray(Signature signature);
+	public Object[] signatureToArray(Match match);
 
 }

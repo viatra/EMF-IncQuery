@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 
 /**
  * Generic signature object implementation. 
@@ -26,7 +26,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternSignature;
  *
  */
 @SuppressWarnings("unused")
-public class GenericPatternSignature extends BasePatternSignature implements IPatternSignature {
+public class GenericPatternSignature extends BasePatternMatch implements IPatternMatch {
 
 	private String patternName;
 	private String[] parameterNames;
@@ -46,7 +46,7 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#get(java.lang.String)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#get(java.lang.String)
 	 */
 	@Override
 	public Object get(String parameterName) {
@@ -55,7 +55,7 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#set(java.lang.String, java.lang.Object)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#set(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public boolean set(String parameterName, Object newValue) {
@@ -85,9 +85,9 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof IPatternSignature))
+		if (!(obj instanceof IPatternMatch))
 			return false;
-		IPatternSignature other = (IPatternSignature) obj;
+		IPatternMatch other = (IPatternMatch) obj;
 		if (!patternName.equals(other.patternName()))
 			return false;
 		if (!Arrays.deepEquals(array, other.toArray()))
@@ -96,7 +96,7 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#prettyPrint()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#prettyPrint()
 	 */
 	@Override
 	public String prettyPrint() {
@@ -109,7 +109,7 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#patternName()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#patternName()
 	 */
 	@Override
 	public String patternName() {
@@ -117,7 +117,7 @@ public class GenericPatternSignature extends BasePatternSignature implements IPa
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature#parameterNames()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#parameterNames()
 	 */
 	@Override
 	public String[] parameterNames() {

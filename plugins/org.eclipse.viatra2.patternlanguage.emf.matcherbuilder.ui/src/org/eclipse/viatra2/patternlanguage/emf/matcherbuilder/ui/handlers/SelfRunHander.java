@@ -96,7 +96,7 @@ public class SelfRunHander extends AbstractHandler {
 					GenericPatternMatcher matcher = matcherFactory
 							.getMatcher(resourceSet);
 					Collection<GenericPatternSignature> allMatches = matcher
-							.getAllMatchesAsSignature();
+							.getAllMatches();
 					for (GenericPatternSignature signature : allMatches) {
 						System.out.println("\t\t" + signature.prettyPrint());
 					}

@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -78,7 +78,7 @@ public class IncqueryFeatureHelper {
 			String targetParamName,
 			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind) {
 		try {
-			IncQueryMatcher<IPatternSignature> matcher = matcherFactory.getMatcher(source);
+			IncQueryMatcher<IPatternMatch> matcher = matcherFactory.getMatcher(source);
 			IncqueryFeatureHandler handler = new IncqueryFeatureHandler(
 					(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind);
 			handler.startMonitoring();
