@@ -51,9 +51,10 @@ public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternSign
 	}
 
 	@Override
-	public GenericPatternMatcher instantiate(ReteEngine<String> reteEngine) throws IncQueryRuntimeException {
+	public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException {
+		ReteEngine<String> reteEngine = engine.getReteEngine();
 		try {
-			return new GenericPatternMatcher(patternName, reteEngine, reteEngine.accessMatcher(getPatternName()));
+			return new GenericPatternMatcher(patternName, engine, reteEngine.accessMatcher(getPatternName()));
 		} catch (RetePatternBuildException e) {
 			throw new IncQueryRuntimeException(e);
 		}

@@ -17,7 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
@@ -38,14 +40,16 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 
 	// FIELDS AND CONSTRUCTOR
 	
-	protected ReteEngine<?> engine;
+	protected IncQueryEngine engine;
 	protected RetePatternMatcher patternMatcher;
+	protected ReteEngine<String> reteEngine;
 	private Map<String, Integer> posMapping;
 
-	public BaseMatcher(ReteEngine<?> engine, RetePatternMatcher patternMatcher) {
+	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher) throws IncQueryRuntimeException {
 		super();
 		this.engine = engine;
 		this.patternMatcher = patternMatcher;
+		this.reteEngine = engine.getReteEngine();
 	}
 
 
@@ -246,7 +250,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 */
 	@Override
 	public DeltaMonitor<Signature> newDeltaMonitor(boolean fillAtStart) {
-		DeltaMonitor<Signature> dm = new DeltaMonitor<Signature>(engine.getReteNet().getHeadContainer()) {
+		DeltaMonitor<Signature> dm = new DeltaMonitor<Signature>(reteEngine.getReteNet().getHeadContainer()) {
 			@Override
 			public Signature statelessConvert(Tuple t) {
 				return tupleToSignature(t);
@@ -261,7 +265,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 */
 	@Override
 	public boolean addCallbackAfterUpdates(Runnable callback) {
-		return engine.getAfterUpdateCallbacks().add(callback);
+		return reteEngine.getAfterUpdateCallbacks().add(callback);
 	}
 
 	/* (non-Javadoc)
@@ -269,7 +273,7 @@ public abstract class BaseMatcher<Signature extends IPatternSignature> implement
 	 */
 	@Override
 	public boolean removeCallbackAfterUpdates(Runnable callback) {
-		return engine.getAfterUpdateCallbacks().remove(callback);
+		return reteEngine.getAfterUpdateCallbacks().remove(callback);
 	}
 	
 	/* (non-Javadoc)

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
@@ -38,8 +38,11 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternSignature> 
 	
 	/**
 	 * Wraps the familiar API around an internal matcher object.
+	 * @throws IncQueryRuntimeException 
 	 */
-	GenericPatternMatcher(String patternName, ReteEngine<String> engine, RetePatternMatcher matcher) {
+	GenericPatternMatcher(String patternName, IncQueryEngine engine, RetePatternMatcher matcher) 
+			throws IncQueryRuntimeException 
+	{
 		super(engine, matcher);
 		this.patternName = patternName;		
 	}

@@ -15,9 +15,9 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 
 /**
  * Base implementation of IMatcherFactory.
@@ -27,30 +27,22 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
 public abstract class BaseMatcherFactory<Signature extends IPatternSignature, Matcher extends IncQueryMatcher<Signature>> 
 	implements IMatcherFactory<Signature, Matcher> 
 {
-	public abstract Matcher instantiate(ReteEngine<String> reteEngine) throws IncQueryRuntimeException;
+	public abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.common.notify.Notifier)
-	 */
-	@Override
-	public Matcher getMatcher(Notifier emfRoot) throws IncQueryRuntimeException {
-		return getMatcher(emfRoot, 0);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.common.notify.Notifier, int)
 	 */
 	@Override
-	public Matcher getMatcher(Notifier emfRoot, int numThreads) throws IncQueryRuntimeException {
-		ReteEngine<String> reteEngine = EngineManager.getInstance().getReteEngine(emfRoot, numThreads);
-		return instantiate(reteEngine);
+	public Matcher getMatcher(Notifier emfRoot) throws IncQueryRuntimeException {
+		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(emfRoot);
+		return instantiate(engine);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine)
 	 */
 	@Override
-	public Matcher getMatcher(ReteEngine<String> engine) throws IncQueryRuntimeException {
+	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryRuntimeException {
 		return instantiate(engine);
 	}
 
@@ -71,8 +63,8 @@ public abstract class BaseMatcherFactory<Signature extends IPatternSignature, Ma
 //	@Override
 //	public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException {
 //		try {		
-//			ReteEngine<String> reteEngine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
-//			return instantiate(reteEngine);
+//			IncQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
+//			return instantiate(engine);
 //		} catch (RetePatternBuildException e) {
 //			throw new IncQueryRuntimeException(e);
 //		}
