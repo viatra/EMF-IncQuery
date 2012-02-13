@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.validation.Check;
 
@@ -39,13 +36,14 @@ public class EMFPatternLanguageJavaValidator extends
 
 	@Check
 	public void checkPatternModelPackageImports(PatternModel patternModel) {
-		final Set<EPackage> importedPackages = new HashSet<EPackage>();
-		for (PackageImport pi : patternModel.getImportPackages()) {
-			if (importedPackages.contains(pi.getEPackage())) {
-				warning(DUPLICATE_IMPORT + pi.getEPackage().getName(), pi, EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE, 
-						EMFIssueCodes.DUPLICATE_IMPORT, "");
-			} else {
-				importedPackages.add(pi.getEPackage());
+		for (int i = 0; i < patternModel.getImportPackages().size(); ++i) {
+			EPackage leftPackage = patternModel.getImportPackages().get(i).getEPackage();
+			for (int j = i + 1; j < patternModel.getImportPackages().size(); ++j) {
+				EPackage rightPackage = patternModel.getImportPackages().get(j).getEPackage();
+				if (leftPackage.equals(rightPackage)) {
+					warning(DUPLICATE_IMPORT + leftPackage.getNsURI(), EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, i, EMFIssueCodes.DUPLICATE_IMPORT);
+					warning(DUPLICATE_IMPORT + rightPackage.getNsURI(), EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, j, EMFIssueCodes.DUPLICATE_IMPORT);
+				}
 			}
 		}
 	}

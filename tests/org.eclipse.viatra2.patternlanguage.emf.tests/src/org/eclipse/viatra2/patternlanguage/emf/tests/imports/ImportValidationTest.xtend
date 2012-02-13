@@ -47,6 +47,6 @@ class ImportValidationTest extends AbstractValidatorTest {
 			}
 		') as PatternModel
 		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT));
+		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT));
 	}
 }

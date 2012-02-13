@@ -53,7 +53,8 @@ public class ImportValidationTest extends AbstractValidatorTest {
         this._validationTestHelper.assertNoErrors(model);
         AssertableDiagnostics _validate = this.tester.validate(model);
         DiagnosticPredicate _warningCode = this.getWarningCode(EMFIssueCodes.DUPLICATE_IMPORT);
-        _validate.assertAll(_warningCode);
+        DiagnosticPredicate _warningCode_1 = this.getWarningCode(EMFIssueCodes.DUPLICATE_IMPORT);
+        _validate.assertAll(_warningCode, _warningCode_1);
       }
     } catch (Exception _e) {
       throw Exceptions.sneakyThrow(_e);
