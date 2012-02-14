@@ -13,7 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -94,10 +94,10 @@ public class PatternMatcherRoot {
 				EList<Pattern> patterns = pm.getPatterns();
 				
 				for (Pattern pattern : patterns) {	
-					IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> matcherFactory = 
+					IMatcherFactory<GenericPatternMatch, GenericPatternMatcher> matcherFactory = 
 						PatternRegistry.INSTANCE.getMatcherFactory(pattern);
 		
-					IncQueryMatcher<GenericPatternSignature> matcher = matcherFactory.getMatcher(key.getNotifier());
+					IncQueryMatcher<GenericPatternMatch> matcher = matcherFactory.getMatcher(key.getNotifier());
 					setTmp.add(matcher);
 					addMatcher(matcher, false);
 				}
