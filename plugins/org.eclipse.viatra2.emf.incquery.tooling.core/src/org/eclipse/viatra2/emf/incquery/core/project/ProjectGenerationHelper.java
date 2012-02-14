@@ -1,9 +1,10 @@
 package org.eclipse.viatra2.emf.incquery.core.project;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * A common helper class for generating IncQuery-related projects.
@@ -152,14 +157,26 @@ public abstract class ProjectGenerationHelper {
 	}
 
 	public static void initializeBuildProperties(IProject proj,
-			IProgressMonitor monitor) throws FileNotFoundException,
-			CoreException {
-		/* TODO UGLY: Add the build.properties to the project */
-		File buildProp = IncQueryPlugin.getFileFromBundle(
-				IncQueryNature.BUNDLE_ID,
-				IncQueryNature.SOURCE_BUILD_PROPERTIES);
-		addFileToProject(proj, new Path("build.properties"),
-				new FileInputStream(buildProp), monitor);
+			IProgressMonitor monitor) throws CoreException, IOException {
+		IBuildModel buildModel = PluginRegistry.createBuildModel(PluginRegistry.findModel(proj));
+		IBuildModelFactory factory = buildModel.getFactory();
+		IBuildEntry sourceEntry = factory.createEntry("source..");
+		sourceEntry.addToken(IncQueryNature.SRC_DIR);
+		sourceEntry.addToken(IncQueryNature.SRCGEN_DIR);
+		IBuild build = buildModel.getBuild();
+		build.add(sourceEntry);
+		IBuildEntry binEntry = factory.createEntry("output..");
+		binEntry.addToken("bin");
+		build.add(binEntry);
+		StringWriter sWriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(sWriter);
+		build.write("", writer);
+		writer.flush();
+		sWriter.close();
+		IFile file = (IFile) buildModel.getUnderlyingResource();
+		ByteArrayInputStream stream = new ByteArrayInputStream(sWriter.toString().getBytes("8859_1"));
+		file.setContents(stream, false, false, monitor);
+		stream.close();
 	}
 
 	/**
