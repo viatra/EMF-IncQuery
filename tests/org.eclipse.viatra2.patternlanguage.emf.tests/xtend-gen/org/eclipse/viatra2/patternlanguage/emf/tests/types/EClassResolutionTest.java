@@ -97,7 +97,7 @@ public class EClassResolutionTest {
         final EClassConstraint constraint = ((EClassConstraint) _get_2);
         EntityType _type = constraint.getType();
         final ClassType type = ((ClassType) _type);
-        this._validationTestHelper.assertError(model, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.CLASS_TYPE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EClass");
+        this._validationTestHelper.assertError(type, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.CLASS_TYPE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EClass");
       }
     } catch (Exception _e) {
       throw Exceptions.sneakyThrow(_e);

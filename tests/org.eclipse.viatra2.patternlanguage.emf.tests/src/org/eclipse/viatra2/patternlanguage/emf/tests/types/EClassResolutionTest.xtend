@@ -66,7 +66,7 @@ class EClassResolutionTest {
 		val pattern = model.patterns.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
 		val type = constraint.type as ClassType
-		model.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
+		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
 			Diagnostic::LINKING_DIAGNOSTIC, "reference to EClass")		
 	}
 }

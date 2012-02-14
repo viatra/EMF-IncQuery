@@ -9,7 +9,6 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
 import static org.junit.Assert.*
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
