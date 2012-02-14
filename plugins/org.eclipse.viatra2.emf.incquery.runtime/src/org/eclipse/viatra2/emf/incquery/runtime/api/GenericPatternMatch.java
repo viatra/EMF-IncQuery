@@ -26,7 +26,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
  *
  */
 @SuppressWarnings("unused")
-public class GenericPatternSignature extends BasePatternMatch implements IPatternMatch {
+public class GenericPatternMatch extends BasePatternMatch implements IPatternMatch {
 
 	private String patternName;
 	private String[] parameterNames;
@@ -37,7 +37,7 @@ public class GenericPatternSignature extends BasePatternMatch implements IPatter
 	 * @param posMapping
 	 * @param array
 	 */
-	GenericPatternSignature(String patternName, String[] parameterNames, Map<String, Integer> posMapping, Object[] array) {
+	GenericPatternMatch(String patternName, String[] parameterNames, Map<String, Integer> posMapping, Object[] array) {
 		super();
 		this.patternName = patternName;
 		this.parameterNames = parameterNames;

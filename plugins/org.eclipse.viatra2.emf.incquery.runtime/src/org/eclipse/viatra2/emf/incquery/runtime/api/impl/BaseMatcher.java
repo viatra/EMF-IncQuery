@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -29,14 +30,9 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * Base implementation of IncQueryMatcher.
  * @author Bergmann Gábor
  *
- * @param <Signature>
+ * @param <Match>
  */
-/**
- * @author Bergmann Gábor
- *
- * @param <Signature>
- */
-public abstract class BaseMatcher<Signature extends IPatternMatch> implements IncQueryMatcher<Signature> {
+public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQueryMatcher<Match> {
 
 	// FIELDS AND CONSTRUCTOR
 	
@@ -55,15 +51,17 @@ public abstract class BaseMatcher<Signature extends IPatternMatch> implements In
 
 	// HELPERS
 	
-	protected abstract Signature tupleToSignature(Tuple t);
+	protected abstract Match tupleToMatch(Tuple t);
 
+	private static Object[] fEmptyArray;
 	private Object[] emptyArray() {
-		return new Object[getParameterNames().length];
+		if (fEmptyArray == null) fEmptyArray = new Object[getParameterNames().length];
+		return fEmptyArray;
 	}
 
-	private boolean[] notNull(Object[] signature) {
-		boolean[] notNull = new boolean[signature.length];
-		for (int i=0; i<signature.length; ++i) notNull[i] = signature[i] != null;
+	private boolean[] notNull(Object[] parameters) {
+		boolean[] notNull = new boolean[parameters.length];
+		for (int i=0; i<parameters.length; ++i) notNull[i] = parameters[i] != null;
 		return notNull;
 	}
 	
@@ -90,133 +88,77 @@ public abstract class BaseMatcher<Signature extends IPatternMatch> implements In
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsArray()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatches()
 	 */
 	@Override
-	public Collection<Object[]> getAllMatchesAsArray() {
-		return getAllMatchesAsArray(emptyArray());
+	public Collection<Match> getAllMatches() {
+		return rawGetAllMatches(emptyArray());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllMatches(java.lang.Object[])
 	 */
 	@Override
-	public Collection<Signature> getAllMatches() {
-		return getAllMatches(emptyArray());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsArray(java.lang.Object[])
-	 */
-	@Override
-	public Collection<Object[]> getAllMatchesAsArray(Object[] signature) {
-		ArrayList<Tuple> m = patternMatcher.matchAll(signature, notNull(signature));
-		ArrayList<Object[]> matches = new ArrayList<Object[]>();		
-		//clones the tuples into Object arrays to prevent the Tuples from modifications outside of the ReteMatcher 
-		for(Tuple t: m) matches.add(t.getElements());
+	public Collection<Match> rawGetAllMatches(Object[] parameters) {
+		ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
+		ArrayList<Match> matches = new ArrayList<Match>();		
+		//clones the tuples into a match object to protect the Tuples from modifications outside of the ReteMatcher 
+		for(Tuple t: m) matches.add(tupleToMatch(t));
 		return matches;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature(java.lang.Object[])
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatches(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public Collection<Signature> getAllMatches(Object[] signature) {
-		ArrayList<Tuple> m = patternMatcher.matchAll(signature, notNull(signature));
-		ArrayList<Signature> matches = new ArrayList<Signature>();		
-		//clones the tuples into Object arrays to prevent the Tuples from modifications outside of the ReteMatcher 
-		for(Tuple t: m) matches.add(tupleToSignature(t));
-		return matches;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
-	@Override
-	public Collection<Object[]> getAllMatchesAsArray(Signature signature) {
-		return getAllMatchesAsArray(signature.toArray());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatchesAsSignature(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
-	@Override
-	public Collection<Signature> getAllMatches(Signature signature) {
-		return getAllMatches(signature.toArray());
+	public Collection<Match> getAllMatches(Match partialMatch) {
+		return rawGetAllMatches(partialMatch.toArray());
 	}
 	// with input binding as pattern-specific parameters: not declared in interface
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsArray()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneArbitraryMatch()
 	 */
 	@Override
-	public Object[] getOneMatchAsArray() {
-		return getOneMatchAsArray(emptyArray());
+	public Match getOneArbitraryMatch() {
+		return rawGetOneArbitraryMatch(emptyArray());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetOneArbitraryMatch(java.lang.Object[])
 	 */
 	@Override
-	public Signature getOneMatch() {
-		return getOneMatch(emptyArray());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsArray(java.lang.Object[])
-	 */
-	@Override
-	public Object[] getOneMatchAsArray(Object[] signature) {
-		Tuple t = patternMatcher.matchOne(signature, notNull(signature));
+	public Match rawGetOneArbitraryMatch(Object[] parameters) {
+		Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
 		if(t != null) 
-			return t.getElements();
+			return tupleToMatch(t);
 		else
 			return null; 	
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature(java.lang.Object[])
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneArbitraryMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public Signature getOneMatch(Object[] signature) {
-		Tuple t = patternMatcher.matchOne(signature, notNull(signature));
-		if(t != null) 
-			return tupleToSignature(t);
-		else
-			return null; 	
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
-	@Override
-	public Object[] getOneMatchAsArray(Signature signature) {
-		return getOneMatchAsArray(signature.toArray());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneMatchAsSignature(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
-	@Override
-	public Signature getOneMatch(Signature signature) {
-		return getOneMatch(signature.toArray());
+	public Match getOneArbitraryMatch(Match partialMatch) {
+		return rawGetOneArbitraryMatch(partialMatch.toArray());
 	}
 	// with input binding as pattern-specific parameters: not declared in interface
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#hasMatch(java.lang.Object[])
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawHasMatch(java.lang.Object[])
 	 */
 	@Override
-	public boolean hasMatch(Object[] signature) {
-		return patternMatcher.count(signature, notNull(signature)) > 0;
+	public boolean rawHasMatch(Object[] parameters) {
+		return patternMatcher.count(parameters, notNull(parameters)) > 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#hasMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public boolean hasMatch(Signature signature) {
-		return hasMatch(signature.toArray());
+	public boolean hasMatch(Match partialMatch) {
+		return rawHasMatch(partialMatch.toArray());
 	}
 	// with input binding as pattern-specific parameters: not declared in interface
 
@@ -225,35 +167,94 @@ public abstract class BaseMatcher<Signature extends IPatternMatch> implements In
 	 */
 	@Override
 	public int countMatches() {
-		return countMatches(emptyArray());
+		return rawCountMatches(emptyArray());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#countMatches(java.lang.Object[])
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawCountMatches(java.lang.Object[])
 	 */
 	@Override
-	public int countMatches(Object[] signature) {
-		return patternMatcher.count(signature, notNull(signature));
+	public int rawCountMatches(Object[] parameters) {
+		return patternMatcher.count(parameters, notNull(parameters));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#countMatches(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public int countMatches(Signature signature) {
-		return countMatches(signature.toArray());
+	public int countMatches(Match partialMatch) {
+		return rawCountMatches(partialMatch.toArray());
 	}
 	// with input binding as pattern-specific parameters: not declared in interface
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawForEachMatch(java.lang.Object[], org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+	@Override
+	public void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
+		ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
+		//clones the tuples into match objects to protect the Tuples from modifications outside of the ReteMatcher 
+		for(Tuple t: m) processor.process(tupleToMatch(t));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forEachMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+	@Override
+	public void forEachMatch(IMatchProcessor<? super Match> processor) {
+		rawForEachMatch(emptyArray(), processor);
+	};
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forEachMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+	@Override
+	public void forEachMatch(Match match, IMatchProcessor<? super Match> processor) {
+		rawForEachMatch(match.toArray(), processor);
+	};
+	// with input binding as pattern-specific parameters: not declared in interface
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forOneArbitraryMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+	@Override
+	public boolean forOneArbitraryMatch(IMatchProcessor<? super Match> processor) {
+		return rawForOneArbitraryMatch(emptyArray(), processor);
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forOneArbitraryMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+	@Override
+	public boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor) {
+		return rawForOneArbitraryMatch(partialMatch.toArray(), processor);		
+	};	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawForOneArbitraryMatch(java.lang.Object[], org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+	@Override
+	public boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
+		Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
+		if(t != null) { 
+			processor.process(tupleToMatch(t));
+			return true;
+		} else {
+			return false; 	
+		}
+	}
+	// with input binding as pattern-specific parameters: not declared in interface
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newDeltaMonitor(boolean)
 	 */
 	@Override
-	public DeltaMonitor<Signature> newDeltaMonitor(boolean fillAtStart) {
-		DeltaMonitor<Signature> dm = new DeltaMonitor<Signature>(reteEngine.getReteNet().getHeadContainer()) {
+	public DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart) {
+		DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
 			@Override
-			public Signature statelessConvert(Tuple t) {
-				return tupleToSignature(t);
+			public Match statelessConvert(Tuple t) {
+				return tupleToMatch(t);
 			}
 		};
 		patternMatcher.connect(dm, fillAtStart);
@@ -277,10 +278,10 @@ public abstract class BaseMatcher<Signature extends IPatternMatch> implements In
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#signatureToArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#matchToArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
 	 */
 	@Override
-	public Object[] signatureToArray(Signature signature) {
-		return signature.toArray();
+	public Object[] matchToArray(Match partialMatch) {
+		return partialMatch.toArray();
 	}
 }

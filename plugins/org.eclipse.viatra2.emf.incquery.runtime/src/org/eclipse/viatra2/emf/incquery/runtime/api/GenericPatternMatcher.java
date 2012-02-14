@@ -23,14 +23,14 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * This is a generic pattern matcher for an arbitrary IncQuery pattern.
  * Please instantiate using a GenericMatcherFactory. 
  * 
- * Matches of the pattern will be represented as GenericPatternSignature. 
+ * Matches of the pattern will be represented as GenericPatternMatch. 
  * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
  * 
  * @author Bergmann Gábor
  *
  */
 @SuppressWarnings("unused")
-public class GenericPatternMatcher extends BaseMatcher<GenericPatternSignature> implements IncQueryMatcher<GenericPatternSignature> {
+public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements IncQueryMatcher<GenericPatternMatch> {
 
 	String patternName;
 	private String[] parameterNames;
@@ -72,20 +72,22 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternSignature> 
 		return parameterNames;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#arrayToSignature(java.lang.Object[])
-	 */
-	@Override
-	public GenericPatternSignature arrayToSignature(Object[] signature) {
-		return new GenericPatternSignature(getPatternName(), getParameterNames(), getPosMapping(), signature);
-	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.BaseMatcher#tupleToSignature(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#arrayToMatch(java.lang.Object[])
 	 */
 	@Override
-	protected GenericPatternSignature tupleToSignature(Tuple t) {
-		return new GenericPatternSignature(getPatternName(), getParameterNames(), getPosMapping(), t.getElements());
+	public GenericPatternMatch arrayToMatch(Object[] parameters) {
+		return new GenericPatternMatch(getPatternName(), getParameterNames(), getPosMapping(), parameters);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher#tupleToMatch(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
+	 */
+	@Override
+	protected GenericPatternMatch tupleToMatch(Tuple t) {
+		return new GenericPatternMatch(getPatternName(), getParameterNames(), getPosMapping(), t.getElements());
 	}
 
 }
