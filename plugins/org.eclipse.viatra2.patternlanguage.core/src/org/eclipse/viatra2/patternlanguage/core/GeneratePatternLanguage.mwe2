@@ -131,13 +131,13 @@ Workflow {
 			}
 
             // provides a preference page for template proposals
-            fragment = templates.CodetemplatesGeneratorFragment {}
+            //fragment = templates.CodetemplatesGeneratorFragment {}
 
 
             // provides a compare view
-            fragment = compare.CompareFragment {
-                 fileExtensions = file.extensions
-            }
+//            fragment = compare.CompareFragment {
+//                 fileExtensions = file.extensions
+//            }
 
         }
     }

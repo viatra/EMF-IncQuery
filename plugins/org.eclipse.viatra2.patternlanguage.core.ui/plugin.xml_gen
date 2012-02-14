@@ -303,23 +303,4 @@
         </page>
     </extension>
 
-  <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.compare.contentViewers"
-            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="pattern">
-    </viewer>
-  </extension>
-  <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.compare.contentMergeViewers"
-            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="pattern" label="PatternLanguage Compare">
-     </viewer>
-  </extension>
-  <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.editors.documentProviders"
-            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="pattern">
-    </provider>
-  </extension>
-
 </plugin>
