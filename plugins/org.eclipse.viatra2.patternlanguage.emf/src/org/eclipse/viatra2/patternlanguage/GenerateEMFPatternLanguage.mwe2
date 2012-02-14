@@ -15,7 +15,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var grammarURI = "classpath:/org/eclipse/viatra2/patternlanguage/EMFPatternLanguage.xtext"
-var file.extensions = "emfpattern"
+var file.extensions = "eiq"
 var projectName = "org.eclipse.viatra2.patternlanguage.emf"
 var runtimeProject = "../${projectName}"
 
