@@ -22,14 +22,14 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
  *  and then use the factory to obtain an actual pattern matcher for the pattern. 
  *  
  * The created matcher will be of type GenericPatternMatcher. 
- * Matches of the pattern will be represented as GenericPatternSignature. 
+ * Matches of the pattern will be represented as GenericPatternMatch. 
  * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
  * 
  * @author Bergmann Gábor
  */
 @SuppressWarnings("unused")
-public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternSignature, GenericPatternMatcher> 
-	implements IMatcherFactory<GenericPatternSignature, GenericPatternMatcher>
+public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatch, GenericPatternMatcher> 
+	implements IMatcherFactory<GenericPatternMatch, GenericPatternMatcher>
 {
 	String patternName;
 	

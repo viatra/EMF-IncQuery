@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -39,11 +39,11 @@ public class PatternRegistry {
 		return patternByFQN.get(fqn);
 	}
 	
-	public IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> getMatcherFactory(String fqn) {
+	public IMatcherFactory<GenericPatternMatch, GenericPatternMatcher> getMatcherFactory(String fqn) {
 		if (findPattern(fqn) == null) return null;
 		return new GenericMatcherFactory(fqn);
 	}
-	public IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> getMatcherFactory(Pattern pattern) {
+	public IMatcherFactory<GenericPatternMatch, GenericPatternMatcher> getMatcherFactory(Pattern pattern) {
 		String fqn = fqnOf(pattern);
 		if (findPattern(fqn) == null) registerSingle(pattern); // TODO handle dependencies?
 		return new GenericMatcherFactory(fqn);

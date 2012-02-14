@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternSignature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
@@ -91,13 +91,13 @@ public class SelfRunHander extends AbstractHandler {
 					System.out.println();
 					System.out.println("*** " + pattern.getName() + " ("
 							+ PatternRegistry.fqnOf(pattern) + ")");
-					IMatcherFactory<GenericPatternSignature, GenericPatternMatcher> matcherFactory = PatternRegistry.INSTANCE
+					IMatcherFactory<GenericPatternMatch, GenericPatternMatcher> matcherFactory = PatternRegistry.INSTANCE
 							.getMatcherFactory(pattern);
 					GenericPatternMatcher matcher = matcherFactory
 							.getMatcher(resourceSet);
-					Collection<GenericPatternSignature> allMatches = matcher
+					Collection<GenericPatternMatch> allMatches = matcher
 							.getAllMatches();
-					for (GenericPatternSignature signature : allMatches) {
+					for (GenericPatternMatch signature : allMatches) {
 						System.out.println("\t\t" + signature.prettyPrint());
 					}
 				}
