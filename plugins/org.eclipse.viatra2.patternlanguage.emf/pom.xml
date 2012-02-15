@@ -10,13 +10,4 @@
   </parent>
   <artifactId>org.eclipse.viatra2.patternlanguage.emf</artifactId>
   <packaging>eclipse-plugin</packaging>
-    <build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho.version}</version>
-			</plugin>
-		</plugins>
-	</build>
 </project>
