@@ -25,23 +25,6 @@
 				<artifactId>tycho-source-plugin</artifactId>
 				<version>${tycho.version}</version>
 			</plugin>
-			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-oaw-m2-plugin</artifactId>
-				<version>3.3.0</version>
-				<configuration>
-					<workflowEngine>mwe2</workflowEngine>
-					<workflowDescriptor>src/org/eclipse/viatra2/patternlanguage/core/GeneratePatternLanguage.mwe2</workflowDescriptor>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run-workflow</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<resources>
 			<resource>

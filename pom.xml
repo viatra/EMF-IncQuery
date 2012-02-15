@@ -14,8 +14,10 @@
 		<module>plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
 		<module>plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
 		<module>plugins/org.eclipse.viatra2.emf.incquery.tooling.gui</module>
+		<module>plugins/org.eclipse.viatra2.patternlanguage.core.model</module>
 		<module>plugins/org.eclipse.viatra2.patternlanguage.core</module>
 		<module>plugins/org.eclipse.viatra2.patternlanguage.core.ui</module>
+		<module>plugins/org.eclipse.viatra2.patternlanguage.emf.model</module>
 		<module>plugins/org.eclipse.viatra2.patternlanguage.emf</module>
 		<module>plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>
 		<module>tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
