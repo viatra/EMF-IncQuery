@@ -6,7 +6,7 @@
     <artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
     <groupId>org.eclipse.viatra2</groupId>
     <version>0.6.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
   </parent>
   <artifactId>org.eclipse.viatra2.patternlanguage.core.tests</artifactId>
   <packaging>eclipse-test-plugin</packaging>
