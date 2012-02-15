@@ -53,7 +53,10 @@ Workflow {
             fragment = grammarAccess.GrammarAccessFragment {}
 
             // generates Java API for the generated EPackages
-            fragment = ecore.EcoreGeneratorFragment {}
+            fragment = ecore.EcoreGeneratorFragment {
+            	modelPluginID = "${projectName}.model"
+            	javaModelDirectory = "../${projectName}.model/src-gen"
+            }
 
             // Serializer 2.0
             fragment = serializer.SerializerFragment {}
