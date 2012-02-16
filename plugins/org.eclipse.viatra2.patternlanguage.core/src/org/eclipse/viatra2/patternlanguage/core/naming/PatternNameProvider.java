@@ -12,9 +12,9 @@
 package org.eclipse.viatra2.patternlanguage.core.naming;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.naming.SimpleNameProvider;
@@ -30,8 +30,7 @@ public class PatternNameProvider extends SimpleNameProvider {
 	public QualifiedName getFullyQualifiedName(EObject obj) {
 		if (obj instanceof Pattern) {
 			Pattern pattern = (Pattern) obj;
-			PatternModel model = (PatternModel) pattern.eContainer();
-			return nameConverter.toQualifiedName(model.getPackageName() + "." + pattern.getName());
+			return nameConverter.toQualifiedName(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 		} else if (obj instanceof PatternBody) {
 			PatternBody patternBody = (PatternBody) obj;
 			Pattern pattern = (Pattern) patternBody.eContainer();
