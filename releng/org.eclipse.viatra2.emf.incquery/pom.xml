@@ -21,8 +21,6 @@
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.matcherbuilder</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
