@@ -31,7 +31,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext.EdgeInterpretation;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
-import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BOOLEAN;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
@@ -84,7 +84,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		this.context = context;
 		this.buildable = buildable;
 		
-		patternFQN = new PatternNameProvider().apply(pattern).toString();
+		patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern).toString();
 	}
 	
 	public PSystem<Pattern, StubHandle, Collector> toPSystem() throws RetePatternBuildException {

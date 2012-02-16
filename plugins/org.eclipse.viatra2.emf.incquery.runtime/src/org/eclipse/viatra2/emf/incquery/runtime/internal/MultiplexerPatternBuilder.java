@@ -22,7 +22,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
-import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -61,7 +61,7 @@ public class MultiplexerPatternBuilder implements
 		IStatelessRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
 		if (builder != null) return builder.construct(baseBuildable, context, gtPattern);
 		else throw new RetePatternBuildException("No RETE pattern builder generated for pattern {1}.",
-				new String[]{new PatternNameProvider().apply(gtPattern).toString()}, gtPattern);
+				new String[]{CorePatternLanguageHelper.getFullyQualifiedName(gtPattern).toString()}, gtPattern);
 	}
 
 	/* (non-Javadoc)
