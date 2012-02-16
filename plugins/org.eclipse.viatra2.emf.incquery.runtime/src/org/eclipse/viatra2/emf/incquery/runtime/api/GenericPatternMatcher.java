@@ -14,37 +14,64 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
- * This is a generic pattern matcher for an arbitrary IncQuery pattern.
- * Please instantiate using a GenericMatcherFactory. 
+ * This is a generic pattern matcher for any EMF-IncQuery pattern, with "interpretative" query execution.
  * 
- * Matches of the pattern will be represented as GenericPatternMatch. 
- * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
+ * <p>When available, consider using the pattern-specific generated matcher API instead.
+ * 
+ * <p>Matches of the pattern will be represented as GenericPatternMatch. 
  * 
  * @author Bergmann Gábor
- *
+ * @see GenericPatternMatch
+ * @see GenericMatcherFactory
+ * @see GenericMatchProcessor
  */
 @SuppressWarnings("unused")
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements IncQueryMatcher<GenericPatternMatch> {
 
-	String patternName;
+	Pattern pattern;
 	private String[] parameterNames;
 	
 	
 	/**
-	 * Wraps the familiar API around an internal matcher object.
-	 * @throws IncQueryRuntimeException 
+	 * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
+	 * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
+	 * The match set will be incrementally refreshed upon updates from the given EMF root and below.
+	 * 
+	 * <p>Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the resourceSet but are referenced. 
+	 * 	This is mainly to support nsURI-based instance-level references to registered EPackages.
+	 * 
+	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
+	 * @param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
+	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
 	 */
-	GenericPatternMatcher(String patternName, IncQueryEngine engine, RetePatternMatcher matcher) 
+	public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) 
 			throws IncQueryRuntimeException 
 	{
-		super(engine, matcher);
-		this.patternName = patternName;		
+		this(pattern, EngineManager.getInstance().getIncQueryEngine(emfRoot));
+	}
+	
+	/**
+	 * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+	 * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+	 * The match set will be incrementally refreshed upon updates.
+	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
+	 * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
+	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	 */
+	public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) 
+			throws IncQueryRuntimeException 
+	{
+		super(engine, accessMatcher(pattern, engine));
+		this.pattern = pattern;		
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +79,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	 */
 	@Override
 	public String getPatternName() {
-		return patternName;
+		return pattern.getName();
 	}
 
 	/* (non-Javadoc)
@@ -90,4 +117,13 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 		return new GenericPatternMatch(getPatternName(), getParameterNames(), getPosMapping(), t.getElements());
 	}
 
+	private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) 
+		throws IncQueryRuntimeException 
+	{
+		try {
+			return engine.getReteEngine().accessMatcher(pattern);
+		} catch (RetePatternBuildException e) {
+			throw new IncQueryRuntimeException(e);
+		}
+	}
 }

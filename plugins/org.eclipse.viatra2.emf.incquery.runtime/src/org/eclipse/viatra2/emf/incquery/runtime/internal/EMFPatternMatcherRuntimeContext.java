@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFPatternMatcherContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
@@ -146,24 +145,24 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		@Override
 		public void considerForExpansion(EObject obj) {}
 	}
-	public static class ForTransactionalEditingDomain<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
-		TransactionalEditingDomain domain;
-		public ForTransactionalEditingDomain(TransactionalEditingDomain domain) {
-			super();
-			this.domain = domain;
-		}
-		@Override
-		protected EMFContainmentHierarchyTraversal newTraversal() {
-			return new EMFContainmentHierarchyTraversal(domain.getResourceSet());
-		}
-		@Override
-		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-			return new EMFTransactionalEditingDomainListener(engine, domain, this);
-		}
-		@Override
-		public void considerForExpansion(EObject obj) {}
-
-	}
+//	public static class ForTransactionalEditingDomain<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
+//		TransactionalEditingDomain domain;
+//		public ForTransactionalEditingDomain(TransactionalEditingDomain domain) {
+//			super();
+//			this.domain = domain;
+//		}
+//		@Override
+//		protected EMFContainmentHierarchyTraversal newTraversal() {
+//			return new EMFContainmentHierarchyTraversal(domain.getResourceSet());
+//		}
+//		@Override
+//		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
+//			return new EMFTransactionalEditingDomainListener(engine, domain, this);
+//		}
+//		@Override
+//		public void considerForExpansion(EObject obj) {}
+//
+//	}
 	
 	/**
 	 * Notifier must be EObject, Resource or ResourceSet

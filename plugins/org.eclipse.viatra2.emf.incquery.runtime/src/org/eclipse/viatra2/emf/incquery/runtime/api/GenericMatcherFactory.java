@@ -13,33 +13,36 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
- * This is a generic factory for IncQuery pattern matchers (for which code has been generated).
- * Instantiate the factory with the (fully qualified) name of a registered pattern, 
- *  and then use the factory to obtain an actual pattern matcher for the pattern. 
- *  
- * The created matcher will be of type GenericPatternMatcher. 
- * Matches of the pattern will be represented as GenericPatternMatch. 
- * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
+ * This is a generic factory for EMF-IncQuery pattern matchers, for "interpretative" query execution.
+ * Instantiate the factory with any registered pattern, 
+ *  and then use the factory to obtain an actual pattern matcher operating on a given model. 
  * 
+ * <p>When available, consider using the pattern-specific generated matcher API instead.
+ *  
+ * <p>The created matcher will be of type GenericPatternMatcher. 
+ * Matches of the pattern will be represented as GenericPatternMatch. 
+ * 
+ * @see GenericPatternMatcher
+ * @see GenericPatternMatch
+ * @see GenericMatchProcessor
  * @author Bergmann Gábor
  */
 @SuppressWarnings("unused")
 public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatch, GenericPatternMatcher> 
 	implements IMatcherFactory<GenericPatternMatch, GenericPatternMatcher>
 {
-	String patternName;
+	Pattern pattern;
 	
 	/**
 	 * Initializes a generic pattern factory for a given pattern.
 	 * @param patternName the name of the pattern for which matchers are to be constructed.
 	 */
-	public GenericMatcherFactory(String patternName) {
+	public GenericMatcherFactory(Pattern pattern) {
 		super();
-		this.patternName = patternName;
+		this.pattern = pattern;
 	}
 	
 	/* (non-Javadoc)
@@ -47,17 +50,12 @@ public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatc
 	 */
 	@Override
 	public String getPatternName() {
-		return patternName;
+		return pattern.getName();
 	}
 
 	@Override
 	public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException {
-		ReteEngine<String> reteEngine = engine.getReteEngine();
-		try {
-			return new GenericPatternMatcher(patternName, engine, reteEngine.accessMatcher(getPatternName()));
-		} catch (RetePatternBuildException e) {
-			throw new IncQueryRuntimeException(e);
-		}
+		return new GenericPatternMatcher(pattern, engine);
 	}
 
 }

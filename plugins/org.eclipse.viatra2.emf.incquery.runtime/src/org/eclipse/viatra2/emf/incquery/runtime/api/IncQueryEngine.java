@@ -11,22 +11,20 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.MultiplexerPatternBuilder;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.ViatraEMFPatternmatcherBuildAdvisor;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
@@ -55,7 +53,7 @@ public class IncQueryEngine {
 	/**
 	 * The RETE pattern matcher component of the EMF-IncQuery engine.
 	 */	
-	private ReteEngine<String> reteEngine = null;
+	private ReteEngine<Pattern> reteEngine = null;
 	/**
 	 * EXPERIMENTAL
 	 */
@@ -83,15 +81,15 @@ public class IncQueryEngine {
 	 * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
 	 * @noreference A typical user would not need to call this method.
 	 */
-	public ReteEngine<String> getReteEngine() throws IncQueryRuntimeException {
+	public ReteEngine<Pattern> getReteEngine() throws IncQueryRuntimeException {
 		if (reteEngine == null) {
-			IPatternMatcherRuntimeContext<String> context;
+			IPatternMatcherRuntimeContext<Pattern> context;
 			if (emfRoot instanceof EObject) 
-				context = new EMFPatternMatcherRuntimeContext.ForEObject<String>((EObject)emfRoot);
+				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot);
 			else if (emfRoot instanceof Resource) 
-				context = new EMFPatternMatcherRuntimeContext.ForResource<String>((Resource)emfRoot);
+				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot);
 			else if (emfRoot instanceof ResourceSet) 
-				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<String>((ResourceSet)emfRoot);
+				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot);
 			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 			
 			reteEngine = buildReteEngineInternal(context);
@@ -114,26 +112,27 @@ public class IncQueryEngine {
 		killInternal();
 	}
 	
-	private ReteEngine<String> buildReteEngineInternal(IPatternMatcherRuntimeContext<String> context) 
+	private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) 
 			throws IncQueryRuntimeException 
 	{
-		ReteEngine<String> engine;
-		engine = new ReteEngine<String>(context, reteThreads);
-		ReteContainerBuildable<String> buildable = new ReteContainerBuildable<String>(engine);
-
-		Collection<ViatraEMFPatternmatcherBuildAdvisor> advisors = 
-			BuilderRegistry.getContributedPatternBuildAdvisors();	
-		if (advisors==null || advisors.isEmpty()) {
-			engine.setBuilder(new MultiplexerPatternBuilder(buildable, context));
-			Set<String> patternSet = BuilderRegistry.getContributedStatelessPatternBuilders().keySet(); 
-			try {
-				engine.buildMatchersCoalesced(patternSet);
-			} catch (RetePatternBuildException e) {
-				throw new IncQueryRuntimeException(e);
-			}
-		} else {
-			advisors.iterator().next().applyBuilder(engine, buildable, context);
-		}
+		ReteEngine<Pattern> engine;
+		engine = new ReteEngine<Pattern>(context, reteThreads);
+		ReteContainerBuildable<Pattern> buildable = new ReteContainerBuildable<Pattern>(engine);
+		EPMBuilder<Address<? extends Supplier>, Address<? extends Receiver>> builder = 
+				new EPMBuilder<Address<? extends Supplier>, Address<? extends Receiver>> (buildable, context);
+//		Collection<ViatraEMFPatternmatcherBuildAdvisor> advisors = 
+//			BuilderRegistry.getContributedPatternBuildAdvisors();	
+//		if (advisors==null || advisors.isEmpty()) {			
+			engine.setBuilder(builder);
+//			Set<Pattern> patternSet = BuilderRegistry.getContributedStatelessPatternBuilders().keySet(); 
+//			try {
+//				engine.buildMatchersCoalesced(patternSet);
+//			} catch (RetePatternBuildException e) {
+//				throw new IncQueryRuntimeException(e);
+//			}
+//		} else {
+//			advisors.iterator().next().applyBuilder(engine, buildable, context);
+//		}
 		return engine;
 	}
 

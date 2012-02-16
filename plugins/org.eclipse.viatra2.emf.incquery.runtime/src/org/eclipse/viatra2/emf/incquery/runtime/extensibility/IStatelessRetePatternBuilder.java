@@ -18,13 +18,11 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Re
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Stateless version of IRetePatternBuilder: takes all parameters upon call.
  * Can be registered in BuilderRegistry for those patterns I can build the matcher for.
- * 
- * Patterns are identified by string (PatternDescriptor = String), 
- * 	the actual definition of the pattern should already be known by me.
  * 
  * Only a simple Context is used to parameterize the construction;
  * 	all additional pattern-independent information should also be known by me.
@@ -48,15 +46,15 @@ public interface IStatelessRetePatternBuilder {
 	 *             if construction fails.
 	 */
 	public Address<? extends Receiver> construct(
-			ReteContainerBuildable<String> buildable,
-			IPatternMatcherContext<String> context,
-			String gtPattern) throws RetePatternBuildException;
+			ReteContainerBuildable<Pattern> buildable,
+			IPatternMatcherContext<Pattern> context,
+			Pattern gtPattern) throws RetePatternBuildException;
 	
 	/**
 	 * Extract the position mapping of the graph pattern.
 	 * @return map.
 	 */
-	HashMap<Object, Integer> getPosMapping(String gtPattern);
+	HashMap<Object, Integer> getPosMapping(Pattern gtPattern);
 
 
 }

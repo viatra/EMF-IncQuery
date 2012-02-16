@@ -11,19 +11,10 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
-import org.eclipse.viatra2.emf.incquery.runtime.IStatelessGeneratedRetePatternBuilder;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.ViatraEMFPatternmatcherBuildAdvisor;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Registry class for registering IncQuery pattern builders.
@@ -32,75 +23,75 @@ import org.eclipse.viatra2.emf.incquery.runtime.internal.ViatraEMFPatternmatcher
  */
 public class BuilderRegistry {
 
-	private static Collection<ViatraEMFPatternmatcherBuildAdvisor> contributedPatternBuildAdvisors = new ArrayList<ViatraEMFPatternmatcherBuildAdvisor>();;
+//	private static Collection<ViatraEMFPatternmatcherBuildAdvisor> contributedPatternBuildAdvisors = new ArrayList<ViatraEMFPatternmatcherBuildAdvisor>();;
 
-	private static Map<String, IStatelessRetePatternBuilder> contributedStatelessPatternBuilders = new HashMap<String, IStatelessRetePatternBuilder>();
+	private static Map<Pattern, IStatelessRetePatternBuilder> contributedStatelessPatternBuilders = new HashMap<Pattern, IStatelessRetePatternBuilder>();
 
 	/**
 	 * Called by Activator.
 	 */
 	public static void initRegistry()
 	{
-		contributedPatternBuildAdvisors.clear();
+//		contributedPatternBuildAdvisors.clear();
 		contributedStatelessPatternBuilders.clear();
 		
-		IExtensionRegistry reg = Platform.getExtensionRegistry();	
-		IExtensionPoint poi;
-
-		poi = reg.getExtensionPoint(IExtensions.EXTENSION_POINT_ID);	
-		if (poi != null) 
-		{		
-			IExtension[] exts = poi.getExtensions();
-			
-			for (IExtension ext: exts)
-			{
-				
-				IConfigurationElement[] els = ext.getConfigurationElements();
-				for (IConfigurationElement el : els)
-				{
-					if (el.getName().equals("patternmatcher-builder")) {
-						try
-						{
-							ViatraEMFPatternmatcherBuildAdvisor o = (ViatraEMFPatternmatcherBuildAdvisor)el.createExecutableExtension("build-class");
-							BuilderRegistry.contributedPatternBuildAdvisors.add(o);
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					} else if (el.getName().equals("pattern-builder")) {
-						try
-						{
-							IStatelessGeneratedRetePatternBuilder o = (IStatelessGeneratedRetePatternBuilder)el.createExecutableExtension("build-class");
-							contributedStatelessPatternBuilders.put(el.getAttribute("pattern-fqn"), o);
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					} else {
-						throw new UnsupportedOperationException(
-								"Unknown configuration element " + el.getName() + " in plugin.xml of "
-								+ el.getDeclaringExtension().getUniqueIdentifier());
-					}
-				}
-			}
-		}
+//		IExtensionRegistry reg = Platform.getExtensionRegistry();	
+//		IExtensionPoint poi;
+//
+//		poi = reg.getExtensionPoint(IExtensions.EXTENSION_POINT_ID);	
+//		if (poi != null) 
+//		{		
+//			IExtension[] exts = poi.getExtensions();
+//			
+//			for (IExtension ext: exts)
+//			{
+//				
+//				IConfigurationElement[] els = ext.getConfigurationElements();
+//				for (IConfigurationElement el : els)
+//				{
+//					if (el.getName().equals("patternmatcher-builder")) {
+//						try
+//						{
+//							ViatraEMFPatternmatcherBuildAdvisor o = (ViatraEMFPatternmatcherBuildAdvisor)el.createExecutableExtension("build-class");
+//							BuilderRegistry.contributedPatternBuildAdvisors.add(o);
+//						}
+//						catch (Exception e)
+//						{
+//							e.printStackTrace();
+//						}
+//					} else if (el.getName().equals("pattern-builder")) {
+//						try
+//						{
+//							IStatelessGeneratedRetePatternBuilder o = (IStatelessGeneratedRetePatternBuilder)el.createExecutableExtension("build-class");
+//							contributedStatelessPatternBuilders.put(el.getAttribute("pattern-fqn"), o);
+//						}
+//						catch (Exception e)
+//						{
+//							e.printStackTrace();
+//						}
+//					} else {
+//						throw new UnsupportedOperationException(
+//								"Unknown configuration element " + el.getName() + " in plugin.xml of "
+//								+ el.getDeclaringExtension().getUniqueIdentifier());
+//					}
+//				}
+//			}
+//		}
 	}
 
-	public static Map<String, IStatelessRetePatternBuilder> getContributedStatelessPatternBuilders() {
+	public static Map<Pattern, IStatelessRetePatternBuilder> getContributedStatelessPatternBuilders() {
 		return contributedStatelessPatternBuilders;
 	}	
 	
-	public static Collection<ViatraEMFPatternmatcherBuildAdvisor> getContributedPatternBuildAdvisors() {
-		return contributedPatternBuildAdvisors;
-	}
+//	public static Collection<ViatraEMFPatternmatcherBuildAdvisor> getContributedPatternBuildAdvisors() {
+//		return contributedPatternBuildAdvisors;
+//	}
 
 	/**
 	 * @param patternFQN
 	 * @param builder
 	 */
-	public static void registerStatelessPatternBuilder(String patternFQN,IStatelessRetePatternBuilder builder) {
-		contributedStatelessPatternBuilders.put(patternFQN, builder);
+	public static void registerStatelessPatternBuilder(Pattern pattern,IStatelessRetePatternBuilder builder) {
+		contributedStatelessPatternBuilders.put(pattern, builder);
 	}
 }

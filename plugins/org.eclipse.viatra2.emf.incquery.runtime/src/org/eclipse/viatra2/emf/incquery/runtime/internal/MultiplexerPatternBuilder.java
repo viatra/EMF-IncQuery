@@ -22,6 +22,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
+import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Internal RetePatternBuilder that multiplexes build requests to contributions to the BuilderRegistry.
@@ -30,41 +32,45 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
  *
  */
 public class MultiplexerPatternBuilder implements
-		IRetePatternBuilder<String, Address<? extends Supplier>, Address<? extends Receiver>>
+		IRetePatternBuilder<Pattern, Address<? extends Supplier>, Address<? extends Receiver>>
 {
-	ReteContainerBuildable<String> baseBuildable;
-	IPatternMatcherContext<String> context;
+	ReteContainerBuildable<Pattern> baseBuildable;
+	IPatternMatcherContext<Pattern> context;
+	IRetePatternBuilder<Pattern, Address<? extends Supplier>, Address<? extends Receiver>> fallbackBuilder;
 
 	/**
 	 * @param baseBuildable
 	 * @param context
 	 */
-	public MultiplexerPatternBuilder(ReteContainerBuildable<String> baseBuildable,
-			IPatternMatcherContext<String> context) {
+	public MultiplexerPatternBuilder(
+			ReteContainerBuildable<Pattern> baseBuildable,
+			IPatternMatcherContext<Pattern> context,
+			IRetePatternBuilder<Pattern, Address<? extends Supplier>, Address<? extends Receiver>> fallbackBuilder) {
 		super();
 		this.baseBuildable = baseBuildable;
 		this.context = context;
+		this.fallbackBuilder = fallbackBuilder;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#construct(java.lang.Object)
 	 */
 	@Override
-	public Address<? extends Receiver> construct(String gtPattern)
+	public Address<? extends Receiver> construct(Pattern gtPattern)
 			throws RetePatternBuildException {
 		IStatelessRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
 		if (builder != null) return builder.construct(baseBuildable, context, gtPattern);
 		else throw new RetePatternBuildException("No RETE pattern builder generated for pattern {1}.",
-				new String[]{gtPattern}, gtPattern);
+				new String[]{new PatternNameProvider().apply(gtPattern).toString()}, gtPattern);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#getPosMapping(java.lang.Object)
 	 */
 	@Override
-	public HashMap<Object, Integer> getPosMapping(String gtPattern) {
-		IStatelessRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(gtPattern);
-		if (builder != null) return builder.getPosMapping(gtPattern); else return null;
+	public HashMap<Object, Integer> getPosMapping(Pattern pattern) {
+		IStatelessRetePatternBuilder builder = BuilderRegistry.getContributedStatelessPatternBuilders().get(pattern);
+		if (builder != null) return builder.getPosMapping(pattern); else return fallbackBuilder.getPosMapping(pattern);
 	}
 
 	/* (non-Javadoc)
@@ -87,7 +93,7 @@ public class MultiplexerPatternBuilder implements
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#getContext()
 	 */
 	@Override
-	public IPatternMatcherContext<String> getContext() {
+	public IPatternMatcherContext<Pattern> getContext() {
 		return context;
 	}
 

@@ -25,6 +25,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Base implementation of IncQueryMatcher.
@@ -38,7 +39,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	
 	protected IncQueryEngine engine;
 	protected RetePatternMatcher patternMatcher;
-	protected ReteEngine<String> reteEngine;
+	protected ReteEngine<Pattern> reteEngine;
 	private Map<String, Integer> posMapping;
 
 	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher) throws IncQueryRuntimeException {

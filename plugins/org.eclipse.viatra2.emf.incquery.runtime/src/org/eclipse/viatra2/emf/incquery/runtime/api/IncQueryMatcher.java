@@ -134,11 +134,9 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * Registers a callback that will be run each time EMF-IncQuery match sets are refreshed after a model update.
 	 * Typically useful to check delta monitors. 
 	 * When the callback is issued, the pattern match sets are guaranteed to reflect the post-state after the update.
-	 * <p> If the pattern matcher is registered on an EMF TransactionalEditingDomain,
-	 * 	callbacks are issued after each transaction.
-	 * However if the pattern matcher is registered on an EMF Notifier (typically Resource or ResourceSet),
-	 * 	callbacks are issued after each elementary change (i.e. possibly at incomplete transient states).
-	 *  Therefore in this case, some higher-level source of invocation is preferable.	
+	 * <p> Callbacks are issued after each elementary change (i.e. possibly at incomplete transient states).
+	 * This can have a negative effect on performance, therefore clients are advised to use it as a last resort only.
+	 *   Consider coarser-grained timing (e.g EMF Transaction pre/post-commit) instead, whenever available.	
 	 * @param callback a Runnable to execute after each update.
 	 * @return false if the callback was already registered.
 	 */
