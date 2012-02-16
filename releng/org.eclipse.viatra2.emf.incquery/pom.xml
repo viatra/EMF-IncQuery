@@ -89,10 +89,6 @@
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho.version}</version>
-					<configuration>
-						<showWarnings>true</showWarnings>
-						<!-- <compilerArgument>-warn:+assertIdentifier,charConcat,compareIdentical,constructorName,deadCode,deprecation,discouraged,enumIdentifier,finalBound,finally,forbidden,intfAnnotation,intfNonInherited,maskedCatchBlock,noEffectAssign,pkgDefaultMethod,raw,serial,staticReceiver,suppress,typeHiding,unavoidableGenericProblems,unchecked,unusedImport,unusedLabel,unusedLocal,unusedPrivate,unusedTypeArgs,varargsCast,warningToken</compilerArgument> -->
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
