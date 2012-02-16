@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -19,12 +20,23 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePat
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
- * Performs the initialization of a BaseMatcher so that it is adapted to the EMF-IncQuery runtime component.
+ * Provides common functionality of pattern-specific generated matchers.
  * @author Bergmann Gábor
  * @param <Signature>
  *
  */
 public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> extends BaseMatcher<Signature> {
+	
+	protected IMatcherFactory<Signature, ? extends BaseGeneratedMatcher<Signature>> factory;
+	
+	public BaseGeneratedMatcher(
+			IncQueryEngine engine, 
+			IMatcherFactory<Signature, ? extends BaseGeneratedMatcher<Signature>> factory) 
+			throws IncQueryRuntimeException 
+	{
+		super(engine, accessMatcher(engine, factory.getPattern()));
+		this.factory = factory;
+	}
 	
 	static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryRuntimeException {
 		try {
@@ -34,13 +46,21 @@ public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> exte
 		}
 	}
 	
-	/**
-	 * @param engine
-	 * @param patternMatcher
-	 * @throws RetePatternBuildException 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPattern()
 	 */
-	public BaseGeneratedMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryRuntimeException {
-		super(engine, accessMatcher(engine, pattern));
+	@Override
+	public Pattern getPattern() {
+		return factory.getPattern();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPatternName()
+	 */
+	@Override
+	public String getPatternName() {
+		return factory.getPatternFullyQualifiedName();
 	}
 	
 }

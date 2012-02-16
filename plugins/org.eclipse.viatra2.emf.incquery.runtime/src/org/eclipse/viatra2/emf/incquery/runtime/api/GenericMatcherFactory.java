@@ -34,7 +34,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatch, GenericPatternMatcher> 
 	implements IMatcherFactory<GenericPatternMatch, GenericPatternMatcher>
 {
-	Pattern pattern;
+	public Pattern pattern;
 	
 	/**
 	 * Initializes a generic pattern factory for a given pattern.
@@ -46,16 +46,20 @@ public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatc
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPatternName()
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPattern()
 	 */
 	@Override
-	public String getPatternName() {
-		return pattern.getName();
-	}
-
+	public Pattern getPattern() {
+		return pattern;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory#instantiate(org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine)
+	 */
 	@Override
 	public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException {
 		return new GenericPatternMatcher(pattern, engine);
 	}
+
 
 }

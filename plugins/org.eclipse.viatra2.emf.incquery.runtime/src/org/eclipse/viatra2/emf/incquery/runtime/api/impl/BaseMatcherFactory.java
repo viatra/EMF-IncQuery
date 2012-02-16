@@ -18,6 +18,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 
 /**
  * Base implementation of IMatcherFactory.
@@ -27,7 +28,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
 public abstract class BaseMatcherFactory<Signature extends IPatternMatch, Matcher extends IncQueryMatcher<Signature>> 
 	implements IMatcherFactory<Signature, Matcher> 
 {
-	public abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException;
+
+	protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.common.notify.Notifier, int)
@@ -44,6 +46,17 @@ public abstract class BaseMatcherFactory<Signature extends IPatternMatch, Matche
 	@Override
 	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryRuntimeException {
 		return instantiate(engine);
+	}
+
+	private String fullyQualifiedName;
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPatternFullyQualifiedName()
+	 */
+	@Override
+	public String getPatternFullyQualifiedName() {
+		if (fullyQualifiedName == null) 
+			fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
+		return fullyQualifiedName;
 	}
 
 

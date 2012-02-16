@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.Collection;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Interface for an EMF-IncQuery matcher associated with a graph pattern.
@@ -23,7 +24,9 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  */
 public interface IncQueryMatcher<Match extends IPatternMatch> {
 	// REFLECTION
-	/** Fully qualified name of pattern. */
+	/** The pattern that will be matched. */
+	public abstract Pattern getPattern();
+	/** Fully qualified name of the pattern. */
 	public abstract String getPatternName();
 	/** Returns the index of the symbolic parameter with the given name. */
 	public abstract Integer getPositionOfParameter(String parameterName);

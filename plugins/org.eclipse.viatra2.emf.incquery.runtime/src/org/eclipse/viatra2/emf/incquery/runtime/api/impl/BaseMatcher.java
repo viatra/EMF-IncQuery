@@ -13,8 +13,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -25,6 +25,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEng
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -40,7 +41,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	protected IncQueryEngine engine;
 	protected RetePatternMatcher patternMatcher;
 	protected ReteEngine<Pattern> reteEngine;
-	private Map<String, Integer> posMapping;
 
 	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher) throws IncQueryRuntimeException {
 		super();
@@ -56,7 +56,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
 	private static Object[] fEmptyArray;
 	private Object[] emptyArray() {
-		if (fEmptyArray == null) fEmptyArray = new Object[getParameterNames().length];
+		if (fEmptyArray == null) fEmptyArray = new Object[getPattern().getParameters().size()];
 		return fEmptyArray;
 	}
 
@@ -66,20 +66,16 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		return notNull;
 	}
 	
+	// REFLECTION
+	
+	private Map<String, Integer> posMapping;
 	protected Map<String, Integer> getPosMapping() {
 		if (posMapping == null)
 		{
-			posMapping = new HashMap<String, Integer>();
-			int parameterPosition = 0;
-			for (String parameterName : getParameterNames()) {
-				posMapping.put(parameterName, parameterPosition++);
-			}
+			posMapping = CorePatternLanguageHelper.getParameterPositionsByName(getPattern());
 		}
 		return posMapping;
 	}	
- 
-	// BASE IMPLEMENTATION
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPositionOfParameter(java.lang.String)
 	 */
@@ -87,6 +83,24 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	public Integer getPositionOfParameter(String parameterName) {
 		return getPosMapping().get(parameterName);
 	}
+	
+	private String[] parameterNames;
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getParameterNames()
+	 */
+	@Override
+	public String[] getParameterNames() {
+		if (parameterNames == null) {
+			Map<String, Integer> rawPosMapping = getPosMapping();
+			parameterNames = new String[rawPosMapping.size()];
+			for (Entry<String, Integer> entry : rawPosMapping.entrySet()) {
+				parameterNames[entry.getValue()] = entry.getKey();
+			}
+		}
+		return parameterNames;
+	}
+
+	// BASE IMPLEMENTATION
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatches()

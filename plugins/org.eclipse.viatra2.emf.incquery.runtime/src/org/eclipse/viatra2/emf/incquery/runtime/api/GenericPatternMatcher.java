@@ -11,15 +11,13 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -38,7 +36,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements IncQueryMatcher<GenericPatternMatch> {
 
 	Pattern pattern;
-	private String[] parameterNames;
 	
 	
 	/**
@@ -73,32 +70,25 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 		super(engine, accessMatcher(pattern, engine));
 		this.pattern = pattern;		
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPattern()
+	 */
+	@Override
+	public Pattern getPattern() {
+		return pattern;
+	}
+	
+	private String fullyQualifiedName;
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPatternName()
 	 */
 	@Override
 	public String getPatternName() {
-		return pattern.getName();
+		if (fullyQualifiedName == null) 
+			fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
+		return fullyQualifiedName;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getParameterNames()
-	 */
-	@Override
-	public String[] getParameterNames() {
-		if (parameterNames == null) {
-			HashMap<Object, Integer> rawPosMapping = patternMatcher.getPosMapping();
-			parameterNames = new String[rawPosMapping.size()];
-			for (Entry<Object, Integer> entry : rawPosMapping.entrySet()) {
-				Object key = entry.getKey();
-				if (key instanceof String) 
-					parameterNames[entry.getValue()] = (String) key;
-			}
-		}
-		return parameterNames;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#arrayToMatch(java.lang.Object[])

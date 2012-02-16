@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Interface for an IncQuery matcher factory.
@@ -24,10 +25,14 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
  */
 public interface IMatcherFactory<Signature extends IPatternMatch, Matcher extends IncQueryMatcher<Signature>> {
 	
+	/** 
+	 * @returns the pattern for which matchers can be instantiated. 
+	 */
+	public Pattern getPattern();
 	/**
 	 * Identifies the pattern for which matchers can be instantiated. 
 	 */
-	public String getPatternName();
+	public String getPatternFullyQualifiedName();
 	
 	/**
 	 * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
