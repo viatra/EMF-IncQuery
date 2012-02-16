@@ -9,15 +9,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>org.eclipse.viatra2.patternlanguage.core</artifactId>
-  <packaging>eclipse-plugin</packaging>
-  <dependencies>
-     <dependency>
-        <groupId>org.eclipse.viatra2</groupId>
-        <artifactId>org.eclipse.viatra2.patternlanguage.generator.util</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
-        <scope>generate-sources</scope>
-    </dependency>
-  </dependencies> 
+  <packaging>eclipse-plugin</packaging> 
   <build>
 		<plugins>
 			<plugin>
