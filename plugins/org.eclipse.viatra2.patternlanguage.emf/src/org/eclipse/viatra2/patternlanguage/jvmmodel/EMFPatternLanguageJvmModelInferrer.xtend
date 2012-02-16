@@ -13,6 +13,8 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel
 import com.google.inject.Inject
 import java.util.Arrays
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
@@ -24,7 +26,6 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.util.IAcceptor
 import org.eclipse.xtext.xbase.compiler.ImportManager
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -39,7 +40,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */
-	@Inject extension JvmTypesBuilder
+	@Inject extension org.eclipse.viatra2.patternlanguage.jvmmodel.EMFJvmTypesBuilder
    	
 	/**
 	 * Is called for each Pattern instance in a resource.
@@ -87,7 +88,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    				}
    				it.body = ['''
    					«FOR variable : pattern.parameters»
-   					this.«variable.name» = «variable.name»;
+   					this.«variable.fieldName» = «variable.name»;
    					«ENDFOR»
    				''']
    			]
@@ -276,4 +277,3 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		}
    	}
 }
-

@@ -15,6 +15,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
+import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFJvmTypesBuilder;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmAnnotationReference;
 import org.eclipse.xtext.common.types.JvmConstructor;
@@ -30,7 +31,6 @@ import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -52,7 +52,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    * convenience API to build and initialize JvmTypes and their members.
    */
   @Inject
-  private JvmTypesBuilder _jvmTypesBuilder;
+  private EMFJvmTypesBuilder _eMFJvmTypesBuilder;
   
   /**
    * Is called for each Pattern instance in a resource.
@@ -82,22 +82,22 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
           {
             it.setPackageName(mainPackageName);
             EList<JvmTypeReference> _superTypes = it.getSuperTypes();
-            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch.class);
+            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch.class);
             CollectionExtensions.<JvmTypeReference>operator_add(_superTypes, _newTypeRef);
             EList<JvmTypeReference> _superTypes_1 = it.getSuperTypes();
-            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch.class);
+            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch.class);
             CollectionExtensions.<JvmTypeReference>operator_add(_superTypes_1, _newTypeRef_1);
             EList<Variable> _parameters = pattern.getParameters();
             for (final Variable variable : _parameters) {
               EList<JvmMember> _members = it.getMembers();
               String _fieldName = EMFPatternLanguageJvmModelInferrer.this.fieldName(variable);
               JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(variable);
-              JvmField _field = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toField(pattern, _fieldName, _calculateType);
+              JvmField _field = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toField(pattern, _fieldName, _calculateType);
               CollectionExtensions.<JvmField>operator_add(_members, _field);
             }
             EList<JvmMember> _members_1 = it.getMembers();
-            JvmTypeReference _newTypeRef_2 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
-            JvmTypeReference _addArrayTypeDimension = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.addArrayTypeDimension(_newTypeRef_2);
+            JvmTypeReference _newTypeRef_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+            JvmTypeReference _addArrayTypeDimension = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.addArrayTypeDimension(_newTypeRef_2);
             final Procedure1<JvmField> _function = new Procedure1<JvmField>() {
                 public void apply(final JvmField it) {
                   final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
@@ -123,10 +123,10 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                         return _builder;
                       }
                     };
-                  EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setInitializer(it, _function);
+                  EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setInitializer(it, _function);
                 }
               };
-            JvmField _field_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toField(pattern, "parameterNames", _addArrayTypeDimension, _function);
+            JvmField _field_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toField(pattern, "parameterNames", _addArrayTypeDimension, _function);
             CollectionExtensions.<JvmField>operator_add(_members_1, _field_1);
             EList<JvmMember> _members_2 = it.getMembers();
             String _matchClassName = EMFPatternLanguageJvmModelInferrer.this.matchClassName(pattern);
@@ -141,7 +141,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                         final JvmTypeReference javaType = _calculateType;
                         EList<JvmFormalParameter> _parameters_1 = it.getParameters();
                         String _name = variable.getName();
-                        JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(variable, _name, javaType);
+                        JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(variable, _name, javaType);
                         CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                       }
                     }
@@ -152,11 +152,11 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                             EList<Variable> _parameters = pattern.getParameters();
                             for(final Variable variable : _parameters) {
                               _builder.append("this.");
+                              String _fieldName = EMFPatternLanguageJvmModelInferrer.this.fieldName(variable);
+                              _builder.append(_fieldName, "");
+                              _builder.append(" = ");
                               String _name = variable.getName();
                               _builder.append(_name, "");
-                              _builder.append(" = ");
-                              String _name_1 = variable.getName();
-                              _builder.append(_name_1, "");
                               _builder.append(";");
                               _builder.newLineIfNotEmpty();
                             }
@@ -164,19 +164,19 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmConstructor _constructor = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toConstructor(pattern, _matchClassName, _function_1);
+            JvmConstructor _constructor = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toConstructor(pattern, _matchClassName, _function_1);
             CollectionExtensions.<JvmConstructor>operator_add(_members_2, _constructor);
             EList<JvmMember> _members_3 = it.getMembers();
-            JvmTypeReference _newTypeRef_3 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+            JvmTypeReference _newTypeRef_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
             final Procedure1<JvmOperation> _function_2 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -189,23 +189,23 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "patternName", _newTypeRef_3, _function_2);
+            JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "patternName", _newTypeRef_3, _function_2);
             CollectionExtensions.<JvmOperation>operator_add(_members_3, _method);
             EList<JvmMember> _members_4 = it.getMembers();
-            JvmTypeReference _newTypeRef_4 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
+            JvmTypeReference _newTypeRef_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
             final Procedure1<JvmOperation> _function_3 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     EList<JvmFormalParameter> _parameters = it.getParameters();
-                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
-                    JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(pattern, "parameterName", _newTypeRef);
+                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+                    JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "parameterName", _newTypeRef);
                     CollectionExtensions.<JvmFormalParameter>operator_add(_parameters, _parameter);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -228,11 +228,11 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "get", _newTypeRef_4, _function_3);
+            JvmOperation _method_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "get", _newTypeRef_4, _function_3);
             CollectionExtensions.<JvmOperation>operator_add(_members_4, _method_1);
             EList<Variable> _parameters_1 = pattern.getParameters();
             for (final Variable variable_1 : _parameters_1) {
@@ -254,27 +254,27 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 };
-              JvmOperation _method_2 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, _operator_plus, _calculateType_1, _function_4);
+              JvmOperation _method_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, _operator_plus, _calculateType_1, _function_4);
               CollectionExtensions.<JvmOperation>operator_add(_members_5, _method_2);
             }
             EList<JvmMember> _members_6 = it.getMembers();
-            JvmTypeReference _newTypeRef_5 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, boolean.class);
+            JvmTypeReference _newTypeRef_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
             final Procedure1<JvmOperation> _function_5 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     EList<JvmFormalParameter> _parameters = it.getParameters();
-                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
-                    JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(pattern, "parameterName", _newTypeRef);
+                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+                    JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "parameterName", _newTypeRef);
                     CollectionExtensions.<JvmFormalParameter>operator_add(_parameters, _parameter);
                     EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                    JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
-                    JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(pattern, "newValue", _newTypeRef_1);
+                    JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
+                    JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "newValue", _newTypeRef_1);
                     CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter_1);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -313,11 +313,11 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_3 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "set", _newTypeRef_5, _function_5);
+            JvmOperation _method_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "set", _newTypeRef_5, _function_5);
             CollectionExtensions.<JvmOperation>operator_add(_members_6, _method_3);
             EList<Variable> _parameters_2 = pattern.getParameters();
             for (final Variable variable_2 : _parameters_2) {
@@ -331,7 +331,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                       EList<JvmFormalParameter> _parameters = it.getParameters();
                       String _name = variable_2.getName();
                       JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(variable_2);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(pattern, _name, _calculateType);
+                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, _name, _calculateType);
                       CollectionExtensions.<JvmFormalParameter>operator_add(_parameters, _parameter);
                       final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                           public CharSequence apply(final ImportManager it) {
@@ -347,21 +347,21 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                             return _builder;
                           }
                         };
-                      EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                      EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                     }
                   }
                 };
-              JvmOperation _method_4 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, _operator_plus_1, null, _function_6);
+              JvmOperation _method_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, _operator_plus_1, null, _function_6);
               CollectionExtensions.<JvmOperation>operator_add(_members_7, _method_4);
             }
             EList<JvmMember> _members_8 = it.getMembers();
-            JvmTypeReference _newTypeRef_6 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
-            JvmTypeReference _addArrayTypeDimension_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.addArrayTypeDimension(_newTypeRef_6);
+            JvmTypeReference _newTypeRef_6 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+            JvmTypeReference _addArrayTypeDimension_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.addArrayTypeDimension(_newTypeRef_6);
             final Procedure1<JvmOperation> _function_7 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -371,20 +371,20 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_5 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "parameterNames", _addArrayTypeDimension_1, _function_7);
+            JvmOperation _method_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "parameterNames", _addArrayTypeDimension_1, _function_7);
             CollectionExtensions.<JvmOperation>operator_add(_members_8, _method_5);
             EList<JvmMember> _members_9 = it.getMembers();
-            JvmTypeReference _newTypeRef_7 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
-            JvmTypeReference _addArrayTypeDimension_2 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.addArrayTypeDimension(_newTypeRef_7);
+            JvmTypeReference _newTypeRef_7 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
+            JvmTypeReference _addArrayTypeDimension_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.addArrayTypeDimension(_newTypeRef_7);
             final Procedure1<JvmOperation> _function_8 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -408,19 +408,19 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_6 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "toArray", _addArrayTypeDimension_2, _function_8);
+            JvmOperation _method_6 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "toArray", _addArrayTypeDimension_2, _function_8);
             CollectionExtensions.<JvmOperation>operator_add(_members_9, _method_6);
             EList<JvmMember> _members_10 = it.getMembers();
-            JvmTypeReference _newTypeRef_8 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+            JvmTypeReference _newTypeRef_8 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
             final Procedure1<JvmOperation> _function_9 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -445,19 +445,19 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_7 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "prettyPrint", _newTypeRef_8, _function_9);
+            JvmOperation _method_7 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "prettyPrint", _newTypeRef_8, _function_9);
             CollectionExtensions.<JvmOperation>operator_add(_members_10, _method_7);
             EList<JvmMember> _members_11 = it.getMembers();
-            JvmTypeReference _newTypeRef_9 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, int.class);
+            JvmTypeReference _newTypeRef_9 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, int.class);
             final Procedure1<JvmOperation> _function_10 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -484,23 +484,23 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_8 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "hashCode", _newTypeRef_9, _function_10);
+            JvmOperation _method_8 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "hashCode", _newTypeRef_9, _function_10);
             CollectionExtensions.<JvmOperation>operator_add(_members_11, _method_8);
             EList<JvmMember> _members_12 = it.getMembers();
-            JvmTypeReference _newTypeRef_10 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, boolean.class);
+            JvmTypeReference _newTypeRef_10 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
             final Procedure1<JvmOperation> _function_11 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
-                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     EList<JvmFormalParameter> _parameters = it.getParameters();
-                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
-                    JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(pattern, "obj", _newTypeRef);
+                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
+                    JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "obj", _newTypeRef);
                     CollectionExtensions.<JvmFormalParameter>operator_add(_parameters, _parameter);
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
@@ -508,16 +508,16 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _equalsMethodBody;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method_9 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "equals", _newTypeRef_10, _function_11);
+            JvmOperation _method_9 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "equals", _newTypeRef_10, _function_11);
             CollectionExtensions.<JvmOperation>operator_add(_members_12, _method_9);
           }
         }
       };
-    JvmGenericType _class = this._jvmTypesBuilder.toClass(pattern, _matchClassName, _function);
+    JvmGenericType _class = this._eMFJvmTypesBuilder.toClass(pattern, _matchClassName, _function);
     return _class;
   }
   
@@ -528,21 +528,21 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
           {
             it.setPackageName(mainPackageName);
             EList<JvmTypeReference> _superTypes = it.getSuperTypes();
-            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher.class);
+            JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher.class);
             CollectionExtensions.<JvmTypeReference>operator_add(_superTypes, _newTypeRef);
             EList<JvmMember> _members = it.getMembers();
-            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+            JvmTypeReference _newTypeRef_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
             final Procedure1<JvmOperation> _function = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
                     EList<Variable> _parameters = pattern.getParameters();
                     for (final Variable parameter : _parameters) {
                       {
-                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
+                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
                         final JvmTypeReference javaType = _newTypeRef;
                         EList<JvmFormalParameter> _parameters_1 = it.getParameters();
                         String _name = parameter.getName();
-                        JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toParameter(parameter, _name, javaType);
+                        JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, javaType);
                         CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                       }
                     }
@@ -557,21 +557,21 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           return _builder;
                         }
                       };
-                    EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.setBody(it, _function);
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
                   }
                 }
               };
-            JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._jvmTypesBuilder.toMethod(pattern, "getAllMatches", _newTypeRef_1, _function);
+            JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "getAllMatches", _newTypeRef_1, _function);
             CollectionExtensions.<JvmOperation>operator_add(_members, _method);
           }
         }
       };
-    JvmGenericType _class = this._jvmTypesBuilder.toClass(pattern, _matcherClassName, _function);
+    JvmGenericType _class = this._eMFJvmTypesBuilder.toClass(pattern, _matcherClassName, _function);
     return _class;
   }
   
   public CharSequence equalsMethodBody(final Pattern pattern, final ImportManager importManager) {
-      JvmTypeReference _newTypeRef = this._jvmTypesBuilder.newTypeRef(pattern, java.util.Arrays.class);
+      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, java.util.Arrays.class);
       JvmType _type = _newTypeRef.getType();
       importManager.addImportFor(_type);
       StringConcatenation _builder = new StringConcatenation();
@@ -675,7 +675,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     if (_operator_and) {
       Type _type_2 = variable.getType();
       String _typename_1 = _type_2.getTypename();
-      JvmTypeReference _newTypeRef = this._jvmTypesBuilder.newTypeRef(variable, _typename_1);
+      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, _typename_1);
       return _newTypeRef;
     } else {
       {
@@ -711,7 +711,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                           EClass _classname = ((ClassType) entityType).getClassname();
                           Class<? extends Object> _instanceClass = _classname.getInstanceClass();
                           final Class<? extends Object> clazz = _instanceClass;
-                          JvmTypeReference _newTypeRef_1 = this._jvmTypesBuilder.newTypeRef(variable, clazz);
+                          JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
                           final JvmTypeReference typeref = _newTypeRef_1;
                           boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(typeref, null);
                           if (_operator_notEquals_1) {
@@ -726,7 +726,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
             }
           }
         }
-        JvmTypeReference _newTypeRef_2 = this._jvmTypesBuilder.newTypeRef(variable, java.lang.Object.class);
+        JvmTypeReference _newTypeRef_2 = this._eMFJvmTypesBuilder.newTypeRef(variable, java.lang.Object.class);
         return _newTypeRef_2;
       }
     }
