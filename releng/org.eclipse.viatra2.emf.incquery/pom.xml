@@ -46,15 +46,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>maven-osgi-compiler-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<showWarnings>true</showWarnings>
-					<!-- <compilerArgument>-warn:+assertIdentifier,charConcat,compareIdentical,constructorName,deadCode,deprecation,discouraged,enumIdentifier,finalBound,finally,forbidden,intfAnnotation,intfNonInherited,maskedCatchBlock,noEffectAssign,pkgDefaultMethod,raw,serial,staticReceiver,suppress,typeHiding,unavoidableGenericProblems,unchecked,unusedImport,unusedLabel,unusedLocal,unusedPrivate,unusedTypeArgs,varargsCast,warningToken</compilerArgument> -->
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
@@ -92,6 +83,35 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-compiler-plugin</artifactId>
+					<version>${tycho.version}</version>
+					<configuration>
+						<showWarnings>true</showWarnings>
+						<!-- <compilerArgument>-warn:+assertIdentifier,charConcat,compareIdentical,constructorName,deadCode,deprecation,discouraged,enumIdentifier,finalBound,finally,forbidden,intfAnnotation,intfNonInherited,maskedCatchBlock,noEffectAssign,pkgDefaultMethod,raw,serial,staticReceiver,suppress,typeHiding,unavoidableGenericProblems,unchecked,unusedImport,unusedLabel,unusedLocal,unusedPrivate,unusedTypeArgs,varargsCast,warningToken</compilerArgument> -->
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>maven-osgi-test-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-repository-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
 	</build>
 	<reporting>
 		<plugins>
