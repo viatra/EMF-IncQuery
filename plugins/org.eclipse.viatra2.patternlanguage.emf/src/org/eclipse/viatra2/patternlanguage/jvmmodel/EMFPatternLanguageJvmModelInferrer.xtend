@@ -13,8 +13,6 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel
 import com.google.inject.Inject
 import java.util.Arrays
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
@@ -54,33 +52,20 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
    		val mainPackageName = (pattern.eContainer as PatternModel).packageName
+   		// infer Match class
+   		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
    		
    		// infer a Matcher class
-   		acceptor.accept(pattern.toClass(pattern.matcherClassName) [
-   			packageName = mainPackageName 
-   			superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
-   			
-   			
-   			//Adding type-safe matcher calls
-   			members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(String))) [
-   				for (parameter : pattern.parameters){
-   					val javaType = pattern.newTypeRef(typeof(Object))
-					it.parameters += parameter.toParameter(parameter.name, javaType)				
-   				}
-   				
-   				it.body = ['''
-   					return "Hello «pattern.name»";
-   				''']
-   			]
-   		])
+   		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName)
    		
-   		inferSignatureClass(pattern, acceptor, isPrelinkingPhase, mainPackageName)
+   		// accept new classes
+   		acceptor.accept(matchClass)
+   		acceptor.accept(matcherClass)
    	}
    	
-   	def inferSignatureClass(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase, String mainPackageName) {
-   		   		// infer a Signature class
-   		acceptor.accept(pattern.toClass(pattern.signatureClassName) [
-   			packageName = mainPackageName //+ ".signature"
+   	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String mainPackageName) {
+   		return pattern.toClass(pattern.matchClassName) [
+   			packageName = mainPackageName
    			superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch))
    			superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
    			
@@ -94,7 +79,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			]
    			
    			// add constructor
-   			members += pattern.toConstructor(pattern.signatureClassName) [
+   			members += pattern.toConstructor(pattern.matchClassName) [
    				it.visibility = JvmVisibility::PUBLIC
    				for (Variable variable : pattern.parameters) {
    					val javaType = variable.calculateType
@@ -121,7 +106,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    				it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    				it.body = ['''
    					«FOR variable : pattern.parameters»
-   					if ("«variable.name»".equals(parameterName)) return «variable.fieldName»;
+   					if ("«variable.name»".equals(parameterName)) return this.«variable.fieldName»;
    					«ENDFOR»
    					return null;
    				''']
@@ -141,8 +126,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    				it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
    				it.body = ['''
    					«FOR variable : pattern.parameters»
-   					if ("«variable.name»".equals(parameterName)) {
-   						«variable.fieldName» = newValue;
+   					if ("«variable.name»".equals(parameterName) && newValue instanceof «variable.calculateType.simpleName») {
+   						this.«variable.fieldName» = («variable.calculateType.simpleName») newValue;
    						return true;
    					}
    					«ENDFOR»
@@ -202,7 +187,27 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 				it.body = [it | pattern.equalsMethodBody(it)]
 			]
    			
-   		])
+   		]
+   	}
+   	
+   	def inferMatcherClass(Pattern pattern, boolean isPrelinkingPhase, String mainPackageName) {
+   		return pattern.toClass(pattern.matcherClassName) [
+   			packageName = mainPackageName 
+   			superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
+   			
+   			
+   			//Adding type-safe matcher calls
+   			members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(String))) [
+   				for (parameter : pattern.parameters){
+   					val javaType = pattern.newTypeRef(typeof(Object))
+					it.parameters += parameter.toParameter(parameter.name, javaType)				
+   				}
+   				
+   				it.body = ['''
+   					return "Hello «pattern.name»";
+   				''']
+   			]
+   		]
    	}
    	
    	def CharSequence equalsMethodBody(Pattern pattern, ImportManager importManager) {
@@ -212,14 +217,14 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 						return true;
 					if (obj == null)
 						return false;
-					if (!(obj instanceof IPatternSignature))
+					if (!(obj instanceof IPatternMatch))
 						return false;
-					IPatternSignature otherSig  = (IPatternSignature) obj;
+					IPatternMatch otherSig  = (IPatternMatch) obj;
 					if (!patternName().equals(otherSig.patternName()))
 						return false;
-					if (!«pattern.signatureClassName».class.equals(obj.getClass()))
+					if (!«pattern.matchClassName».class.equals(obj.getClass()))
 						return Arrays.deepEquals(toArray(), otherSig.toArray());
-					«pattern.signatureClassName» other = («pattern.signatureClassName») obj;
+					«pattern.matchClassName» other = («pattern.matchClassName») obj;
 					«FOR variable : pattern.parameters»
 					if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
 					else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
@@ -232,8 +237,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		pattern.name.toFirstUpper+"Matcher"
    	}
    	
-   	def signatureClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Signature"
+   	def matchClassName(Pattern pattern) {
+   		pattern.name.toFirstUpper+"Match"
    	} 		
    	
    	def fieldName(Variable variable) {
@@ -256,7 +261,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    							val variableRef = (constraint as EClassConstraint).getVar
    							if (variableRef.variable == variable || variableRef.getVar.equals(variable.name)) {
    								if (entityType instanceof ClassType) {
-   									val typeref = variable.newTypeRef((entityType as ClassType).classname.name)
+   									val clazz = (entityType as ClassType).classname.instanceClass
+   									val typeref = variable.newTypeRef(clazz)
    									if (typeref != null) {
    										return typeref
    									}
