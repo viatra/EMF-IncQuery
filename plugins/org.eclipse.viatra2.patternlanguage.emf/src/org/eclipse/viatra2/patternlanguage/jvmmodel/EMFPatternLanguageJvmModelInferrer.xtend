@@ -409,14 +409,16 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    						if (constraint instanceof EClassConstraint) {
    							val entityType = (constraint as EClassConstraint).type
    							val variableRef = (constraint as EClassConstraint).getVar
-   							if (variableRef.variable == variable || variableRef.getVar.equals(variable.name)) {
-   								if (entityType instanceof ClassType) {
-   									val clazz = (entityType as ClassType).classname.instanceClass
-   									val typeref = variable.newTypeRef(clazz)
-   									if (typeref != null) {
-   										return typeref
-   									}
-   								}
+   							if (variableRef != null) {
+   								if (variableRef.variable == variable || variableRef.getVar.equals(variable.name)) {
+	   								if (entityType instanceof ClassType) {
+	   									val clazz = (entityType as ClassType).classname.instanceClass
+	   									val typeref = variable.newTypeRef(clazz)
+	   									if (typeref != null) {
+	   										return typeref
+	   									}
+	   								}
+   								}	
    							}
    						}
    					}

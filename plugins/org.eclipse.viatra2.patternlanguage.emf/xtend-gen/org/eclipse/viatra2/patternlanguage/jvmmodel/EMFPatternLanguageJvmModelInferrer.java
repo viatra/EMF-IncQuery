@@ -1236,28 +1236,31 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final EntityType entityType = _type_3;
                     VariableReference _var = ((EClassConstraint) constraint).getVar();
                     final VariableReference variableRef = _var;
-                    boolean _operator_or = false;
-                    Variable _variable = variableRef.getVariable();
-                    boolean _operator_equals = ObjectExtensions.operator_equals(_variable, variable);
-                    if (_operator_equals) {
-                      _operator_or = true;
-                    } else {
-                      String _var_1 = variableRef.getVar();
-                      String _name = variable.getName();
-                      boolean _equals = _var_1.equals(_name);
-                      _operator_or = BooleanExtensions.operator_or(_operator_equals, _equals);
-                    }
-                    if (_operator_or) {
-                      if ((entityType instanceof ClassType)) {
-                        {
-                          EClass _classname = ((ClassType) entityType).getClassname();
-                          Class<? extends Object> _instanceClass = _classname.getInstanceClass();
-                          final Class<? extends Object> clazz = _instanceClass;
-                          JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
-                          final JvmTypeReference typeref = _newTypeRef_1;
-                          boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(typeref, null);
-                          if (_operator_notEquals_1) {
-                            return typeref;
+                    boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(variableRef, null);
+                    if (_operator_notEquals_1) {
+                      boolean _operator_or = false;
+                      Variable _variable = variableRef.getVariable();
+                      boolean _operator_equals = ObjectExtensions.operator_equals(_variable, variable);
+                      if (_operator_equals) {
+                        _operator_or = true;
+                      } else {
+                        String _var_1 = variableRef.getVar();
+                        String _name = variable.getName();
+                        boolean _equals = _var_1.equals(_name);
+                        _operator_or = BooleanExtensions.operator_or(_operator_equals, _equals);
+                      }
+                      if (_operator_or) {
+                        if ((entityType instanceof ClassType)) {
+                          {
+                            EClass _classname = ((ClassType) entityType).getClassname();
+                            Class<? extends Object> _instanceClass = _classname.getInstanceClass();
+                            final Class<? extends Object> clazz = _instanceClass;
+                            JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
+                            final JvmTypeReference typeref = _newTypeRef_1;
+                            boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(typeref, null);
+                            if (_operator_notEquals_2) {
+                              return typeref;
+                            }
                           }
                         }
                       }
