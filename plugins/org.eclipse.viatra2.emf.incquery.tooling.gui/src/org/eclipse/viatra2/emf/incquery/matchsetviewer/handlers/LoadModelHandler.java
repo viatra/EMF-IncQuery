@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView;
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.PartListener;
 
 public class LoadModelHandler extends AbstractHandler {
@@ -26,7 +26,7 @@ public class LoadModelHandler extends AbstractHandler {
 				ResourceSet resourceSet = providerEditor.getEditingDomain()
 						.getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					MatchSetViewer.viewerRoot.addPatternMatcherRoot(editorPart,
+					MatchSetView.viewerRoot.addPatternMatcherRoot(editorPart,
 							resourceSet);
 				}
 			}

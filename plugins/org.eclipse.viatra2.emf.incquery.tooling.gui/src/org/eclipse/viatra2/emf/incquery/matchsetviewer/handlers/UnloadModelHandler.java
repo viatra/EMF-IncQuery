@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetViewer;
+import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView;
 
 public class UnloadModelHandler extends AbstractHandler {
 
@@ -21,7 +21,7 @@ public class UnloadModelHandler extends AbstractHandler {
 				IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
 				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					MatchSetViewer.viewerRoot.removePatternMatcherRoot(editorPart, resourceSet);
+					MatchSetView.viewerRoot.removePatternMatcherRoot(editorPart, resourceSet);
 				}
 			}
 		}
@@ -29,7 +29,7 @@ public class UnloadModelHandler extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
-		MatchSetViewer.tableViewer.setInput(null);
+		MatchSetView.tableViewer.setInput(null);
 		
 		return null;
 	}
