@@ -38,6 +38,11 @@ Workflow {
     	exclude = "keep.txt"
         directory = "${runtimeProject}.ui/src-gen"
     }
+    
+    component = DirectoryCleaner {
+    	exclude = "keep.txt"
+        directory = "${runtimeProject}.model/src-gen"
+    }
 	
     component = ExtendedPatternLanguageGenerator {
         pathRtProject = runtimeProject
