@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.viatra2.patternlanguage.emf;visibility:=reexport,
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.viatra2.patternlanguage.ui.contentassist.antlr,
- org.eclipse.viatra2.patternlanguage.ui.internal,
- org.eclipse.viatra2.patternlanguage.ui.contentassist
+Export-Package: org.eclipse.viatra2.patternlanguage.ui,
+ org.eclipse.viatra2.patternlanguage.ui.contentassist,
+ org.eclipse.viatra2.patternlanguage.ui.contentassist.antlr,
+ org.eclipse.viatra2.patternlanguage.ui.internal
 Bundle-Activator: org.eclipse.viatra2.patternlanguage.ui.internal.EMFPatternLanguageActivator
