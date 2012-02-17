@@ -12,9 +12,13 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Arrays
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher
+import java.util.Collection
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
@@ -23,9 +27,16 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.util.IAcceptor
 import org.eclipse.xtext.xbase.compiler.ImportManager
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
+import org.eclipse.emf.common.notify.Notifier
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -40,8 +51,10 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */
-	@Inject extension org.eclipse.viatra2.patternlanguage.jvmmodel.EMFJvmTypesBuilder
-   	
+	@Inject extension EMFJvmTypesBuilder
+	@Inject extension IQualifiedNameProvider
+	@Inject extension TypeReferences types
+
 	/**
 	 * Is called for each Pattern instance in a resource.
 	 * 
@@ -52,35 +65,47 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
-   		val mainPackageName = (pattern.eContainer as PatternModel).packageName
+   		val matcherPackageName = (pattern.eContainer as PatternModel).packageName + ".matcher"
+   		val matchPackageName = (pattern.eContainer as PatternModel).packageName + ".match"
+   		val processorPackageName = (pattern.eContainer as PatternModel).packageName + ".processor"
    		// infer Match class
-   		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
+   		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, matchPackageName)
+   		val matchClassRef = types.createTypeRef(matchClass)
    		
    		// infer a Matcher class
-   		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName)
+   		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, matcherPackageName, matchClassRef)
+   		val matcherClassRef = types.createTypeRef(matcherClass)
+   		matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
+   			it.setStatic(true)
+//   		it.setFinal(true)
+   		]
    		
+   		// infer Processor class
+   		val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, processorPackageName, matchClassRef)
    		// accept new classes
    		acceptor.accept(matchClass)
    		acceptor.accept(matcherClass)
+   		acceptor.accept(processorClass)
    	}
    	
-   	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String mainPackageName) {
+   	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String matchPackageName) {
    		return pattern.toClass(pattern.matchClassName) [
-   			packageName = mainPackageName
-   			superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch))
-   			superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
-   			
+   			it.packageName = matchPackageName
+   			it.documentation = pattern.matchClassJavadoc.toString
+   			it.final = true
+   			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch))
+   			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
    			// add fields
    			for (Variable variable : pattern.parameters) {
-   				members += pattern.toField(variable.fieldName, variable.calculateType)
+   				it.members += pattern.toField(variable.fieldName, variable.calculateType)
    			}
 
-   			members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
+   			it.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
    				it.setInitializer(['''{«FOR variable : pattern.parameters SEPARATOR ', '»"«variable.name»"«ENDFOR»}'''])
    			]
    			
    			// add constructor
-   			members += pattern.toConstructor(pattern.matchClassName) [
+   			it.members += pattern.toConstructor(pattern.matchClassName) [
    				it.visibility = JvmVisibility::PUBLIC
    				for (Variable variable : pattern.parameters) {
    					val javaType = variable.calculateType
@@ -94,16 +119,16 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			]
    			
    			// add methods
-   			members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
+   			it.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
    				annotations += pattern.toAnnotation(typeof (Override))
    				it.body = ['''
-   					return "«pattern.name»";
+   					return "«pattern.fullyQualifiedName»";
    				''']
    			]
    			
    			// add getters
-   			members += pattern.toMethod("get", pattern.newTypeRef(typeof (Object))) [
-   				annotations += pattern.toAnnotation(typeof (Override))
+   			it.members += pattern.toMethod("get", pattern.newTypeRef(typeof (Object))) [
+   				it.annotations += pattern.toAnnotation(typeof (Override))
    				it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    				it.body = ['''
    					«FOR variable : pattern.parameters»
@@ -113,7 +138,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    				''']
    			]
    			for (Variable variable : pattern.parameters) {
-   				members += pattern.toMethod("get" + variable.name.toFirstUpper, variable.calculateType) [
+   				it.members += pattern.toMethod("get" + variable.name.toFirstUpper, variable.calculateType) [
    					it.body = ['''
    						return this.«variable.fieldName»;
    					''']
@@ -121,8 +146,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			}
    			
    			// add setters
-   			members += pattern.toMethod("set", pattern.newTypeRef(typeof (boolean))) [
-   				annotations += pattern.toAnnotation(typeof (Override))
+   			it.members += pattern.toMethod("set", pattern.newTypeRef(typeof (boolean))) [
+   				it.annotations += pattern.toAnnotation(typeof (Override))
    				it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    				it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
    				it.body = ['''
@@ -136,7 +161,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    				''']
    			]
    			for (Variable variable : pattern.parameters) {
-   				members += pattern.toMethod("set" + variable.name.toFirstUpper, null) [
+   				it.members += pattern.toMethod("set" + variable.name.toFirstUpper, null) [
    					it.parameters += pattern.toParameter(variable.name, variable.calculateType)
    					it.body = ['''
    						this.«variable.fieldName» = «variable.name»;
@@ -145,22 +170,22 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			}
    			
    			// add extra methods like equals, hashcode, toArray, parameterNames
-   			members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
+   			it.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
    				annotations += pattern.toAnnotation(typeof (Override))
    				it.body = ['''
    					return parameterNames;
    				''']
    			]
    			
-   			members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
+   			it.members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
    				annotations += pattern.toAnnotation(typeof (Override))
    				it.body = ['''
    					return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
    				''']
    			]
 			
-			members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
-				annotations += pattern.toAnnotation(typeof (Override))
+			it.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
+				it.annotations += pattern.toAnnotation(typeof (Override))
 				it.body = ['''
 					StringBuilder result = new StringBuilder();
 					«FOR variable : pattern.parameters»
@@ -170,8 +195,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 				''']
 			]
 			
-			members += pattern.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
-				annotations += pattern.toAnnotation(typeof (Override))
+			it.members += pattern.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
+				it.annotations += pattern.toAnnotation(typeof (Override))
 				it.body = ['''
 					final int prime = 31;
 					int result = 1;
@@ -182,35 +207,147 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 				''']
 			]
 			
-			members += pattern.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
-				annotations += pattern.toAnnotation(typeof (Override))
-				parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
+			it.members += pattern.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
+				it.annotations += pattern.toAnnotation(typeof (Override))
+				it.parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
 				it.body = [it | pattern.equalsMethodBody(it)]
 			]
    			
    		]
    	}
    	
-   	def inferMatcherClass(Pattern pattern, boolean isPrelinkingPhase, String mainPackageName) {
+   	def JvmDeclaredType inferMatcherClass(Pattern pattern, boolean isPrelinkingPhase, String matcherPackageName, JvmTypeReference matchClassRef) {
+   		
    		return pattern.toClass(pattern.matcherClassName) [
-   			packageName = mainPackageName 
-   			superTypes += pattern.newTypeRef(typeof(GenericPatternMatcher))
+   			it.packageName = matcherPackageName
+   			it.documentation = pattern.matcherClassJavadoc.toString
+//   		it.annotations += pattern.toAnnotation(typeof (SuppressWarnings), "unused")
+   			it.superTypes += pattern.newTypeRef(typeof(BaseGeneratedMatcher), cloneWithProxies(matchClassRef))
+   			it.superTypes += pattern.newTypeRef(typeof(IncQueryMatcher), cloneWithProxies(matchClassRef))
+   			it.members += pattern.toConstructor(pattern.matcherClassName) [
+   				it.visibility = JvmVisibility::PUBLIC
+				it.documentation = pattern.matcherConstructorNotifierJavadoc.toString
+   				it.parameters += pattern.toParameter("notifier", pattern.newTypeRef(typeof (Notifier)))
+   				it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
+   				it.body = [it | pattern.matcherConstructorBodyNotifier(it)]
+   			]
    			
+   			it.members += pattern.toConstructor(pattern.matcherClassName) [
+   				it.visibility = JvmVisibility::PUBLIC
+   				it.documentation = pattern.matcherConstructorEngineJavadoc.toString
+   				it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
+   				it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
+   				it.body = ['''super(engine, FACTORY);''']
+   			]
    			
-   			//Adding type-safe matcher calls
-   			members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(String))) [
+   			// Adding type-safe matcher calls
+   			it.members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(Collection), cloneWithProxies(matchClassRef))) [
+   				it.documentation = pattern.javadocGetAllMatches.toString
    				for (parameter : pattern.parameters){
-   					val javaType = pattern.newTypeRef(typeof(Object))
-					it.parameters += parameter.toParameter(parameter.name, javaType)				
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
-   				
    				it.body = ['''
-   					return "Hello «pattern.name»";
+   					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
    				''']
    			]
+   			
+   			it.members += pattern.toMethod("getOneArbitraryMatch", cloneWithProxies(matchClassRef)) [
+   				it.documentation = pattern.javadocGetOneArbitraryMatch.toString
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+   				}
+   				it.body = ['''
+   					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+   				''']
+   			]
+   			
+			it.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
+   				it.documentation = pattern.javadocHasMatch.toString
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+   				}
+   				it.body = ['''
+   					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+   				''']
+   			]
+   			
+   			it.members += pattern.toMethod("countMatches", pattern.newTypeRef(typeof(int))) [
+   				it.documentation = pattern.javadocCountMatches.toString
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+   				}
+   				it.body = ['''
+   					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+   				''']
+   			]
+   			
+   			it.members += pattern.toMethod("forEachMatch", null) [
+   				it.documentation = pattern.javadocForEachMatch.toString
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+   				}
+				// TODO: add ? super MatchClass to Processor as typeparameter
+				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
+   				it.body = ['''
+   					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
+   				''']
+   			]
+   			
+   			it.members += pattern.toMethod("forOneArbitraryMatch", pattern.newTypeRef(typeof(boolean))) [
+   				it.documentation = pattern.javadocForOneArbitraryMatch.toString
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+   				}
+   				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
+   				it.body = ['''
+   					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
+   				''']
+   			]
+   			it.members += pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
+   				it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
+   				it.body = ['''
+   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);
+   				''']
+   			]
+   			
+   			it.members += pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
+   				it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
+   				it.body = ['''
+   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+   				''']
+   			]
+   			
    		]
    	}
-   	
+  	
+  	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {
+  		return pattern.toClass(pattern.processorClassName) [
+  			it.packageName = processorPackageName
+  			it.documentation = pattern.processorClassJavadoc.toString
+  			it.abstract = true
+  			it.superTypes += pattern.newTypeRef(typeof(IMatchProcessor), cloneWithProxies(matchClassRef))
+  			it.members += pattern.toMethod("process", null) [
+  				it.documentation = pattern.javadocProcess.toString
+  				it.abstract = true
+  				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)
+   				}
+  			]
+  			it.members += pattern.toMethod("process", null) [
+  				it.annotations += pattern.toAnnotation(typeof (Override))
+  				it.parameters += pattern.toParameter("match", cloneWithProxies(matchClassRef))
+  				it.body = ['''
+  					process(«FOR p : pattern.parameters SEPARATOR ', '»match.get«p.name.toFirstUpper»()«ENDFOR»);  				
+  				''']
+  			]
+  		]
+  	}
+
+	def matcherConstructorBodyNotifier(Pattern pattern, ImportManager manager) {
+  		manager.addImportFor(pattern.newTypeRef(typeof (EngineManager)).type)
+  		return '''this(EngineManager.getInstance().getIncQueryEngine(notifier));'''
+  	}
+
    	def CharSequence equalsMethodBody(Pattern pattern, ImportManager importManager) {
    		importManager.addImportFor(pattern.newTypeRef(typeof (Arrays)).type)
    		return '''
@@ -226,35 +363,47 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 					if (!«pattern.matchClassName».class.equals(obj.getClass()))
 						return Arrays.deepEquals(toArray(), otherSig.toArray());
 					«pattern.matchClassName» other = («pattern.matchClassName») obj;
-					«FOR variable : pattern.parameters»
+					«FOR variable : pattern.parameters» 
 					if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
 					else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
 					«ENDFOR»
 					return true;
 				'''
    	}
-
+   	
+//   	def tupleToMatchConstruct(Pattern pattern) {
+//   		val builder = new StringBuilder();
+//   		for (var int i = 0; i < pattern.parameters.size(); i = i + 1) {
+//   			
+//   		}
+//		return builder.toString
+//   	}
+ 
    	def matcherClassName(Pattern pattern) {
    		pattern.name.toFirstUpper+"Matcher"
    	}
-   	
+   	 
    	def matchClassName(Pattern pattern) {
    		pattern.name.toFirstUpper+"Match"
-   	} 		
+   	}
+   	
+   	def processorClassName(Pattern pattern) {
+   		pattern.name.toFirstUpper+"Processor"
+   	}
    	
    	def fieldName(Variable variable) {
    		"f"+variable.name.toFirstUpper
-   	}
+   	} 
    	
    	// Type calculation: first try
    	// See the XBaseUsageCrossReferencer class, possible solution for local variable usage
-	// TODO: Find out how to get the type for variable 
+	// TODO: Find out how to get the type for variable
    	def JvmTypeReference calculateType(Variable variable) {
    		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
    			return variable.newTypeRef(variable.type.typename)
    		} else {
    			if (variable.eContainer() instanceof Pattern) {
-   				val pattern = variable.eContainer() as Pattern;
+   		 		val pattern = variable.eContainer() as Pattern;
    				for (body : pattern.bodies) {
    					for (constraint : body.constraints) {
    						if (constraint instanceof EClassConstraint) {
@@ -276,4 +425,107 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			return variable.newTypeRef(typeof(Object))
    		}
    	}
+   	
+   	def matchClassJavadoc(Pattern pattern) '''
+		Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern, 
+		to be used in conjunction with «pattern.matcherClassName».
+		
+		<p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
+		Each instance is a (possibly partial) substitution of pattern parameters, 
+		usable to represent a match of the pattern in the result of a query, 
+		or to specify the bound (fixed) input parameters when issuing a query.
+		
+		@see «pattern.matcherClassName»
+		@see «pattern.processorClassName»
+   	'''
+
+   	def matcherClassJavadoc(Pattern pattern) '''		
+		Generated pattern matcher API of of the «pattern.fullyQualifiedName» pattern, 
+		providing pattern-specific query methods. 
+
+		@see «pattern.matchClassName»
+		@see «pattern.processorClassName»
+   	'''
+   	
+   	def processorClassJavadoc(Pattern pattern) '''
+		A match processor tailored for the «pattern.fullyQualifiedName» pattern.
+		
+		Clients should derive an (anonymous) class that implements the abstract process().
+	'''
+   	
+   	def matcherConstructorNotifierJavadoc(Pattern pattern) '''
+		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
+		If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
+		The match set will be incrementally refreshed upon updates from the given EMF root and below.
+		<p>Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the resourceSet but are referenced. 
+		This is mainly to support nsURI-based instance-level references to registered EPackages.
+		@param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
+		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	'''
+	
+	def matcherConstructorEngineJavadoc(Pattern pattern) '''
+		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+		The match set will be incrementally refreshed upon updates.
+		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
+		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	'''
+	
+	def javadocGetAllMatches(Pattern pattern) '''
+		Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return matches represented as a «pattern.matchClassName» object.
+	'''
+	
+	def javadocGetOneArbitraryMatch(Pattern pattern) '''
+		Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
+		Neither determinism nor randomness of selection is guaranteed.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return a match represented as a «pattern.matchClassName» object, or null if no match is found.
+	'''
+	
+	def javadocHasMatch(Pattern pattern) '''
+		Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
+		under any possible substitution of the unspecified parameters (if any).
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return true if the input is a valid (partial) match of the pattern.
+	'''
+	
+	def javadocCountMatches(Pattern pattern) '''
+		Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return the number of pattern matches found.
+	'''
+	
+	def javadocForEachMatch(Pattern pattern) '''
+		Executes the given processor on each match of the pattern that conforms to the given fixed values of some parameters.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@param processor the action that will process each pattern match.
+	'''
+	
+	def javadocForOneArbitraryMatch(Pattern pattern) '''
+		Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.  
+		Neither determinism nor randomness of selection is guaranteed.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@param processor the action that will process the selected match. 
+		@return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
+	'''
+	
+	def javadocProcess(Pattern pattern) '''
+		Defines the action that is to be executed on each match.
+		@param parameters a single match of the pattern that must be processed by the implementation of this method, 
+		represented as an array containing the values of each pattern parameter
+	'''
 }
