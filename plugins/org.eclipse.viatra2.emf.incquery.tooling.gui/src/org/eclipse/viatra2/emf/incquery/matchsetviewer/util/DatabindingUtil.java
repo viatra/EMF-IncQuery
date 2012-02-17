@@ -25,13 +25,13 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 
 import com.google.inject.Injector;
 
@@ -77,7 +77,7 @@ public class DatabindingUtil {
 		else {
 			for (IFile key : registeredPatterModels.keySet()) {
 				for (Pattern p : registeredPatterModels.get(key).getPatterns()) {
-					if (PatternRegistry.fqnOf(p).matches(patternName)) {
+					if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 						for (Annotation a : p.getAnnotations()) {
 							if (a.getName().matches("PatternUI")) {
 								for (AnnotationParameter ap : a.getParameters()) {
@@ -133,7 +133,7 @@ public class DatabindingUtil {
 			
 			for (IFile file : registeredPatterModels.keySet()) {
 				for (Pattern p : registeredPatterModels.get(file).getPatterns()) {
-					if (PatternRegistry.fqnOf(p).matches(patternName)) {
+					if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 						for (Annotation a : p.getAnnotations()) {
 							if (a.getName().matches("ObservableValue")) {
 								String key = null, value = null;

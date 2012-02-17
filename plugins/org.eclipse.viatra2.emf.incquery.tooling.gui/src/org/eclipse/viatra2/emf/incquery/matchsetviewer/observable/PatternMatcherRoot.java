@@ -12,15 +12,13 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 
 /**
  * Each IEditingDomainProvider will be associated a PatternMatcherRoot element in the tree viewer.
@@ -94,10 +92,7 @@ public class PatternMatcherRoot {
 				EList<Pattern> patterns = pm.getPatterns();
 				
 				for (Pattern pattern : patterns) {	
-					IMatcherFactory<GenericPatternMatch, GenericPatternMatcher> matcherFactory = 
-						PatternRegistry.INSTANCE.getMatcherFactory(pattern);
-		
-					IncQueryMatcher<GenericPatternMatch> matcher = matcherFactory.getMatcher(key.getNotifier());
+					IncQueryMatcher<GenericPatternMatch> matcher = new GenericPatternMatcher(pattern, key.getNotifier());
 					setTmp.add(matcher);
 					addMatcher(matcher, false);
 				}

@@ -6,7 +6,6 @@ import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcher
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 
 /**
  * Runnable unit of registering patterns in given file.
@@ -31,7 +30,7 @@ public class RuntimeMatcherRegistrationJob implements Runnable {
 		ViewerRoot vr = MatchSetViewer.viewerRoot;
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file);
-		PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
+//		PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
 			
 		DatabindingUtil.registeredPatterModels.remove(file);
 			
