@@ -45,14 +45,14 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
  * @author Tamas Szabo
  *
  */
-public class MatchSetViewer extends ViewPart {
+public class MatchSetView extends ViewPart {
 
-	public static final String ID = "org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer";
+	public static final String ID = "org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView";
 	public static TreeViewer treeViewer;
 	public static TableViewer tableViewer;
 	public static ViewerRoot viewerRoot = new ViewerRoot();
 	
-	public MatchSetViewer() {
+	public MatchSetView() {
 		
 	}
 
@@ -92,7 +92,7 @@ public class MatchSetViewer extends ViewPart {
         Menu menu = menuMgr.createContextMenu(treeViewer.getControl());
         
 		treeViewer.getControl().setMenu(menu);
-		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.databinding.ui.MatchSetViewer.treeViewerMenu", menuMgr, treeViewer);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView.treeViewerMenu", menuMgr, treeViewer);
 		
 		//tableView configuration
 		createColumns(parent, tableViewer);
