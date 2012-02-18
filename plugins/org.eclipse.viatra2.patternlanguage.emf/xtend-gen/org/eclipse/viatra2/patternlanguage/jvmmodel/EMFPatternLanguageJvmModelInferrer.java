@@ -1251,10 +1251,19 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                       if (_operator_equals) {
                         _operator_or = true;
                       } else {
+                        boolean _operator_and_1 = false;
                         String _var_1 = variableRef.getVar();
-                        String _name = variable.getName();
-                        boolean _equals = _var_1.equals(_name);
-                        _operator_or = BooleanExtensions.operator_or(_operator_equals, _equals);
+                        boolean _isNullOrEmpty_1 = StringExtensions.isNullOrEmpty(_var_1);
+                        boolean _operator_not_1 = BooleanExtensions.operator_not(_isNullOrEmpty_1);
+                        if (!_operator_not_1) {
+                          _operator_and_1 = false;
+                        } else {
+                          String _var_2 = variableRef.getVar();
+                          String _name = variable.getName();
+                          boolean _equals = _var_2.equals(_name);
+                          _operator_and_1 = BooleanExtensions.operator_and(_operator_not_1, _equals);
+                        }
+                        _operator_or = BooleanExtensions.operator_or(_operator_equals, _operator_and_1);
                       }
                       if (_operator_or) {
                         if ((entityType instanceof ClassType)) {
