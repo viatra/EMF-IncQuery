@@ -76,16 +76,20 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   protected void _infer(final Pattern pattern, final IAcceptor<JvmDeclaredType> acceptor, final boolean isPrelinkingPhase) {
       EObject _eContainer = pattern.eContainer();
       String _packageName = ((PatternModel) _eContainer).getPackageName();
-      String _operator_plus = StringExtensions.operator_plus(_packageName, ".matcher");
-      final String matcherPackageName = _operator_plus;
-      EObject _eContainer_1 = pattern.eContainer();
-      String _packageName_1 = ((PatternModel) _eContainer_1).getPackageName();
-      String _operator_plus_1 = StringExtensions.operator_plus(_packageName_1, ".match");
-      final String matchPackageName = _operator_plus_1;
-      EObject _eContainer_2 = pattern.eContainer();
-      String _packageName_2 = ((PatternModel) _eContainer_2).getPackageName();
-      String _operator_plus_2 = StringExtensions.operator_plus(_packageName_2, ".processor");
-      final String processorPackageName = _operator_plus_2;
+      String packageName = _packageName;
+      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(packageName);
+      if (_isNullOrEmpty) {
+        packageName = "";
+      } else {
+        String _operator_plus = StringExtensions.operator_plus(packageName, ".");
+        packageName = _operator_plus;
+      }
+      String _operator_plus_1 = StringExtensions.operator_plus(packageName, "matcher");
+      final String matcherPackageName = _operator_plus_1;
+      String _operator_plus_2 = StringExtensions.operator_plus(packageName, "match");
+      final String matchPackageName = _operator_plus_2;
+      String _operator_plus_3 = StringExtensions.operator_plus(packageName, "processor");
+      final String processorPackageName = _operator_plus_3;
       JvmDeclaredType _inferMatchClass = this.inferMatchClass(pattern, isPrelinkingPhase, matchPackageName);
       final JvmDeclaredType matchClass = _inferMatchClass;
       JvmParameterizedTypeReference _createTypeRef = this.types.createTypeRef(matchClass);
@@ -100,7 +104,10 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory.class, _cloneWithProxies, _cloneWithProxies_1);
       final Procedure1<JvmField> _function = new Procedure1<JvmField>() {
           public void apply(final JvmField it) {
-            it.setStatic(true);
+            {
+              it.setVisibility(JvmVisibility.PUBLIC);
+              it.setStatic(true);
+            }
           }
         };
       JvmField _field = this._eMFJvmTypesBuilder.toField(pattern, "FACTORY", _newTypeRef, _function);
@@ -1312,7 +1319,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   
   public CharSequence matcherClassJavadoc(final Pattern pattern) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("Generated pattern matcher API of of the ");
+    _builder.append("Generated pattern matcher API of the ");
     QualifiedName _fullyQualifiedName = this._iQualifiedNameProvider.getFullyQualifiedName(pattern);
     _builder.append(_fullyQualifiedName, "");
     _builder.append(" pattern, ");
@@ -1528,10 +1535,19 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("Defines the action that is to be executed on each match.");
     _builder.newLine();
-    _builder.append("@param parameters a single match of the pattern that must be processed by the implementation of this method, ");
-    _builder.newLine();
-    _builder.append("represented as an array containing the values of each pattern parameter");
-    _builder.newLine();
+    {
+      EList<Variable> _parameters = pattern.getParameters();
+      for(final Variable p : _parameters) {
+        _builder.append("@param ");
+        String _name = p.getName();
+        _builder.append(_name, "");
+        _builder.append(" the value of pattern parameter ");
+        String _name_1 = p.getName();
+        _builder.append(_name_1, "");
+        _builder.append(" in the currently processed match ");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     return _builder;
   }
   

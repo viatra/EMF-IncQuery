@@ -65,9 +65,15 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
-   		val matcherPackageName = (pattern.eContainer as PatternModel).packageName + ".matcher"
-   		val matchPackageName = (pattern.eContainer as PatternModel).packageName + ".match"
-   		val processorPackageName = (pattern.eContainer as PatternModel).packageName + ".processor"
+   		var packageName = (pattern.eContainer as PatternModel).packageName
+   		if (packageName.nullOrEmpty) {
+   			packageName = ""
+   		} else {
+   			packageName = packageName + "."
+   		}
+   		val matcherPackageName = packageName + "matcher"
+   		val matchPackageName = packageName + "match"
+   		val processorPackageName = packageName + "processor"
    		// infer Match class
    		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, matchPackageName)
    		val matchClassRef = types.createTypeRef(matchClass)
@@ -76,6 +82,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, matcherPackageName, matchClassRef)
    		val matcherClassRef = types.createTypeRef(matcherClass)
    		matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
+   			it.visibility = JvmVisibility::PUBLIC
    			it.setStatic(true)
 //   		it.setFinal(true)
    		]
@@ -442,7 +449,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    	'''
 
    	def matcherClassJavadoc(Pattern pattern) '''		
-		Generated pattern matcher API of of the «pattern.fullyQualifiedName» pattern, 
+		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods. 
 
 		@see «pattern.matchClassName»
@@ -527,7 +534,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	
 	def javadocProcess(Pattern pattern) '''
 		Defines the action that is to be executed on each match.
-		@param parameters a single match of the pattern that must be processed by the implementation of this method, 
-		represented as an array containing the values of each pattern parameter
+		«FOR p : pattern.parameters»
+		@param «p.name» the value of pattern parameter «p.name» in the currently processed match 
+		«ENDFOR»
 	'''
 }
