@@ -207,7 +207,7 @@
                               type="org.eclipse.core.resources.IFile">
                            <test
                                  property="org.eclipse.core.resources.name"
-                                 value="*.emfpattern">
+                                 value="*.eiq">
                            </test>
                         </adapt>
                      </iterate>
@@ -227,7 +227,7 @@
                               type="org.eclipse.core.resources.IFile">
                            <test
                                  property="org.eclipse.core.resources.name"
-                                 value="*.emfpattern">
+                                 value="*.eiq">
                            </test>
                         </adapt>
                      </iterate>
