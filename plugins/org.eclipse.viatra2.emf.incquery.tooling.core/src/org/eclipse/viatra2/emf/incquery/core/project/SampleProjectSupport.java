@@ -13,8 +13,6 @@
 package org.eclipse.viatra2.emf.incquery.core.project;
 
 
-import java.io.IOException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -22,9 +20,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
@@ -73,6 +71,12 @@ public class SampleProjectSupport {
 			bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
 			bundleDesc.setSymbolicName(desc.getName());
 			bundleDesc.setExtensionRegistry(true);
+			bundleDesc.setExtensionRegistry(true);
+			bundleDesc.setBundleClasspath(new IBundleClasspathEntry[] {
+					service.newBundleClasspathEntry(new Path(
+							IncQueryNature.SRC_DIR), null, null),
+					service.newBundleClasspathEntry(new Path(
+							IncQueryNature.SRCGEN_DIR), null, null) });
 			bundleDesc.setActivator("handlers.Activator");
 			// Adding dependencies
 			IRequiredBundleDescription[] reqBundles = new IRequiredBundleDescription[] {
@@ -84,16 +88,8 @@ public class SampleProjectSupport {
 			bundleDesc.setRequiredBundles(reqBundles);
 			bundleDesc.apply(monitor);
 			context.ungetService(ref);
-			/* Creating Java folders */
-			ProjectGenerationHelper.initializeClasspath(proj, monitor, ProjectGenerationHelper.sourceFolders);
-			ProjectGenerationHelper.initializeBuildProperties(proj, monitor);
 
 			return proj;
-		} catch (IOException ioe) {
-			IStatus status = new Status(IStatus.ERROR,
-					IncQueryNature.BUNDLE_ID, IStatus.ERROR,
-					ioe.getLocalizedMessage(), ioe);
-			throw new CoreException(status);
 		} finally {
 			monitor.done();
 			if(context != null && ref != null)

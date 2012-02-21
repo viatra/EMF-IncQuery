@@ -1,10 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.core.project;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,17 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.build.IBuildModelFactory;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * A common helper class for generating IncQuery-related projects.
@@ -92,30 +78,6 @@ public abstract class ProjectGenerationHelper {
 	}
 
 	/**
-	 * This method creates a new project using the input project description,
-	 * and adds the following project natures to the project:
-	 * @param description
-	 * @param proj
-	 * @param monitor
-	 * @param natures
-	 * @return the final IProjectDescription
-	 * @throws CoreException
-	 */
-	public static IProjectDescription initializeProject(
-			IProjectDescription description, IProject proj,
-			IProgressMonitor monitor, String[] natures) throws CoreException {
-		proj.create(description, new SubProgressMonitor(monitor, 500));
-		if (monitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-
-		proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor,
-				1000));
-		/* Adding project nature */
-		return proj.getDescription();//addNatures(proj, natures, new SubProgressMonitor(monitor, 500));
-	}
-
-	/**
 	 * Adds a collection of natures to the project
 	 * @param proj
 	 * @param natures
@@ -133,76 +95,6 @@ public abstract class ProjectGenerationHelper {
 		proj.setDescription(desc, monitor);
 		return desc;
 	}
-
-	/**
-	 * Initializes the Java project classpath with the selected source
-	 * containers, the default JRE containers and the plug-in classpath
-	 * @param proj
-	 * @param monitor
-	 * @param sourceFolders
-	 * @throws CoreException
-	 * @throws JavaModelException
-	 */
-	public static void initializeClasspath(IProject proj,
-			IProgressMonitor monitor, String[] sourceFolders)
-			throws CoreException, JavaModelException {
-		final List<IClasspathEntry> classpathEntries = new ArrayList<IClasspathEntry>();
-		final IJavaProject javaProject = JavaCore.create(proj);
-		for (String folderName : sourceFolders) {
-			final IFolder srcContainer = proj.getFolder(folderName);
-			srcContainer.create(true, true, monitor);
-			final IClasspathEntry srcClasspathEntry = JavaCore
-					.newSourceEntry(srcContainer.getFullPath());
-			classpathEntries.add(srcClasspathEntry);
-		}
-		// Plug-in classpath
-		classpathEntries.add(JavaCore.newContainerEntry(new Path(
-				"org.eclipse.pde.core.requiredPlugins")));
-		classpathEntries.add(JavaRuntime.getDefaultJREContainerEntry());
-		javaProject
-				.setRawClasspath(classpathEntries
-						.toArray(new IClasspathEntry[classpathEntries.size()]),
-						monitor);
-	}
-
-	public static void initializeBuildProperties(IProject proj,
-			IProgressMonitor monitor) throws CoreException, IOException {
-		IBuildModel buildModel = PluginRegistry.createBuildModel(getPluginModelBase(proj));
-		IBuildModelFactory factory = buildModel.getFactory();
-		IBuildEntry sourceEntry = factory.createEntry("source..");
-		sourceEntry.addToken(IncQueryNature.SRC_DIR);
-		sourceEntry.addToken(IncQueryNature.SRCGEN_DIR);
-		IBuild build = buildModel.getBuild();
-		build.add(sourceEntry);
-		IBuildEntry binEntry = factory.createEntry("output..");
-		binEntry.addToken("bin");
-		build.add(binEntry);
-		StringWriter sWriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(sWriter);
-		build.write("", writer);
-		writer.flush();
-		sWriter.close();
-		IFile file = (IFile) buildModel.getUnderlyingResource();
-		ByteArrayInputStream stream = new ByteArrayInputStream(sWriter.toString().getBytes("8859_1"));
-		file.setContents(stream, false, false, monitor);
-		stream.close();
-	}
-
-	public static IPluginModelBase getPluginModelBase(IProject proj) {
-		IPluginModelBase base = PluginRegistry.findModel(proj);
-		while (base != null) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			base = PluginRegistry.findModel(proj);
-		}
-		return base;
-	}
-	
-	
 
 	/**
 	 * Adds a file to a container.
