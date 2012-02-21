@@ -37,6 +37,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -75,21 +76,24 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		// infer Match class
    		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
    		val matchClassRef = types.createTypeRef(matchClass)
-   		
    		// infer a Matcher class
    		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
    		val matcherClassRef = types.createTypeRef(matcherClass)
+   		// infer MatcherFactory class
+   		val matcherFactoryClass = inferMatcherFactoryClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef, matcherClassRef)
+   		// infer Processor class
+   		val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
+   		// add Factory field to Matcher class
    		matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
    			it.visibility = JvmVisibility::PUBLIC
    			it.setStatic(true)
-//   		it.setFinal(true)
+	   		it.setFinal(true)
+	   		it.setInitializer([''' new «matcherFactoryClass.simpleName»()'''])
    		]
-   		
-   		// infer Processor class
-   		val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
    		// accept new classes
    		acceptor.accept(matchClass)
    		acceptor.accept(matcherClass)
+   		acceptor.accept(matcherFactoryClass)
    		acceptor.accept(processorClass)
    	}
    	
@@ -325,6 +329,30 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		]
    	}
   	
+  	def inferMatcherFactoryClass(Pattern pattern, boolean isPrelinkingPhase, String matcherFactoryPackageName, JvmTypeReference matchClassRef, JvmTypeReference matcherClassRef) {
+  		return pattern.toClass(pattern.matcherFactoryClassName) [
+  			it.packageName = matcherFactoryPackageName
+  			it.documentation = pattern.matcherFactoryClassJavadoc.toString
+  			it.superTypes += pattern.newTypeRef(typeof (BaseGeneratedMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))
+  			it.members += pattern.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
+  				it.visibility = JvmVisibility::PUBLIC
+  				it.annotations += pattern.toAnnotation(typeof (Override))
+  				it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
+   				it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
+   				it.body = ['''
+   					return new «pattern.matcherClassName»(engine);
+   				''']
+  			]
+  			it.members += pattern.toMethod("parsePattern", pattern.newTypeRef(typeof (Pattern))) [
+  				it.visibility = JvmVisibility::PROTECTED
+  				it.annotations += pattern.toAnnotation(typeof (Override))
+  				it.body = ['''
+   					throw new UnsupportedOperationException();
+   				''']
+  			]
+  		]
+  	}
+  	
   	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {
   		return pattern.toClass(pattern.processorClassName) [
   			it.packageName = processorPackageName
@@ -375,14 +403,10 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 					return true;
 				'''
    	}
-   	
-//   	def tupleToMatchConstruct(Pattern pattern) {
-//   		val builder = new StringBuilder();
-//   		for (var int i = 0; i < pattern.parameters.size(); i = i + 1) {
-//   			
-//   		}
-//		return builder.toString
-//   	}
+ 
+	def matcherFactoryClassName(Pattern pattern) {
+		pattern.name.toFirstUpper+"MatcherFactory"
+	} 
  
    	def matcherClassName(Pattern pattern) {
    		pattern.name.toFirstUpper+"Matcher"
@@ -448,10 +472,18 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
    	def matcherClassJavadoc(Pattern pattern) '''		
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
-		providing pattern-specific query methods. 
+		providing pattern-specific query methods.
 
 		@see «pattern.matchClassName»
+		@see «pattern.matcherFactoryClassName»
 		@see «pattern.processorClassName»
+   	'''
+   	
+   	def matcherFactoryClassJavadoc(Pattern pattern) '''
+	 	A pattern-specific matcher factory that can instantiate «pattern.matcherClassName» in a type-safe way.
+	 	
+	 	@see «pattern.matcherClassName»
+	 	@see «pattern.matchClassName»
    	'''
    	
    	def processorClassJavadoc(Pattern pattern) '''
