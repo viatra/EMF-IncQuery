@@ -32,6 +32,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
@@ -111,10 +112,18 @@ public abstract class ProjectGenerationHelper {
 		proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor,
 				1000));
 		/* Adding project nature */
-		return addNatures(proj, natures, new SubProgressMonitor(monitor, 500));
+		return proj.getDescription();//addNatures(proj, natures, new SubProgressMonitor(monitor, 500));
 	}
 
-	private static IProjectDescription addNatures(IProject proj,
+	/**
+	 * Adds a collection of natures to the project
+	 * @param proj
+	 * @param natures
+	 * @param monitor
+	 * @return
+	 * @throws CoreException
+	 */
+	public static IProjectDescription addNatures(IProject proj,
 			String[] natures, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription desc = proj.getDescription();
 		List<String> newNatures = new ArrayList<String>();
@@ -158,7 +167,7 @@ public abstract class ProjectGenerationHelper {
 
 	public static void initializeBuildProperties(IProject proj,
 			IProgressMonitor monitor) throws CoreException, IOException {
-		IBuildModel buildModel = PluginRegistry.createBuildModel(PluginRegistry.findModel(proj));
+		IBuildModel buildModel = PluginRegistry.createBuildModel(getPluginModelBase(proj));
 		IBuildModelFactory factory = buildModel.getFactory();
 		IBuildEntry sourceEntry = factory.createEntry("source..");
 		sourceEntry.addToken(IncQueryNature.SRC_DIR);
@@ -178,6 +187,22 @@ public abstract class ProjectGenerationHelper {
 		file.setContents(stream, false, false, monitor);
 		stream.close();
 	}
+
+	public static IPluginModelBase getPluginModelBase(IProject proj) {
+		IPluginModelBase base = PluginRegistry.findModel(proj);
+		while (base != null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			base = PluginRegistry.findModel(proj);
+		}
+		return base;
+	}
+	
+	
 
 	/**
 	 * Adds a file to a container.

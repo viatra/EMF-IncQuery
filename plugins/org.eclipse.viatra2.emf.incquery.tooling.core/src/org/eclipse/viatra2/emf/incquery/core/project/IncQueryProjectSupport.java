@@ -5,17 +5,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
@@ -62,15 +60,6 @@ public class IncQueryProjectSupport {
 		try {
 
 			monitor.beginTask("", 2000);
-			IProjectDescription desc = ProjectGenerationHelper.initializeProject(description, proj,
-					monitor, ProjectGenerationHelper.allNatures);
-			/* Creating folder structure */
-			final IFolder modelFolder = proj.getFolder(new Path(
-					IncQueryNature.MODELS_DIR));
-			modelFolder.create(true, true, monitor);
-			final IFolder vtclFolder = proj.getFolder(new Path(
-					IncQueryNature.VTCL_DIR));
-			vtclFolder.create(true, true, monitor);
 			/* Creating plug-in information */
 			context = IncQueryPlugin.plugin.context;
 			ref = context
@@ -78,12 +67,17 @@ public class IncQueryProjectSupport {
 			IBundleProjectService service = (IBundleProjectService) context
 					.getService(ref);
 			IBundleProjectDescription bundleDesc = service.getDescription(proj);
-			bundleDesc.setBundleName(desc.getName());
+			bundleDesc.setBundleName(description.getName());
 			bundleDesc.setBundleVersion(new Version(0, 0, 1, "qualifier"));
 			bundleDesc.setSingleton(true);
 			bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
-			bundleDesc.setSymbolicName(desc.getName());
+			bundleDesc.setSymbolicName(description.getName());
 			bundleDesc.setExtensionRegistry(true);
+			bundleDesc.setBundleClasspath(new IBundleClasspathEntry[] {
+					service.newBundleClasspathEntry(new Path(IncQueryNature.SRC_DIR), null, null),
+					service.newBundleClasspathEntry(new Path(IncQueryNature.SRCGEN_DIR), null, null)
+			});
+			bundleDesc.setExecutionEnvironments(new String[] {IncQueryNature.EXECUTION_ENVIRONMENT});
 			// Adding dependencies
 			IRequiredBundleDescription[] reqBundles = new IRequiredBundleDescription[] { 
 					service.newRequiredBundle("org.eclipse.pde.core", null, false, false),
@@ -92,15 +86,8 @@ public class IncQueryProjectSupport {
 					service.newRequiredBundle("org.eclipse.viatra2.emf.incquery.runtime", null, false, true)};
 			bundleDesc.setRequiredBundles(reqBundles);
 			bundleDesc.apply(monitor);
-			/* Creating Java folders */
-			ProjectGenerationHelper.initializeClasspath(proj, monitor, ProjectGenerationHelper.sourceFolders);
-			ProjectGenerationHelper.initializeBuildProperties(proj, monitor);
-			
-		} catch (IOException ioe) {
-			IStatus status = new Status(IStatus.ERROR,
-					IncQueryNature.BUNDLE_ID, IStatus.ERROR,
-					ioe.getLocalizedMessage(), ioe);
-			throw new CoreException(status);
+			//Adding IncQuery-specific natures
+			ProjectGenerationHelper.addNatures(proj, new String[] {IncQueryNature.NATURE_ID, "org.eclipse.xtext.ui.shared.xtextNature"}, monitor);
 		} finally {
 			monitor.done();
 			if(context != null && ref != null)

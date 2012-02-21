@@ -16,13 +16,9 @@ public class IncQueryNature implements IProjectNature {
 	public static final String NATURE_ID = "org.eclipse.viatra2.emf.incquery.projectnature"; //$NON-NLS-1$
 	public static final String BUNDLE_ID = "org.eclipse.viatra2.emf.incquery.core"; //$NON-NLS-1$
 	public static final String MODEL_BUNDLE_ID = "org.eclipse.viatra2.emf.importer.generic"; //$NON-NLS-1$
-	public static final String MODELS_DIR = "models"; //$NON-NLS-1$
-	public static final String VTCL_DIR = "models/vtcl"; //$NON-NLS-1$
-	public static final String SOURCE_VPML = "models/nemf_xml.vpml"; //$NON-NLS-1$
-	public static final String TARGET_VPML = "models/model.vpml"; //$NON-NLS-1$
-	public static final String IC_GENMODEL = "models/generator.incquery"; //$NON-NLS-1$
 	public static final String SRCGEN_DIR = "src-gen"; //$NON-NLS-1$
 	public static final String SRC_DIR = "src"; //$NON-NLS-1$
+	public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; //$NON_NLS-1$
 	public static final String GENERATED_BUILDERS_DIR = "src-gen/patternbuilders"; //$NON-NLS-1$
 	public static final String GENERATED_BUILDERS_PACKAGEROOT = "patternbuilders"; //$NON-NLS-1$
 	public static final String GENERATED_MATCHERS_DIR = "src-gen/patternmatchers"; //$NON-NLS-1$
