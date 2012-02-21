@@ -656,285 +656,318 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
               };
             JvmConstructor _constructor_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toConstructor(pattern, _matcherClassName_1, _function_1);
             CollectionExtensions.<JvmConstructor>operator_add(_members_1, _constructor_1);
-            EList<JvmMember> _members_2 = it.getMembers();
-            JvmTypeReference _cloneWithProxies_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-            JvmTypeReference _newTypeRef_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.util.Collection.class, _cloneWithProxies_2);
-            final Procedure1<JvmOperation> _function_2 = new Procedure1<JvmOperation>() {
-                public void apply(final JvmOperation it) {
-                  {
-                    CharSequence _javadocGetAllMatches = EMFPatternLanguageJvmModelInferrer.this.javadocGetAllMatches(pattern);
-                    String _string = _javadocGetAllMatches.toString();
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
-                    EList<Variable> _parameters = pattern.getParameters();
-                    for (final Variable parameter : _parameters) {
-                      EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                      String _name = parameter.getName();
-                      JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
-                      CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
-                    }
-                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                        public CharSequence apply(final ImportManager it) {
-                          StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("return rawGetAllMatches(new Object[]{");
-                          {
-                            EList<Variable> _parameters = pattern.getParameters();
-                            boolean _hasElements = false;
-                            for(final Variable p : _parameters) {
-                              if (!_hasElements) {
-                                _hasElements = true;
-                              } else {
-                                _builder.appendImmediate(", ", "");
-                              }
-                              String _name = p.getName();
-                              _builder.append(_name, "");
-                            }
-                          }
-                          _builder.append("});");
-                          _builder.newLineIfNotEmpty();
-                          return _builder;
+            EList<Variable> _parameters = pattern.getParameters();
+            boolean _isEmpty = _parameters.isEmpty();
+            boolean _operator_not = BooleanExtensions.operator_not(_isEmpty);
+            if (_operator_not) {
+              {
+                EList<JvmMember> _members_2 = it.getMembers();
+                JvmTypeReference _cloneWithProxies_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
+                JvmTypeReference _newTypeRef_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.util.Collection.class, _cloneWithProxies_2);
+                final Procedure1<JvmOperation> _function_2 = new Procedure1<JvmOperation>() {
+                    public void apply(final JvmOperation it) {
+                      {
+                        CharSequence _javadocGetAllMatches = EMFPatternLanguageJvmModelInferrer.this.javadocGetAllMatches(pattern);
+                        String _string = _javadocGetAllMatches.toString();
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                        EList<Variable> _parameters = pattern.getParameters();
+                        for (final Variable parameter : _parameters) {
+                          EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                          String _name = parameter.getName();
+                          JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
+                          JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
+                          CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                         }
-                      };
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
-                  }
-                }
-              };
-            JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "getAllMatches", _newTypeRef_2, _function_2);
-            CollectionExtensions.<JvmOperation>operator_add(_members_2, _method);
-            EList<JvmMember> _members_3 = it.getMembers();
-            JvmTypeReference _cloneWithProxies_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-            final Procedure1<JvmOperation> _function_3 = new Procedure1<JvmOperation>() {
-                public void apply(final JvmOperation it) {
-                  {
-                    CharSequence _javadocGetOneArbitraryMatch = EMFPatternLanguageJvmModelInferrer.this.javadocGetOneArbitraryMatch(pattern);
-                    String _string = _javadocGetOneArbitraryMatch.toString();
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
-                    EList<Variable> _parameters = pattern.getParameters();
-                    for (final Variable parameter : _parameters) {
-                      EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                      String _name = parameter.getName();
-                      JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
-                      CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
-                    }
-                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                        public CharSequence apply(final ImportManager it) {
-                          StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("return rawGetOneArbitraryMatch(new Object[]{");
-                          {
-                            EList<Variable> _parameters = pattern.getParameters();
-                            boolean _hasElements = false;
-                            for(final Variable p : _parameters) {
-                              if (!_hasElements) {
-                                _hasElements = true;
-                              } else {
-                                _builder.appendImmediate(", ", "");
+                        final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                            public CharSequence apply(final ImportManager it) {
+                              StringConcatenation _builder = new StringConcatenation();
+                              _builder.append("return rawGetAllMatches(new Object[]{");
+                              {
+                                EList<Variable> _parameters = pattern.getParameters();
+                                boolean _hasElements = false;
+                                for(final Variable p : _parameters) {
+                                  if (!_hasElements) {
+                                    _hasElements = true;
+                                  } else {
+                                    _builder.appendImmediate(", ", "");
+                                  }
+                                  String _name = p.getName();
+                                  _builder.append(_name, "");
+                                }
                               }
-                              String _name = p.getName();
-                              _builder.append(_name, "");
+                              _builder.append("});");
+                              _builder.newLineIfNotEmpty();
+                              return _builder;
                             }
-                          }
-                          _builder.append("});");
-                          _builder.newLineIfNotEmpty();
-                          return _builder;
-                        }
-                      };
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
-                  }
-                }
-              };
-            JvmOperation _method_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "getOneArbitraryMatch", _cloneWithProxies_3, _function_3);
-            CollectionExtensions.<JvmOperation>operator_add(_members_3, _method_1);
-            EList<JvmMember> _members_4 = it.getMembers();
-            JvmTypeReference _newTypeRef_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
-            final Procedure1<JvmOperation> _function_4 = new Procedure1<JvmOperation>() {
-                public void apply(final JvmOperation it) {
-                  {
-                    CharSequence _javadocHasMatch = EMFPatternLanguageJvmModelInferrer.this.javadocHasMatch(pattern);
-                    String _string = _javadocHasMatch.toString();
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
-                    EList<Variable> _parameters = pattern.getParameters();
-                    for (final Variable parameter : _parameters) {
-                      EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                      String _name = parameter.getName();
-                      JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
-                      CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
+                          };
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                      }
                     }
-                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                        public CharSequence apply(final ImportManager it) {
-                          StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("return rawHasMatch(new Object[]{");
-                          {
-                            EList<Variable> _parameters = pattern.getParameters();
-                            boolean _hasElements = false;
-                            for(final Variable p : _parameters) {
-                              if (!_hasElements) {
-                                _hasElements = true;
-                              } else {
-                                _builder.appendImmediate(", ", "");
-                              }
-                              String _name = p.getName();
-                              _builder.append(_name, "");
-                            }
-                          }
-                          _builder.append("});");
-                          _builder.newLineIfNotEmpty();
-                          return _builder;
+                  };
+                JvmOperation _method = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "getAllMatches", _newTypeRef_2, _function_2);
+                CollectionExtensions.<JvmOperation>operator_add(_members_2, _method);
+                EList<JvmMember> _members_3 = it.getMembers();
+                JvmTypeReference _cloneWithProxies_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
+                final Procedure1<JvmOperation> _function_3 = new Procedure1<JvmOperation>() {
+                    public void apply(final JvmOperation it) {
+                      {
+                        CharSequence _javadocGetOneArbitraryMatch = EMFPatternLanguageJvmModelInferrer.this.javadocGetOneArbitraryMatch(pattern);
+                        String _string = _javadocGetOneArbitraryMatch.toString();
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                        EList<Variable> _parameters = pattern.getParameters();
+                        for (final Variable parameter : _parameters) {
+                          EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                          String _name = parameter.getName();
+                          JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
+                          JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
+                          CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                         }
-                      };
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
-                  }
-                }
-              };
-            JvmOperation _method_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "hasMatch", _newTypeRef_3, _function_4);
-            CollectionExtensions.<JvmOperation>operator_add(_members_4, _method_2);
-            EList<JvmMember> _members_5 = it.getMembers();
-            JvmTypeReference _newTypeRef_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, int.class);
-            final Procedure1<JvmOperation> _function_5 = new Procedure1<JvmOperation>() {
-                public void apply(final JvmOperation it) {
-                  {
-                    CharSequence _javadocCountMatches = EMFPatternLanguageJvmModelInferrer.this.javadocCountMatches(pattern);
-                    String _string = _javadocCountMatches.toString();
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
-                    EList<Variable> _parameters = pattern.getParameters();
-                    for (final Variable parameter : _parameters) {
-                      EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                      String _name = parameter.getName();
-                      JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
-                      CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
+                        final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                            public CharSequence apply(final ImportManager it) {
+                              StringConcatenation _builder = new StringConcatenation();
+                              _builder.append("return rawGetOneArbitraryMatch(new Object[]{");
+                              {
+                                EList<Variable> _parameters = pattern.getParameters();
+                                boolean _hasElements = false;
+                                for(final Variable p : _parameters) {
+                                  if (!_hasElements) {
+                                    _hasElements = true;
+                                  } else {
+                                    _builder.appendImmediate(", ", "");
+                                  }
+                                  String _name = p.getName();
+                                  _builder.append(_name, "");
+                                }
+                              }
+                              _builder.append("});");
+                              _builder.newLineIfNotEmpty();
+                              return _builder;
+                            }
+                          };
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                      }
                     }
-                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                        public CharSequence apply(final ImportManager it) {
-                          StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("return rawCountMatches(new Object[]{");
-                          {
-                            EList<Variable> _parameters = pattern.getParameters();
-                            boolean _hasElements = false;
-                            for(final Variable p : _parameters) {
-                              if (!_hasElements) {
-                                _hasElements = true;
-                              } else {
-                                _builder.appendImmediate(", ", "");
-                              }
-                              String _name = p.getName();
-                              _builder.append(_name, "");
-                            }
-                          }
-                          _builder.append("});");
-                          _builder.newLineIfNotEmpty();
-                          return _builder;
+                  };
+                JvmOperation _method_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "getOneArbitraryMatch", _cloneWithProxies_3, _function_3);
+                CollectionExtensions.<JvmOperation>operator_add(_members_3, _method_1);
+                EList<JvmMember> _members_4 = it.getMembers();
+                JvmTypeReference _newTypeRef_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
+                final Procedure1<JvmOperation> _function_4 = new Procedure1<JvmOperation>() {
+                    public void apply(final JvmOperation it) {
+                      {
+                        CharSequence _javadocHasMatch = EMFPatternLanguageJvmModelInferrer.this.javadocHasMatch(pattern);
+                        String _string = _javadocHasMatch.toString();
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                        EList<Variable> _parameters = pattern.getParameters();
+                        for (final Variable parameter : _parameters) {
+                          EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                          String _name = parameter.getName();
+                          JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
+                          JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
+                          CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                         }
-                      };
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
-                  }
-                }
-              };
-            JvmOperation _method_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "countMatches", _newTypeRef_4, _function_5);
-            CollectionExtensions.<JvmOperation>operator_add(_members_5, _method_3);
-            EList<JvmMember> _members_6 = it.getMembers();
-            final Procedure1<JvmOperation> _function_6 = new Procedure1<JvmOperation>() {
-                public void apply(final JvmOperation it) {
-                  {
-                    CharSequence _javadocForEachMatch = EMFPatternLanguageJvmModelInferrer.this.javadocForEachMatch(pattern);
-                    String _string = _javadocForEachMatch.toString();
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
-                    EList<Variable> _parameters = pattern.getParameters();
-                    for (final Variable parameter : _parameters) {
-                      EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                      String _name = parameter.getName();
-                      JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
-                      CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
+                        final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                            public CharSequence apply(final ImportManager it) {
+                              StringConcatenation _builder = new StringConcatenation();
+                              _builder.append("return rawHasMatch(new Object[]{");
+                              {
+                                EList<Variable> _parameters = pattern.getParameters();
+                                boolean _hasElements = false;
+                                for(final Variable p : _parameters) {
+                                  if (!_hasElements) {
+                                    _hasElements = true;
+                                  } else {
+                                    _builder.appendImmediate(", ", "");
+                                  }
+                                  String _name = p.getName();
+                                  _builder.append(_name, "");
+                                }
+                              }
+                              _builder.append("});");
+                              _builder.newLineIfNotEmpty();
+                              return _builder;
+                            }
+                          };
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                      }
                     }
-                    EList<JvmFormalParameter> _parameters_2 = it.getParameters();
-                    JvmTypeReference _cloneWithProxies = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _cloneWithProxies);
-                    JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "processor", _newTypeRef);
-                    CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_2, _parameter_1);
-                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                        public CharSequence apply(final ImportManager it) {
-                          StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("rawForEachMatch(new Object[]{");
-                          {
-                            EList<Variable> _parameters = pattern.getParameters();
-                            boolean _hasElements = false;
-                            for(final Variable p : _parameters) {
-                              if (!_hasElements) {
-                                _hasElements = true;
-                              } else {
-                                _builder.appendImmediate(", ", "");
-                              }
-                              String _name = p.getName();
-                              _builder.append(_name, "");
-                            }
-                          }
-                          _builder.append("}, processor);");
-                          _builder.newLineIfNotEmpty();
-                          return _builder;
+                  };
+                JvmOperation _method_2 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "hasMatch", _newTypeRef_3, _function_4);
+                CollectionExtensions.<JvmOperation>operator_add(_members_4, _method_2);
+                EList<JvmMember> _members_5 = it.getMembers();
+                JvmTypeReference _newTypeRef_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, int.class);
+                final Procedure1<JvmOperation> _function_5 = new Procedure1<JvmOperation>() {
+                    public void apply(final JvmOperation it) {
+                      {
+                        CharSequence _javadocCountMatches = EMFPatternLanguageJvmModelInferrer.this.javadocCountMatches(pattern);
+                        String _string = _javadocCountMatches.toString();
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                        EList<Variable> _parameters = pattern.getParameters();
+                        for (final Variable parameter : _parameters) {
+                          EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                          String _name = parameter.getName();
+                          JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
+                          JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
+                          CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                         }
-                      };
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
-                  }
-                }
-              };
-            JvmOperation _method_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "forEachMatch", null, _function_6);
-            CollectionExtensions.<JvmOperation>operator_add(_members_6, _method_4);
-            EList<JvmMember> _members_7 = it.getMembers();
-            JvmTypeReference _newTypeRef_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
-            final Procedure1<JvmOperation> _function_7 = new Procedure1<JvmOperation>() {
-                public void apply(final JvmOperation it) {
-                  {
-                    CharSequence _javadocForOneArbitraryMatch = EMFPatternLanguageJvmModelInferrer.this.javadocForOneArbitraryMatch(pattern);
-                    String _string = _javadocForOneArbitraryMatch.toString();
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
-                    EList<Variable> _parameters = pattern.getParameters();
-                    for (final Variable parameter : _parameters) {
-                      EList<JvmFormalParameter> _parameters_1 = it.getParameters();
-                      String _name = parameter.getName();
-                      JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
-                      JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
-                      CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
+                        final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                            public CharSequence apply(final ImportManager it) {
+                              StringConcatenation _builder = new StringConcatenation();
+                              _builder.append("return rawCountMatches(new Object[]{");
+                              {
+                                EList<Variable> _parameters = pattern.getParameters();
+                                boolean _hasElements = false;
+                                for(final Variable p : _parameters) {
+                                  if (!_hasElements) {
+                                    _hasElements = true;
+                                  } else {
+                                    _builder.appendImmediate(", ", "");
+                                  }
+                                  String _name = p.getName();
+                                  _builder.append(_name, "");
+                                }
+                              }
+                              _builder.append("});");
+                              _builder.newLineIfNotEmpty();
+                              return _builder;
+                            }
+                          };
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                      }
                     }
-                    EList<JvmFormalParameter> _parameters_2 = it.getParameters();
-                    JvmTypeReference _cloneWithProxies = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-                    JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _cloneWithProxies);
-                    JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "processor", _newTypeRef);
-                    CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_2, _parameter_1);
-                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                        public CharSequence apply(final ImportManager it) {
-                          StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("return rawForOneArbitraryMatch(new Object[]{");
-                          {
-                            EList<Variable> _parameters = pattern.getParameters();
-                            boolean _hasElements = false;
-                            for(final Variable p : _parameters) {
-                              if (!_hasElements) {
-                                _hasElements = true;
-                              } else {
-                                _builder.appendImmediate(", ", "");
-                              }
-                              String _name = p.getName();
-                              _builder.append(_name, "");
-                            }
-                          }
-                          _builder.append("}, processor);");
-                          _builder.newLineIfNotEmpty();
-                          return _builder;
+                  };
+                JvmOperation _method_3 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "countMatches", _newTypeRef_4, _function_5);
+                CollectionExtensions.<JvmOperation>operator_add(_members_5, _method_3);
+                EList<JvmMember> _members_6 = it.getMembers();
+                final Procedure1<JvmOperation> _function_6 = new Procedure1<JvmOperation>() {
+                    public void apply(final JvmOperation it) {
+                      {
+                        CharSequence _javadocForEachMatch = EMFPatternLanguageJvmModelInferrer.this.javadocForEachMatch(pattern);
+                        String _string = _javadocForEachMatch.toString();
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                        EList<Variable> _parameters = pattern.getParameters();
+                        for (final Variable parameter : _parameters) {
+                          EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                          String _name = parameter.getName();
+                          JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
+                          JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
+                          CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
                         }
-                      };
-                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                        EList<JvmFormalParameter> _parameters_2 = it.getParameters();
+                        JvmTypeReference _cloneWithProxies = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
+                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _cloneWithProxies);
+                        JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "processor", _newTypeRef);
+                        CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_2, _parameter_1);
+                        final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                            public CharSequence apply(final ImportManager it) {
+                              StringConcatenation _builder = new StringConcatenation();
+                              _builder.append("rawForEachMatch(new Object[]{");
+                              {
+                                EList<Variable> _parameters = pattern.getParameters();
+                                boolean _hasElements = false;
+                                for(final Variable p : _parameters) {
+                                  if (!_hasElements) {
+                                    _hasElements = true;
+                                  } else {
+                                    _builder.appendImmediate(", ", "");
+                                  }
+                                  String _name = p.getName();
+                                  _builder.append(_name, "");
+                                }
+                              }
+                              _builder.append("}, processor);");
+                              _builder.newLineIfNotEmpty();
+                              return _builder;
+                            }
+                          };
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                      }
+                    }
+                  };
+                JvmOperation _method_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "forEachMatch", null, _function_6);
+                CollectionExtensions.<JvmOperation>operator_add(_members_6, _method_4);
+                EList<JvmMember> _members_7 = it.getMembers();
+                JvmTypeReference _newTypeRef_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
+                final Procedure1<JvmOperation> _function_7 = new Procedure1<JvmOperation>() {
+                    public void apply(final JvmOperation it) {
+                      {
+                        CharSequence _javadocForOneArbitraryMatch = EMFPatternLanguageJvmModelInferrer.this.javadocForOneArbitraryMatch(pattern);
+                        String _string = _javadocForOneArbitraryMatch.toString();
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                        EList<Variable> _parameters = pattern.getParameters();
+                        for (final Variable parameter : _parameters) {
+                          EList<JvmFormalParameter> _parameters_1 = it.getParameters();
+                          String _name = parameter.getName();
+                          JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(parameter);
+                          JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(parameter, _name, _calculateType);
+                          CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_1, _parameter);
+                        }
+                        EList<JvmFormalParameter> _parameters_2 = it.getParameters();
+                        JvmTypeReference _cloneWithProxies = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
+                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _cloneWithProxies);
+                        JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "processor", _newTypeRef);
+                        CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_2, _parameter_1);
+                        final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                            public CharSequence apply(final ImportManager it) {
+                              StringConcatenation _builder = new StringConcatenation();
+                              _builder.append("return rawForOneArbitraryMatch(new Object[]{");
+                              {
+                                EList<Variable> _parameters = pattern.getParameters();
+                                boolean _hasElements = false;
+                                for(final Variable p : _parameters) {
+                                  if (!_hasElements) {
+                                    _hasElements = true;
+                                  } else {
+                                    _builder.appendImmediate(", ", "");
+                                  }
+                                  String _name = p.getName();
+                                  _builder.append(_name, "");
+                                }
+                              }
+                              _builder.append("}, processor);");
+                              _builder.newLineIfNotEmpty();
+                              return _builder;
+                            }
+                          };
+                        EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                      }
+                    }
+                  };
+                JvmOperation _method_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "forOneArbitraryMatch", _newTypeRef_5, _function_7);
+                CollectionExtensions.<JvmOperation>operator_add(_members_7, _method_5);
+              }
+            } else {
+              EList<JvmMember> _members_8 = it.getMembers();
+              JvmTypeReference _newTypeRef_6 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, boolean.class);
+              final Procedure1<JvmOperation> _function_8 = new Procedure1<JvmOperation>() {
+                  public void apply(final JvmOperation it) {
+                    {
+                      CharSequence _javadocHasMatchNoParameter = EMFPatternLanguageJvmModelInferrer.this.javadocHasMatchNoParameter(pattern);
+                      String _string = _javadocHasMatchNoParameter.toString();
+                      EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
+                      final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                          public CharSequence apply(final ImportManager it) {
+                            StringConcatenation _builder = new StringConcatenation();
+                            _builder.append("return rawHasMatch(new Object[]{});");
+                            _builder.newLine();
+                            return _builder;
+                          }
+                        };
+                      EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                    }
                   }
-                }
-              };
-            JvmOperation _method_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "forOneArbitraryMatch", _newTypeRef_5, _function_7);
-            CollectionExtensions.<JvmOperation>operator_add(_members_7, _method_5);
-            EList<JvmMember> _members_8 = it.getMembers();
+                };
+              JvmOperation _method_6 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "hasMatch", _newTypeRef_6, _function_8);
+              CollectionExtensions.<JvmOperation>operator_add(_members_8, _method_6);
+            }
+            EList<JvmMember> _members_9 = it.getMembers();
             JvmTypeReference _cloneWithProxies_4 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-            final Procedure1<JvmOperation> _function_8 = new Procedure1<JvmOperation>() {
+            final Procedure1<JvmOperation> _function_9 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
+                    EList<JvmAnnotationReference> _annotations = it.getAnnotations();
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     EList<JvmFormalParameter> _parameters = it.getParameters();
                     JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple.class);
                     JvmFormalParameter _parameter = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "t", _newTypeRef);
@@ -975,13 +1008,16 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                   }
                 }
               };
-            JvmOperation _method_6 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "tupleToMatch", _cloneWithProxies_4, _function_8);
-            CollectionExtensions.<JvmOperation>operator_add(_members_8, _method_6);
-            EList<JvmMember> _members_9 = it.getMembers();
+            JvmOperation _method_7 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "tupleToMatch", _cloneWithProxies_4, _function_9);
+            CollectionExtensions.<JvmOperation>operator_add(_members_9, _method_7);
+            EList<JvmMember> _members_10 = it.getMembers();
             JvmTypeReference _cloneWithProxies_5 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-            final Procedure1<JvmOperation> _function_9 = new Procedure1<JvmOperation>() {
+            final Procedure1<JvmOperation> _function_10 = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
+                    EList<JvmAnnotationReference> _annotations = it.getAnnotations();
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
                     EList<JvmFormalParameter> _parameters = it.getParameters();
                     JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.Object.class);
                     JvmTypeReference _addArrayTypeDimension = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.addArrayTypeDimension(_newTypeRef);
@@ -1023,8 +1059,8 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                   }
                 }
               };
-            JvmOperation _method_7 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "arrayToMatch", _cloneWithProxies_5, _function_9);
-            CollectionExtensions.<JvmOperation>operator_add(_members_9, _method_7);
+            JvmOperation _method_8 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "arrayToMatch", _cloneWithProxies_5, _function_10);
+            CollectionExtensions.<JvmOperation>operator_add(_members_10, _method_8);
           }
         }
       };
@@ -1237,32 +1273,39 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       _builder.append("\t");
       _builder.append("return Arrays.deepEquals(toArray(), otherSig.toArray());");
       _builder.newLine();
-      String _matchClassName_1 = this.matchClassName(pattern);
-      _builder.append(_matchClassName_1, "");
-      _builder.append(" other = (");
-      String _matchClassName_2 = this.matchClassName(pattern);
-      _builder.append(_matchClassName_2, "");
-      _builder.append(") obj;");
-      _builder.newLineIfNotEmpty();
       {
         EList<Variable> _parameters = pattern.getParameters();
-        for(final Variable variable : _parameters) {
-          _builder.append("if (");
-          String _fieldName = this.fieldName(variable);
-          _builder.append(_fieldName, "");
-          _builder.append(" == null) {if (other.");
-          String _fieldName_1 = this.fieldName(variable);
-          _builder.append(_fieldName_1, "");
-          _builder.append(" != null) return false;}");
+        boolean _isEmpty = _parameters.isEmpty();
+        boolean _operator_not = BooleanExtensions.operator_not(_isEmpty);
+        if (_operator_not) {
+          String _matchClassName_1 = this.matchClassName(pattern);
+          _builder.append(_matchClassName_1, "");
+          _builder.append(" other = (");
+          String _matchClassName_2 = this.matchClassName(pattern);
+          _builder.append(_matchClassName_2, "");
+          _builder.append(") obj;");
           _builder.newLineIfNotEmpty();
-          _builder.append("else if (!");
-          String _fieldName_2 = this.fieldName(variable);
-          _builder.append(_fieldName_2, "");
-          _builder.append(".equals(other.");
-          String _fieldName_3 = this.fieldName(variable);
-          _builder.append(_fieldName_3, "");
-          _builder.append(")) return false;");
-          _builder.newLineIfNotEmpty();
+          {
+            EList<Variable> _parameters_1 = pattern.getParameters();
+            for(final Variable variable : _parameters_1) {
+              _builder.append("if (");
+              String _fieldName = this.fieldName(variable);
+              _builder.append(_fieldName, "");
+              _builder.append(" == null) {if (other.");
+              String _fieldName_1 = this.fieldName(variable);
+              _builder.append(_fieldName_1, "");
+              _builder.append(" != null) return false;}");
+              _builder.newLineIfNotEmpty();
+              _builder.append("else if (!");
+              String _fieldName_2 = this.fieldName(variable);
+              _builder.append(_fieldName_2, "");
+              _builder.append(".equals(other.");
+              String _fieldName_3 = this.fieldName(variable);
+              _builder.append(_fieldName_3, "");
+              _builder.append(")) return false;");
+              _builder.newLineIfNotEmpty();
+            }
+          }
         }
       }
       _builder.append("return true;");
@@ -1586,6 +1629,15 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       }
     }
     _builder.append("@return true if the input is a valid (partial) match of the pattern.");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  public CharSequence javadocHasMatchNoParameter(final Pattern pattern) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("Indicates whether the (parameterless) pattern matches or not. ");
+    _builder.newLine();
+    _builder.append("@return true if the pattern has a valid match.");
     _builder.newLine();
     return _builder;
   }

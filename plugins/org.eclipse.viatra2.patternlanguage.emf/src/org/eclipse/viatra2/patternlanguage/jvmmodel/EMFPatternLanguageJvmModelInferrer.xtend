@@ -250,81 +250,94 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			]
    			
    			// Adding type-safe matcher calls
-   			it.members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(Collection), cloneWithProxies(matchClassRef))) [
-   				it.documentation = pattern.javadocGetAllMatches.toString
-   				for (parameter : pattern.parameters){
-					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
-   				}
-   				it.body = ['''
-   					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
-   			]
+   			// if the pattern not defines parameters, the Matcher class contains only the hasMatch method
+   			if (!pattern.parameters.isEmpty) {
+   				 it.members += pattern.toMethod("getAllMatches", pattern.newTypeRef(typeof(Collection), cloneWithProxies(matchClassRef))) [
+	   				it.documentation = pattern.javadocGetAllMatches.toString
+	   				for (parameter : pattern.parameters){
+						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+	   				}
+	   				it.body = ['''
+	   					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+	   				''']
+	   			]
+	   			
+	   			it.members += pattern.toMethod("getOneArbitraryMatch", cloneWithProxies(matchClassRef)) [
+	   				it.documentation = pattern.javadocGetOneArbitraryMatch.toString
+	   				for (parameter : pattern.parameters){
+						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+	   				}
+	   				it.body = ['''
+	   					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+	   				''']
+	   			]
+	   			
+	   			it.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
+	   				it.documentation = pattern.javadocHasMatch.toString
+	   				for (parameter : pattern.parameters){
+						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+	   				}
+	   				it.body = ['''
+	   					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+	   				''']
+	   			]
+	   			
+	   			it.members += pattern.toMethod("countMatches", pattern.newTypeRef(typeof(int))) [
+	   				it.documentation = pattern.javadocCountMatches.toString
+	   				for (parameter : pattern.parameters){
+						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+	   				}
+	   				it.body = ['''
+	   					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
+	   				''']
+	   			]
+	   			
+	   			it.members += pattern.toMethod("forEachMatch", null) [
+	   				it.documentation = pattern.javadocForEachMatch.toString
+	   				for (parameter : pattern.parameters){
+						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+	   				}
+					// TODO: add ? super MatchClass to Processor as typeparameter
+					it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
+	   				it.body = ['''
+	   					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
+	   				''']
+	   			]
+	   			
+	   			it.members += pattern.toMethod("forOneArbitraryMatch", pattern.newTypeRef(typeof(boolean))) [
+	   				it.documentation = pattern.javadocForOneArbitraryMatch.toString
+	   				for (parameter : pattern.parameters){
+						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
+	   				}
+	   				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
+	   				it.body = ['''
+	   					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
+	   				''']
+	   			]
+   			} else {
+   				it.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
+	   				it.documentation = pattern.javadocHasMatchNoParameter.toString
+	   				it.body = ['''
+	   					return rawHasMatch(new Object[]{});
+	   				''']
+	   			]
+   			}
    			
-   			it.members += pattern.toMethod("getOneArbitraryMatch", cloneWithProxies(matchClassRef)) [
-   				it.documentation = pattern.javadocGetOneArbitraryMatch.toString
-   				for (parameter : pattern.parameters){
-					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
-   				}
-   				it.body = ['''
-   					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
-   			]
-   			
-			it.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
-   				it.documentation = pattern.javadocHasMatch.toString
-   				for (parameter : pattern.parameters){
-					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
-   				}
-   				it.body = ['''
-   					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
-   			]
-   			
-   			it.members += pattern.toMethod("countMatches", pattern.newTypeRef(typeof(int))) [
-   				it.documentation = pattern.javadocCountMatches.toString
-   				for (parameter : pattern.parameters){
-					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
-   				}
-   				it.body = ['''
-   					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
-   			]
-   			
-   			it.members += pattern.toMethod("forEachMatch", null) [
-   				it.documentation = pattern.javadocForEachMatch.toString
-   				for (parameter : pattern.parameters){
-					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
-   				}
-				// TODO: add ? super MatchClass to Processor as typeparameter
-				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
-   				it.body = ['''
-   					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
-   				''']
-   			]
-   			
-   			it.members += pattern.toMethod("forOneArbitraryMatch", pattern.newTypeRef(typeof(boolean))) [
-   				it.documentation = pattern.javadocForOneArbitraryMatch.toString
-   				for (parameter : pattern.parameters){
-					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
-   				}
-   				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
-   				it.body = ['''
-   					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
-   				''']
-   			]
    			it.members += pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
-   				it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
-   				it.body = ['''
-   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);
-   				''']
-   			]
-   			
-   			it.members += pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
-   				it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
-   				it.body = ['''
-   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
-   				''']
-   			]
+	   			it.annotations += pattern.toAnnotation(typeof (Override))
+	   			it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
+	   			it.body = ['''
+	   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);
+	   			''']
+	   		]
+	   			
+	   		it.members += pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
+	   			it.annotations += pattern.toAnnotation(typeof (Override))
+	   			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
+	   			it.body = ['''
+	   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+	   			''']
+	   		]
    			
    		]
    	}
@@ -395,11 +408,13 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 						return false;
 					if (!«pattern.matchClassName».class.equals(obj.getClass()))
 						return Arrays.deepEquals(toArray(), otherSig.toArray());
+					«IF !pattern.parameters.isEmpty»
 					«pattern.matchClassName» other = («pattern.matchClassName») obj;
 					«FOR variable : pattern.parameters» 
 					if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
 					else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
 					«ENDFOR»
+					«ENDIF»
 					return true;
 				'''
    	}
@@ -534,6 +549,11 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return true if the input is a valid (partial) match of the pattern.
+	'''
+	
+	def javadocHasMatchNoParameter(Pattern pattern) '''
+		Indicates whether the (parameterless) pattern matches or not. 
+		@return true if the pattern has a valid match.
 	'''
 	
 	def javadocCountMatches(Pattern pattern) '''
