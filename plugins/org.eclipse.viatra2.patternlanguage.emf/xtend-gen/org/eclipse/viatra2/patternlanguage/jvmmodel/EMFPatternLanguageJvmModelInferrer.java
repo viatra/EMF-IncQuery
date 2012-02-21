@@ -84,17 +84,14 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
         String _operator_plus = StringExtensions.operator_plus(packageName, ".");
         packageName = _operator_plus;
       }
-      String _operator_plus_1 = StringExtensions.operator_plus(packageName, "matcher");
-      final String matcherPackageName = _operator_plus_1;
-      String _operator_plus_2 = StringExtensions.operator_plus(packageName, "match");
-      final String matchPackageName = _operator_plus_2;
-      String _operator_plus_3 = StringExtensions.operator_plus(packageName, "processor");
-      final String processorPackageName = _operator_plus_3;
-      JvmDeclaredType _inferMatchClass = this.inferMatchClass(pattern, isPrelinkingPhase, matchPackageName);
+      String _name = pattern.getName();
+      String _operator_plus_1 = StringExtensions.operator_plus(packageName, _name);
+      final String mainPackageName = _operator_plus_1;
+      JvmDeclaredType _inferMatchClass = this.inferMatchClass(pattern, isPrelinkingPhase, mainPackageName);
       final JvmDeclaredType matchClass = _inferMatchClass;
       JvmParameterizedTypeReference _createTypeRef = this.types.createTypeRef(matchClass);
       final JvmParameterizedTypeReference matchClassRef = _createTypeRef;
-      JvmDeclaredType _inferMatcherClass = this.inferMatcherClass(pattern, isPrelinkingPhase, matcherPackageName, matchClassRef);
+      JvmDeclaredType _inferMatcherClass = this.inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef);
       final JvmDeclaredType matcherClass = _inferMatcherClass;
       JvmParameterizedTypeReference _createTypeRef_1 = this.types.createTypeRef(matcherClass);
       final JvmParameterizedTypeReference matcherClassRef = _createTypeRef_1;
@@ -112,7 +109,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
         };
       JvmField _field = this._eMFJvmTypesBuilder.toField(pattern, "FACTORY", _newTypeRef, _function);
       CollectionExtensions.<JvmField>operator_add(_members, _field);
-      JvmDeclaredType _inferProcessorClass = this.inferProcessorClass(pattern, isPrelinkingPhase, processorPackageName, matchClassRef);
+      JvmDeclaredType _inferProcessorClass = this.inferProcessorClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef);
       final JvmDeclaredType processorClass = _inferProcessorClass;
       acceptor.accept(matchClass);
       acceptor.accept(matcherClass);

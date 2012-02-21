@@ -71,15 +71,13 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		} else {
    			packageName = packageName + "."
    		}
-   		val matcherPackageName = packageName + "matcher"
-   		val matchPackageName = packageName + "match"
-   		val processorPackageName = packageName + "processor"
+   		val mainPackageName = packageName + pattern.name
    		// infer Match class
-   		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, matchPackageName)
+   		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
    		val matchClassRef = types.createTypeRef(matchClass)
    		
    		// infer a Matcher class
-   		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, matcherPackageName, matchClassRef)
+   		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
    		val matcherClassRef = types.createTypeRef(matcherClass)
    		matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
    			it.visibility = JvmVisibility::PUBLIC
@@ -88,7 +86,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    		]
    		
    		// infer Processor class
-   		val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, processorPackageName, matchClassRef)
+   		val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
    		// accept new classes
    		acceptor.accept(matchClass)
    		acceptor.accept(matcherClass)
