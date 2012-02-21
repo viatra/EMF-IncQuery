@@ -95,7 +95,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	 */
 	@Override
 	public GenericPatternMatch arrayToMatch(Object[] parameters) {
-		return new GenericPatternMatch(getPatternName(), getParameterNames(), getPosMapping(), parameters);
+		return new GenericPatternMatch(this, parameters);
 	}
 
 
@@ -104,7 +104,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	 */
 	@Override
 	protected GenericPatternMatch tupleToMatch(Tuple t) {
-		return new GenericPatternMatch(getPatternName(), getParameterNames(), getPosMapping(), t.getElements());
+		return new GenericPatternMatch(this, t.getElements());
 	}
 
 	private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) 

@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+
 
 /**
  * Generic interface for a single match of a pattern.
@@ -22,6 +24,9 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
  * @author Bergmann Gábor
  */
 public interface IPatternMatch extends Cloneable /*, Map<String, Object>*/ {
+	/** @return the pattern for which this is a match. */
+	public Pattern pattern();	
+	
 	/** Identifies the name of the pattern for which this is a match. */
 	public String patternName();
 

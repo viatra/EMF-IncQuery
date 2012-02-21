@@ -12,9 +12,9 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Generic signature object implementation. 
@@ -28,20 +28,16 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 @SuppressWarnings("unused")
 public class GenericPatternMatch extends BasePatternMatch implements IPatternMatch {
 
-	private String patternName;
-	private String[] parameterNames;
-	private Map<String, Integer> posMapping;
+	private GenericPatternMatcher matcher;
 	private Object[] array;
 
 	/**
 	 * @param posMapping
 	 * @param array
 	 */
-	GenericPatternMatch(String patternName, String[] parameterNames, Map<String, Integer> posMapping, Object[] array) {
+	GenericPatternMatch(GenericPatternMatcher matcher, Object[] array) {
 		super();
-		this.patternName = patternName;
-		this.parameterNames = parameterNames;
-		this.posMapping = posMapping;
+		this.matcher = matcher;
 		this.array = array;
 	}
 
@@ -50,7 +46,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 	 */
 	@Override
 	public Object get(String parameterName) {
-		Integer index = posMapping.get(parameterName);
+		Integer index = matcher.getPositionOfParameter(parameterName);
 		return index == null? null : array[index];
 	}
 	
@@ -59,7 +55,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 	 */
 	@Override
 	public boolean set(String parameterName, Object newValue) {
-		Integer index = posMapping.get(parameterName);
+		Integer index = matcher.getPositionOfParameter(parameterName);
 		if (index == null) return false;
 		array[index] = newValue;
 		return true;
@@ -88,7 +84,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 		if (!(obj instanceof IPatternMatch))
 			return false;
 		IPatternMatch other = (IPatternMatch) obj;
-		if (!patternName.equals(other.patternName()))
+		if (!pattern().equals(other.pattern()))
 			return false;
 		if (!Arrays.deepEquals(array, other.toArray()))
 			return false;
@@ -101,6 +97,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 	@Override
 	public String prettyPrint() {
 		StringBuilder result = new StringBuilder();
+		String[] parameterNames = parameterNames();
 		for (int i=0; i<array.length; ++i) {
 			if (i!=0) result.append(", ");
 			result.append("\"" + parameterNames[i] + "\"=" + prettyPrintValue(array[i]));
@@ -109,11 +106,19 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#pattern()
+	 */
+	@Override
+	public Pattern pattern() {
+		return matcher.getPattern();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#patternName()
 	 */
 	@Override
 	public String patternName() {
-		return patternName;
+		return matcher.getPatternName();
 	}
 
 	/* (non-Javadoc)
@@ -121,7 +126,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 	 */
 	@Override
 	public String[] parameterNames() {
-		return parameterNames;
+		return matcher.getParameterNames();
 	}
 	
 }
