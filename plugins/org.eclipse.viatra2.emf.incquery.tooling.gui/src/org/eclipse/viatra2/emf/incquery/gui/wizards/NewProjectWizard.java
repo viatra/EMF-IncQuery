@@ -20,8 +20,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryProjectSupport;
 
 /**
- * A wizard class for creating an Incremental Query project with an IncQuery
- * genmodel.
+ * A wizard class for initializing an EMF IncQuery project.
  * 
  * @author Zoltan Ujhelyi
  * 
@@ -41,9 +40,9 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	public void addPages() {
 		projectCreationPage = new WizardNewProjectCreationPage(
 				"NewIncQueryProject");
-		projectCreationPage.setTitle("New Incremental Query Project");
+		projectCreationPage.setTitle("New EMF IncQuery Project");
 		projectCreationPage
-				.setDescription("Create a new Incremental Query project.");
+				.setDescription("Create a new EMF IncQuery project.");
 		addPage(projectCreationPage);
 	}
 
@@ -64,7 +63,6 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		final IProjectDescription description = workspace
 				.newProjectDescription(projectHandle.getName());
 		description.setLocationURI(projectURI);
-		// description.setNatureIds(new String[] {IncQueryNature.NATURE_ID});
 
 		/*
 		 * Just like the ExampleWizard, but this time with an operation object
