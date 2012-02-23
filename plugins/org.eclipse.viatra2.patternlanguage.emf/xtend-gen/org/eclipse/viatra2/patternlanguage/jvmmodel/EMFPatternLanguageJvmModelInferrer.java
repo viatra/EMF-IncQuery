@@ -161,30 +161,33 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
             JvmTypeReference _addArrayTypeDimension = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.addArrayTypeDimension(_newTypeRef_2);
             final Procedure1<JvmField> _function = new Procedure1<JvmField>() {
                 public void apply(final JvmField it) {
-                  final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                      public CharSequence apply(final ImportManager it) {
-                        StringConcatenation _builder = new StringConcatenation();
-                        _builder.append("{");
-                        {
-                          EList<Variable> _parameters = pattern.getParameters();
-                          boolean _hasElements = false;
-                          for(final Variable variable : _parameters) {
-                            if (!_hasElements) {
-                              _hasElements = true;
-                            } else {
-                              _builder.appendImmediate(", ", "");
+                  {
+                    it.setStatic(true);
+                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                        public CharSequence apply(final ImportManager it) {
+                          StringConcatenation _builder = new StringConcatenation();
+                          _builder.append("{");
+                          {
+                            EList<Variable> _parameters = pattern.getParameters();
+                            boolean _hasElements = false;
+                            for(final Variable variable : _parameters) {
+                              if (!_hasElements) {
+                                _hasElements = true;
+                              } else {
+                                _builder.appendImmediate(", ", "");
+                              }
+                              _builder.append("\"");
+                              String _name = variable.getName();
+                              _builder.append(_name, "");
+                              _builder.append("\"");
                             }
-                            _builder.append("\"");
-                            String _name = variable.getName();
-                            _builder.append(_name, "");
-                            _builder.append("\"");
                           }
+                          _builder.append("}");
+                          return _builder;
                         }
-                        _builder.append("}");
-                        return _builder;
-                      }
-                    };
-                  EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setInitializer(it, _function);
+                      };
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setInitializer(it, _function);
+                  }
                 }
               };
             JvmField _field_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toField(pattern, "parameterNames", _addArrayTypeDimension, _function);
@@ -427,8 +430,11 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
                           StringConcatenation _builder = new StringConcatenation();
-                          _builder.append("return parameterNames;");
-                          _builder.newLine();
+                          _builder.append("return ");
+                          String _matchClassName = EMFPatternLanguageJvmModelInferrer.this.matchClassName(pattern);
+                          _builder.append(_matchClassName, "");
+                          _builder.append(".parameterNames;");
+                          _builder.newLineIfNotEmpty();
                           return _builder;
                         }
                       };
@@ -575,6 +581,30 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
               };
             JvmOperation _method_9 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "equals", _newTypeRef_10, _function_11);
             CollectionExtensions.<JvmOperation>operator_add(_members_12, _method_9);
+            EList<JvmMember> _members_13 = it.getMembers();
+            JvmTypeReference _newTypeRef_11 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern.class);
+            final Procedure1<JvmOperation> _function_12 = new Procedure1<JvmOperation>() {
+                public void apply(final JvmOperation it) {
+                  {
+                    EList<JvmAnnotationReference> _annotations = it.getAnnotations();
+                    JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+                    CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
+                    final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                        public CharSequence apply(final ImportManager it) {
+                          StringConcatenation _builder = new StringConcatenation();
+                          _builder.append("return ");
+                          String _matcherClassName = EMFPatternLanguageJvmModelInferrer.this.matcherClassName(pattern);
+                          _builder.append(_matcherClassName, "");
+                          _builder.append(".FACTORY.getPattern();");
+                          return _builder;
+                        }
+                      };
+                    EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+                  }
+                }
+              };
+            JvmOperation _method_10 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toMethod(pattern, "pattern", _newTypeRef_11, _function_12);
+            CollectionExtensions.<JvmOperation>operator_add(_members_13, _method_10);
           }
         }
       };
@@ -1087,7 +1117,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
             final Procedure1<JvmOperation> _function = new Procedure1<JvmOperation>() {
                 public void apply(final JvmOperation it) {
                   {
-                    it.setVisibility(JvmVisibility.PUBLIC);
+                    it.setVisibility(JvmVisibility.PROTECTED);
                     EList<JvmAnnotationReference> _annotations = it.getAnnotations();
                     JvmAnnotationReference _annotation = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
                     CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
@@ -1260,7 +1290,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       _builder.newLine();
       _builder.append("IPatternMatch otherSig  = (IPatternMatch) obj;");
       _builder.newLine();
-      _builder.append("if (!patternName().equals(otherSig.patternName()))");
+      _builder.append("if (!pattern().equals(otherSig.pattern()))");
       _builder.newLine();
       _builder.append("\t");
       _builder.append("return false;");

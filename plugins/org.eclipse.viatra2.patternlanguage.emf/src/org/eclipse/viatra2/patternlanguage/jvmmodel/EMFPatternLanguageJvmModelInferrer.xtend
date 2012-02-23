@@ -110,6 +110,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			}
 
    			it.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
+   				it.setStatic(true);
    				it.setInitializer(['''{«FOR variable : pattern.parameters SEPARATOR ', '»"«variable.name»"«ENDFOR»}'''])
    			]
    			
@@ -129,7 +130,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			
    			// add methods
    			it.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
-   				annotations += pattern.toAnnotation(typeof (Override))
+   				it.annotations += pattern.toAnnotation(typeof (Override))
    				it.body = ['''
    					return "«pattern.fullyQualifiedName»";
    				''']
@@ -180,14 +181,14 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			
    			// add extra methods like equals, hashcode, toArray, parameterNames
    			it.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
-   				annotations += pattern.toAnnotation(typeof (Override))
+   				it.annotations += pattern.toAnnotation(typeof (Override))
    				it.body = ['''
-   					return parameterNames;
+   					return «pattern.matchClassName».parameterNames;
    				''']
    			]
    			
    			it.members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
-   				annotations += pattern.toAnnotation(typeof (Override))
+   				it.annotations += pattern.toAnnotation(typeof (Override))
    				it.body = ['''
    					return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
    				''']
@@ -221,7 +222,11 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 				it.parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
 				it.body = [it | pattern.equalsMethodBody(it)]
 			]
-   			
+
+			it.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
+				it.annotations += pattern.toAnnotation(typeof (Override))
+				it.body = ['''return «pattern.matcherClassName».FACTORY.getPattern();''']
+			]
    		]
    	}
    	
@@ -348,7 +353,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   			it.documentation = pattern.matcherFactoryClassJavadoc.toString
   			it.superTypes += pattern.newTypeRef(typeof (BaseGeneratedMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))
   			it.members += pattern.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
-  				it.visibility = JvmVisibility::PUBLIC
+  				it.visibility = JvmVisibility::PROTECTED
   				it.annotations += pattern.toAnnotation(typeof (Override))
   				it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
    				it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
@@ -404,7 +409,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 					if (!(obj instanceof IPatternMatch))
 						return false;
 					IPatternMatch otherSig  = (IPatternMatch) obj;
-					if (!patternName().equals(otherSig.patternName()))
+					if (!pattern().equals(otherSig.pattern()))
 						return false;
 					if (!«pattern.matchClassName».class.equals(obj.getClass()))
 						return Arrays.deepEquals(toArray(), otherSig.toArray());
