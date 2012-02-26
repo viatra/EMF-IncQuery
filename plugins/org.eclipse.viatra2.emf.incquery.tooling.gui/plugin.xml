@@ -389,4 +389,20 @@
             name="Unregister patterns from MatchSetView">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eclipse.viatra2.emf.incquery.gui.category"
+            name="EMF-IncQuery">
+      </category>
+      <wizard
+            category="org.eclipse.viatra2.emf.incquery.gui.category"
+            class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizard"
+            finalPerspective="org.eclipse.viatra2.gui.perspective"
+            icon="icons/matcher.gif"
+            id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
+            name="eiq file"
+            preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
+      </wizard>
+   </extension>
 </plugin>
