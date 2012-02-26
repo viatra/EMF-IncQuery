@@ -38,6 +38,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
+import org.eclipse.xtext.serializer.ISerializer
+import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.serializer.sequencer.ISemanticSequencer
+import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -55,6 +60,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension IQualifiedNameProvider
 	@Inject extension TypeReferences types
+	@Inject ISerializer serializer
 
 	/**
 	 * Is called for each Pattern instance in a resource.
@@ -332,7 +338,11 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   			it.annotations += pattern.toAnnotation(typeof (Override))
 	   			it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
 	   			it.body = ['''
-	   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);
+	   				try {
+	   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
+	   				} catch(ClassCastException e) {
+	   					throw new IncQueryRuntimeException(e.getMessage());
+	   				}
 	   			''']
 	   		]
 	   			
@@ -340,7 +350,11 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   			it.annotations += pattern.toAnnotation(typeof (Override))
 	   			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
 	   			it.body = ['''
-	   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+	   				try {
+	   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+	   				} catch(ClassCastException e) {
+	   					throw new IncQueryRuntimeException(e.getMessage());
+	   				}
 	   			''']
 	   		]
    			
@@ -365,10 +379,24 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   				it.visibility = JvmVisibility::PROTECTED
   				it.annotations += pattern.toAnnotation(typeof (Override))
   				it.body = ['''
-   					throw new UnsupportedOperationException();
+  					«pattern.serializeToJava»
+  					throw new UnsupportedOperationException();
    				''']
   			]
   		]
+  	}
+  	
+  	def serializeToJava(EObject pattern) {
+  		val parseString = serializer.serialize(pattern)
+  		val splits = parseString.split("[\r\n]+")
+  		val stringRep = '''String patternString = ""''' as StringConcatenation
+  		stringRep.newLine
+  		for (s : splits) {
+  			stringRep.append("+\"" + s + "\"")
+  			stringRep.newLine
+  		}
+  		stringRep.append(";")
+  		return stringRep
   	}
   	
   	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {
@@ -493,7 +521,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    	def matcherClassJavadoc(Pattern pattern) '''		
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
-
+		
+		«serializer.serialize(pattern)»
+		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»
 		@see «pattern.processorClassName»

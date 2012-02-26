@@ -32,6 +32,7 @@ import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.serializer.ISerializer;
 import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
@@ -63,6 +64,9 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   
   @Inject
   private TypeReferences types;
+  
+  @Inject
+  private ISerializer serializer;
   
   /**
    * Is called for each Pattern instance in a resource.
@@ -1005,9 +1009,12 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
                           StringConcatenation _builder = new StringConcatenation();
+                          _builder.append("try {");
+                          _builder.newLine();
+                          _builder.append("\t");
                           _builder.append("return new ");
                           String _matchClassName = EMFPatternLanguageJvmModelInferrer.this.matchClassName(pattern);
-                          _builder.append(_matchClassName, "");
+                          _builder.append(_matchClassName, "	");
                           _builder.append("(");
                           {
                             EList<Variable> _parameters = pattern.getParameters();
@@ -1016,21 +1023,28 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                               if (!_hasElements) {
                                 _hasElements = true;
                               } else {
-                                _builder.appendImmediate(", ", "");
+                                _builder.appendImmediate(", ", "	");
                               }
                               _builder.append("(");
                               JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(p);
                               String _simpleName = _calculateType.getSimpleName();
-                              _builder.append(_simpleName, "");
+                              _builder.append(_simpleName, "	");
                               _builder.append(") t.get(");
                               EList<Variable> _parameters_1 = pattern.getParameters();
                               int _indexOf = _parameters_1.indexOf(p);
-                              _builder.append(_indexOf, "");
+                              _builder.append(_indexOf, "	");
                               _builder.append(")");
                             }
                           }
-                          _builder.append(");");
+                          _builder.append(");\t");
                           _builder.newLineIfNotEmpty();
+                          _builder.append("} catch(ClassCastException e) {");
+                          _builder.newLine();
+                          _builder.append("\t");
+                          _builder.append("throw new IncQueryRuntimeException(e.getMessage());");
+                          _builder.newLine();
+                          _builder.append("}");
+                          _builder.newLine();
                           return _builder;
                         }
                       };
@@ -1056,9 +1070,12 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
                           StringConcatenation _builder = new StringConcatenation();
+                          _builder.append("try {");
+                          _builder.newLine();
+                          _builder.append("\t");
                           _builder.append("return new ");
                           String _matchClassName = EMFPatternLanguageJvmModelInferrer.this.matchClassName(pattern);
-                          _builder.append(_matchClassName, "");
+                          _builder.append(_matchClassName, "	");
                           _builder.append("(");
                           {
                             EList<Variable> _parameters = pattern.getParameters();
@@ -1067,21 +1084,28 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                               if (!_hasElements) {
                                 _hasElements = true;
                               } else {
-                                _builder.appendImmediate(", ", "");
+                                _builder.appendImmediate(", ", "	");
                               }
                               _builder.append("(");
                               JvmTypeReference _calculateType = EMFPatternLanguageJvmModelInferrer.this.calculateType(p);
                               String _simpleName = _calculateType.getSimpleName();
-                              _builder.append(_simpleName, "");
+                              _builder.append(_simpleName, "	");
                               _builder.append(") match[");
                               EList<Variable> _parameters_1 = pattern.getParameters();
                               int _indexOf = _parameters_1.indexOf(p);
-                              _builder.append(_indexOf, "");
+                              _builder.append(_indexOf, "	");
                               _builder.append("]");
                             }
                           }
                           _builder.append(");");
                           _builder.newLineIfNotEmpty();
+                          _builder.append("} catch(ClassCastException e) {");
+                          _builder.newLine();
+                          _builder.append("\t");
+                          _builder.append("throw new IncQueryRuntimeException(e.getMessage());");
+                          _builder.newLine();
+                          _builder.append("}");
+                          _builder.newLine();
                           return _builder;
                         }
                       };
@@ -1157,6 +1181,9 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
                           StringConcatenation _builder = new StringConcatenation();
+                          StringConcatenation _serializeToJava = EMFPatternLanguageJvmModelInferrer.this.serializeToJava(pattern);
+                          _builder.append(_serializeToJava, "");
+                          _builder.newLineIfNotEmpty();
                           _builder.append("throw new UnsupportedOperationException();");
                           _builder.newLine();
                           return _builder;
@@ -1173,6 +1200,27 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       };
     JvmGenericType _class = this._eMFJvmTypesBuilder.toClass(pattern, _matcherFactoryClassName, _function);
     return _class;
+  }
+  
+  public StringConcatenation serializeToJava(final EObject pattern) {
+      String _serialize = this.serializer.serialize(pattern);
+      final String parseString = _serialize;
+      String[] _split = parseString.split("[\r\n]+");
+      final String[] splits = _split;
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("String patternString = \"\"");
+      final StringConcatenation stringRep = ((StringConcatenation) _builder);
+      stringRep.newLine();
+      for (final String s : splits) {
+        {
+          String _operator_plus = StringExtensions.operator_plus("+\"", s);
+          String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
+          stringRep.append(_operator_plus_1);
+          stringRep.newLine();
+        }
+      }
+      stringRep.append(";");
+      return stringRep;
   }
   
   public JvmDeclaredType inferProcessorClass(final Pattern pattern, final boolean isPrelinkingPhase, final String processorPackageName, final JvmTypeReference matchClassRef) {
@@ -1505,6 +1553,10 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     _builder.newLineIfNotEmpty();
     _builder.append("providing pattern-specific query methods.");
     _builder.newLine();
+    _builder.newLine();
+    String _serialize = this.serializer.serialize(pattern);
+    _builder.append(_serialize, "");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("@see ");
     String _matchClassName = this.matchClassName(pattern);
