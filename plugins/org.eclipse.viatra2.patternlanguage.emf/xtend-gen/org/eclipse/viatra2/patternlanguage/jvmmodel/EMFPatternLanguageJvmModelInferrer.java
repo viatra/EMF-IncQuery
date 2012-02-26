@@ -38,6 +38,7 @@ import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
@@ -78,18 +79,23 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
    */
   protected void _infer(final Pattern pattern, final IAcceptor<JvmDeclaredType> acceptor, final boolean isPrelinkingPhase) {
+      String _name = pattern.getName();
+      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(_name);
+      if (_isNullOrEmpty) {
+        return;
+      }
       EObject _eContainer = pattern.eContainer();
       String _packageName = ((PatternModel) _eContainer).getPackageName();
       String packageName = _packageName;
-      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(packageName);
-      if (_isNullOrEmpty) {
+      boolean _isNullOrEmpty_1 = StringExtensions.isNullOrEmpty(packageName);
+      if (_isNullOrEmpty_1) {
         packageName = "";
       } else {
         String _operator_plus = StringExtensions.operator_plus(packageName, ".");
         packageName = _operator_plus;
       }
-      String _name = pattern.getName();
-      String _operator_plus_1 = StringExtensions.operator_plus(packageName, _name);
+      String _name_1 = pattern.getName();
+      String _operator_plus_1 = StringExtensions.operator_plus(packageName, _name_1);
       final String mainPackageName = _operator_plus_1;
       JvmDeclaredType _inferMatchClass = this.inferMatchClass(pattern, isPrelinkingPhase, mainPackageName);
       final JvmDeclaredType matchClass = _inferMatchClass;
@@ -1181,7 +1187,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
                           StringConcatenation _builder = new StringConcatenation();
-                          StringConcatenation _serializeToJava = EMFPatternLanguageJvmModelInferrer.this.serializeToJava(pattern);
+                          CharSequence _serializeToJava = EMFPatternLanguageJvmModelInferrer.this.serializeToJava(pattern);
                           _builder.append(_serializeToJava, "");
                           _builder.newLineIfNotEmpty();
                           _builder.append("throw new UnsupportedOperationException();");
@@ -1202,25 +1208,37 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     return _class;
   }
   
-  public StringConcatenation serializeToJava(final EObject pattern) {
-      String _serialize = this.serializer.serialize(pattern);
-      final String parseString = _serialize;
-      String[] _split = parseString.split("[\r\n]+");
-      final String[] splits = _split;
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("String patternString = \"\"");
-      final StringConcatenation stringRep = ((StringConcatenation) _builder);
-      stringRep.newLine();
-      for (final String s : splits) {
+  public CharSequence serializeToJava(final EObject pattern) {
+      try {
         {
-          String _operator_plus = StringExtensions.operator_plus("+\"", s);
-          String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
-          stringRep.append(_operator_plus_1);
+          String _serialize = this.serializer.serialize(pattern);
+          final String parseString = _serialize;
+          String[] _split = parseString.split("[\r\n]+");
+          final String[] splits = _split;
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("String patternString = \"\"");
+          final StringConcatenation stringRep = ((StringConcatenation) _builder);
           stringRep.newLine();
+          for (final String s : splits) {
+            {
+              String _operator_plus = StringExtensions.operator_plus("+\"", s);
+              String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
+              stringRep.append(_operator_plus_1);
+              stringRep.newLine();
+            }
+          }
+          stringRep.append(";");
+          return stringRep;
+        }
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          e.printStackTrace();
+        } else {
+          throw Exceptions.sneakyThrow(_t);
         }
       }
-      stringRep.append(";");
-      return stringRep;
+      return "";
   }
   
   public JvmDeclaredType inferProcessorClass(final Pattern pattern, final boolean isPrelinkingPhase, final String processorPackageName, final JvmTypeReference matchClassRef) {

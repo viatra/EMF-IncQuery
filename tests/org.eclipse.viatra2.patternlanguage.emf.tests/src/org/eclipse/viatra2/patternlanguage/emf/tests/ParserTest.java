@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
@@ -93,7 +94,7 @@ public class ParserTest {
 		PatternModel model = patternParseHelper
 				.parse("pattern emptyPattern() = {}");
 		helper.assertError(model, PatternLanguagePackage.Literals.PATTERN_BODY,
-				Diagnostic.SYNTAX_DIAGNOSTIC, "did not match");
+				IssueCodes.PATTERN_BODY_EMPTY, "empty");
 		// testParserRuleErrors("pattern emptyPattern() = {}", PATTERN_RULE,
 		// "did not match");
 	}

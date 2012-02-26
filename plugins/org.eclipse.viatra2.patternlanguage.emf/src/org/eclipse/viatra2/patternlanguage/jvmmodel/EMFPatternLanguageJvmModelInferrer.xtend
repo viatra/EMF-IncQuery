@@ -72,37 +72,38 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
-   		var packageName = (pattern.eContainer as PatternModel).packageName
-   		if (packageName.nullOrEmpty) {
-   			packageName = ""
-   		} else {
-   			packageName = packageName + "."
-   		}
-   		val mainPackageName = packageName + pattern.name
-   		// infer Match class
-   		val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
-   		val matchClassRef = types.createTypeRef(matchClass)
-   		// infer a Matcher class
-   		val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
-   		val matcherClassRef = types.createTypeRef(matcherClass)
-   		// infer MatcherFactory class
-   		val matcherFactoryClass = inferMatcherFactoryClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef, matcherClassRef)
-   		// infer Processor class
-   		val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
-   		// add Factory field to Matcher class
-   		matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
-   			it.visibility = JvmVisibility::PUBLIC
-   			it.setStatic(true)
-	   		it.setFinal(true)
-	   		it.setInitializer([''' new «matcherFactoryClass.simpleName»()'''])
-   		]
-   		// accept new classes
-   		acceptor.accept(matchClass)
-   		acceptor.accept(matcherClass)
-   		acceptor.accept(matcherFactoryClass)
-   		acceptor.accept(processorClass)
+   		if (pattern.name.nullOrEmpty) return;
+	   	var packageName = (pattern.eContainer as PatternModel).packageName
+	   	if (packageName.nullOrEmpty) {
+	   		packageName = ""
+	   	} else {
+	   		packageName = packageName + "."
+	   	}
+	   	val mainPackageName = packageName + pattern.name
+	   	// infer Match class
+	   	val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
+	   	val matchClassRef = types.createTypeRef(matchClass)
+	   	// infer a Matcher class
+	   	val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
+	   	val matcherClassRef = types.createTypeRef(matcherClass)
+	   	// infer MatcherFactory class
+	   	val matcherFactoryClass = inferMatcherFactoryClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef, matcherClassRef)
+	   	// infer Processor class
+	   	val processorClass = inferProcessorClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
+	   	// add Factory field to Matcher class
+	   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
+	   		it.visibility = JvmVisibility::PUBLIC
+	   		it.setStatic(true)
+			it.setFinal(true)
+			it.setInitializer([''' new «matcherFactoryClass.simpleName»()'''])
+	   	]
+	   	// accept new classes
+	   	acceptor.accept(matchClass)
+	   	acceptor.accept(matcherClass)
+	   	acceptor.accept(matcherFactoryClass)
+	   	acceptor.accept(processorClass)	
    	}
-   	
+   	   	
    	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String matchPackageName) {
    		return pattern.toClass(pattern.matchClassName) [
    			it.packageName = matchPackageName
@@ -387,16 +388,21 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   	}
   	
   	def serializeToJava(EObject pattern) {
-  		val parseString = serializer.serialize(pattern)
-  		val splits = parseString.split("[\r\n]+")
-  		val stringRep = '''String patternString = ""''' as StringConcatenation
-  		stringRep.newLine
-  		for (s : splits) {
-  			stringRep.append("+\"" + s + "\"")
-  			stringRep.newLine
-  		}
-  		stringRep.append(";")
-  		return stringRep
+  		try {
+			val parseString = serializer.serialize(pattern)
+	  		val splits = parseString.split("[\r\n]+")
+	  		val stringRep = '''String patternString = ""''' as StringConcatenation
+	  		stringRep.newLine
+	  		for (s : splits) {
+	  			stringRep.append("+\"" + s + "\"")
+	  			stringRep.newLine
+	  		}
+	  		stringRep.append(";")
+	  		return stringRep   		
+   		} catch (Exception e) {
+  			e.printStackTrace
+		}
+		return ""
   	}
   	
   	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {

@@ -18,7 +18,9 @@ import static org.eclipse.xtext.util.Strings.equal;
 import java.util.Iterator;
 
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
@@ -33,6 +35,7 @@ import org.eclipse.xtext.validation.Check;
  * <li>Duplicate parameter in pattern declaration</li>
  * <li>Duplicate pattern definition (name duplication only, better calculation is needed)</li>
  * <li>Pattern call parameter checking (only the number of the parameters, types not supported yet)</li>
+ * <li>Empty PatternBody check</li>
  * </ul>
  * 
  * @author Mark Czotter
@@ -85,6 +88,27 @@ public class PatternLanguageJavaValidator extends
 				}
 			}
 		}
+	}
+	
+	@Check
+	public void checkPatternBody(PatternBody body) {
+		if (body.getConstraints().isEmpty()) {
+			String bodyName = getName(body);
+			if (bodyName == null) {
+				Pattern pattern = ((Pattern)body.eContainer());
+				String patternName = pattern.getName();
+				error("A patternbody of " + patternName + " is empty", body, PatternLanguagePackage.Literals.PATTERN_BODY__CONSTRAINTS, IssueCodes.PATTERN_BODY_EMPTY);
+			} else {
+				error("The patternbody "+bodyName+" cannot be empty", body, PatternLanguagePackage.Literals.PATTERN_BODY__NAME, IssueCodes.PATTERN_BODY_EMPTY);
+			}
+		}
+	}
+
+	private String getName(PatternBody body) {
+		if (body.getName() != null && !body.getName().isEmpty()) {
+			return "'" +body.getName()+ "'";
+		}
+		return null;
 	}
 
 	private String getFormattedPattern(Pattern pattern) {

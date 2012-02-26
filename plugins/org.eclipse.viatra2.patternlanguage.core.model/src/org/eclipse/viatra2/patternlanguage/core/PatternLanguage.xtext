@@ -81,7 +81,7 @@ PatternBody returns PatternBody:
 {PatternBody}
     (name=ID)?
 	'{'
-	  ((constraints += Constraint ';'))+
+	  ((constraints += Constraint ';'))*
 	'}'
 ;
 
