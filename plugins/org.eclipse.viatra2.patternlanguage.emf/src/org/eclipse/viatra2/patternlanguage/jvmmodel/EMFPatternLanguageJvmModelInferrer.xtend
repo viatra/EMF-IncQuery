@@ -43,6 +43,7 @@ import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.serializer.sequencer.ISemanticSequencer
 import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -380,30 +381,30 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   				it.visibility = JvmVisibility::PROTECTED
   				it.annotations += pattern.toAnnotation(typeof (Override))
   				it.body = ['''
-  					«pattern.serializeToJava»
+«««  					«pattern.serializeToJava»
   					throw new UnsupportedOperationException();
    				''']
   			]
   		]
   	}
   	
-  	def serializeToJava(EObject pattern) {
-  		try {
-			val parseString = serializer.serialize(pattern)
-	  		val splits = parseString.split("[\r\n]+")
-	  		val stringRep = '''String patternString = ""''' as StringConcatenation
-	  		stringRep.newLine
-	  		for (s : splits) {
-	  			stringRep.append("+\"" + s + "\"")
-	  			stringRep.newLine
-	  		}
-	  		stringRep.append(";")
-	  		return stringRep   		
-   		} catch (Exception e) {
-  			e.printStackTrace
-		}
-		return ""
-  	}
+//  	def serializeToJava(EObject pattern) {
+//  		try {
+//			val parseString = serializer.serialize(pattern)
+//	  		val splits = parseString.split("[\r\n]+")
+//	  		val stringRep = '''String patternString = ""''' as StringConcatenation
+//	  		stringRep.newLine
+//	  		for (s : splits) {
+//	  			stringRep.append("+\"" + s + "\"")
+//	  			stringRep.newLine
+//	  		}
+//	  		stringRep.append(";")
+//	  		return stringRep   		
+//   		} catch (Exception e) {
+//  			e.printStackTrace
+//		}
+//		return ""
+//  	}
   	
   	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {
   		return pattern.toClass(pattern.processorClassName) [
@@ -482,36 +483,46 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    	// See the XBaseUsageCrossReferencer class, possible solution for local variable usage
 	// TODO: Find out how to get the type for variable
    	def JvmTypeReference calculateType(Variable variable) {
-   		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
-   			return variable.newTypeRef(variable.type.typename)
-   		} else {
+//   		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
+//   			return variable.newTypeRef(variable.type.typename)
+//   		} else {
    			if (variable.eContainer() instanceof Pattern) {
    		 		val pattern = variable.eContainer() as Pattern;
    				for (body : pattern.bodies) {
    					for (constraint : body.constraints) {
-   						if (constraint instanceof EClassConstraint) {
-   							val entityType = (constraint as EClassConstraint).type
-   							val variableRef = (constraint as EClassConstraint).getVar
-   							if (variableRef != null) {
-   								if (variableRef.variable == variable || (!variableRef.getVar.nullOrEmpty && variableRef.getVar.equals(variable.name))) {
-	   								if (entityType instanceof ClassType) {
-	   									val clazz = (entityType as ClassType).classname.instanceClass
-	   									val typeref = variable.newTypeRef(clazz)
-	   									if (typeref != null) {
-	   										return typeref
-	   									}
-	   								}
-   								}	
-   							}
+   						val typeRef = getTypeRef(constraint, variable)
+   						if (typeRef != null) {
+   							return typeRef
    						}
    					}
    				}
    			}
    			return variable.newTypeRef(typeof(Object))
-   		}
+//   		}
    	}
    	
-   	def matchClassJavadoc(Pattern pattern) '''
+   	def dispatch JvmTypeReference getTypeRef(Constraint constraint, Variable variable) {
+   	}
+   	def dispatch JvmTypeReference getTypeRef(EClassConstraint constraint, Variable variable) {
+   		val entityType = constraint.type
+   		val variableRef = constraint.getVar
+   		if (variableRef != null) {
+   			if (variableRef.variable == variable || (!variableRef.getVar.nullOrEmpty && variableRef.getVar.equals(variable.name))) {
+	   			if (entityType instanceof ClassType) {
+	   				val clazz = (entityType as ClassType).classname.instanceClass
+	   				if (clazz != null) {
+	   					val typeref = variable.newTypeRef(clazz)
+						if (typeref != null) {
+							return typeref
+						}
+	   				}
+	   			}
+   			}	
+   		}
+   		return null
+   	}
+   	   
+	def matchClassJavadoc(Pattern pattern) '''
 		Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern, 
 		to be used in conjunction with «pattern.matcherClassName».
 		
@@ -528,7 +539,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
-		«serializer.serialize(pattern)»
+«««		«serializer.serialize(pattern)»
 		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»

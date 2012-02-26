@@ -10,7 +10,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
@@ -38,7 +37,6 @@ import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
-import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
@@ -1187,9 +1185,6 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                     final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                         public CharSequence apply(final ImportManager it) {
                           StringConcatenation _builder = new StringConcatenation();
-                          CharSequence _serializeToJava = EMFPatternLanguageJvmModelInferrer.this.serializeToJava(pattern);
-                          _builder.append(_serializeToJava, "");
-                          _builder.newLineIfNotEmpty();
                           _builder.append("throw new UnsupportedOperationException();");
                           _builder.newLine();
                           return _builder;
@@ -1206,39 +1201,6 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       };
     JvmGenericType _class = this._eMFJvmTypesBuilder.toClass(pattern, _matcherFactoryClassName, _function);
     return _class;
-  }
-  
-  public CharSequence serializeToJava(final EObject pattern) {
-      try {
-        {
-          String _serialize = this.serializer.serialize(pattern);
-          final String parseString = _serialize;
-          String[] _split = parseString.split("[\r\n]+");
-          final String[] splits = _split;
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append("String patternString = \"\"");
-          final StringConcatenation stringRep = ((StringConcatenation) _builder);
-          stringRep.newLine();
-          for (final String s : splits) {
-            {
-              String _operator_plus = StringExtensions.operator_plus("+\"", s);
-              String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
-              stringRep.append(_operator_plus_1);
-              stringRep.newLine();
-            }
-          }
-          stringRep.append(";");
-          return stringRep;
-        }
-      } catch (final Throwable _t) {
-        if (_t instanceof Exception) {
-          final Exception e = (Exception)_t;
-          e.printStackTrace();
-        } else {
-          throw Exceptions.sneakyThrow(_t);
-        }
-      }
-      return "";
   }
   
   public JvmDeclaredType inferProcessorClass(final Pattern pattern, final boolean isPrelinkingPhase, final String processorPackageName, final JvmTypeReference matchClassRef) {
@@ -1445,88 +1407,84 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   }
   
   public JvmTypeReference calculateType(final Variable variable) {
-    boolean _operator_and = false;
-    Type _type = variable.getType();
-    boolean _operator_notEquals = ObjectExtensions.operator_notEquals(_type, null);
-    if (!_operator_notEquals) {
-      _operator_and = false;
-    } else {
-      Type _type_1 = variable.getType();
-      String _typename = _type_1.getTypename();
-      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(_typename);
-      boolean _operator_not = BooleanExtensions.operator_not(_isNullOrEmpty);
-      _operator_and = BooleanExtensions.operator_and(_operator_notEquals, _operator_not);
-    }
-    if (_operator_and) {
-      Type _type_2 = variable.getType();
-      String _typename_1 = _type_2.getTypename();
-      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, _typename_1);
+      EObject _eContainer = variable.eContainer();
+      if ((_eContainer instanceof Pattern)) {
+        {
+          EObject _eContainer_1 = variable.eContainer();
+          final Pattern pattern = ((Pattern) _eContainer_1);
+          EList<PatternBody> _bodies = pattern.getBodies();
+          for (final PatternBody body : _bodies) {
+            EList<Constraint> _constraints = body.getConstraints();
+            for (final Constraint constraint : _constraints) {
+              {
+                JvmTypeReference _typeRef = this.getTypeRef(constraint, variable);
+                final JvmTypeReference typeRef = _typeRef;
+                boolean _operator_notEquals = ObjectExtensions.operator_notEquals(typeRef, null);
+                if (_operator_notEquals) {
+                  return typeRef;
+                }
+              }
+            }
+          }
+        }
+      }
+      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, java.lang.Object.class);
       return _newTypeRef;
-    } else {
-      {
-        EObject _eContainer = variable.eContainer();
-        if ((_eContainer instanceof Pattern)) {
-          {
-            EObject _eContainer_1 = variable.eContainer();
-            final Pattern pattern = ((Pattern) _eContainer_1);
-            EList<PatternBody> _bodies = pattern.getBodies();
-            for (final PatternBody body : _bodies) {
-              EList<Constraint> _constraints = body.getConstraints();
-              for (final Constraint constraint : _constraints) {
-                if ((constraint instanceof EClassConstraint)) {
-                  {
-                    EntityType _type_3 = ((EClassConstraint) constraint).getType();
-                    final EntityType entityType = _type_3;
-                    VariableReference _var = ((EClassConstraint) constraint).getVar();
-                    final VariableReference variableRef = _var;
-                    boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(variableRef, null);
-                    if (_operator_notEquals_1) {
-                      boolean _operator_or = false;
-                      Variable _variable = variableRef.getVariable();
-                      boolean _operator_equals = ObjectExtensions.operator_equals(_variable, variable);
-                      if (_operator_equals) {
-                        _operator_or = true;
-                      } else {
-                        boolean _operator_and_1 = false;
-                        String _var_1 = variableRef.getVar();
-                        boolean _isNullOrEmpty_1 = StringExtensions.isNullOrEmpty(_var_1);
-                        boolean _operator_not_1 = BooleanExtensions.operator_not(_isNullOrEmpty_1);
-                        if (!_operator_not_1) {
-                          _operator_and_1 = false;
-                        } else {
-                          String _var_2 = variableRef.getVar();
-                          String _name = variable.getName();
-                          boolean _equals = _var_2.equals(_name);
-                          _operator_and_1 = BooleanExtensions.operator_and(_operator_not_1, _equals);
-                        }
-                        _operator_or = BooleanExtensions.operator_or(_operator_equals, _operator_and_1);
-                      }
-                      if (_operator_or) {
-                        if ((entityType instanceof ClassType)) {
-                          {
-                            EClass _classname = ((ClassType) entityType).getClassname();
-                            Class<? extends Object> _instanceClass = _classname.getInstanceClass();
-                            final Class<? extends Object> clazz = _instanceClass;
-                            JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
-                            final JvmTypeReference typeref = _newTypeRef_1;
-                            boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(typeref, null);
-                            if (_operator_notEquals_2) {
-                              return typeref;
-                            }
-                          }
-                        }
-                      }
-                    }
+  }
+  
+  protected JvmTypeReference _getTypeRef(final Constraint constraint, final Variable variable) {
+    return null;
+  }
+  
+  protected JvmTypeReference _getTypeRef(final EClassConstraint constraint, final Variable variable) {
+      EntityType _type = constraint.getType();
+      final EntityType entityType = _type;
+      VariableReference _var = constraint.getVar();
+      final VariableReference variableRef = _var;
+      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(variableRef, null);
+      if (_operator_notEquals) {
+        boolean _operator_or = false;
+        Variable _variable = variableRef.getVariable();
+        boolean _operator_equals = ObjectExtensions.operator_equals(_variable, variable);
+        if (_operator_equals) {
+          _operator_or = true;
+        } else {
+          boolean _operator_and = false;
+          String _var_1 = variableRef.getVar();
+          boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(_var_1);
+          boolean _operator_not = BooleanExtensions.operator_not(_isNullOrEmpty);
+          if (!_operator_not) {
+            _operator_and = false;
+          } else {
+            String _var_2 = variableRef.getVar();
+            String _name = variable.getName();
+            boolean _equals = _var_2.equals(_name);
+            _operator_and = BooleanExtensions.operator_and(_operator_not, _equals);
+          }
+          _operator_or = BooleanExtensions.operator_or(_operator_equals, _operator_and);
+        }
+        if (_operator_or) {
+          if ((entityType instanceof ClassType)) {
+            {
+              EClass _classname = ((ClassType) entityType).getClassname();
+              Class<? extends Object> _instanceClass = _classname.getInstanceClass();
+              final Class<? extends Object> clazz = _instanceClass;
+              boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(clazz, null);
+              if (_operator_notEquals_1) {
+                {
+                  JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
+                  final JvmTypeReference typeref = _newTypeRef;
+                  boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(typeref, null);
+                  if (_operator_notEquals_2) {
+                    return typeref;
                   }
                 }
               }
             }
           }
         }
-        JvmTypeReference _newTypeRef_2 = this._eMFJvmTypesBuilder.newTypeRef(variable, java.lang.Object.class);
-        return _newTypeRef_2;
       }
-    }
+      return null;
   }
   
   public CharSequence matchClassJavadoc(final Pattern pattern) {
@@ -1572,9 +1530,6 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     _builder.append("providing pattern-specific query methods.");
     _builder.newLine();
     _builder.newLine();
-    String _serialize = this.serializer.serialize(pattern);
-    _builder.append(_serialize, "");
-    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("@see ");
     String _matchClassName = this.matchClassName(pattern);
@@ -1840,6 +1795,17 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         Arrays.<Object>asList(pattern, acceptor, isPrelinkingPhase).toString());
+    }
+  }
+  
+  public JvmTypeReference getTypeRef(final Constraint constraint, final Variable variable) {
+    if (constraint instanceof EClassConstraint) {
+      return _getTypeRef((EClassConstraint)constraint, variable);
+    } else if (constraint != null) {
+      return _getTypeRef(constraint, variable);
+    } else {
+      throw new IllegalArgumentException("Unhandled parameter types: " +
+        Arrays.<Object>asList(constraint, variable).toString());
     }
   }
 }
