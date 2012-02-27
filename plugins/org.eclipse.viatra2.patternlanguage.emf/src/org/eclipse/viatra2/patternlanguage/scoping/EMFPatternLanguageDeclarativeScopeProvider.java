@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -28,8 +27,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
@@ -94,10 +91,12 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	public IScope scope_EPackage(PackageImport ctx, EReference ref){
 		IScope current = new SimpleScope(IScope.NULLSCOPE, Iterables.transform(EPackage.Registry.INSTANCE.keySet(), new Function<String, IEObjectDescription>() {
 			public IEObjectDescription apply(String from) {
-				InternalEObject proxyPackage = (InternalEObject) EcoreFactory.eINSTANCE.createEPackage();
-				proxyPackage.eSetProxyURI(URI.createURI(from));
+				EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(from); 
+//				InternalEObject proxyPackage = (InternalEObject) EcoreFactory.eINSTANCE.createEPackage();
+//				proxyPackage.eSetProxyURI(URI.createURI(from));
 				QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
-				return EObjectDescription.create(qualifiedName, proxyPackage, Collections.singletonMap("nsURI", "true"));
+//				return EObjectDescription.create(qualifiedName, proxyPackage, Collections.singletonMap("nsURI", "true"));
+				return EObjectDescription.create(qualifiedName, ePackage, Collections.singletonMap("nsURI", "true"));
 			}
 		}));
 		return current;
