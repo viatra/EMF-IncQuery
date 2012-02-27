@@ -47,7 +47,7 @@ public class CompositionTest {
   @Test
   public void testNegativeComposition() {
     try {
-      EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern calledPattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t} or {\n\t\t\t\tneg find calledPattern(p);\n\t\t\t}");
+      EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern calledPattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t\tneg find calledPattern(p);\n\t\t\t}");
       this._validationTestHelper.assertNoErrors(_parse);
     } catch (Exception _e) {
       throw Exceptions.sneakyThrow(_e);
