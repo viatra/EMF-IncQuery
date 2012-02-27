@@ -179,8 +179,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   				for (parameter : pattern.parameters){
 						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
 	   				}
-					// TODO: add ? super MatchClass to Processor as typeparameter
-					it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
+					it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
 	   				it.body = ['''
 	   					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
 	   				''']
@@ -191,7 +190,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   				for (parameter : pattern.parameters){
 						it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
 	   				}
-	   				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef)))
+	   				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
 	   				it.body = ['''
 	   					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
 	   				''']

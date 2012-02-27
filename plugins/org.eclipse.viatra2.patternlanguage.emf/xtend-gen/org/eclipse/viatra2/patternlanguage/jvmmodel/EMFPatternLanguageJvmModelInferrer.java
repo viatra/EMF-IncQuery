@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
+import org.eclipse.xtext.common.types.JvmWildcardTypeReference;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -414,7 +415,8 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                         }
                         EList<JvmFormalParameter> _parameters_2 = it.getParameters();
                         JvmTypeReference _cloneWithProxies = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _cloneWithProxies);
+                        JvmWildcardTypeReference _wildCardSuper = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.wildCardSuper(_cloneWithProxies);
+                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _wildCardSuper);
                         JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "processor", _newTypeRef);
                         CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_2, _parameter_1);
                         final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
@@ -463,7 +465,8 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
                         }
                         EList<JvmFormalParameter> _parameters_2 = it.getParameters();
                         JvmTypeReference _cloneWithProxies = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _cloneWithProxies);
+                        JvmWildcardTypeReference _wildCardSuper = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.wildCardSuper(_cloneWithProxies);
+                        JvmTypeReference _newTypeRef = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor.class, _wildCardSuper);
                         JvmFormalParameter _parameter_1 = EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "processor", _newTypeRef);
                         CollectionExtensions.<JvmFormalParameter>operator_add(_parameters_2, _parameter_1);
                         final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
