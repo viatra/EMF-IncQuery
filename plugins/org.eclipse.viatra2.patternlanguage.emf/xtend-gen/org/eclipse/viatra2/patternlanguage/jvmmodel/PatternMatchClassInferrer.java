@@ -68,6 +68,10 @@ public class PatternMatchClassInferrer {
       JvmGenericType _class = this._eMFJvmTypesBuilder.toClass(pattern, _matchClassName, _function);
       final JvmGenericType matchClass = _class;
       this.inferMatchClassFields(matchClass, pattern);
+      this.inferMatchClassConstructors(matchClass, pattern);
+      this.inferMatchClassGetters(matchClass, pattern);
+      this.inferMatchClassSetters(matchClass, pattern);
+      this.inferMatchClassMethods(matchClass, pattern);
       return matchClass;
   }
   

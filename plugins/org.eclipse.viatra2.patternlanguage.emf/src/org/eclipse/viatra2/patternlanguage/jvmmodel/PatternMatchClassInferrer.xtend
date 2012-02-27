@@ -32,6 +32,10 @@ class PatternMatchClassInferrer {
    			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
    		]
    		matchClass.inferMatchClassFields(pattern)
+   		matchClass.inferMatchClassConstructors(pattern)
+   		matchClass.inferMatchClassGetters(pattern)
+   		matchClass.inferMatchClassSetters(pattern)
+   		matchClass.inferMatchClassMethods(pattern)
    		return matchClass
    	}
    	
