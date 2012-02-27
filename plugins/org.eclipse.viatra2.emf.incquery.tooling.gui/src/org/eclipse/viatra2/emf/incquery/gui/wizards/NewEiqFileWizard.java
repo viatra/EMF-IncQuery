@@ -30,19 +30,22 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 
 public class NewEiqFileWizard extends Wizard implements INewWizard {
 	private NewEiqFileWizardPage page;
 	private ISelection selection;
 
+	@Inject
+	IResourceSetProvider resourceSetProvider;
+	
 	public NewEiqFileWizard() {
 		super();
 		setNeedsProgressMonitor(true);
@@ -82,10 +85,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 	}
 	
 	private void doFinish2(String containerName, String fileName, String patternName, IProgressMonitor monitor) throws IOException {
-		Injector injector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource containerResource = root.findMember(new Path(containerName));
-		ResourceSet resourceSet = injector.getInstance(ResourceSet.class);
+		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
 
 		URI fileURI = URI.createPlatformResourceURI(containerResource.getFullPath().append("/"+fileName).toString(), false);
 		Resource resource = resourceSet.createResource(fileURI);
