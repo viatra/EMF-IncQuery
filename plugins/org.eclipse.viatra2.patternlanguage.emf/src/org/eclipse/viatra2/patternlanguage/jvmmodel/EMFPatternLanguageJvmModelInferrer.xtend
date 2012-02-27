@@ -59,10 +59,12 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
      * convenience API to build and initialize JvmTypes and their members.
      */
 	@Inject extension EMFJvmTypesBuilder
+	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	@Inject extension PatternMatchClassInferrer
 	@Inject extension IQualifiedNameProvider
 	@Inject extension TypeReferences types
 	@Inject ISerializer serializer
-
+	
 	/**
 	 * Is called for each Pattern instance in a resource.
 	 * 
@@ -82,7 +84,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   	}
 	   	val mainPackageName = packageName + pattern.name
 	   	// infer Match class
-	   	val matchClass = inferMatchClass(pattern, isPrelinkingPhase, mainPackageName)
+	   	val matchClass = pattern.inferMatchClass(isPrelinkingPhase, mainPackageName)
 	   	val matchClassRef = types.createTypeRef(matchClass)
 	   	// infer a Matcher class
 	   	val matcherClass = inferMatcherClass(pattern, isPrelinkingPhase, mainPackageName, matchClassRef)
@@ -103,139 +105,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   	acceptor.accept(matcherClass)
 	   	acceptor.accept(matcherFactoryClass)
 	   	acceptor.accept(processorClass)	
-   	}
-   	   	
-   	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String matchPackageName) {
-   		return pattern.toClass(pattern.matchClassName) [
-   			it.packageName = matchPackageName
-   			it.documentation = pattern.matchClassJavadoc.toString
-   			it.final = true
-   			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch))
-   			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
-   			// add fields
-   			for (Variable variable : pattern.parameters) {
-   				it.members += pattern.toField(variable.fieldName, variable.calculateType)
-   			}
-
-   			it.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
-   				it.setStatic(true);
-   				it.setInitializer(['''{«FOR variable : pattern.parameters SEPARATOR ', '»"«variable.name»"«ENDFOR»}'''])
-   			]
-   			
-   			// add constructor
-   			it.members += pattern.toConstructor(pattern.matchClassName) [
-   				it.visibility = JvmVisibility::PUBLIC
-   				for (Variable variable : pattern.parameters) {
-   					val javaType = variable.calculateType
-   					it.parameters += variable.toParameter(variable.name, javaType)
-   				}
-   				it.body = ['''
-   					«FOR variable : pattern.parameters»
-   					this.«variable.fieldName» = «variable.name»;
-   					«ENDFOR»
-   				''']
-   			]
-   			
-   			// add methods
-   			it.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
-   				it.annotations += pattern.toAnnotation(typeof (Override))
-   				it.body = ['''
-   					return "«pattern.fullyQualifiedName»";
-   				''']
-   			]
-   			
-   			// add getters
-   			it.members += pattern.toMethod("get", pattern.newTypeRef(typeof (Object))) [
-   				it.annotations += pattern.toAnnotation(typeof (Override))
-   				it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
-   				it.body = ['''
-   					«FOR variable : pattern.parameters»
-   					if ("«variable.name»".equals(parameterName)) return this.«variable.fieldName»;
-   					«ENDFOR»
-   					return null;
-   				''']
-   			]
-   			for (Variable variable : pattern.parameters) {
-   				it.members += pattern.toMethod("get" + variable.name.toFirstUpper, variable.calculateType) [
-   					it.body = ['''
-   						return this.«variable.fieldName»;
-   					''']
-   				]
-   			}
-   			
-   			// add setters
-   			it.members += pattern.toMethod("set", pattern.newTypeRef(typeof (boolean))) [
-   				it.annotations += pattern.toAnnotation(typeof (Override))
-   				it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
-   				it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
-   				it.body = ['''
-   					«FOR variable : pattern.parameters»
-   					if ("«variable.name»".equals(parameterName) && newValue instanceof «variable.calculateType.simpleName») {
-   						this.«variable.fieldName» = («variable.calculateType.simpleName») newValue;
-   						return true;
-   					}
-   					«ENDFOR»
-   					return false;
-   				''']
-   			]
-   			for (Variable variable : pattern.parameters) {
-   				it.members += pattern.toMethod("set" + variable.name.toFirstUpper, null) [
-   					it.parameters += pattern.toParameter(variable.name, variable.calculateType)
-   					it.body = ['''
-   						this.«variable.fieldName» = «variable.name»;
-   					''']
-   				]
-   			}
-   			
-   			// add extra methods like equals, hashcode, toArray, parameterNames
-   			it.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
-   				it.annotations += pattern.toAnnotation(typeof (Override))
-   				it.body = ['''
-   					return «pattern.matchClassName».parameterNames;
-   				''']
-   			]
-   			
-   			it.members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
-   				it.annotations += pattern.toAnnotation(typeof (Override))
-   				it.body = ['''
-   					return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
-   				''']
-   			]
-			
-			it.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
-				it.annotations += pattern.toAnnotation(typeof (Override))
-				it.body = ['''
-					StringBuilder result = new StringBuilder();
-					«FOR variable : pattern.parameters»
-					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName») + "\n");
-					«ENDFOR»
-					return result.toString();
-				''']
-			]
-			
-			it.members += pattern.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
-				it.annotations += pattern.toAnnotation(typeof (Override))
-				it.body = ['''
-					final int prime = 31;
-					int result = 1;
-					«FOR variable : pattern.parameters»
-					result = prime * result + ((«variable.fieldName» == null) ? 0 : «variable.fieldName».hashCode()); 
-					«ENDFOR»
-					return result; 
-				''']
-			]
-			
-			it.members += pattern.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
-				it.annotations += pattern.toAnnotation(typeof (Override))
-				it.parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
-				it.body = [it | pattern.equalsMethodBody(it)]
-			]
-
-			it.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
-				it.annotations += pattern.toAnnotation(typeof (Override))
-				it.body = ['''return «pattern.matcherClassName».FACTORY.getPattern();''']
-			]
-   		]
    	}
    	
    	def JvmDeclaredType inferMatcherClass(Pattern pattern, boolean isPrelinkingPhase, String matcherPackageName, JvmTypeReference matchClassRef) {
@@ -381,30 +250,30 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   				it.visibility = JvmVisibility::PROTECTED
   				it.annotations += pattern.toAnnotation(typeof (Override))
   				it.body = ['''
-«««  					«pattern.serializeToJava»
+  					«pattern.serializeToJava»
   					throw new UnsupportedOperationException();
    				''']
   			]
   		]
   	}
   	
-//  	def serializeToJava(EObject pattern) {
-//  		try {
-//			val parseString = serializer.serialize(pattern)
-//	  		val splits = parseString.split("[\r\n]+")
-//	  		val stringRep = '''String patternString = ""''' as StringConcatenation
-//	  		stringRep.newLine
-//	  		for (s : splits) {
-//	  			stringRep.append("+\"" + s + "\"")
-//	  			stringRep.newLine
-//	  		}
-//	  		stringRep.append(";")
-//	  		return stringRep   		
-//   		} catch (Exception e) {
-//  			e.printStackTrace
-//		}
-//		return ""
-//  	}
+  	def serializeToJava(EObject pattern) {
+  		try {
+			val parseString = serializer.serialize(pattern)
+	  		val splits = parseString.split("[\r\n]+")
+	  		val stringRep = '''String patternString = ""''' as StringConcatenation
+	  		stringRep.newLine
+	  		for (s : splits) {
+	  			stringRep.append("+\"" + s + "\"")
+	  			stringRep.newLine
+	  		}
+	  		stringRep.append(";")
+	  		return stringRep   		
+   		} catch (Exception e) {
+  			e.printStackTrace
+		}
+		return ""
+  	}
   	
   	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {
   		return pattern.toClass(pattern.processorClassName) [
@@ -434,112 +303,11 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   		return '''this(EngineManager.getInstance().getIncQueryEngine(notifier));'''
   	}
 
-   	def CharSequence equalsMethodBody(Pattern pattern, ImportManager importManager) {
-   		importManager.addImportFor(pattern.newTypeRef(typeof (Arrays)).type)
-   		return '''
-					if (this == obj)
-						return true;
-					if (obj == null)
-						return false;
-					if (!(obj instanceof IPatternMatch))
-						return false;
-					IPatternMatch otherSig  = (IPatternMatch) obj;
-					if (!pattern().equals(otherSig.pattern()))
-						return false;
-					if (!«pattern.matchClassName».class.equals(obj.getClass()))
-						return Arrays.deepEquals(toArray(), otherSig.toArray());
-					«IF !pattern.parameters.isEmpty»
-					«pattern.matchClassName» other = («pattern.matchClassName») obj;
-					«FOR variable : pattern.parameters» 
-					if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
-					else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
-					«ENDFOR»
-					«ENDIF»
-					return true;
-				'''
-   	}
- 
-	def matcherFactoryClassName(Pattern pattern) {
-		pattern.name.toFirstUpper+"MatcherFactory"
-	} 
- 
-   	def matcherClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Matcher"
-   	}
-   	 
-   	def matchClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Match"
-   	}
-   	
-   	def processorClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Processor"
-   	}
-   	
-   	def fieldName(Variable variable) {
-   		"f"+variable.name.toFirstUpper
-   	} 
-   	
-   	// Type calculation: first try
-   	// See the XBaseUsageCrossReferencer class, possible solution for local variable usage
-	// TODO: Find out how to get the type for variable
-   	def JvmTypeReference calculateType(Variable variable) {
-//   		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
-//   			return variable.newTypeRef(variable.type.typename)
-//   		} else {
-   			if (variable.eContainer() instanceof Pattern) {
-   		 		val pattern = variable.eContainer() as Pattern;
-   				for (body : pattern.bodies) {
-   					for (constraint : body.constraints) {
-   						val typeRef = getTypeRef(constraint, variable)
-   						if (typeRef != null) {
-   							return typeRef
-   						}
-   					}
-   				}
-   			}
-   			return variable.newTypeRef(typeof(Object))
-//   		}
-   	}
-   	
-   	def dispatch JvmTypeReference getTypeRef(Constraint constraint, Variable variable) {
-   	}
-   	def dispatch JvmTypeReference getTypeRef(EClassConstraint constraint, Variable variable) {
-   		val entityType = constraint.type
-   		val variableRef = constraint.getVar
-   		if (variableRef != null) {
-   			if (variableRef.variable == variable || (!variableRef.getVar.nullOrEmpty && variableRef.getVar.equals(variable.name))) {
-	   			if (entityType instanceof ClassType) {
-	   				val clazz = (entityType as ClassType).classname.instanceClass
-	   				if (clazz != null) {
-	   					val typeref = variable.newTypeRef(clazz)
-						if (typeref != null) {
-							return typeref
-						}
-	   				}
-	   			}
-   			}	
-   		}
-   		return null
-   	}
-   	   
-	def matchClassJavadoc(Pattern pattern) '''
-		Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern, 
-		to be used in conjunction with «pattern.matcherClassName».
-		
-		<p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
-		Each instance is a (possibly partial) substitution of pattern parameters, 
-		usable to represent a match of the pattern in the result of a query, 
-		or to specify the bound (fixed) input parameters when issuing a query.
-		
-		@see «pattern.matcherClassName»
-		@see «pattern.processorClassName»
-   	'''
-
    	def matcherClassJavadoc(Pattern pattern) '''		
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
-«««		«serializer.serialize(pattern)»
+		«serializer.serialize(pattern)»
 		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»
