@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 
 <plugin>
+   <extension-point id="annotation" name="Pattern Annotation" schema="schema/annotation.exsd"/>
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
@@ -9,6 +10,19 @@
        class = "org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage"
        genModel = "org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel" /> 
 	
+  </extension>
+  <extension
+        point="org.eclipse.viatra2.patternlanguage.core.annotation">
+     <annotation
+           name="optional">
+        <annotationparameter
+              multiple="false"
+              name="p1">
+        </annotationparameter>
+     </annotation>
+     <annotation
+           name="optional">
+     </annotation>
   </extension>
 
 

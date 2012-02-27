@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core;
 
+import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
@@ -21,5 +22,9 @@ public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntime
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return PatternNameProvider.class;
+	}
+	
+	public Class<? extends PatternAnnotationProvider> bindPatternAnnotationProvider() {
+		return PatternAnnotationProvider.class;
 	}
 }

@@ -17,6 +17,8 @@ import static org.eclipse.xtext.util.Strings.equal;
 
 import java.util.Iterator;
 
+import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
@@ -25,6 +27,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.xtext.validation.Check;
+
+import com.google.inject.Inject;
 
 /**
  * Validators for Core Pattern Language.
@@ -46,6 +50,8 @@ public class PatternLanguageJavaValidator extends
 
 	public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
 	public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern ";
+	
+	@Inject PatternAnnotationProvider annotationProvider;
 	
 	@Check
 	public void checkPatternParameters(Pattern pattern) {
@@ -101,6 +107,15 @@ public class PatternLanguageJavaValidator extends
 			} else {
 				error("The patternbody "+bodyName+" cannot be empty", body, PatternLanguagePackage.Literals.PATTERN_BODY__NAME, IssueCodes.PATTERN_BODY_EMPTY);
 			}
+		}
+	}
+	
+	@Check
+	public void checkAnnotation(Annotation annotation) {
+		if (annotationProvider.hasValidator(annotation.getName())) {
+			
+		} else {
+			warning("Unknown annotation " + annotation.getName(), PatternLanguagePackage.Literals.ANNOTATION__NAME, IssueCodes.UNKNOWN_ANNOTATION);
 		}
 	}
 
