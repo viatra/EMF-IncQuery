@@ -16,7 +16,6 @@ import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.ParserRule;
-import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
@@ -141,6 +140,12 @@ public class ParserTest {
 	public void orPattern() {
 		testParserRule(
 				"pattern simplePattern(Name) = {Pattern(Name);} or {Pattern(name);}",
+				PATTERN_RULE);
+	}
+	@Test
+	public void namedBodies() {
+		testParserRule(
+				"pattern simplePattern(Name) = body1 {Pattern(Name);} or body2 {Pattern(name);}",
 				PATTERN_RULE);
 	}
 
