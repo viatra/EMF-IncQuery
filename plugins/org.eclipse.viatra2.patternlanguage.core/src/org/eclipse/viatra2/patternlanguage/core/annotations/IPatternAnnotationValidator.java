@@ -4,7 +4,8 @@
 package org.eclipse.viatra2.patternlanguage.core.annotations;
 
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 
 /**
  * An interface for validating pattern {@link Annotation} objects.
@@ -13,10 +14,18 @@ import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
  */
 public interface IPatternAnnotationValidator {
 
+	public Iterable<String> getMissingMandatoryAttributes(Annotation annotation);
+	
 	/**
-	 * Validates the annotation using the annotation definiton.
 	 * @param annotation
-	 * @param validator
+	 * @return
 	 */
-	public void validateAnnotation(Annotation annotation, AbstractDeclarativeValidator validator);
+	public Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation);
+	
+	/**
+	 * Returns whether a parameter of an annotation is mistyped
+	 * @param parameter
+	 * @return the 
+	 */
+	public Class<ValueReference> getParameterTypeError(AnnotationParameter parameter);
 }

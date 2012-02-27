@@ -17,8 +17,10 @@ import static org.eclipse.xtext.util.Strings.equal;
 
 import java.util.Iterator;
 
+import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
@@ -50,6 +52,8 @@ public class PatternLanguageJavaValidator extends
 
 	public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
 	public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern ";
+	public static final String UNKNOWN_ANNOTATION_ATTRIBUTE = "Undefined annotation attribute ";
+	public static final String MISSING_ANNOTATION_ATTRIBUTE = "Required attribute missing ";
 	
 	@Inject PatternAnnotationProvider annotationProvider;
 	
@@ -113,9 +117,29 @@ public class PatternLanguageJavaValidator extends
 	@Check
 	public void checkAnnotation(Annotation annotation) {
 		if (annotationProvider.hasValidator(annotation.getName())) {
-			
+			IPatternAnnotationValidator validator = annotationProvider
+					.getValidator(annotation.getName());
+			// Check for unknown annotation attributes
+			for (AnnotationParameter unknownParameter : validator
+					.getUnknownAttributes(annotation)) {
+				error(UNKNOWN_ANNOTATION_ATTRIBUTE + unknownParameter.getName(),
+						unknownParameter,
+						PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
+						annotation.getParameters().indexOf(unknownParameter),
+						IssueCodes.UNKNOWN_ANNOTATION_PARAMETER);
+			}
+			// Check for missing mandatory attributes
+			for (String missingAttribute : validator
+					.getMissingMandatoryAttributes(annotation)) {
+				error(MISSING_ANNOTATION_ATTRIBUTE + missingAttribute,
+						annotation,
+						PatternLanguagePackage.Literals.ANNOTATION__PARAMETERS,
+						IssueCodes.MISSING_REQUIRED_ANNOTATION_PARAMETER);
+			}
 		} else {
-			warning("Unknown annotation " + annotation.getName(), PatternLanguagePackage.Literals.ANNOTATION__NAME, IssueCodes.UNKNOWN_ANNOTATION);
+			warning("Unknown annotation " + annotation.getName(),
+					PatternLanguagePackage.Literals.ANNOTATION__NAME,
+					IssueCodes.UNKNOWN_ANNOTATION);
 		}
 	}
 

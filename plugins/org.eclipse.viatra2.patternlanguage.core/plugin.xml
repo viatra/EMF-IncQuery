@@ -11,19 +11,6 @@
        genModel = "org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel" /> 
 	
   </extension>
-  <extension
-        point="org.eclipse.viatra2.patternlanguage.core.annotation">
-     <annotation
-           name="optional">
-        <annotationparameter
-              multiple="false"
-              name="p1">
-        </annotationparameter>
-     </annotation>
-     <annotation
-           name="optional">
-     </annotation>
-  </extension>
 
 
 
