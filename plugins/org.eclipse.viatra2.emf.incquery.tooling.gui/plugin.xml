@@ -10,11 +10,20 @@
       <wizard
             category="org.eclipse.viatra2.emf.incquery.gui.category"
             class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
-            finalPerspective="org.eclipse.viatra2.gui.perspective"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             id="org.eclipse.viatra2.emf.incquery.gui.newproject"
             name="Create Incremental Query Project"
-            preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
+            preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
+      </wizard>
+      <wizard
+            category="org.eclipse.viatra2.emf.incquery.gui.category"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizard"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            icon="icons/matcher.gif"
+            id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
+            name="eiq file"
+            preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
       </wizard>
      <!-- <wizard
             category="org.eclipse.ui.Examples"
@@ -388,21 +397,5 @@
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor"
             name="Unregister patterns from MatchSetView">
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            id="org.eclipse.viatra2.emf.incquery.gui.category"
-            name="EMF-IncQuery">
-      </category>
-      <wizard
-            category="org.eclipse.viatra2.emf.incquery.gui.category"
-            class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizard"
-            finalPerspective="org.eclipse.viatra2.gui.perspective"
-            icon="icons/matcher.gif"
-            id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
-            name="eiq file"
-            preferredPerspectives="org.eclipse.viatra2.gui.perspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
-      </wizard>
    </extension>
 </plugin>
