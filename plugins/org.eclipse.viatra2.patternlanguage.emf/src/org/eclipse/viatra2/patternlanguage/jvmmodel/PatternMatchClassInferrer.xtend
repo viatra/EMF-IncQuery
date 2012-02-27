@@ -1,16 +1,18 @@
 package org.eclipse.viatra2.patternlanguage.jvmmodel
 
-import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import com.google.inject.Inject
-import org.eclipse.xtext.naming.IQualifiedNameProvider
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
-import org.eclipse.xtext.common.types.JvmVisibility
 import java.util.Arrays
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
+import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.ImportManager
 
 /**
- * IPatternMatch implementation inferer for a {@link Pattern} object.
+ * {@link IPatternMatch} implementation inferer.
  * 
  * @author Mark Czotter
  */
@@ -19,17 +21,18 @@ class PatternMatchClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension IQualifiedNameProvider
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	@Inject extension JavadocInferrer
 	
 	/**
-	 * Infers the {@link IPatternMatch} implementation class from pattern parameter.
+	 * Infers the {@link IPatternMatch} implementation class from {@link Pattern} parameters.
 	 */
 	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String matchPackageName) {
 		val matchClass = pattern.toClass(pattern.matchClassName) [
    			it.packageName = matchPackageName
    			it.documentation = pattern.javadocMatchClass.toString
    			it.final = true
-   			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch))
-   			it.superTypes += pattern.newTypeRef(typeof (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch))
+   			it.superTypes += pattern.newTypeRef(typeof (BasePatternMatch))
+   			it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
    		]
    		matchClass.inferMatchClassFields(pattern)
    		matchClass.inferMatchClassConstructors(pattern)
@@ -138,14 +141,12 @@ class PatternMatchClassInferrer {
    				return «pattern.matchClassName».parameterNames;
    			''']
    		]
-   		
    		matchClass.members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.body = ['''
    				return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
    			''']
    		]
-		
 		matchClass.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
@@ -156,7 +157,6 @@ class PatternMatchClassInferrer {
 				return result.toString();
 			''']
 		]
-		
 		matchClass.members += pattern.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
@@ -168,13 +168,11 @@ class PatternMatchClassInferrer {
 				return result; 
 			''']
 		]
-		
 		matchClass.members += pattern.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
 			it.body = [it | pattern.equalsMethodBody(it)]
 		]
-
 		matchClass.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''return «pattern.matcherClassName».FACTORY.getPattern();''']
@@ -187,42 +185,26 @@ class PatternMatchClassInferrer {
    	def CharSequence equalsMethodBody(Pattern pattern, ImportManager importManager) {
    		importManager.addImportFor(pattern.newTypeRef(typeof (Arrays)).type)
    		return '''
-					if (this == obj)
-						return true;
-					if (obj == null)
-						return false;
-					if (!(obj instanceof IPatternMatch))
-						return false;
-					IPatternMatch otherSig  = (IPatternMatch) obj;
-					if (!pattern().equals(otherSig.pattern()))
-						return false;
-					if (!«pattern.matchClassName».class.equals(obj.getClass()))
-						return Arrays.deepEquals(toArray(), otherSig.toArray());
-					«IF !pattern.parameters.isEmpty»
-					«pattern.matchClassName» other = («pattern.matchClassName») obj;
-					«FOR variable : pattern.parameters» 
-					if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
-					else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
-					«ENDFOR»
-					«ENDIF»
-					return true;
-				'''
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (!(obj instanceof IPatternMatch))
+				return false;
+			IPatternMatch otherSig  = (IPatternMatch) obj;
+			if (!pattern().equals(otherSig.pattern()))
+				return false;
+			if (!«pattern.matchClassName».class.equals(obj.getClass()))
+				return Arrays.deepEquals(toArray(), otherSig.toArray());
+			«IF !pattern.parameters.isEmpty»
+			«pattern.matchClassName» other = («pattern.matchClassName») obj;
+			«FOR variable : pattern.parameters» 
+			if («variable.fieldName» == null) {if (other.«variable.fieldName» != null) return false;}
+			else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
+			«ENDFOR»
+			«ENDIF»
+			return true;
+		'''
    	}
-   	
-   	/**
-   	 * Infers javadoc for Match class based on the input 'pattern'.
-   	 */
-   	def javadocMatchClass(Pattern pattern) '''
-		Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern, 
-		to be used in conjunction with «pattern.matcherClassName».
-		
-		<p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
-		Each instance is a (possibly partial) substitution of pattern parameters, 
-		usable to represent a match of the pattern in the result of a query, 
-		or to specify the bound (fixed) input parameters when issuing a query.
-		
-		@see «pattern.matcherClassName»
-		@see «pattern.processorClassName»
-   	'''
 	
 }

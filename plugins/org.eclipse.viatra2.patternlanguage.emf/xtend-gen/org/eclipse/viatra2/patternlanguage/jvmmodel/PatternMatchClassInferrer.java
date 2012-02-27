@@ -6,6 +6,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFJvmTypesBuilder;
 import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra2.patternlanguage.jvmmodel.JavadocInferrer;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmAnnotationReference;
 import org.eclipse.xtext.common.types.JvmConstructor;
@@ -28,7 +29,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 /**
- * IPatternMatch implementation inferer for a {@link Pattern} object.
+ * {@link IPatternMatch} implementation inferer.
  * 
  * @author Mark Czotter
  */
@@ -43,8 +44,11 @@ public class PatternMatchClassInferrer {
   @Inject
   private EMFPatternLanguageJvmModelInferrerUtil _eMFPatternLanguageJvmModelInferrerUtil;
   
+  @Inject
+  private JavadocInferrer _javadocInferrer;
+  
   /**
-   * Infers the {@link IPatternMatch} implementation class from pattern parameter.
+   * Infers the {@link IPatternMatch} implementation class from {@link Pattern} parameters.
    */
   public JvmDeclaredType inferMatchClass(final Pattern pattern, final boolean isPrelinkingPhase, final String matchPackageName) {
       String _matchClassName = this._eMFPatternLanguageJvmModelInferrerUtil.matchClassName(pattern);
@@ -52,7 +56,7 @@ public class PatternMatchClassInferrer {
           public void apply(final JvmGenericType it) {
             {
               it.setPackageName(matchPackageName);
-              CharSequence _javadocMatchClass = PatternMatchClassInferrer.this.javadocMatchClass(pattern);
+              CharSequence _javadocMatchClass = PatternMatchClassInferrer.this._javadocInferrer.javadocMatchClass(pattern);
               String _string = _javadocMatchClass.toString();
               PatternMatchClassInferrer.this._eMFJvmTypesBuilder.setDocumentation(it, _string);
               it.setFinal(true);
@@ -649,41 +653,5 @@ public class PatternMatchClassInferrer {
       _builder.append("return true;");
       _builder.newLine();
       return _builder;
-  }
-  
-  /**
-   * Infers javadoc for Match class based on the input 'pattern'.
-   */
-  public CharSequence javadocMatchClass(final Pattern pattern) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("Pattern-specific match representation of the ");
-    QualifiedName _fullyQualifiedName = this._iQualifiedNameProvider.getFullyQualifiedName(pattern);
-    _builder.append(_fullyQualifiedName, "");
-    _builder.append(" pattern, ");
-    _builder.newLineIfNotEmpty();
-    _builder.append("to be used in conjunction with ");
-    String _matcherClassName = this._eMFPatternLanguageJvmModelInferrerUtil.matcherClassName(pattern);
-    _builder.append(_matcherClassName, "");
-    _builder.append(".");
-    _builder.newLineIfNotEmpty();
-    _builder.newLine();
-    _builder.append("<p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.");
-    _builder.newLine();
-    _builder.append("Each instance is a (possibly partial) substitution of pattern parameters, ");
-    _builder.newLine();
-    _builder.append("usable to represent a match of the pattern in the result of a query, ");
-    _builder.newLine();
-    _builder.append("or to specify the bound (fixed) input parameters when issuing a query.");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("@see ");
-    String _matcherClassName_1 = this._eMFPatternLanguageJvmModelInferrerUtil.matcherClassName(pattern);
-    _builder.append(_matcherClassName_1, "");
-    _builder.newLineIfNotEmpty();
-    _builder.append("@see ");
-    String _processorClassName = this._eMFPatternLanguageJvmModelInferrerUtil.processorClassName(pattern);
-    _builder.append(_processorClassName, "");
-    _builder.newLineIfNotEmpty();
-    return _builder;
   }
 }

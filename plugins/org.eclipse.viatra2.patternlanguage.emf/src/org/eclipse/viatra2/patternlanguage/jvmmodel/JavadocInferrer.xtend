@@ -1,0 +1,136 @@
+package org.eclipse.viatra2.patternlanguage.jvmmodel
+
+import com.google.inject.Inject
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.xtext.naming.IQualifiedNameProvider
+import org.eclipse.xtext.serializer.ISerializer
+
+class JavadocInferrer {
+	
+	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	@Inject extension IQualifiedNameProvider
+	@Inject ISerializer serializer
+	
+	/**
+   	 * Infers javadoc for Match class based on the input 'pattern'.
+   	 */
+   	def javadocMatchClass(Pattern pattern) '''
+		Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern, 
+		to be used in conjunction with «pattern.matcherClassName».
+		
+		<p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
+		Each instance is a (possibly partial) substitution of pattern parameters, 
+		usable to represent a match of the pattern in the result of a query, 
+		or to specify the bound (fixed) input parameters when issuing a query.
+		
+		@see «pattern.matcherClassName»
+		@see «pattern.processorClassName»
+   	'''
+	
+	def javadocMatcherClass(Pattern pattern) '''		
+		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
+		providing pattern-specific query methods.
+		
+		«serializer.serialize(pattern)»
+		
+		@see «pattern.matchClassName»
+		@see «pattern.matcherFactoryClassName»
+		@see «pattern.processorClassName»
+   	'''
+   	
+   	def javadocMatcherFactoryClass(Pattern pattern) '''
+	 	A pattern-specific matcher factory that can instantiate «pattern.matcherClassName» in a type-safe way.
+	 	
+	 	@see «pattern.matcherClassName»
+	 	@see «pattern.matchClassName»
+   	'''
+   	
+   	def javadocProcessorClass(Pattern pattern) '''
+		A match processor tailored for the «pattern.fullyQualifiedName» pattern.
+		
+		Clients should derive an (anonymous) class that implements the abstract process().
+	'''
+   	
+   	def javadocMatcherConstructorNotifier(Pattern pattern) '''
+		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
+		If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
+		The match set will be incrementally refreshed upon updates from the given EMF root and below.
+		<p>Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the resourceSet but are referenced. 
+		This is mainly to support nsURI-based instance-level references to registered EPackages.
+		@param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
+		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	'''
+	
+	def javadocMatcherConstructorEngine(Pattern pattern) '''
+		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+		The match set will be incrementally refreshed upon updates.
+		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
+		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	'''
+	
+	def javadocGetAllMatchesMethod(Pattern pattern) '''
+		Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return matches represented as a «pattern.matchClassName» object.
+	'''
+	
+	def javadocGetOneArbitraryMatchMethod(Pattern pattern) '''
+		Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
+		Neither determinism nor randomness of selection is guaranteed.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return a match represented as a «pattern.matchClassName» object, or null if no match is found.
+	'''
+	
+	def javadocHasMatchMethod(Pattern pattern) '''
+		Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
+		under any possible substitution of the unspecified parameters (if any).
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return true if the input is a valid (partial) match of the pattern.
+	'''
+	
+	def javadocHasMatchMethodNoParameter(Pattern pattern) '''
+		Indicates whether the (parameterless) pattern matches or not. 
+		@return true if the pattern has a valid match.
+	'''
+	
+	def javadocCountMatchesMethod(Pattern pattern) '''
+		Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return the number of pattern matches found.
+	'''
+	
+	def javadocForEachMatchMethod(Pattern pattern) '''
+		Executes the given processor on each match of the pattern that conforms to the given fixed values of some parameters.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@param processor the action that will process each pattern match.
+	'''
+	
+	def javadocForOneArbitraryMatchMethod(Pattern pattern) '''
+		Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.  
+		Neither determinism nor randomness of selection is guaranteed.
+		«FOR p : pattern.parameters»
+		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@param processor the action that will process the selected match. 
+		@return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
+	'''
+	
+	def javadocProcessMethod(Pattern pattern) '''
+		Defines the action that is to be executed on each match.
+		«FOR p : pattern.parameters»
+		@param «p.name» the value of pattern parameter «p.name» in the currently processed match 
+		«ENDFOR»
+	'''
+	
+}

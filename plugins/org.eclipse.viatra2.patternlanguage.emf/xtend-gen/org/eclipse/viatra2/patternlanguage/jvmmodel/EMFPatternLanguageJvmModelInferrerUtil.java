@@ -9,21 +9,36 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
 import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFJvmTypesBuilder;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.serializer.ISerializer;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
+/**
+ * Utility class for the EMFPatternLanguageJvmModelInferrer.
+ * 
+ * @author Mark Czotter
+ */
 @SuppressWarnings("all")
 public class EMFPatternLanguageJvmModelInferrerUtil {
   @Inject
   private EMFJvmTypesBuilder _eMFJvmTypesBuilder;
   
+  @Inject
+  private ISerializer serializer;
+  
+  /**
+   * Returns the MatcherFactoryClass name based on the Pattern's name
+   */
   public String matcherFactoryClassName(final Pattern pattern) {
     String _name = pattern.getName();
     String _firstUpper = StringExtensions.toFirstUpper(_name);
@@ -31,6 +46,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     return _operator_plus;
   }
   
+  /**
+   * Returns the MatcherClass name based on the Pattern's name
+   */
   public String matcherClassName(final Pattern pattern) {
     String _name = pattern.getName();
     String _firstUpper = StringExtensions.toFirstUpper(_name);
@@ -38,6 +56,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     return _operator_plus;
   }
   
+  /**
+   * Returns the MatchClass name based on the Pattern's name
+   */
   public String matchClassName(final Pattern pattern) {
     String _name = pattern.getName();
     String _firstUpper = StringExtensions.toFirstUpper(_name);
@@ -45,6 +66,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     return _operator_plus;
   }
   
+  /**
+   * Returns the ProcessorClass name based on the Pattern's name
+   */
   public String processorClassName(final Pattern pattern) {
     String _name = pattern.getName();
     String _firstUpper = StringExtensions.toFirstUpper(_name);
@@ -52,6 +76,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     return _operator_plus;
   }
   
+  /**
+   * Returns the field name of Variable
+   */
   public String fieldName(final Variable variable) {
     String _name = variable.getName();
     String _firstUpper = StringExtensions.toFirstUpper(_name);
@@ -60,35 +87,50 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   }
   
   public JvmTypeReference calculateType(final Variable variable) {
-      EObject _eContainer = variable.eContainer();
-      if ((_eContainer instanceof Pattern)) {
-        {
-          EObject _eContainer_1 = variable.eContainer();
-          final Pattern pattern = ((Pattern) _eContainer_1);
-          EList<PatternBody> _bodies = pattern.getBodies();
-          for (final PatternBody body : _bodies) {
-            EList<Constraint> _constraints = body.getConstraints();
-            for (final Constraint constraint : _constraints) {
-              {
-                JvmTypeReference _typeRef = this.getTypeRef(constraint, variable);
-                final JvmTypeReference typeRef = _typeRef;
-                boolean _operator_notEquals = ObjectExtensions.operator_notEquals(typeRef, null);
-                if (_operator_notEquals) {
-                  return typeRef;
+      try {
+        EObject _eContainer = variable.eContainer();
+        if ((_eContainer instanceof Pattern)) {
+          {
+            EObject _eContainer_1 = variable.eContainer();
+            final Pattern pattern = ((Pattern) _eContainer_1);
+            EList<PatternBody> _bodies = pattern.getBodies();
+            for (final PatternBody body : _bodies) {
+              EList<Constraint> _constraints = body.getConstraints();
+              for (final Constraint constraint : _constraints) {
+                {
+                  JvmTypeReference _typeRef = this.getTypeRef(constraint, variable);
+                  final JvmTypeReference typeRef = _typeRef;
+                  boolean _operator_notEquals = ObjectExtensions.operator_notEquals(typeRef, null);
+                  if (_operator_notEquals) {
+                    return typeRef;
+                  }
                 }
               }
             }
           }
+        }
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          e.printStackTrace();
+        } else {
+          throw Exceptions.sneakyThrow(_t);
         }
       }
       JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, java.lang.Object.class);
       return _newTypeRef;
   }
   
+  /**
+   * Returns the JvmTypeReference for variable if it used in the Constraint.
+   */
   protected JvmTypeReference _getTypeRef(final Constraint constraint, final Variable variable) {
     return null;
   }
   
+  /**
+   * Returns the JvmTypeReference for variable if it used in the EClassConstraint.
+   */
   protected JvmTypeReference _getTypeRef(final EClassConstraint constraint, final Variable variable) {
       EntityType _type = constraint.getType();
       final EntityType entityType = _type;
@@ -138,6 +180,61 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
         }
       }
       return null;
+  }
+  
+  /**
+   * Serializes the EObject into a String representation
+   */
+  public CharSequence serializeToJava(final EObject pattern) {
+      try {
+        {
+          String _serialize = this.serializer.serialize(pattern);
+          final String parseString = _serialize;
+          String[] _split = parseString.split("[\r\n]+");
+          final String[] splits = _split;
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("String patternString = \"\"");
+          final StringConcatenation stringRep = ((StringConcatenation) _builder);
+          stringRep.newLine();
+          for (final String s : splits) {
+            {
+              String _operator_plus = StringExtensions.operator_plus("+\"", s);
+              String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
+              stringRep.append(_operator_plus_1);
+              stringRep.newLine();
+            }
+          }
+          stringRep.append(";");
+          return stringRep;
+        }
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          e.printStackTrace();
+        } else {
+          throw Exceptions.sneakyThrow(_t);
+        }
+      }
+      return "";
+  }
+  
+  /**
+   * Returns the packageName: PatternModel.packageName + Pattern.name, packageName is ignored, when nullOrEmpty.
+   */
+  public String getPackageName(final Pattern pattern) {
+      EObject _eContainer = pattern.eContainer();
+      String _packageName = ((PatternModel) _eContainer).getPackageName();
+      String packageName = _packageName;
+      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(packageName);
+      if (_isNullOrEmpty) {
+        packageName = "";
+      } else {
+        String _operator_plus = StringExtensions.operator_plus(packageName, ".");
+        packageName = _operator_plus;
+      }
+      String _name = pattern.getName();
+      String _operator_plus_1 = StringExtensions.operator_plus(packageName, _name);
+      return _operator_plus_1;
   }
   
   public JvmTypeReference getTypeRef(final Constraint constraint, final Variable variable) {
