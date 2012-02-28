@@ -42,7 +42,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void unknownAnnotation() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@NonExistent\n\t\t\tpattern pattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@NonExistent\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertWarning(IssueCodes.UNKNOWN_ANNOTATION);
@@ -56,7 +56,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void unknownAnnotationAttribute() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Optional(unknown=1)\n\t\t\tpattern pattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Optional(unknown=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertError(IssueCodes.UNKNOWN_ANNOTATION_PARAMETER);
@@ -70,7 +70,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void unknownAnnotationAttributeTogetherWithValid() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=1, unknown=1)\n\t\t\tpattern pattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=1, unknown=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertError(IssueCodes.UNKNOWN_ANNOTATION_PARAMETER);
@@ -84,7 +84,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void missingRequiredAttribute() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p2=1)\n\t\t\tpattern pattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p2=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertError(IssueCodes.MISSING_REQUIRED_ANNOTATION_PARAMETER);
@@ -98,7 +98,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void onlyRequiredAttributeSet() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=1)\n\t\t\tpattern pattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertOK();
@@ -112,7 +112,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void bothRequiredAndOptionalAttributeSet() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=1,p2=1)\n\t\t\tpattern pattern(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=1,p2=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertOK();

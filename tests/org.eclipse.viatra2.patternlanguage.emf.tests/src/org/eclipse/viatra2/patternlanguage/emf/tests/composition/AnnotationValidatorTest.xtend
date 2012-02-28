@@ -39,7 +39,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			@NonExistent
-			pattern pattern(p : Pattern) = {
+			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'
 		) 
@@ -51,7 +51,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			@Optional(unknown=1)
-			pattern pattern(p : Pattern) = {
+			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'
 		) 
@@ -63,7 +63,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			@Param1(p1=1, unknown=1)
-			pattern pattern(p : Pattern) = {
+			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'
 		) 
@@ -75,7 +75,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			@Param2(p2=1)
-			pattern pattern(p : Pattern) = {
+			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'
 		) 
@@ -87,7 +87,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			@Param2(p1=1)
-			pattern pattern(p : Pattern) = {
+			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'
 		) 
@@ -99,7 +99,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			@Param2(p1=1,p2=1)
-			pattern pattern(p : Pattern) = {
+			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'
 		) 
