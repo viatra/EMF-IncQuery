@@ -20,5 +20,5 @@ Require-Bundle: org.eclipse.viatra2.patternlanguage.emf,
  org.eclipse.viatra2.patternlanguage.emf.model;bundle-version="0.6.0"
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
