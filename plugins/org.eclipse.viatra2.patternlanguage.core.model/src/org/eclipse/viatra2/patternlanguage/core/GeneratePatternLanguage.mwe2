@@ -73,13 +73,6 @@ Workflow {
                 fileExtensions = file.extensions
             }
 
-            // The antlr parser generator fragment.
-            fragment = parser.antlr.XtextAntlrGeneratorFragment {
-            //  options = {
-            //      backtrack = true
-            //  }
-            }
-
             // java-based API for validation
             fragment = validation.JavaValidatorFragment {
                 //composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
@@ -115,9 +108,6 @@ Workflow {
             // content assist API
             fragment = contentAssist.JavaBasedContentAssistFragment {}
 
-            // generates a more lightweight Antlr parser and lexer tailored for content assist
-            fragment = parser.antlr.XtextAntlrUiGeneratorFragment {}
-
             // generates junit test support classes into Generator#pathTestProject
             fragment = junit.Junit4Fragment {}
 
@@ -134,7 +124,9 @@ Workflow {
             fragment = types.TypesGeneratorFragment {}
 
             // generates the required bindings only if the grammar inherits from Xbase
-            fragment = xbase.XbaseGeneratorFragment {}
+            fragment = xbase.XbaseGeneratorFragment {
+            	generateXtendInferrer=false
+            }
             
             // Code generator
 			fragment = generator.GeneratorFragment {
