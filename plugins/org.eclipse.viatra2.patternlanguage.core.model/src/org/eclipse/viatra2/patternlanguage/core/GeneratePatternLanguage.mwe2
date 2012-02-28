@@ -124,9 +124,7 @@ Workflow {
             fragment = types.TypesGeneratorFragment {}
 
             // generates the required bindings only if the grammar inherits from Xbase
-            fragment = xbase.XbaseGeneratorFragment {
-            	generateXtendInferrer=false
-            }
+            fragment = xbase.XbaseGeneratorFragment { }
             
             // Code generator
 			fragment = generator.GeneratorFragment {

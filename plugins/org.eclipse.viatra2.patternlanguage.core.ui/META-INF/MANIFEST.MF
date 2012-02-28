@@ -20,7 +20,6 @@ Require-Bundle: org.eclipse.viatra2.patternlanguage.core;bundle-version="0.6.0";
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.viatra2.patternlanguage.core.ui.contentassist,
- org.eclipse.viatra2.patternlanguage.core.ui.contentassist.antlr,
- org.eclipse.viatra2.patternlanguage.core.ui.internal
+Export-Package: org.eclipse.viatra2.patternlanguage.core.ui.internal,
+ org.eclipse.viatra2.patternlanguage.core.ui.contentassist
 Bundle-Activator: org.eclipse.viatra2.patternlanguage.core.ui.internal.PatternLanguageActivator
