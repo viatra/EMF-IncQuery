@@ -26,60 +26,64 @@ import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public class WellbehavingDerivedFeatureRegistry {
 	private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = new ArrayList<EStructuralFeature>();;
+	private static Collection<EClass> contributedWellbehavingDerivedClasses = new ArrayList<EClass>();;
+	private static Collection<EPackage> contributedWellbehavingDerivedPackages = new ArrayList<EPackage>();;
 
 	/**
 	 * Called by Activator.
 	 */
-	public static void initRegistry()
-	{
+	public static void initRegistry() {
 		getContributedWellbehavingDerivedFeatures().clear();
-		
-		IExtensionRegistry reg = Platform.getExtensionRegistry();	
+		getContributedWellbehavingDerivedClasses().clear();
+		getContributedWellbehavingDerivedPackages().clear();
+
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint poi;
 
-		poi = reg.getExtensionPoint(IExtensions.WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID);	
-		if (poi != null) 
-		{		
+		poi = reg.getExtensionPoint(IExtensions.WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID);
+		if (poi != null) {
 			IExtension[] exts = poi.getExtensions();
-			
-			for (IExtension ext: exts)
-			{
-				
+
+			for (IExtension ext : exts) {
+
 				IConfigurationElement[] els = ext.getConfigurationElements();
-				for (IConfigurationElement el : els)
-				{
+				for (IConfigurationElement el : els) {
 					if (el.getName().equals("wellbehaving-derived-feature")) {
-						try
-						{
+						try {
 							String packageUri = el.getAttribute("package-nsUri");
 							String classifierName = el.getAttribute("classifier-name");
 							String featureName = el.getAttribute("feature-name");
-							if(packageUri != null) {
+							if (packageUri != null) {
 								EPackage pckg = EPackage.Registry.INSTANCE.getEPackage(packageUri);
-								if(pckg != null && classifierName != null) {
-									EClassifier clsr = pckg.getEClassifier(classifierName);
-									if(clsr instanceof EClass && featureName != null) {
-										EClass cls = (EClass) clsr;
-										EStructuralFeature feature = cls.getEStructuralFeature(featureName);
-										if(feature != null) {
-											contributedWellbehavingDerivedFeatures.add(feature);
+								if (pckg != null) {
+									if (classifierName != null) {
+										EClassifier clsr = pckg.getEClassifier(classifierName);
+										if (clsr instanceof EClass) {
+											if (featureName != null) {
+												EClass cls = (EClass) clsr;
+												EStructuralFeature feature = cls.getEStructuralFeature(featureName);
+												if (feature != null) {
+													contributedWellbehavingDerivedFeatures.add(feature);
+												}
+											} else {
+												contributedWellbehavingDerivedClasses.add((EClass) clsr);
+											}
 										}
+									} else {
+										contributedWellbehavingDerivedPackages.add(pckg);
 									}
 								}
 							}
-						}
-						catch (Exception e)
-						{
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} else {
-						throw new UnsupportedOperationException(
-								"Unknown configuration element " + el.getName() + " in plugin.xml of "
-								+ el.getDeclaringExtension().getUniqueIdentifier());
+						throw new UnsupportedOperationException("Unknown configuration element " + el.getName()
+								+ " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
 					}
 				}
 			}
@@ -94,9 +98,42 @@ public class WellbehavingDerivedFeatureRegistry {
 	}
 
 	/**
+	 * @param feature
+	 */
+	public static void registerWellbehavingDerivedClass(EClass cls) {
+		contributedWellbehavingDerivedClasses.add(cls);
+	}
+
+	/**
+	 * @param feature
+	 */
+	public static void registerWellbehavingDerivedPackage(EPackage pkg) {
+		contributedWellbehavingDerivedPackages.add(pkg);
+	}
+
+	/**
 	 * @return the contributedWellbehavingDerivedFeatures
 	 */
 	public static Collection<EStructuralFeature> getContributedWellbehavingDerivedFeatures() {
 		return contributedWellbehavingDerivedFeatures;
+	}
+
+	public static Collection<EClass> getContributedWellbehavingDerivedClasses() {
+		return contributedWellbehavingDerivedClasses;
+	}
+
+	public static Collection<EPackage> getContributedWellbehavingDerivedPackages() {
+		return contributedWellbehavingDerivedPackages;
+	}
+
+	public static boolean isWellbehavingFeature(EStructuralFeature feature) {
+		if (contributedWellbehavingDerivedFeatures.contains(feature)) {
+			return true;
+		} else if (contributedWellbehavingDerivedClasses.contains(feature.eClass())) {
+			return true;
+		} else if (contributedWellbehavingDerivedPackages.contains(feature.eClass().getEPackage())) {
+			return true;
+		}
+		return false;
 	}
 }

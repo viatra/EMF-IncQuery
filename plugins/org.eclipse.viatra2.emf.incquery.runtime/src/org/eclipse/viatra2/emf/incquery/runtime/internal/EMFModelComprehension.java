@@ -34,7 +34,7 @@ public class EMFModelComprehension {
 		if(suspect) {
 			// override support here 
 			// (e.g. if manual notifications available, or no changes expected afterwards)
-			suspect = !WellbehavingDerivedFeatureRegistry.getContributedWellbehavingDerivedFeatures().contains(feature);
+			suspect = !WellbehavingDerivedFeatureRegistry.isWellbehavingFeature(feature);
 			// TODO verbose flag somewhere to ease debugging (for such warnings)
 			// TODO add warning about not visited subtree (containment, FeatureMap and annotation didn't define otherwise)
 		}

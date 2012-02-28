@@ -56,14 +56,14 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="classifier-name" type="string" use="required">
+         <attribute name="classifier-name" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="feature-name" type="string" use="required">
+         <attribute name="feature-name" type="string">
             <annotation>
                <documentation>
                   
