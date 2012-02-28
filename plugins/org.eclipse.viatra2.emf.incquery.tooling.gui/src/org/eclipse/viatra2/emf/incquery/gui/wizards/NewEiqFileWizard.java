@@ -44,6 +44,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		page = new NewEiqFileWizardPage();
 		page.init((IStructuredSelection) selection);
 		addPage(page);
+		setForcePreviousAndNextButtons(false);
 	}
 
 	public boolean performFinish() {
