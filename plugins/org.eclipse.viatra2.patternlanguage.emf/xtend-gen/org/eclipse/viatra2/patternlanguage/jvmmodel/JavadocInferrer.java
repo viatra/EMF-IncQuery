@@ -9,6 +9,8 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.serializer.ISerializer;
+import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class JavadocInferrer {
@@ -67,8 +69,21 @@ public class JavadocInferrer {
     _builder.append("providing pattern-specific query methods.");
     _builder.newLine();
     _builder.newLine();
-    String _serialize = this.serializer.serialize(pattern);
-    _builder.append(_serialize, "");
+    String _xtrycatchfinallyexpression = null;
+    try {
+      String _serialize = this.serializer.serialize(pattern);
+      _xtrycatchfinallyexpression = _serialize;
+    } catch (final Throwable _t) {
+      if (_t instanceof Exception) {
+        final Exception e = (Exception)_t;
+        String _message = e.getMessage();
+        String _operator_plus = StringExtensions.operator_plus("Serialization error ", _message);
+        _xtrycatchfinallyexpression = _operator_plus;
+      } else {
+        throw Exceptions.sneakyThrow(_t);
+      }
+    }
+    _builder.append(_xtrycatchfinallyexpression, "");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("@see ");

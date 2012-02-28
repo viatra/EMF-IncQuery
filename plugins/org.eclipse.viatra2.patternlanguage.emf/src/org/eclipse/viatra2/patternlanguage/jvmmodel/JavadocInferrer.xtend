@@ -31,7 +31,12 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
-		«serializer.serialize(pattern)»
+		«try {
+			serializer.serialize(pattern)
+		} catch (Exception e) {
+			//TODO error logging required!
+			"Serialization error " + e.message
+		}»
 		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»
