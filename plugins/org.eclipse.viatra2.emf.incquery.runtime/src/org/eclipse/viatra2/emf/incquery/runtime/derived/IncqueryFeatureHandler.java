@@ -32,6 +32,9 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  * @author Abel Hegedus
  *
  * FIXME write AggregateHandler if any EDataType should be allowed 
+ * TODO notifications could be static final? to ensure message ordering
+ * TODO one delta monitor per matcher should be enough if only matches corresponding to the given object are removed 
+ * 
  */
 public class IncqueryFeatureHandler {
 
