@@ -22,8 +22,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
@@ -31,9 +31,9 @@ import com.google.inject.Inject;
 public class NewEiqFileWizard extends Wizard implements INewWizard {
 	private NewEiqFileWizardPage page;
 	private ISelection selection;
-
+	
 	@Inject
-	IResourceSetProvider resourceSetProvider;
+	private IResourceSetProvider resourceSetProvider;
 	
 	public NewEiqFileWizard() {
 		super();
@@ -51,12 +51,14 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final String patternName = page.getPatternName();
+		final String packageName = page.getPackageName();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, fileName, patternName, monitor);
+					doFinish(containerName, packageName, fileName, patternName, monitor);
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
@@ -66,8 +68,10 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		try {
 			getContainer().run(true, false, op);
 		} catch (InterruptedException e) {
+			e.printStackTrace();
 			return false;
 		} catch (InvocationTargetException e) {
+			e.printStackTrace();
 			Throwable realException = e.getTargetException();
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
@@ -75,33 +79,38 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		return true;
 	}
 	
-	private void doFinish(String containerName, String fileName, String patternName, IProgressMonitor monitor) throws IOException {
-		
+	private void doFinish(String containerPath, String packageName, String fileName, String patternName, IProgressMonitor monitor) {
 		monitor.beginTask("Creating " + fileName, 1);
-		
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource containerResource = root.findMember(new Path(containerName));
-		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
-
-		URI fileURI = URI.createPlatformResourceURI(containerResource.getFullPath().append(fileName).toString(), false);
-		Resource resource = resourceSet.createResource(fileURI);
-		
-		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
-		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
-		pattern.setName(patternName);
-		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
-		pattern.getBodies().add(body);
-		
-		pm.getPatterns().add(pattern);
-
-		resource.getContents().add(pm);
-		
-		resource.save(Collections.EMPTY_MAP);
-		
+		createEiqFile(containerPath, packageName, fileName, patternName);
 		monitor.worked(1);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
+	}
+	
+	private void createEiqFile(String containerPath, String packageName, String fileName,	String patternName) {
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IResource containerResource = root.findMember(new Path(containerPath));
+		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
+
+		URI fileURI = URI.createPlatformResourceURI(containerResource.getFullPath().append(packageName+"/"+fileName).toString(), false);
+		Resource resource = resourceSet.createResource(fileURI);
+
+		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
+		pattern.setName(patternName);
+		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
+		pattern.getBodies().add(body);
+		pm.getPatterns().add(pattern);
+		resource.getContents().add(pm);
+
+		try {
+			resource.save(Collections.EMPTY_MAP);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
