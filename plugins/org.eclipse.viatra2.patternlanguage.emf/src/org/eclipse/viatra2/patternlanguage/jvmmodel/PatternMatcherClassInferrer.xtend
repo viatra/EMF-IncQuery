@@ -2,6 +2,9 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Collection
+import org.eclipse.core.runtime.ILog
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Status
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
@@ -53,7 +56,7 @@ class PatternMatcherClassInferrer {
 			it.documentation = pattern.javadocMatcherConstructorNotifier.toString
 			it.parameters += pattern.toParameter("notifier", pattern.newTypeRef(typeof (Notifier)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
-			it.body = [it | pattern.matcherConstructorBodyNotifier(it)]
+			it.body = [it | pattern.inferMatcherConstructorBodyNotifier(it)]
 		]
 		
 		matcherClass.members += pattern.toConstructor(pattern.matcherClassName) [
@@ -142,36 +145,110 @@ class PatternMatcherClassInferrer {
    	 * Infers tupleToMatch, arrayToMatch methods for Matcher class based on the input 'pattern'.
    	 */   	
    	def inferMatcherClassToMatchMethods(JvmDeclaredType matcherClass, Pattern pattern, JvmTypeReference matchClassRef) {
-	   	matcherClass.members += pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
+   		// TODO get setting from the generator model
+  		val isPluginLogging = false;
+	   	val tupleToMatchMethod = pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
-   			it.body = ['''
-   				try {
-   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
-   				} catch(ClassCastException e) {
-   					throw new IncQueryRuntimeException(e.getMessage());
-   				}
-   			''']
    		]
-   		matcherClass.members += pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
+   		val arrayToMatchMethod = pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
-   			it.body = ['''
-   				try {
-   					return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
-   				} catch(ClassCastException e) {
-   					throw new IncQueryRuntimeException(e.getMessage());
-   				}
-   			''']
    		]
+   		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it, isPluginLogging)])
+   		arrayToMatchMethod.setBody([it | pattern.inferArrayToMatchMethodBody(it, isPluginLogging)])
+   		matcherClass.members += tupleToMatchMethod
+   		matcherClass.members += arrayToMatchMethod
    	}
    	
 	/**
    	 * Infers body for Matcher class constructor (Notifier) based on the input 'pattern'.
    	 */
-   	def matcherConstructorBodyNotifier(Pattern pattern, ImportManager manager) {
+   	def inferMatcherConstructorBodyNotifier(Pattern pattern, ImportManager manager) {
   		manager.addImportFor(pattern.newTypeRef(typeof (EngineManager)).type)
   		return '''this(EngineManager.getInstance().getIncQueryEngine(notifier));'''
   	}
+  	
+  	/**
+  	 * Infers the arrayToMatch method body.
+  	 */
+  	def inferTupleToMatchMethodBody(Pattern pattern, ImportManager manager, boolean isPluginLogging) {
+  		val activatorClass = pattern.findActivatorClass;
+  		if (activatorClass != null && isPluginLogging) {
+  			manager.addLogImports(pattern)
+  		}
+   		'''
+   			try {
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
+   			} catch(ClassCastException e) {
+   				«pattern.inferLogging(isPluginLogging, activatorClass, "tupleToMatch")»
+   				//throw new IncQueryRuntimeException(e.getMessage());
+   				return null;
+   			}
+   		'''
+  	}
+  	
+  	/**
+  	 * Infers the arrayToMatch method body.
+  	 */
+  	def inferArrayToMatchMethodBody(Pattern pattern, ImportManager manager, boolean isPluginLogging) {
+  		val activatorClass = pattern.findActivatorClass;
+  	  	if (activatorClass != null && isPluginLogging) {
+  			manager.addLogImports(pattern)
+  		}
+  		'''
+   			try {
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+   			} catch(ClassCastException e) {
+   				«pattern.inferLogging(isPluginLogging, activatorClass, "arrayToMatch")»
+   				//throw new IncQueryRuntimeException(e.getMessage());
+   				return null;
+   			}
+   		'''
+  	}
+  	
+  	/**
+  	 * Adds imports for ILog, IStatus, Status classes
+  	 */
+  	def addLogImports(ImportManager manager, Pattern pattern) {
+  		manager.addImportFor(pattern.newTypeRef(typeof (ILog)).type)
+  		manager.addImportFor(pattern.newTypeRef(typeof (IStatus)).type)
+  		manager.addImportFor(pattern.newTypeRef(typeof (Status)).type)	
+	}
+	  	
+  	/**
+  	 * Infers the appropriate logging based on the parameters.
+  	 */
+  	def inferLogging(Pattern pattern, boolean pluginLogging, JvmTypeReference activator, String methodName) {
+  		if (pluginLogging && activator != null) {
+  			return pattern.pluginLogging(activator)
+  		} else {
+  			return pattern.consoleLogging(methodName)
+  		}
+	}
+	
+	/**
+	 * Searches for an Activator class
+	 * TODO: generate an Activator or ?
+	 */
+	def findActivatorClass(Pattern pattern) {
+		return pattern.newTypeRef("Activator")
+	}
+	
+	/**
+	 * Default logging to System error.
+	 */
+	def consoleLogging(Pattern pattern, String methodName) '''
+		System.err.println("Error when executing «methodName» in «pattern.matcherClassName»:" + e.getMessage());
+	'''
+	
+	/**
+	 * Default logging with Activator's ILog.
+	 */
+	def pluginLogging(Pattern pattern, JvmTypeReference activator) '''
+		ILog log = Activator.getDefault().getLog();
+		IStatus status = new Status(IStatus.ERROR, log.getBundle().getSymbolicName(), e.getMessage());
+		log.log(status);
+	'''
 	
 }
