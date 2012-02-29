@@ -50,7 +50,8 @@ class PatternMatcherFactoryClassInferrer {
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
-				«pattern.serializeToJava»
+«««				Serialize the PatternModel
+				«pattern.eContainer.serializeToJava» 
 				throw new UnsupportedOperationException();
 			''']
 		]

@@ -2,6 +2,7 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel;
 
 import com.google.inject.Inject;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFJvmTypesBuilder;
 import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
@@ -113,8 +114,10 @@ public class PatternMatcherFactoryClassInferrer {
               final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                   public CharSequence apply(final ImportManager it) {
                     StringConcatenation _builder = new StringConcatenation();
-                    CharSequence _serializeToJava = PatternMatcherFactoryClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.serializeToJava(pattern);
+                    EObject _eContainer = pattern.eContainer();
+                    CharSequence _serializeToJava = PatternMatcherFactoryClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.serializeToJava(_eContainer);
                     _builder.append(_serializeToJava, "");
+                    _builder.append(" ");
                     _builder.newLineIfNotEmpty();
                     _builder.append("throw new UnsupportedOperationException();");
                     _builder.newLine();

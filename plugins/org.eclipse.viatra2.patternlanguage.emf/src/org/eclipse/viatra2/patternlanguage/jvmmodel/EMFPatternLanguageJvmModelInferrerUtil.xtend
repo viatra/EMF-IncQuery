@@ -111,24 +111,43 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	}
    	
    	/**
-   	 * Serializes the EObject into a String representation
+   	 * Serializes the EObject into Java String variable.
    	 */
-   	def serializeToJava(EObject pattern) {
-  		try {
-			val parseString = serializer.serialize(pattern)
-	  		val splits = parseString.split("[\r\n]+")
-	  		val stringRep = '''String patternString = ""''' as StringConcatenation
-	  		stringRep.newLine
-	  		for (s : splits) {
-	  			stringRep.append("+\"" + s + "\"")
-	  			stringRep.newLine
-	  		}
-	  		stringRep.append(";")
-	  		return stringRep   		
-   		} catch (Exception e) {
-  			e.printStackTrace
+   	def serializeToJava(EObject eObject) {
+		val parseString = eObject.serialize
+		if (parseString.nullOrEmpty) {
+			return "";
 		}
-		return ""
+	  	val splits = parseString.split("[\r\n]+")
+	  	val stringRep = '''String patternString = ""''' as StringConcatenation
+	  	stringRep.newLine
+	  	for (s : splits) {
+	  		stringRep.append("+\"" + s + "\"")
+	  		stringRep.newLine
+	  	}
+	  	stringRep.append(";")
+	  	return stringRep   		
+  	}
+  	
+  	def serializeToJavadoc(Pattern pattern) {
+  		val javadocString = pattern.serialize
+  		if (javadocString.nullOrEmpty) {
+  			return "Serialization error, check Log"
+  		}
+  		return javadocString
+  	}
+  	
+  	/**
+  	 * Serializes EObject to a String representation.
+  	 */
+  	def private serialize(EObject eObject) {
+  		try {
+			serializer.serialize(eObject).replaceAll("\"", "\\\\\"")
+		} catch (Exception e) {
+			//TODO error logging required!
+//			"Serialization error " + e.message
+			return null
+		}
   	}
   	
   	/**

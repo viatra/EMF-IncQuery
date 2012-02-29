@@ -3,13 +3,11 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import org.eclipse.xtext.serializer.ISerializer
 
 class JavadocInferrer {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension IQualifiedNameProvider
-	@Inject ISerializer serializer
 	
 	/**
    	 * Infers javadoc for Match class based on the input 'pattern'.
@@ -31,12 +29,7 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
-		«try {
-			serializer.serialize(pattern)
-		} catch (Exception e) {
-			//TODO error logging required!
-			"Serialization error " + e.message
-		}»
+		«pattern.serializeToJavadoc»
 		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»

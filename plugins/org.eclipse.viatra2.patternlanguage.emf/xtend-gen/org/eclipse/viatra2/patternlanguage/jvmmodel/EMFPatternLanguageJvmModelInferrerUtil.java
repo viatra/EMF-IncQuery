@@ -183,39 +183,61 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   }
   
   /**
-   * Serializes the EObject into a String representation
+   * Serializes the EObject into Java String variable.
    */
-  public CharSequence serializeToJava(final EObject pattern) {
-      try {
+  public CharSequence serializeToJava(final EObject eObject) {
+      String _serialize = this.serialize(eObject);
+      final String parseString = _serialize;
+      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(parseString);
+      if (_isNullOrEmpty) {
+        return "";
+      }
+      String[] _split = parseString.split("[\r\n]+");
+      final String[] splits = _split;
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("String patternString = \"\"");
+      final StringConcatenation stringRep = ((StringConcatenation) _builder);
+      stringRep.newLine();
+      for (final String s : splits) {
         {
-          String _serialize = this.serializer.serialize(pattern);
-          final String parseString = _serialize;
-          String[] _split = parseString.split("[\r\n]+");
-          final String[] splits = _split;
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append("String patternString = \"\"");
-          final StringConcatenation stringRep = ((StringConcatenation) _builder);
+          String _operator_plus = StringExtensions.operator_plus("+\"", s);
+          String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
+          stringRep.append(_operator_plus_1);
           stringRep.newLine();
-          for (final String s : splits) {
-            {
-              String _operator_plus = StringExtensions.operator_plus("+\"", s);
-              String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
-              stringRep.append(_operator_plus_1);
-              stringRep.newLine();
-            }
-          }
-          stringRep.append(";");
-          return stringRep;
-        }
-      } catch (final Throwable _t) {
-        if (_t instanceof Exception) {
-          final Exception e = (Exception)_t;
-          e.printStackTrace();
-        } else {
-          throw Exceptions.sneakyThrow(_t);
         }
       }
-      return "";
+      stringRep.append(";");
+      return stringRep;
+  }
+  
+  public String serializeToJavadoc(final Pattern pattern) {
+      String _serialize = this.serialize(pattern);
+      final String javadocString = _serialize;
+      boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(javadocString);
+      if (_isNullOrEmpty) {
+        return "Serialization error, check Log";
+      }
+      return javadocString;
+  }
+  
+  /**
+   * Serializes EObject to a String representation.
+   */
+  private String serialize(final EObject eObject) {
+    String _xtrycatchfinallyexpression = null;
+    try {
+      String _serialize = this.serializer.serialize(eObject);
+      String _replaceAll = _serialize.replaceAll("\"", "\\\\\"");
+      _xtrycatchfinallyexpression = _replaceAll;
+    } catch (final Throwable _t) {
+      if (_t instanceof Exception) {
+        final Exception e = (Exception)_t;
+        return null;
+      } else {
+        throw Exceptions.sneakyThrow(_t);
+      }
+    }
+    return _xtrycatchfinallyexpression;
   }
   
   /**

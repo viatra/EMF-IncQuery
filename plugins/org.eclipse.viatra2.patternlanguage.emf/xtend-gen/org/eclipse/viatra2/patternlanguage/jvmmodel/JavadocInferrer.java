@@ -8,9 +8,6 @@ import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFPatternLanguageJvmModelIn
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.serializer.ISerializer;
-import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class JavadocInferrer {
@@ -19,9 +16,6 @@ public class JavadocInferrer {
   
   @Inject
   private IQualifiedNameProvider _iQualifiedNameProvider;
-  
-  @Inject
-  private ISerializer serializer;
   
   /**
    * Infers javadoc for Match class based on the input 'pattern'.
@@ -69,21 +63,8 @@ public class JavadocInferrer {
     _builder.append("providing pattern-specific query methods.");
     _builder.newLine();
     _builder.newLine();
-    String _xtrycatchfinallyexpression = null;
-    try {
-      String _serialize = this.serializer.serialize(pattern);
-      _xtrycatchfinallyexpression = _serialize;
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
-        String _message = e.getMessage();
-        String _operator_plus = StringExtensions.operator_plus("Serialization error ", _message);
-        _xtrycatchfinallyexpression = _operator_plus;
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
-    _builder.append(_xtrycatchfinallyexpression, "");
+    String _serializeToJavadoc = this._eMFPatternLanguageJvmModelInferrerUtil.serializeToJavadoc(pattern);
+    _builder.append(_serializeToJavadoc, "");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("@see ");
