@@ -1,8 +1,10 @@
 package org.eclipse.viatra2.emf.incquery.core.project;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -19,13 +21,28 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+
+import com.google.inject.Inject;
 
 /**
  * A common helper class for generating IncQuery-related projects.
+ * 
  * @author Zoltan Ujhelyi
  */
 public abstract class ProjectGenerationHelper {
+
+	@Inject
+	private static IResourceSetProvider resourceSetProvider;
 
 	/**
 	 * The list of all natures used in an IncQuery project.
@@ -50,10 +67,11 @@ public abstract class ProjectGenerationHelper {
 	/**
 	 * This method initializes a new project with a selected name, but deletes
 	 * any existing project with the same name - it shall be called with care!
+	 * 
 	 * @param projectName
 	 * @param natures
 	 * @param monitor
-	 * @return the project description of the created 
+	 * @return the project description of the created
 	 * @throws CoreException
 	 */
 	public static IProject initializeProject(String projectName,
@@ -79,6 +97,7 @@ public abstract class ProjectGenerationHelper {
 
 	/**
 	 * Adds a collection of natures to the project
+	 * 
 	 * @param proj
 	 * @param natures
 	 * @param monitor
@@ -98,6 +117,7 @@ public abstract class ProjectGenerationHelper {
 
 	/**
 	 * Adds a file to a container.
+	 * 
 	 * @param container
 	 *            the container to add the file to
 	 * @param path
@@ -119,21 +139,52 @@ public abstract class ProjectGenerationHelper {
 		}
 
 	}
-	
-	
 
 	/**
 	 * @param folder
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public static void deleteJavaFiles(IFolder folder, final IProgressMonitor monitor) throws CoreException {
+	public static void deleteJavaFiles(IFolder folder,
+			final IProgressMonitor monitor) throws CoreException {
 		folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		CollectDeletedElement visitor = new CollectDeletedElement();
 		folder.accept(visitor);
 		for (IResource res : visitor.toDelete) {
 			res.delete(false, new SubProgressMonitor(monitor, 1));
 		}
-	};
-	
+	}
+
+	/**
+	 * The method will create a new query definiton file inside the given container.
+	 *  
+	 * @param containerPath the full path of the container of the file to be generated
+	 * @param fileName must end with eiq extension
+	 * @param patternName the name of the initial pattern in the generated query definition file
+	 */
+	public static void createEiqFile(String containerPath, String packageName, String fileName,	String patternName) {
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IResource containerResource = root.findMember(new Path(containerPath));
+		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
+
+		URI fileURI = URI.createPlatformResourceURI(containerResource.getFullPath().append(packageName+"/"+fileName).toString(), false);
+		Resource resource = resourceSet.createResource(fileURI);
+
+		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
+		pattern.setName(patternName);
+		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
+		pattern.getBodies().add(body);
+		pm.getPatterns().add(pattern);
+		resource.getContents().add(pm);
+
+		try {
+			resource.save(Collections.EMPTY_MAP);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -3,9 +3,12 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -105,7 +108,6 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 		si.setOK();
 		
 		String containerPath = getPackageFragmentRootText();
-		String packageName = getPackageText();
 		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource containerResource = root.findMember(new Path(containerPath));
@@ -113,10 +115,7 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 		if (containerResource == null) {
 			si.setError("The given source folder does not exist");
 		}
-		else {
-			
-		}
-		
+
 		if (fileText != null && patternText != null) {
 		
 			String fileName = fileText.getText();
@@ -168,6 +167,23 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 	}
 	
 	public String getContainerName() {
-		return getPackageFragmentRootText()+"/"+getPackageText();
+		return getPackageFragmentRootText();
+	}
+	
+	public String getPackageName() {
+		IPackageFragmentRoot root = getPackageFragmentRoot();
+		
+		IPackageFragment fragment = root.getPackageFragment(getPackageText());
+		
+		if (!fragment.exists()) {
+			try {
+				root.createPackageFragment(getPackageText(), true, new NullProgressMonitor());
+			} 
+			catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return getPackageText();
 	}
 }
