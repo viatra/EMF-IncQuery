@@ -23,6 +23,7 @@ import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 /**
@@ -96,8 +97,8 @@ public class PatternMatcherClassInferrer {
               CollectionExtensions.<JvmTypeReference>operator_add(_exceptions, _newTypeRef_1);
               final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                   public CharSequence apply(final ImportManager it) {
-                    CharSequence _matcherConstructorBodyNotifier = PatternMatcherClassInferrer.this.matcherConstructorBodyNotifier(pattern, it);
-                    return _matcherConstructorBodyNotifier;
+                    CharSequence _inferMatcherConstructorBodyNotifier = PatternMatcherClassInferrer.this.inferMatcherConstructorBodyNotifier(pattern, it);
+                    return _inferMatcherConstructorBodyNotifier;
                   }
                 };
               PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
@@ -464,7 +465,7 @@ public class PatternMatcherClassInferrer {
   public boolean inferMatcherClassToMatchMethods(final JvmDeclaredType matcherClass, final Pattern pattern, final JvmTypeReference matchClassRef) {
     boolean _xblockexpression = false;
     {
-      EList<JvmMember> _members = matcherClass.getMembers();
+      final boolean isPluginLogging = false;
       JvmTypeReference _cloneWithProxies = this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
       final Procedure1<JvmOperation> _function = new Procedure1<JvmOperation>() {
           public void apply(final JvmOperation it) {
@@ -476,55 +477,11 @@ public class PatternMatcherClassInferrer {
               JvmTypeReference _newTypeRef = PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple.class);
               JvmFormalParameter _parameter = PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "t", _newTypeRef);
               CollectionExtensions.<JvmFormalParameter>operator_add(_parameters, _parameter);
-              final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                  public CharSequence apply(final ImportManager it) {
-                    StringConcatenation _builder = new StringConcatenation();
-                    _builder.append("try {");
-                    _builder.newLine();
-                    _builder.append("\t");
-                    _builder.append("return new ");
-                    String _matchClassName = PatternMatcherClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.matchClassName(pattern);
-                    _builder.append(_matchClassName, "	");
-                    _builder.append("(");
-                    {
-                      EList<Variable> _parameters = pattern.getParameters();
-                      boolean _hasElements = false;
-                      for(final Variable p : _parameters) {
-                        if (!_hasElements) {
-                          _hasElements = true;
-                        } else {
-                          _builder.appendImmediate(", ", "	");
-                        }
-                        _builder.append("(");
-                        JvmTypeReference _calculateType = PatternMatcherClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(p);
-                        String _simpleName = _calculateType.getSimpleName();
-                        _builder.append(_simpleName, "	");
-                        _builder.append(") t.get(");
-                        EList<Variable> _parameters_1 = pattern.getParameters();
-                        int _indexOf = _parameters_1.indexOf(p);
-                        _builder.append(_indexOf, "	");
-                        _builder.append(")");
-                      }
-                    }
-                    _builder.append(");\t");
-                    _builder.newLineIfNotEmpty();
-                    _builder.append("} catch(ClassCastException e) {");
-                    _builder.newLine();
-                    _builder.append("\t");
-                    _builder.append("throw new IncQueryRuntimeException(e.getMessage());");
-                    _builder.newLine();
-                    _builder.append("}");
-                    _builder.newLine();
-                    return _builder;
-                  }
-                };
-              PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
             }
           }
         };
       JvmOperation _method = this._eMFJvmTypesBuilder.toMethod(pattern, "tupleToMatch", _cloneWithProxies, _function);
-      CollectionExtensions.<JvmOperation>operator_add(_members, _method);
-      EList<JvmMember> _members_1 = matcherClass.getMembers();
+      final JvmOperation tupleToMatchMethod = _method;
       JvmTypeReference _cloneWithProxies_1 = this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
       final Procedure1<JvmOperation> _function_1 = new Procedure1<JvmOperation>() {
           public void apply(final JvmOperation it) {
@@ -537,54 +494,29 @@ public class PatternMatcherClassInferrer {
               JvmTypeReference _addArrayTypeDimension = PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.addArrayTypeDimension(_newTypeRef);
               JvmFormalParameter _parameter = PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.toParameter(pattern, "match", _addArrayTypeDimension);
               CollectionExtensions.<JvmFormalParameter>operator_add(_parameters, _parameter);
-              final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                  public CharSequence apply(final ImportManager it) {
-                    StringConcatenation _builder = new StringConcatenation();
-                    _builder.append("try {");
-                    _builder.newLine();
-                    _builder.append("\t");
-                    _builder.append("return new ");
-                    String _matchClassName = PatternMatcherClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.matchClassName(pattern);
-                    _builder.append(_matchClassName, "	");
-                    _builder.append("(");
-                    {
-                      EList<Variable> _parameters = pattern.getParameters();
-                      boolean _hasElements = false;
-                      for(final Variable p : _parameters) {
-                        if (!_hasElements) {
-                          _hasElements = true;
-                        } else {
-                          _builder.appendImmediate(", ", "	");
-                        }
-                        _builder.append("(");
-                        JvmTypeReference _calculateType = PatternMatcherClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(p);
-                        String _simpleName = _calculateType.getSimpleName();
-                        _builder.append(_simpleName, "	");
-                        _builder.append(") match[");
-                        EList<Variable> _parameters_1 = pattern.getParameters();
-                        int _indexOf = _parameters_1.indexOf(p);
-                        _builder.append(_indexOf, "	");
-                        _builder.append("]");
-                      }
-                    }
-                    _builder.append(");");
-                    _builder.newLineIfNotEmpty();
-                    _builder.append("} catch(ClassCastException e) {");
-                    _builder.newLine();
-                    _builder.append("\t");
-                    _builder.append("throw new IncQueryRuntimeException(e.getMessage());");
-                    _builder.newLine();
-                    _builder.append("}");
-                    _builder.newLine();
-                    return _builder;
-                  }
-                };
-              PatternMatcherClassInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
             }
           }
         };
       JvmOperation _method_1 = this._eMFJvmTypesBuilder.toMethod(pattern, "arrayToMatch", _cloneWithProxies_1, _function_1);
-      boolean _operator_add = CollectionExtensions.<JvmOperation>operator_add(_members_1, _method_1);
+      final JvmOperation arrayToMatchMethod = _method_1;
+      final Function1<ImportManager,CharSequence> _function_2 = new Function1<ImportManager,CharSequence>() {
+          public CharSequence apply(final ImportManager it) {
+            CharSequence _inferTupleToMatchMethodBody = PatternMatcherClassInferrer.this.inferTupleToMatchMethodBody(pattern, it, isPluginLogging);
+            return _inferTupleToMatchMethodBody;
+          }
+        };
+      this._eMFJvmTypesBuilder.setBody(tupleToMatchMethod, _function_2);
+      final Function1<ImportManager,CharSequence> _function_3 = new Function1<ImportManager,CharSequence>() {
+          public CharSequence apply(final ImportManager it) {
+            CharSequence _inferArrayToMatchMethodBody = PatternMatcherClassInferrer.this.inferArrayToMatchMethodBody(pattern, it, isPluginLogging);
+            return _inferArrayToMatchMethodBody;
+          }
+        };
+      this._eMFJvmTypesBuilder.setBody(arrayToMatchMethod, _function_3);
+      EList<JvmMember> _members = matcherClass.getMembers();
+      CollectionExtensions.<JvmOperation>operator_add(_members, tupleToMatchMethod);
+      EList<JvmMember> _members_1 = matcherClass.getMembers();
+      boolean _operator_add = CollectionExtensions.<JvmOperation>operator_add(_members_1, arrayToMatchMethod);
       _xblockexpression = (_operator_add);
     }
     return _xblockexpression;
@@ -593,12 +525,224 @@ public class PatternMatcherClassInferrer {
   /**
    * Infers body for Matcher class constructor (Notifier) based on the input 'pattern'.
    */
-  public CharSequence matcherConstructorBodyNotifier(final Pattern pattern, final ImportManager manager) {
+  public CharSequence inferMatcherConstructorBodyNotifier(final Pattern pattern, final ImportManager manager) {
       JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager.class);
       JvmType _type = _newTypeRef.getType();
       manager.addImportFor(_type);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("this(EngineManager.getInstance().getIncQueryEngine(notifier));");
       return _builder;
+  }
+  
+  /**
+   * Infers the arrayToMatch method body.
+   */
+  public CharSequence inferTupleToMatchMethodBody(final Pattern pattern, final ImportManager manager, final boolean isPluginLogging) {
+    CharSequence _xblockexpression = null;
+    {
+      JvmTypeReference _findActivatorClass = this.findActivatorClass(pattern);
+      final JvmTypeReference activatorClass = _findActivatorClass;
+      boolean _operator_and = false;
+      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(activatorClass, null);
+      if (!_operator_notEquals) {
+        _operator_and = false;
+      } else {
+        _operator_and = BooleanExtensions.operator_and(_operator_notEquals, isPluginLogging);
+      }
+      if (_operator_and) {
+        this.addLogImports(manager, pattern);
+      }
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("try {");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("return new ");
+      String _matchClassName = this._eMFPatternLanguageJvmModelInferrerUtil.matchClassName(pattern);
+      _builder.append(_matchClassName, "	");
+      _builder.append("(");
+      {
+        EList<Variable> _parameters = pattern.getParameters();
+        boolean _hasElements = false;
+        for(final Variable p : _parameters) {
+          if (!_hasElements) {
+            _hasElements = true;
+          } else {
+            _builder.appendImmediate(", ", "	");
+          }
+          _builder.append("(");
+          JvmTypeReference _calculateType = this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(p);
+          String _simpleName = _calculateType.getSimpleName();
+          _builder.append(_simpleName, "	");
+          _builder.append(") t.get(");
+          EList<Variable> _parameters_1 = pattern.getParameters();
+          int _indexOf = _parameters_1.indexOf(p);
+          _builder.append(_indexOf, "	");
+          _builder.append(")");
+        }
+      }
+      _builder.append(");\t");
+      _builder.newLineIfNotEmpty();
+      _builder.append("} catch(ClassCastException e) {");
+      _builder.newLine();
+      _builder.append("\t");
+      CharSequence _inferLogging = this.inferLogging(pattern, isPluginLogging, activatorClass, "tupleToMatch");
+      _builder.append(_inferLogging, "	");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("//throw new IncQueryRuntimeException(e.getMessage());");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("return null;");
+      _builder.newLine();
+      _builder.append("}");
+      _builder.newLine();
+      _xblockexpression = (_builder);
+    }
+    return _xblockexpression;
+  }
+  
+  /**
+   * Infers the arrayToMatch method body.
+   */
+  public CharSequence inferArrayToMatchMethodBody(final Pattern pattern, final ImportManager manager, final boolean isPluginLogging) {
+    CharSequence _xblockexpression = null;
+    {
+      JvmTypeReference _findActivatorClass = this.findActivatorClass(pattern);
+      final JvmTypeReference activatorClass = _findActivatorClass;
+      boolean _operator_and = false;
+      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(activatorClass, null);
+      if (!_operator_notEquals) {
+        _operator_and = false;
+      } else {
+        _operator_and = BooleanExtensions.operator_and(_operator_notEquals, isPluginLogging);
+      }
+      if (_operator_and) {
+        this.addLogImports(manager, pattern);
+      }
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("try {");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("return new ");
+      String _matchClassName = this._eMFPatternLanguageJvmModelInferrerUtil.matchClassName(pattern);
+      _builder.append(_matchClassName, "	");
+      _builder.append("(");
+      {
+        EList<Variable> _parameters = pattern.getParameters();
+        boolean _hasElements = false;
+        for(final Variable p : _parameters) {
+          if (!_hasElements) {
+            _hasElements = true;
+          } else {
+            _builder.appendImmediate(", ", "	");
+          }
+          _builder.append("(");
+          JvmTypeReference _calculateType = this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(p);
+          String _simpleName = _calculateType.getSimpleName();
+          _builder.append(_simpleName, "	");
+          _builder.append(") match[");
+          EList<Variable> _parameters_1 = pattern.getParameters();
+          int _indexOf = _parameters_1.indexOf(p);
+          _builder.append(_indexOf, "	");
+          _builder.append("]");
+        }
+      }
+      _builder.append(");");
+      _builder.newLineIfNotEmpty();
+      _builder.append("} catch(ClassCastException e) {");
+      _builder.newLine();
+      _builder.append("\t");
+      CharSequence _inferLogging = this.inferLogging(pattern, isPluginLogging, activatorClass, "arrayToMatch");
+      _builder.append(_inferLogging, "	");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("//throw new IncQueryRuntimeException(e.getMessage());");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("return null;");
+      _builder.newLine();
+      _builder.append("}");
+      _builder.newLine();
+      _xblockexpression = (_builder);
+    }
+    return _xblockexpression;
+  }
+  
+  /**
+   * Adds imports for ILog, IStatus, Status classes
+   */
+  public boolean addLogImports(final ImportManager manager, final Pattern pattern) {
+    boolean _xblockexpression = false;
+    {
+      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.core.runtime.ILog.class);
+      JvmType _type = _newTypeRef.getType();
+      manager.addImportFor(_type);
+      JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.core.runtime.IStatus.class);
+      JvmType _type_1 = _newTypeRef_1.getType();
+      manager.addImportFor(_type_1);
+      JvmTypeReference _newTypeRef_2 = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.core.runtime.Status.class);
+      JvmType _type_2 = _newTypeRef_2.getType();
+      boolean _addImportFor = manager.addImportFor(_type_2);
+      _xblockexpression = (_addImportFor);
+    }
+    return _xblockexpression;
+  }
+  
+  /**
+   * Infers the appropriate logging based on the parameters.
+   */
+  public CharSequence inferLogging(final Pattern pattern, final boolean pluginLogging, final JvmTypeReference activator, final String methodName) {
+    boolean _operator_and = false;
+    if (!pluginLogging) {
+      _operator_and = false;
+    } else {
+      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(activator, null);
+      _operator_and = BooleanExtensions.operator_and(pluginLogging, _operator_notEquals);
+    }
+    if (_operator_and) {
+      CharSequence _pluginLogging = this.pluginLogging(pattern, activator);
+      return _pluginLogging;
+    } else {
+      CharSequence _consoleLogging = this.consoleLogging(pattern, methodName);
+      return _consoleLogging;
+    }
+  }
+  
+  /**
+   * Searches for an Activator class
+   * TODO: generate an Activator or ?
+   */
+  public JvmTypeReference findActivatorClass(final Pattern pattern) {
+    JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, "Activator");
+    return _newTypeRef;
+  }
+  
+  /**
+   * Default logging to System error.
+   */
+  public CharSequence consoleLogging(final Pattern pattern, final String methodName) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("System.err.println(\"Error when executing ");
+    _builder.append(methodName, "");
+    _builder.append(" in ");
+    String _matcherClassName = this._eMFPatternLanguageJvmModelInferrerUtil.matcherClassName(pattern);
+    _builder.append(_matcherClassName, "");
+    _builder.append(":\" + e.getMessage());");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  /**
+   * Default logging with Activator's ILog.
+   */
+  public CharSequence pluginLogging(final Pattern pattern, final JvmTypeReference activator) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ILog log = Activator.getDefault().getLog();");
+    _builder.newLine();
+    _builder.append("IStatus status = new Status(IStatus.ERROR, log.getBundle().getSymbolicName(), e.getMessage());");
+    _builder.newLine();
+    _builder.append("log.log(status);");
+    _builder.newLine();
+    return _builder;
   }
 }

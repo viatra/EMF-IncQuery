@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.patternlanguage.jvmmodel
 
 import com.google.inject.Inject
+import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
@@ -11,7 +12,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.serializer.ISerializer
-import org.apache.log4j.Logger
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -152,7 +153,10 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	 */
   	def private serialize(EObject eObject) {
   		try {
+  			// This call sometimes causes ConcurrentModificationException
 			serializer.serialize(eObject).replaceAll("\"", "\\\\\"")
+			// Another way to serialize the eObject, uses the current node model
+//			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
 		} catch (Exception e) {
 			if (logger != null) {
 				logger.error("Error when serializing " + eObject.eClass.name, e)	
