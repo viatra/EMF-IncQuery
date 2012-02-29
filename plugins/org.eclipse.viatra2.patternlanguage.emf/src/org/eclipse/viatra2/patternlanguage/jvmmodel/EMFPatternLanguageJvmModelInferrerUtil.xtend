@@ -11,6 +11,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.serializer.ISerializer
+import org.apache.log4j.Logger
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -21,13 +22,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	
 	@Inject extension EMFJvmTypesBuilder
 	@Inject ISerializer serializer
+	Logger logger = Logger::getLogger(getClass())
 	
 	/**
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
 	 */
 	def matcherFactoryClassName(Pattern pattern) {
 		pattern.name.toFirstUpper+"MatcherFactory"
-	} 
+	}
 	
 	/**
 	 * Returns the MatcherClass name based on the Pattern's name
@@ -57,9 +59,12 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		"f"+variable.name.toFirstUpper
    	}
    	
-	// Type calculation: first try
-   	// See the XBaseUsageCrossReferencer class, possible solution for local variable usage
-	// TODO: Find out how to get the type for variable
+	/**
+	 * Calculates type for a Variable.
+	 * See the XBaseUsageCrossReferencer class, possible solution for local variable usage
+	 * TODO: improve type calculation 
+	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
+	 */
    	def JvmTypeReference calculateType(Variable variable) {
    		try {
 //   		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
@@ -78,7 +83,9 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	   			}
 //   		}   			
    		} catch (Exception e) {
-   			e.printStackTrace
+   			if (logger != null) {
+   				logger.error("Error during type calculation for " + variable.name, e)	
+   			}
    		}
 		return variable.newTypeRef(typeof(Object))
    	}
@@ -129,6 +136,9 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	  	return stringRep   		
   	}
   	
+  	/**
+  	 * Serializes the input for Javadoc
+  	 */
   	def serializeToJavadoc(Pattern pattern) {
   		val javadocString = pattern.serialize
   		if (javadocString.nullOrEmpty) {
@@ -138,14 +148,15 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	}
   	
   	/**
-  	 * Serializes EObject to a String representation.
+  	 * Serializes EObject to a String representation. Escapes only the double qoutes.
   	 */
   	def private serialize(EObject eObject) {
   		try {
 			serializer.serialize(eObject).replaceAll("\"", "\\\\\"")
 		} catch (Exception e) {
-			//TODO error logging required!
-//			"Serialization error " + e.message
+			if (logger != null) {
+				logger.error("Error when serializing " + eObject.eClass.name, e)	
+			}
 			return null
 		}
   	}

@@ -2,6 +2,7 @@ package org.eclipse.viatra2.patternlanguage.jvmmodel;
 
 import com.google.inject.Inject;
 import java.util.Arrays;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -20,6 +21,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.serializer.ISerializer;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
@@ -35,6 +37,14 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   
   @Inject
   private ISerializer serializer;
+  
+  private Logger logger = new Function0<Logger>() {
+    public Logger apply() {
+      Class<? extends Object> _class = EMFPatternLanguageJvmModelInferrerUtil.this.getClass();
+      Logger _logger = Logger.getLogger(_class);
+      return _logger;
+    }
+  }.apply();
   
   /**
    * Returns the MatcherFactoryClass name based on the Pattern's name
@@ -86,6 +96,12 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     return _operator_plus;
   }
   
+  /**
+   * Calculates type for a Variable.
+   * See the XBaseUsageCrossReferencer class, possible solution for local variable usage
+   * TODO: improve type calculation
+   * @return JvmTypeReference pointing the EClass that defines the Variable's type.
+   */
   public JvmTypeReference calculateType(final Variable variable) {
       try {
         EObject _eContainer = variable.eContainer();
@@ -112,7 +128,12 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
       } catch (final Throwable _t) {
         if (_t instanceof Exception) {
           final Exception e = (Exception)_t;
-          e.printStackTrace();
+          boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(this.logger, null);
+          if (_operator_notEquals_1) {
+            String _name = variable.getName();
+            String _operator_plus = StringExtensions.operator_plus("Error during type calculation for ", _name);
+            this.logger.error(_operator_plus, e);
+          }
         } else {
           throw Exceptions.sneakyThrow(_t);
         }
@@ -210,6 +231,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
       return stringRep;
   }
   
+  /**
+   * Serializes the input for Javadoc
+   */
   public String serializeToJavadoc(final Pattern pattern) {
       String _serialize = this.serialize(pattern);
       final String javadocString = _serialize;
@@ -221,7 +245,7 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   }
   
   /**
-   * Serializes EObject to a String representation.
+   * Serializes EObject to a String representation. Escapes only the double qoutes.
    */
   private String serialize(final EObject eObject) {
     String _xtrycatchfinallyexpression = null;
@@ -232,7 +256,16 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     } catch (final Throwable _t) {
       if (_t instanceof Exception) {
         final Exception e = (Exception)_t;
-        return null;
+        {
+          boolean _operator_notEquals = ObjectExtensions.operator_notEquals(this.logger, null);
+          if (_operator_notEquals) {
+            EClass _eClass = eObject.eClass();
+            String _name = _eClass.getName();
+            String _operator_plus = StringExtensions.operator_plus("Error when serializing ", _name);
+            this.logger.error(_operator_plus, e);
+          }
+          return null;
+        }
       } else {
         throw Exceptions.sneakyThrow(_t);
       }
