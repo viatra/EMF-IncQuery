@@ -43,4 +43,5 @@ public class EMFPatternLanguageRuntimeModule extends org.eclipse.viatra2.pattern
 //	public Class<? extends ITypeProvider> bindITypeProvider() {
 //			return EMFPatternTypeProvider.class;
 //	}
+
 }

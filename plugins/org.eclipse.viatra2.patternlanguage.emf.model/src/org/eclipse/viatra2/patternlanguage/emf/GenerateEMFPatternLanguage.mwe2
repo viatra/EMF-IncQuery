@@ -75,6 +75,7 @@ Workflow {
 
             // The antlr parser generator fragment.
             fragment = parser.antlr.XtextAntlrGeneratorFragment {
+            	
             //  options = {
             //      backtrack = true
             //  }
@@ -131,7 +132,9 @@ Workflow {
             fragment = types.TypesGeneratorFragment {}
 
             // generates the required bindings only if the grammar inherits from Xbase
-            fragment = xbase.XbaseGeneratorFragment {}
+            fragment = xbase.XbaseGeneratorFragment {
+            	generateXtendInferrer = false
+            }
             
             // Code generator
 			fragment = generator.GeneratorFragment {

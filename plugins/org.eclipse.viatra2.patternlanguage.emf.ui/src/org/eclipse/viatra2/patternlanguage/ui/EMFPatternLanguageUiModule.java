@@ -11,7 +11,9 @@
 package org.eclipse.viatra2.patternlanguage.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
@@ -32,4 +34,11 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 						Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 				.toInstance(".,");
 	}
+	
+	/*
+	 * Registering model inferrer from the tooling.generator project
+	 */
+		public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
+			return EMFPatternLanguageJvmModelInferrer.class;
+		}
 }

@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.jvmmodel
+package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor

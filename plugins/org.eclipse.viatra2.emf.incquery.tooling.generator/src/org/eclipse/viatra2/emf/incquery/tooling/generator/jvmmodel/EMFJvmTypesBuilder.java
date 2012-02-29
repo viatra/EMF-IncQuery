@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.jvmmodel;
+package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmConstructor;
