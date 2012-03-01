@@ -13,9 +13,8 @@ module org.eclipse.viatra2.patternlanguage.GenerateEMFPatternLanguage
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
-import org.eclipse.viatra2.patternlanguage.core.*
 
-var grammarURI = "classpath:/org/eclipse/viatra2/patternlanguage/emf/EMFPatternLanguage.xtext"
+var grammarURI = "classpath:/org/eclipse/viatra2/patternlanguage/EMFPatternLanguage.xtext"
 var file.extensions = "eiq"
 var projectName = "org.eclipse.viatra2.patternlanguage.emf"
 var runtimeProject = "../${projectName}"
@@ -26,7 +25,7 @@ Workflow {
         platformUri = "${runtimeProject}/.."
         registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
         registerGeneratedEPackage = "org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage"
-		registerGenModelFile = "platform:/resource/org.eclipse.viatra2.patternlanguage.core.model/src-gen/org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel"
+		registerGenModelFile = "platform:/resource/org.eclipse.viatra2.patternlanguage.core/src-gen/org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel"
 		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
 		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
     }
@@ -60,10 +59,7 @@ Workflow {
             fragment = grammarAccess.GrammarAccessFragment {}
 
             // generates Java API for the generated EPackages
-            fragment = PatternLanguageEcoreGeneratorFragment {
-            	modelPluginID = "${projectName}.model"
-            	javaModelDirectory = "../${projectName}.model/src-gen"
-            }
+            fragment = ecore.EcoreGeneratorFragment {}
 
             // Serializer 2.0
             fragment = serializer.SerializerFragment {}
