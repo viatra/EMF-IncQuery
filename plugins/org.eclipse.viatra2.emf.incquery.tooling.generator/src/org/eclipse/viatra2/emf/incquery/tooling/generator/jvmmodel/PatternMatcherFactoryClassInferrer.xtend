@@ -46,13 +46,21 @@ class PatternMatcherFactoryClassInferrer {
 				return new «pattern.matcherClassName»(engine);
 			''']
 		]
-		matcherFactoryClass.members += pattern.toMethod("parsePattern", pattern.newTypeRef(typeof (Pattern))) [
+		matcherFactoryClass.members += pattern.toMethod("patternString", pattern.newTypeRef(typeof (String))) [
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
 «««				Serialize the PatternModel
-				«pattern.eContainer.serializeToJava» 
-				throw new UnsupportedOperationException();
+				«pattern.eContainer.serializeToJava»
+				return patternString;  
+				//throw new UnsupportedOperationException();
+			''']
+		]
+		matcherFactoryClass.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof (String))) [
+			it.visibility = JvmVisibility::PROTECTED
+			it.annotations += pattern.toAnnotation(typeof (Override))
+			it.body = ['''
+				return "«pattern.name»";
 			''']
 		]
   	}

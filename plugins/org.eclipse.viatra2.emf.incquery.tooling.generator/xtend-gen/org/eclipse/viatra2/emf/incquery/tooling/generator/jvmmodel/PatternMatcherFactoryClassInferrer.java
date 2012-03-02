@@ -103,7 +103,7 @@ public class PatternMatcherFactoryClassInferrer {
       JvmOperation _method = this._eMFJvmTypesBuilder.toMethod(pattern, "instantiate", _cloneWithProxies, _function);
       CollectionExtensions.<JvmOperation>operator_add(_members, _method);
       EList<JvmMember> _members_1 = matcherFactoryClass.getMembers();
-      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern.class);
+      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
       final Procedure1<JvmOperation> _function_1 = new Procedure1<JvmOperation>() {
           public void apply(final JvmOperation it) {
             {
@@ -117,9 +117,10 @@ public class PatternMatcherFactoryClassInferrer {
                     EObject _eContainer = pattern.eContainer();
                     CharSequence _serializeToJava = PatternMatcherFactoryClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.serializeToJava(_eContainer);
                     _builder.append(_serializeToJava, "");
-                    _builder.append(" ");
                     _builder.newLineIfNotEmpty();
-                    _builder.append("throw new UnsupportedOperationException();");
+                    _builder.append("return patternString;  ");
+                    _builder.newLine();
+                    _builder.append("//throw new UnsupportedOperationException();");
                     _builder.newLine();
                     return _builder;
                   }
@@ -128,8 +129,34 @@ public class PatternMatcherFactoryClassInferrer {
             }
           }
         };
-      JvmOperation _method_1 = this._eMFJvmTypesBuilder.toMethod(pattern, "parsePattern", _newTypeRef, _function_1);
-      boolean _operator_add = CollectionExtensions.<JvmOperation>operator_add(_members_1, _method_1);
+      JvmOperation _method_1 = this._eMFJvmTypesBuilder.toMethod(pattern, "patternString", _newTypeRef, _function_1);
+      CollectionExtensions.<JvmOperation>operator_add(_members_1, _method_1);
+      EList<JvmMember> _members_2 = matcherFactoryClass.getMembers();
+      JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
+      final Procedure1<JvmOperation> _function_2 = new Procedure1<JvmOperation>() {
+          public void apply(final JvmOperation it) {
+            {
+              it.setVisibility(JvmVisibility.PROTECTED);
+              EList<JvmAnnotationReference> _annotations = it.getAnnotations();
+              JvmAnnotationReference _annotation = PatternMatcherFactoryClassInferrer.this._eMFJvmTypesBuilder.toAnnotation(pattern, java.lang.Override.class);
+              CollectionExtensions.<JvmAnnotationReference>operator_add(_annotations, _annotation);
+              final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                  public CharSequence apply(final ImportManager it) {
+                    StringConcatenation _builder = new StringConcatenation();
+                    _builder.append("return \"");
+                    String _name = pattern.getName();
+                    _builder.append(_name, "");
+                    _builder.append("\";");
+                    _builder.newLineIfNotEmpty();
+                    return _builder;
+                  }
+                };
+              PatternMatcherFactoryClassInferrer.this._eMFJvmTypesBuilder.setBody(it, _function);
+            }
+          }
+        };
+      JvmOperation _method_2 = this._eMFJvmTypesBuilder.toMethod(pattern, "patternName", _newTypeRef_1, _function_2);
+      boolean _operator_add = CollectionExtensions.<JvmOperation>operator_add(_members_2, _method_2);
       _xblockexpression = (_operator_add);
     }
     return _xblockexpression;

@@ -126,13 +126,15 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		if (parseString.nullOrEmpty) {
 			return "";
 		}
-	  	val splits = parseString.split("[\r\n]+")
-	  	val stringRep = '''String patternString = ""''' as StringConcatenation
+		val splits = parseString.split("[\r\n]+")
+		val stringRep = '''String patternString = ""''' as StringConcatenation
 	  	stringRep.newLine
 	  	for (s : splits) {
-	  		stringRep.append("+\"" + s + "\"")
+	  		// Extra space needed before and after every line, 
+	  		// otherwise parser parses the entire string (or part of it) as package name).
+	  		stringRep.append("+\" " + s + " \"")
 	  		stringRep.newLine
-	  	}
+		}
 	  	stringRep.append(";")
 	  	return stringRep   		
   	}
@@ -156,6 +158,9 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   			// This call sometimes causes ConcurrentModificationException
 			serializer.serialize(eObject).replaceAll("\"", "\\\\\"")
 			// Another way to serialize the eObject, uses the current node model
+			// simple getText returns the currently text, that parsed by the editor 
+//			NodeModelUtils::getNode(eObject).text.replaceAll("\"", "\\\\\"")
+			// getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
 		} catch (Exception e) {
 			if (logger != null) {

@@ -221,8 +221,8 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
       stringRep.newLine();
       for (final String s : splits) {
         {
-          String _operator_plus = StringExtensions.operator_plus("+\"", s);
-          String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, "\"");
+          String _operator_plus = StringExtensions.operator_plus("+\" ", s);
+          String _operator_plus_1 = StringExtensions.operator_plus(_operator_plus, " \"");
           stringRep.append(_operator_plus_1);
           stringRep.newLine();
         }
