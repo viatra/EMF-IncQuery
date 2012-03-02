@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.viatra2.patternlanguage.emf;visibility:=reexport,
  org.eclipse.compare,
  org.eclipse.viatra2.patternlanguage.core;bundle-version="0.6.0",
  org.eclipse.viatra2.patternlanguage.core.ui;bundle-version="0.6.0",
- org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0"
+ org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0",
+ org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0"
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -27,4 +28,4 @@ Export-Package: org.eclipse.viatra2.patternlanguage.ui,
  org.eclipse.viatra2.patternlanguage.ui.contentassist,
  org.eclipse.viatra2.patternlanguage.ui.contentassist.antlr,
  org.eclipse.viatra2.patternlanguage.ui.internal
-Bundle-Activator: org.eclipse.viatra2.patternlanguage.ui.internal.EMFPatternLanguageActivator
+Bundle-Activator: org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageUIActivator

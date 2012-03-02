@@ -8,11 +8,12 @@
  * Contributors:
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.runtime.internal;
+package org.eclipse.viatra2.emf.incquery.runtime;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule;
 import org.osgi.framework.BundleContext;
 
 import com.google.inject.Guice;
@@ -21,17 +22,17 @@ import com.google.inject.Injector;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends Plugin {
+public class IncQueryRuntimePlugin extends Plugin {
 
 	// The shared instance
-	private static Activator plugin;
+	private static IncQueryRuntimePlugin plugin;
 	private Injector injector;
 	
 
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public IncQueryRuntimePlugin() {
 	}
 
 	/*
@@ -61,7 +62,7 @@ public class Activator extends Plugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static IncQueryRuntimePlugin getDefault() {
 		return plugin;
 	}
 
@@ -78,8 +79,16 @@ public class Activator extends Plugin {
 //		return EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage");
 	}
 	
-	public Injector createInjector() {
-		return Guice.createInjector(new org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule());
+	protected Injector createInjector() {
+		return Guice.createInjector(getRuntimeModule());
+	}
+
+	/**
+	 * Return the runtime module for the pattern language project
+	 * @return
+	 */
+	public EMFPatternLanguageRuntimeModule getRuntimeModule() {
+		return new org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule();
 	}
 
 }
