@@ -13,7 +13,10 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.osgi.framework.BundleContext;
+
+import com.google.inject.Injector;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -22,6 +25,7 @@ public class Activator extends Plugin {
 
 	// The shared instance
 	private static Activator plugin;
+	private Injector injector;
 	
 
 	/**
@@ -61,5 +65,17 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 
+	
+	/**
+	 * Returns injector for the EMFPatternLanguage.
+	 * @return
+	 */
+	public Injector getInjector() {
+		if (injector == null) {
+			injector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		}
+		return injector;
+//		return EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage");
+	}
 
 }
