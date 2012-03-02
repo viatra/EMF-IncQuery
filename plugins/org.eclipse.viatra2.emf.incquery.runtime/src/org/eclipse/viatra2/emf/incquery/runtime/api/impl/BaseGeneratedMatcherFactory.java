@@ -18,8 +18,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.Activator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.xtext.resource.IResourceFactory;
@@ -57,7 +57,7 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 	}
 	
 	private PatternModel parseRoot(InputStream inputStream) {
-		final Injector injector = Activator.getDefault().getInjector();
+		final Injector injector = IncQueryRuntimePlugin.getDefault().getInjector();
 		final ResourceSet resourceSet = injector.getProvider(XtextResourceSet.class).get();
 		final IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
 		Resource resource = resourceFactory.createResource(computeUnusedUri(resourceSet));
