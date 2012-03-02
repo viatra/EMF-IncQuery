@@ -13,9 +13,9 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.osgi.framework.BundleContext;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
@@ -72,10 +72,14 @@ public class Activator extends Plugin {
 	 */
 	public Injector getInjector() {
 		if (injector == null) {
-			injector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+			injector = createInjector();
 		}
 		return injector;
 //		return EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage");
+	}
+	
+	public Injector createInjector() {
+		return Guice.createInjector(new org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule());
 	}
 
 }
