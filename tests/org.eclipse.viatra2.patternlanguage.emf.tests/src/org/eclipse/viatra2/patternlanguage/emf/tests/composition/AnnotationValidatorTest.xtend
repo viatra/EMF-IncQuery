@@ -62,7 +62,7 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			@Param1(p1=1, unknown=1)
+			@Param1(p1="1", unknown=1)
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'

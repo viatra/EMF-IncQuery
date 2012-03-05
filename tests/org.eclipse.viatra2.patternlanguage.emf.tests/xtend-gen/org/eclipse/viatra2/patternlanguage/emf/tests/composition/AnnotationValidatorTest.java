@@ -70,7 +70,7 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
   public void unknownAnnotationAttributeTogetherWithValid() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=1, unknown=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=\"1\", unknown=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
         final EObject model = _parse;
         AssertableDiagnostics _validate = this.tester.validate(model);
         _validate.assertError(IssueCodes.UNKNOWN_ANNOTATION_PARAMETER);
