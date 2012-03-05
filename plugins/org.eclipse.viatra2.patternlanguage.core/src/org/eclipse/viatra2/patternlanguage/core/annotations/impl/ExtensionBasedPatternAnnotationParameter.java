@@ -1,9 +1,14 @@
 package org.eclipse.viatra2.patternlanguage.core.annotations.impl;
 
-import org.eclipse.viatra2.patternlanguage.core.annotations.ParameterType;
 
 
 public class ExtensionBasedPatternAnnotationParameter {
+	public static final String STRING = "string";
+	public static final String VARIABLEREFERENCE = "variablereference";
+	public static final String LIST = "list";
+	public static final String BOOLEAN = "boolean";
+	public static final String DOUBLE = "double";
+	public static final String INT = "int";
 	String name;
 	String type;
 	boolean multiple;
@@ -27,23 +32,5 @@ public class ExtensionBasedPatternAnnotationParameter {
 	}
 	public boolean isMandatory() {
 		return mandatory;
-	}
-	
-	private ParameterType getType(String typeStr) {
-		if ("string".equals(typeStr)) {
-			return ParameterType.STRING;
-		} else if ("int".equals(typeStr)) {
-			return ParameterType.INT;
-		} else if ("double".equals(typeStr)) {
-			return ParameterType.DOUBLE;
-		} else if ("boolean".equals(typeStr)) {
-			return ParameterType.BOOL;
-		} else if ("list".equals(typeStr)) {
-			return ParameterType.LIST;
-		} else if ("variablereference"
-				.equals(typeStr)) {
-			return ParameterType.VARIABLE;
-		}
-		return null;
 	}
 }

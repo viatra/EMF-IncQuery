@@ -25,7 +25,7 @@ public interface IPatternAnnotationValidator {
 	/**
 	 * Returns whether a parameter of an annotation is mistyped
 	 * @param parameter
-	 * @return the 
+	 * @return the expected class of the parameter variable
 	 */
-	public Class<ValueReference> getParameterTypeError(AnnotationParameter parameter);
+	public Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter);
 }

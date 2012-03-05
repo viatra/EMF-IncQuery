@@ -4,7 +4,13 @@ import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationVa
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -81,9 +87,29 @@ public class ExtensionBasedPatternAnnotationValidator implements
 	}
 
 	@Override
-	public Class<ValueReference> getParameterTypeError(
-			AnnotationParameter parameter) {
-		// TODO Auto-generated method stub
+	public Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter) {
+		ExtensionBasedPatternAnnotationParameter expectedParameter = null;
+		for (ExtensionBasedPatternAnnotationParameter p : definedAttributes) {
+			if (p.name.equals(parameter.getName())) {
+				expectedParameter = p;
+			}
+		}
+		if (expectedParameter == null || expectedParameter.getType() == null) {
+			return null;
+		}
+		if (ExtensionBasedPatternAnnotationParameter.INT.equals(expectedParameter.getType())) {
+			return IntValue.class;
+		} else if (ExtensionBasedPatternAnnotationParameter.STRING.equals(expectedParameter.getType())) {
+			return StringValue.class;
+		} else if (ExtensionBasedPatternAnnotationParameter.DOUBLE.equals(expectedParameter.getType())) {
+			return DoubleValue.class;
+		} else if (ExtensionBasedPatternAnnotationParameter.BOOLEAN.equals(expectedParameter.getType())) {
+			return BoolValue.class;
+		} else if (ExtensionBasedPatternAnnotationParameter.LIST.equals(expectedParameter.getType())) {
+			return ListValue.class;
+		} if (ExtensionBasedPatternAnnotationParameter.VARIABLEREFERENCE.equals(expectedParameter.getType())) {
+			return VariableValue.class;
+		} 
 		return null;
 	}
 
