@@ -121,4 +121,158 @@ public class AnnotationValidatorTest extends AbstractValidatorTest {
       throw Exceptions.sneakyThrow(_e);
     }
   }
+  
+  @Test
+  public void parameterTypeStringExpectedIntFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertError(IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeStringExpectedBoolFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=true)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertError(IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeStringExpectedVariableFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=p)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertError(IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeStringExpectedDoubleFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1=1.1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertError(IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeStringExpectedListFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param1(p1={1,2,3})\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertError(IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeUncheckedIntFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertOK();
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeUncheckedBoolFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=true)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertOK();
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeUncheckedVariableFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=p)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertOK();
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeUncheckedDoubleFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=1.1)\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertOK();
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeUncheckedListFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1={1,2,3})\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertOK();
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void parameterTypeUncheckedStringFound() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("import \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\t@Param2(p1=\"{1,2,3}\")\n\t\t\tpattern pattern2(p : Pattern) = {\n\t\t\t\tPattern(p);\n\t\t\t}");
+        final EObject model = _parse;
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        _validate.assertOK();
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
 }

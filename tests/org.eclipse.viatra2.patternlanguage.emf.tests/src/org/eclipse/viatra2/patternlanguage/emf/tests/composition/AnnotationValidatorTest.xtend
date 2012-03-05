@@ -105,5 +105,136 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 		) 
 		tester.validate(model).assertOK;
 	}
+	@Test
+	def void parameterTypeStringExpectedIntFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
+			@Param1(p1=1)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertError(IssueCodes::MISTYPED_ANNOTATION_PARAMETER);
+	}
+	@Test
+	def void parameterTypeStringExpectedBoolFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param1(p1=true)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertError(IssueCodes::MISTYPED_ANNOTATION_PARAMETER);
+	}
+	@Test
+	def void parameterTypeStringExpectedVariableFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param1(p1=p)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertError(IssueCodes::MISTYPED_ANNOTATION_PARAMETER);
+	}
+	@Test
+	def void parameterTypeStringExpectedDoubleFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param1(p1=1.1)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertError(IssueCodes::MISTYPED_ANNOTATION_PARAMETER);
+	}
+	@Test
+	def void parameterTypeStringExpectedListFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param1(p1={1,2,3})
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertError(IssueCodes::MISTYPED_ANNOTATION_PARAMETER);
+	}
+	@Test
+	def void parameterTypeUncheckedIntFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param2(p1=1)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
+	@Test
+	def void parameterTypeUncheckedBoolFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param2(p1=true)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
+	@Test
+	def void parameterTypeUncheckedVariableFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param2(p1=p)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
+	@Test
+	def void parameterTypeUncheckedDoubleFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param2(p1=1.1)
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
+	@Test
+	def void parameterTypeUncheckedListFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param2(p1={1,2,3})
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
+	@Test
+	def void parameterTypeUncheckedStringFound() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			@Param2(p1="{1,2,3}")
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
 }
