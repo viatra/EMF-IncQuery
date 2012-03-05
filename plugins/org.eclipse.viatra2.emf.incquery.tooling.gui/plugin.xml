@@ -12,7 +12,7 @@
             class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             id="org.eclipse.viatra2.emf.incquery.gui.newproject"
-            name="Create Incremental Query Project"
+            name="EMF-IncQuery Project"
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
@@ -117,14 +117,14 @@
          point="org.eclipse.ui.views">
       <category
             id="org.eclipse.viatra2.emf.incquery.tooling.gui"
-            name="MatchSetView">
+            name="EMF-IncQuery">
       </category>
       <view
             category="org.eclipse.viatra2.emf.incquery.tooling.gui"
             class="org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView"
             icon="icons/sample.gif"
             id="org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView"
-            name="MatchSetView">
+            name="MatchSet View">
       </view>
    </extension>
    <extension
