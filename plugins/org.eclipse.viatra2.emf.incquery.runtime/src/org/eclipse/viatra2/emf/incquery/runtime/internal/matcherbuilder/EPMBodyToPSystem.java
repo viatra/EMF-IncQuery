@@ -32,7 +32,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BOOLEAN;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
@@ -147,13 +146,11 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		else if (reference instanceof EnumValue) // EMF-specific
 			return pSystem.newConstantVariable(((EnumValue) reference).getLiteral().getInstance());
 		else if (reference instanceof DoubleValue) {
-			String dSVal = ((DoubleValue) reference).getValue();
-			Double dVal = Double.parseDouble(dSVal);
+			Double dVal = ((DoubleValue) reference).getValue();
 			return pSystem.newConstantVariable(new Double(dVal));
 		}
 		else if (reference instanceof BoolValue) {
-			BOOLEAN bVal = ((BoolValue) reference).getValue();
-			Boolean b = (bVal.getLiteral().toLowerCase().matches("true")) ? true : false;
+			Boolean b = ((BoolValue) reference).isValue();
 			return pSystem.newConstantVariable(b);
 		}
 		else throw new RetePatternBuildException(
