@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
@@ -198,7 +198,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			throws RetePatternBuildException {
 		if (constraint instanceof EClassConstraint) {  // EMF-specific
 			EClassConstraint constraint2 = (EClassConstraint) constraint;
-			EClass classname = ((ClassType)constraint2.getType()).getClassname();
+			//TODO Gabor, please check the following line
+			EClassifier classname = ((ClassType)constraint2.getType()).getClassname();
 			PVariable pNode = getPNode(constraint2.getVar());
 			new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
 		} else if (constraint instanceof PatternCompositionConstraint) {
