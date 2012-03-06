@@ -102,7 +102,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		return current;
 	}
 	
-	public IScope scope_EClass(PatternBody ctx, EReference ref) {
+	public IScope scope_EClassifier(PatternBody ctx, EReference ref) {
 		// This is needed for content assist - in that case the ClassType does not exists
 		EObject root = getRootContainer(ctx);
 		if (root instanceof PatternModel){
@@ -111,7 +111,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 			return IScope.NULLSCOPE;
 	}
 	
-	public IScope scope_EClass(ClassType ctx, EReference ref) {
+	public IScope scope_EClassifier(ClassType ctx, EReference ref) {
 		EObject root = getRootContainer(ctx);
 		if (root instanceof PatternModel){
 			return createReferencedPackagesScope((PatternModel) root);
@@ -188,7 +188,12 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 					targetReferences = ((EClass) referredType).getEAllStructuralFeatures();
 				}
 			} else if (type instanceof ClassType) {
-				targetReferences = ((ClassType) type).getClassname().getEAllStructuralFeatures();
+				EClassifier classifier = ((ClassType) type).getClassname();
+				if (classifier instanceof EClass) {
+					targetReferences = (((EClass)classifier).getEAllStructuralFeatures());
+				} else {
+					targetReferences = Collections.emptyList();
+				}
 			}
 			return Scopes.scopeFor(targetReferences);
 		}

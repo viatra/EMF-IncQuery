@@ -39,7 +39,7 @@ EClassConstraint:
 
 Type returns core::EntityType:
 	{ClassType}
-	classname=[ecore::EClass]
+	classname=[ecore::EClassifier]
 ;
 
 RefType returns core::RelationType:
