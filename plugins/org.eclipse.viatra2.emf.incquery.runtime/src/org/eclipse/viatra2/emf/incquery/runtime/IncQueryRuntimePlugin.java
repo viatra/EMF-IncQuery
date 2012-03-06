@@ -27,13 +27,6 @@ public class IncQueryRuntimePlugin extends Plugin {
 	// The shared instance
 	private static IncQueryRuntimePlugin plugin;
 	private Injector injector;
-	
-
-	/**
-	 * The constructor
-	 */
-	public IncQueryRuntimePlugin() {
-	}
 
 	/*
 	 * (non-Javadoc)
