@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFJvmTypesBuilder;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
@@ -182,7 +183,7 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
         if (_operator_or) {
           if ((entityType instanceof ClassType)) {
             {
-              EClass _classname = ((ClassType) entityType).getClassname();
+              EClassifier _classname = ((ClassType) entityType).getClassname();
               Class<? extends Object> _instanceClass = _classname.getInstanceClass();
               final Class<? extends Object> clazz = _instanceClass;
               boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(clazz, null);
