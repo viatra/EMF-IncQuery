@@ -11,10 +11,19 @@ import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
 
 import com.google.inject.Inject;
 
+/**
+ * A custom generator for EMF-IncQuery projects that is based on the JVM Model
+ * Inferrers, but allows extensions based on an injected
+ * {@link IGenerationFragmentProvider} instance.
+ * 
+ * @author Zoltan Ujhelyi
+ * 
+ */
 public class IncQueryGenerator extends JvmModelGenerator {
 
-	@Inject IGenerationFragmentProvider fragmentProvider;
-	
+	@Inject
+	IGenerationFragmentProvider fragmentProvider;
+
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
 		super.doGenerate(input, fsa);
@@ -22,14 +31,16 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		while (it.hasNext()) {
 			EObject obj = it.next();
 			if (obj instanceof Pattern) {
-				executeGeneratorFragments((Pattern)obj);
+				executeGeneratorFragments((Pattern) obj);
 			}
 		}
 	}
 
 	private void executeGeneratorFragments(Pattern obj) {
-		for (IGenerationFragment fragment : fragmentProvider.getFragmentsForPattern(obj)) {
-			System.out.println(obj.getName() + ": " + fragment.getClass().getCanonicalName());
+		for (IGenerationFragment fragment : fragmentProvider
+				.getFragmentsForPattern(obj)) {
+			System.out.println(obj.getName() + ": "
+					+ fragment.getClass().getCanonicalName());
 		}
 	}
 

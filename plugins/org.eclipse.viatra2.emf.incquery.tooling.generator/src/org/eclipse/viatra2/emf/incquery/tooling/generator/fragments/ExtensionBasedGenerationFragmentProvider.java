@@ -12,6 +12,12 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+/**
+ * A provider for {@link IGenerationFragment} classes - the fragment list is populated using the
+ * registered extensions for the {@value #EXTENSIONID} extension point.
+ * @author Zoltan Ujhelyi
+ *
+ */
 public class ExtensionBasedGenerationFragmentProvider implements
 		IGenerationFragmentProvider {
 	
