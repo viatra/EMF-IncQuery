@@ -153,6 +153,10 @@ public class ParserTest {
 	public void floatAttribute() {
 		testParserRule("EClass.name(Name, 2.2)", PATH_EXPRESSION_RULE);
 	}
+	@Test
+	public void negativeFloatAttribute() {
+		testParserRule("EClass.name(Name, -2.2)", PATH_EXPRESSION_RULE);
+	}
 
 	@Test
 	public void booleanAttribute() {
@@ -163,6 +167,10 @@ public class ParserTest {
 	@Test
 	public void intAttribute() {
 		testParserRule("EClass.name(Name, 2)", PATH_EXPRESSION_RULE);
+	}
+	@Test
+	public void negativeIntAttribute() {
+		testParserRule("EClass.name(Name, -2)", PATH_EXPRESSION_RULE);
 	}
 
 	@Test
