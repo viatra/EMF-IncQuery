@@ -2,7 +2,7 @@ package org.eclipse.viatra2.patternlanguage.emf.tests.types;
 
 import com.google.inject.Inject;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
@@ -50,8 +50,33 @@ public class EClassResolutionTest {
         final EClassConstraint constraint = ((EClassConstraint) _get_2);
         EntityType _type = constraint.getType();
         final ClassType type = ((ClassType) _type);
-        EClass _classname = type.getClassname();
+        EClassifier _classname = type.getClassname();
         Assert.assertEquals(_classname, Literals.PATTERN);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Test
+  public void eClassifierResolutionSuccess() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/emf/2002/Ecore\"\n\n\t\t\tpattern ECoreNamedElement(Name) = {\n\t\t\t\tEString(Name);\n\t\t\t}\n\t\t");
+        final PatternModel model = ((PatternModel) _parse);
+        this._validationTestHelper.assertNoErrors(model);
+        EList<Pattern> _patterns = model.getPatterns();
+        Pattern _get = _patterns.get(0);
+        final Pattern pattern = _get;
+        EList<PatternBody> _bodies = pattern.getBodies();
+        PatternBody _get_1 = _bodies.get(0);
+        EList<Constraint> _constraints = _get_1.getConstraints();
+        Constraint _get_2 = _constraints.get(0);
+        final EClassConstraint constraint = ((EClassConstraint) _get_2);
+        EntityType _type = constraint.getType();
+        final ClassType type = ((ClassType) _type);
+        EClassifier _classname = type.getClassname();
+        Assert.assertEquals(_classname, org.eclipse.emf.ecore.EcorePackage.Literals.ESTRING);
       }
     } catch (Exception _e) {
       throw Exceptions.sneakyThrow(_e);

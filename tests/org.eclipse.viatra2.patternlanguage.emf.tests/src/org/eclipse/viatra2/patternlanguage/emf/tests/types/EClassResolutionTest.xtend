@@ -15,6 +15,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageP
 import static org.junit.Assert.*
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
+import org.eclipse.emf.ecore.EcorePackage
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -38,6 +39,22 @@ class EClassResolutionTest {
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
 		val type = constraint.type as ClassType
 		assertEquals(type.classname, PatternLanguagePackage$Literals::PATTERN)		
+	}
+	
+	@Test
+	def eClassifierResolutionSuccess() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern ECoreNamedElement(Name) = {
+				EString(Name);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		val pattern = model.patterns.get(0)
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val type = constraint.type as ClassType
+		assertEquals(type.classname, EcorePackage$Literals::ESTRING)		
 	}
 
 	@Test
