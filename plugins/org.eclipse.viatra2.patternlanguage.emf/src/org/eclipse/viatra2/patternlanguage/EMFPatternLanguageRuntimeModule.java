@@ -24,7 +24,7 @@ import com.google.inject.name.Names;
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-public class EMFPatternLanguageRuntimeModule extends org.eclipse.viatra2.patternlanguage.AbstractEMFPatternLanguageRuntimeModule {
+public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageRuntimeModule {
 
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {
