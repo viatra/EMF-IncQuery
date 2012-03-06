@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.patternlanguage.emf.tests.types;
 
 import com.google.inject.Inject;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage.Literals;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnumLiteral;
@@ -13,7 +14,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHe
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
@@ -43,7 +43,7 @@ public class EnumResolutionTest {
   public void eEnumResolutionSuccess() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern resolutionTest(Name) = {\n\t\t\t\tBoolValue(Name);\n\t\t\t\tBoolValue.value(Name, ::TRUE);\n\t\t\t}\n\t\t");
+        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/emf/2002/GenModel\"\n\n\t\t\tpattern resolutionTest(Model) = {\n\t\t\t\tGenModel(Model);\n\t\t\t\tGenModel.runtimeVersion(Model, ::EMF23);\n\t\t\t}\n\t\t");
         final PatternModel model = ((PatternModel) _parse);
         this._validationTestHelper.assertNoErrors(model);
         EList<Pattern> _patterns = model.getPatterns();
@@ -61,12 +61,12 @@ public class EnumResolutionTest {
         final ReferenceType type = ((ReferenceType) _type);
         EStructuralFeature _refname = type.getRefname();
         EClassifier _eType = _refname.getEType();
-        Assert.assertEquals(_eType, Literals.BOOLEAN);
+        Assert.assertEquals(_eType, Literals.GEN_RUNTIME_VERSION);
         PathExpressionHead _head_1 = constraint.getHead();
         ValueReference _dst = _head_1.getDst();
         final EnumValue value = ((EnumValue) _dst);
         EEnumLiteral _literal = value.getLiteral();
-        EEnumLiteral _eEnumLiteral = Literals.BOOLEAN.getEEnumLiteral("TRUE");
+        EEnumLiteral _eEnumLiteral = Literals.GEN_RUNTIME_VERSION.getEEnumLiteral("EMF23");
         Assert.assertEquals(_literal, _eEnumLiteral);
       }
     } catch (Exception _e) {
@@ -78,7 +78,7 @@ public class EnumResolutionTest {
   public void eEnumResolutionInvalidLiteral() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern resolutionTest(Name) = {\n\t\t\t\tBoolValue(Name);\n\t\t\t\tBoolValue.value(Name, ::NOTEXIST);\n\t\t\t}\n\t\t");
+        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/emf/2002/GenModel\"\n\n\t\t\tpattern resolutionTest(Model) = {\n\t\t\t\tGenModel(Model);\n\t\t\t\tGenModel.runtimeVersion(Model, ::NOTEXIST);\n\t\t\t}\n\t\t");
         final PatternModel model = ((PatternModel) _parse);
         this._validationTestHelper.assertError(model, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.ENUM_VALUE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EEnumLiteral");
       }
@@ -91,7 +91,7 @@ public class EnumResolutionTest {
   public void eEnumResolutionNotEnum() {
     try {
       {
-        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage\"\n\n\t\t\tpattern resolutionTest(Name) = {\n\t\t\t\tPattern(Name);\n\t\t\t\tPattern.name(Name, ::TRUE);\n\t\t\t}\n\t\t");
+        EObject _parse = this.parseHelper.parse("\n\t\t\timport \"http://www.eclipse.org/emf/2002/GenModel\"\n\n\t\t\tpattern resolutionTest(Model) = {\n\t\t\t\tGenModel(Model);\n\t\t\t\tGenModel.copyrightText(Model, ::EMF23);\n\t\t\t}\n\t\t");
         final PatternModel model = ((PatternModel) _parse);
         this._validationTestHelper.assertError(model, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.ENUM_VALUE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EEnumLiteral");
       }

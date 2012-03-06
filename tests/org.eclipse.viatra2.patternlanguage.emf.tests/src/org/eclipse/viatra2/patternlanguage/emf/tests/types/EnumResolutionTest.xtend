@@ -16,6 +16,7 @@ import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue
+import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -28,11 +29,11 @@ class EnumResolutionTest {
 	@Test
 	def eEnumResolutionSuccess() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Name) = {
-				BoolValue(Name);
-				BoolValue.value(Name, ::TRUE);
+			pattern resolutionTest(Model) = {
+				GenModel(Model);
+				GenModel.runtimeVersion(Model, ::EMF23);
 			}
 		') as PatternModel
 		model.assertNoErrors
@@ -40,19 +41,19 @@ class EnumResolutionTest {
 		val constraint = pattern.bodies.get(0).constraints.get(1) as PathExpressionConstraint
 		val tail = constraint.head.tail
 		val type = tail.type as ReferenceType
-		assertEquals(type.refname.EType, PatternLanguagePackage$Literals::BOOLEAN)
+		assertEquals(type.refname.EType, GenModelPackage$Literals::GEN_RUNTIME_VERSION)
 		val value = constraint.head.dst as EnumValue
-		assertEquals(value.literal, PatternLanguagePackage$Literals::BOOLEAN.getEEnumLiteral("TRUE"))		
+		assertEquals(value.literal, GenModelPackage$Literals::GEN_RUNTIME_VERSION.getEEnumLiteral("EMF23"))		
 	}
 	
 	@Test
 	def eEnumResolutionInvalidLiteral() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Name) = {
-				BoolValue(Name);
-				BoolValue.value(Name, ::NOTEXIST);
+			pattern resolutionTest(Model) = {
+				GenModel(Model);
+				GenModel.runtimeVersion(Model, ::NOTEXIST);
 			}
 		') as PatternModel
 		model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
@@ -61,11 +62,11 @@ class EnumResolutionTest {
 	@Test
 	def eEnumResolutionNotEnum() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-				Pattern.name(Name, ::TRUE);
+			pattern resolutionTest(Model) = {
+				GenModel(Model);
+				GenModel.copyrightText(Model, ::EMF23);
 			}
 		') as PatternModel
 		//XXX With better type inference this error message should be replaced
