@@ -49,7 +49,7 @@ public class SampleProjectSupport {
 			String incQueryProjectName) throws CoreException,
 			OperationCanceledException {
 		BundleContext context = null;
-		ServiceReference ref = null;
+		ServiceReference<IBundleProjectService> ref = null;
 
 		try {
 			monitor.beginTask("", 2000);
@@ -60,10 +60,8 @@ public class SampleProjectSupport {
 			IProjectDescription desc = proj.getDescription();
 			/* Creating plug-in information */
 			context = IncQueryPlugin.plugin.context;
-			ref = context
-					.getServiceReference(IBundleProjectService.class.getName());
-			IBundleProjectService service = (IBundleProjectService) context
-					.getService(ref);
+			ref = context.getServiceReference(IBundleProjectService.class);
+			IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service.getDescription(proj);
 			bundleDesc.setBundleName(desc.getName());
 			bundleDesc.setBundleVersion(new Version(0, 0, 1, "qualifier"));

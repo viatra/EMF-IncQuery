@@ -25,13 +25,21 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.osgi.framework.Version;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -58,7 +66,8 @@ public abstract class ProjectGenerationHelper {
 	 * Two source folders: src to be manually written and src-gen to contain
 	 * generated code
 	 */
-	public static final String[] sourceFolders = { "src", "src-gen" };
+	//public static final String[] sourceFolders = { "src", "src-gen" };
+	public static final List<String> sourceFolders = ImmutableList.of(IncQueryNature.SRC_DIR, IncQueryNature.SRCGEN_DIR);
 	/**
 	 * A single source folder named src
 	 */
@@ -79,11 +88,23 @@ public abstract class ProjectGenerationHelper {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject proj = root.getProject(projectName);
-
+		
 		if (proj.exists()) {
 			proj.delete(true, true, monitor);
 		}
 
+		return initializeProject(proj, natures, monitor);
+	}
+
+	/**
+	 * @param proj
+	 * @param natures
+	 * @param monitor
+	 * @return
+	 * @throws CoreException
+	 */
+	public static IProject initializeProject(IProject proj, String[] natures,
+			IProgressMonitor monitor) throws CoreException {
 		proj.create(new SubProgressMonitor(monitor, 1000));
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
@@ -185,6 +206,52 @@ public abstract class ProjectGenerationHelper {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Initializes the plug-in metadata of a newly created project.
+	 * @param project the plug-in project to create the metadata for. The plug-in id will be the same as the project name
+	 * @param dependencies a list of required bundles to add
+	 * @param service 
+	 * @param bundleDesc
+	 */
+	public static void fillProjectMetadata(IProject project,
+			ImmutableList<String> dependencies,
+			final IBundleProjectService service,
+			IBundleProjectDescription bundleDesc) {
+		bundleDesc.setBundleName(project.getName());
+		bundleDesc.setBundleVersion(new Version(0, 0, 1, "qualifier"));
+		bundleDesc.setSingleton(true);
+		bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
+		bundleDesc.setSymbolicName(project.getName());
+		bundleDesc.setExtensionRegistry(true);
+	
+		IBundleClasspathEntry[] classpathEntries = Lists.transform(
+				sourceFolders,
+				new Function<String, IBundleClasspathEntry>() {
+	
+					@Override
+					public IBundleClasspathEntry apply(String input) {
+						return service.newBundleClasspathEntry(new Path(
+								input), null, null);
+					}
+				}).toArray(new IBundleClasspathEntry[sourceFolders.size()]);
+		bundleDesc.setBundleClasspath(classpathEntries);
+		bundleDesc
+				.setExecutionEnvironments(new String[] { IncQueryNature.EXECUTION_ENVIRONMENT });
+		// Adding dependencies
+		IRequiredBundleDescription[] reqBundles = Lists.transform(
+				dependencies,
+				new Function<String, IRequiredBundleDescription>() {
+	
+					@Override
+					public IRequiredBundleDescription apply(String input) {
+						return service.newRequiredBundle(input, null,
+								false, false);
+					}
+				}).toArray(
+				new IRequiredBundleDescription[dependencies.size()]);
+		bundleDesc.setRequiredBundles(reqBundles);
 	}
 
 }
