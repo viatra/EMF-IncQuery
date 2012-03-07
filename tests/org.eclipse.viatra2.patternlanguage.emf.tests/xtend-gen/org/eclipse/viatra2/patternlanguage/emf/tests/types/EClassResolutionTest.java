@@ -11,7 +11,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.junit4.InjectWith;
@@ -47,7 +47,7 @@ public class EClassResolutionTest {
         PatternBody _get_1 = _bodies.get(0);
         EList<Constraint> _constraints = _get_1.getConstraints();
         Constraint _get_2 = _constraints.get(0);
-        final EClassConstraint constraint = ((EClassConstraint) _get_2);
+        final EClassifierConstraint constraint = ((EClassifierConstraint) _get_2);
         EntityType _type = constraint.getType();
         final ClassType type = ((ClassType) _type);
         EClassifier _classname = type.getClassname();
@@ -72,7 +72,7 @@ public class EClassResolutionTest {
         PatternBody _get_1 = _bodies.get(0);
         EList<Constraint> _constraints = _get_1.getConstraints();
         Constraint _get_2 = _constraints.get(0);
-        final EClassConstraint constraint = ((EClassConstraint) _get_2);
+        final EClassifierConstraint constraint = ((EClassifierConstraint) _get_2);
         EntityType _type = constraint.getType();
         final ClassType type = ((ClassType) _type);
         EClassifier _classname = type.getClassname();
@@ -96,7 +96,7 @@ public class EClassResolutionTest {
         PatternBody _get_1 = _bodies.get(0);
         EList<Constraint> _constraints = _get_1.getConstraints();
         Constraint _get_2 = _constraints.get(0);
-        final EClassConstraint constraint = ((EClassConstraint) _get_2);
+        final EClassifierConstraint constraint = ((EClassifierConstraint) _get_2);
         EntityType _type = constraint.getType();
         final ClassType type = ((ClassType) _type);
         this._validationTestHelper.assertError(type, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.CLASS_TYPE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EClass");
@@ -119,7 +119,7 @@ public class EClassResolutionTest {
         PatternBody _get_1 = _bodies.get(0);
         EList<Constraint> _constraints = _get_1.getConstraints();
         Constraint _get_2 = _constraints.get(0);
-        final EClassConstraint constraint = ((EClassConstraint) _get_2);
+        final EClassifierConstraint constraint = ((EClassifierConstraint) _get_2);
         EntityType _type = constraint.getType();
         final ClassType type = ((ClassType) _type);
         this._validationTestHelper.assertError(type, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage.Literals.CLASS_TYPE, Diagnostic.LINKING_DIAGNOSTIC, "reference to EClass");

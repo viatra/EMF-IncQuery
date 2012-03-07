@@ -9,7 +9,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import static org.junit.Assert.*
 
 @RunWith(typeof(XtextRunner))
@@ -32,7 +32,7 @@ class VariableResolutionTest {
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		assertEquals(parameter.name, constraint.getVar().getVar())
 	}
 	
@@ -48,7 +48,7 @@ class VariableResolutionTest {
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		assertTrue(parameter.name != constraint.getVar().getVar())		
 	}
 	
@@ -65,8 +65,8 @@ class VariableResolutionTest {
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
-		val constraint0 = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
-		val constraint1 = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint0 = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
+		val constraint1 = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		assertTrue(parameter.name != constraint0.getVar().getVar())
 		assertEquals(constraint0.getVar().getVar(), constraint1.getVar().getVar())				
 	}

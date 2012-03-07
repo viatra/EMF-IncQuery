@@ -49,7 +49,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 
@@ -196,8 +196,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	 */
 	protected void gatherConstraint(Constraint constraint)
 			throws RetePatternBuildException {
-		if (constraint instanceof EClassConstraint) {  // EMF-specific
-			EClassConstraint constraint2 = (EClassConstraint) constraint;
+		if (constraint instanceof EClassifierConstraint) {  // EMF-specific
+			EClassifierConstraint constraint2 = (EClassifierConstraint) constraint;
 			//TODO Gabor, please check the following line
 			EClassifier classname = ((ClassType)constraint2.getType()).getClassname();
 			PVariable pNode = getPNode(constraint2.getVar());

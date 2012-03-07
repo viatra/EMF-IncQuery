@@ -9,7 +9,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage
 import static org.junit.Assert.*
@@ -36,7 +36,7 @@ class EClassResolutionTest {
 		') as PatternModel
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val type = constraint.type as ClassType
 		assertEquals(type.classname, PatternLanguagePackage$Literals::PATTERN)		
 	}
@@ -52,7 +52,7 @@ class EClassResolutionTest {
 		') as PatternModel
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val type = constraint.type as ClassType
 		assertEquals(type.classname, EcorePackage$Literals::ESTRING)		
 	}
@@ -67,7 +67,7 @@ class EClassResolutionTest {
 			}
 		') as PatternModel
 		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val type = constraint.type as ClassType
 		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
 			Diagnostic::LINKING_DIAGNOSTIC, "reference to EClass")		
@@ -81,7 +81,7 @@ class EClassResolutionTest {
 			}
 		') as PatternModel
 		val pattern = model.patterns.get(0)
-		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassConstraint
+		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val type = constraint.type as ClassType
 		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
 			Diagnostic::LINKING_DIAGNOSTIC, "reference to EClass")		

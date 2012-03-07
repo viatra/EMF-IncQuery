@@ -20,7 +20,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
@@ -59,7 +59,7 @@ public class EMFPatternLanguageOutlineTreeProvider extends
 		}
 	}
 	
-	protected void _createChildren(IOutlineNode parentNode, EClassConstraint constraint) {
+	protected void _createChildren(IOutlineNode parentNode, EClassifierConstraint constraint) {
 		// By leaving this method empty, the EClass Constraint will not have any children in the outline view
 	}
 	

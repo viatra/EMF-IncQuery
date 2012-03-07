@@ -30,10 +30,10 @@ PackageImport:
 Constraint returns core::Constraint:
 	//CheckConstraint	| 
 	PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
-	| EClassConstraint 													  // Additions
+	| EClassifierConstraint                                 // Additions
 ;
 
-EClassConstraint:
+EClassifierConstraint:
 	type = Type  '(' var = VariableReference ')'
 ; 
 

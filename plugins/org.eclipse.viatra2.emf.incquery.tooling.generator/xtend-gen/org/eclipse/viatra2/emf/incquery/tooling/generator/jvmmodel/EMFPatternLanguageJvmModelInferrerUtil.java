@@ -16,7 +16,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.serializer.ISerializer;
@@ -153,7 +153,7 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   /**
    * Returns the JvmTypeReference for variable if it used in the EClassConstraint.
    */
-  protected JvmTypeReference _getTypeRef(final EClassConstraint constraint, final Variable variable) {
+  protected JvmTypeReference _getTypeRef(final EClassifierConstraint constraint, final Variable variable) {
       EntityType _type = constraint.getType();
       final EntityType entityType = _type;
       VariableReference _var = constraint.getVar();
@@ -294,8 +294,8 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   }
   
   public JvmTypeReference getTypeRef(final Constraint constraint, final Variable variable) {
-    if (constraint instanceof EClassConstraint) {
-      return _getTypeRef((EClassConstraint)constraint, variable);
+    if (constraint instanceof EClassifierConstraint) {
+      return _getTypeRef((EClassifierConstraint)constraint, variable);
     } else if (constraint != null) {
       return _getTypeRef(constraint, variable);
     } else {

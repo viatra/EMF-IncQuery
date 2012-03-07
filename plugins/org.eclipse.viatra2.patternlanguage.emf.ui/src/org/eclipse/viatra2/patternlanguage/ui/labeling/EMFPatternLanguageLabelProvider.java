@@ -24,7 +24,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
@@ -61,7 +61,7 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		return String.format("body #%d", ((Pattern)ele.eContainer()).getBodies().indexOf(ele) + 1);
 	}
 	
-	String text(EClassConstraint constraint) {
+	String text(EClassifierConstraint constraint) {
 		String typename = ((ClassType)constraint.getType()).getClassname().getName();
 		return String.format("%s (%s)", typename, constraint.getVar().getVar());
 	}

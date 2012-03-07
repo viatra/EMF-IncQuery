@@ -8,11 +8,11 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.serializer.ISerializer
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -99,7 +99,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	/**
    	 * Returns the JvmTypeReference for variable if it used in the EClassConstraint.
    	 */   	
-   	def dispatch JvmTypeReference getTypeRef(EClassConstraint constraint, Variable variable) {
+   	def dispatch JvmTypeReference getTypeRef(EClassifierConstraint constraint, Variable variable) {
    		val entityType = constraint.type
    		val variableRef = constraint.getVar
    		if (variableRef != null) {
