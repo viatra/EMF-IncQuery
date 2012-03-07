@@ -3,12 +3,17 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.corext.util.JavaConventionsUtil;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -98,14 +103,15 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 	@Override
 	protected void handleFieldChanged(String fieldName) {
 		super.handleFieldChanged(fieldName);
-
 		dialogChanged();
 	}
 	
 	private void dialogChanged() {
 		
-		StatusInfo si = new StatusInfo();
-		si.setOK();
+		IStatus packageStatus = validatePackageName(getPackageText());
+		
+		StatusInfo si = new StatusInfo(packageStatus.getSeverity(), packageStatus.getMessage());
+		//si.setOK();
 		
 		String containerPath = getPackageFragmentRootText();
 		
@@ -150,12 +156,24 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 				si.setError("Pattern name must be specified");
 			}
 		}
+		
+		if (si.getSeverity() == IStatus.OK) {
+			si.setInfo("");
+		}
 
 		updateStatus(si);
 		
 		if (si.isError()) {
 			setErrorMessage(si.getMessage());
 		}
+	}
+	
+	private IStatus validatePackageName(String text) {
+		IJavaProject project= getJavaProject();
+		if (project == null || !project.exists()) {
+			return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_3, JavaCore.VERSION_1_3);
+		}
+		return JavaConventionsUtil.validatePackageName(text, project);
 	}
 
 	public String getFileName() {

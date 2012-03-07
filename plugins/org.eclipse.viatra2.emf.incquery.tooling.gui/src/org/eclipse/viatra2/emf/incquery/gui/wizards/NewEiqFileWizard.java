@@ -51,7 +51,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final String patternName = page.getPatternName();
-		final String packageName = page.getPackageName();
+		final String packageName = page.getPackageName().replaceAll("\\.", "/");
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
@@ -95,7 +95,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		IResource containerResource = root.findMember(new Path(containerPath));
 		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
 
-		URI fileURI = URI.createPlatformResourceURI(containerResource.getFullPath().append(packageName+"/"+fileName).toString(), false);
+		String fullPath = containerResource.getFullPath().append(packageName+"/"+fileName).toString();
+		
+		URI fileURI = URI.createPlatformResourceURI(fullPath, false);
 		Resource resource = resourceSet.createResource(fileURI);
 
 		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
