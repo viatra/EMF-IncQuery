@@ -8,6 +8,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 
 /**
  * {@link IMatcherFactory} implementation inferrer.

@@ -10,6 +10,8 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.ImportManager
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 
 /**
  * {@link IPatternMatch} implementation inferer.

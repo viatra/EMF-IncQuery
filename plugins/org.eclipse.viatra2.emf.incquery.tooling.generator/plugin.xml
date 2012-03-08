@@ -2,11 +2,5 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="generatorFragment" name="EMF-IncQuery Code Generation Fragment" schema="schema/generatorFragment.exsd"/>
-   <extension
-         point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
-      <fragment
-            fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.SampleUIGenerator">
-      </fragment>
-   </extension>
 
 </plugin>

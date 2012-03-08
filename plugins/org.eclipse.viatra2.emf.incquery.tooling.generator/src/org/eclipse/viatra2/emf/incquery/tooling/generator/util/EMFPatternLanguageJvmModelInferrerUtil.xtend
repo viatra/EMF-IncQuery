@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
+package org.eclipse.viatra2.emf.incquery.tooling.generator.util
 
 import com.google.inject.Inject
 import org.apache.log4j.Logger
@@ -13,6 +13,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.serializer.ISerializer
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.

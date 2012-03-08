@@ -6,7 +6,9 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 
 /**
- * @author A generator fragment for the sample UI project
+ * A generator fragment for the sample UI project
+ * 
+ * @author Zoltan Ujhelyi
  * 
  */
 public class SampleUIGenerator implements IGenerationFragment {

@@ -18,6 +18,8 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.util.IAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
