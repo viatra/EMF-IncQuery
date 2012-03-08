@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -276,15 +277,67 @@ public abstract class ProjectGenerationHelper {
 		IRequiredBundleDescription[] requiredBundles = bundleDesc
 				.getRequiredBundles();
 		List<String> missingDependencies = new ArrayList<String>(dependencies);
+		if (requiredBundles != null) {
 		for (IRequiredBundleDescription bundle : requiredBundles) {
-			if (missingDependencies.contains(bundle.getName())) {
-				missingDependencies.remove(bundle.getName());
+				if (missingDependencies.contains(bundle.getName())) {
+					missingDependencies.remove(bundle.getName());
+				}
+				// if (!missingDependencies.contains(bundle.getName())) {
+				// missingDependencies.add(bundle.getName());
+				// }
 			}
-//			if (!missingDependencies.contains(bundle.getName())) {
-//				missingDependencies.add(bundle.getName());
-//			}
 		}
 		bundleDesc.setRequiredBundles(Lists.transform(missingDependencies, new IDToRequireBundleTransformer(service)).toArray(new IRequiredBundleDescription[missingDependencies.size()]));
 	}
 
+	public static void ensurePackageExports(IProject project,
+			final List<String> dependencies) throws CoreException {
+		ensurePackageExports(project, dependencies,
+				new NullProgressMonitor());
+	}
+
+	public static void ensurePackageExports(IProject project,
+			final List<String> dependencies, IProgressMonitor monitor)
+			throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			ensurePackageExports(service, bundleDesc, dependencies);
+			bundleDesc.apply(monitor);
+		} finally {
+			if (context != null && ref != null)
+				context.ungetService(ref);
+		}
+	}
+
+	
+	public static void ensurePackageExports(final IBundleProjectService service, IBundleProjectDescription bundleDesc, final List<String> exports) {
+		IPackageExportDescription[] packageExports = bundleDesc.getPackageExports();
+		List<String> missingExports = new ArrayList<String>(exports);
+		List<IPackageExportDescription> exportList = new ArrayList<IPackageExportDescription>();
+		if (packageExports != null) {
+			for (IPackageExportDescription export : packageExports) {
+				if (!missingExports.contains(export.getName())) {
+					missingExports.remove(export.getName());
+				}
+				exportList.add(export);
+			}
+		}
+		//IPackageExportDescription[] newExports = 
+		exportList.addAll(
+				Lists.transform(missingExports, new Function<String, IPackageExportDescription>() {
+
+			@Override
+			public IPackageExportDescription apply(String input) {
+				return service.newPackageExport(input, null, true, null);
+			}
+		}));
+		
+		bundleDesc.setPackageExports(exportList.toArray(new IPackageExportDescription[exportList.size()]));
+	}
 }

@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +18,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
@@ -49,6 +50,8 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	Injector injector;
 	@Inject
 	EclipseOutputConfigurationProvider outputConfigurationProvider;
+	@Inject
+	EMFPatternLanguageJvmModelInferrerUtil util;
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
@@ -57,24 +60,27 @@ public class IncQueryGenerator extends JvmModelGenerator {
 			IProject project = workspaceRoot.getFile(
 					new Path(input.getURI().toPlatformString(true)))
 					.getProject();
+			ArrayList<String> packageNames = new ArrayList<String>();
 			TreeIterator<EObject> it = input.getAllContents();
 			while (it.hasNext()) {
 				EObject obj = it.next();
 				if (obj instanceof Pattern) {
 					executeGeneratorFragments(project, (Pattern) obj);
+					packageNames.add(util.getPackageName((Pattern) obj));
 				}
 			}
+			ProjectGenerationHelper.ensurePackageExports(project, packageNames);
 		} catch (CoreException e) {
 			logger.error("Error during code generation", e);
 		}
 	}
 
-	private void executeGeneratorFragments(IProject modelProject, Pattern obj)
+	private void executeGeneratorFragments(IProject modelProject, Pattern pattern)
 			throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider
-				.getFragmentsForPattern(obj)) {
+				.getFragmentsForPattern(pattern)) {
 			injector.injectMembers(fragment);
-			System.out.println(obj.getName() + ": "
+			System.out.println(pattern.getName() + ": "
 					+ fragment.getClass().getCanonicalName());
 			EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
 			IProject targetProject = createOrGetTargetProject(modelProject,
@@ -104,9 +110,10 @@ public class IncQueryGenerator extends JvmModelGenerator {
 				}
 				
 			});
-			for (JvmGenericType type : fragment.inferFiles(obj)) {
-				internalDoGenerate(type, fsa);
-			}
+//			for (JvmGenericType type : fragment.inferFiles(pattern)) {
+//				internalDoGenerate(type, fsa);
+//			}
+			fragment.generateFiles(pattern, fsa);
 		}
 	}
 

@@ -293,6 +293,12 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
       return _operator_plus_1;
   }
   
+  public String getPackagePath(final Pattern pattern) {
+    String _packageName = this.getPackageName(pattern);
+    String _replace = _packageName.replace(".", "/");
+    return _replace;
+  }
+  
   public JvmTypeReference getTypeRef(final Constraint constraint, final Variable variable) {
     if (constraint instanceof EClassifierConstraint) {
       return _getTypeRef((EClassifierConstraint)constraint, variable);

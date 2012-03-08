@@ -3,9 +3,7 @@
  */
 package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
 /**
@@ -37,8 +35,6 @@ public interface IGenerationFragment {
 	public String[] getProjectDependencies();
 	
 	public void generateFiles(Pattern pattern, IFileSystemAccess fsa);
-	public void generateFiles(Pattern patternm, Annotation annotation, IFileSystemAccess fsa);
 
-	public Iterable<JvmGenericType> inferFiles(Pattern pattern);
-	public Iterable<JvmGenericType> inferFiles(Pattern pattern, Annotation annotation);
+	//public Iterable<JvmGenericType> inferFiles(Pattern pattern);
 }

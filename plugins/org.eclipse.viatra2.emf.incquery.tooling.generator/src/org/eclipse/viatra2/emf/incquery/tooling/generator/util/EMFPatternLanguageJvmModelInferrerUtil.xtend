@@ -184,4 +184,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	   	return packageName + pattern.name
   	}
 	
+	def getPackagePath(Pattern pattern) {
+		pattern.packageName.replace(".","/")
+	}
 }
