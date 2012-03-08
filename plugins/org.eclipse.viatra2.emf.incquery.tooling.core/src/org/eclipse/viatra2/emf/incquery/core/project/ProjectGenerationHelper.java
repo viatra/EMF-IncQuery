@@ -13,28 +13,29 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 import com.google.common.base.Function;
@@ -49,72 +50,34 @@ import com.google.inject.Inject;
  */
 public abstract class ProjectGenerationHelper {
 
+	private static final class IDToRequireBundleTransformer implements
+			Function<String, IRequiredBundleDescription> {
+		private final IBundleProjectService service;
+
+		private IDToRequireBundleTransformer(IBundleProjectService service) {
+			this.service = service;
+		}
+
+		@Override
+		public IRequiredBundleDescription apply(String input) {
+			return service.newRequiredBundle(input, null, false,
+					false);
+		}
+	}
+
 	@Inject
 	private static IResourceSetProvider resourceSetProvider;
 
 	/**
-	 * The list of all natures used in an IncQuery project.
-	 */
-	public static final String[] allNatures = { IncQueryNature.NATURE_ID,
-			JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature" };
-	/**
-	 * The natures used in a generated sample project.
-	 */
-	public static final String[] generatedNatures = { JavaCore.NATURE_ID,
-			"org.eclipse.pde.PluginNature" };
-	/**
 	 * Two source folders: src to be manually written and src-gen to contain
 	 * generated code
 	 */
-	//public static final String[] sourceFolders = { "src", "src-gen" };
-	public static final List<String> sourceFolders = ImmutableList.of(IncQueryNature.SRC_DIR, IncQueryNature.SRCGEN_DIR);
+	public static final List<String> sourceFolders = ImmutableList.of(
+			IncQueryNature.SRC_DIR, IncQueryNature.SRCGEN_DIR);
 	/**
 	 * A single source folder named src
 	 */
 	public static final String[] singleSourceFolder = { "src" };
-
-	/**
-	 * This method initializes a new project with a selected name, but deletes
-	 * any existing project with the same name - it shall be called with care!
-	 * 
-	 * @param projectName
-	 * @param natures
-	 * @param monitor
-	 * @return the project description of the created
-	 * @throws CoreException
-	 */
-	public static IProject initializeProject(String projectName,
-			String[] natures, IProgressMonitor monitor) throws CoreException {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject proj = root.getProject(projectName);
-		
-		if (proj.exists()) {
-			proj.delete(true, true, monitor);
-		}
-
-		return initializeProject(proj, natures, monitor);
-	}
-
-	/**
-	 * @param proj
-	 * @param natures
-	 * @param monitor
-	 * @return
-	 * @throws CoreException
-	 */
-	public static IProject initializeProject(IProject proj, String[] natures,
-			IProgressMonitor monitor) throws CoreException {
-		proj.create(new SubProgressMonitor(monitor, 1000));
-		if (monitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-
-		proj.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor,
-				1000));
-		addNatures(proj, natures, new SubProgressMonitor(monitor, 500));
-		return proj;
-	}
 
 	/**
 	 * Adds a collection of natures to the project
@@ -177,22 +140,32 @@ public abstract class ProjectGenerationHelper {
 	}
 
 	/**
-	 * The method will create a new query definiton file inside the given container.
-	 *  
-	 * @param containerPath the full path of the container of the file to be generated
-	 * @param fileName must end with eiq extension
-	 * @param patternName the name of the initial pattern in the generated query definition file
+	 * The method will create a new query definiton file inside the given
+	 * container.
+	 * 
+	 * @param containerPath
+	 *            the full path of the container of the file to be generated
+	 * @param fileName
+	 *            must end with eiq extension
+	 * @param patternName
+	 *            the name of the initial pattern in the generated query
+	 *            definition file
 	 */
-	public static void createEiqFile(String containerPath, String packageName, String fileName,	String patternName) {
+	public static void createEiqFile(String containerPath, String packageName,
+			String fileName, String patternName) {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource containerResource = root.findMember(new Path(containerPath));
-		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
+		ResourceSet resourceSet = resourceSetProvider.get(containerResource
+				.getProject());
 
-		URI fileURI = URI.createPlatformResourceURI(containerResource.getFullPath().append(packageName+"/"+fileName).toString(), false);
+		URI fileURI = URI.createPlatformResourceURI(containerResource
+				.getFullPath().append(packageName + "/" + fileName).toString(),
+				false);
 		Resource resource = resourceSet.createResource(fileURI);
 
-		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE
+				.createPatternModel();
 		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
 		pattern.setName(patternName);
 		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
@@ -202,21 +175,49 @@ public abstract class ProjectGenerationHelper {
 
 		try {
 			resource.save(Collections.EMPTY_MAP);
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static void initializePluginProject(IProject project,
+			final List<String> dependencies) throws CoreException {
+		initializePluginProject(project, dependencies,
+				new NullProgressMonitor());
+	}
+
+	public static void initializePluginProject(IProject project,
+			final List<String> dependencies, IProgressMonitor monitor)
+			throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			fillProjectMetadata(project, dependencies, service, bundleDesc);
+			bundleDesc.apply(monitor);
+		} finally {
+			if (context != null && ref != null)
+				context.ungetService(ref);
 		}
 	}
 
 	/**
 	 * Initializes the plug-in metadata of a newly created project.
-	 * @param project the plug-in project to create the metadata for. The plug-in id will be the same as the project name
-	 * @param dependencies a list of required bundles to add
-	 * @param service 
+	 * 
+	 * @param project
+	 *            the plug-in project to create the metadata for. The plug-in id
+	 *            will be the same as the project name
+	 * @param dependencies
+	 *            a list of required bundles to add
+	 * @param service
 	 * @param bundleDesc
 	 */
 	public static void fillProjectMetadata(IProject project,
-			ImmutableList<String> dependencies,
+			final List<String> dependencies,
 			final IBundleProjectService service,
 			IBundleProjectDescription bundleDesc) {
 		bundleDesc.setBundleName(project.getName());
@@ -225,33 +226,65 @@ public abstract class ProjectGenerationHelper {
 		bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
 		bundleDesc.setSymbolicName(project.getName());
 		bundleDesc.setExtensionRegistry(true);
-	
+
 		IBundleClasspathEntry[] classpathEntries = Lists.transform(
-				sourceFolders,
-				new Function<String, IBundleClasspathEntry>() {
-	
+				sourceFolders, new Function<String, IBundleClasspathEntry>() {
+
 					@Override
 					public IBundleClasspathEntry apply(String input) {
-						return service.newBundleClasspathEntry(new Path(
-								input), null, null);
+						return service.newBundleClasspathEntry(new Path(input),
+								null, null);
 					}
 				}).toArray(new IBundleClasspathEntry[sourceFolders.size()]);
 		bundleDesc.setBundleClasspath(classpathEntries);
 		bundleDesc
 				.setExecutionEnvironments(new String[] { IncQueryNature.EXECUTION_ENVIRONMENT });
 		// Adding dependencies
-		IRequiredBundleDescription[] reqBundles = Lists.transform(
-				dependencies,
-				new Function<String, IRequiredBundleDescription>() {
-	
-					@Override
-					public IRequiredBundleDescription apply(String input) {
-						return service.newRequiredBundle(input, null,
-								false, false);
-					}
-				}).toArray(
-				new IRequiredBundleDescription[dependencies.size()]);
+		IRequiredBundleDescription[] reqBundles = Lists.transform(dependencies,
+				new IDToRequireBundleTransformer(service)).toArray(new IRequiredBundleDescription[dependencies.size()]);
 		bundleDesc.setRequiredBundles(reqBundles);
+	}
+
+	public static void ensureBundleDependencies(IProject project,
+			final List<String> dependencies) throws CoreException {
+		ensureBundleDependencies(project, dependencies,
+				new NullProgressMonitor());
+	}
+
+	public static void ensureBundleDependencies(IProject project,
+			final List<String> dependencies, IProgressMonitor monitor)
+			throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			ensureBundleDependencies(service, bundleDesc, dependencies);
+			bundleDesc.apply(monitor);
+		} finally {
+			if (context != null && ref != null)
+				context.ungetService(ref);
+		}
+	}
+
+	public static void ensureBundleDependencies(IBundleProjectService service, 
+			IBundleProjectDescription bundleDesc,
+			final List<String> dependencies) {
+		IRequiredBundleDescription[] requiredBundles = bundleDesc
+				.getRequiredBundles();
+		List<String> missingDependencies = new ArrayList<String>(dependencies);
+		for (IRequiredBundleDescription bundle : requiredBundles) {
+			if (missingDependencies.contains(bundle.getName())) {
+				missingDependencies.remove(bundle.getName());
+			}
+//			if (!missingDependencies.contains(bundle.getName())) {
+//				missingDependencies.add(bundle.getName());
+//			}
+		}
+		bundleDesc.setRequiredBundles(Lists.transform(missingDependencies, new IDToRequireBundleTransformer(service)).toArray(new IRequiredBundleDescription[missingDependencies.size()]));
 	}
 
 }
