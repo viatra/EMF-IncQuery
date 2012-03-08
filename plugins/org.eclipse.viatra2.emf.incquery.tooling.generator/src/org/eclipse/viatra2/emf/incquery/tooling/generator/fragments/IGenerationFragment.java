@@ -3,6 +3,11 @@
  */
 package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.generator.IFileSystemAccess;
+
 /**
  * A code generation fragment is used by annotation processors for code
  * generation.
@@ -30,4 +35,10 @@ public interface IGenerationFragment {
 	 * @return A non-null (but possibly empty) array of dependencies to add.
 	 */
 	public String[] getProjectDependencies();
+	
+	public void generateFiles(Pattern pattern, IFileSystemAccess fsa);
+	public void generateFiles(Pattern patternm, Annotation annotation, IFileSystemAccess fsa);
+
+	public Iterable<JvmGenericType> inferFiles(Pattern pattern);
+	public Iterable<JvmGenericType> inferFiles(Pattern pattern, Annotation annotation);
 }

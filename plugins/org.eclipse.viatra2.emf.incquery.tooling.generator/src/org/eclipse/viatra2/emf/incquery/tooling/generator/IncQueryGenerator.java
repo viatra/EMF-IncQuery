@@ -1,11 +1,15 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -14,12 +18,16 @@ import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * A custom generator for EMF-IncQuery projects that is based on the JVM Model
@@ -37,6 +45,10 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	IGenerationFragmentProvider fragmentProvider;
 	@Inject
 	IWorkspaceRoot workspaceRoot;
+	@Inject
+	Injector injector;
+	@Inject
+	EclipseOutputConfigurationProvider outputConfigurationProvider;
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
@@ -61,12 +73,40 @@ public class IncQueryGenerator extends JvmModelGenerator {
 			throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(obj)) {
+			injector.injectMembers(fragment);
 			System.out.println(obj.getName() + ": "
 					+ fragment.getClass().getCanonicalName());
 			EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
 			IProject targetProject = createOrGetTargetProject(modelProject,
 					fragment);
 			fsa.setProject(targetProject);
+			fsa.setMonitor(new NullProgressMonitor());
+			Map<String, OutputConfiguration> outputs = new HashMap<String, OutputConfiguration>(); 
+			for (OutputConfiguration conf : outputConfigurationProvider.getOutputConfigurations(targetProject)) {
+				outputs.put(conf.getName(), conf);
+			}
+			fsa.setOutputConfigurations(outputs);
+			fsa.setPostProcessor(new EclipseResourceFileSystemAccess2.IFileCallback() {
+				
+				public boolean beforeFileDeletion(IFile file) {
+					return true;
+				}
+				
+				public void afterFileUpdate(IFile file) {
+					handleFileAccess(file);
+				}
+
+				public void afterFileCreation(IFile file) {
+					handleFileAccess(file);
+				}
+				
+				protected void handleFileAccess(IFile file) {
+				}
+				
+			});
+			for (JvmGenericType type : fragment.inferFiles(obj)) {
+				internalDoGenerate(type, fsa);
+			}
 		}
 	}
 
