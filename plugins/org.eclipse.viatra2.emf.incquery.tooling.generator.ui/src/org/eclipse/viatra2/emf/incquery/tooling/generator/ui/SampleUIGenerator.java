@@ -4,6 +4,13 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.generator.IFileSystemAccess;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * A generator fragment for the sample UI project
@@ -13,12 +20,10 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationF
  */
 public class SampleUIGenerator implements IGenerationFragment {
 
-	/**
-	 * 
-	 */
-	public SampleUIGenerator() {
-		// TODO Auto-generated constructor stub
-	}
+	@Inject
+	Injector injector;
+	
+	SampleUIJvmModelInferrer inferrer = new SampleUIJvmModelInferrer();
 
 	@Override
 	public String getProjectPostfix() {
@@ -31,4 +36,24 @@ public class SampleUIGenerator implements IGenerationFragment {
 				"org.eclipse.emf.ecore", "org.eclipse.pde.core"};
 	}
 
+	@Override
+	public void generateFiles(Pattern pattern, IFileSystemAccess fsa) {
+		
+	}
+
+	@Override
+	public void generateFiles(Pattern patternm, Annotation annotation,
+			IFileSystemAccess fsa) {}
+	
+	@Override
+	public Iterable<JvmGenericType> inferFiles(Pattern pattern) {
+		injector.injectMembers(inferrer);
+		return inferrer.infer(pattern);
+	}
+	
+	@Override
+	public Iterable<JvmGenericType> inferFiles(Pattern pattern, Annotation annotation) {
+		return null;
+	}
+	
 }
