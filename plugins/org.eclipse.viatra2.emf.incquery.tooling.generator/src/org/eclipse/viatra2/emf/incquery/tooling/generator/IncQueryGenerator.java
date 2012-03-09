@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
@@ -26,7 +27,9 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -52,6 +55,8 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	EclipseOutputConfigurationProvider outputConfigurationProvider;
 	@Inject
 	EMFPatternLanguageJvmModelInferrerUtil util;
+	
+	Multimap<IProject, IPluginExtension> extensionMap = ArrayListMultimap.create();
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
@@ -70,6 +75,9 @@ public class IncQueryGenerator extends JvmModelGenerator {
 				}
 			}
 			ProjectGenerationHelper.ensurePackageExports(project, packageNames);
+			for (IProject proj : extensionMap.keySet()) {
+				ProjectGenerationHelper.ensureExtensions(proj, extensionMap.get(proj));
+			}
 		} catch (CoreException e) {
 			logger.error("Error during code generation", e);
 		}
@@ -114,6 +122,10 @@ public class IncQueryGenerator extends JvmModelGenerator {
 //				internalDoGenerate(type, fsa);
 //			}
 			fragment.generateFiles(pattern, fsa);
+			ExtensionGenerator generator = new ExtensionGenerator();
+			generator.setProject(targetProject);
+			Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, generator);
+			extensionMap.putAll(targetProject, extensionContribution);
 		}
 	}
 

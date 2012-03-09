@@ -3,6 +3,8 @@
  */
 package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
@@ -37,4 +39,5 @@ public interface IGenerationFragment {
 	public void generateFiles(Pattern pattern, IFileSystemAccess fsa);
 
 	//public Iterable<JvmGenericType> inferFiles(Pattern pattern);
+	public Iterable<IPluginExtension> extensionContribution(Pattern pattern, ExtensionGenerator exGen);
 }

@@ -23,11 +23,19 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
@@ -40,8 +48,10 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 
 /**
@@ -339,5 +349,65 @@ public abstract class ProjectGenerationHelper {
 		}));
 		
 		bundleDesc.setPackageExports(exportList.toArray(new IPackageExportDescription[exportList.size()]));
+	}
+	
+	public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions)  {
+		ensureExtensions(project, contributedExtensions, new NullProgressMonitor());
+	}
+	
+	@SuppressWarnings("restriction")
+	public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions, IProgressMonitor monitor)  {
+		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap.create();
+		for (IPluginExtension extension : contributedExtensions) {
+			extensionMap.put(extension.getId(), extension);
+		}
+		IFile pluginXml = PDEProject.getPluginXml(project);
+		IPluginModel plugin = (IPluginModel)PDECore.getDefault().getModelManager().findModel(project);
+		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
+		fModel.setEditable(true);
+		try {
+			fModel.load();
+			//Storing a write-only plugin.xml model
+			IExtensions extensions = fModel.getExtensions();
+			//Storing a read-only plugin.xml model
+			if (plugin != null) {
+				IExtensions readExtension = plugin.getExtensions();
+				nextExtension: for (IPluginExtension extension : readExtension.getExtensions()) {
+					String id = extension.getId().substring(project.getName().length() + 1);
+					System.out.println("[READ]" + id);
+					if (extensionMap.containsKey(id)) {						
+						String point = extension.getPoint();
+						for (IPluginExtension ex : extensionMap.get(id)) {
+							if (ex.getPoint().equals(point)) {
+								continue nextExtension;
+							}
+						}
+					}
+					IPluginExtension cloneExtension = fModel.createExtension();
+					System.out.println("[CLONE]" + id);
+					cloneExtension.setId(id);
+					cloneExtension.setName(extension.getName());
+					cloneExtension.setPoint(extension.getPoint());
+					for (IPluginObject obj : extension.getChildren()) {						
+						cloneExtension.add(obj);
+					}
+					cloneExtension.setInTheModel(true);
+					extensions.add(cloneExtension);
+				}
+				for (IPluginExtensionPoint point : readExtension
+						.getExtensionPoints()) {
+					extensions.add(point);
+				}
+			}
+			for (IPluginExtension contribExtension : contributedExtensions) {
+				System.out.println("[WRITE]" + contribExtension.getId());
+				extensions.add(contribExtension);
+				contribExtension.setInTheModel(true);
+			}
+			fModel.save();
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }
