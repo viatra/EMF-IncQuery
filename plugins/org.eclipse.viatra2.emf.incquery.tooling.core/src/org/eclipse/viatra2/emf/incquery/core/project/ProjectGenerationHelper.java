@@ -71,8 +71,7 @@ public abstract class ProjectGenerationHelper {
 
 		@Override
 		public IRequiredBundleDescription apply(String input) {
-			return service.newRequiredBundle(input, null, false,
-					false);
+			return service.newRequiredBundle(input, null, false, false);
 		}
 	}
 
@@ -252,16 +251,34 @@ public abstract class ProjectGenerationHelper {
 				.setExecutionEnvironments(new String[] { IncQueryNature.EXECUTION_ENVIRONMENT });
 		// Adding dependencies
 		IRequiredBundleDescription[] reqBundles = Lists.transform(dependencies,
-				new IDToRequireBundleTransformer(service)).toArray(new IRequiredBundleDescription[dependencies.size()]);
+				new IDToRequireBundleTransformer(service)).toArray(
+				new IRequiredBundleDescription[dependencies.size()]);
 		bundleDesc.setRequiredBundles(reqBundles);
 	}
 
+	/**
+	 * Updates project manifest to ensure the selected bundle dependencies are
+	 * set. Does not change existing dependencies.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @throws CoreException
+	 */
 	public static void ensureBundleDependencies(IProject project,
 			final List<String> dependencies) throws CoreException {
 		ensureBundleDependencies(project, dependencies,
 				new NullProgressMonitor());
 	}
 
+	/**
+	 * Updates project manifest to ensure the selected bundle dependencies are
+	 * set. Does not change existing dependencies.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	public static void ensureBundleDependencies(IProject project,
 			final List<String> dependencies, IProgressMonitor monitor)
 			throws CoreException {
@@ -281,31 +298,53 @@ public abstract class ProjectGenerationHelper {
 		}
 	}
 
-	public static void ensureBundleDependencies(IBundleProjectService service, 
+	/**
+	 * Updates project manifest to ensure the selected bundle dependencies are
+	 * set. Does not change existing dependencies.
+	 * @param service
+	 * @param bundleDesc
+	 * @param dependencies
+	 */
+	public static void ensureBundleDependencies(IBundleProjectService service,
 			IBundleProjectDescription bundleDesc,
 			final List<String> dependencies) {
 		IRequiredBundleDescription[] requiredBundles = bundleDesc
 				.getRequiredBundles();
 		List<String> missingDependencies = new ArrayList<String>(dependencies);
 		if (requiredBundles != null) {
-		for (IRequiredBundleDescription bundle : requiredBundles) {
+			for (IRequiredBundleDescription bundle : requiredBundles) {
 				if (missingDependencies.contains(bundle.getName())) {
 					missingDependencies.remove(bundle.getName());
 				}
-				// if (!missingDependencies.contains(bundle.getName())) {
-				// missingDependencies.add(bundle.getName());
-				// }
 			}
 		}
-		bundleDesc.setRequiredBundles(Lists.transform(missingDependencies, new IDToRequireBundleTransformer(service)).toArray(new IRequiredBundleDescription[missingDependencies.size()]));
+		bundleDesc.setRequiredBundles(Lists.transform(missingDependencies,
+				new IDToRequireBundleTransformer(service)).toArray(
+				new IRequiredBundleDescription[missingDependencies.size()]));
 	}
 
+	/**
+	 * Updates project manifest to ensure the selected packages are exported.
+	 * Does not change existing exports.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @throws CoreException
+	 */
 	public static void ensurePackageExports(IProject project,
 			final List<String> dependencies) throws CoreException {
-		ensurePackageExports(project, dependencies,
-				new NullProgressMonitor());
+		ensurePackageExports(project, dependencies, new NullProgressMonitor());
 	}
 
+	/**
+	 * Updates project manifest to ensure the selected packages are exported.
+	 * Does not change existing exports.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	public static void ensurePackageExports(IProject project,
 			final List<String> dependencies, IProgressMonitor monitor)
 			throws CoreException {
@@ -325,9 +364,19 @@ public abstract class ProjectGenerationHelper {
 		}
 	}
 
-	
-	public static void ensurePackageExports(final IBundleProjectService service, IBundleProjectDescription bundleDesc, final List<String> exports) {
-		IPackageExportDescription[] packageExports = bundleDesc.getPackageExports();
+	/**
+	 * Updates project manifest to ensure the selected packages are exported.
+	 * Does not change existing exports.
+	 * 
+	 * @param service
+	 * @param bundleDesc
+	 * @param exports
+	 */
+	public static void ensurePackageExports(
+			final IBundleProjectService service,
+			IBundleProjectDescription bundleDesc, final List<String> exports) {
+		IPackageExportDescription[] packageExports = bundleDesc
+				.getPackageExports();
 		List<String> missingExports = new ArrayList<String>(exports);
 		List<IPackageExportDescription> exportList = new ArrayList<IPackageExportDescription>();
 		if (packageExports != null) {
@@ -338,76 +387,105 @@ public abstract class ProjectGenerationHelper {
 				exportList.add(export);
 			}
 		}
-		//IPackageExportDescription[] newExports = 
-		exportList.addAll(
-				Lists.transform(missingExports, new Function<String, IPackageExportDescription>() {
+		exportList.addAll(Lists.transform(missingExports,
+				new Function<String, IPackageExportDescription>() {
 
-			@Override
-			public IPackageExportDescription apply(String input) {
-				return service.newPackageExport(input, null, true, null);
-			}
-		}));
-		
-		bundleDesc.setPackageExports(exportList.toArray(new IPackageExportDescription[exportList.size()]));
+					@Override
+					public IPackageExportDescription apply(String input) {
+						return service
+								.newPackageExport(input, null, true, null);
+					}
+				}));
+
+		bundleDesc.setPackageExports(exportList
+				.toArray(new IPackageExportDescription[exportList.size()]));
 	}
-	
-	public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions)  {
-		ensureExtensions(project, contributedExtensions, new NullProgressMonitor());
+
+	/**
+	 * Updates the selected project to contain the selected extension. The
+	 * extensions are identified using an identifier and extension point
+	 * together; old extensions are replaced with the new ones, other extensions
+	 * are kept intact.
+	 * 
+	 * @param project
+	 * @param contributedExtensions
+	 * @throws CoreException
+	 */
+	public static void ensureExtensions(IProject project,
+			Iterable<IPluginExtension> contributedExtensions)
+			throws CoreException {
+		ensureExtensions(project, contributedExtensions,
+				new NullProgressMonitor());
 	}
-	
+
+	/**
+	 * Updates the selected project to contain the selected extension. The
+	 * extensions are identified using an identifier and extension point
+	 * together; old extensions are replaced with the new ones, other extensions
+	 * are kept intact.
+	 * 
+	 * @param project
+	 * @param contributedExtensions
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	@SuppressWarnings("restriction")
-	public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions, IProgressMonitor monitor)  {
-		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap.create();
+	public static void ensureExtensions(IProject project,
+			Iterable<IPluginExtension> contributedExtensions,
+			IProgressMonitor monitor) throws CoreException {
+		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap
+				.create();
 		for (IPluginExtension extension : contributedExtensions) {
 			extensionMap.put(extension.getId(), extension);
 		}
+		// XXX Using two APIs to extension generation: one to read and one to
+		// write
 		IFile pluginXml = PDEProject.getPluginXml(project);
-		IPluginModel plugin = (IPluginModel)PDECore.getDefault().getModelManager().findModel(project);
+		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
+				.getModelManager().findModel(project);
 		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
 		fModel.setEditable(true);
-		try {
-			fModel.load();
-			//Storing a write-only plugin.xml model
-			IExtensions extensions = fModel.getExtensions();
-			//Storing a read-only plugin.xml model
-			if (plugin != null) {
-				IExtensions readExtension = plugin.getExtensions();
-				nextExtension: for (IPluginExtension extension : readExtension.getExtensions()) {
-					String id = extension.getId().substring(project.getName().length() + 1);
-					System.out.println("[READ]" + id);
-					if (extensionMap.containsKey(id)) {						
-						String point = extension.getPoint();
-						for (IPluginExtension ex : extensionMap.get(id)) {
-							if (ex.getPoint().equals(point)) {
-								continue nextExtension;
-							}
+		fModel.load();
+		// Storing a write-only plugin.xml model
+		IExtensions extensions = fModel.getExtensions();
+		// Storing a read-only plugin.xml model
+		if (plugin != null) {
+			IExtensions readExtension = plugin.getExtensions();
+			nextExtension: for (IPluginExtension extension : readExtension
+					.getExtensions()) {
+				String id = extension.getId().substring(
+						project.getName().length() + 1);
+				System.out.println("[READ]" + id);
+				if (extensionMap.containsKey(id)) {
+					String point = extension.getPoint();
+					for (IPluginExtension ex : extensionMap.get(id)) {
+						if (ex.getPoint().equals(point)) {
+							continue nextExtension;
 						}
 					}
-					IPluginExtension cloneExtension = fModel.createExtension();
-					System.out.println("[CLONE]" + id);
-					cloneExtension.setId(id);
-					cloneExtension.setName(extension.getName());
-					cloneExtension.setPoint(extension.getPoint());
-					for (IPluginObject obj : extension.getChildren()) {						
-						cloneExtension.add(obj);
-					}
-					cloneExtension.setInTheModel(true);
-					extensions.add(cloneExtension);
 				}
-				for (IPluginExtensionPoint point : readExtension
-						.getExtensionPoints()) {
-					extensions.add(point);
+				// XXX cloning extensions to remove project name prefixes
+				IPluginExtension cloneExtension = fModel.createExtension();
+				System.out.println("[CLONE]" + id);
+				cloneExtension.setId(id);
+				cloneExtension.setName(extension.getName());
+				cloneExtension.setPoint(extension.getPoint());
+				for (IPluginObject obj : extension.getChildren()) {
+					cloneExtension.add(obj);
 				}
+				cloneExtension.setInTheModel(true);
+				extensions.add(cloneExtension);
 			}
-			for (IPluginExtension contribExtension : contributedExtensions) {
-				System.out.println("[WRITE]" + contribExtension.getId());
-				extensions.add(contribExtension);
-				contribExtension.setInTheModel(true);
+			for (IPluginExtensionPoint point : readExtension
+					.getExtensionPoints()) {
+				extensions.add(point);
 			}
-			fModel.save();
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
+		for (IPluginExtension contribExtension : contributedExtensions) {
+			System.out.println("[WRITE]" + contribExtension.getId());
+			extensions.add(contribExtension);
+			contribExtension.setInTheModel(true);
+		}
+		fModel.save();
 	}
 }

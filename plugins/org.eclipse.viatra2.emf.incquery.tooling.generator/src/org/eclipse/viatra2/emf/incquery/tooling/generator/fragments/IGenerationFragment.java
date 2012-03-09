@@ -36,8 +36,24 @@ public interface IGenerationFragment {
 	 */
 	public String[] getProjectDependencies();
 	
+	/**
+	 * Executes code generation for a selected pattern. All resulting files
+	 * should be placed using the file system access component.
+	 * 
+	 * @param pattern
+	 * @param fsa
+	 */
 	public void generateFiles(Pattern pattern, IFileSystemAccess fsa);
 
 	//public Iterable<JvmGenericType> inferFiles(Pattern pattern);
+	/**
+	 * Returns a collection of extension contributions for the selected pattern.
+	 * The {@link ExtensionGeneration} parameter provides a builder API for
+	 * Xtend-based generators to have a readable generator.
+	 * 
+	 * @param pattern
+	 * @param exGen
+	 * @return a collection of plugin extensions
+	 */
 	public Iterable<IPluginExtension> extensionContribution(Pattern pattern, ExtensionGenerator exGen);
 }

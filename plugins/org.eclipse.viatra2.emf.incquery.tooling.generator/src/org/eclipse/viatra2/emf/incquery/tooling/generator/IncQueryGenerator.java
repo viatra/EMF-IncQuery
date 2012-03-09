@@ -74,7 +74,9 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					packageNames.add(util.getPackageName((Pattern) obj));
 				}
 			}
+			// Exporting packages from the main project
 			ProjectGenerationHelper.ensurePackageExports(project, packageNames);
+			// Loading extensions to the generated projects
 			for (IProject proj : extensionMap.keySet()) {
 				ProjectGenerationHelper.ensureExtensions(proj, extensionMap.get(proj));
 			}
@@ -90,43 +92,57 @@ public class IncQueryGenerator extends JvmModelGenerator {
 			injector.injectMembers(fragment);
 			System.out.println(pattern.getName() + ": "
 					+ fragment.getClass().getCanonicalName());
-			EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
 			IProject targetProject = createOrGetTargetProject(modelProject,
 					fragment);
-			fsa.setProject(targetProject);
-			fsa.setMonitor(new NullProgressMonitor());
-			Map<String, OutputConfiguration> outputs = new HashMap<String, OutputConfiguration>(); 
-			for (OutputConfiguration conf : outputConfigurationProvider.getOutputConfigurations(targetProject)) {
-				outputs.put(conf.getName(), conf);
-			}
-			fsa.setOutputConfigurations(outputs);
-			fsa.setPostProcessor(new EclipseResourceFileSystemAccess2.IFileCallback() {
-				
-				public boolean beforeFileDeletion(IFile file) {
-					return true;
-				}
-				
-				public void afterFileUpdate(IFile file) {
-					handleFileAccess(file);
-				}
-
-				public void afterFileCreation(IFile file) {
-					handleFileAccess(file);
-				}
-				
-				protected void handleFileAccess(IFile file) {
-				}
-				
-			});
+			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
 //			for (JvmGenericType type : fragment.inferFiles(pattern)) {
 //				internalDoGenerate(type, fsa);
 //			}
 			fragment.generateFiles(pattern, fsa);
+			//Generating Eclipse extensions
 			ExtensionGenerator generator = new ExtensionGenerator();
 			generator.setProject(targetProject);
 			Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, generator);
+			//Gathering all registered extensions together to avoid unnecessary plugin.xml modifications
+			//Both for performance and for avoiding race conditions
 			extensionMap.putAll(targetProject, extensionContribution);
 		}
+	}
+
+	/**
+	 * Calculates a file system access component for the selected target project. This is required for code generation API.
+	 * @param targetProject
+	 * @return an initialized file system access component for the 
+	 */
+	EclipseResourceFileSystemAccess2 createProjectFileSystemAccess(
+			IProject targetProject) {
+		EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
+		fsa.setProject(targetProject);
+		fsa.setMonitor(new NullProgressMonitor());
+		Map<String, OutputConfiguration> outputs = new HashMap<String, OutputConfiguration>(); 
+		for (OutputConfiguration conf : outputConfigurationProvider.getOutputConfigurations(targetProject)) {
+			outputs.put(conf.getName(), conf);
+		}
+		fsa.setOutputConfigurations(outputs);
+		fsa.setPostProcessor(new EclipseResourceFileSystemAccess2.IFileCallback() {
+			
+			public boolean beforeFileDeletion(IFile file) {
+				return true;
+			}
+			
+			public void afterFileUpdate(IFile file) {
+				handleFileAccess(file);
+			}
+
+			public void afterFileCreation(IFile file) {
+				handleFileAccess(file);
+			}
+			
+			protected void handleFileAccess(IFile file) {
+			}
+			
+		});
+		return fsa;
 	}
 
 	private IProject createOrGetTargetProject(IProject modelProject,
