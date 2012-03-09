@@ -5,10 +5,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.generator.IFileSystemAccess
 import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 class SampleUIGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	@Inject 
+		IQualifiedNameProvider nameProvider
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.generateFile(pattern.packagePath + "/handlers/" + pattern.name + "Handler.java", pattern.patternHandler)
@@ -21,6 +25,17 @@ class SampleUIGenerator implements IGenerationFragment {
 	
 	override getProjectPostfix() {
 		"ui"
+	}
+	
+	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+		newArrayList(
+		exGen.contribExtension(nameProvider.getFullyQualifiedName(pattern).toString + "Command", "org.eclipse.ui.commands") [
+			exGen.contribElement(it, "command") [
+				exGen.contribAttribute(it, "commandId", nameProvider.getFullyQualifiedName(pattern).toString + "CommandId")
+				exGen.contribAttribute(it, "style", "push")
+			]
+		]
+		)
 	}
 	
 	def patternHandler(Pattern pattern) '''
