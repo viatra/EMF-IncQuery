@@ -29,11 +29,12 @@ Export-Package: org.eclipse.viatra2.patternlanguage.core,
  org.eclipse.viatra2.patternlanguage.core.formatting,
  org.eclipse.viatra2.patternlanguage.core.helper,
  org.eclipse.viatra2.patternlanguage.core.jvmmodel,
+ org.eclipse.viatra2.patternlanguage.core.naming,
+ org.eclipse.viatra2.patternlanguage.core.patternLanguage,
+ org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl,
+ org.eclipse.viatra2.patternlanguage.core.patternLanguage.util,
  org.eclipse.viatra2.patternlanguage.core.scoping,
  org.eclipse.viatra2.patternlanguage.core.serializer,
  org.eclipse.viatra2.patternlanguage.core.services,
- org.eclipse.viatra2.patternlanguage.core.validation,
- org.eclipse.viatra2.patternlanguage.core.patternLanguage,
- org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl,
- org.eclipse.viatra2.patternlanguage.core.patternLanguage.util
+ org.eclipse.viatra2.patternlanguage.core.validation
 

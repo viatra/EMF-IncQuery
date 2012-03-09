@@ -17,11 +17,11 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.naming.SimpleNameProvider;
+import org.eclipse.xtext.xbase.scoping.XbaseQualifiedNameProvider;
 
 import com.google.inject.Inject;
 
-public class PatternNameProvider extends SimpleNameProvider {
+public class PatternNameProvider extends XbaseQualifiedNameProvider {
 
 	@Inject
 	IQualifiedNameConverter nameConverter;
