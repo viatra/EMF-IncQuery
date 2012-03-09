@@ -455,7 +455,6 @@ public abstract class ProjectGenerationHelper {
 					.getExtensions()) {
 				String id = extension.getId().substring(
 						project.getName().length() + 1);
-				System.out.println("[READ]" + id);
 				if (extensionMap.containsKey(id)) {
 					String point = extension.getPoint();
 					for (IPluginExtension ex : extensionMap.get(id)) {
@@ -466,7 +465,6 @@ public abstract class ProjectGenerationHelper {
 				}
 				// XXX cloning extensions to remove project name prefixes
 				IPluginExtension cloneExtension = fModel.createExtension();
-				System.out.println("[CLONE]" + id);
 				cloneExtension.setId(id);
 				cloneExtension.setName(extension.getName());
 				cloneExtension.setPoint(extension.getPoint());
@@ -482,7 +480,6 @@ public abstract class ProjectGenerationHelper {
 			}
 		}
 		for (IPluginExtension contribExtension : contributedExtensions) {
-			System.out.println("[WRITE]" + contribExtension.getId());
 			extensions.add(contribExtension);
 			contribExtension.setInTheModel(true);
 		}

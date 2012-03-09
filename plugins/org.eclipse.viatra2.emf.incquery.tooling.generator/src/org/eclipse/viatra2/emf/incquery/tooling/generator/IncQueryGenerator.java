@@ -90,8 +90,6 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(pattern)) {
 			injector.injectMembers(fragment);
-			System.out.println(pattern.getName() + ": "
-					+ fragment.getClass().getCanonicalName());
 			IProject targetProject = createOrGetTargetProject(modelProject,
 					fragment);
 			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
