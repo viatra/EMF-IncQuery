@@ -7,11 +7,10 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.IFileSystemAccess;
-import org.eclipse.xtext.naming.IQualifiedNameProvider;
-import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
@@ -21,9 +20,6 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 public class SampleUIGenerator implements IGenerationFragment {
   @Inject
   private EMFPatternLanguageJvmModelInferrerUtil _eMFPatternLanguageJvmModelInferrerUtil;
-  
-  @Inject
-  private IQualifiedNameProvider nameProvider;
   
   public void generateFiles(final Pattern pattern, final IFileSystemAccess fsa) {
     String _packagePath = this._eMFPatternLanguageJvmModelInferrerUtil.getPackagePath(pattern);
@@ -45,17 +41,15 @@ public class SampleUIGenerator implements IGenerationFragment {
   }
   
   public Iterable<IPluginExtension> extensionContribution(final Pattern pattern, final ExtensionGenerator exGen) {
-    QualifiedName _fullyQualifiedName = this.nameProvider.getFullyQualifiedName(pattern);
-    String _string = _fullyQualifiedName.toString();
-    String _operator_plus = StringExtensions.operator_plus(_string, "Command");
+    String _fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+    String _operator_plus = StringExtensions.operator_plus(_fullyQualifiedName, "Command");
     final Procedure1<IPluginExtension> _function = new Procedure1<IPluginExtension>() {
         public void apply(final IPluginExtension it) {
           final Procedure1<IPluginElement> _function = new Procedure1<IPluginElement>() {
               public void apply(final IPluginElement it) {
                 {
-                  QualifiedName _fullyQualifiedName = SampleUIGenerator.this.nameProvider.getFullyQualifiedName(pattern);
-                  String _string = _fullyQualifiedName.toString();
-                  String _operator_plus = StringExtensions.operator_plus(_string, "CommandId");
+                  String _fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+                  String _operator_plus = StringExtensions.operator_plus(_fullyQualifiedName, "CommandId");
                   exGen.contribAttribute(it, "commandId", _operator_plus);
                   exGen.contribAttribute(it, "style", "push");
                 }

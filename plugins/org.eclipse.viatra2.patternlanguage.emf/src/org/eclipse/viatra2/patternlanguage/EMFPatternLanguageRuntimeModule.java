@@ -11,7 +11,6 @@
 package org.eclipse.viatra2.patternlanguage;
 
 import org.eclipse.viatra2.patternlanguage.core.scoping.MyAbstractDeclarativeScopeProvider;
-import org.eclipse.viatra2.patternlanguage.naming.EmfPatternLanguageNameProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.xtext.linking.ILinkingService;
@@ -37,11 +36,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	public void configureIScopeProviderDelegate(Binder binder) {
 		binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(EMFPatternLanguageDeclarativeScopeProvider.class);
 		binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(XbaseImportedNamespaceScopeProvider.class);
-	}
-	
-	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-	public Class<? extends org.eclipse.xtext.naming.IQualifiedNameProvider> bindIQualifiedNameProvider() {
-		return EmfPatternLanguageNameProvider.class;
 	}
 	
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
