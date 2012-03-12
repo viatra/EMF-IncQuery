@@ -278,8 +278,7 @@ public class SampleUIGenerator implements IGenerationFragment {
     _builder.append("\t");
     _builder.append("}");
     _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
+    _builder.append("}\t");
     _builder.newLine();
     return _builder;
   }

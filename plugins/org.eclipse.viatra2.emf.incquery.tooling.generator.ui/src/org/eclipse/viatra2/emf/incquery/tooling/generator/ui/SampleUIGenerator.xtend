@@ -109,8 +109,7 @@ class SampleUIGenerator implements IGenerationFragment {
 				//returns the match set in a serialized form
 				return builder.toString();
 			}
-		}
-		
+		}	
 	'''
 	
 }
