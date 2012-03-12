@@ -8,12 +8,10 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.serializer.ISerializer
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -25,6 +23,8 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject ISerializer serializer
 	Logger logger = Logger::getLogger(getClass())
+	private String MULTILINE_COMMENT_PATTERN = "/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/"
+	private String SINGLELINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)"
 	
 	/**
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
@@ -157,18 +157,29 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	def private serialize(EObject eObject) {
   		try {
   			// This call sometimes causes ConcurrentModificationException
-			serializer.serialize(eObject).replaceAll("\"", "\\\\\"")
+			val serializedObject = serializer.serialize(eObject)
 			// Another way to serialize the eObject, uses the current node model
 			// simple getText returns the currently text, that parsed by the editor 
 //			NodeModelUtils::getNode(eObject).text.replaceAll("\"", "\\\\\"")
 			// getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
+			return escape(serializedObject)
 		} catch (Exception e) {
 			if (logger != null) {
 				logger.error("Error when serializing " + eObject.eClass.name, e)	
 			}
 			return null
 		}
+  	}
+  	
+  	def private escape(String escapable) {
+  		// escape double quotes
+  		var escapedString = escapable.replaceAll("\"", "\\\\\"")
+  		// escape javadoc comments to single space
+  		// FIXME need a better replacement, or better way to do this
+  		escapedString = escapedString.replaceAll(MULTILINE_COMMENT_PATTERN, " ")
+  		escapedString = escapedString.replaceAll(SINGLELINE_COMMENT_PATTERN, " ")
+  		return escapedString
   	}
   	
   	/**

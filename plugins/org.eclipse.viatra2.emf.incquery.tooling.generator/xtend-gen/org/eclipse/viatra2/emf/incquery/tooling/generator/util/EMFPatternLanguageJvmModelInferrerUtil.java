@@ -47,6 +47,10 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     }
   }.apply();
   
+  private String MULTILINE_COMMENT_PATTERN = "/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/";
+  
+  private String SINGLELINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)";
+  
   /**
    * Returns the MatcherFactoryClass name based on the Pattern's name
    */
@@ -249,11 +253,13 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
    * Serializes EObject to a String representation. Escapes only the double qoutes.
    */
   private String serialize(final EObject eObject) {
-    String _xtrycatchfinallyexpression = null;
     try {
-      String _serialize = this.serializer.serialize(eObject);
-      String _replaceAll = _serialize.replaceAll("\"", "\\\\\"");
-      _xtrycatchfinallyexpression = _replaceAll;
+      {
+        String _serialize = this.serializer.serialize(eObject);
+        final String serializedObject = _serialize;
+        String _escape = this.escape(serializedObject);
+        return _escape;
+      }
     } catch (final Throwable _t) {
       if (_t instanceof Exception) {
         final Exception e = (Exception)_t;
@@ -271,7 +277,16 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
         throw Exceptions.sneakyThrow(_t);
       }
     }
-    return _xtrycatchfinallyexpression;
+  }
+  
+  private String escape(final String escapable) {
+      String _replaceAll = escapable.replaceAll("\"", "\\\\\"");
+      String escapedString = _replaceAll;
+      String _replaceAll_1 = escapedString.replaceAll(this.MULTILINE_COMMENT_PATTERN, " ");
+      escapedString = _replaceAll_1;
+      String _replaceAll_2 = escapedString.replaceAll(this.SINGLELINE_COMMENT_PATTERN, " ");
+      escapedString = _replaceAll_2;
+      return escapedString;
   }
   
   /**
