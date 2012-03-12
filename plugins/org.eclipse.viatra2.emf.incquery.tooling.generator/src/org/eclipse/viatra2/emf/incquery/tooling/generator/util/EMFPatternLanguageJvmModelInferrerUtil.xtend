@@ -23,8 +23,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject ISerializer serializer
 	Logger logger = Logger::getLogger(getClass())
-	private String MULTILINE_COMMENT_PATTERN = "/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/"
-	private String SINGLELINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)"
+	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 	
 	/**
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
@@ -178,7 +177,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   		// escape javadoc comments to single space
   		// FIXME need a better replacement, or better way to do this
   		escapedString = escapedString.replaceAll(MULTILINE_COMMENT_PATTERN, " ")
-  		escapedString = escapedString.replaceAll(SINGLELINE_COMMENT_PATTERN, " ")
   		return escapedString
   	}
   	

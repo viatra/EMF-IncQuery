@@ -47,9 +47,7 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     }
   }.apply();
   
-  private String MULTILINE_COMMENT_PATTERN = "/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/";
-  
-  private String SINGLELINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)";
+  private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)";
   
   /**
    * Returns the MatcherFactoryClass name based on the Pattern's name
@@ -284,8 +282,6 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
       String escapedString = _replaceAll;
       String _replaceAll_1 = escapedString.replaceAll(this.MULTILINE_COMMENT_PATTERN, " ");
       escapedString = _replaceAll_1;
-      String _replaceAll_2 = escapedString.replaceAll(this.SINGLELINE_COMMENT_PATTERN, " ");
-      escapedString = _replaceAll_2;
       return escapedString;
   }
   
