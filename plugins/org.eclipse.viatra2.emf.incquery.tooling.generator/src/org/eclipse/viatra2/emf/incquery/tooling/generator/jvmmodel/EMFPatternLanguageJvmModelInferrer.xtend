@@ -20,6 +20,7 @@ import org.eclipse.xtext.util.IAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.apache.log4j.Logger
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -30,6 +31,8 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguag
  * @author Mark Czotter     
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
+
+	Logger logger = Logger::getLogger(getClass())
 
     /**
      * convenience API to build and initialize JvmTypes and their members.
@@ -53,29 +56,34 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
    		if (pattern.name.nullOrEmpty) return;
+   		println("Inferring Jvm Model for " + pattern.name);
 	   	val packageName = pattern.getPackageName
-	   	// infer Match class
-	   	val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
-	   	val matchClassRef = types.createTypeRef(matchClass)
-	   	// infer a Matcher class
-	   	val matcherClass = pattern.inferMatcherClass(isPrelinkingPhase, packageName, matchClassRef)
-	   	val matcherClassRef = types.createTypeRef(matcherClass)
-	   	// infer MatcherFactory class
-	   	val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
-	   	// infer Processor class
-	   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
-	   	// add Factory field to Matcher class
-	   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
-	   		it.visibility = JvmVisibility::PUBLIC
-	   		it.setStatic(true)
-			it.setFinal(true)
-			it.setInitializer([''' new «matcherFactoryClass.simpleName»()'''])
-	   	]
-	   	// accept new classes
-	   	acceptor.accept(matchClass)
-	   	acceptor.accept(matcherClass)
-	   	acceptor.accept(matcherFactoryClass)
-	   	acceptor.accept(processorClass)
+	   	try {
+			// infer Match class
+		   	val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
+		   	val matchClassRef = types.createTypeRef(matchClass)
+		   	// infer a Matcher class
+		   	val matcherClass = pattern.inferMatcherClass(isPrelinkingPhase, packageName, matchClassRef)
+		   	val matcherClassRef = types.createTypeRef(matcherClass)
+		   	// infer MatcherFactory class
+		   	val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
+		   	// infer Processor class
+		   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
+		   	// add Factory field to Matcher class
+		   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
+		   		it.visibility = JvmVisibility::PUBLIC
+		   		it.setStatic(true)
+				it.setFinal(true)
+				it.setInitializer([''' new «matcherFactoryClass.simpleName»()'''])
+		   	]
+		   	// accept new classes
+		   	acceptor.accept(matchClass)
+		   	acceptor.accept(matcherClass)
+		   	acceptor.accept(matcherFactoryClass)
+		   	acceptor.accept(processorClass)	   		
+	   	} catch(Exception e) {
+	   		logger.error("Exception during Jvm Model Infer", e)
+	   	}
    	}
    	
 }
