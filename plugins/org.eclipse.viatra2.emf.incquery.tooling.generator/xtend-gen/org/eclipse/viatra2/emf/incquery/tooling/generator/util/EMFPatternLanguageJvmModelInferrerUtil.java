@@ -19,6 +19,8 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.serializer.ISerializer;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -253,8 +255,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   private String serialize(final EObject eObject) {
     try {
       {
-        String _serialize = this.serializer.serialize(eObject);
-        final String serializedObject = _serialize;
+        ICompositeNode _node = NodeModelUtils.getNode(eObject);
+        String _text = _node.getText();
+        final String serializedObject = _text;
         String _escape = this.escape(serializedObject);
         return _escape;
       }

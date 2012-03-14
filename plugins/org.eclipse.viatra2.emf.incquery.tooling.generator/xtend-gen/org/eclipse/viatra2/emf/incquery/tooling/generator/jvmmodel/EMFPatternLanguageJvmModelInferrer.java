@@ -2,6 +2,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel;
 
 import com.google.inject.Inject;
 import java.util.Arrays;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.PatternMatchClassInferrer;
@@ -23,7 +24,10 @@ import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
@@ -37,6 +41,14 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
  */
 @SuppressWarnings("all")
 public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
+  private Logger logger = new Function0<Logger>() {
+    public Logger apply() {
+      Class<? extends Object> _class = EMFPatternLanguageJvmModelInferrer.this.getClass();
+      Logger _logger = Logger.getLogger(_class);
+      return _logger;
+    }
+  }.apply();
+  
   /**
    * convenience API to build and initialize JvmTypes and their members.
    */
@@ -76,51 +88,65 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       if (_isNullOrEmpty) {
         return;
       }
+      String _name_1 = pattern.getName();
+      String _operator_plus = StringExtensions.operator_plus("Inferring Jvm Model for ", _name_1);
+      InputOutput.<String>println(_operator_plus);
       String _packageName = this._eMFPatternLanguageJvmModelInferrerUtil.getPackageName(pattern);
       final String packageName = _packageName;
-      JvmDeclaredType _inferMatchClass = this._patternMatchClassInferrer.inferMatchClass(pattern, isPrelinkingPhase, packageName);
-      final JvmDeclaredType matchClass = _inferMatchClass;
-      JvmParameterizedTypeReference _createTypeRef = this.types.createTypeRef(matchClass);
-      final JvmParameterizedTypeReference matchClassRef = _createTypeRef;
-      JvmDeclaredType _inferMatcherClass = this._patternMatcherClassInferrer.inferMatcherClass(pattern, isPrelinkingPhase, packageName, matchClassRef);
-      final JvmDeclaredType matcherClass = _inferMatcherClass;
-      JvmParameterizedTypeReference _createTypeRef_1 = this.types.createTypeRef(matcherClass);
-      final JvmParameterizedTypeReference matcherClassRef = _createTypeRef_1;
-      JvmDeclaredType _inferMatcherFactoryClass = this._patternMatcherFactoryClassInferrer.inferMatcherFactoryClass(pattern, isPrelinkingPhase, packageName, matchClassRef, matcherClassRef);
-      final JvmDeclaredType matcherFactoryClass = _inferMatcherFactoryClass;
-      JvmDeclaredType _inferProcessorClass = this._patternMatchProcessorClassInferrer.inferProcessorClass(pattern, isPrelinkingPhase, packageName, matchClassRef);
-      final JvmDeclaredType processorClass = _inferProcessorClass;
-      EList<JvmMember> _members = matcherClass.getMembers();
-      JvmTypeReference _cloneWithProxies = this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
-      JvmTypeReference _cloneWithProxies_1 = this._eMFJvmTypesBuilder.cloneWithProxies(matcherClassRef);
-      JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory.class, _cloneWithProxies, _cloneWithProxies_1);
-      final Procedure1<JvmField> _function = new Procedure1<JvmField>() {
-          public void apply(final JvmField it) {
-            {
-              it.setVisibility(JvmVisibility.PUBLIC);
-              it.setStatic(true);
-              it.setFinal(true);
-              final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
-                  public CharSequence apply(final ImportManager it) {
-                    StringConcatenation _builder = new StringConcatenation();
-                    _builder.append(" ");
-                    _builder.append("new ");
-                    String _simpleName = matcherFactoryClass.getSimpleName();
-                    _builder.append(_simpleName, " ");
-                    _builder.append("()");
-                    return _builder;
-                  }
-                };
-              EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setInitializer(it, _function);
-            }
-          }
-        };
-      JvmField _field = this._eMFJvmTypesBuilder.toField(pattern, "FACTORY", _newTypeRef, _function);
-      CollectionExtensions.<JvmField>operator_add(_members, _field);
-      acceptor.accept(matchClass);
-      acceptor.accept(matcherClass);
-      acceptor.accept(matcherFactoryClass);
-      acceptor.accept(processorClass);
+      try {
+        {
+          JvmDeclaredType _inferMatchClass = this._patternMatchClassInferrer.inferMatchClass(pattern, isPrelinkingPhase, packageName);
+          final JvmDeclaredType matchClass = _inferMatchClass;
+          JvmParameterizedTypeReference _createTypeRef = this.types.createTypeRef(matchClass);
+          final JvmParameterizedTypeReference matchClassRef = _createTypeRef;
+          JvmDeclaredType _inferMatcherClass = this._patternMatcherClassInferrer.inferMatcherClass(pattern, isPrelinkingPhase, packageName, matchClassRef);
+          final JvmDeclaredType matcherClass = _inferMatcherClass;
+          JvmParameterizedTypeReference _createTypeRef_1 = this.types.createTypeRef(matcherClass);
+          final JvmParameterizedTypeReference matcherClassRef = _createTypeRef_1;
+          JvmDeclaredType _inferMatcherFactoryClass = this._patternMatcherFactoryClassInferrer.inferMatcherFactoryClass(pattern, isPrelinkingPhase, packageName, matchClassRef, matcherClassRef);
+          final JvmDeclaredType matcherFactoryClass = _inferMatcherFactoryClass;
+          JvmDeclaredType _inferProcessorClass = this._patternMatchProcessorClassInferrer.inferProcessorClass(pattern, isPrelinkingPhase, packageName, matchClassRef);
+          final JvmDeclaredType processorClass = _inferProcessorClass;
+          EList<JvmMember> _members = matcherClass.getMembers();
+          JvmTypeReference _cloneWithProxies = this._eMFJvmTypesBuilder.cloneWithProxies(matchClassRef);
+          JvmTypeReference _cloneWithProxies_1 = this._eMFJvmTypesBuilder.cloneWithProxies(matcherClassRef);
+          JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(pattern, org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory.class, _cloneWithProxies, _cloneWithProxies_1);
+          final Procedure1<JvmField> _function = new Procedure1<JvmField>() {
+              public void apply(final JvmField it) {
+                {
+                  it.setVisibility(JvmVisibility.PUBLIC);
+                  it.setStatic(true);
+                  it.setFinal(true);
+                  final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
+                      public CharSequence apply(final ImportManager it) {
+                        StringConcatenation _builder = new StringConcatenation();
+                        _builder.append(" ");
+                        _builder.append("new ");
+                        String _simpleName = matcherFactoryClass.getSimpleName();
+                        _builder.append(_simpleName, " ");
+                        _builder.append("()");
+                        return _builder;
+                      }
+                    };
+                  EMFPatternLanguageJvmModelInferrer.this._eMFJvmTypesBuilder.setInitializer(it, _function);
+                }
+              }
+            };
+          JvmField _field = this._eMFJvmTypesBuilder.toField(pattern, "FACTORY", _newTypeRef, _function);
+          CollectionExtensions.<JvmField>operator_add(_members, _field);
+          acceptor.accept(matchClass);
+          acceptor.accept(matcherClass);
+          acceptor.accept(matcherFactoryClass);
+          acceptor.accept(processorClass);
+        }
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          this.logger.error("Exception during Jvm Model Infer", e);
+        } else {
+          throw Exceptions.sneakyThrow(_t);
+        }
+      }
   }
   
   public void infer(final EObject pattern, final IAcceptor<JvmDeclaredType> acceptor, final boolean isPrelinkingPhase) {
