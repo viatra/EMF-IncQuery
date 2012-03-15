@@ -2,12 +2,14 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.databinding
 
 import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl
+import org.eclipse.xtext.generator.IFileSystemAccess
+
+import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 
 class DatabindingGenerator implements IGenerationFragment {
 	
@@ -26,14 +28,40 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+		var tmp = ""
+		
+		for (a : pattern.annotations) {
+			if (a.name.matches("PatternUI")) {
+				for (ap : a.parameters) {
+					if (ap.name.matches("message")) {
+						tmp = (ap.value as StringValueImpl).value
+					}
+				}
+			}
+		}
+		
+		val message = tmp;
+		
 		newArrayList(
-		exGen.contribExtension(pattern.getFullyQualifiedName + "Command", "org.eclipse.ui.commands") [
-			exGen.contribElement(it, "command") [
-				exGen.contribAttribute(it, "commandId", pattern.getFullyQualifiedName + "CommandId")
-				exGen.contribAttribute(it, "style", "push")
+		exGen.contribExtension("", "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding") [
+			exGen.contribElement(it, "databinding") [
+				exGen.contribAttribute(it, "class", pattern.packagePath+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
+				exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
+				exGen.contribAttribute(it, "message", message)
+				exGen.contribAttribute(it, "matcherClass", pattern.packagePath+"."+pattern.matcherClassName)
 			]
 		]
 		)
+	}
+	
+	def getElementOfObservableValue(Annotation a, String literal) {
+		for (ap : a.parameters) {
+			if (ap.name.matches(literal)) {
+				return (ap.value as StringValueImpl).value
+			}
+		}
+		
+		return null
 	}
 	
 	def patternHandler(Pattern pattern) '''
@@ -54,21 +82,15 @@ class DatabindingGenerator implements IGenerationFragment {
 
 			private Map<String, String> parameterMap;
 		
-			public TestDatabindingAdapter() {
+			public «pattern.name.toFirstUpper»DatabindingAdapter() {
 				parameterMap = new HashMap<String, String>();
 				«FOR annotation : pattern.annotations»
 				«IF annotation.name.matches("ObservableValue")»
-				«var name = ""»
-				«var expression = ""»
-					«FOR annotationParameter : annotation.parameters»
-						«IF annotationParameter.name.matches("name")»
-							« name = (annotationParameter.value as StringValueImpl).value»	
-						«ENDIF»
-						«IF annotationParameter.name.matches("expression")»
-							«expression = (annotationParameter.value as StringValueImpl).value»	
-						«ENDIF»
-					«ENDFOR»
-				parameterMap.put("«name»","«expression»");
+					«val name = getElementOfObservableValue(annotation, "name")»
+					«val expression = getElementOfObservableValue(annotation, "expression")»
+					«IF (name != null) && (expression != null)»
+						parameterMap.put("«name»","«expression»");
+					«ENDIF»
 				«ENDIF»
 				«ENDFOR»
 			}
