@@ -12,6 +12,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguage
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
 
 /**
  * @author Mark Czotter
@@ -26,8 +27,8 @@ class XmiOutputBuilder {
 	 */
 	def build(ResourceSet resourceSet, IProject project) {
 		try {
-			val folder = project.getFolder("queries")
-			val file = folder.getFile("globalEiqModel.xmi")
+			val folder = project.getFolder(BaseGeneratedMatcherFactory::XMI_OUTPUT_FOLDER)
+			val file = folder.getFile(BaseGeneratedMatcherFactory::GLOBAL_EIQ_FILENAME)
 			if (!folder.exists) {
 				folder.create(IResource::DEPTH_INFINITE, false, null)
 			}
@@ -58,7 +59,7 @@ class XmiOutputBuilder {
 					xmiModelRoot.patterns.add(p)
 				}	
 			}
-			// then iterate over all added patterns and change the patternRef
+			// then iterate over all added PatternCompositonConstraint and change the patternRef
 			for (constraint : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
 				val fqn = constraint.patternRef.fullyQualifiedName.toString
 				val p = fqnToPatternMap.get(fqn)

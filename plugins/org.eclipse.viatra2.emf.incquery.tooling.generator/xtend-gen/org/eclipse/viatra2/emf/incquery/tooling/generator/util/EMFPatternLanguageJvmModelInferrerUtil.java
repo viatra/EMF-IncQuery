@@ -3,10 +3,16 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.util;
 import com.google.inject.Inject;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
@@ -50,6 +56,25 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   }.apply();
   
   private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)";
+  
+  @Inject
+  private IWorkspaceRoot workspaceRoot;
+  
+  public String bundleName(final Pattern pattern) {
+    String _xblockexpression = null;
+    {
+      Resource _eResource = pattern.eResource();
+      URI _uRI = _eResource.getURI();
+      String _platformString = _uRI.toPlatformString(true);
+      Path _path = new Path(_platformString);
+      IFile _file = this.workspaceRoot.getFile(_path);
+      IProject _project = _file.getProject();
+      final IProject project = _project;
+      String _name = project.getName();
+      _xblockexpression = (_name);
+    }
+    return _xblockexpression;
+  }
   
   /**
    * Returns the MatcherFactoryClass name based on the Pattern's name

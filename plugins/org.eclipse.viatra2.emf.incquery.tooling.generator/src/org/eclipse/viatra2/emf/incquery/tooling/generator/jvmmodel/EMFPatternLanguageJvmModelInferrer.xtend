@@ -56,9 +56,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
    		if (pattern.name.nullOrEmpty) return;
-   		println("Inferring Jvm Model for " + pattern.name);
-	   	val packageName = pattern.getPackageName
+   		logger.debug("Inferring Jvm Model for " + pattern.name);
 	   	try {
+	   		val packageName = pattern.getPackageName
 			// infer Match class
 		   	val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
 		   	val matchClassRef = types.createTypeRef(matchClass)

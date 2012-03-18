@@ -27,7 +27,6 @@ import org.eclipse.xtext.xbase.lib.CollectionExtensions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
@@ -90,11 +89,11 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
       }
       String _name_1 = pattern.getName();
       String _operator_plus = StringExtensions.operator_plus("Inferring Jvm Model for ", _name_1);
-      InputOutput.<String>println(_operator_plus);
-      String _packageName = this._eMFPatternLanguageJvmModelInferrerUtil.getPackageName(pattern);
-      final String packageName = _packageName;
+      this.logger.debug(_operator_plus);
       try {
         {
+          String _packageName = this._eMFPatternLanguageJvmModelInferrerUtil.getPackageName(pattern);
+          final String packageName = _packageName;
           JvmDeclaredType _inferMatchClass = this._patternMatchClassInferrer.inferMatchClass(pattern, isPrelinkingPhase, packageName);
           final JvmDeclaredType matchClass = _inferMatchClass;
           JvmParameterizedTypeReference _createTypeRef = this.types.createTypeRef(matchClass);

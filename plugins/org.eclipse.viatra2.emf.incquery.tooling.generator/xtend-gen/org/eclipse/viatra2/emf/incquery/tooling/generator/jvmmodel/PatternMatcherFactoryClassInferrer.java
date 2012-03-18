@@ -15,6 +15,8 @@ import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -35,6 +37,9 @@ public class PatternMatcherFactoryClassInferrer {
   
   @Inject
   private JavadocInferrer _javadocInferrer;
+  
+  @Inject
+  private IQualifiedNameProvider _iQualifiedNameProvider;
   
   /**
    * Infers the {@link IMatcherFactory} implementation class from {@link Pattern}.
@@ -113,8 +118,11 @@ public class PatternMatcherFactoryClassInferrer {
               final Function1<ImportManager,CharSequence> _function = new Function1<ImportManager,CharSequence>() {
                   public CharSequence apply(final ImportManager it) {
                     StringConcatenation _builder = new StringConcatenation();
-                    _builder.append("throw new UnsupportedOperationException();");
-                    _builder.newLine();
+                    _builder.append("return \"");
+                    String _bundleName = PatternMatcherFactoryClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.bundleName(pattern);
+                    _builder.append(_bundleName, "");
+                    _builder.append("\";");
+                    _builder.newLineIfNotEmpty();
                     return _builder;
                   }
                 };
@@ -122,7 +130,7 @@ public class PatternMatcherFactoryClassInferrer {
             }
           }
         };
-      JvmOperation _method_1 = this._eMFJvmTypesBuilder.toMethod(pattern, "patternString", _newTypeRef, _function_1);
+      JvmOperation _method_1 = this._eMFJvmTypesBuilder.toMethod(pattern, "getBundleName", _newTypeRef, _function_1);
       CollectionExtensions.<JvmOperation>operator_add(_members_1, _method_1);
       EList<JvmMember> _members_2 = matcherFactoryClass.getMembers();
       JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(pattern, java.lang.String.class);
@@ -137,8 +145,8 @@ public class PatternMatcherFactoryClassInferrer {
                   public CharSequence apply(final ImportManager it) {
                     StringConcatenation _builder = new StringConcatenation();
                     _builder.append("return \"");
-                    String _name = pattern.getName();
-                    _builder.append(_name, "");
+                    QualifiedName _fullyQualifiedName = PatternMatcherFactoryClassInferrer.this._iQualifiedNameProvider.getFullyQualifiedName(pattern);
+                    _builder.append(_fullyQualifiedName, "");
                     _builder.append("\";");
                     _builder.newLineIfNotEmpty();
                     return _builder;

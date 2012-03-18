@@ -13,6 +13,8 @@ import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.serializer.ISerializer
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.runtime.Path
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -25,6 +27,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject ISerializer serializer
 	Logger logger = Logger::getLogger(getClass())
 	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
+	@Inject	IWorkspaceRoot workspaceRoot
+	
+	def bundleName(Pattern pattern) {
+		val project = workspaceRoot.getFile(
+				new Path(pattern.eResource.getURI().toPlatformString(true)))
+				.getProject();
+		project.name
+	}
 	
 	/**
 	 * Returns the MatcherFactoryClass name based on the Pattern's name

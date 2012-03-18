@@ -10,6 +10,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 /**
  * {@link IMatcherFactory} implementation inferrer.
@@ -21,6 +22,7 @@ class PatternMatcherFactoryClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
+	@Inject extension IQualifiedNameProvider
 
 	/**
 	 * Infers the {@link IMatcherFactory} implementation class from {@link Pattern}.
@@ -48,21 +50,28 @@ class PatternMatcherFactoryClassInferrer {
 				return new «pattern.matcherClassName»(engine);
 			''']
 		]
-		matcherFactoryClass.members += pattern.toMethod("patternString", pattern.newTypeRef(typeof (String))) [
+//		matcherFactoryClass.members += pattern.toMethod("patternString", pattern.newTypeRef(typeof (String))) [
+//			it.visibility = JvmVisibility::PROTECTED
+//			it.annotations += pattern.toAnnotation(typeof (Override))
+//			it.body = ['''
+//«««				Serialize the PatternModel
+//«««				«pattern.eContainer.serializeToJava»
+//«««				return patternString;  
+//				throw new UnsupportedOperationException();
+//			''']
+//		]
+		matcherFactoryClass.members += pattern.toMethod("getBundleName", pattern.newTypeRef(typeof (String))) [
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
-«««				Serialize the PatternModel
-«««				«pattern.eContainer.serializeToJava»
-«««				return patternString;  
-				throw new UnsupportedOperationException();
+				return "«pattern.bundleName»";
 			''']
 		]
 		matcherFactoryClass.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof (String))) [
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
-				return "«pattern.name»";
+				return "«pattern.fullyQualifiedName»";
 			''']
 		]
   	}
