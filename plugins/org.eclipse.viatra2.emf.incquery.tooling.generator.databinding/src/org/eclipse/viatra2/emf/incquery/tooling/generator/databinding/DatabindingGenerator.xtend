@@ -20,7 +20,11 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	override getProjectDependencies() {
-		newArrayList("org.eclipse.core.databinding.property", "org.eclipse.emf.databinding", "org.eclipse.core.databinding.observable", "org.eclipse.viatra2.emf.incquery.databinding.runtime")
+		newArrayList("org.eclipse.core.databinding.property", 
+		"org.eclipse.emf.databinding", 
+		"org.eclipse.core.databinding.observable", 
+		"org.eclipse.viatra2.emf.incquery.databinding.runtime",
+		"org.eclipse.viatra2.emf.incquery.runtime")
 	}
 	
 	override getProjectPostfix() {
@@ -48,7 +52,7 @@ class DatabindingGenerator implements IGenerationFragment {
 				exGen.contribAttribute(it, "class", pattern.packagePath+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
 				exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
 				exGen.contribAttribute(it, "message", message)
-				exGen.contribAttribute(it, "matcherClass", pattern.packagePath+"."+pattern.matcherClassName)
+				exGen.contribAttribute(it, "matcherFactoryClass", pattern.packagePath+"."+pattern.matcherFactoryClassName)
 			]
 		]
 		)

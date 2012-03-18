@@ -73,13 +73,13 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="matcherClass" type="string" use="required">
+         <attribute name="matcherFactoryClass" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory:"/>
                </appinfo>
             </annotation>
          </attribute>
