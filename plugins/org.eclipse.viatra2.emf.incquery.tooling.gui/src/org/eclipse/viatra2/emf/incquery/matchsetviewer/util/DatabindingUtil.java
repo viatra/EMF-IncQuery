@@ -63,8 +63,7 @@ public class DatabindingUtil {
 						String[] tokens = patternName.split("\\.");
 						String pattern = tokens[tokens.length - 1];
 	
-						if (ce.getName().equals("databinding")
-								&& ce.getAttribute("patternName").equalsIgnoreCase(
+						if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(
 										pattern)) {
 							return ce.getAttribute("message");
 						}
