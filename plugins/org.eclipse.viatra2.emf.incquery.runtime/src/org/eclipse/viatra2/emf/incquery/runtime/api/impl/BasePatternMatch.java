@@ -76,7 +76,7 @@ public abstract class BasePatternMatch implements IPatternMatch {
 	 */
 	@Override
 	public String toString() {
-		return "Sig<" + patternName() + ">{" + prettyPrint() + "}";
+		return "Match<" + patternName() + ">{" + prettyPrint() + "}";
 	}
 
 }
