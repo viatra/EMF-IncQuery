@@ -9,17 +9,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.util.ParseHelper;
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
@@ -40,16 +35,12 @@ public class ParserTest {
 	private static final String PATTERN_RULE = "Pattern";
 
 	@Inject
-	private ParseHelper<PatternModel> patternParseHelper;
-
-	@Inject
 	private IGrammarAccess grammarAccess;
 	@Inject
 	private IParser parser;
 
-	@SuppressWarnings("unchecked")
 	protected void testParserRule(String text, String rulename) {
-		testParserRule(text, rulename, Collections.EMPTY_SET);
+		testParserRule(text, rulename, Collections.<ExpectedIssue>emptySet());
 	}
 	
 	protected void testParserRule(String text, String rulename, ExpectedIssue issue) {
@@ -85,17 +76,10 @@ public class ParserTest {
 		}
 	}
 
-	@Inject
-	private ValidationTestHelper helper;
-
 	@Test
 	public void emptyPatternBody() throws Exception {
-		PatternModel model = patternParseHelper
-				.parse("pattern emptyPattern() = {}");
-		helper.assertError(model, PatternLanguagePackage.Literals.PATTERN_BODY,
-				IssueCodes.PATTERN_BODY_EMPTY, "empty");
-		// testParserRuleErrors("pattern emptyPattern() = {}", PATTERN_RULE,
-		// "did not match");
+		// Parser allows empty pattern body - only validation checks for it
+		testParserRule("pattern emptyPattern() = {}", PATTERN_RULE);
 	}
 
 	@Test
@@ -241,6 +225,11 @@ public class ParserTest {
 	@Test
 	public void multipleAnnotations() {
 		testParserRule("@Optional@Test pattern name(A) = {Pattern(A);}",
+				PATTERN_RULE);
+	}
+	@Test
+	public void multipleSameAnnotations() {
+		testParserRule("@Optional@Optional pattern name(A) = {Pattern(A);}",
 				PATTERN_RULE);
 	}
 }
