@@ -53,9 +53,9 @@ class PatternMatcherFactoryClassInferrer {
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = ['''
 «««				Serialize the PatternModel
-«««				«pattern.eContainer.serializeToJava»
-«««				return patternString;  
-				throw new UnsupportedOperationException();
+				«pattern.eContainer.serializeToJava»
+				return patternString;  
+				//throw new UnsupportedOperationException();
 			''']
 		]
 		matcherFactoryClass.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof (String))) [

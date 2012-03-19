@@ -20,16 +20,11 @@ import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XmiOutputBuilder;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.OutputConfiguration;
-import org.eclipse.xtext.resource.IContainer;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -62,36 +57,14 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	EMFPatternLanguageJvmModelInferrerUtil util;
 	
 	Multimap<IProject, IPluginExtension> extensionMap = ArrayListMultimap.create();
-	
-	// EXPERIMENTAL
-	@Inject
-	ResourceDescriptionsProvider resourceDescriptionsProvider;
-	@Inject
-	IContainer.Manager containerManager;
-	@Inject
-	XmiOutputBuilder builder;
-	
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		IProject project = workspaceRoot.getFile(
-				new Path(input.getURI().toPlatformString(true)))
-				.getProject();
-		// create a resourcedescription for the input, 
-		// this way we can find all relevant EIQ file in the context of this input.
-		IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
-		IResourceDescription resDesc = index.getResourceDescription(input.getURI());
-		List<IContainer> visibleContainers = containerManager.getVisibleContainers(resDesc, index);
-		// load all visible resource to the resourceset of the input resource
-		for (IContainer container : visibleContainers) {
-			for (IResourceDescription rd : container.getResourceDescriptions()) {
-				input.getResourceSet().getResource(rd.getURI(), true);				
-			}
-		}
-		// build xmi file
-		builder.build(input.getResourceSet(), project);
 		super.doGenerate(input, fsa);
 		try {
+			IProject project = workspaceRoot.getFile(
+					new Path(input.getURI().toPlatformString(true)))
+					.getProject();
 			ArrayList<String> packageNames = new ArrayList<String>();
 			TreeIterator<EObject> it = input.getAllContents();
 			while (it.hasNext()) {

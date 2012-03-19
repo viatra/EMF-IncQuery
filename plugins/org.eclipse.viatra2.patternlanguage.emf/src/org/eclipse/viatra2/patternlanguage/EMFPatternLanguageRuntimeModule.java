@@ -11,11 +11,9 @@
 package org.eclipse.viatra2.patternlanguage;
 
 import org.eclipse.viatra2.patternlanguage.core.scoping.MyAbstractDeclarativeScopeProvider;
-import org.eclipse.viatra2.patternlanguage.core.scoping.PatternLanguageResourceDescriptionStrategy;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.xtext.linking.ILinkingService;
-import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.xbase.scoping.XbaseImportedNamespaceScopeProvider;
@@ -38,10 +36,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	public void configureIScopeProviderDelegate(Binder binder) {
 		binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(EMFPatternLanguageDeclarativeScopeProvider.class);
 		binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(XbaseImportedNamespaceScopeProvider.class);
-	}
-	
-	public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
-		return PatternLanguageResourceDescriptionStrategy.class;
 	}
 	
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment

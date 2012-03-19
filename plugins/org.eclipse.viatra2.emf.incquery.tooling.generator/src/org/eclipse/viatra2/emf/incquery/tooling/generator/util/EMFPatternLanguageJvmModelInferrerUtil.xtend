@@ -11,7 +11,6 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.serializer.ISerializer
 
 /**
@@ -157,10 +156,10 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	def private serialize(EObject eObject) {
   		try {
   			// This call sometimes causes ConcurrentModificationException
-//			val serializedObject = serializer.serialize(eObject)
+			val serializedObject = serializer.serialize(eObject)
 			// Another way to serialize the eObject, uses the current node model
 			// simple getText returns the currently text, that parsed by the editor 
-			val serializedObject = NodeModelUtils::getNode(eObject).text
+//			NodeModelUtils::getNode(eObject).text.replaceAll("\"", "\\\\\"")
 			// getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
 			return escape(serializedObject)

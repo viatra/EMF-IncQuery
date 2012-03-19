@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.scoping;
 
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
-import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.scoping.IScope;
-import org.eclipse.xtext.scoping.impl.FilteringScope;
-
-import com.google.common.base.Predicate;
-
 
 /**
  * <p>An extended abstract declarative scope provider to facilitate the reusing of abstract
@@ -29,27 +21,5 @@ import com.google.common.base.Predicate;
 public class PatternLanguageDeclarativeScopeProvider extends
 		MyAbstractDeclarativeScopeProvider {
 	
-	/**
-	 * Custom scoping for patternRef in {@link PatternCompositionConstraint}. 
-	 * Currently returns all Pattern that is visible from the current context.
-	 * @param ctx
-	 * @param ref
-	 * @return
-	 */
-	public IScope scope_PatternCompositionConstraint_patternRef(PatternCompositionConstraint ctx, EReference ref) {
-		IScope scope = delegateGetScope(ctx, ref);
-		return new FilteringScope(scope, new Predicate<IEObjectDescription>() {
-			@Override
-			public boolean apply(IEObjectDescription input) {
-				// filter not local, private patterns (private patterns in other resources)
-				// this information stored in the userdata of the EObjectDescription 
-				// EObjectDescription only created for not local eObjects, so check for resource equality is unnecessary.
-				if ("true".equals(input.getUserData("private"))) {
-					return false;
-				}
-				return true;
-			}
-		});
-	}
 	
 }

@@ -20,4 +20,3 @@ Export-Package: org.eclipse.viatra2.emf.incquery.tooling.generator,
  org.eclipse.viatra2.emf.incquery.tooling.generator.fragments,
  org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel,
  org.eclipse.viatra2.emf.incquery.tooling.generator.util
-Import-Package: org.eclipse.xtext.xtend2.lib
