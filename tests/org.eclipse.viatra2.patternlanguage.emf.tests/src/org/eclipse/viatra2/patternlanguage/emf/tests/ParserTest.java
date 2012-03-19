@@ -30,6 +30,7 @@ import com.google.inject.Inject;
 public class ParserTest {
 
 	private static final String ANNOTATION_RULE = "Annotation";
+	private static final String COMPARE_CONSTRAINT_RULE = "CompareConstraint";
 	private static final String PATTERN_COMPOSITION_RULE = "PatternCompositionConstraint";
 	private static final String PATH_EXPRESSION_RULE = "PathExpressionConstraint";
 	private static final String PATTERN_RULE = "Pattern";
@@ -191,6 +192,23 @@ public class ParserTest {
 		testParserRule("Pattern.parameters*(Name, in)", PATH_EXPRESSION_RULE);
 	}
 
+	@Test
+	public void equality() throws Exception {
+		testParserRule("A == B", COMPARE_CONSTRAINT_RULE);
+	}
+	@Test
+	public void equalityConstant() throws Exception {
+		testParserRule("A == 1", COMPARE_CONSTRAINT_RULE);
+	}
+	@Test
+	public void inequality() throws Exception {
+		testParserRule("A != B", COMPARE_CONSTRAINT_RULE);
+	}
+	@Test
+	public void inequalityConstant() throws Exception {
+		testParserRule("A != 1", COMPARE_CONSTRAINT_RULE);
+	}
+	
 	@Test
 	public void patternCall() {
 		testParserRule("find a(Name, in)", PATTERN_COMPOSITION_RULE);
