@@ -33,6 +33,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHe
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.PatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
@@ -112,6 +113,14 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	}
 	
 	public IScope scope_EClassifier(ClassType ctx, EReference ref) {
+		EObject root = getRootContainer(ctx);
+		if (root instanceof PatternModel){
+			return createReferencedPackagesScope((PatternModel) root);
+		} else 
+			return IScope.NULLSCOPE;
+	}
+	
+	public IScope scope_EClassifier(Variable ctx, EReference ref) {
 		EObject root = getRootContainer(ctx);
 		if (root instanceof PatternModel){
 			return createReferencedPackagesScope((PatternModel) root);
