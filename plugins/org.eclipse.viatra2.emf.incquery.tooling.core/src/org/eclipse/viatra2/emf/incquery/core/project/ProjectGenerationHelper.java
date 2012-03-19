@@ -453,8 +453,11 @@ public abstract class ProjectGenerationHelper {
 			IExtensions readExtension = plugin.getExtensions();
 			nextExtension: for (IPluginExtension extension : readExtension
 					.getExtensions()) {
-				String id = extension.getId().substring(
+				String id = extension.getId();
+				if (id.startsWith(project.getName())) {
+					id = id.substring(
 						project.getName().length() + 1);
+				}
 				if (extensionMap.containsKey(id)) {
 					String point = extension.getPoint();
 					for (IPluginExtension ex : extensionMap.get(id)) {
