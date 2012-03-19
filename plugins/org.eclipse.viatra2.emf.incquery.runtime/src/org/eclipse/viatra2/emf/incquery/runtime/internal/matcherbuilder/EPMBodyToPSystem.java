@@ -207,9 +207,9 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			Pattern patternRef = constraint2.getPatternRef();
 			Tuple pNodeTuple = getPNodeTuple(constraint2.getParameters());
 			if (constraint2.isNegative()) 
-				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, pattern);
+				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
 			else 
-				new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, pattern);
+				new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
 		} else if (constraint instanceof PathExpressionConstraint) {
 			// TODO advanced features here
 			PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;
