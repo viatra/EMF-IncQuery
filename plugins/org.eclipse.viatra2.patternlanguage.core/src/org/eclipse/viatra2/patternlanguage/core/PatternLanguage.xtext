@@ -76,11 +76,19 @@ PatternBody returns PatternBody:
 
 Constraint returns Constraint:
 //CheckConstraint |
-	PatternCompositionConstraint | PathExpressionConstraint;
+	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint;
 
 PatternCompositionConstraint returns Constraint:
 	{PatternCompositionConstraint} negative?='neg'? 'find' patternRef=[Pattern] '(' (parameters+=VariableReference (','
 	parameters+=VariableReference)*)? ')';
+
+CompareConstraint returns Constraint:
+	{CompareConstraint} leftOperand = VariableReference feature=CompareFeature rightOperand = VariableReference 
+;
+
+enum CompareFeature:
+	equality = '==' | inequality = '!='
+;
 
 CheckConstraint returns Constraint:
 	{CheckConstraint} 'check' '(' expression=XExpression ')';

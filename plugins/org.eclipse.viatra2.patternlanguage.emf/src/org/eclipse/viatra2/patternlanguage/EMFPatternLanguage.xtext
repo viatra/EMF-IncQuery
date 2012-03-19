@@ -29,7 +29,7 @@ PackageImport:
 
 Constraint returns core::Constraint:
 	//CheckConstraint	| 
-	PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
+	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
 	| EClassifierConstraint                                 // Additions
 ;
 
