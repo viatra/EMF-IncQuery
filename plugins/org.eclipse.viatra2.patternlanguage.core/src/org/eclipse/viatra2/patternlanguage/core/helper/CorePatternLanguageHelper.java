@@ -13,13 +13,7 @@ public class CorePatternLanguageHelper {
 	 */
 	public static String getFullyQualifiedName(Pattern p) {
 		PatternModel patternModel = (PatternModel) p.eContainer();
-		
-		String packageName = patternModel.getPackageName();
-		if (packageName == null || packageName.isEmpty()) {
-			return p.getName();
-		} else {
-			return packageName + "." + p.getName();
-		}
+		return patternModel.getPackageName() + "." + p.getName();
 		// TODO ("local pattern?")
 	}
 
