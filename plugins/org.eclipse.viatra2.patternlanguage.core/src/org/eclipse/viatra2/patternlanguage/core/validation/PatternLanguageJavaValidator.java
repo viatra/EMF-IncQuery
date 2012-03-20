@@ -22,6 +22,7 @@ import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationPro
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
@@ -190,6 +191,20 @@ public class PatternLanguageJavaValidator extends
 			warning("Unknown annotation " + annotation.getName(),
 					PatternLanguagePackage.Literals.ANNOTATION__NAME,
 					IssueCodes.UNKNOWN_ANNOTATION);
+		}
+	}
+	
+	@Check
+	public void checkCompareConstraints(CompareConstraint constraint) {
+		//If none of the operands are variables, issue a warning
+		if (!PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getLeftOperand().eClass())
+				&& !PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getRightOperand().eClass())) {
+			warning("Both operands are constants - constraint is always true or always false.",
+					PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
+					IssueCodes.CONSTANT_COMPARE_CONSTRAINT);
+			warning("Both operands are constants - constraint is always true or always false.",
+					PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__RIGHT_OPERAND,
+					IssueCodes.CONSTANT_COMPARE_CONSTRAINT);
 		}
 	}
 
