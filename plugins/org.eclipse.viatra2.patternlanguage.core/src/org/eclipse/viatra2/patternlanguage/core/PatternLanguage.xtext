@@ -79,8 +79,8 @@ Constraint returns Constraint:
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint;
 
 PatternCompositionConstraint returns Constraint:
-	{PatternCompositionConstraint} negative?='neg'? 'find' patternRef=[Pattern] '(' (parameters+=VariableReference (','
-	parameters+=VariableReference)*)? ')';
+	{PatternCompositionConstraint} negative?='neg'? 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
+	parameters+=ValueReference)*)? ')';
 
 CompareConstraint returns Constraint:
 	{CompareConstraint} leftOperand = ValueReference feature=CompareFeature rightOperand = ValueReference 
