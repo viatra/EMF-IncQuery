@@ -2,6 +2,8 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.util
 
 import com.google.inject.Inject
 import org.apache.log4j.Logger
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
@@ -10,11 +12,10 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.serializer.ISerializer
-import org.eclipse.core.resources.IWorkspaceRoot
-import org.eclipse.core.runtime.Path
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -78,27 +79,36 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
+   		// resolve the possible proxies
+   		EcoreUtil2::resolveAll(variable)
    		try {
-//   		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
-//   			return variable.newTypeRef(variable.type.typename)
-//   		} else {
-	   			if (variable.eContainer() instanceof Pattern) {
-	   		 		val pattern = variable.eContainer() as Pattern;
-	   				for (body : pattern.bodies) {
-	   					for (constraint : body.constraints) {
-	   						val typeRef = getTypeRef(constraint, variable)
-	   						if (typeRef != null) {
-	   							return typeRef
-	   						}
+   			// first try to get the type through the variable's type ref 
+   			if (variable.type instanceof ClassType) {
+   				val clazz = (variable.type as ClassType).classname.instanceClass
+   				
+   				if (clazz != null) {
+	   				return variable.newTypeRef(clazz)	
+   				}
+   			} 
+	   		// if the first try didnt return anything, try to 
+	   		// infer the type from one of the Pattern bodies.
+		   	if (variable.eContainer() instanceof Pattern) {
+	   	 		val pattern = variable.eContainer() as Pattern;
+	   			for (body : pattern.bodies) {
+	   				for (constraint : body.constraints) {
+	   					val typeRef = getTypeRef(constraint, variable)
+	   					if (typeRef != null) {
+	   						return typeRef
 	   					}
 	   				}
 	   			}
-//   		}   			
+	   		}
    		} catch (Exception e) {
    			if (logger != null) {
    				logger.error("Error during type calculation for " + variable.name, e)	
    			}
    		}
+   		// if all calculation failed, simply fall back to java Object.
 		return variable.newTypeRef(typeof(Object))
    	}
    	
