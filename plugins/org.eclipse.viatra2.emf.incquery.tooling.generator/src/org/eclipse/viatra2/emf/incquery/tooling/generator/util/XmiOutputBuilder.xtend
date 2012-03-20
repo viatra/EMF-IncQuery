@@ -40,12 +40,15 @@ class XmiOutputBuilder {
 			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(file.fullPath.toOSString, true))
 			// add import declarations 
 			val importDeclarations = newHashSet()
-			for (importDecl : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (PackageImport))).flatten) {
-				if (!importDeclarations.contains(importDecl.EPackage)) {
-					importDeclarations.add(importDecl.EPackage)
-					xmiModelRoot.importPackages.add(importDecl)
+			val packageImports = resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (PackageImport))).flatten
+			if (!packageImports.empty) {
+				for (importDecl : packageImports) {
+					if (!importDeclarations.contains(importDecl.EPackage)) {
+						importDeclarations.add(importDecl.EPackage)
+						xmiModelRoot.importPackages.add(importDecl)
+					}
 				}
-			}
+			} 
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {

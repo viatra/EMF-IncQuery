@@ -143,11 +143,19 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
             {
               Type _type_1 = variable.getType();
               EClassifier _classname = ((ClassType) _type_1).getClassname();
-              Class<? extends Object> _instanceClass = _classname.getInstanceClass();
-              final Class<? extends Object> clazz = _instanceClass;
-              boolean _operator_notEquals = ObjectExtensions.operator_notEquals(clazz, null);
-              if (_operator_notEquals) {
-                JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
+              final EClassifier eClassifier = _classname;
+              boolean _operator_and = false;
+              boolean _operator_notEquals = ObjectExtensions.operator_notEquals(eClassifier, null);
+              if (!_operator_notEquals) {
+                _operator_and = false;
+              } else {
+                Class<? extends Object> _instanceClass = eClassifier.getInstanceClass();
+                boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(_instanceClass, null);
+                _operator_and = BooleanExtensions.operator_and(_operator_notEquals, _operator_notEquals_1);
+              }
+              if (_operator_and) {
+                Class<? extends Object> _instanceClass_1 = eClassifier.getInstanceClass();
+                JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, _instanceClass_1);
                 return _newTypeRef;
               }
             }
@@ -164,8 +172,8 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
                   {
                     JvmTypeReference _typeRef = this.getTypeRef(constraint, variable);
                     final JvmTypeReference typeRef = _typeRef;
-                    boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(typeRef, null);
-                    if (_operator_notEquals_1) {
+                    boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(typeRef, null);
+                    if (_operator_notEquals_2) {
                       return typeRef;
                     }
                   }
@@ -177,8 +185,8 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
       } catch (final Throwable _t) {
         if (_t instanceof Exception) {
           final Exception e = (Exception)_t;
-          boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(this.logger, null);
-          if (_operator_notEquals_2) {
+          boolean _operator_notEquals_3 = ObjectExtensions.operator_notEquals(this.logger, null);
+          if (_operator_notEquals_3) {
             String _name = variable.getName();
             String _operator_plus = StringExtensions.operator_plus("Error during type calculation for ", _name);
             this.logger.error(_operator_plus, e);
@@ -297,34 +305,39 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
    * Serializes EObject to a String representation. Escapes only the double qoutes.
    */
   private String serialize(final EObject eObject) {
-    try {
-      {
-        ICompositeNode _node = NodeModelUtils.getNode(eObject);
-        String _text = _node.getText();
-        final String serializedObject = _text;
-        String _escape = this.escape(serializedObject);
-        return _escape;
-      }
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
+      try {
         {
-          boolean _operator_notEquals = ObjectExtensions.operator_notEquals(this.logger, null);
+          ICompositeNode _node = NodeModelUtils.getNode(eObject);
+          final ICompositeNode eObjectNode = _node;
+          boolean _operator_notEquals = ObjectExtensions.operator_notEquals(eObjectNode, null);
           if (_operator_notEquals) {
+            String _text = eObjectNode.getText();
+            String _escape = this.escape(_text);
+            return _escape;
+          }
+        }
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(this.logger, null);
+          if (_operator_notEquals_1) {
             EClass _eClass = eObject.eClass();
             String _name = _eClass.getName();
             String _operator_plus = StringExtensions.operator_plus("Error when serializing ", _name);
             this.logger.error(_operator_plus, e);
           }
-          return null;
+        } else {
+          throw Exceptions.sneakyThrow(_t);
         }
-      } else {
-        throw Exceptions.sneakyThrow(_t);
       }
-    }
+      return null;
   }
   
   private String escape(final String escapable) {
+      boolean _operator_equals = ObjectExtensions.operator_equals(escapable, null);
+      if (_operator_equals) {
+        return null;
+      }
       String _replaceAll = escapable.replaceAll("\"", "\\\\\"");
       String escapedString = _replaceAll;
       String _replaceAll_1 = escapedString.replaceAll(this.MULTILINE_COMMENT_PATTERN, " ");

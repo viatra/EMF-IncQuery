@@ -84,10 +84,9 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		try {
    			// first try to get the type through the variable's type ref 
    			if (variable.type instanceof ClassType) {
-   				val clazz = (variable.type as ClassType).classname.instanceClass
-   				
-   				if (clazz != null) {
-	   				return variable.newTypeRef(clazz)	
+   				val eClassifier = (variable.type as ClassType).classname
+   				if (eClassifier != null && eClassifier.instanceClass != null) {
+	   				return variable.newTypeRef(eClassifier.instanceClass)	
    				}
    			} 
 	   		// if the first try didnt return anything, try to 
@@ -180,19 +179,22 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 //			val serializedObject = serializer.serialize(eObject)
 			// Another way to serialize the eObject, uses the current node model
 			// simple getText returns the currently text, that parsed by the editor 
-			val serializedObject = NodeModelUtils::getNode(eObject).text
+			val eObjectNode = NodeModelUtils::getNode(eObject)
+			if (eObjectNode != null) {
+				return escape(eObjectNode.text)	
+			}
 			// getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
-			return escape(serializedObject)
 		} catch (Exception e) {
 			if (logger != null) {
 				logger.error("Error when serializing " + eObject.eClass.name, e)	
 			}
-			return null
 		}
+		return null
   	}
   	
   	def private escape(String escapable) {
+  		if (escapable == null) return null
   		// escape double quotes
   		var escapedString = escapable.replaceAll("\"", "\\\\\"")
   		// escape javadoc comments to single space

@@ -92,16 +92,21 @@ public class XmiOutputBuilder {
           };
         List<Iterable<PackageImport>> _map = ListExtensions.<Resource, Iterable<PackageImport>>map(_resources, _function);
         Iterable<PackageImport> _flatten = IterableExtensions.<PackageImport>flatten(_map);
-        for (final PackageImport importDecl : _flatten) {
-          EPackage _ePackage = importDecl.getEPackage();
-          boolean _contains = importDeclarations.contains(_ePackage);
-          boolean _operator_not_1 = BooleanExtensions.operator_not(_contains);
-          if (_operator_not_1) {
-            {
-              EPackage _ePackage_1 = importDecl.getEPackage();
-              importDeclarations.add(_ePackage_1);
-              EList<PackageImport> _importPackages = xmiModelRoot.getImportPackages();
-              _importPackages.add(importDecl);
+        final Iterable<PackageImport> packageImports = _flatten;
+        boolean _isEmpty = IterableExtensions.isEmpty(packageImports);
+        boolean _operator_not_1 = BooleanExtensions.operator_not(_isEmpty);
+        if (_operator_not_1) {
+          for (final PackageImport importDecl : packageImports) {
+            EPackage _ePackage = importDecl.getEPackage();
+            boolean _contains = importDeclarations.contains(_ePackage);
+            boolean _operator_not_2 = BooleanExtensions.operator_not(_contains);
+            if (_operator_not_2) {
+              {
+                EPackage _ePackage_1 = importDecl.getEPackage();
+                importDeclarations.add(_ePackage_1);
+                EList<PackageImport> _importPackages = xmiModelRoot.getImportPackages();
+                _importPackages.add(importDecl);
+              }
             }
           }
         }
