@@ -157,4 +157,20 @@ public class ConstraintValidationTest extends AbstractValidatorTest {
       throw Exceptions.sneakyThrow(_e);
     }
   }
+  
+  @Test
+  public void selfCompareValidation() {
+    try {
+      {
+        EObject _parse = this.parseHelper.parse("\n\t\t\tpattern constantCompareTest(Name) = {\n\t\t\t\tName == Name\n\t\t\t}\n\t\t");
+        final PatternModel model = ((PatternModel) _parse);
+        AssertableDiagnostics _validate = this.tester.validate(model);
+        DiagnosticPredicate _warningCode = this.getWarningCode(IssueCodes.SELF_COMPARE_CONSTRAINT);
+        DiagnosticPredicate _warningCode_1 = this.getWarningCode(IssueCodes.SELF_COMPARE_CONSTRAINT);
+        _validate.assertAll(_warningCode, _warningCode_1);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
 }

@@ -103,4 +103,13 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		') as PatternModel
 		tester.validate(model).assertOK
 	}
+	@Test
+	def selfCompareValidation() {
+		val model = parseHelper.parse('
+			pattern constantCompareTest(Name) = {
+				Name == Name
+			}
+		') as PatternModel
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT))
+	}
 }
