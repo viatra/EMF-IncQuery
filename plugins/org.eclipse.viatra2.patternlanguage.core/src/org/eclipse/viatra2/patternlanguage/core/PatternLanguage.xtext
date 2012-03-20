@@ -83,7 +83,7 @@ PatternCompositionConstraint returns Constraint:
 	parameters+=VariableReference)*)? ')';
 
 CompareConstraint returns Constraint:
-	{CompareConstraint} leftOperand = VariableReference feature=CompareFeature rightOperand = VariableReference 
+	{CompareConstraint} leftOperand = ValueReference feature=CompareFeature rightOperand = ValueReference 
 ;
 
 enum CompareFeature:
