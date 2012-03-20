@@ -33,7 +33,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.xtext.validation.Check;
 
@@ -218,6 +217,33 @@ public class PatternLanguageJavaValidator extends
 		return "UNDEFINED";
 	}
 
+	private String getConstantAsString(ValueReference ref) {
+		if (ref instanceof IntValue) {
+			return Integer.toString(((IntValue) ref).getValue());
+		} else if (ref instanceof DoubleValue) {
+			return Double.toString(((DoubleValue) ref).getValue());
+		} else if (ref instanceof BoolValue) {
+			return Boolean.toString(((BoolValue) ref).isValue());
+		} else if (ref instanceof StringValue) {
+			return "\"" + ((StringValue) ref).getValue() + "\"";
+		} else if (ref instanceof ListValue) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("{ ");
+			for (Iterator<ValueReference> iter = ((ListValue) ref).getValues()
+					.iterator(); iter.hasNext();) {
+				sb.append(getConstantAsString(iter.next()));
+				if (iter.hasNext()) {
+					sb.append(", ");
+				}
+			}
+			sb.append("}");
+			return sb.toString();
+		} else if (ref instanceof VariableValue) {
+			return ((VariableValue) ref).getValue().getVar();
+		}
+		return "UNDEFINED";
+	}
+
 	private String getFormattedPattern(Pattern pattern) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(pattern.getName());
@@ -236,9 +262,10 @@ public class PatternLanguageJavaValidator extends
 	protected String getFormattedArgumentsList(
 			PatternCompositionConstraint constraint) {
 		StringBuilder builder = new StringBuilder();
-		for (Iterator<VariableReference> iter = constraint.getParameters()
+		for (Iterator<ValueReference> iter = constraint.getParameters()
 				.iterator(); iter.hasNext();) {
-			builder.append(iter.next().getVar());
+			ValueReference parameter = iter.next();
+			builder.append(getConstantAsString(parameter));
 			if (iter.hasNext()) {
 				builder.append(", ");
 			}

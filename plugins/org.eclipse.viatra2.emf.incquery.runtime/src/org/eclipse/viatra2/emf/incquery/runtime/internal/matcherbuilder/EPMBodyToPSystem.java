@@ -124,14 +124,14 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	protected PVariable getPNode(VariableReference variable) {
 		return getPNode(variable.getVar());
 	}
-	protected Tuple getPNodeTuple(List<VariableReference> variables) {
+	protected Tuple getPNodeTuple(List<? extends ValueReference> variables) throws RetePatternBuildException {
 		PVariable[] pNodeArray = getPNodeArray(variables);
 		return new FlatTuple(pNodeArray);
 	}
-	public PVariable[] getPNodeArray(List<VariableReference> variables) {
+	public PVariable[] getPNodeArray(List<? extends ValueReference> variables) throws RetePatternBuildException {
 		int k = 0;
 		PVariable[] pNodeArray = new PVariable[variables.size()];
-		for (VariableReference varRef : variables) {
+		for (ValueReference varRef : variables) {
 			pNodeArray[k++] = getPNode(varRef);
 		}
 		return pNodeArray;
@@ -198,7 +198,6 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			throws RetePatternBuildException {
 		if (constraint instanceof EClassifierConstraint) {  // EMF-specific
 			EClassifierConstraint constraint2 = (EClassifierConstraint) constraint;
-			//TODO Gabor, please check the following line
 			EClassifier classname = ((ClassType)constraint2.getType()).getClassname();
 			PVariable pNode = getPNode(constraint2.getVar());
 			new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
