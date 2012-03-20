@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
@@ -19,6 +21,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
@@ -31,6 +36,10 @@ import com.google.inject.Inject;
 public class NewEiqFileWizard extends Wizard implements INewWizard {
 	private NewEiqFileWizardPage page;
 	private ISelection selection;
+	private IWorkbench workbench;
+	
+	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	private IPath filePath;
 	
 	@Inject
 	private IResourceSetProvider resourceSetProvider;
@@ -67,6 +76,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		};
 		try {
 			getContainer().run(true, false, op);
+			IFile file = (IFile) root.findMember(filePath);
+			BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
+			IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			return false;
@@ -75,6 +87,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 			Throwable realException = e.getTargetException();
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
+		} catch (PartInitException e) {
+			e.printStackTrace();
+			MessageDialog.openError(getShell(), "Error", e.getMessage());
 		}
 		return true;
 	}
@@ -87,15 +102,16 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
+		this.workbench = workbench;
 	}
 	
 	private void createEiqFile(String containerPath, String packageName, String fileName,	String patternName) {
 
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource containerResource = root.findMember(new Path(containerPath));
 		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
 
-		String fullPath = containerResource.getFullPath().append(packageName+"/"+fileName).toString();
+		filePath = containerResource.getFullPath().append(packageName+"/"+fileName);
+		String fullPath = filePath.toString();
 		
 		URI fileURI = URI.createPlatformResourceURI(fullPath, false);
 		Resource resource = resourceSet.createResource(fileURI);
