@@ -6,6 +6,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -25,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 @SuppressWarnings("restriction")
 public class NewEiqFileWizardPage extends NewTypeWizardPage {
@@ -169,9 +171,12 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 	}
 	
 	private IStatus validatePackageName(String text) {
+		if (text == null || text.isEmpty()) {
+			return new Status(WARNING, IncQueryGUIPlugin.PLUGIN_ID, "The use of default package is discouraged.");
+		}
 		IJavaProject project= getJavaProject();
 		if (project == null || !project.exists()) {
-			return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_3, JavaCore.VERSION_1_3);
+			return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
 		}
 		return JavaConventionsUtil.validatePackageName(text, project);
 	}
