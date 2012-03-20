@@ -22,6 +22,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ps
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.Equality;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.TypeBinary;
@@ -33,6 +34,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
@@ -209,6 +211,17 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
 			else 
 				new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+		} else if (constraint instanceof CompareConstraint) {
+			CompareConstraint compare = (CompareConstraint) constraint;
+			PVariable left = getPNode(compare.getLeftOperand()); 
+			PVariable right = getPNode(compare.getRightOperand()); 
+			switch(compare.getFeature()) {
+			case EQUALITY:
+				new Equality<Pattern, StubHandle>(pSystem, left, right);
+				break;
+			case INEQUALITY:
+				new Inequality<Pattern, StubHandle>(pSystem, left, right, false);
+			}
 		} else if (constraint instanceof PathExpressionConstraint) {
 			// TODO advanced features here
 			PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;
