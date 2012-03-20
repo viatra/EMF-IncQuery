@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.emf.tests
+package org.eclipse.viatra2.patternlanguage.emf.tests.basic
 
 import org.eclipse.xtext.junit4.XtextRunner
 import org.junit.runner.RunWith
@@ -6,12 +6,9 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider
 import com.google.inject.Inject
 import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import static org.junit.Assert.*
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes

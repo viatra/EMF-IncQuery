@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.emf.tests;
+package org.eclipse.viatra2.patternlanguage.emf.tests.basic;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
 import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.emf.tests.AbstractValidatorTest;
 import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
@@ -20,7 +21,7 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @RunWith(XtextRunner.class)
 @InjectWith(EMFPatternLanguageInjectorProvider.class)
-public class PatternValidationTest {
+public class PatternValidationTest extends AbstractValidatorTest {
   @Inject
   private ParseHelper parseHelper;
   
