@@ -117,6 +117,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		Resource resource = resourceSet.createResource(fileURI);
 
 		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+		if (page.getPackageName() != null && !page.getPackageName().isEmpty()) {
+			pm.setPackageName(page.getPackageName());
+		}
 		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
 		pattern.setName(patternName);
 		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
