@@ -16,7 +16,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -89,17 +91,21 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 	
-	public IScope scope_EPackage(PackageImport ctx, EReference ref){
-		IScope current = new SimpleScope(IScope.NULLSCOPE, Iterables.transform(EPackage.Registry.INSTANCE.keySet(), new Function<String, IEObjectDescription>() {
-			public IEObjectDescription apply(String from) {
-				EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(from); 
-//				InternalEObject proxyPackage = (InternalEObject) EcoreFactory.eINSTANCE.createEPackage();
-//				proxyPackage.eSetProxyURI(URI.createURI(from));
-				QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
-//				return EObjectDescription.create(qualifiedName, proxyPackage, Collections.singletonMap("nsURI", "true"));
-				return EObjectDescription.create(qualifiedName, ePackage, Collections.singletonMap("nsURI", "true"));
-			}
-		}));
+	public IScope scope_EPackage(PackageImport ctx, EReference ref) {
+		Set<String> packageURIs = new HashSet<String>(EPackage.Registry.INSTANCE.keySet());
+		IScope current = new SimpleScope(IScope.NULLSCOPE, Iterables.transform(packageURIs,
+				new Function<String, IEObjectDescription>() {
+					public IEObjectDescription apply(String from) {
+						EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(from);
+						// InternalEObject proxyPackage = (InternalEObject)
+						// EcoreFactory.eINSTANCE.createEPackage();
+						// proxyPackage.eSetProxyURI(URI.createURI(from));
+						QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
+						// return EObjectDescription.create(qualifiedName, proxyPackage,
+						// Collections.singletonMap("nsURI", "true"));
+						return EObjectDescription.create(qualifiedName, ePackage, Collections.singletonMap("nsURI", "true"));
+					}
+				}));
 		return current;
 	}
 	
