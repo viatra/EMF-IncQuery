@@ -10,25 +10,57 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.formatting;
 
+import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.PatternBodyElements;
+import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAccess;
+import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAccess.EMFPatternModelElements;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
 
 /**
- * This class contains custom formatting description.
- * 
- * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#formatting
- * on how and when to use it 
- * 
- * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
+ * Formatting rules for the EMF pattern language.
  */
 public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
 	
 	@Override
 	protected void configureFormatting(FormattingConfig c) {
-// It's usually a good idea to activate the following three statements.
-// They will add and preserve newlines around comments
-//		c.setLinewrap(0, 1, 2).before(getGrammarAccess().getSL_COMMENTRule());
-//		c.setLinewrap(0, 1, 2).before(getGrammarAccess().getML_COMMENTRule());
-//		c.setLinewrap(0, 1, 1).after(getGrammarAccess().getML_COMMENTRule());
+		// Preserve newlines around comments
+		EMFPatternLanguageGrammarAccess grammar = (EMFPatternLanguageGrammarAccess) getGrammarAccess();
+		c.setLinewrap(0, 1, 2).before(grammar.getSL_COMMENTRule());
+		c.setLinewrap(0, 1, 2).before(grammar.getML_COMMENTRule());
+		c.setLinewrap(0, 1, 1).after(grammar.getML_COMMENTRule());
+		
+		for (Keyword keyword : grammar.findKeywords(".")) {
+			c.setNoSpace().before(keyword);
+			c.setNoSpace().after(keyword);
+		}
+		for (Keyword keyword : grammar.findKeywords(":")) {
+			c.setSpace(" ").before(keyword);
+			c.setSpace(" ").after(keyword);
+		}
+		for (Keyword keyword : grammar.findKeywords("::")) {
+			c.setSpace(" ").before(keyword);
+			c.setNoSpace().after(keyword);
+		}
+		for (Keyword keyword : grammar.findKeywords(",")) {
+			c.setNoSpace().before(keyword);
+			c.setSpace(" ").after(keyword);
+		}
+		for (Keyword keyword : grammar.findKeywords("(", ")")) {
+			c.setNoSpace().before(keyword);
+			c.setNoSpace().after(keyword);
+		}
+		
+		EMFPatternModelElements patternModelAccess = grammar.getEMFPatternModelAccess();
+		c.setLinewrap(2).after(patternModelAccess.getPackageNameAssignment_1_1());
+		c.setLinewrap(1).after(patternModelAccess.getImportPackagesAssignment_2());
+		c.setLinewrap().before(patternModelAccess.getPatternsAssignment_3());
+		
+		PatternBodyElements patternBodyAccess = grammar.getPatternBodyAccess();
+		c.setLinewrap(1, 1, 2).before(patternBodyAccess.getConstraintsAssignment_3_0());
+		c.setLinewrap(1, 1, 2).before(patternBodyAccess.getRightCurlyBracketKeyword_4());
+		c.setLinewrap(2).after(patternBodyAccess.getRightCurlyBracketKeyword_4());
+		c.setIndentationIncrement().after(patternBodyAccess.getLeftCurlyBracketKeyword_2());
+		c.setIndentationDecrement().before(patternBodyAccess.getRightCurlyBracketKeyword_4());
 	}
 }
