@@ -195,16 +195,30 @@ public class PatternLanguageJavaValidator extends
 	}
 	
 	@Check
-	public void checkCompareConstraints(CompareConstraint constraint) {
-		//If none of the operands are variables, issue a warning
-		if (!PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getLeftOperand().eClass())
-				&& !PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getRightOperand().eClass())) {
+	public void checkCompareConstraints(CompareConstraint constraint) { 
+		//If none of the operands are variables, issues a warning
+		boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getLeftOperand().eClass());
+		boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getRightOperand().eClass());
+		if (!op1Variable && !op2Variable) {
 			warning("Both operands are constants - constraint is always true or always false.",
 					PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
 					IssueCodes.CONSTANT_COMPARE_CONSTRAINT);
 			warning("Both operands are constants - constraint is always true or always false.",
 					PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__RIGHT_OPERAND,
 					IssueCodes.CONSTANT_COMPARE_CONSTRAINT);
+		}
+		//If both operands are the same, issues a warning
+		if (op1Variable && op2Variable) {
+			VariableValue op1 = (VariableValue) constraint.getLeftOperand();
+			VariableValue op2 = (VariableValue) constraint.getRightOperand();
+			if (op1.getValue().getVar().equals(op2.getValue().getVar())) {
+				warning("Comparing a variable with itself.",
+						PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
+						IssueCodes.SELF_COMPARE_CONSTRAINT);
+				warning("Comparing a variable with itself.",
+						PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__RIGHT_OPERAND,
+						IssueCodes.SELF_COMPARE_CONSTRAINT);
+			}
 		}
 	}
 
