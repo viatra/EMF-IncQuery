@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra2.emf.incquery.runtime.feature"
-      label="EMF-IncQuery Runtime feature"
+      id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature"
+      label="EMF-IncQuery Databinding Feature"
       version="0.6.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -211,29 +211,26 @@ Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
 
+   <includes
+         id="org.eclipse.viatra2.emf.incquery.databinding.feature"
+         version="0.0.0"/>
+
    <plugin
-         id="org.eclipse.viatra2.emf.incquery.runtime"
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.databinding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.databinding.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.patternlanguage.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf"
+         id="org.eclipse.viatra2.emf.incquery.databinding.runtime.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

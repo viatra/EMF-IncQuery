@@ -12,7 +12,7 @@
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.eclipse.org/legal/epl-v10.html">
+<license url="http://www.eclipse.org/legal/epl-v10.html">
       Eclipse Public License - v 1.0
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS
 ECLIPSE PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR
@@ -216,10 +216,6 @@ litigation.
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.viatra2.patternlanguage.emf.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.viatra2.emf.incquery.databinding.feature"
          version="0.0.0"/>
 
@@ -259,20 +255,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.core"
          download-size="0"
          install-size="0"
@@ -281,6 +263,27 @@ litigation.
 
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.gui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.emf.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
