@@ -14,10 +14,11 @@ import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaVali
 import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes
 import com.google.inject.Injector
 import org.junit.Before
+import org.eclipse.viatra2.patternlanguage.emf.tests.AbstractValidatorTest
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class PatternValidationTest {
+class PatternValidationTest extends AbstractValidatorTest {
 	@Inject
 	ParseHelper parseHelper
 	@Inject

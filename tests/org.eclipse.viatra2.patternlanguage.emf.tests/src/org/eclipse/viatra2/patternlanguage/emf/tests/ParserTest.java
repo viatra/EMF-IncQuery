@@ -213,10 +213,34 @@ public class ParserTest {
 	public void patternCall() {
 		testParserRule("find a(Name, in)", PATTERN_COMPOSITION_RULE);
 	}
+	@Test
+	public void patternCallStringConstantParameter() {
+		testParserRule("find a(Name, \"in\")", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void patternCallIntConstantParameter() {
+		testParserRule("find a(Name, 2)", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void patternCallEnumConstantParameter() {
+		testParserRule("find a(Name, ::in)", PATTERN_COMPOSITION_RULE);
+	}
 
 	@Test
 	public void negPatternCall() {
 		testParserRule("neg find a(Name)", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void negPatternCallStringConstantParameter() {
+		testParserRule("neg find a(Name, \"in\")", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void negPatternCallIntConstantParameter() {
+		testParserRule("neg find a(Name, 2)", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void negPatternCallEnumConstantParameter() {
+		testParserRule("neg find a(Name, ::in)", PATTERN_COMPOSITION_RULE);
 	}
 
 	@Test
