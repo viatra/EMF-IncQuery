@@ -108,8 +108,8 @@ class PatternMatchClassInferrer {
    			it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
    			it.body = ['''
    				«FOR variable : pattern.parameters»
-   				if ("«variable.name»".equals(parameterName) && newValue instanceof «variable.calculateType.simpleName») {
-   					this.«variable.fieldName» = («variable.calculateType.simpleName») newValue;
+   				if ("«variable.name»".equals(parameterName) && newValue instanceof «variable.calculateType.qualifiedName») {
+   					this.«variable.fieldName» = («variable.calculateType.qualifiedName») newValue;
    					return true;
    				}
    				«ENDFOR»

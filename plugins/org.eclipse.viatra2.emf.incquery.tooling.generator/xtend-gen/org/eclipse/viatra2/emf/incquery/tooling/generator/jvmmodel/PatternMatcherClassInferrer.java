@@ -571,8 +571,8 @@ public class PatternMatcherClassInferrer {
           }
           _builder.append("(");
           JvmTypeReference _calculateType = this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(p);
-          String _simpleName = _calculateType.getSimpleName();
-          _builder.append(_simpleName, "	");
+          String _qualifiedName = _calculateType.getQualifiedName();
+          _builder.append(_qualifiedName, "	");
           _builder.append(") t.get(");
           EList<Variable> _parameters_1 = pattern.getParameters();
           int _indexOf = _parameters_1.indexOf(p);
@@ -638,8 +638,8 @@ public class PatternMatcherClassInferrer {
           }
           _builder.append("(");
           JvmTypeReference _calculateType = this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(p);
-          String _simpleName = _calculateType.getSimpleName();
-          _builder.append(_simpleName, "	");
+          String _qualifiedName = _calculateType.getQualifiedName();
+          _builder.append(_qualifiedName, "	");
           _builder.append(") match[");
           EList<Variable> _parameters_1 = pattern.getParameters();
           int _indexOf = _parameters_1.indexOf(p);

@@ -181,7 +181,7 @@ class PatternMatcherClassInferrer {
   		}
    		'''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
    			} catch(ClassCastException e) {
    				«pattern.inferLogging(isPluginLogging, activatorClass, "tupleToMatch")»
    				//throw new IncQueryRuntimeException(e.getMessage());
@@ -200,7 +200,7 @@ class PatternMatcherClassInferrer {
   		}
   		'''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
    			} catch(ClassCastException e) {
    				«pattern.inferLogging(isPluginLogging, activatorClass, "arrayToMatch")»
    				//throw new IncQueryRuntimeException(e.getMessage());

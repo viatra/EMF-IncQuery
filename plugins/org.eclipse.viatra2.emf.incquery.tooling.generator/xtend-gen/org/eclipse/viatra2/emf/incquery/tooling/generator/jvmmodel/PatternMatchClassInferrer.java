@@ -285,8 +285,8 @@ public class PatternMatchClassInferrer {
                         _builder.append(_name, "");
                         _builder.append("\".equals(parameterName) && newValue instanceof ");
                         JvmTypeReference _calculateType = PatternMatchClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(variable);
-                        String _simpleName = _calculateType.getSimpleName();
-                        _builder.append(_simpleName, "");
+                        String _qualifiedName = _calculateType.getQualifiedName();
+                        _builder.append(_qualifiedName, "");
                         _builder.append(") {");
                         _builder.newLineIfNotEmpty();
                         _builder.append("\t");
@@ -295,8 +295,8 @@ public class PatternMatchClassInferrer {
                         _builder.append(_fieldName, "	");
                         _builder.append(" = (");
                         JvmTypeReference _calculateType_1 = PatternMatchClassInferrer.this._eMFPatternLanguageJvmModelInferrerUtil.calculateType(variable);
-                        String _simpleName_1 = _calculateType_1.getSimpleName();
-                        _builder.append(_simpleName_1, "	");
+                        String _qualifiedName_1 = _calculateType_1.getQualifiedName();
+                        _builder.append(_qualifiedName_1, "	");
                         _builder.append(") newValue;");
                         _builder.newLineIfNotEmpty();
                         _builder.append("\t");
