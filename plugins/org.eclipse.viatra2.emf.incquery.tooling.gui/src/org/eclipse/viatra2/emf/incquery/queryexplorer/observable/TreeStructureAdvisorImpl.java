@@ -1,7 +1,7 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
 
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 /**
  * Custom tree structure advisor implementation.
@@ -21,7 +21,7 @@ public class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 			return ((PatternMatcher) element).getParent();
 		}
 		else if (element instanceof PatternMatcherRoot) {
-			return MatchSetView.viewerRoot;
+			return QueryExplorer.viewerRoot;
 		}
 		else {
 			return null;

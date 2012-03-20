@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.DatabindingUIPluginActivator;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.DatabindingUIPluginActivator;
 import org.osgi.framework.Bundle;
 
 /**

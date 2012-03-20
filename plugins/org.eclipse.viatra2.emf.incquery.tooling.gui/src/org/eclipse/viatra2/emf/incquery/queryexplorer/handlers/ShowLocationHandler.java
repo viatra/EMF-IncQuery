@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatch;
 
 public class ShowLocationHandler extends AbstractHandler {
 	

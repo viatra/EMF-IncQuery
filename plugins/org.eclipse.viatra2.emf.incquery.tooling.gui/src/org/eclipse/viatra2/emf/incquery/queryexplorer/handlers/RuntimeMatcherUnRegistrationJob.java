@@ -1,0 +1,27 @@
+package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+
+public class RuntimeMatcherUnRegistrationJob implements Runnable {
+
+	private IFile file;
+
+	public RuntimeMatcherUnRegistrationJob(IFile file) {
+		this.file = file;
+	}
+
+	@Override
+	public void run() {
+		ViewerRoot vr = QueryExplorer.viewerRoot;
+
+		for (PatternMatcherRoot root : vr.getRoots()) {
+			root.unregisterPatternsFromFile(file);
+		}
+		DatabindingUtil.registeredPatterModels.remove(file);
+	}
+
+}

@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer;
+package org.eclipse.viatra2.emf.incquery.queryexplorer;
 
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.IBeanListProperty;
@@ -28,15 +28,15 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.DetailElement;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.DetailObservable;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatch;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeFactoryImpl;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeLabelProviderImpl;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.TreeStructureAdvisorImpl;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRoot;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.DetailElement;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.DetailObservable;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeFactoryImpl;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeLabelProviderImpl;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeStructureAdvisorImpl;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
@@ -45,14 +45,14 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
  * @author Tamas Szabo
  *
  */
-public class MatchSetView extends ViewPart {
+public class QueryExplorer extends ViewPart {
 
-	public static final String ID = "org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView";
+	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	public static TreeViewer treeViewer;
 	public static TableViewer tableViewer;
 	public static ViewerRoot viewerRoot = new ViewerRoot();
 	
-	public MatchSetView() {
+	public QueryExplorer() {
 		
 	}
 
@@ -92,7 +92,7 @@ public class MatchSetView extends ViewPart {
         Menu menu = menuMgr.createContextMenu(treeViewer.getControl());
         
 		treeViewer.getControl().setMenu(menu);
-		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView.treeViewerMenu", menuMgr, treeViewer);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", menuMgr, treeViewer);
 		
 		//tableView configuration
 		createColumns(parent, tableViewer);

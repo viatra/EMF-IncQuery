@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -7,10 +7,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.PartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
-public class LoadModelHandler extends AbstractHandler {
+public class UnloadModelHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -18,21 +17,19 @@ public class LoadModelHandler extends AbstractHandler {
 		try {
 			IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
 			
-			HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(new PartListener());
-			
 			if (editorPart instanceof IEditingDomainProvider) {
 				IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
-				
-				ResourceSet resourceSet = providerEditor.getEditingDomain()
-						.getResourceSet();
+				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					MatchSetView.viewerRoot.addPatternMatcherRoot(editorPart,
-							resourceSet);
+					QueryExplorer.viewerRoot.removePatternMatcherRoot(editorPart, resourceSet);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		QueryExplorer.tableViewer.setInput(null);
 		
 		return null;
 	}

@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
 
 import java.util.ArrayList;
 import java.util.Collection;

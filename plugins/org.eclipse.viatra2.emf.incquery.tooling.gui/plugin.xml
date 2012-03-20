@@ -121,10 +121,10 @@
       </category>
       <view
             category="org.eclipse.viatra2.emf.incquery.tooling.gui"
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
             icon="icons/sample.gif"
-            id="org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView"
-            name="MatchSet View">
+            id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
+            name="Query Explorer">
       </view>
    </extension>
    <extension
@@ -167,31 +167,31 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.RuntimeMatcherMenuRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherMenuRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.RuntimeMatcherMenuUnRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherMenuUnRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.UnloadModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.UnloadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unloadmodel">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.LoadModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.ShowLocationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.RuntimeMatcherEditorRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherEditorRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers.RuntimeMatcherEditorUnRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherEditorUnRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor">
       </handler>
    </extension>
@@ -303,7 +303,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView">
+            locationURI="toolbar:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer">
          <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel"
                icon="icons/load.gif"
@@ -319,7 +319,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView.treeViewerMenu">
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation"
                label="Show location"
@@ -334,7 +334,7 @@
                   <iterate
                         ifEmpty="false">
                      <instanceof
-                           value="org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatch">
+                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatch">
                      </instanceof>
                   </iterate>
                </with>
@@ -371,11 +371,11 @@
          point="org.eclipse.ui.commands">
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
-            name="Register patterns in MatchSetView">
+            name="Register patterns in Query Explorer">
       </command>
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
-            name="Unregister patterns from MatchSetView">
+            name="Unregister patterns from Query Explorer">
       </command>
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel"
@@ -391,11 +391,11 @@
       </command>
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
-            name="Register patterns in MatchSetView">
+            name="Register patterns in Query Explorer">
       </command>
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor"
-            name="Unregister patterns from MatchSetView">
+            name="Unregister patterns from Query Explorer">
       </command>
    </extension>
 </plugin>

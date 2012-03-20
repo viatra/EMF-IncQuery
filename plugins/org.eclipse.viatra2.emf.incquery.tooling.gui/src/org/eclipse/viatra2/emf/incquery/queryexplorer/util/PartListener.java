@@ -1,11 +1,11 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.util;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 /**
  * The PartListener is used to observer EditorPart close actions.
@@ -35,7 +35,7 @@ public class PartListener implements IPartListener {
 			if (closedEditor instanceof IEditingDomainProvider) {
 				ResourceSet resourceSet = ((IEditingDomainProvider) closedEditor).getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					MatchSetView.viewerRoot.removePatternMatcherRoot(closedEditor, resourceSet);
+					QueryExplorer.viewerRoot.removePatternMatcherRoot(closedEditor, resourceSet);
 				}
 			}
 		}

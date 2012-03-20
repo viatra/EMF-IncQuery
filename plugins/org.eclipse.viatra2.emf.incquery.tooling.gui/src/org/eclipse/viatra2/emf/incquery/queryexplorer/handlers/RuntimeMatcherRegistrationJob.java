@@ -1,10 +1,10 @@
-package org.eclipse.viatra2.emf.incquery.matchsetviewer.handlers;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.observable.ViewerRoot;
-import org.eclipse.viatra2.emf.incquery.matchsetviewer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 /**
@@ -27,7 +27,7 @@ public class RuntimeMatcherRegistrationJob implements Runnable {
 
 	@Override
 	public void run() {
-		ViewerRoot vr = MatchSetView.viewerRoot;
+		ViewerRoot vr = QueryExplorer.viewerRoot;
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file);
 //		PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
