@@ -73,29 +73,35 @@ public class PatternMatch {
 		String newText = "";
 		
 		for (int i = 0;i<tokens.length;i++) {
-			if (i % 2 == 0) newText += tokens[i];
+			if (i % 2 == 0) {
+				newText += tokens[i];
+			}
 			else {
 				String[] objectTokens = tokens[i].split("\\.");
-				if (objectTokens.length == 1) {
-					Object o = signature.get(objectTokens[0]);
-					if (o != null) {
-						newText += o.toString();
-						continue;
+				if (objectTokens.length > 0) {
+					Object o = null;
+					EStructuralFeature feature = null;
+					
+					if (objectTokens.length == 1) {
+						o = signature.get(objectTokens[0]);
+						feature = DatabindingUtil.getFeature(o, "name");
 					}
-				}
-				else if (objectTokens.length == 2) {
-					Object o = signature.get(objectTokens[0]);
-					EStructuralFeature feature = DatabindingUtil.getFeature(o, objectTokens[1]);
+					if (objectTokens.length == 2) {
+						o = signature.get(objectTokens[0]);
+						feature = DatabindingUtil.getFeature(o, objectTokens[1]);
+					}
 					
 					if (o != null && feature != null) {
 						Object value = ((EObject) o).eGet(feature);
 						if (value != null) {
 							newText += value.toString();
-							continue;
 						}
 						else {
 							newText += "null";
 						}
+					}
+					else if (o != null) {
+						newText += o.toString();
 					}
 				}	
 				else {
