@@ -69,7 +69,7 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	def patternHandler(Pattern pattern) '''
-		package «pattern.name».databinding;
+		package «pattern.fullyQualifiedName».databinding;
 		
 		import java.util.HashMap;
 		import java.util.Map;
