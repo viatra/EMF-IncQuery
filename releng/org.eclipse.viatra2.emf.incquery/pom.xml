@@ -33,8 +33,9 @@
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
-		<!-- Sonar -->
 		<jacoco.version>0.5.6.201201232323</jacoco.version>
+		<!-- Sonar -->
+		<sonar.version>2.14</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -129,6 +130,11 @@
 					<artifactId>tycho-p2-repository-plugin</artifactId>
 					<version>${tycho.version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${sonar.version}</version>
+				</plugin>
 
 			</plugins>
 		</pluginManagement>
@@ -148,6 +154,7 @@
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.3</version>
 			</plugin>
+
 		</plugins>
 	</reporting>
 	<repositories>
