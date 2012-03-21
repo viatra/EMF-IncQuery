@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
@@ -22,6 +23,9 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 public class GenerateMatcherFactoryExtension {
   @Inject
   private IJvmModelAssociations associations;
+  
+  @Inject
+  private EMFPatternLanguageJvmModelInferrerUtil _eMFPatternLanguageJvmModelInferrerUtil;
   
   public ArrayList<IPluginExtension> extensionContribution(final Pattern pattern, final ExtensionGenerator exGen) {
     String _fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
@@ -40,8 +44,9 @@ public class GenerateMatcherFactoryExtension {
                           _operator_and = false;
                         } else {
                           String _simpleName = ((JvmType) it).getSimpleName();
-                          boolean _endsWith = _simpleName.endsWith("MatcherFactory");
-                          _operator_and = BooleanExtensions.operator_and((it instanceof JvmType), _endsWith);
+                          String _matcherFactoryClassName = GenerateMatcherFactoryExtension.this._eMFPatternLanguageJvmModelInferrerUtil.matcherFactoryClassName(pattern);
+                          boolean _equals = _simpleName.equals(_matcherFactoryClassName);
+                          _operator_and = BooleanExtensions.operator_and((it instanceof JvmType), _equals);
                         }
                         return Boolean.valueOf(_operator_and);
                       }

@@ -7,11 +7,13 @@ import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 import org.eclipse.xtext.common.types.JvmIdentifiableElement
 import org.eclipse.xtext.common.types.JvmType
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 
 class GenerateMatcherFactoryExtension {
 	
 	@Inject
 	IJvmModelAssociations associations
+	@Inject extension EMFPatternLanguageJvmModelInferrerUtil 
 	
 	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
@@ -19,7 +21,7 @@ class GenerateMatcherFactoryExtension {
 			exGen.contribElement(it, "matcher") [
 				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
 				val el = associations.getJvmElements(pattern).
-				  findFirst[it instanceof JvmType && (it as JvmType).simpleName.endsWith("MatcherFactory")] as JvmIdentifiableElement
+				  findFirst[it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.matcherFactoryClassName)] as JvmIdentifiableElement
 				exGen.contribAttribute(it, "factory", el.qualifiedName)
 			]
 		]
