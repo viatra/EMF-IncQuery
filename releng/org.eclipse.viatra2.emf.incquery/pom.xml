@@ -92,7 +92,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.version}</version>
 				<configuration>
-					<includes>example.*</includes>
+					<includes>org.eclipse.viatra2.*</includes>
 					<destFile>${project.basedir}/../target/jacoco.exec</destFile>
 				</configuration>
 				<executions>
