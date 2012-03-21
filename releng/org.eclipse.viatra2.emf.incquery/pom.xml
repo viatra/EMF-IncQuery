@@ -132,7 +132,7 @@
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
+					<artifactId>sonar-maven3-plugin</artifactId>
 					<version>${sonar.version}</version>
 				</plugin>
 
