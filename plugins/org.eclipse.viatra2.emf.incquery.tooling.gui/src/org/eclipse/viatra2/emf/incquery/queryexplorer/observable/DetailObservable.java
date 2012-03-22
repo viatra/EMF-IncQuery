@@ -54,6 +54,10 @@ public class DetailObservable extends AbstractObservableList {
 				DetailElement de = new DetailElement(param, data);
 				addDetail(oval, de, -1);
 			}
+			else {
+				Object value = patternMatch.getSignature().get(param);
+				this.details.add(new DetailElement(param, (value == null) ? null : value.toString()));
+			}
 		}
 	}
 	
