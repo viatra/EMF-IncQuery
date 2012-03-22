@@ -26,8 +26,7 @@ public class LoadModelHandler extends AbstractHandler {
 				ResourceSet resourceSet = providerEditor.getEditingDomain()
 						.getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					QueryExplorer.viewerRoot.addPatternMatcherRoot(editorPart,
-							resourceSet);
+					QueryExplorer.viewerRoot.addPatternMatcherRoot(editorPart, resourceSet);
 				}
 			}
 		} catch (Exception e) {

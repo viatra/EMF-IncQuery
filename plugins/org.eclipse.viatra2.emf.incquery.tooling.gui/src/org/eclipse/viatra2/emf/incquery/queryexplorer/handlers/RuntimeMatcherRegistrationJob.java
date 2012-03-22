@@ -30,7 +30,6 @@ public class RuntimeMatcherRegistrationJob implements Runnable {
 		ViewerRoot vr = QueryExplorer.viewerRoot;
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file);
-//		PatternRegistry.INSTANCE.registerAllInModel(parsedEPM);
 			
 		DatabindingUtil.registeredPatterModels.remove(file);
 			
@@ -43,6 +42,8 @@ public class RuntimeMatcherRegistrationJob implements Runnable {
 		for (PatternMatcherRoot root : vr.getRoots()) {
 			root.registerPatternsFromFile(file, parsedEPM);
 		}
+		
+		QueryExplorer.treeViewer.refresh();
 	}
 
 }
