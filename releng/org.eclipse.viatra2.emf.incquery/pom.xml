@@ -93,7 +93,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.version}</version>
 				<configuration>
-					<destFile>${project.basedir}/../target/jacoco.exec</destFile>
+					<destFile>${project.basedir}/../../target/jacoco.exec</destFile>
 				</configuration>
 				<executions>
 					<execution>
@@ -122,16 +122,11 @@
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>maven-osgi-test-plugin</artifactId>
-					<version>${tycho.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-repository-plugin</artifactId>
 					<version>${tycho.version}</version>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
+					<groupId>org.codehaus.sonar</groupId>
 					<artifactId>sonar-maven3-plugin</artifactId>
 					<version>${sonar.version}</version>
 				</plugin>
