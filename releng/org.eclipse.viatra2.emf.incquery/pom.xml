@@ -182,4 +182,16 @@
 		</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<scm>
+		<connection>scm:git:git://github.com/ujhelyiz/EMF-IncQuery.git</connection>
+		<url>https://github.com/ujhelyiz/EMF-IncQuery</url>
+	</scm>
+	<ciManagement>
+		<url>https://build.inf.mit.bme.hu/jenkins</url>
+		<system>Jenkins</system>
+	</ciManagement>
+	<issueManagement>
+		<url>https://github.com/ujhelyiz/EMF-IncQuery/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 </project>
