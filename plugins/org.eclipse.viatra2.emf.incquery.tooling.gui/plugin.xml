@@ -11,6 +11,7 @@
             category="org.eclipse.viatra2.emf.incquery.gui.category"
             class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.newproject"
             name="EMF-IncQuery Project"
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
@@ -20,7 +21,7 @@
             category="org.eclipse.viatra2.emf.incquery.gui.category"
             class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            icon="icons/matcher.gif"
+            icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
             name="EMF-IncQuery query definition "
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
@@ -122,7 +123,7 @@
       <view
             category="org.eclipse.viatra2.emf.incquery.tooling.gui"
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
-            icon="icons/sample.gif"
+            icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
             name="Query Explorer">
       </view>
