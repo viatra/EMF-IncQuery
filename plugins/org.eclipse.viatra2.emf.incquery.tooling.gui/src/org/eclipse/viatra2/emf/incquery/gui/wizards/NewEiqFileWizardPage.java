@@ -154,7 +154,7 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 				si.setError("File extension must be \"eiq\"");
 			}
 	
-			if (patternName.length() == 0 || patternName == null) {
+			if (patternName == null || patternName.length() == 0) {
 				si.setError("Pattern name must be specified");
 			}
 		}

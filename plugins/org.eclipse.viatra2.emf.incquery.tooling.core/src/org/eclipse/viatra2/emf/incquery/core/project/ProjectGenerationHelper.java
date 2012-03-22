@@ -104,7 +104,7 @@ public abstract class ProjectGenerationHelper {
 		List<String> newNatures = new ArrayList<String>();
 		newNatures.addAll(Arrays.asList(desc.getNatureIds()));
 		newNatures.addAll(Arrays.asList(natures));
-		desc.setNatureIds(newNatures.toArray(new String[] {}));
+		desc.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
 		proj.setDescription(desc, monitor);
 		return desc;
 	}
