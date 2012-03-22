@@ -133,7 +133,16 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               id="org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView"
+               id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <view
+               id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.TaskList">
