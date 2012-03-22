@@ -21,10 +21,10 @@ class DatabindingGenerator implements IGenerationFragment {
 	
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.core.databinding.property", 
-		"org.eclipse.emf.databinding", 
 		"org.eclipse.core.databinding.observable", 
 		"org.eclipse.viatra2.emf.incquery.databinding.runtime",
-		"org.eclipse.viatra2.emf.incquery.runtime")
+		"org.eclipse.viatra2.emf.incquery.runtime",
+		"org.eclipse.viatra2.emf.incquery.tooling.gui")
 	}
 	
 	override getProjectPostfix() {
@@ -75,10 +75,8 @@ class DatabindingGenerator implements IGenerationFragment {
 		import java.util.Map;
 
 		import org.eclipse.core.databinding.observable.value.IObservableValue;
-		import org.eclipse.emf.databinding.EMFProperties;
-		import org.eclipse.emf.ecore.EObject;
-		import org.eclipse.emf.ecore.EStructuralFeature;
 		import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+		import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
 
@@ -108,16 +106,7 @@ class DatabindingGenerator implements IGenerationFragment {
 			public IObservableValue getObservableParameter(«pattern.matchClassName» match, String parameterName) {
 				if (parameterMap.size() > 0) {
 					String expression = parameterMap.get(parameterName);
-					String[] tokens = expression.split("\\.");
-					
-					Object o = match.get(tokens[0]);
-					if (o != null && o instanceof EObject) {
-						EObject eObj = (EObject) o;
-						EStructuralFeature feature = eObj.eClass().getEStructuralFeature(tokens[1]);
-						if (feature != null) {
-							return EMFProperties.value(feature).observe(eObj);
-						}
-					}
+					return DatabindingUtil.getObservableValue(match, expression);
 				}
 				return null;
 			}
