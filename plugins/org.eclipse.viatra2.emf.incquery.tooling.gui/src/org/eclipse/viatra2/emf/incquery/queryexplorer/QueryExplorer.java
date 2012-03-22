@@ -8,6 +8,9 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -37,6 +40,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeLabelProvid
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeStructureAdvisorImpl;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.MyResourceChangeReporter;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
@@ -110,6 +114,8 @@ public class QueryExplorer extends ViewPart {
 		tableViewer.getControl().setLayoutData(gridData);
 		
 		getSite().setSelectionProvider(treeViewer);
+		
+		initFileListener();
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {
@@ -196,5 +202,15 @@ public class QueryExplorer extends ViewPart {
 
 	public TableViewer getTableViewer() {
 		return tableViewer;
+	}
+	
+	private void initFileListener() {
+		IResourceChangeListener listener = new MyResourceChangeReporter();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, 
+				IResourceChangeEvent.PRE_CLOSE | 
+				IResourceChangeEvent.PRE_DELETE | 
+				IResourceChangeEvent.PRE_BUILD | 
+				IResourceChangeEvent.POST_BUILD | 
+				IResourceChangeEvent.POST_CHANGE);
 	}
 }
