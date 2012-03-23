@@ -4,15 +4,15 @@
       label="EMF-IncQuery SDK feature"
       version="0.6.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      EMF-IncQuery tooling support: editor, code generation, etc.
    </description>
 
    <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
    </copyright>
 
-<license url="http://www.eclipse.org/legal/epl-v10.html">
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
       Eclipse Public License - v 1.0
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS
 ECLIPSE PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR
@@ -217,6 +217,10 @@ litigation.
 
    <includes
          id="org.eclipse.viatra2.emf.incquery.databinding.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature"
          version="0.0.0"/>
 
    <plugin

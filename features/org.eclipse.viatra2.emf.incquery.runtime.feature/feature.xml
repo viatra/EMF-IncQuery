@@ -4,8 +4,8 @@
       label="EMF-IncQuery Runtime feature"
       version="0.6.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      EMF-IncQuery runtime feature. This is the minimum dependency to execute EMF-IncQuery matchers.
    </description>
 
    <copyright url="http://www.example.com/copyright">
