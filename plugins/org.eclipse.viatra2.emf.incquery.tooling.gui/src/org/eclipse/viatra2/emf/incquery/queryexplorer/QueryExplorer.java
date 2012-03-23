@@ -29,7 +29,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.DetailElement;
@@ -59,6 +63,26 @@ public class QueryExplorer extends ViewPart {
 	
 	public QueryExplorer() {
 		
+	}
+	
+	public static QueryExplorer openView() {
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getActivePage();
+        IViewPart form = page.findView(ID);
+        if (form == null) {
+            try {
+                form = page.showView(ID);
+            } catch (PartInitException e) {
+            }
+        } else
+            page.bringToTop(form);
+        return (QueryExplorer) form;
+	}
+	
+	public static boolean isViewOpen() {
+			IWorkbenchPage page = PlatformUI.getWorkbench()
+	                .getActiveWorkbenchWindow().getActivePage();
+	        return page.findView(ID) == null;
 	}
 
 	public void createPartControl(Composite parent) {
