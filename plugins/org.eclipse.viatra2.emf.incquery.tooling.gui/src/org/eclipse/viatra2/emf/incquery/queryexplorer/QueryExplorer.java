@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -61,8 +62,9 @@ public class QueryExplorer extends ViewPart {
 	}
 
 	public void createPartControl(Composite parent) {
-		treeViewer = new TreeViewer(parent);
-		tableViewer = new TableViewer(parent);
+		SashForm form = new SashForm(parent, SWT.HORIZONTAL);
+		treeViewer = new TreeViewer(form);
+		tableViewer = new TableViewer(form);
 		
 		//treeViewer configuration
 		ObservableListTreeContentProvider cp = new ObservableListTreeContentProvider(
