@@ -42,8 +42,7 @@ public class RuntimeMatcherRegistrationJob implements Runnable {
 		for (PatternMatcherRoot root : vr.getRoots()) {
 			root.registerPatternsFromFile(file, parsedEPM);
 		}
-		
-		QueryExplorer.treeViewer.refresh();
+
 	}
 
 }

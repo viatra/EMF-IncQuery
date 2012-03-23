@@ -40,7 +40,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeLabelProvid
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeStructureAdvisorImpl;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeReporter;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
@@ -205,7 +205,7 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	private void initFileListener() {
-		IResourceChangeListener listener = new ResourceChangeReporter();
+		IResourceChangeListener listener = new ResourceChangeListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, 
 				IResourceChangeEvent.PRE_CLOSE | 
 				IResourceChangeEvent.PRE_DELETE | 
