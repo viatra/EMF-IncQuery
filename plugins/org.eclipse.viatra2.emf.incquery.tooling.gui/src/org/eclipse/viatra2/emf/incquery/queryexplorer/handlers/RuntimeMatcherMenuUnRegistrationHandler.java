@@ -18,8 +18,8 @@ public class RuntimeMatcherMenuUnRegistrationHandler extends AbstractHandler {
 		if (firstElement != null && firstElement instanceof IFile) {
 			IFile file = (IFile) firstElement;
 			
-			RuntimeMatcherUnRegistrationJob job = new RuntimeMatcherUnRegistrationJob(file);
-			Display.getCurrent().syncExec(job);
+			RuntimeMatcherUnRegistrator job = new RuntimeMatcherUnRegistrator(file);
+			job.run();
 		}		
 		return null;
 	}

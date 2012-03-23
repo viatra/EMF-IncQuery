@@ -17,11 +17,11 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
  * @author Tamas Szabo
  *
  */
-public class RuntimeMatcherRegistrationJob implements Runnable {
+public class RuntimeMatcherRegistrator implements Runnable {
 
 	private IFile file;
 	
-	public RuntimeMatcherRegistrationJob(IFile file) {
+	public RuntimeMatcherRegistrator(IFile file) {
 		this.file = file;
 	}
 

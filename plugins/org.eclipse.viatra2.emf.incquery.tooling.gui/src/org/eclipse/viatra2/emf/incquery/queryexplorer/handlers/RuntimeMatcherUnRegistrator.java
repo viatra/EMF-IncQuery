@@ -6,11 +6,11 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherR
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
-public class RuntimeMatcherUnRegistrationJob implements Runnable {
+public class RuntimeMatcherUnRegistrator implements Runnable {
 
 	private IFile file;
 
-	public RuntimeMatcherUnRegistrationJob(IFile file) {
+	public RuntimeMatcherUnRegistrator(IFile file) {
 		this.file = file;
 	}
 
