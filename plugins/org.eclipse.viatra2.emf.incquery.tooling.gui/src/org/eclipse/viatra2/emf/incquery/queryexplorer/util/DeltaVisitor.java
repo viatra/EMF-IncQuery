@@ -5,7 +5,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherRegistrationJob;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherRegistrator;
 
 class DeltaVisitor implements IResourceDeltaVisitor {
 	public boolean visit(IResourceDelta delta) {
@@ -15,7 +15,7 @@ class DeltaVisitor implements IResourceDeltaVisitor {
 			//System.out.println("File changed");
 			IFile file = (IFile) res;
 			if (DatabindingUtil.registeredPatterModels.containsKey(file)) {
-				RuntimeMatcherRegistrationJob job = new RuntimeMatcherRegistrationJob((IFile) file);
+				RuntimeMatcherRegistrator job = new RuntimeMatcherRegistrator((IFile) file);
 				Display.getDefault().syncExec(job);
 			}
 			return false;
