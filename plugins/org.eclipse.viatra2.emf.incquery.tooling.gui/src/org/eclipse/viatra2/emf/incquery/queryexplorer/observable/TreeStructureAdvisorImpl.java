@@ -21,7 +21,7 @@ public class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 			return ((PatternMatcher) element).getParent();
 		}
 		else if (element instanceof PatternMatcherRoot) {
-			return QueryExplorer.viewerRoot;
+			return QueryExplorer.getViewerRoot();
 		}
 		else {
 			return null;

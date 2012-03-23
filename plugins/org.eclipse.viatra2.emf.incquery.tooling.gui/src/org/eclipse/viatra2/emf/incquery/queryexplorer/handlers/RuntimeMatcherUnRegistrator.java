@@ -16,7 +16,7 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 
 	@Override
 	public void run() {
-		ViewerRoot vr = QueryExplorer.viewerRoot;
+		ViewerRoot vr = QueryExplorer.getViewerRoot();
 
 		for (PatternMatcherRoot root : vr.getRoots()) {
 			root.unregisterPatternsFromFile(file);
@@ -24,7 +24,7 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 		DatabindingUtil.registeredPatterModels.remove(file);
 		
 		if (QueryExplorer.isViewOpen()) {
-			QueryExplorer.treeViewer.refresh();
+			QueryExplorer.refreshTreeViewer();
 		}
 	}
 

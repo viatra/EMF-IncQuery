@@ -57,31 +57,45 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
-	public static TreeViewer treeViewer;
-	public static TableViewer tableViewer;
-	public static ViewerRoot viewerRoot = new ViewerRoot();
+	private static TreeViewer treeViewer;
+	private static TableViewer tableViewer;
+	private static ViewerRoot viewerRoot = new ViewerRoot();
 	
 	public QueryExplorer() {
 		
 	}
 	
+	public static ViewerRoot getViewerRoot() {
+		return viewerRoot;
+	}
+	
 	public static QueryExplorer openView() {
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IViewPart form = page.findView(ID);
         if (form == null) {
             try {
                 form = page.showView(ID);
-            } catch (PartInitException e) {
+            } 
+            catch (PartInitException e) {
+            	e.printStackTrace();
             }
-        } else
+        } 
+        else {
             page.bringToTop(form);
+        }
         return (QueryExplorer) form;
 	}
 	
+	public static void refreshTreeViewer() {
+		treeViewer.refresh();
+	}
+	
+	public static void clearTableViewer() {
+		tableViewer.setInput(null);
+	}
+	
 	public static boolean isViewOpen() {
-			IWorkbenchPage page = PlatformUI.getWorkbench()
-	                .getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	        return page.findView(ID) == null;
 	}
 
@@ -224,10 +238,6 @@ public class QueryExplorer extends ViewPart {
 			}
 		}
 		
-	}
-
-	public TableViewer getTableViewer() {
-		return tableViewer;
 	}
 	
 	private void initFileListener() {

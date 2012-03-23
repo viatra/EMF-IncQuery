@@ -35,7 +35,7 @@ public class PartListener implements IPartListener {
 			if (closedEditor instanceof IEditingDomainProvider) {
 				ResourceSet resourceSet = ((IEditingDomainProvider) closedEditor).getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					QueryExplorer.viewerRoot.removePatternMatcherRoot(closedEditor, resourceSet);
+					QueryExplorer.getViewerRoot().removePatternMatcherRoot(closedEditor, resourceSet);
 				}
 			}
 		}
