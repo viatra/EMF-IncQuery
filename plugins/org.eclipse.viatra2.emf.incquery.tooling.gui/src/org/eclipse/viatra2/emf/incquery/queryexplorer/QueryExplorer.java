@@ -60,6 +60,7 @@ public class QueryExplorer extends ViewPart {
 	private static TreeViewer treeViewer;
 	private static TableViewer tableViewer;
 	private static ViewerRoot viewerRoot = new ViewerRoot();
+	private static SashForm form;
 	
 	public QueryExplorer() {
 		
@@ -88,6 +89,7 @@ public class QueryExplorer extends ViewPart {
 	
 	public static void refreshTreeViewer() {
 		treeViewer.refresh();
+		form.redraw();
 	}
 	
 	public static void clearTableViewer() {
@@ -100,7 +102,7 @@ public class QueryExplorer extends ViewPart {
 	}
 
 	public void createPartControl(Composite parent) {
-		SashForm form = new SashForm(parent, SWT.HORIZONTAL);
+		form = new SashForm(parent, SWT.HORIZONTAL);
 		treeViewer = new TreeViewer(form);
 		tableViewer = new TableViewer(form);
 		

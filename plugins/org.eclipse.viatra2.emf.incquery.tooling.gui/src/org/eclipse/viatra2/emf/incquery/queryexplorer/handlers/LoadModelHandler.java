@@ -32,6 +32,8 @@ public class LoadModelHandler extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
+		QueryExplorer.refreshTreeViewer();
+		
 		return null;
 	}
 }

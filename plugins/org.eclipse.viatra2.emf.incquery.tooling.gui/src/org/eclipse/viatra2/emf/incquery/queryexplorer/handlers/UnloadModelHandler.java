@@ -29,6 +29,7 @@ public class UnloadModelHandler extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
+		QueryExplorer.refreshTreeViewer();
 		QueryExplorer.clearTableViewer();
 		
 		return null;
