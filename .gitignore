@@ -3,8 +3,8 @@ bin
 target
 plugin.xml_gen
 .DS_Store*
-src-gen/**/*.java
-xtend-gen/**/*.java
+src-gen
+xtend-gen
 +keep.txt
 +.keep.txt
 
