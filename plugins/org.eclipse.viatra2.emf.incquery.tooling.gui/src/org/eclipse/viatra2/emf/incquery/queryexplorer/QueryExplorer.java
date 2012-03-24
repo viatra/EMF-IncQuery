@@ -45,6 +45,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeLabelProvid
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeStructureAdvisorImpl;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
@@ -61,6 +62,7 @@ public class QueryExplorer extends ViewPart {
 	private static TableViewer tableViewer;
 	private static ViewerRoot viewerRoot = new ViewerRoot();
 	private static SashForm form;
+	private static PartListener partListener;
 	
 	public QueryExplorer() {
 		
@@ -102,6 +104,7 @@ public class QueryExplorer extends ViewPart {
 	}
 
 	public void createPartControl(Composite parent) {
+		partListener = new PartListener();
 		form = new SashForm(parent, SWT.HORIZONTAL);
 		treeViewer = new TreeViewer(form);
 		tableViewer = new TableViewer(form);
@@ -250,5 +253,9 @@ public class QueryExplorer extends ViewPart {
 				IResourceChangeEvent.PRE_BUILD | 
 				IResourceChangeEvent.POST_BUILD | 
 				IResourceChangeEvent.POST_CHANGE);
+	}
+	
+	public static PartListener getPartListener() {
+		return partListener;
 	}
 }

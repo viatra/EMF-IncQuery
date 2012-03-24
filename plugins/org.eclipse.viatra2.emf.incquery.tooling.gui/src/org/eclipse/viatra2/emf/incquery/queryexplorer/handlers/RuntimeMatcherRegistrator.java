@@ -27,7 +27,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
 	@Override
 	public void run() {
-		QueryExplorer.openView();
+		//QueryExplorer.openView();
 		ViewerRoot vr = QueryExplorer.getViewerRoot();
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file);
@@ -44,7 +44,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			root.registerPatternsFromFile(file, parsedEPM);
 		}
 		
-		QueryExplorer.refreshTreeViewer();
+		//QueryExplorer.refreshTreeViewer();
 
 	}
 

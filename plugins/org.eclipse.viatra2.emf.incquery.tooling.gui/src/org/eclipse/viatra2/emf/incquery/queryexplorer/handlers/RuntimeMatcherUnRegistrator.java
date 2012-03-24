@@ -23,9 +23,9 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 		}
 		DatabindingUtil.registeredPatterModels.remove(file);
 		
-		if (QueryExplorer.isViewOpen()) {
-			QueryExplorer.refreshTreeViewer();
-		}
+//		if (QueryExplorer.isViewOpen()) {
+//			QueryExplorer.refreshTreeViewer();
+//		}
 	}
 
 }
