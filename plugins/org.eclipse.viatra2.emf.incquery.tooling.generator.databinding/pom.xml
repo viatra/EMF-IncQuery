@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
-    <groupId>org.eclipse.viatra2</groupId>
-    <version>0.6.0-SNAPSHOT</version>
-    <relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
-  </parent>
-  <artifactId>org.eclipse.viatra2.emf.incquery.tooling.generator.databinding</artifactId>
-  <packaging>eclipse-plugin</packaging>
-      <build>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
+		<groupId>org.eclipse.viatra2</groupId>
+		<version>0.6.0-SNAPSHOT</version>
+		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
+	</parent>
+	<artifactId>org.eclipse.viatra2.emf.incquery.tooling.generator.databinding</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<build>
 		<resources>
 			<resource>
 				<directory>src</directory>
@@ -19,5 +20,20 @@
 				<directory>xtend-gen</directory>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+				<version>${xtend.compiler.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>

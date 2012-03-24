@@ -34,6 +34,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.5.6.201201232323</jacoco.version>
+		<xtend.compiler.version>2.3.0</xtend.compiler.version>
 		<!-- Sonar -->
 		<sonar.version>2.14</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -129,6 +130,15 @@
 					<groupId>org.codehaus.sonar</groupId>
 					<artifactId>sonar-maven3-plugin</artifactId>
 					<version>${sonar.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.xtend</groupId>
+					<artifactId>xtend-maven-plugin</artifactId>
+					<version>${xtend.compiler.version}</version>
+					<configuration>
+						<!-- need to prefix by basedir to generate to currently built module -->
+						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
+					</configuration>
 				</plugin>
 
 			</plugins>
