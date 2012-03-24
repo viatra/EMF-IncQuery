@@ -148,8 +148,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		else if (reference instanceof EnumValue) // EMF-specific
 			return pSystem.newConstantVariable(((EnumValue) reference).getLiteral().getInstance());
 		else if (reference instanceof DoubleValue) {
-			Double dVal = ((DoubleValue) reference).getValue();
-			return pSystem.newConstantVariable(new Double(dVal));
+			return pSystem.newConstantVariable(((DoubleValue) reference).getValue());
 		}
 		else if (reference instanceof BoolValue) {
 			Boolean b = ((BoolValue) reference).isValue();
