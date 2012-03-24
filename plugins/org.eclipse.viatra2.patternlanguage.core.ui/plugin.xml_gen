@@ -11,6 +11,7 @@
             default="true"
             extensions="pattern"
             id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage"
+            matchingStrategy="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
             name="PatternLanguage Editor">
         </editor>
     </extension>
@@ -151,6 +152,28 @@
     </extension>
 
 
+    <!-- marker definitions for org.eclipse.viatra2.patternlanguage.core.PatternLanguage -->
+    <extension
+            id="patternlanguage.check.fast"
+            name="PatternLanguage Problem"
+            point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.xtext.ui.check.fast"/>
+        <persistent value="true"/>
+    </extension>
+    <extension
+            id="patternlanguage.check.normal"
+            name="PatternLanguage Problem"
+            point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.xtext.ui.check.normal"/>
+        <persistent value="true"/>
+    </extension>
+    <extension
+            id="patternlanguage.check.expensive"
+            name="PatternLanguage Problem"
+            point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.xtext.ui.check.expensive"/>
+        <persistent value="true"/>
+    </extension>
 
 	<!-- Quick Outline -->
 	<extension
@@ -185,13 +208,34 @@
 			</command>
 		</menuContribution>
 	</extension>
-   <!-- quickfix marker resolution generator -->
-   <extension
-         point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
-            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
-      </markerResolutionGenerator>
-   </extension>
+    <!-- quickfix marker resolution generator for org.eclipse.viatra2.patternlanguage.core.PatternLanguage -->
+    <extension
+            point="org.eclipse.ui.ide.markerResolution">
+        <markerResolutionGenerator
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.viatra2.patternlanguage.core.ui.patternlanguage.check.fast">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+        <markerResolutionGenerator
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.viatra2.patternlanguage.core.ui.patternlanguage.check.normal">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+        <markerResolutionGenerator
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.viatra2.patternlanguage.core.ui.patternlanguage.check.expensive">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+    </extension>
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
@@ -271,6 +315,62 @@
 			</command>
 		</menuContribution>
 	</extension>
+	<!-- Call Hierachy -->
+	<extension
+		point="org.eclipse.ui.handlers">
+		<handler 
+			class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.OpenCallHierachyHandler"
+			commandId="org.eclipse.xtext.xbase.ui.hierarchy.OpenCallHierarchy">
+			<activeWhen>
+				<reference
+					definitionId="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.Editor.opened">
+				</reference>
+			</activeWhen>
+		</handler>
+	</extension>
+	
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution
+			locationURI="popup:#TextEditorContext?after=group.open">
+			<command commandId="org.eclipse.xtext.xbase.ui.hierarchy.OpenCallHierarchy"
+				style="push"
+				tooltip="Open Call Hierarchy">
+				<visibleWhen checkEnabled="false">
+					<reference definitionId="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.Editor.opened"/>
+				</visibleWhen>
+			</command>
+		</menuContribution>
+	</extension>
+	<extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.smap.StratumBreakpointAdapterFactory"
+         adaptableType="org.eclipse.xtext.ui.editor.XtextEditor">
+         <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+      </factory> 
+   </extension>
+   <extension point="org.eclipse.ui.editorActions">
+      <editorContribution targetID="org.eclipse.viatra2.patternlanguage.core.PatternLanguage" 
+                          id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.ide.rulerActions">
+	     <action
+	             label="Not Used"
+	             class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+	             style="push"
+	             actionID="RulerDoubleClick"
+	             id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.doubleClickBreakpointAction"/>
+	  </editorContribution>
+   </extension>
+   <extension point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+         targetID="example.rulerContextMenuId"
+         id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.ide.RulerPopupActions">
+         <action
+            label="Toggle Breakpoint"
+            class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+            menubarPath="additions"
+            id="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.ide.rulerContextMenu.toggleBreakpointAction">
+         </action>
+      </viewerContribution>
+   </extension>
 
    <extension
          point="org.eclipse.xtext.builder.participant">
