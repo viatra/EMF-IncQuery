@@ -13,6 +13,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
+import java.util.ArrayList
 
 /**
  * @author Mark Czotter
@@ -40,15 +41,24 @@ class XmiOutputBuilder {
 			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(file.fullPath.toOSString, true))
 			// add import declarations 
 			val importDeclarations = newHashSet()
-			val packageImports = resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (PackageImport))).flatten
-			if (!packageImports.empty) {
-				for (importDecl : packageImports) {
-					if (!importDeclarations.contains(importDecl.EPackage)) {
-						importDeclarations.add(importDecl.EPackage)
-						xmiModelRoot.importPackages.add(importDecl)
+			/*
+			 * The following change avoids two different errors:
+			 *  * concurrentmodification of the growing list of resources
+			 *  * and a bug wrt Guice flatten and EMF BasicEList
+			 */ 
+			//val packageImports = resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (PackageImport))).flatten
+			val resources = new ArrayList(resourceSet.resources)
+			for (r : resources) {
+				val packageImports = r.allContents.toIterable.filter(typeof (PackageImport))
+				if (!packageImports.empty) {
+					for (importDecl : packageImports) {
+						if (!importDeclarations.contains(importDecl.EPackage)) {
+							importDeclarations.add(importDecl.EPackage)
+							xmiModelRoot.importPackages.add(importDecl)
+						}
 					}
-				}
-			} 
+				} 
+			}
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {

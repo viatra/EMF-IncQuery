@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.util;
 
 import com.google.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,30 +83,29 @@ public class XmiOutputBuilder {
         HashSet<Object> _newHashSet = CollectionLiterals.<Object>newHashSet();
         final HashSet<Object> importDeclarations = _newHashSet;
         EList<Resource> _resources = resourceSet.getResources();
-        final Function1<Resource,Iterable<PackageImport>> _function = new Function1<Resource,Iterable<PackageImport>>() {
-            public Iterable<PackageImport> apply(final Resource r) {
-              TreeIterator<EObject> _allContents = r.getAllContents();
-              Iterable<EObject> _iterable = IteratorExtensions.<EObject>toIterable(_allContents);
-              Iterable<PackageImport> _filter = IterableExtensions.<PackageImport>filter(_iterable, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport.class);
-              return _filter;
-            }
-          };
-        List<Iterable<PackageImport>> _map = ListExtensions.<Resource, Iterable<PackageImport>>map(_resources, _function);
-        Iterable<PackageImport> _flatten = IterableExtensions.<PackageImport>flatten(_map);
-        final Iterable<PackageImport> packageImports = _flatten;
-        boolean _isEmpty = IterableExtensions.isEmpty(packageImports);
-        boolean _operator_not_1 = BooleanExtensions.operator_not(_isEmpty);
-        if (_operator_not_1) {
-          for (final PackageImport importDecl : packageImports) {
-            EPackage _ePackage = importDecl.getEPackage();
-            boolean _contains = importDeclarations.contains(_ePackage);
-            boolean _operator_not_2 = BooleanExtensions.operator_not(_contains);
-            if (_operator_not_2) {
-              {
-                EPackage _ePackage_1 = importDecl.getEPackage();
-                importDeclarations.add(_ePackage_1);
-                EList<PackageImport> _importPackages = xmiModelRoot.getImportPackages();
-                _importPackages.add(importDecl);
+        ArrayList<Resource> _arrayList = new ArrayList<Resource>(_resources);
+        final ArrayList<Resource> resources = _arrayList;
+        for (final Resource r : resources) {
+          {
+            TreeIterator<EObject> _allContents = r.getAllContents();
+            Iterable<EObject> _iterable = IteratorExtensions.<EObject>toIterable(_allContents);
+            Iterable<PackageImport> _filter = IterableExtensions.<PackageImport>filter(_iterable, org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport.class);
+            final Iterable<PackageImport> packageImports = _filter;
+            boolean _isEmpty = IterableExtensions.isEmpty(packageImports);
+            boolean _operator_not_1 = BooleanExtensions.operator_not(_isEmpty);
+            if (_operator_not_1) {
+              for (final PackageImport importDecl : packageImports) {
+                EPackage _ePackage = importDecl.getEPackage();
+                boolean _contains = importDeclarations.contains(_ePackage);
+                boolean _operator_not_2 = BooleanExtensions.operator_not(_contains);
+                if (_operator_not_2) {
+                  {
+                    EPackage _ePackage_1 = importDecl.getEPackage();
+                    importDeclarations.add(_ePackage_1);
+                    EList<PackageImport> _importPackages = xmiModelRoot.getImportPackages();
+                    _importPackages.add(importDecl);
+                  }
+                }
               }
             }
           }
@@ -113,7 +113,7 @@ public class XmiOutputBuilder {
         HashMap<Object,Object> _newHashMap = CollectionLiterals.<Object, Object>newHashMap();
         final HashMap<Object,Object> fqnToPatternMap = _newHashMap;
         EList<Resource> _resources_1 = resourceSet.getResources();
-        final Function1<Resource,Iterable<Pattern>> _function_1 = new Function1<Resource,Iterable<Pattern>>() {
+        final Function1<Resource,Iterable<Pattern>> _function = new Function1<Resource,Iterable<Pattern>>() {
             public Iterable<Pattern> apply(final Resource r) {
               TreeIterator<EObject> _allContents = r.getAllContents();
               Iterable<EObject> _iterable = IteratorExtensions.<EObject>toIterable(_allContents);
@@ -121,9 +121,9 @@ public class XmiOutputBuilder {
               return _filter;
             }
           };
-        List<Iterable<Pattern>> _map_1 = ListExtensions.<Resource, Iterable<Pattern>>map(_resources_1, _function_1);
-        Iterable<Pattern> _flatten_1 = IterableExtensions.<Pattern>flatten(_map_1);
-        for (final Pattern pattern : _flatten_1) {
+        List<Iterable<Pattern>> _map = ListExtensions.<Resource, Iterable<Pattern>>map(_resources_1, _function);
+        Iterable<Pattern> _flatten = IterableExtensions.<Pattern>flatten(_map);
+        for (final Pattern pattern : _flatten) {
           {
             Pattern _copy = EcoreUtil.<Pattern>copy(pattern);
             final Pattern p = _copy;
@@ -146,9 +146,9 @@ public class XmiOutputBuilder {
           }
         }
         TreeIterator<EObject> _eAllContents = xmiModelRoot.eAllContents();
-        Iterable<EObject> _iterable = IteratorExtensions.<EObject>toIterable(_eAllContents);
-        Iterable<PatternCompositionConstraint> _filter = IterableExtensions.<PatternCompositionConstraint>filter(_iterable, org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint.class);
-        for (final PatternCompositionConstraint constraint : _filter) {
+        Iterable<EObject> _iterable_1 = IteratorExtensions.<EObject>toIterable(_eAllContents);
+        Iterable<PatternCompositionConstraint> _filter_1 = IterableExtensions.<PatternCompositionConstraint>filter(_iterable_1, org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint.class);
+        for (final PatternCompositionConstraint constraint : _filter_1) {
           {
             Pattern _patternRef = constraint.getPatternRef();
             QualifiedName _fullyQualifiedName_1 = this.qualifiedNameProvider.getFullyQualifiedName(_patternRef);
