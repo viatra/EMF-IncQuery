@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Validation Tooling
+Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.validation.tooling;singleton:=true
+Bundle-Version: 0.4.0.qualifier
+Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.tooling.ValidationToolingPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.viatra2.emf.incquery.validation.codegen,
+ org.eclipse.core.resources,
+ org.eclipse.viatra2.emf.incquery.core;bundle-version="0.4.0",
+ org.eclipse.viatra2.emf.incquery.gui;bundle-version="0.4.0",
+ org.eclipse.viatra2.emf.incquery.model;bundle-version="0.4.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
