@@ -63,6 +63,8 @@ public class QueryExplorer extends ViewPart {
 	private static ViewerRoot viewerRoot = new ViewerRoot();
 	private static SashForm form;
 	private static PartListener partListener;
+	private IObservableList rootsObservableList;
+	private IBeanListProperty rootsProp;
 	
 	public QueryExplorer() {
 		
@@ -89,9 +91,11 @@ public class QueryExplorer extends ViewPart {
         return (QueryExplorer) form;
 	}
 	
-	public static void refreshTreeViewer() {
+	public void refreshTreeViewer() {
 		treeViewer.refresh();
-		form.redraw();
+//		if (rootsObservableList != null) {
+//			treeViewer.setInput(rootsProp.observe(viewerRoot));
+//		}
 	}
 	
 	public static void clearTableViewer() {
@@ -121,8 +125,8 @@ public class QueryExplorer extends ViewPart {
 
 		treeViewer.setLabelProvider(new TreeLabelProviderImpl(map));
 		
-		IBeanListProperty rootsProp = BeanProperties.list(ViewerRoot.class, "roots", PatternMatcherRoot.class);
-		IObservableList rootsObservableList = rootsProp.observe(viewerRoot);
+		rootsProp = BeanProperties.list(ViewerRoot.class, "roots", PatternMatcherRoot.class);
+		rootsObservableList = rootsProp.observe(viewerRoot);
 		treeViewer.setInput(rootsObservableList);
 		
 		IObservableValue selection = ViewersObservables.observeSingleSelection(treeViewer);
@@ -247,12 +251,8 @@ public class QueryExplorer extends ViewPart {
 	
 	private void initFileListener() {
 		IResourceChangeListener listener = new ResourceChangeListener();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, 
-				IResourceChangeEvent.PRE_CLOSE | 
-				IResourceChangeEvent.PRE_DELETE | 
-				IResourceChangeEvent.PRE_BUILD | 
-				IResourceChangeEvent.POST_BUILD | 
-				IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,  
+				IResourceChangeEvent.PRE_BUILD);
 	}
 	
 	public static PartListener getPartListener() {

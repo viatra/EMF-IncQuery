@@ -47,7 +47,7 @@ public class PatternMatcherRoot {
 		PatternMatcher pm = new PatternMatcher(this, matcher, generated);
 		this.matchers.put(matcher, pm);
 		List<PatternMatcher> newValue = new ArrayList<PatternMatcher>(matchers.values());
-		this.propertyChangeSupport.firePropertyChange("matchers", oldValue, newValue);
+		this.propertyChangeSupport.firePropertyChange(MATCHERS_ID, oldValue, newValue);
 	}
 	
 	public void removeMatcher(IncQueryMatcher<? extends IPatternMatch> matcher) {
@@ -55,8 +55,10 @@ public class PatternMatcherRoot {
 		this.matchers.get(matcher).dispose();
 		this.matchers.remove(matcher);
 		List<PatternMatcher> newValue = new ArrayList<PatternMatcher>(matchers.values());
-		this.propertyChangeSupport.firePropertyChange("matchers", oldValue, newValue);
+		this.propertyChangeSupport.firePropertyChange(MATCHERS_ID, oldValue, newValue);
 	}
+	
+	public static final String MATCHERS_ID = "matchers";
 	
 	public List<PatternMatcher> getMatchers() {
 		return new ArrayList<PatternMatcher>(matchers.values());

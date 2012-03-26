@@ -20,8 +20,8 @@ public class TreeFactoryImpl implements IObservableFactory {
 	private IBeanListProperty matcherListProp;
 	
 	public TreeFactoryImpl() {
-		matchesListProp = BeanProperties.list(PatternMatcher.class, "matches", PatternMatch.class);
-		matcherListProp = BeanProperties.list(PatternMatcherRoot.class, "matchers", PatternMatcher.class);
+		matchesListProp = BeanProperties.list(PatternMatcher.class, PatternMatcher.MATCHES_ID, PatternMatch.class);
+		matcherListProp = BeanProperties.list(PatternMatcherRoot.class, PatternMatcherRoot.MATCHERS_ID, PatternMatcher.class);
 	}
 	
 	@Override
