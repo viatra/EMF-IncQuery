@@ -23,8 +23,7 @@ class DatabindingGenerator implements IGenerationFragment {
 		newArrayList("org.eclipse.core.databinding.property", 
 		"org.eclipse.core.databinding.observable", 
 		"org.eclipse.viatra2.emf.incquery.databinding.runtime",
-		"org.eclipse.viatra2.emf.incquery.runtime",
-		"org.eclipse.viatra2.emf.incquery.tooling.gui")
+		"org.eclipse.viatra2.emf.incquery.runtime")
 	}
 	
 	override getProjectPostfix() {
@@ -76,7 +75,7 @@ class DatabindingGenerator implements IGenerationFragment {
 
 		import org.eclipse.core.databinding.observable.value.IObservableValue;
 		import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-		import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+		import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
 
@@ -106,7 +105,7 @@ class DatabindingGenerator implements IGenerationFragment {
 			public IObservableValue getObservableParameter(«pattern.matchClassName» match, String parameterName) {
 				if (parameterMap.size() > 0) {
 					String expression = parameterMap.get(parameterName);
-					return DatabindingUtil.getObservableValue(match, expression);
+					return DatabindingAdapterUtil.getObservableValue(match, expression);
 				}
 				return null;
 			}
