@@ -12,12 +12,12 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.RuntimeDatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRootKey;
@@ -246,46 +246,13 @@ public class DatabindingUtil {
 				
 				//odd tokens 
 				if (i % 2 != 0) {
-					IObservableValue value = getObservableValue(match, tokens[i]);
+					IObservableValue value = DatabindingAdapterUtil.getObservableValue(match, tokens[i]);
 					if (value != null) {
 						value.addValueChangeListener(changeListener);
 					}
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Returns an IObservableValue for the given match based on the given expression.
-	 * If an attribute is not present in the expression than it tries with the 'name' attribute.
-	 * If it is not present the returned value will be null.
-	 * 
-	 * @param match the match object
-	 * @param expression the expression
-	 * @return IObservableValue instance or null 
-	 */
-	public static IObservableValue getObservableValue(IPatternMatch match, String expression) {
-		IObservableValue val = null;
-		String[] objectTokens = expression.split("\\.");
-		
-		if (objectTokens.length > 0) {
-			Object o = null;
-			EStructuralFeature feature = null;
-			
-			if (objectTokens.length == 2) {
-				o = match.get(objectTokens[0]);
-				feature = getFeature(o, objectTokens[1]);
-			}
-			if (objectTokens.length == 1) {
-				o = match.get(objectTokens[0]);
-				feature = getFeature(o, "name");
-			}
-			if (o != null && feature != null) {
-				val = EMFProperties.value(feature).observe(o);
-			}
-		}
-		
-		return val;
 	}
 
 	/**

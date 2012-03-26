@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
@@ -24,7 +24,7 @@ public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
 	public IObservableValue getObservableParameter(IPatternMatch match,	String parameterName) {
 		if (parameterMap.size() > 0) {
 			String expression = parameterMap.get(parameterName);
-			return DatabindingUtil.getObservableValue(match, expression);
+			return DatabindingAdapterUtil.getObservableValue(match, expression);
 		}
 		return null;
 	}
