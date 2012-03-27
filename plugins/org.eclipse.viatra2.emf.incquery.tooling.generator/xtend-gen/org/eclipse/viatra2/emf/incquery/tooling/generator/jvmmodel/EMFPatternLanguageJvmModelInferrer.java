@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.xbase.compiler.ImportManager;
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator;
 import org.eclipse.xtext.xbase.lib.CollectionExtensions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
@@ -71,6 +72,9 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
   
   @Inject
   private TypeReferences types;
+  
+  @Inject
+  private IJvmModelAssociator associator;
   
   /**
    * Is called for each Pattern instance in a resource.
@@ -133,6 +137,7 @@ public class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
             };
           JvmField _field = this._eMFJvmTypesBuilder.toField(pattern, "FACTORY", _newTypeRef, _function);
           CollectionExtensions.<JvmField>operator_add(_members, _field);
+          this.associator.associatePrimary(pattern, matcherClass);
           acceptor.accept(matchClass);
           acceptor.accept(matcherClass);
           acceptor.accept(matcherFactoryClass);
