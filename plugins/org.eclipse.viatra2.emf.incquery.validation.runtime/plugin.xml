@@ -2,5 +2,29 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="constraint" name="constraint" schema="schema/constraint.exsd"/>
+   <extension
+         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+      <annotation
+            name="Constraint">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="location"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="location"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="mode"
+               type="string">
+         </annotationparameter>
+      </annotation>
+   </extension>
 
 </plugin>
