@@ -15,7 +15,7 @@
          <annotationparameter
                mandatory="true"
                multiple="false"
-               name="location"
+               name="message"
                type="string">
          </annotationparameter>
          <annotationparameter
