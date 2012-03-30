@@ -2,5 +2,32 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="databinding" name="databinding" schema="schema/databinding.exsd"/>
+   <extension
+         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+      <annotation
+            name="PatternUI">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="message"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            name="ObservableValue">
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="name"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="expression"
+               type="string">
+         </annotationparameter>
+      </annotation>
+   </extension>
 
 </plugin>
