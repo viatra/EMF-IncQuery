@@ -1,40 +1,29 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.util;
 
 import com.google.inject.Inject;
-import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.serializer.ISerializer;
-import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -61,6 +50,9 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   
   @Inject
   private IWorkspaceRoot workspaceRoot;
+  
+  @Inject
+  private ITypeProvider typeProvider;
   
   public String bundleName(final Pattern pattern) {
     String _xblockexpression = null;
@@ -124,8 +116,7 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
   public String fieldName(final Variable variable) {
     String _name = variable.getName();
     String _firstUpper = StringExtensions.toFirstUpper(_name);
-    String _operator_plus = StringExtensions.operator_plus("f", _firstUpper);
-    return _operator_plus;
+    return _firstUpper;
   }
   
   /**
@@ -135,129 +126,8 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
    * @return JvmTypeReference pointing the EClass that defines the Variable's type.
    */
   public JvmTypeReference calculateType(final Variable variable) {
-      EcoreUtil.resolveAll(variable);
-      try {
-        {
-          Type _type = variable.getType();
-          if ((_type instanceof ClassType)) {
-            {
-              Type _type_1 = variable.getType();
-              EClassifier _classname = ((ClassType) _type_1).getClassname();
-              final EClassifier eClassifier = _classname;
-              boolean _operator_and = false;
-              boolean _operator_notEquals = ObjectExtensions.operator_notEquals(eClassifier, null);
-              if (!_operator_notEquals) {
-                _operator_and = false;
-              } else {
-                Class<? extends Object> _instanceClass = eClassifier.getInstanceClass();
-                boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(_instanceClass, null);
-                _operator_and = BooleanExtensions.operator_and(_operator_notEquals, _operator_notEquals_1);
-              }
-              if (_operator_and) {
-                Class<? extends Object> _instanceClass_1 = eClassifier.getInstanceClass();
-                JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, _instanceClass_1);
-                return _newTypeRef;
-              }
-            }
-          }
-          EObject _eContainer = variable.eContainer();
-          if ((_eContainer instanceof Pattern)) {
-            {
-              EObject _eContainer_1 = variable.eContainer();
-              final Pattern pattern = ((Pattern) _eContainer_1);
-              EList<PatternBody> _bodies = pattern.getBodies();
-              for (final PatternBody body : _bodies) {
-                EList<Constraint> _constraints = body.getConstraints();
-                for (final Constraint constraint : _constraints) {
-                  {
-                    JvmTypeReference _typeRef = this.getTypeRef(constraint, variable);
-                    final JvmTypeReference typeRef = _typeRef;
-                    boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(typeRef, null);
-                    if (_operator_notEquals_2) {
-                      return typeRef;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      } catch (final Throwable _t) {
-        if (_t instanceof Exception) {
-          final Exception e = (Exception)_t;
-          boolean _operator_notEquals_3 = ObjectExtensions.operator_notEquals(this.logger, null);
-          if (_operator_notEquals_3) {
-            String _name = variable.getName();
-            String _operator_plus = StringExtensions.operator_plus("Error during type calculation for ", _name);
-            this.logger.error(_operator_plus, e);
-          }
-        } else {
-          throw Exceptions.sneakyThrow(_t);
-        }
-      }
-      JvmTypeReference _newTypeRef_1 = this._eMFJvmTypesBuilder.newTypeRef(variable, java.lang.Object.class);
-      return _newTypeRef_1;
-  }
-  
-  /**
-   * Returns the JvmTypeReference for variable if it used in the Constraint.
-   */
-  protected JvmTypeReference _getTypeRef(final Constraint constraint, final Variable variable) {
-    return null;
-  }
-  
-  /**
-   * Returns the JvmTypeReference for variable if it used in the EClassConstraint.
-   */
-  protected JvmTypeReference _getTypeRef(final EClassifierConstraint constraint, final Variable variable) {
-      EntityType _type = constraint.getType();
-      final EntityType entityType = _type;
-      VariableReference _var = constraint.getVar();
-      final VariableReference variableRef = _var;
-      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(variableRef, null);
-      if (_operator_notEquals) {
-        boolean _operator_or = false;
-        Variable _variable = variableRef.getVariable();
-        boolean _operator_equals = ObjectExtensions.operator_equals(_variable, variable);
-        if (_operator_equals) {
-          _operator_or = true;
-        } else {
-          boolean _operator_and = false;
-          String _var_1 = variableRef.getVar();
-          boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(_var_1);
-          boolean _operator_not = BooleanExtensions.operator_not(_isNullOrEmpty);
-          if (!_operator_not) {
-            _operator_and = false;
-          } else {
-            String _var_2 = variableRef.getVar();
-            String _name = variable.getName();
-            boolean _equals = _var_2.equals(_name);
-            _operator_and = BooleanExtensions.operator_and(_operator_not, _equals);
-          }
-          _operator_or = BooleanExtensions.operator_or(_operator_equals, _operator_and);
-        }
-        if (_operator_or) {
-          if ((entityType instanceof ClassType)) {
-            {
-              EClassifier _classname = ((ClassType) entityType).getClassname();
-              Class<? extends Object> _instanceClass = _classname.getInstanceClass();
-              final Class<? extends Object> clazz = _instanceClass;
-              boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(clazz, null);
-              if (_operator_notEquals_1) {
-                {
-                  JvmTypeReference _newTypeRef = this._eMFJvmTypesBuilder.newTypeRef(variable, clazz);
-                  final JvmTypeReference typeref = _newTypeRef;
-                  boolean _operator_notEquals_2 = ObjectExtensions.operator_notEquals(typeref, null);
-                  if (_operator_notEquals_2) {
-                    return typeref;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      return null;
+    JvmTypeReference _typeForIdentifiable = this.typeProvider.getTypeForIdentifiable(variable);
+    return _typeForIdentifiable;
   }
   
   /**
@@ -368,16 +238,5 @@ public class EMFPatternLanguageJvmModelInferrerUtil {
     String _packageName = this.getPackageName(pattern);
     String _replace = _packageName.replace(".", "/");
     return _replace;
-  }
-  
-  public JvmTypeReference getTypeRef(final Constraint constraint, final Variable variable) {
-    if (constraint instanceof EClassifierConstraint) {
-      return _getTypeRef((EClassifierConstraint)constraint, variable);
-    } else if (constraint != null) {
-      return _getTypeRef(constraint, variable);
-    } else {
-      throw new IllegalArgumentException("Unhandled parameter types: " +
-        Arrays.<Object>asList(constraint, variable).toString());
-    }
   }
 }

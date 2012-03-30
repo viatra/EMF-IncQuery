@@ -16,6 +16,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.serializer.ISerializer
+import org.eclipse.xtext.xbase.typing.ITypeProvider
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -29,6 +30,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	Logger logger = Logger::getLogger(getClass())
 	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 	@Inject	IWorkspaceRoot workspaceRoot
+	@Inject ITypeProvider typeProvider
 	
 	def bundleName(Pattern pattern) {
 		val project = workspaceRoot.getFile(
@@ -69,7 +71,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	 * Returns the field name of Variable
    	 */
    	def fieldName(Variable variable) {
-   		"f"+variable.name.toFirstUpper
+   		variable.name.toFirstUpper
    	}
    	
 	/**
@@ -79,63 +81,21 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
-   		// resolve the possible proxies
-   		EcoreUtil2::resolveAll(variable)
-   		try {
-   			// first try to get the type through the variable's type ref 
-   			if (variable.type instanceof ClassType) {
-   				val eClassifier = (variable.type as ClassType).classname
-   				if (eClassifier != null && eClassifier.instanceClass != null) {
-	   				return variable.newTypeRef(eClassifier.instanceClass)	
-   				}
-   			} 
-	   		// if the first try didnt return anything, try to 
-	   		// infer the type from one of the Pattern bodies.
-		   	if (variable.eContainer() instanceof Pattern) {
-	   	 		val pattern = variable.eContainer() as Pattern;
-	   			for (body : pattern.bodies) {
-	   				for (constraint : body.constraints) {
-	   					val typeRef = getTypeRef(constraint, variable)
-	   					if (typeRef != null) {
-	   						return typeRef
-	   					}
-	   				}
-	   			}
-	   		}
-   		} catch (Exception e) {
-   			if (logger != null) {
-   				logger.error("Error during type calculation for " + variable.name, e)	
-   			}
-   		}
-   		// if all calculation failed, simply fall back to java Object.
-		return variable.newTypeRef(typeof(Object))
-   	}
-   	
-   	/**
-   	 * Returns the JvmTypeReference for variable if it used in the Constraint.
-   	 */
-   	def dispatch JvmTypeReference getTypeRef(Constraint constraint, Variable variable) {}
-
-   	/**
-   	 * Returns the JvmTypeReference for variable if it used in the EClassConstraint.
-   	 */   	
-   	def dispatch JvmTypeReference getTypeRef(EClassifierConstraint constraint, Variable variable) {
-   		val entityType = constraint.type
-   		val variableRef = constraint.getVar
-   		if (variableRef != null) {
-   			if (variableRef.variable == variable || (!variableRef.getVar.nullOrEmpty && variableRef.getVar.equals(variable.name))) {
-	   			if (entityType instanceof ClassType) {
-	   				val clazz = (entityType as ClassType).classname.instanceClass
-	   				if (clazz != null) {
-	   					val typeref = variable.newTypeRef(clazz)
-						if (typeref != null) {
-							return typeref
-						}
-	   				}
-	   			}
-   			}	
-   		}
-   		return null
+   		typeProvider.getTypeForIdentifiable(variable)
+//   		// resolve the possible proxies
+//   		EcoreUtil2::resolveAll(variable)
+//   		try {
+//   			val ref = 
+//   			if (ref != null){
+//   				return ref;
+//   			}
+//   		} catch (Exception e) {
+//   			if (logger != null) {
+//   				logger.error("Error during type calculation for " + variable.name, e)	
+//   			}
+//   		}
+//   		// if all calculation failed, simply fall back to java Object.
+//		return variable.newTypeRef(typeof(Object))
    	}
    	
    	/**
