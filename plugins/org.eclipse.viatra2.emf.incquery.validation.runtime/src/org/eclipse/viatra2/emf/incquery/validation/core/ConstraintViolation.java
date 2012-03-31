@@ -96,7 +96,7 @@ public class ConstraintViolation<MatchType extends IPatternMatch> {
 	}
 	
 	private void updateMarker() throws CoreException {
-		marker.setAttribute(IMarker.MESSAGE, kind.getMessage(affectedElements));    
+		marker.setAttribute(IMarker.MESSAGE, kind.getMessage());    
 		EObject location = kind.getLocationObject(affectedElements);
 		if (location!=null) {
 			/*
