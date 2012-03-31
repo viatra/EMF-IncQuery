@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 
 public class ConstraintViolation<MatchType extends IPatternMatch> {
 

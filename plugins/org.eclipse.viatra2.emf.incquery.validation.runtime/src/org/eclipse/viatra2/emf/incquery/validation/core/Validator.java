@@ -21,6 +21,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
 /**
@@ -38,7 +39,8 @@ public class Validator<MatchType extends IPatternMatch> {
 	public Validator(Constraint<MatchType> constraint, Notifier emfRoot, IFile f) throws IncQueryRuntimeException {
 		this.constraint = constraint;
 		this.f = f;
-		this.matcher = constraint.matcherFactory().getMatcher(emfRoot);
+		this.matcher = null;
+		//this.matcher = constraint.matcherFactory().getMatcher(emfRoot);
 		this.dm = matcher.newDeltaMonitor(true);
 		this.processMatchesRunnable = new Runnable() {		
 			@Override

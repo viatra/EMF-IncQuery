@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.validation;
+package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -6,18 +6,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class ValidationRuntimeActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.validation"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.validation.runtime"; //$NON-NLS-1$
 
 	// The shared instance
-	private static Activator plugin;
+	private static ValidationRuntimeActivator plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public ValidationRuntimeActivator() {
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static ValidationRuntimeActivator getDefault() {
 		return plugin;
 	}
 

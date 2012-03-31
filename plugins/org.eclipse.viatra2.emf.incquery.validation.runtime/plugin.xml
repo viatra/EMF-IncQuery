@@ -21,7 +21,7 @@
          <annotationparameter
                mandatory="true"
                multiple="false"
-               name="mode"
+               name="severity"
                type="string">
          </annotationparameter>
       </annotation>

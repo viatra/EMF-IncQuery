@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Live Validation Engine
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.validation.runtime;singleton:=true
 Bundle-Version: 0.6.0.qualifier
-Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.Activator
+Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationRuntimeActivator
 Bundle-Vendor: Gabor Bergmann, Istvan Rath
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -12,4 +12,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.viatra2.emf.incquery.validation.core
+Export-Package: org.eclipse.viatra2.emf.incquery.validation.runtime

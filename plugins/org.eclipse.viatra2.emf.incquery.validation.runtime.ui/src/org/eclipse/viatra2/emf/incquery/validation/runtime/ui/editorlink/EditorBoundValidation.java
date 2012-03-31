@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.validation.core.ValidationUtil;
+//import org.eclipse.viatra2.emf.incquery.validation.core.ValidationUtil;
 
 /**
  * @author Bergmann Gábor
@@ -48,7 +48,8 @@ public class EditorBoundValidation {
 	{
 		IFile inputFile = getInputFile(editor);
 		if (inputFile == null) return false;
-		boolean initialized = ValidationUtil.initValidators(emfRoot, inputFile);
+		boolean initialized = false;
+		//ValidationUtil.initValidators(emfRoot, inputFile);
 		if (initialized) {
 			//activeEditorRoots.put(editor, emfRoot);
 			registerPartListener(editor, inputFile, emfRoot);
@@ -78,7 +79,7 @@ public class EditorBoundValidation {
 			public void partClosed(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part.equals(targetEditor)) {
-					ValidationUtil.closeValidators(emfRoot, inputFile);
+					//ValidationUtil.closeValidators(emfRoot, inputFile);
 					page.removePartListener(this);
 				}
 			}

@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.viatra2.emf.incquery.validation" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.viatra2.emf.incquery.validation.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.viatra2.emf.incquery.validation" id="constraint" name="constraint"/>
+         <meta.schema plugin="org.eclipse.viatra2.emf.incquery.validation.runtime" id="constraint" name="constraint"/>
       </appinfo>
       <documentation>
-         Plugins may contribute Constraints to be validated by the EMF-IncQuery validation engine 
+         Plugins may contribute Constraints to be validated by the EMF-IncQuery validation engine
       </documentation>
    </annotation>
 
