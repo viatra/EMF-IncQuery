@@ -27,6 +27,12 @@
                   commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators"
                   label="Initialize EMF-IncQuery Validators"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                  </reference>
+               </visibleWhen>
             </command>
          </menu>
       </menuContribution>
@@ -40,6 +46,12 @@
                   commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators"
                   label="Initialize EMF-IncQuery Validators"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                  </reference>
+               </visibleWhen>
             </command>
          </menu>
       </menuContribution>
@@ -53,6 +65,12 @@
                   commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators"
                   label="Initialize EMF-IncQuery Validators"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                  </reference>
+               </visibleWhen>
             </command>
          </menu>
       </menuContribution>
@@ -66,8 +84,29 @@
                   commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators"
                   label="Initialize EMF-IncQuery Validators"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                  </reference>
+               </visibleWhen>
             </command>
          </menu>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.eclipse.emf.ecore.EObject">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
    </extension>
 </plugin>
