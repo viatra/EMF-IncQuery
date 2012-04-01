@@ -27,38 +27,6 @@ public class ValidationUtil {
 	private static Map<Notifier,Collection<Validator>> activeRoots = 
 		new HashMap<Notifier,Collection<Validator>>();  
 	
-	/*public static Set<ConstraintViolation> getProblems(IFile f) {
-		return problems.get(f).keySet();
-	}*/
-	
-	/*static void putProblem(IFile f, ConstraintViolation vp) throws CoreException {
-		System.out.println("PUT: " + f + " - " + vp.affectedElements.toString());
-		IMarker marker = vp.createMarker(f);
-		Map<ConstraintViolation, IMarker> _problems = problems.get(f);
-		if (_problems == null) {
-			_problems = new HashMap<ConstraintViolation, IMarker>();
-			problems.put(f, _problems);
-		}
-		_problems.put(vp, marker);
-	}
-	
-	static void removeProblem(IFile f, ConstraintViolation vp) throws CoreException {
-		System.out.println("REMOVE: " + f + " - " + vp.affectedElements.toString());
-		Map<ConstraintViolation, IMarker> _problems = problems.get(f);
-		if (_problems != null) {
-			vp.dispose();
-			_problems.remove(vp);
-		}
-	}
-	
-	static boolean knownProblem(IFile f, ConstraintViolation _vp) {
-		Map<ConstraintViolation, IMarker> _problems = problems.get(f);
-		if (_problems!=null) {
-			return _problems.containsKey(_vp);
-		}
-		return false;
-	}*/
-	
 	
 	/**
 	 * Put a problem with the given constraint and signature in the list of current problems for the given file

@@ -75,10 +75,18 @@ class ValidationGenerator implements IGenerationFragment {
 
 		import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 		import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
-
+		import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
 		import «pattern.packageName + "." + pattern.matchClassName»;
+		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;
+		import «pattern.packageName + "." + pattern.matcherClassName»;
 
 		public class «pattern.name.toFirstUpper»Constraint extends Constraint<«pattern.matchClassName»> {
+
+			private «pattern.matcherFactoryClassName» matcherFactory;
+
+			public «pattern.name.toFirstUpper»Constraint() {
+				matcherFactory = new «pattern.matcherFactoryClassName»();
+			}
 
 			@Override
 			public String getMessage() {
@@ -97,6 +105,11 @@ class ValidationGenerator implements IGenerationFragment {
 			@Override
 			public int getSeverity() {
 				return ValidationUtil.getSeverity("«getElementOfConstraintAnnotation(pattern, "severity")»");
+			}
+			
+			@Override
+			public BaseGeneratedMatcherFactory<«pattern.matchClassName», «pattern.matcherClassName»> getMatcherFactory() {
+				return matcherFactory;
 			}
 		}
 	'''
