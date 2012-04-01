@@ -37,67 +37,6 @@
       </wizard>-->
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.presentation.IncquerygenmodelEditorID">
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate>
-                     <instanceof
-                           value="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel">
-                     </instanceof>
-                  </iterate>
-                  <count
-                        value="1">
-                  </count>
-               </with>
-            </visibleWhen>
-               
-         </command>
-      </menuContribution>
-      
-      
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-             <menu
-                   id="org.eclipse.viatra2.emf.incquery.gui.menu.packageExplorer"
-                   label="EMF-IncQuery">
-         
-        </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
-           <menu
-                 id="org.eclipse.viatra2.emf.incquery.gui.menu.projectExplorer"
-                 label="EMF-IncQuery">
-           </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.views.ResourceNavigator">
-        <menu
-              id="org.eclipse.viatra2.emf.incquery.gui.menu.resourceNavigator"
-              label="EMF-IncQuery">
-         
-        </menu>
-      </menuContribution>
-      
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-   </extension>
-   <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             id="org.eclipse.viatra2.emf.incquery"
@@ -110,9 +49,6 @@
             id="org.eclipse.viatra2.emf.incquery.gui.cheatsheet"
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
    </extension>
 <extension
          point="org.eclipse.ui.views">
@@ -148,12 +84,6 @@
                relative="org.eclipse.ui.views.TaskList">
          </view>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
