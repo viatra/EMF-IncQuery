@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-versio
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtext.xbase;bundle-version="2.2.1",
  org.eclipse.xtend2.lib;bundle-version="2.2.1",
- com.google.inject
+ com.google.inject,
+ org.eclipse.viatra2.emf.incquery.tooling.generator.databinding;bundle-version="0.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.emf.incquery.tooling.generator.validation

@@ -14,9 +14,12 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 class DatabindingGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	private static String annotationLiteral = "Databinding"
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		fsa.generateFile(pattern.packagePath + "/databinding/" + pattern.name.toFirstUpper + "DatabindingAdapter.java", pattern.patternHandler)
+		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
+			fsa.generateFile(pattern.packagePath + "/databinding/" + pattern.name.toFirstUpper + "DatabindingAdapter.java", pattern.patternHandler)
+		}
 	}
 	
 	override getProjectDependencies() {
@@ -31,30 +34,35 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
-		var tmp = ""
-		
-		for (a : pattern.annotations) {
-			if (a.name.matches("PatternUI")) {
-				for (ap : a.parameters) {
-					if (ap.name.matches("message")) {
-						tmp = (ap.value as StringValueImpl).value
+		if (hasAnnotationLiteral(pattern, annotationLiteral)) {		
+			var tmp = ""
+			
+			for (a : pattern.annotations) {
+				if (a.name.matches("PatternUI")) {
+					for (ap : a.parameters) {
+						if (ap.name.matches("message")) {
+							tmp = (ap.value as StringValueImpl).value
+						}
 					}
 				}
 			}
-		}
-		
-		val message = tmp;
-		
-		newArrayList(
-		exGen.contribExtension("", "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding") [
-			exGen.contribElement(it, "databinding") [
-				exGen.contribAttribute(it, "class", pattern.packagePath+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
-				exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
-				exGen.contribAttribute(it, "message", message)
-				exGen.contribAttribute(it, "matcherFactoryClass", pattern.packagePath+"."+pattern.matcherFactoryClassName)
+			
+			val message = tmp;
+			
+			newArrayList(
+			exGen.contribExtension("", "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding") [
+				exGen.contribElement(it, "databinding") [
+					exGen.contribAttribute(it, "class", pattern.packagePath+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
+					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
+					exGen.contribAttribute(it, "message", message)
+					exGen.contribAttribute(it, "matcherFactoryClass", pattern.packagePath+"."+pattern.matcherFactoryClassName)
+				]
 			]
-		]
-		)
+			)
+		}
+		else {
+			return newArrayList()
+		}
 	}
 	
 	def getElementOfObservableValue(Annotation a, String literal) {
@@ -65,6 +73,15 @@ class DatabindingGenerator implements IGenerationFragment {
 		}
 		
 		return null
+	}
+	
+	def hasAnnotationLiteral(Pattern pattern, String literal) {
+		for (a : pattern.annotations) {
+			if (a.name.matches(literal)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	def patternHandler(Pattern pattern) '''

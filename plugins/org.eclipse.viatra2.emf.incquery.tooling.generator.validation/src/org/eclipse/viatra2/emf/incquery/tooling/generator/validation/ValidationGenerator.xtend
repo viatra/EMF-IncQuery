@@ -9,14 +9,17 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl
+import org.eclipse.viatra2.emf.incquery.tooling.generator.databinding.DatabindingGenerator
 
-class ValidationGenerator implements IGenerationFragment {
+class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
+	private static String annotationLiteral = "Constraint"
+	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		if (hasConstraintAnnotation(pattern)) {
-			fsa.generateFile(pattern.packagePath + "/validation/" + pattern.name.toFirstUpper + "Constraint.java", pattern.patternHandler)
+		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
+			fsa.generateFile(pattern.packagePath + "/validation/" + pattern.name.toFirstUpper + annotationLiteral + ".java", pattern.patternHandler)
 		}
 	}
 	
@@ -31,11 +34,11 @@ class ValidationGenerator implements IGenerationFragment {
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
-		if (hasConstraintAnnotation(pattern)) {		
+		if (hasAnnotationLiteral(pattern, annotationLiteral)) {		
 			return newArrayList(
 				exGen.contribExtension("", "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint") [
 					exGen.contribElement(it, "constraint") [
-						exGen.contribAttribute(it, "class", pattern.packagePath+".validation."+pattern.name.toFirstUpper+"Constraint")
+						exGen.contribAttribute(it, "class", pattern.packagePath+".validation."+pattern.name.toFirstUpper+annotationLiteral)
 						exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
 					]
 				]
@@ -45,19 +48,10 @@ class ValidationGenerator implements IGenerationFragment {
 			return newArrayList()
 		}
 	}
-	
-	def hasConstraintAnnotation(Pattern pattern) {
-		for (a : pattern.annotations) {
-			if (a.name.matches("Constraint")) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
+		
 	def getElementOfConstraintAnnotation(Pattern pattern, String elementName) {
 		for (a : pattern.annotations) {
-			if (a.name.matches("Constraint")) {
+			if (a.name.matches(annotationLiteral)) {
 				for (ap : a.parameters) {
 					if (ap.name.matches(elementName)) {
 						return (ap.value as StringValueImpl).value
@@ -68,7 +62,7 @@ class ValidationGenerator implements IGenerationFragment {
 		return null
 	}
 	
-	def patternHandler(Pattern pattern) '''
+	override patternHandler(Pattern pattern) '''
 		package «pattern.fullyQualifiedName».validation;
 		
 		import org.eclipse.emf.ecore.EObject;
@@ -80,7 +74,7 @@ class ValidationGenerator implements IGenerationFragment {
 		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 
-		public class «pattern.name.toFirstUpper»Constraint extends Constraint<«pattern.matchClassName»> {
+		public class «pattern.name.toFirstUpper»«annotationLiteral» extends «annotationLiteral»<«pattern.matchClassName»> {
 
 			private «pattern.matcherFactoryClassName» matcherFactory;
 
