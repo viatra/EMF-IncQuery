@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.editorlink.EditorBoundValidation;
 
 /**
  * @author Bergmann Gábor
@@ -60,11 +58,11 @@ public class InitializeValidationHandler extends AbstractHandler {
 		}
 		if (emfRoot==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
 	
-		try {
-			EditorBoundValidation.INSTANCE.initializeValidatorsOnEditor(activeEditor, emfRoot);
-		} catch (IncQueryRuntimeException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			EditorBoundValidation.INSTANCE.initializeValidatorsOnEditor(activeEditor, emfRoot);
+//		} catch (IncQueryRuntimeException e) {
+//			e.printStackTrace();
+//		}
 
 		return null;
 	}
