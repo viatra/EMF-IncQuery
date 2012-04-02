@@ -62,7 +62,7 @@ class XmiOutputBuilder {
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
-				val p = EcoreUtil2::copy(pattern)
+				val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
 				val fqn = pattern.fullyQualifiedName.toString
 				p.setName(fqn)
 				if (fqnToPatternMap.get(fqn) != null) {

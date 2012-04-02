@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.6"?>
 
-<target name="emfpattern" sequenceNumber="8">
+<target name="emfpattern" sequenceNumber="9">
 <locations>
-<location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.platform.sdk" version="3.7.0.I20110613-1736"/>
-<repository location="http://download.eclipse.org/eclipse/updates/3.7"/>
-</location>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.viatra2.emf.incquery.runtime.feature.feature.group" version="0.4.0.201112010014"/>
 <repository location="http://viatra.inf.mit.bme.hu/update/nightly/"/>
@@ -24,6 +20,11 @@
 <unit id="org.eclipse.xtend.sdk.feature.group" version="2.3.0.v201203201034"/>
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.3.0.v201203201034"/>
 <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
+</location>
+<location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.platform.sdk" version="3.7.2.M20120208-0800"/>
+<unit id="org.eclipse.sdk.ide" version="3.7.2.M20120208-0800"/>
+<repository location="http://download.eclipse.org/eclipse/updates/3.7"/>
 </location>
 </locations>
 </target>
