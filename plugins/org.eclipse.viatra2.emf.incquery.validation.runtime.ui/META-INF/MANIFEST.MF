@@ -13,5 +13,3 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.viatra2.emf.incquery.validation.runtime.ui.actions,
- org.eclipse.viatra2.emf.incquery.validation.runtime.ui.editorlink
