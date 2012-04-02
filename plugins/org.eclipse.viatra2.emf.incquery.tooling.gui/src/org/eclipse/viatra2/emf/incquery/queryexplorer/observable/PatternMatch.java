@@ -20,23 +20,23 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 public class PatternMatch {
 
 	private String text;
-	private IPatternMatch signature;
+	private IPatternMatch match;
 	private PatternMatcher parent;
 	private String message;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ParameterValueChangedListener listener;
 	
-	public PatternMatch(PatternMatcher parent, IPatternMatch signature) {
+	public PatternMatch(PatternMatcher parent, IPatternMatch match) {
 		this.parent = parent;
-		this.signature = signature;
-		this.message = DatabindingUtil.getMessage(signature.patternName(), parent.isGenerated());
+		this.match = match;
+		this.message = DatabindingUtil.getMessage(match, parent.isGenerated());
 		this.listener = new ParameterValueChangedListener();
 		if (message != null) {
 			updateText();
-			DatabindingUtil.observeFeatures(signature, listener, message);
+			DatabindingUtil.observeFeatures(match, listener, message);
 		}
 		else {
-			this.text = signature.toString();
+			this.text = match.toString();
 		}
 	}
 
@@ -83,11 +83,11 @@ public class PatternMatch {
 					EStructuralFeature feature = null;
 					
 					if (objectTokens.length == 1) {
-						o = signature.get(objectTokens[0]);
+						o = match.get(objectTokens[0]);
 						feature = DatabindingUtil.getFeature(o, "name");
 					}
 					if (objectTokens.length == 2) {
-						o = signature.get(objectTokens[0]);
+						o = match.get(objectTokens[0]);
 						feature = DatabindingUtil.getFeature(o, objectTokens[1]);
 					}
 					
@@ -114,10 +114,10 @@ public class PatternMatch {
 	}
 
 	public IPatternMatch getSignature() {
-		return signature;
+		return match;
 	}
 	
 	public Object[] getLocationObjects() {
-		return this.signature.toArray();
+		return this.match.toArray();
 	}
 }

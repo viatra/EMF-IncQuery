@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -45,6 +46,30 @@ import com.google.inject.Injector;
 public class DatabindingUtil {
 
 	public static Map<IFile, PatternModel> registeredPatterModels = new HashMap<IFile, PatternModel>();
+	public static Map<URI, AdapterFactory> registeredItemProviders = collectItemProviders();
+	
+	private static Map<URI, AdapterFactory> collectItemProviders() {
+		Map<URI, AdapterFactory> result = new HashMap<URI, AdapterFactory>();
+		try {
+			IExtensionRegistry reg = Platform.getExtensionRegistry();
+			IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.emf.edit.itemProviderAdapterFactories");
+			for (IExtension e : ep.getExtensions()) {
+				for (IConfigurationElement ce : e.getConfigurationElements()) {
+					if (ce.getName().matches("factory")) {
+						Object obj = ce.createExecutableExtension("class");
+						URI uri = URI.createURI(ce.getAttribute("uri"));
+						if (obj instanceof AdapterFactory) {
+							result.put(uri, (AdapterFactory) obj);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Get the value of the PatternUI annotation's message attribute for the pattern which name is patternName. 
@@ -52,16 +77,17 @@ public class DatabindingUtil {
 	 * @param patternName the name of the pattern
 	 * @return the content of the message attribute
 	 */
-	public static String getMessage(String patternName, boolean generatedMatcher) {
+	public static String getMessage(IPatternMatch match, boolean generatedMatcher) {
 		if (generatedMatcher) {
-			return getMessageForGeneratedMatcher(patternName);
+			return getMessageForGeneratedMatcher(match);
 		}
 		else {
-			return getMessageForGenericMatcher(patternName);
+			return getMessageForGenericMatcher(match);
 		}
 	}
 	
-	private static String getMessageForGeneratedMatcher(String patternName) {
+	private static String getMessageForGeneratedMatcher(IPatternMatch match) {
+		String patternName = match.patternName();
 		try {
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
 			IExtensionPoint ep = reg
@@ -84,7 +110,8 @@ public class DatabindingUtil {
 		return null;
 	}
 	
-	private static String getMessageForGenericMatcher(String patternName) {
+	private static String getMessageForGenericMatcher(IPatternMatch match) {
+		String patternName = match.patternName();
 		Pattern pattern = null;
 		
 		//find PatternUI annotation
@@ -107,6 +134,17 @@ public class DatabindingUtil {
 				}
 			}
 		}
+		
+//		Object tmp = match.get(0);
+//		if (tmp instanceof EObject) {
+//			EObject eObj = (EObject) tmp;
+//			URI uri = URI.createURI(eObj.eClass().getEPackage().getNsURI());
+//			AdapterFactory af = registeredItemProviders.get(uri);
+//			if (af != null) {
+//				AdapterFactoryLabelProvider aflp = new AdapterFactoryLabelProvider(af);
+//				System.out.println(aflp.getText(eObj));
+//			}
+//		}
 		
 		//PatternUI annotation was not found
 		if (pattern != null) {
@@ -171,6 +209,7 @@ public class DatabindingUtil {
 		boolean annotationFound = false;
 		Pattern pattern = null;
 		
+		//process annotations if present
 		for (IFile file : registeredPatterModels.keySet()) {
 			for (Pattern p : registeredPatterModels.get(file).getPatterns()) {
 				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
@@ -206,6 +245,7 @@ public class DatabindingUtil {
 			}
 		}
 		
+		//try to show parameters with a name attribute
 		if (!annotationFound && pattern != null) {
 			for (Variable v : pattern.getParameters()) {
 				adapter.putToParameterMap(v.getName(),v.getName());
