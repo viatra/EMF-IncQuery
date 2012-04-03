@@ -11,6 +11,7 @@
             category="org.eclipse.viatra2.emf.incquery.gui.category"
             class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.newproject"
             name="EMF-IncQuery Project"
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
@@ -20,7 +21,7 @@
             category="org.eclipse.viatra2.emf.incquery.gui.category"
             class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            icon="icons/matcher.gif"
+            icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
             name="EMF-IncQuery query definition "
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
@@ -36,67 +37,6 @@
       </wizard>-->
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.presentation.IncquerygenmodelEditorID">
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.gui.loadmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate>
-                     <instanceof
-                           value="org.eclipse.viatra2.emf.incquery.model.incquerygenmodel.IncQueryGenmodel">
-                     </instanceof>
-                  </iterate>
-                  <count
-                        value="1">
-                  </count>
-               </with>
-            </visibleWhen>
-               
-         </command>
-      </menuContribution>
-      
-      
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-             <menu
-                   id="org.eclipse.viatra2.emf.incquery.gui.menu.packageExplorer"
-                   label="EMF-IncQuery">
-         
-        </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
-           <menu
-                 id="org.eclipse.viatra2.emf.incquery.gui.menu.projectExplorer"
-                 label="EMF-IncQuery">
-           </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.views.ResourceNavigator">
-        <menu
-              id="org.eclipse.viatra2.emf.incquery.gui.menu.resourceNavigator"
-              label="EMF-IncQuery">
-         
-        </menu>
-      </menuContribution>
-      
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-   </extension>
-   <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             id="org.eclipse.viatra2.emf.incquery"
@@ -110,9 +50,6 @@
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
    </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-   </extension>
 <extension
          point="org.eclipse.ui.views">
       <category
@@ -122,7 +59,7 @@
       <view
             category="org.eclipse.viatra2.emf.incquery.tooling.gui"
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
-            icon="icons/sample.gif"
+            icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
             name="Query Explorer">
       </view>
@@ -132,18 +69,21 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               id="org.eclipse.viatra2.emf.incquery.matchsetviewer.MatchSetView"
+               id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.TaskList">
          </view>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <view
+               id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -157,7 +97,7 @@
                      type="org.eclipse.core.resources.IFile">
                   <test
                         property="org.eclipse.core.resources.name"
-                        value="*.emfpattern">
+                        value="*.eiq">
                   </test>
                </adapt>
             </iterate>
@@ -199,9 +139,9 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+            locationURI="popup:org.eclipse.ui.popup.any">
          <menu
-               id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.packageExplorer"
+               id="org.eclipse.viatra2.emf.incquery.tooling.gui.navigator.popup"
                label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
@@ -243,62 +183,16 @@
                   </with>
                </visibleWhen>
             </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.projectExplorer"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.views.ResourceNavigator">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.resourceNavigator"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
+            <separator
+                  name="additions"
+                  visible="true">
+            </separator>
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
+               </reference>
+            </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -370,32 +264,44 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
             name="Register patterns in Query Explorer">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
             name="Unregister patterns from Query Explorer">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel"
             name="Load model">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.unloadmodel"
             name="Unload model">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation"
             name="Show location">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
             name="Register patterns in Query Explorer">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor"
             name="Unregister patterns from Query Explorer">
       </command>
+      <category
+            description="Commands related to EMF-IncQuery"
+            id="org.eclipse.viatra2.emf.incquery.tooling.category"
+            name="EMF-IncQuery">
+      </category>
    </extension>
 </plugin>

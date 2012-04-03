@@ -11,13 +11,14 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.RuntimeDatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRootKey;
@@ -30,6 +31,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
@@ -44,47 +46,86 @@ import com.google.inject.Injector;
 public class DatabindingUtil {
 
 	public static Map<IFile, PatternModel> registeredPatterModels = new HashMap<IFile, PatternModel>();
+	public static Map<URI, AdapterFactory> registeredItemProviders = collectItemProviders();
+	
+	private static Map<URI, AdapterFactory> collectItemProviders() {
+		Map<URI, AdapterFactory> result = new HashMap<URI, AdapterFactory>();
+		try {
+			IExtensionRegistry reg = Platform.getExtensionRegistry();
+			IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.emf.edit.itemProviderAdapterFactories");
+			for (IExtension e : ep.getExtensions()) {
+				for (IConfigurationElement ce : e.getConfigurationElements()) {
+					if (ce.getName().matches("factory")) {
+						Object obj = ce.createExecutableExtension("class");
+						URI uri = URI.createURI(ce.getAttribute("uri"));
+						if (obj instanceof AdapterFactory) {
+							result.put(uri, (AdapterFactory) obj);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	
 	/**
-	 * Get the PatternUI annotation's message attribute for the pattern whose name is patternName. 
+	 * Get the value of the PatternUI annotation's message attribute for the pattern which name is patternName. 
 	 * 
 	 * @param patternName the name of the pattern
 	 * @return the content of the message attribute
 	 */
-	public static String getMessage(String patternName, boolean generatedMatcher) {
-		
+	public static String getMessage(IPatternMatch match, boolean generatedMatcher) {
 		if (generatedMatcher) {
-			try {
-				IExtensionRegistry reg = Platform.getExtensionRegistry();
-				IExtensionPoint ep = reg
-						.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
-				for (IExtension e : ep.getExtensions()) {
-					for (IConfigurationElement ce : e.getConfigurationElements()) {
-						String[] tokens = patternName.split("\\.");
-						String pattern = tokens[tokens.length - 1];
-	
-						if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(
-										pattern)) {
-							return ce.getAttribute("message");
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			return getMessageForGeneratedMatcher(match);
 		}
 		else {
-			for (IFile key : registeredPatterModels.keySet()) {
-				for (Pattern p : registeredPatterModels.get(key).getPatterns()) {
-					if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
-						for (Annotation a : p.getAnnotations()) {
-							if (a.getName().matches("PatternUI")) {
-								for (AnnotationParameter ap : a.getParameters()) {
-									if (ap.getName().matches("message")) {
-										ValueReference valRef = ap.getValue();
-										if (valRef instanceof StringValueImpl) {
-											return ((StringValueImpl) valRef).getValue();
-										}
+			return getMessageForGenericMatcher(match);
+		}
+	}
+	
+	private static String getMessageForGeneratedMatcher(IPatternMatch match) {
+		String patternName = match.patternName();
+		try {
+			IExtensionRegistry reg = Platform.getExtensionRegistry();
+			IExtensionPoint ep = reg
+					.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
+			for (IExtension e : ep.getExtensions()) {
+				for (IConfigurationElement ce : e.getConfigurationElements()) {
+					String[] tokens = patternName.split("\\.");
+					String pattern = tokens[tokens.length - 1];
+
+					if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(
+									pattern)) {
+						return ce.getAttribute("message");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private static String getMessageForGenericMatcher(IPatternMatch match) {
+		String patternName = match.patternName();
+		Pattern pattern = null;
+		
+		//find PatternUI annotation
+		for (IFile key : registeredPatterModels.keySet()) {
+			for (Pattern p : registeredPatterModels.get(key).getPatterns()) {
+				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
+					pattern = p;
+					for (Annotation a : p.getAnnotations()) {
+						if (a.getName().matches("PatternUI")) {							
+							for (AnnotationParameter ap : a.getParameters()) {
+								if (ap.getName().matches("message")) {
+									ValueReference valRef = ap.getValue();
+									if (valRef instanceof StringValueImpl) {
+										return ((StringValueImpl) valRef).getValue();
 									}
 								}
 							}
@@ -93,7 +134,32 @@ public class DatabindingUtil {
 				}
 			}
 		}
-
+		
+//		Object tmp = match.get(0);
+//		if (tmp instanceof EObject) {
+//			EObject eObj = (EObject) tmp;
+//			URI uri = URI.createURI(eObj.eClass().getEPackage().getNsURI());
+//			AdapterFactory af = registeredItemProviders.get(uri);
+//			if (af != null) {
+//				AdapterFactoryLabelProvider aflp = new AdapterFactoryLabelProvider(af);
+//				System.out.println(aflp.getText(eObj));
+//			}
+//		}
+		
+		//PatternUI annotation was not found
+		if (pattern != null) {
+			String message = ""; int i = 0;
+			for (Variable v : pattern.getParameters()) {
+				if (i > 0) {
+					message += ", ";
+				}
+				message += v.getName()+"=$"+v.getName()+"$";
+				i++;
+			}
+			
+			return message;
+		}
+		
 		return null;
 	}
 	
@@ -103,69 +169,90 @@ public class DatabindingUtil {
 	 * @param patternName the name of the pattern
 	 * @return an instance of the DatabindingAdapter class generated for the pattern
 	 */
-	@SuppressWarnings("unchecked")
 	public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName, boolean generatedMatcher) {
 		if (generatedMatcher) {
-			try {
-				IExtensionRegistry reg = Platform.getExtensionRegistry();
-				IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
-				for (IExtension e : ep.getExtensions()) {
-					for (IConfigurationElement ce : e.getConfigurationElements()) {
-						String[] tokens = patternName.split("\\.");
-						String pattern = tokens[tokens.length - 1];
-						
-						if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(pattern)) {
-							Object obj = ce.createExecutableExtension("class");
-	
-							if (obj != null && obj instanceof DatabindingAdapter) {
-								return (DatabindingAdapter<IPatternMatch>) obj;
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				System.out.println("Could not find DatabindableMatcher for pattern named: "+patternName);
-			}
+			return getDatabindingAdapterForGeneratedMatcher(patternName);
 		}
 		else {
-			RuntimeDatabindingAdapter adapter = new RuntimeDatabindingAdapter();
-			
-			for (IFile file : registeredPatterModels.keySet()) {
-				for (Pattern p : registeredPatterModels.get(file).getPatterns()) {
-					if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
-						for (Annotation a : p.getAnnotations()) {
-							if (a.getName().matches("ObservableValue")) {
-								String key = null, value = null;
-								
-								for (AnnotationParameter ap : a.getParameters()) {
-									if (ap.getName().matches("name")) {
-										ValueReference valRef = ap.getValue();
-										if (valRef instanceof StringValueImpl) {
-											key = ((StringValueImpl) valRef).getValue();
-										}
-									}
-									
-									if (ap.getName().matches("expression")) {
-										ValueReference valRef = ap.getValue();
-										if (valRef instanceof StringValueImpl) {
-											value = ((StringValueImpl) valRef).getValue();
-										}
+			return getDatabindingAdapterForGenericMatcher(patternName);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGeneratedMatcher(String patternName) {
+		try {
+			IExtensionRegistry reg = Platform.getExtensionRegistry();
+			IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
+			for (IExtension e : ep.getExtensions()) {
+				for (IConfigurationElement ce : e.getConfigurationElements()) {
+					String[] tokens = patternName.split("\\.");
+					String pattern = tokens[tokens.length - 1];
+					
+					if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(pattern)) {
+						Object obj = ce.createExecutableExtension("class");
+
+						if (obj != null && obj instanceof DatabindingAdapter) {
+							return (DatabindingAdapter<IPatternMatch>) obj;
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Could not find DatabindableMatcher for pattern named: "+patternName);
+		}
+		
+		return null;
+	}
+	
+	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(String patternName) {
+		RuntimeDatabindingAdapter adapter = new RuntimeDatabindingAdapter();
+		boolean annotationFound = false;
+		Pattern pattern = null;
+		
+		//process annotations if present
+		for (IFile file : registeredPatterModels.keySet()) {
+			for (Pattern p : registeredPatterModels.get(file).getPatterns()) {
+				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
+					pattern = p;
+					
+					for (Annotation a : p.getAnnotations()) {
+						if (a.getName().matches("ObservableValue")) {
+							annotationFound = true;
+							String key = null, value = null;
+							
+							for (AnnotationParameter ap : a.getParameters()) {
+								if (ap.getName().matches("name")) {
+									ValueReference valRef = ap.getValue();
+									if (valRef instanceof StringValueImpl) {
+										key = ((StringValueImpl) valRef).getValue();
 									}
 								}
 								
-								if (key != null && value != null) {
-									adapter.putToParameterMap(key, value);
+								if (ap.getName().matches("expression")) {
+									ValueReference valRef = ap.getValue();
+									if (valRef instanceof StringValueImpl) {
+										value = ((StringValueImpl) valRef).getValue();
+									}
 								}
+							}
+							
+							if (key != null && value != null) {
+								adapter.putToParameterMap(key, value);
 							}
 						}
 					}
 				}
 			}
-			
-			return adapter;
 		}
-
-		return null;
+		
+		//try to show parameters with a name attribute
+		if (!annotationFound && pattern != null) {
+			for (Variable v : pattern.getParameters()) {
+				adapter.putToParameterMap(v.getName(),v.getName());
+			}
+		}
+		
+		return adapter;
 	}
 
 	/**
@@ -177,8 +264,7 @@ public class DatabindingUtil {
 	 */
 	public static EStructuralFeature getFeature(Object o, String featureName) {
 		if (o != null && o instanceof EObject) {
-			EStructuralFeature feature = ((EObject) o).eClass()
-					.getEStructuralFeature(featureName);
+			EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(featureName);
 			return feature;
 		}
 		return null;
@@ -192,20 +278,17 @@ public class DatabindingUtil {
 	 * @param changeListener the changle listener 
 	 * @param message the message which can be found in the appropriate PatternUI annotation
 	 */
-	public static void observeFeatures(IPatternMatch signature,	IValueChangeListener changeListener, String message) {
+	public static void observeFeatures(IPatternMatch match,	IValueChangeListener changeListener, String message) {
 		if (message != null) {
 			String[] tokens = message.split("\\$");
 
 			for (int i = 0; i < tokens.length; i++) {
+				
+				//odd tokens 
 				if (i % 2 != 0) {
-					String[] objectTokens = tokens[i].split("\\.");
-					if (objectTokens.length == 2) {
-						Object o = signature.get(objectTokens[0]);
-						EStructuralFeature feature = getFeature(o, objectTokens[1]);
-						if (o != null && feature != null) {
-							IObservableValue val = EMFProperties.value(feature).observe(o);
-							val.addValueChangeListener(changeListener);
-						}
+					IObservableValue value = DatabindingAdapterUtil.getObservableValue(match, tokens[i]);
+					if (value != null) {
+						value.addValueChangeListener(changeListener);
 					}
 				}
 			}

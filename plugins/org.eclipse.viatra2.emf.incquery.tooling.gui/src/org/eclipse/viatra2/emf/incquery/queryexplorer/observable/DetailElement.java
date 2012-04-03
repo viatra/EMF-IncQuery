@@ -1,7 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
 
 /**
- * This class represents a single row in the tableviewer and is associated to a single 
+ * This class represents a single row in the table viewer and is associated to a single 
  * ObservableValue and it's value.
  * 
  * @author Tamas Szabo

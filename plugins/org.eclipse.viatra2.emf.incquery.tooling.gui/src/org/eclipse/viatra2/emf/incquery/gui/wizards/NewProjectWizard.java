@@ -93,10 +93,6 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
 		project = projectHandle;
 
-		if (project == null) {
-			return false;
-		}
-
 		BasicNewProjectResourceWizard.selectAndReveal(project,
 				workbench.getActiveWorkbenchWindow());
 

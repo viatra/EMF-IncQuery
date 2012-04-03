@@ -2,6 +2,8 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.util
 
 import com.google.inject.Inject
 import org.apache.log4j.Logger
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
@@ -10,11 +12,12 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.serializer.ISerializer
-import org.eclipse.core.resources.IWorkspaceRoot
-import org.eclipse.core.runtime.Path
+import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -28,6 +31,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	Logger logger = Logger::getLogger(getClass())
 	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 	@Inject	IWorkspaceRoot workspaceRoot
+	@Inject ITypeProvider typeProvider
 	
 	def bundleName(Pattern pattern) {
 		val project = workspaceRoot.getFile(
@@ -78,27 +82,35 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
+   		// resolve the possible proxies
+   		EcoreUtil2::resolveAll(variable)
    		try {
-//   		if (variable.type != null && !variable.type.typename.nullOrEmpty) {
-//   			return variable.newTypeRef(variable.type.typename)
-//   		} else {
-	   			if (variable.eContainer() instanceof Pattern) {
-	   		 		val pattern = variable.eContainer() as Pattern;
-	   				for (body : pattern.bodies) {
-	   					for (constraint : body.constraints) {
-	   						val typeRef = getTypeRef(constraint, variable)
-	   						if (typeRef != null) {
-	   							return typeRef
-	   						}
+   			// first try to get the type through the variable's type ref 
+   			if (variable.type instanceof ClassType) {
+   				val eClassifier = (variable.type as ClassType).classname
+   				if (eClassifier != null && eClassifier.instanceClass != null) {
+	   				return variable.newTypeRef(eClassifier.instanceClass)	
+   				}
+   			} 
+	   		// if the first try didnt return anything, try to 
+	   		// infer the type from one of the Pattern bodies.
+		   	if (variable.eContainer() instanceof Pattern) {
+	   	 		val pattern = variable.eContainer() as Pattern;
+	   			for (body : pattern.bodies) {
+	   				for (constraint : body.constraints) {
+	   					val typeRef = getTypeRef(constraint, variable)
+	   					if (typeRef != null) {
+	   						return typeRef
 	   					}
 	   				}
 	   			}
-//   		}   			
+	   		}
    		} catch (Exception e) {
    			if (logger != null) {
    				logger.error("Error during type calculation for " + variable.name, e)	
    			}
    		}
+   		// if all calculation failed, simply fall back to java Object.
 		return variable.newTypeRef(typeof(Object))
    	}
    	
@@ -170,19 +182,22 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 //			val serializedObject = serializer.serialize(eObject)
 			// Another way to serialize the eObject, uses the current node model
 			// simple getText returns the currently text, that parsed by the editor 
-			val serializedObject = NodeModelUtils::getNode(eObject).text
+			val eObjectNode = NodeModelUtils::getNode(eObject)
+			if (eObjectNode != null) {
+				return escape(eObjectNode.text)	
+			}
 			// getTokenText returns the string without hidden tokens
 //			NodeModelUtils::getTokenText(NodeModelUtils::getNode(eObject)).replaceAll("\"", "\\\\\"")
-			return escape(serializedObject)
 		} catch (Exception e) {
 			if (logger != null) {
 				logger.error("Error when serializing " + eObject.eClass.name, e)	
 			}
-			return null
 		}
+		return null
   	}
   	
   	def private escape(String escapable) {
+  		if (escapable == null) return null
   		// escape double quotes
   		var escapedString = escapable.replaceAll("\"", "\\\\\"")
   		// escape javadoc comments to single space
@@ -206,5 +221,11 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	
 	def getPackagePath(Pattern pattern) {
 		pattern.packageName.replace(".","/")
+	}
+	
+	def referClass(ITreeAppendable appendable, EObject ctx, Class<?> clazz) {
+		val type = ctx.newTypeRef(clazz).type
+		appendable.append(type)
+		//'''«type.simpleName»'''
 	}
 }

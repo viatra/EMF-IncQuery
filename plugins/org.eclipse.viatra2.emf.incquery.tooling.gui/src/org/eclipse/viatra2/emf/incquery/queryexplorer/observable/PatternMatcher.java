@@ -84,13 +84,13 @@ public class PatternMatcher {
 		PatternMatch pm = new PatternMatch(this, signature);
 		this.sigMap.put(signature, pm);
 		this.matches.add(pm);
-		this.propertyChangeSupport.firePropertyChange("matches", oldValue, matches);
+		this.propertyChangeSupport.firePropertyChange(MATCHES_ID, oldValue, matches);
 	}
 	
 	private void removeSignature(IPatternMatch signature) {
 		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
 		this.matches.remove(this.sigMap.remove(signature));
-		this.propertyChangeSupport.firePropertyChange("matches", oldValue, matches);
+		this.propertyChangeSupport.firePropertyChange(MATCHES_ID, oldValue, matches);
 	}
 
 	public PatternMatcherRoot getParent() {
@@ -101,6 +101,7 @@ public class PatternMatcher {
 		return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)");
 	}
 
+	public static final String MATCHES_ID = "matches";
 	public List<PatternMatch> getMatches() {
 		return matches;
 	}

@@ -45,7 +45,7 @@ Modifiers:
 	//terminal ID:
 // ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 
-Variable: //; returns types::JvmIdentifiableElement:
+Variable returns types::JvmIdentifiableElement:
 	{Variable}
 	name=ID
 	(':' type=Type)?;
@@ -75,7 +75,7 @@ PatternBody returns PatternBody:
 	'}';
 
 Constraint returns Constraint:
-//CheckConstraint |
+CheckConstraint |
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint;
 
 PatternCompositionConstraint returns Constraint:

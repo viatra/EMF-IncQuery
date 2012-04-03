@@ -20,23 +20,23 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 public class PatternMatch {
 
 	private String text;
-	private IPatternMatch signature;
+	private IPatternMatch match;
 	private PatternMatcher parent;
 	private String message;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ParameterValueChangedListener listener;
 	
-	public PatternMatch(PatternMatcher parent, IPatternMatch signature) {
+	public PatternMatch(PatternMatcher parent, IPatternMatch match) {
 		this.parent = parent;
-		this.signature = signature;
-		this.message = DatabindingUtil.getMessage(signature.patternName(), parent.isGenerated());
+		this.match = match;
+		this.message = DatabindingUtil.getMessage(match, parent.isGenerated());
 		this.listener = new ParameterValueChangedListener();
 		if (message != null) {
 			updateText();
-			DatabindingUtil.observeFeatures(signature, listener, message);
+			DatabindingUtil.observeFeatures(match, listener, message);
 		}
 		else {
-			this.text = signature.toString();
+			this.text = match.toString();
 		}
 	}
 
@@ -73,29 +73,35 @@ public class PatternMatch {
 		String newText = "";
 		
 		for (int i = 0;i<tokens.length;i++) {
-			if (i % 2 == 0) newText += tokens[i];
+			if (i % 2 == 0) {
+				newText += tokens[i];
+			}
 			else {
 				String[] objectTokens = tokens[i].split("\\.");
-				if (objectTokens.length == 1) {
-					Object o = signature.get(objectTokens[0]);
-					if (o != null) {
-						newText += o.toString();
-						continue;
+				if (objectTokens.length > 0) {
+					Object o = null;
+					EStructuralFeature feature = null;
+					
+					if (objectTokens.length == 1) {
+						o = match.get(objectTokens[0]);
+						feature = DatabindingUtil.getFeature(o, "name");
 					}
-				}
-				else if (objectTokens.length == 2) {
-					Object o = signature.get(objectTokens[0]);
-					EStructuralFeature feature = DatabindingUtil.getFeature(o, objectTokens[1]);
+					if (objectTokens.length == 2) {
+						o = match.get(objectTokens[0]);
+						feature = DatabindingUtil.getFeature(o, objectTokens[1]);
+					}
 					
 					if (o != null && feature != null) {
 						Object value = ((EObject) o).eGet(feature);
 						if (value != null) {
 							newText += value.toString();
-							continue;
 						}
 						else {
 							newText += "null";
 						}
+					}
+					else if (o != null) {
+						newText += o.toString();
 					}
 				}	
 				else {
@@ -108,10 +114,10 @@ public class PatternMatch {
 	}
 
 	public IPatternMatch getSignature() {
-		return signature;
+		return match;
 	}
 	
 	public Object[] getLocationObjects() {
-		return this.signature.toArray();
+		return this.match.toArray();
 	}
 }

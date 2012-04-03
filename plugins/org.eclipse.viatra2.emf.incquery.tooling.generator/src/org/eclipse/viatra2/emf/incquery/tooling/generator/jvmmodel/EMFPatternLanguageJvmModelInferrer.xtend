@@ -13,14 +13,14 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.util.IAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.apache.log4j.Logger
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -28,7 +28,7 @@ import org.apache.log4j.Logger
  * <p>The JVM model should contain all elements that would appear in the Java code 
  * which is generated from the source model. Other models link against the JVM model rather than the source model.</p>
  * 
- * @author Mark Czotter     
+ * @author Mark Czotter
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
@@ -44,6 +44,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension PatternMatcherFactoryClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
 	@Inject extension TypeReferences types
+	@Inject extension IJvmModelAssociator associator
 	
 	/**
 	 * Is called for each Pattern instance in a resource.
@@ -54,7 +55,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
 	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
 	 */
-   	def dispatch void infer(Pattern pattern, IAcceptor<JvmDeclaredType> acceptor, boolean isPrelinkingPhase) {
+   	def dispatch void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
    		if (pattern.name.nullOrEmpty) return;
    		logger.debug("Inferring Jvm Model for " + pattern.name);
 	   	try {
@@ -74,8 +75,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		   		it.visibility = JvmVisibility::PUBLIC
 		   		it.setStatic(true)
 				it.setFinal(true)
-				it.setInitializer([''' new «matcherFactoryClass.simpleName»()'''])
+				it.setInitializer([append(''' new «matcherFactoryClass.simpleName»()''')])
 		   	]
+		   	associator.associatePrimary(pattern, matcherClass)
 		   	// accept new classes
 		   	acceptor.accept(matchClass)
 		   	acceptor.accept(matcherClass)

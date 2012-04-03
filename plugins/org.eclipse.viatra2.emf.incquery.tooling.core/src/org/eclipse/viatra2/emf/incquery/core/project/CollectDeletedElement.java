@@ -23,7 +23,7 @@ class CollectDeletedElement implements IResourceVisitor {
 	@Override
 	public boolean visit(IResource resource) throws CoreException {
 		if (resource instanceof IFile) {
-			if (resource!=null && "java".equalsIgnoreCase(((IFile)resource).getFileExtension())) {
+			if ("java".equalsIgnoreCase(((IFile)resource).getFileExtension())) {
 				toDelete.add(resource);
 				return false;
 			}

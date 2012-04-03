@@ -4,8 +4,8 @@
       label="EMF-IncQuery SDK feature"
       version="0.6.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      EMF-IncQuery tooling support: editor, code generation, etc.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -216,11 +216,11 @@ litigation.
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.viatra2.patternlanguage.emf.feature"
+         id="org.eclipse.viatra2.emf.incquery.databinding.feature"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.viatra2.emf.incquery.databinding.feature"
+         id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature"
          version="0.0.0"/>
 
    <plugin
@@ -259,20 +259,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.core"
          download-size="0"
          install-size="0"
@@ -281,6 +267,27 @@ litigation.
 
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.gui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.emf.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

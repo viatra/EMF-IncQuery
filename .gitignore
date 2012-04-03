@@ -1,8 +1,10 @@
-**/plugin.xml_gen
-*/bin/**
-*/target
 plugin.xml_gen
-.DS_Store
-*/src-gen/**/*
-!*/xtend-gen/**
-!*/src-gen/keep.txt
+bin
+target
+plugin.xml_gen
+.DS_Store*
+src-gen
+xtend-gen
++keep.txt
++.keep.txt
+

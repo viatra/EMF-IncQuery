@@ -35,22 +35,29 @@ public class DetailObservable extends AbstractObservableList {
 		this.valueMap = new HashMap<IObservableValue, DetailElement>();
 		this.listener = new ValueChangeListener();
 		for (String param : databindableMatcher.getParameterNames()) {
-			IObservableValue ov = databindableMatcher.getObservableParameter(patternMatch.getSignature(), param);
-			ov.addValueChangeListener(listener);
-			Object value = ov.getValue();
-			String data = "";
-			if (value == null) {
-				data = null;
-			}
-			else if (value instanceof Collection<?>) {
-				data = "Collection";
+			IObservableValue oval = databindableMatcher.getObservableParameter(patternMatch.getSignature(), param);
+			
+			if (oval != null) {
+				oval.addValueChangeListener(listener);
+				Object value = oval.getValue();
+				String data = "";
+				if (value == null) {
+					data = null;
+				}
+				else if (value instanceof Collection<?>) {
+					data = "Collection ["+((Collection<?>) value).size()+"]";
+				}
+				else {
+					data = value.toString();
+				}
+				
+				DetailElement de = new DetailElement(param, data);
+				addDetail(oval, de, -1);
 			}
 			else {
-				data = value.toString();
+				Object value = patternMatch.getSignature().get(param);
+				this.details.add(new DetailElement(param, (value == null) ? null : value.toString()));
 			}
-			
-			DetailElement de = new DetailElement(param, data);
-			addDetail(ov, de, -1);
 		}
 	}
 	
@@ -110,7 +117,7 @@ public class DetailObservable extends AbstractObservableList {
 				data = null;
 			}
 			else if (value instanceof Collection<?>) {
-				data = "Collection";
+				data = "Collection ["+((Collection<?>) value).size()+"]";
 			}
 			else {
 				data = value.toString();

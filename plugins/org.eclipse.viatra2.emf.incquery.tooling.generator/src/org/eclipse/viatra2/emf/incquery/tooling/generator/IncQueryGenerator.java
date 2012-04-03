@@ -74,6 +74,8 @@ public class IncQueryGenerator extends JvmModelGenerator {
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
+		GenerateMatcherFactoryExtension extensionGenerator = new GenerateMatcherFactoryExtension();
+		injector.injectMembers(extensionGenerator);
 		IProject project = workspaceRoot.getFile(
 				new Path(input.getURI().toPlatformString(true)))
 				.getProject();
@@ -92,11 +94,15 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		builder.build(input.getResourceSet(), project);
 		super.doGenerate(input, fsa);
 		try {
+			ExtensionGenerator generator = new ExtensionGenerator();
+			generator.setProject(project);
 			ArrayList<String> packageNames = new ArrayList<String>();
 			TreeIterator<EObject> it = input.getAllContents();
 			while (it.hasNext()) {
 				EObject obj = it.next();
 				if (obj instanceof Pattern) {
+					Iterable<IPluginExtension> extensionContribution = extensionGenerator.extensionContribution((Pattern)obj, generator);
+					extensionMap.putAll(project, extensionContribution);
 					executeGeneratorFragments(project, (Pattern) obj);
 					packageNames.add(util.getPackageName((Pattern) obj));
 				}

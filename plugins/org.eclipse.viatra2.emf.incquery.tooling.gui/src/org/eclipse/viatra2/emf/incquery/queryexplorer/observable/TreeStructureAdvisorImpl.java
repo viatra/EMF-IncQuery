@@ -21,7 +21,7 @@ public class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 			return ((PatternMatcher) element).getParent();
 		}
 		else if (element instanceof PatternMatcherRoot) {
-			return QueryExplorer.viewerRoot;
+			return QueryExplorer.getViewerRoot();
 		}
 		else {
 			return null;
@@ -32,32 +32,19 @@ public class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 	public Boolean hasChildren(Object element) {
 		if (element instanceof ViewerRoot) {
 			ViewerRoot root = (ViewerRoot) element;
-			if (root.getRoots().size() > 0) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		if (element instanceof PatternMatcherRoot) {
-			PatternMatcherRoot root = (PatternMatcherRoot) element;
-			if (root.getMatchers().size() > 0) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else if (element instanceof PatternMatcher) {
+			return root.getRoots().size() > 0;
+		} if (element instanceof PatternMatcherRoot) {
+			/*
+			 * Commented out as no listeners are registered
+			 * if we return no known children.
+			 */ 
+//			PatternMatcherRoot root = (PatternMatcherRoot) element;
+//			return root.getMatchers().size() > 0;
+			return true;
+		} else if (element instanceof PatternMatcher) {
 			PatternMatcher matcher = (PatternMatcher) element;
-			if (matcher.getMatches().size() > 0) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
+			return matcher.getMatches().size() > 0;
+		} else {
 			return false;
 		}
 	}

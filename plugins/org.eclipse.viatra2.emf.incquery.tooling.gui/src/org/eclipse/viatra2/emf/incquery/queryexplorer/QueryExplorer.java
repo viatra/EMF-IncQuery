@@ -8,6 +8,9 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -20,12 +23,17 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.DetailElement;
@@ -37,6 +45,8 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeLabelProvid
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeStructureAdvisorImpl;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
@@ -48,17 +58,60 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
-	public static TreeViewer treeViewer;
-	public static TableViewer tableViewer;
-	public static ViewerRoot viewerRoot = new ViewerRoot();
+	private static TreeViewer treeViewer;
+	private static TableViewer tableViewer;
+	private static ViewerRoot viewerRoot = new ViewerRoot();
+	private static SashForm form;
+	private static PartListener partListener;
+	private IObservableList rootsObservableList;
+	private IBeanListProperty rootsProp;
 	
 	public QueryExplorer() {
 		
 	}
+	
+	public static ViewerRoot getViewerRoot() {
+		return viewerRoot;
+	}
+	
+	public static QueryExplorer openView() {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IViewPart form = page.findView(ID);
+        if (form == null) {
+            try {
+                form = page.showView(ID);
+            } 
+            catch (PartInitException e) {
+            	e.printStackTrace();
+            }
+        } 
+        else {
+            page.bringToTop(form);
+        }
+        return (QueryExplorer) form;
+	}
+	
+	public void refreshTreeViewer() {
+		treeViewer.refresh();
+//		if (rootsObservableList != null) {
+//			treeViewer.setInput(rootsProp.observe(viewerRoot));
+//		}
+	}
+	
+	public static void clearTableViewer() {
+		tableViewer.setInput(null);
+	}
+	
+	public static boolean isViewOpen() {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	        return page.findView(ID) == null;
+	}
 
 	public void createPartControl(Composite parent) {
-		treeViewer = new TreeViewer(parent);
-		tableViewer = new TableViewer(parent);
+		partListener = new PartListener();
+		form = new SashForm(parent, SWT.HORIZONTAL);
+		treeViewer = new TreeViewer(form);
+		tableViewer = new TableViewer(form);
 		
 		//treeViewer configuration
 		ObservableListTreeContentProvider cp = new ObservableListTreeContentProvider(
@@ -72,8 +125,8 @@ public class QueryExplorer extends ViewPart {
 
 		treeViewer.setLabelProvider(new TreeLabelProviderImpl(map));
 		
-		IBeanListProperty rootsProp = BeanProperties.list(ViewerRoot.class, "roots", PatternMatcherRoot.class);
-		IObservableList rootsObservableList = rootsProp.observe(viewerRoot);
+		rootsProp = BeanProperties.list(ViewerRoot.class, "roots", PatternMatcherRoot.class);
+		rootsObservableList = rootsProp.observe(viewerRoot);
 		treeViewer.setInput(rootsObservableList);
 		
 		IObservableValue selection = ViewersObservables.observeSingleSelection(treeViewer);
@@ -110,6 +163,8 @@ public class QueryExplorer extends ViewPart {
 		tableViewer.getControl().setLayoutData(gridData);
 		
 		getSite().setSelectionProvider(treeViewer);
+		
+		initFileListener();
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {
@@ -193,8 +248,14 @@ public class QueryExplorer extends ViewPart {
 		}
 		
 	}
-
-	public TableViewer getTableViewer() {
-		return tableViewer;
+	
+	private void initFileListener() {
+		IResourceChangeListener listener = new ResourceChangeListener();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,  
+				IResourceChangeEvent.PRE_BUILD);
+	}
+	
+	public static PartListener getPartListener() {
+		return partListener;
 	}
 }

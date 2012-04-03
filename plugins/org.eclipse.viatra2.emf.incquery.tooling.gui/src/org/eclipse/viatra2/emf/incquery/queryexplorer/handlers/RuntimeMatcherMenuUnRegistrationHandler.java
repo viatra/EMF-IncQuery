@@ -5,7 +5,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class RuntimeMatcherMenuUnRegistrationHandler extends AbstractHandler {
@@ -18,8 +17,8 @@ public class RuntimeMatcherMenuUnRegistrationHandler extends AbstractHandler {
 		if (firstElement != null && firstElement instanceof IFile) {
 			IFile file = (IFile) firstElement;
 			
-			RuntimeMatcherUnRegistrationJob job = new RuntimeMatcherUnRegistrationJob(file);
-			Display.getCurrent().syncExec(job);
+			RuntimeMatcherUnRegistrator job = new RuntimeMatcherUnRegistrator(file);
+			job.run();
 		}		
 		return null;
 	}

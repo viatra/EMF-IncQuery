@@ -186,7 +186,6 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 				String classifierName = getValueConverter().toString(classifier.getName(), "ID");
 				QualifiedName proposalQualifiedName = /*(prefix != null) ? prefix.append(classifierName) :*/ QualifiedName
 						.create(classifierName);
-				System.out.println(proposalQualifiedName);
 				IEObjectDescription description = EObjectDescription.create(proposalQualifiedName, classifier);
 				ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) factory.apply(description);
 				if (proposal != null) {

@@ -36,7 +36,8 @@ public class IncQueryProjectSupport {
 		ImmutableList<String> dependencies = ImmutableList.of(
 				"org.eclipse.pde.core", "org.eclipse.emf.ecore",
 				"org.eclipse.emf.transaction",
-				"org.eclipse.viatra2.emf.incquery.runtime");
+				"org.eclipse.viatra2.emf.incquery.runtime",
+				"org.eclipse.xtext.xbase.lib");
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 

@@ -10,28 +10,38 @@
 	<version>0.6.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
+		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
+		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.gui</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.databinding</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.gui</module>
+		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core.ui</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>
-		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
+		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
-		<module>../../features/org.eclipse.viatra2.patternlanguage.emf.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
 	<properties>
-		<tycho.version>0.14.0</tycho.version>
+		<tycho.version>0.14.1</tycho.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+		<jacoco.version>0.5.6.201201232323</jacoco.version>
+		<xtend.compiler.version>2.3.0</xtend.compiler.version>
+		<!-- Sonar -->
+		<sonar.version>2.14</sonar.version>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath>
+		<sonar.skippedModules>org.eclipse.viatra2.patternlanguage.emf.tests</sonar.skippedModules>
 	</properties>
 	<build>
 		<plugins>
@@ -50,7 +60,7 @@
 					<target>
 						<artifact>
 							<groupId>org.eclipse.viatra2</groupId>
-							<artifactId>org.eclipse.viatra2.patternlanguage.emf.feature</artifactId>
+							<artifactId>org.eclipse.viatra2.patternlanguage.update</artifactId>
 							<version>0.6.0-SNAPSHOT</version>
 							<classifier>emfpattern</classifier>
 						</artifact>
@@ -79,6 +89,21 @@
 					<publishArtifacts>true</publishArtifacts>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<configuration>
+					<destFile>${project.basedir}/../../target/jacoco.exec</destFile>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -87,9 +112,9 @@
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
-                    	<source>1.6</source>
-                    	<target>1.6</target>
-                    </configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
@@ -98,13 +123,22 @@
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>maven-osgi-test-plugin</artifactId>
+					<artifactId>tycho-p2-repository-plugin</artifactId>
 					<version>${tycho.version}</version>
 				</plugin>
 				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-p2-repository-plugin</artifactId>
-					<version>${tycho.version}</version>
+					<groupId>org.codehaus.sonar</groupId>
+					<artifactId>sonar-maven3-plugin</artifactId>
+					<version>${sonar.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.xtend</groupId>
+					<artifactId>xtend-maven-plugin</artifactId>
+					<version>${xtend.compiler.version}</version>
+					<configuration>
+						<!-- need to prefix by basedir to generate to currently built module -->
+						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
+					</configuration>
 				</plugin>
 
 			</plugins>
@@ -125,6 +159,7 @@
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.3</version>
 			</plugin>
+
 		</plugins>
 	</reporting>
 	<repositories>
@@ -157,4 +192,16 @@
 		</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<scm>
+		<connection>scm:git:git://github.com/ujhelyiz/EMF-IncQuery.git</connection>
+		<url>https://github.com/ujhelyiz/EMF-IncQuery</url>
+	</scm>
+	<ciManagement>
+		<url>https://build.inf.mit.bme.hu/jenkins</url>
+		<system>Jenkins</system>
+	</ciManagement>
+	<issueManagement>
+		<url>https://github.com/ujhelyiz/EMF-IncQuery/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 </project>

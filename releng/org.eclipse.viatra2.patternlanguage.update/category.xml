@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.viatra2.patternlanguage.emf.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.patternlanguage.emf.feature" version="0.6.0.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
    <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.feature" version="0.6.0.qualifier">
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
@@ -10,6 +7,9 @@
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
    <feature url="features/org.eclipse.viatra2.emf.incquery.databinding.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.databinding.feature" version="0.6.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature" version="0.6.0.qualifier">
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
    <category-def name="org.eclipse.viatra2.patternlanguage" label="EMF-IncQuery"/>

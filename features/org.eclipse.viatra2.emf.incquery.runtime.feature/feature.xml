@@ -4,8 +4,8 @@
       label="EMF-IncQuery Runtime feature"
       version="0.6.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      EMF-IncQuery runtime feature. This is the minimum dependency to execute EMF-IncQuery matchers.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -219,14 +219,21 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.patternlanguage.core.model"
+         id="org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf.model"
+         id="org.eclipse.viatra2.patternlanguage.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.emf"
          download-size="0"
          install-size="0"
          version="0.0.0"

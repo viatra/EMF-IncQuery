@@ -17,7 +17,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.xbase.compiler.ImportManager
+import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 
@@ -53,20 +53,26 @@ class PatternMatcherClassInferrer {
    	 * Infers constructors for Matcher class based on the input 'pattern'.
    	 */
    	def inferMatcherClassConstructors(JvmDeclaredType matcherClass, Pattern pattern) {
-   		matcherClass.members += pattern.toConstructor(pattern.matcherClassName) [
+   		matcherClass.members += pattern.toConstructor [
+   			it.simpleName = pattern.matcherClassName
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorNotifier.toString
 			it.parameters += pattern.toParameter("notifier", pattern.newTypeRef(typeof (Notifier)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
-			it.body = [it | pattern.inferMatcherConstructorBodyNotifier(it)]
+			it.body = [
+				append('''this(''')
+				referClass(pattern, typeof(EngineManager))
+				append('''.getInstance().getIncQueryEngine(notifier));''')
+			]
 		]
 		
-		matcherClass.members += pattern.toConstructor(pattern.matcherClassName) [
+		matcherClass.members += pattern.toConstructor [
+			it.simpleName = pattern.matcherClassName
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorEngine.toString
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
-			it.body = ['''super(engine, FACTORY);''']
+			it.body = [append('''super(engine, FACTORY);''')]
 		]
    	}
    	
@@ -82,36 +88,36 @@ class PatternMatcherClassInferrer {
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
-   				it.body = ['''
+   				it.body = [append('''
    					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
+   				''')]
    			]
    			matcherClass.members += pattern.toMethod("getOneArbitraryMatch", cloneWithProxies(matchClassRef)) [
    				it.documentation = pattern.javadocGetOneArbitraryMatchMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
-   				it.body = ['''
+   				it.body = [append('''
    					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
+   				''')]
    			]
    			matcherClass.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
-   				it.body = ['''
+   				it.body = [append('''
    					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
+   				''')]
    			]
    			matcherClass.members += pattern.toMethod("countMatches", pattern.newTypeRef(typeof(int))) [
    				it.documentation = pattern.javadocCountMatchesMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
-   				it.body = ['''
+   				it.body = [append('''
    					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»});
-   				''']
+   				''')]
    			]
    			matcherClass.members += pattern.toMethod("forEachMatch", null) [
    				it.documentation = pattern.javadocForEachMatchMethod.toString
@@ -119,9 +125,9 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
 				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
-   				it.body = ['''
+   				it.body = [append('''
    					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
-   				''']
+   				''')]
    			]
    			matcherClass.members += pattern.toMethod("forOneArbitraryMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocForOneArbitraryMatchMethod.toString
@@ -129,16 +135,16 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)				
    				}
    				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
-   				it.body = ['''
+   				it.body = [append('''
    					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.name»«ENDFOR»}, processor);
-   				''']
+   				''')]
    			]
 		} else {
 			matcherClass.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethodNoParameter.toString
-   				it.body = ['''
+   				it.body = [append('''
    					return rawHasMatch(new Object[]{});
-   				''']
+   				''')]
    			]
 		}
    	}
@@ -162,70 +168,49 @@ class PatternMatcherClassInferrer {
    		matcherClass.members += tupleToMatchMethod
    		matcherClass.members += arrayToMatchMethod
    	}
-   	
-	/**
-   	 * Infers body for Matcher class constructor (Notifier) based on the input 'pattern'.
-   	 */
-   	def inferMatcherConstructorBodyNotifier(Pattern pattern, ImportManager manager) {
-  		manager.addImportFor(pattern.newTypeRef(typeof (EngineManager)).type)
-  		return '''this(EngineManager.getInstance().getIncQueryEngine(notifier));'''
+  	
+  	/**
+  	 * Infers the arrayToMatch method body.
+  	 */
+  	def inferTupleToMatchMethodBody(Pattern pattern, ITreeAppendable appendable, boolean isPluginLogging) {
+  		val activatorClass = pattern.findActivatorClass;
+   		appendable.append('''
+   			try {
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
+   			} catch(ClassCastException e) {''')
+   		pattern.inferLogging(isPluginLogging, activatorClass, "tupleToMatch", appendable)
+   		appendable.append('''
+   				//throw new IncQueryRuntimeException(e.getMessage());
+   				return null;
+   			}
+   		''')
   	}
   	
   	/**
   	 * Infers the arrayToMatch method body.
   	 */
-  	def inferTupleToMatchMethodBody(Pattern pattern, ImportManager manager, boolean isPluginLogging) {
+  	def inferArrayToMatchMethodBody(Pattern pattern, ITreeAppendable appendable, boolean isPluginLogging) {
   		val activatorClass = pattern.findActivatorClass;
-  		if (activatorClass != null && isPluginLogging) {
-  			manager.addLogImports(pattern)
-  		}
-   		'''
+  		appendable.append('''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
-   			} catch(ClassCastException e) {
-   				«pattern.inferLogging(isPluginLogging, activatorClass, "tupleToMatch")»
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+   			} catch(ClassCastException e) {''')
+   		pattern.inferLogging(isPluginLogging, activatorClass, "arrayToMatch", appendable)
+   		appendable.append('''
+   		}
    				//throw new IncQueryRuntimeException(e.getMessage());
    				return null;
-   			}
-   		'''
+   		''')
   	}
-  	
-  	/**
-  	 * Infers the arrayToMatch method body.
-  	 */
-  	def inferArrayToMatchMethodBody(Pattern pattern, ImportManager manager, boolean isPluginLogging) {
-  		val activatorClass = pattern.findActivatorClass;
-  	  	if (activatorClass != null && isPluginLogging) {
-  			manager.addLogImports(pattern)
-  		}
-  		'''
-   			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.simpleName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
-   			} catch(ClassCastException e) {
-   				«pattern.inferLogging(isPluginLogging, activatorClass, "arrayToMatch")»
-   				//throw new IncQueryRuntimeException(e.getMessage());
-   				return null;
-   			}
-   		'''
-  	}
-  	
-  	/**
-  	 * Adds imports for ILog, IStatus, Status classes
-  	 */
-  	def addLogImports(ImportManager manager, Pattern pattern) {
-  		manager.addImportFor(pattern.newTypeRef(typeof (ILog)).type)
-  		manager.addImportFor(pattern.newTypeRef(typeof (IStatus)).type)
-  		manager.addImportFor(pattern.newTypeRef(typeof (Status)).type)	
-	}
 	  	
   	/**
   	 * Infers the appropriate logging based on the parameters.
   	 */
-  	def inferLogging(Pattern pattern, boolean pluginLogging, JvmTypeReference activator, String methodName) {
+  	def inferLogging(Pattern pattern, boolean pluginLogging, JvmTypeReference activator, String methodName, ITreeAppendable appendable) {
   		if (pluginLogging && activator != null) {
-  			return pattern.pluginLogging(activator)
+  			return pattern.pluginLogging(activator, appendable)
   		} else {
-  			return pattern.consoleLogging(methodName)
+  			return pattern.consoleLogging(methodName, appendable)
   		}
 	}
 	
@@ -240,17 +225,23 @@ class PatternMatcherClassInferrer {
 	/**
 	 * Default logging to System error.
 	 */
-	def consoleLogging(Pattern pattern, String methodName) '''
+	def consoleLogging(Pattern pattern, String methodName, ITreeAppendable appendable) {appendable.append('''
 		System.err.println("Error when executing «methodName» in «pattern.matcherClassName»:" + e.getMessage());
-	'''
+	''')
+	}
 	
 	/**
 	 * Default logging with Activator's ILog.
 	 */
-	def pluginLogging(Pattern pattern, JvmTypeReference activator) '''
-		ILog log = Activator.getDefault().getLog();
-		IStatus status = new Status(IStatus.ERROR, log.getBundle().getSymbolicName(), e.getMessage());
+	def pluginLogging(Pattern pattern, JvmTypeReference activator, ITreeAppendable appendable) { 
+		appendable.referClass(pattern, typeof(ILog))
+		appendable.append(''' log = Activator.getDefault().getLog();''')
+		appendable.referClass(pattern, typeof(IStatus))
+		appendable.append(''' status = new ''')
+		appendable.referClass(pattern, typeof(Status))
+		appendable.append('''(IStatus.ERROR, log.getBundle().getSymbolicName(), e.getMessage());
 		log.log(status);
-	'''
+	''')
+	}
 	
 }
