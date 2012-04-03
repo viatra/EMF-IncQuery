@@ -3,8 +3,6 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -14,11 +12,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.RuntimeDatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRootKey;
@@ -253,46 +249,6 @@ public class DatabindingUtil {
 		}
 		
 		return adapter;
-	}
-
-	/**
-	 * Get the structural feature with the given name of the given object.
-	 * 
-	 * @param o the object (must be an EObject)
-	 * @param featureName the name of the feature
-	 * @return the EStructuralFeature of the object or null if it can not be found
-	 */
-	public static EStructuralFeature getFeature(Object o, String featureName) {
-		if (o != null && o instanceof EObject) {
-			EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(featureName);
-			return feature;
-		}
-		return null;
-	}
-
-	/**
-	 * Registers the given changeListener for the appropriate features of the given signature.
-	 * The features will be computed based on the message parameter.
-	 * 
-	 * @param signature the signature instance
-	 * @param changeListener the changle listener 
-	 * @param message the message which can be found in the appropriate PatternUI annotation
-	 */
-	public static void observeFeatures(IPatternMatch match,	IValueChangeListener changeListener, String message) {
-		if (message != null) {
-			String[] tokens = message.split("\\$");
-
-			for (int i = 0; i < tokens.length; i++) {
-				
-				//odd tokens 
-				if (i % 2 != 0) {
-					IObservableValue value = DatabindingAdapterUtil.getObservableValue(match, tokens[i]);
-					if (value != null) {
-						value.addValueChangeListener(changeListener);
-					}
-				}
-			}
-		}
 	}
 
 	/**
