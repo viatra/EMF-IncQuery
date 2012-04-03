@@ -139,9 +139,9 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+            locationURI="popup:org.eclipse.ui.popup.any">
          <menu
-               id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.packageExplorer"
+               id="org.eclipse.viatra2.emf.incquery.tooling.gui.navigator.popup"
                label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
@@ -183,62 +183,16 @@
                   </with>
                </visibleWhen>
             </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.projectExplorer"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.views.ResourceNavigator">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.resourceNavigator"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
+            <separator
+                  name="additions"
+                  visible="true">
+            </separator>
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
+               </reference>
+            </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -310,32 +264,44 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
             name="Register patterns in Query Explorer">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
             name="Unregister patterns from Query Explorer">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel"
             name="Load model">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.unloadmodel"
             name="Unload model">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation"
             name="Show location">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
             name="Register patterns in Query Explorer">
       </command>
       <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor"
             name="Unregister patterns from Query Explorer">
       </command>
+      <category
+            description="Commands related to EMF-IncQuery"
+            id="org.eclipse.viatra2.emf.incquery.tooling.category"
+            name="EMF-IncQuery">
+      </category>
    </extension>
 </plugin>
