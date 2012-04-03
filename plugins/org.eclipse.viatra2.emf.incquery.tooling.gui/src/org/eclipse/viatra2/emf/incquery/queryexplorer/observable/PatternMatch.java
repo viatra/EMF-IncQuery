@@ -2,11 +2,12 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
@@ -25,6 +26,7 @@ public class PatternMatch {
 	private String message;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ParameterValueChangedListener listener;
+	private List<IObservableValue> affectedValues;
 	
 	public PatternMatch(PatternMatcher parent, IPatternMatch match) {
 		this.parent = parent;
@@ -32,11 +34,19 @@ public class PatternMatch {
 		this.message = DatabindingUtil.getMessage(match, parent.isGenerated());
 		this.listener = new ParameterValueChangedListener();
 		if (message != null) {
-			updateText();
-			DatabindingUtil.observeFeatures(match, listener, message);
+			setText(DatabindingAdapterUtil.getMessage(match, message));
+			affectedValues = DatabindingAdapterUtil.observeFeatures(match, listener, message);
 		}
 		else {
 			this.text = match.toString();
+		}
+	}
+	
+	public void dispose() {
+		if (affectedValues != null) {
+			for (IObservableValue val : affectedValues) {
+				val.removeValueChangeListener(listener);
+			}
 		}
 	}
 
@@ -64,53 +74,8 @@ public class PatternMatch {
 	private class ParameterValueChangedListener implements IValueChangeListener {
 		@Override
 		public void handleValueChange(ValueChangeEvent event) {
-			updateText();
+			setText(DatabindingAdapterUtil.getMessage(match, message));
 		}
-	}
-	
-	private void updateText() {
-		String[] tokens = message.split("\\$");
-		String newText = "";
-		
-		for (int i = 0;i<tokens.length;i++) {
-			if (i % 2 == 0) {
-				newText += tokens[i];
-			}
-			else {
-				String[] objectTokens = tokens[i].split("\\.");
-				if (objectTokens.length > 0) {
-					Object o = null;
-					EStructuralFeature feature = null;
-					
-					if (objectTokens.length == 1) {
-						o = match.get(objectTokens[0]);
-						feature = DatabindingUtil.getFeature(o, "name");
-					}
-					if (objectTokens.length == 2) {
-						o = match.get(objectTokens[0]);
-						feature = DatabindingUtil.getFeature(o, objectTokens[1]);
-					}
-					
-					if (o != null && feature != null) {
-						Object value = ((EObject) o).eGet(feature);
-						if (value != null) {
-							newText += value.toString();
-						}
-						else {
-							newText += "null";
-						}
-					}
-					else if (o != null) {
-						newText += o.toString();
-					}
-				}	
-				else {
-					newText += "[no such parameter]";
-				}
-			}
-		}
-		
-		this.setText(newText);
 	}
 
 	public IPatternMatch getSignature() {
