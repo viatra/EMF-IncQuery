@@ -15,6 +15,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
@@ -88,7 +89,7 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 	 */
 	private static Resource getGlobalXmiResource(String bundleName) {
 		if (globalXmiResource == null) {
-			ResourceSet set = new ResourceSetImpl();
+			ResourceSet set = IncQueryRuntimePlugin.getDefault().getInjector().getInstance(ResourceSet.class);
 			try { 
 				globalXmiResource = set.getResource(getGlobalEiqModelUri(bundleName), true);
 			} catch (Exception e) {
