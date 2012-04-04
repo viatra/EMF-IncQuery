@@ -182,6 +182,11 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		EList<Variable> parameters = pattern.getParameters();
 		for (Variable variable : parameters) {
 			new ExportedParameter<Pattern, StubHandle>(pSystem, getPNode(variable), variable.getName());
+			if (variable.getType() != null && variable.getType() instanceof ClassType) {
+				EClassifier classname = ((ClassType)variable.getType()).getClassname();
+				PVariable pNode = getPNode(variable);
+				new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+			}
 		}
 	}
 	private void gatherBodyConstraints() throws RetePatternBuildException {
