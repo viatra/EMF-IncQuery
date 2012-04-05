@@ -53,6 +53,24 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        
        pathExpressionConstraint.changeHeadType(pathExpressionHead)
        pathExpressionElement.changeTailType(pathExpressionTail)
+       
+       varClass.addJvmIdentifiableOperations;
+	}
+	
+	def addJvmIdentifiableOperations(EClass varClass) {
+		val getSimpleNameOp = EcoreFactory::eINSTANCE.createEOperation
+		getSimpleNameOp.name = "getSimpleName"
+		getSimpleNameOp.lowerBound = 1
+		getSimpleNameOp.upperBound = 1
+		getSimpleNameOp.EType = EcorePackage::eINSTANCE.EString
+		val body = EcoreFactory::eINSTANCE.createEAnnotation
+		body.source = GenModelPackage::eNS_URI
+		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
+	        map.key = "body"
+	        map.value = "return this.name;"
+	    body.details.add(map)
+	    getSimpleNameOp.EAnnotations += body
+		varClass.EOperations += getSimpleNameOp
 	}
 	
 	def generateInverseContainerOfBody(EClass bodyClass, EClass patternClass) {
