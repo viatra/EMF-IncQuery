@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.viatra2.emf.incquery.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.viatra2.emf.incquery.runtime" id="patternmatcher" name="EMF-IncQuery Pattern Matcher"/>
+         <meta.schema plugin="org.eclipse.viatra2.emf.incquery.runtime" id="org.eclipse.viatra2.emf.incquery.matcherfactory" name="EMF-IncQuery Pattern Matcher"/>
       </appInfo>
       <documentation>
          A registered patternmatcher that is included in the pattern matcher registry.
