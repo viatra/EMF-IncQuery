@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -363,6 +364,34 @@ public abstract class ProjectGenerationHelper {
 				context.ungetService(ref);
 		}
 	}
+	
+	/**
+	 * Updates project manifest to ensure the selected packages are removed.
+	 * Does not change existing exports.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public static void removePackageExports(IProject project,
+			final List<String> dependencies, IProgressMonitor monitor)
+			throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			removePackageExports(service, bundleDesc, dependencies);
+			bundleDesc.apply(monitor);
+		} finally {
+			if (context != null && ref != null)
+				context.ungetService(ref);
+		}
+	}
 
 	/**
 	 * Updates project manifest to ensure the selected packages are exported.
@@ -397,6 +426,31 @@ public abstract class ProjectGenerationHelper {
 					}
 				}));
 
+		bundleDesc.setPackageExports(exportList
+				.toArray(new IPackageExportDescription[exportList.size()]));
+	}
+	
+	/**
+	 * Updates project manifest to ensure the selected packages are removed.
+	 * Does not change existing exports.
+	 * 
+	 * @param service
+	 * @param bundleDesc
+	 * @param exports
+	 */
+	public static void removePackageExports(
+			final IBundleProjectService service,
+			IBundleProjectDescription bundleDesc, final List<String> exports) {
+		IPackageExportDescription[] packageExports = bundleDesc
+				.getPackageExports();
+		List<IPackageExportDescription> exportList = new ArrayList<IPackageExportDescription>();
+		if (packageExports != null) {
+			for (IPackageExportDescription export : packageExports) {
+				if (!exports.contains(export.getName())) {
+					exportList.add(export);
+				}
+			}
+		}
 		bundleDesc.setPackageExports(exportList
 				.toArray(new IPackageExportDescription[exportList.size()]));
 	}
@@ -487,5 +541,22 @@ public abstract class ProjectGenerationHelper {
 			contribExtension.setInTheModel(true);
 		}
 		fModel.save();
+	}
+
+	/**
+	 * Updates project manifest to ensure the selected packages are removed.
+	 * Does not change existing exports.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @throws CoreException
+	 */
+	public static void removePackageExports(IProject project,
+			ArrayList<String> dependencies) throws CoreException {
+		removePackageExports(project, dependencies, new NullProgressMonitor());
+	}
+
+	public static void removeExtensions(IProject project,
+			Collection<IPluginExtension> contributedExtensions) throws CoreException {
 	}
 }

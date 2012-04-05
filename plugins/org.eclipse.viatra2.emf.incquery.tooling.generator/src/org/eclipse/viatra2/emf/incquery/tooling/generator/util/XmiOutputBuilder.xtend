@@ -1,19 +1,18 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.util
 
-import com.google.inject.Inject
+import java.util.ArrayList
 import org.apache.log4j.Logger
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IResource
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
 import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.xtext.naming.IQualifiedNameProvider
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
-import java.util.ArrayList
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 
 /**
  * @author Mark Czotter
@@ -21,15 +20,14 @@ import java.util.ArrayList
 class XmiOutputBuilder {
 	
 	Logger logger = Logger::getLogger(getClass())
-	@Inject extension IQualifiedNameProvider qualifiedNameProvider
 	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
 	 */
 	def build(ResourceSet resourceSet, IProject project) {
 		try {
-			val folder = project.getFolder(BaseGeneratedMatcherFactory::XMI_OUTPUT_FOLDER)
-			val file = folder.getFile(BaseGeneratedMatcherFactory::GLOBAL_EIQ_FILENAME)
+			val folder = project.getFolder(XmiModelUtil::XMI_OUTPUT_FOLDER)
+			val file = folder.getFile(XmiModelUtil::GLOBAL_EIQ_FILENAME)
 			if (!folder.exists) {
 				folder.create(IResource::DEPTH_INFINITE, false, null)
 			}
@@ -63,7 +61,7 @@ class XmiOutputBuilder {
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
 				val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
-				val fqn = pattern.fullyQualifiedName.toString
+				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(pattern)
 				p.setName(fqn)
 				if (fqnToPatternMap.get(fqn) != null) {
 					logger.error("Pattern already set in the Map: " + fqn)
@@ -73,8 +71,8 @@ class XmiOutputBuilder {
 				}	
 			}
 			// then iterate over all added PatternCompositonConstraint and change the patternRef
-			for (constraint : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
-				val fqn = constraint.patternRef.fullyQualifiedName.toString
+			for (constraint : xmiResource.allContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
+				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(constraint.patternRef)
 				val p = fqnToPatternMap.get(fqn)
 				if (p == null) {
 					logger.error("Pattern not found: " +fqn)

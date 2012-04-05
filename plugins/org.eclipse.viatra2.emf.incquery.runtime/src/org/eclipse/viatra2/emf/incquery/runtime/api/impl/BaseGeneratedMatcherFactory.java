@@ -11,12 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 
@@ -29,8 +26,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatch, Matcher extends BaseGeneratedMatcher<Signature>>
 		extends BaseMatcherFactory<Signature, Matcher> 
 {
-	public static final String XMI_OUTPUT_FOLDER = "queries";
-	public static final String GLOBAL_EIQ_FILENAME = "globalEiqModel.xmi";
 	
 	private static Resource globalXmiResource;
 	private static PatternModel modelRoot;
@@ -45,8 +40,7 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 			pattern = parsePattern();
 		return pattern;
 	}
-	
-//	protected abstract String patternString();
+
 	/**
 	 * Returns the bundleName (plug-in name).
 	 * @return
@@ -60,54 +54,13 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 	protected abstract String patternName();
 	
 	protected Pattern parsePattern() {
-//		PatternModel model = parseRoot(getAsStream(patternString()));
-		PatternModel model = getModelRoot(getBundleName());
-		return findPattern(model, patternName());
-	}
-	
-	/**
-	 * 
-	 * @param bundleName
-	 * @return
-	 */
-	public static PatternModel getModelRoot(String bundleName) {
-		if (bundleName == null || bundleName.isEmpty()) return null;
-		if (modelRoot == null) {
-			Resource res = getGlobalXmiResource(bundleName);
-			if (res != null) {
-				modelRoot = (PatternModel) res.getContents().get(0);	
-			}	
+		try {
+			PatternModel model = getModelRoot(getBundleName());
+			return findPattern(model, patternName());
+		} catch (Exception e) {
+			System.out.println("Exception during parse pattern: " + e.getMessage());
 		}
-		return modelRoot;
-	}
-	
-	/**
-	 * Returns the global EIQ resource (XMI), that is hosted in the given bundle.
-	 * If no resource is found, null is returned.
-	 * @param bundleName, cant be null
-	 * @return
-	 */
-	private static Resource getGlobalXmiResource(String bundleName) {
-		if (globalXmiResource == null) {
-			ResourceSet set = IncQueryRuntimePlugin.getDefault().getInjector().getInstance(ResourceSet.class);
-			try { 
-				globalXmiResource = set.getResource(getGlobalEiqModelUri(bundleName), true);
-			} catch (Exception e) {
-				System.err.println("Exception during Global XMi Resource load: " + e.getMessage());
-				globalXmiResource = null;
-			}
-		}
-		return globalXmiResource;
-	}
-	
-	/**
-	 * Creates a platformplugin URI from bundleName and default location of the global EIQ model file path
-	 * @param bundleName
-	 * @return
-	 */
-	private static URI getGlobalEiqModelUri(String bundleName) {
-		return URI.createPlatformPluginURI(String.format("%s/%s/%s",
-				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
+		return null;
 	}
 	
 	/**
@@ -124,6 +77,22 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the global Xmi model Root from the given bundle.
+	 * @param bundleName
+	 * @return
+	 */
+	public static PatternModel getModelRoot(String bundleName) {
+		if (bundleName == null || bundleName.isEmpty()) return null;
+		if (modelRoot == null) {
+			if (globalXmiResource == null) {
+				globalXmiResource = XmiModelUtil.getGlobalXmiResource(bundleName);
+			}
+			modelRoot = (PatternModel) globalXmiResource.getContents().get(0);
+		}
+		return modelRoot;
 	}
 	
 //	private PatternModel parseRoot(InputStream inputStream) {
