@@ -105,12 +105,12 @@ public class MatcherFactoryRegistry {
 	
 	/**
 	 * Returns the specific pattern matcher factory, if it is registered, null otherwise
-	 * @param patternId
+	 * @param patternFqn
 	 * @return
 	 */
-	public static IMatcherFactory getMatcherFactoryByPatternId(String patternId) {
-		if(contributedMatcherFactories.containsKey(patternId)) {
-			return contributedMatcherFactories.get(patternId);
+	public static IMatcherFactory getMatcherFactory(String patternFqn) {
+		if(contributedMatcherFactories.containsKey(patternFqn)) {
+			return contributedMatcherFactories.get(patternFqn);
 		}
 		return null;
 	}
@@ -121,7 +121,7 @@ public class MatcherFactoryRegistry {
 	 * @param pattern
 	 * @return
 	 */
-	public static IMatcherFactory getMatcherFactoryByPattern(Pattern pattern) {
+	public static IMatcherFactory getMatcherFactory(Pattern pattern) {
 		String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 		if(contributedMatcherFactories.containsKey(fullyQualifiedName)) {
 			return contributedMatcherFactories.get(fullyQualifiedName);
@@ -134,7 +134,7 @@ public class MatcherFactoryRegistry {
 	 * @param pattern
 	 * @return
 	 */
-	public static IMatcherFactory getOrCreateMatcherFactoryByPattern(Pattern pattern) {
+	public static IMatcherFactory getOrCreateMatcherFactory(Pattern pattern) {
 		String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 		if(contributedMatcherFactories.containsKey(fullyQualifiedName)) {
 			return contributedMatcherFactories.get(fullyQualifiedName);
