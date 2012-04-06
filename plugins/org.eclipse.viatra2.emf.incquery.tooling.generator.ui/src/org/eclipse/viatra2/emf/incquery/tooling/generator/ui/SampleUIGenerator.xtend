@@ -13,7 +13,11 @@ class SampleUIGenerator implements IGenerationFragment {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		fsa.generateFile(pattern.packagePath + "/handlers/" + pattern.name + "Handler.java", pattern.patternHandler)
+		fsa.generateFile(pattern.packagePath + "/handlers/" + pattern.realPatternName.toFirstUpper + "Handler.java", pattern.patternHandler)
+	}
+	
+	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
+		fsa.deleteFile(pattern.packagePath + "/handlers/" + pattern.realPatternName.toFirstUpper + "Handler.java")
 	}
 	
 	override getProjectDependencies() {
@@ -59,7 +63,7 @@ class SampleUIGenerator implements IGenerationFragment {
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 		import «pattern.packageName + "." + pattern.matchClassName»;
 
-		public class «pattern.name + "Handler"» extends AbstractHandler {
+		public class «pattern.name.toFirstUpper + "Handler"» extends AbstractHandler {
 
 			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {

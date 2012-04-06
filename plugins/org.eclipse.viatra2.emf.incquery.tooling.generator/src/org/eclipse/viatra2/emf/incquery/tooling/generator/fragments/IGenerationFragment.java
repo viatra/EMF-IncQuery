@@ -44,6 +44,15 @@ public interface IGenerationFragment {
 	 * @param fsa
 	 */
 	public void generateFiles(Pattern pattern, IFileSystemAccess fsa);
+	
+	/**
+	 * Cleans up the previosly generated files for the selected pattern. Delete
+	 * the files using the file system access component.
+	 * 
+	 * @param pattern
+	 * @param fsa
+	 */
+	public void cleanUp(Pattern pattern, IFileSystemAccess fsa);
 
 	//public Iterable<JvmGenericType> inferFiles(Pattern pattern);
 	/**
@@ -56,4 +65,5 @@ public interface IGenerationFragment {
 	 * @return a collection of plugin extensions
 	 */
 	public Iterable<IPluginExtension> extensionContribution(Pattern pattern, ExtensionGenerator exGen);
+	
 }

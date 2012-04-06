@@ -23,6 +23,10 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		}
 	}
 	
+	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
+		fsa.deleteFile(pattern.packagePath + "/validation/" + pattern.realPatternName.toFirstUpper + annotationLiteral + ".java")
+	}
+	
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.viatra2.emf.incquery.runtime",
 			"org.eclipse.viatra2.emf.incquery.validation.runtime"
