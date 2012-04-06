@@ -22,6 +22,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationF
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XmiOutputBuilder;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
@@ -32,6 +33,7 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
+import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
@@ -82,7 +84,10 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					new Path(input.getURI().toPlatformString(true)))
 					.getProject();
 			ExtensionGenerator generator = new ExtensionGenerator();
-			generator.setProject(project);		
+			generator.setProject(project);
+			// clear to remove previous extensions, that remain in the map
+			// this way we can avoid growing plugin.xml file.
+			extensionMap.clear();
 			cleanUp(project, extensionGenerator, generator);
 			// create a resourcedescription for the input, 
 			// this way we can find all relevant EIQ file in the context of this input.
@@ -127,17 +132,23 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
 		if (gxr != null) {
 			// do the clean up based on the previous model
+			final String point = "org.eclipse.viatra2.emf.incquery.runtime.patternmatcher";
 			ArrayList<String> packageNames = new ArrayList<String>();
+			ArrayList<Pair<String, String>> contributedExtensions = new ArrayList<Pair<String,String>>();
 			TreeIterator<EObject> it = gxr.getAllContents();
 			while (it.hasNext()) {
 				EObject obj = it.next();
 				if (obj instanceof Pattern) {
 					packageNames.add(util.getPackageName((Pattern) obj));
+					// only the extension id and point name is needed for removal
+					String pointId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
+					contributedExtensions.add(Pair.of(pointId, point));
 				}
 			}
-			// removing previously exported packages
+			// remove previously exported packages
 			ProjectGenerationHelper.removePackageExports(project, packageNames);
-			// TODO remove extensions
+			// remove previously added extensions
+			ProjectGenerationHelper.removeExtensions(project, contributedExtensions);
 		}
 	}
 

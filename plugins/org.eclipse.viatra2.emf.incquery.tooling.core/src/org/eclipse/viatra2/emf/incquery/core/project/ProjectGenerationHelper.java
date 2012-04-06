@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +43,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageF
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.eclipse.xtext.xbase.lib.Functions;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
@@ -556,7 +558,72 @@ public abstract class ProjectGenerationHelper {
 		removePackageExports(project, dependencies, new NullProgressMonitor());
 	}
 
+	/**
+	 * Updates the selected project to not contain the selected extension. The
+	 * extensions are identified using an identifier and extension point
+	 * together; other extensions are kept intact.
+	 * 
+	 * @param project
+	 * @param contributedExtensions
+	 * @throws CoreException
+	 */
 	public static void removeExtensions(IProject project,
-			Collection<IPluginExtension> contributedExtensions) throws CoreException {
+			List<Pair<String, String>> contributedExtensions) throws CoreException {
+		removeExtensions(project, contributedExtensions, new NullProgressMonitor());
+	}
+	
+	/**
+	 * Updates the selected project to not contain the selected extension. The
+	 * extensions are identified using an identifier and extension point
+	 * together; other extensions are kept intact.
+	 * 
+	 * @param project
+	 * @param contributedExtensions
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	@SuppressWarnings("restriction")
+	public static void removeExtensions(IProject project,
+			List<Pair<String, String>> contributedExtensions, IProgressMonitor monitor) throws CoreException {
+		IFile pluginXml = PDEProject.getPluginXml(project);
+		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
+				.getModelManager().findModel(project);
+		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
+		fModel.setEditable(true);
+		fModel.load();
+		// Storing a write-only plugin.xml model
+		IExtensions extensions = fModel.getExtensions();
+		if (plugin != null) {
+			IExtensions readExtension = plugin.getExtensions();
+			for (final IPluginExtension extension : readExtension.getExtensions()) {
+				String id = extension.getId();
+				if (id.startsWith(project.getName())) {
+					id = id.substring(
+						project.getName().length() + 1);
+				}
+				final String extensionId = id;
+				Pair<String, String> contrExt = IterableExtensions.
+						findFirst(contributedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
+					@Override
+					public Boolean apply(Pair<String, String> input) {
+						if (input.getKey().equals(extensionId)) {
+							if (input.getValue().equals(extension.getPoint())) {
+								return true;
+							}
+						}
+						return false;
+					}
+				});
+				// add this extension if not generated previously
+				if (contrExt == null) {
+					extensions.add(extension);
+				}
+			}
+			for (IPluginExtensionPoint point : readExtension
+					.getExtensionPoints()) {
+				extensions.add(point);
+			}
+		}
+		fModel.save();
 	}
 }
