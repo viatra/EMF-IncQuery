@@ -22,6 +22,10 @@ class DatabindingGenerator implements IGenerationFragment {
 		}
 	}
 	
+	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
+		fsa.deleteFile(pattern.packagePath + "/databinding/" + pattern.realPatternName.toFirstUpper + "DatabindingAdapter.java")
+	}
+	
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.core.databinding.property", 
 		"org.eclipse.core.databinding.observable", 
@@ -128,5 +132,5 @@ class DatabindingGenerator implements IGenerationFragment {
 			}
 		}
 	'''
-
+	
 }

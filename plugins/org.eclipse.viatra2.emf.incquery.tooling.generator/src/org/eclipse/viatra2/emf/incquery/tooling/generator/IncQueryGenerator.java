@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
@@ -85,10 +86,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					.getProject();
 			ExtensionGenerator generator = new ExtensionGenerator();
 			generator.setProject(project);
-			// clear to remove previous extensions, that remain in the map
-			// this way we can avoid growing plugin.xml file.
-			extensionMap.clear();
-			cleanUp(project, extensionGenerator, generator);
+			cleanUp(project);
 			// create a resourcedescription for the input, 
 			// this way we can find all relevant EIQ file in the context of this input.
 			IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
@@ -125,14 +123,11 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		}
 	}
 
-	private void cleanUp(IProject project,
-			GenerateMatcherFactoryExtension extensionGenerator,
-			ExtensionGenerator generator) throws CoreException {
+	private void cleanUp(IProject project) throws CoreException {
 		// load previous global xmi resource
 		Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
 		if (gxr != null) {
 			// do the clean up based on the previous model
-			final String point = "org.eclipse.viatra2.emf.incquery.runtime.patternmatcher";
 			ArrayList<String> packageNames = new ArrayList<String>();
 			ArrayList<Pair<String, String>> contributedExtensions = new ArrayList<Pair<String,String>>();
 			TreeIterator<EObject> it = gxr.getAllContents();
@@ -141,17 +136,36 @@ public class IncQueryGenerator extends JvmModelGenerator {
 				if (obj instanceof Pattern) {
 					packageNames.add(util.getPackageName((Pattern) obj));
 					// only the extension id and point name is needed for removal
-					String pointId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
-					contributedExtensions.add(Pair.of(pointId, point));
+					String extensionId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
+					contributedExtensions.add(Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+					// TODO add fragment extensions to cleanUp
+					// execute code clean up for all fragments
+					executeCleanUpOnFragments(project, (Pattern)obj);
 				}
 			}
 			// remove previously exported packages
 			ProjectGenerationHelper.removePackageExports(project, packageNames);
 			// remove previously added extensions
 			ProjectGenerationHelper.removeExtensions(project, contributedExtensions);
+//			for (IProject proj : extensionMap.keySet()) {
+//				ProjectGenerationHelper.removeExtensions(proj, extensionMap.get(proj));
+//			}
 		}
+		// clear the map so the generation starts with an empty map
+		extensionMap.clear();
 	}
 
+	private void executeCleanUpOnFragments(IProject modelProject, Pattern pattern) throws CoreException {
+		for (IGenerationFragment fragment : fragmentProvider
+				.getFragmentsForPattern(pattern)) {
+			injector.injectMembers(fragment);
+			IProject targetProject = createOrGetTargetProject(modelProject,
+					fragment);
+			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
+			fragment.cleanUp(pattern, fsa);
+		}
+	}
+	
 	private void executeGeneratorFragments(IProject modelProject, Pattern pattern)
 			throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider

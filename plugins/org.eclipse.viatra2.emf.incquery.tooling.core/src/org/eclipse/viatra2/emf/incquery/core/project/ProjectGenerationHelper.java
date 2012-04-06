@@ -615,8 +615,17 @@ public abstract class ProjectGenerationHelper {
 					}
 				});
 				// add this extension if not generated previously
+				// XXX cloning extensions to remove project name prefixes
 				if (contrExt == null) {
-					extensions.add(extension);
+					IPluginExtension cloneExtension = fModel.createExtension();
+					cloneExtension.setId(id);
+					cloneExtension.setName(extension.getName());
+					cloneExtension.setPoint(extension.getPoint());
+					for (IPluginObject obj : extension.getChildren()) {
+						cloneExtension.add(obj);
+					}
+					cloneExtension.setInTheModel(true);
+					extensions.add(cloneExtension);
 				}
 			}
 			for (IPluginExtensionPoint point : readExtension
@@ -626,4 +635,5 @@ public abstract class ProjectGenerationHelper {
 		}
 		fModel.save();
 	}
+	
 }
