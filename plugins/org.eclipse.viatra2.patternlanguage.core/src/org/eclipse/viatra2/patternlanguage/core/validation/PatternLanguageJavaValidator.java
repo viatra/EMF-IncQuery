@@ -175,7 +175,8 @@ public class PatternLanguageJavaValidator extends
 			for (AnnotationParameter parameter : annotation.getParameters()) {
 				Class<? extends ValueReference> expectedParameterType = validator
 						.getExpectedParameterType(parameter);
-				if (expectedParameterType != null
+				if (expectedParameterType != null 
+						&& parameter.getValue() != null
 						&& !expectedParameterType.isAssignableFrom(parameter
 								.getValue().getClass())) {
 					error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR,
