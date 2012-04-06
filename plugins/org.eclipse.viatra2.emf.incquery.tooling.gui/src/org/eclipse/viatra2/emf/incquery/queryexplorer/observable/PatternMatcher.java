@@ -54,6 +54,9 @@ public class PatternMatcher {
 	 * Call this method to remove the callback handler from the delta monitor of the matcher.
 	 */
 	public void dispose() {
+		for (PatternMatch pm : matches) {
+			pm.dispose();
+		}
 		this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
 		processMatchesRunnable = null;
 	}

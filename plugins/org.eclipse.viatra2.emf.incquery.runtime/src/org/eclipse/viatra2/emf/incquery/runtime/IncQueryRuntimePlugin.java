@@ -12,7 +12,7 @@ package org.eclipse.viatra2.emf.incquery.runtime;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.BuilderRegistry;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule;
 import org.osgi.framework.BundleContext;
 
@@ -36,7 +36,9 @@ public class IncQueryRuntimePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		BuilderRegistry.initRegistry();
+		// TODO Builder regisry may be used later
+		//BuilderRegistry.initRegistry();
+		MatcherFactoryRegistry.initRegistry();
 		WellbehavingDerivedFeatureRegistry.initRegistry();
 	}
 

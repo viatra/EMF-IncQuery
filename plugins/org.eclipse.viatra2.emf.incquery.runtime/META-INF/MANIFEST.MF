@@ -18,4 +18,5 @@ Export-Package: org.eclipse.viatra2.emf.incquery.runtime,
  org.eclipse.viatra2.emf.incquery.runtime.api.impl,
  org.eclipse.viatra2.emf.incquery.runtime.derived,
  org.eclipse.viatra2.emf.incquery.runtime.exception,
- org.eclipse.viatra2.emf.incquery.runtime.extensibility
+ org.eclipse.viatra2.emf.incquery.runtime.extensibility,
+ org.eclipse.viatra2.emf.incquery.runtime.util

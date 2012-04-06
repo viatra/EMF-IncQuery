@@ -8,6 +8,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 import org.eclipse.xtext.common.types.JvmIdentifiableElement
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.emf.incquery.runtime.IExtensions
 
 class GenerateMatcherFactoryExtension {
 	
@@ -17,7 +18,7 @@ class GenerateMatcherFactoryExtension {
 	
 	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
-		exGen.contribExtension(pattern.getFullyQualifiedName, "org.eclipse.viatra2.emf.incquery.runtime.patternmatcher") [
+		exGen.contribExtension(pattern.getFullyQualifiedName, IExtensions::MATCHERFACTORY_EXTENSION_POINT_ID) [
 			exGen.contribElement(it, "matcher") [
 				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
 				val el = associations.getJvmElements(pattern).

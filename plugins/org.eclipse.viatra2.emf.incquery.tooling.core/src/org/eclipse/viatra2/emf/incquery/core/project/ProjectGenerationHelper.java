@@ -43,6 +43,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageF
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.eclipse.xtext.xbase.lib.Functions;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
@@ -363,6 +366,34 @@ public abstract class ProjectGenerationHelper {
 				context.ungetService(ref);
 		}
 	}
+	
+	/**
+	 * Updates project manifest to ensure the selected packages are removed.
+	 * Does not change existing exports.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public static void removePackageExports(IProject project,
+			final List<String> dependencies, IProgressMonitor monitor)
+			throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			removePackageExports(service, bundleDesc, dependencies);
+			bundleDesc.apply(monitor);
+		} finally {
+			if (context != null && ref != null)
+				context.ungetService(ref);
+		}
+	}
 
 	/**
 	 * Updates project manifest to ensure the selected packages are exported.
@@ -397,6 +428,31 @@ public abstract class ProjectGenerationHelper {
 					}
 				}));
 
+		bundleDesc.setPackageExports(exportList
+				.toArray(new IPackageExportDescription[exportList.size()]));
+	}
+	
+	/**
+	 * Updates project manifest to ensure the selected packages are removed.
+	 * Does not change existing exports.
+	 * 
+	 * @param service
+	 * @param bundleDesc
+	 * @param exports
+	 */
+	public static void removePackageExports(
+			final IBundleProjectService service,
+			IBundleProjectDescription bundleDesc, final List<String> exports) {
+		IPackageExportDescription[] packageExports = bundleDesc
+				.getPackageExports();
+		List<IPackageExportDescription> exportList = new ArrayList<IPackageExportDescription>();
+		if (packageExports != null) {
+			for (IPackageExportDescription export : packageExports) {
+				if (!exports.contains(export.getName())) {
+					exportList.add(export);
+				}
+			}
+		}
 		bundleDesc.setPackageExports(exportList
 				.toArray(new IPackageExportDescription[exportList.size()]));
 	}
@@ -485,6 +541,88 @@ public abstract class ProjectGenerationHelper {
 		for (IPluginExtension contribExtension : contributedExtensions) {
 			extensions.add(contribExtension);
 			contribExtension.setInTheModel(true);
+		}
+		fModel.save();
+	}
+
+	/**
+	 * Updates project manifest to ensure the selected packages are removed.
+	 * Does not change existing exports.
+	 * 
+	 * @param project
+	 * @param dependencies
+	 * @throws CoreException
+	 */
+	public static void removePackageExports(IProject project,
+			ArrayList<String> dependencies) throws CoreException {
+		removePackageExports(project, dependencies, new NullProgressMonitor());
+	}
+
+	/**
+	 * Updates the selected project to not contain the selected extension. The
+	 * extensions are identified using an identifier and extension point
+	 * together; other extensions are kept intact.
+	 * 
+	 * @param project
+	 * @param contributedExtensions
+	 * @throws CoreException
+	 */
+	public static void removeExtensions(IProject project,
+			List<Pair<String, String>> contributedExtensions) throws CoreException {
+		removeExtensions(project, contributedExtensions, new NullProgressMonitor());
+	}
+	
+	/**
+	 * Updates the selected project to not contain the selected extension. The
+	 * extensions are identified using an identifier and extension point
+	 * together; other extensions are kept intact.
+	 * 
+	 * @param project
+	 * @param contributedExtensions
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	@SuppressWarnings("restriction")
+	public static void removeExtensions(IProject project,
+			List<Pair<String, String>> contributedExtensions, IProgressMonitor monitor) throws CoreException {
+		IFile pluginXml = PDEProject.getPluginXml(project);
+		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
+				.getModelManager().findModel(project);
+		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
+		fModel.setEditable(true);
+		fModel.load();
+		// Storing a write-only plugin.xml model
+		IExtensions extensions = fModel.getExtensions();
+		if (plugin != null) {
+			IExtensions readExtension = plugin.getExtensions();
+			for (final IPluginExtension extension : readExtension.getExtensions()) {
+				String id = extension.getId();
+				if (id.startsWith(project.getName())) {
+					id = id.substring(
+						project.getName().length() + 1);
+				}
+				final String extensionId = id;
+				Pair<String, String> contrExt = IterableExtensions.
+						findFirst(contributedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
+					@Override
+					public Boolean apply(Pair<String, String> input) {
+						if (input.getKey().equals(extensionId)) {
+							if (input.getValue().equals(extension.getPoint())) {
+								return true;
+							}
+						}
+						return false;
+					}
+				});
+				// add this extension if not generated previously
+				if (contrExt == null) {
+					extensions.add(extension);
+				}
+			}
+			for (IPluginExtensionPoint point : readExtension
+					.getExtensionPoints()) {
+				extensions.add(point);
+			}
 		}
 		fModel.save();
 	}

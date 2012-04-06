@@ -1,6 +1,10 @@
 package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -42,6 +46,34 @@ public class DatabindingAdapterUtil {
 	}
 	
 	/**
+	 * Registers the given changeListener for the appropriate features of the given signature.
+	 * The features will be computed based on the message parameter.
+	 * 
+	 * @param signature the signature instance
+	 * @param changeListener the changle listener 
+	 * @param message the message which can be found in the appropriate PatternUI annotation
+	 */
+	public static List<IObservableValue> observeFeatures(IPatternMatch match,	IValueChangeListener changeListener, String message) {
+		List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
+		if (message != null) {
+			String[] tokens = message.split("\\$");
+
+			for (int i = 0; i < tokens.length; i++) {
+				
+				//odd tokens 
+				if (i % 2 != 0) {
+					IObservableValue value = DatabindingAdapterUtil.getObservableValue(match, tokens[i]);
+					if (value != null) {
+						value.addValueChangeListener(changeListener);
+						affectedValues.add(value);
+					}
+				}
+			}
+		}
+		return affectedValues;
+	}
+	
+	/**
 	 * Get the structural feature with the given name of the given object.
 	 * 
 	 * @param o the object (must be an EObject)
@@ -54,5 +86,50 @@ public class DatabindingAdapterUtil {
 			return feature;
 		}
 		return null;
+	}
+	
+	public static String getMessage(IPatternMatch match, String message) {
+		String[] tokens = message.split("\\$");
+		String newText = "";
+		
+		for (int i = 0;i<tokens.length;i++) {
+			if (i % 2 == 0) {
+				newText += tokens[i];
+			}
+			else {
+				String[] objectTokens = tokens[i].split("\\.");
+				if (objectTokens.length > 0) {
+					Object o = null;
+					EStructuralFeature feature = null;
+					
+					if (objectTokens.length == 1) {
+						o = match.get(objectTokens[0]);
+						feature = DatabindingAdapterUtil.getFeature(o, "name");
+					}
+					if (objectTokens.length == 2) {
+						o = match.get(objectTokens[0]);
+						feature = DatabindingAdapterUtil.getFeature(o, objectTokens[1]);
+					}
+					
+					if (o != null && feature != null) {
+						Object value = ((EObject) o).eGet(feature);
+						if (value != null) {
+							newText += value.toString();
+						}
+						else {
+							newText += "null";
+						}
+					}
+					else if (o != null) {
+						newText += o.toString();
+					}
+				}	
+				else {
+					newText += "[no such parameter]";
+				}
+			}
+		}
+		
+		return newText;
 	}
 }
