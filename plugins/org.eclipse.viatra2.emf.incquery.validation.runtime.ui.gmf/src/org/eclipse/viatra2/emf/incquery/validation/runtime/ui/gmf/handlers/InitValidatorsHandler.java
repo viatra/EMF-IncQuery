@@ -1,15 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2004-2010 Gabor Bergmann and Daniel Varro
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Gabor Bergmann - initial API and implementation
- *******************************************************************************/
+package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers;
 
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.actions.gmf;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -23,19 +15,16 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.ConstraintAdapter;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
-/**
- * @author Bergmann Gábor
- *
- */
-public class InitializeValidationHandler extends AbstractHandler {
+public class InitValidatorsHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Notifier emfRoot = null;
+		Notifier notifier = null;
 		
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
 		
@@ -50,19 +39,19 @@ public class InitializeValidationHandler extends AbstractHandler {
 				if (element != null) {//  && element instanceof Element) {
 					Resource resource = element.eResource();
 					if (resource == null) 
-						emfRoot = element; 
+						notifier = element; 
 					else 
-						emfRoot = resource;
+						notifier = resource;
 				}
 			}
 		}
-		if (emfRoot==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
+		if (notifier==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
 	
-//		try {
-//			EditorBoundValidation.INSTANCE.initializeValidatorsOnEditor(activeEditor, emfRoot);
-//		} catch (IncQueryRuntimeException e) {
-//			e.printStackTrace();
-//		}
+		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
+		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
+			adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
+		}
+		ValidationUtil.getAdapterMap().put(activeEditor, adapters);
 
 		return null;
 	}

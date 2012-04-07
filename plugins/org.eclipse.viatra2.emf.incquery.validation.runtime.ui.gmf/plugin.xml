@@ -7,8 +7,8 @@
                allPopups="false"
                locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContribution">
             <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation"
-                  label="Initialize Validation (powered by EMF-IncQuery)"
+                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.initValidators"
+                  label="Initialize EMF-IncQuery Validators"
                   style="push">
             </command>
          </menuContribution>
@@ -16,8 +16,8 @@
          <menuContribution
             locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu">
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation"
-               label="Initialize Validation (powered by EMF-IncQuery)"
+               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.initValidators"
+               label="Initialize EMF-IncQuery Validators"
                style="push">
          </command>
          </menuContribution>
@@ -26,15 +26,10 @@
    <extension
             point="org.eclipse.ui.commands">
          <command
-               categoryId="org.eclipse.viatra2.emf.incquery.validation.commands"
-               defaultHandler="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.actions.gmf.InitializeValidationHandler"
-               id="org.eclipse.viatra2.emf.incquery.validation.commands.initializevalidation"
-               name="Initialize IncQuery Validation">
+               defaultHandler="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.InitValidatorsHandler"
+               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.initValidators"
+               name="Initialize EMF-IncQuery Validators">
          </command>
-         <category
-               id="org.eclipse.viatra2.emf.incquery.validation.commands"
-               name="EMF-IncQuery Validation commands">
-         </category>
    </extension>
 
 </plugin>

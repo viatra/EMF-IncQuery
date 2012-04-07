@@ -31,8 +31,7 @@ public class InitValidatorsHandler extends AbstractHandler {
 			}
 			ValidationUtil.getAdapterMap().put(activeEditor, adapters);
 		}
-		
-		System.out.println("initValidators");
+
 		return null;
 	}
 }

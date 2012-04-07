@@ -17,7 +17,14 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 public class ValidationUtil {
 
+	/**
+	 * The list of registered constraints (cached at first call) 
+	 */
 	private static List<Constraint<IPatternMatch>> constraints;
+	
+	/**
+	 * Maps the registered validation adapter instances to a given editor instance
+	 */
 	private static Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = 
 			new HashMap<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>>(); 
 	
@@ -25,6 +32,12 @@ public class ValidationUtil {
 		return adapterMap;
 	}
 
+	/**
+	 * Returns the appropriate IMarker enum value of severity for the given literal
+	 * 
+	 * @param severity the literal of the severity
+	 * @return the IMarker severity enum value (info is the default)
+	 */
 	public static int getSeverity(String severity) {
 		if (severity != null) {
 			if (severity.matches("error")) {
@@ -33,11 +46,8 @@ public class ValidationUtil {
 			else if (severity.matches("warning")) {
 				return IMarker.SEVERITY_WARNING;
 			}
-			else if (severity.matches("info")) {
-				return IMarker.SEVERITY_INFO;
-			}
 		}
-		return -1;
+		return IMarker.SEVERITY_INFO;
 	}
 	
 	public static List<Constraint<IPatternMatch>> getConstraints() {
