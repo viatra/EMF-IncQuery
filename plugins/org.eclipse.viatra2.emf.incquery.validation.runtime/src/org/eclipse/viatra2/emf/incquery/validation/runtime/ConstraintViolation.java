@@ -1,5 +1,8 @@
 package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
+import java.util.List;
+
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IMarker;
@@ -18,13 +21,14 @@ public class ConstraintViolation<T extends IPatternMatch> {
 	private ConstraintAdapter<T> adapter;
 	private String message;
 	private ParameterValueChangedListener listener;
+	private List<IObservableValue> affectedValues;
 	
 	public ConstraintViolation(ConstraintAdapter<T> adapter, T patternMatch) {
 		this.patternMatch = patternMatch;
 		this.adapter = adapter;
 		this.message = adapter.getConstraint().getMessage();
 		this.listener = new ParameterValueChangedListener();
-		DatabindingAdapterUtil.observeFeatures(patternMatch, listener, message);
+		affectedValues = DatabindingAdapterUtil.observeFeatures(patternMatch, listener, message);
 		initMarker();
 	}
 	
@@ -63,6 +67,16 @@ public class ConstraintViolation<T extends IPatternMatch> {
 	}
 	
 	public void dispose() {
-		//dispose marker
+		for (IObservableValue val : affectedValues) {
+			val.removeValueChangeListener(listener);
+		}
+		if (marker != null) {
+			try {
+				marker.delete();
+			} 
+			catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
