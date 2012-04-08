@@ -200,7 +200,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		Object result = null;
 		try {
 			result = evaluator.evaluate(ps);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			engine.getContext().logWarning( 
 					"(Note: this is most likely a transient problem and can be usually ignored.) " +

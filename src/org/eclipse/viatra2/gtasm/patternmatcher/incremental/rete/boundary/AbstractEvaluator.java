@@ -29,9 +29,9 @@ public abstract class AbstractEvaluator {
 	 */
 	Set<Tuple> traces = new HashSet<Tuple>();
 	
-	public abstract Object doEvaluate(Tuple tuple) throws Exception;
+	public abstract Object doEvaluate(Tuple tuple) throws Throwable;
 	
-	Object evaluate(Tuple tuple) throws Exception {
+	Object evaluate(Tuple tuple) throws Throwable {
 		traces.clear();
 		return doEvaluate(tuple);
 	}

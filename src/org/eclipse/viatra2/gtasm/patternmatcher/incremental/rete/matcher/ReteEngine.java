@@ -62,7 +62,7 @@ public class ReteEngine<PatternDescription> {
 	protected boolean parallelExecutionEnabled; // TRUE if Viatra can go on
 												// while RETE does its job.
 	
-	protected BlockingQueue<Exception> caughtExceptions;
+	protected BlockingQueue<Throwable> caughtExceptions;
 	
 	/**
 	 * These runnables will be called after updates by the manipulationListener at its own discretion.
@@ -95,7 +95,7 @@ public class ReteEngine<PatternDescription> {
 		this.parallelExecutionEnabled = reteThreads > 0;
 		
 		this.disconnectables = new LinkedList<Disconnectable>();
-		this.caughtExceptions = new LinkedBlockingQueue<Exception>();
+		this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
 		this.reteNet = new Network(reteThreads);
 		this.boundary = new ReteBoundary<PatternDescription>(this); // prerequisite: network
@@ -433,7 +433,7 @@ public class ReteEngine<PatternDescription> {
 	 * For internal use only: logs exceptions occurring during term evaluation inside the RETE net.
 	 * @param e
 	 */
-	public void logEvaluatorException(Exception e) {
+	public void logEvaluatorException(Throwable e) {
 		try {
 			caughtExceptions.put(e);
 		} catch (InterruptedException e1) {
@@ -446,7 +446,7 @@ public class ReteEngine<PatternDescription> {
 	 * 
 	 * @return the next caught exception, or null if there are no more.
 	 */
-	public Exception getNextLoggedEvaluatorException() {
+	public Throwable getNextLoggedEvaluatorException() {
 		return caughtExceptions.poll();
 	}
 	

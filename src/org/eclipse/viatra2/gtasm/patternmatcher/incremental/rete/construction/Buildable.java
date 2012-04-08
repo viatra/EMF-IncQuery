@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 
@@ -54,7 +55,8 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
 	public Stub<StubHandle> buildCountCheckBetaNode(Stub<StubHandle> primaryStub, Stub<StubHandle> sideStub, 
 			TupleMask primaryMask, TupleMask originalSideMask, int resultPositionInSignature);
 	public Stub<StubHandle> buildScopeConstrainer(Stub<StubHandle> stub, boolean transitive, Object unwrappedContainer, int constrainedIndex);
-	
+	public Stub<StubHandle> buildPredicateChecker(AbstractEvaluator evaluator, Integer rhsIndex, int[] affectedIndices, Stub<StubHandle> stub); 
+
 	
 	/**
 	 * @return a buildable that potentially acts on a separate container
