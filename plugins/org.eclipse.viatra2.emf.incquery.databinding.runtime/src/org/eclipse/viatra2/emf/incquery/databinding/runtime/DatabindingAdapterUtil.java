@@ -52,6 +52,7 @@ public class DatabindingAdapterUtil {
 	 * @param signature the signature instance
 	 * @param changeListener the changle listener 
 	 * @param message the message which can be found in the appropriate PatternUI annotation
+	 * @return the list of IObservableValue instances for which the IValueChangeListener was registered
 	 */
 	public static List<IObservableValue> observeFeatures(IPatternMatch match,	IValueChangeListener changeListener, String message) {
 		List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
