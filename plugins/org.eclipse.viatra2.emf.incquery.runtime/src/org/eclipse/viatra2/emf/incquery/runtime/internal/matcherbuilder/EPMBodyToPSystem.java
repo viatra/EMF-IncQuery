@@ -34,6 +34,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
@@ -54,6 +55,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
+import org.eclipse.xtext.xbase.XExpression;
 
 /**
  * @author Bergmann Gábor
@@ -246,8 +248,10 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 				currentSrc = intermediate;
 			}
 			new Equality<Pattern, StubHandle>(pSystem, currentSrc, finalDst);
-			
-		// TODO OTHER CONSTRAINT TYPES, most notably CheckConstraint
+		} else if (constraint instanceof CheckConstraint) {
+			XExpression expression = ((CheckConstraint) constraint).getExpression();
+			new XBaseCheck<StubHandle>(this, expression);
+		// TODO OTHER CONSTRAINT TYPES
 		} else {
 			throw new RetePatternBuildException(
 					"Unsupported constraint type {1} in pattern {2}.", 
