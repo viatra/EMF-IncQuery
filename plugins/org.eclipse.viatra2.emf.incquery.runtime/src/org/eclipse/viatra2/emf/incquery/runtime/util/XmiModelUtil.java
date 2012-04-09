@@ -34,7 +34,7 @@ public class XmiModelUtil {
 	 * @return
 	 */
 	private static URI getGlobalEiqModelUri(String bundleName) {
-		return URI.createPlatformPluginURI(String.format("%s/%s/%s",
+		return URI.createPlatformResourceURI(String.format("%s/%s/%s",
 				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
 	}
 	

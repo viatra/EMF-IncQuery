@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -124,32 +125,35 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	}
 
 	private void cleanUp(IProject project) throws CoreException {
+		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		// load previous global xmi resource
-		Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
-		if (gxr != null) {
-			// do the clean up based on the previous model
-			ArrayList<String> packageNames = new ArrayList<String>();
-			ArrayList<Pair<String, String>> contributedExtensions = new ArrayList<Pair<String,String>>();
-			TreeIterator<EObject> it = gxr.getAllContents();
-			while (it.hasNext()) {
-				EObject obj = it.next();
-				if (obj instanceof Pattern) {
-					packageNames.add(util.getPackageName((Pattern) obj));
-					// only the extension id and point name is needed for removal
-					String extensionId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
-					contributedExtensions.add(Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
-					// TODO add fragment extensions to cleanUp
-					// execute code clean up for all fragments
-					executeCleanUpOnFragments(project, (Pattern)obj);
+		if (project.getFolder(XmiModelUtil.XMI_OUTPUT_FOLDER).exists()) {
+			Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
+			if (gxr != null) {
+				// do the clean up based on the previous model
+				ArrayList<String> packageNames = new ArrayList<String>();
+				ArrayList<Pair<String, String>> contributedExtensions = new ArrayList<Pair<String,String>>();
+				TreeIterator<EObject> it = gxr.getAllContents();
+				while (it.hasNext()) {
+					EObject obj = it.next();
+					if (obj instanceof Pattern) {
+						packageNames.add(util.getPackageName((Pattern) obj));
+						// only the extension id and point name is needed for removal
+						String extensionId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
+						contributedExtensions.add(Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+						// TODO add fragment extensions to cleanUp
+						// execute code clean up for all fragments
+						executeCleanUpOnFragments(project, (Pattern)obj);
+					}
 				}
+				// remove previously exported packages
+				ProjectGenerationHelper.removePackageExports(project, packageNames);
+				// remove previously added extensions
+				ProjectGenerationHelper.removeExtensions(project, contributedExtensions);
+	//			for (IProject proj : extensionMap.keySet()) {
+	//				ProjectGenerationHelper.removeExtensions(proj, extensionMap.get(proj));
+	//			}
 			}
-			// remove previously exported packages
-			ProjectGenerationHelper.removePackageExports(project, packageNames);
-			// remove previously added extensions
-			ProjectGenerationHelper.removeExtensions(project, contributedExtensions);
-//			for (IProject proj : extensionMap.keySet()) {
-//				ProjectGenerationHelper.removeExtensions(proj, extensionMap.get(proj));
-//			}
 		}
 		// clear the map so the generation starts with an empty map
 		extensionMap.clear();
