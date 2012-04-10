@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -62,6 +63,7 @@ public class XBaseEvaluator extends AbstractEvaluator {
 			context.newValue(varPosition.getKey(), tuple.get(varPosition.getValue()));
 		}
 		IEvaluationResult result = interpreter.evaluate(xExpression, context, CancelIndicator.NullImpl);
+		if (result==null) throw new IncQueryRuntimeException("XBase expression interpreter returned no result.");
 		if (result.getException()!=null) throw result.getException();
 		return result.getResult();
 	}

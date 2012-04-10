@@ -71,7 +71,8 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 		for (Variable variable : variables) {
 			PVariable pNode = pGraph.getPNode(variable);
 			Integer position = stub.getVariablesIndex().get(pNode);
-			qualifiedNameMap.put(nameProvider.getFullyQualifiedName(variable), position);
+			//qualifiedNameMap.put(nameProvider.getFullyQualifiedName(variable), position);
+			qualifiedNameMap.put(QualifiedName.create(variable.getSimpleName()), position);
 			affectedIndices.add(position);
 		}
 		int[] indices = new int[affectedIndices.size()];
