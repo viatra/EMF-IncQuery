@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,8 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator;
+import org.eclipse.xtext.xbase.lib.Functions;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -67,6 +70,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	EMFPatternLanguageJvmModelInferrerUtil util;
 	
 	Multimap<IProject, IPluginExtension> extensionMap = ArrayListMultimap.create();
+	Multimap<IProject, Pair<String, String>> removableExtensionMap = ArrayListMultimap.create();
 	
 	// EXPERIMENTAL
 	@Inject
@@ -116,9 +120,51 @@ public class IncQueryGenerator extends JvmModelGenerator {
 			// Exporting packages from the main project
 			ProjectGenerationHelper.ensurePackageExports(project, packageNames);
 			// Loading extensions to the generated projects
-			for (IProject proj : extensionMap.keySet()) {
-				ProjectGenerationHelper.ensureExtensions(proj, extensionMap.get(proj));
+			// if new contributed extensions exists remove the removables from the 
+			// contributed extensions, so the truly removed extensions remain in the removedExtensions
+			if (!extensionMap.isEmpty()) {
+				// iterate over the contributed extensions, remove the removables
+				for (IProject proj : extensionMap.keySet()) {
+					Iterable<IPluginExtension> extensions = extensionMap.get(proj);
+					Collection<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
+					if (!removableExtensions.isEmpty()) {
+						// not remove a removable if exist in the current extension map
+						for (final IPluginExtension ext : extensions) {
+							Pair<String, String> found = IterableExtensions.findFirst(removableExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
+								@Override
+								public Boolean apply(Pair<String, String> p) {
+									if (p.getKey().equals(ext.getId())) {
+										if (p.getValue().equals(ext.getPoint())) {
+											return true;
+										}
+									}
+									return false;
+								}
+							});
+							removableExtensions.remove(found);
+						}					
+					}
+					ProjectGenerationHelper.ensureExtensions(proj, extensions, removableExtensions);
+				}
+				// iterate over the remaining removables, remove all prev. extension from the projects
+				for (IProject proj : removableExtensionMap.keySet()) {
+					if (!extensionMap.containsKey(proj)) {
+						Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
+						Iterable<IPluginExtension> extensions = Lists.newArrayList();
+						ProjectGenerationHelper.ensureExtensions(proj, extensions, removableExtensions);
+					}
+				}
+			} else {
+				// if no contributed extensions (like no pattern in the eiq file)
+				// remove all previous extension
+				for (IProject proj : removableExtensionMap.keySet()) {
+					Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
+					Iterable<IPluginExtension> extensions = Lists.newArrayList();
+					ProjectGenerationHelper.ensureExtensions(proj, extensions, removableExtensions);
+				}
 			}
+			// clear the removable map after generation
+			removableExtensionMap.clear();
 		} catch (CoreException e) {
 			logger.error("Error during code generation", e);
 		}
@@ -132,7 +178,6 @@ public class IncQueryGenerator extends JvmModelGenerator {
 			if (gxr != null) {
 				// do the clean up based on the previous model
 				ArrayList<String> packageNames = new ArrayList<String>();
-				ArrayList<Pair<String, String>> contributedExtensions = new ArrayList<Pair<String,String>>();
 				TreeIterator<EObject> it = gxr.getAllContents();
 				while (it.hasNext()) {
 					EObject obj = it.next();
@@ -140,19 +185,13 @@ public class IncQueryGenerator extends JvmModelGenerator {
 						packageNames.add(util.getPackageName((Pattern) obj));
 						// only the extension id and point name is needed for removal
 						String extensionId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
-						contributedExtensions.add(Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
-						// TODO add fragment extensions to cleanUp
+						removableExtensionMap.put(project, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
 						// execute code clean up for all fragments
 						executeCleanUpOnFragments(project, (Pattern)obj);
 					}
 				}
 				// remove previously exported packages
 				ProjectGenerationHelper.removePackageExports(project, packageNames);
-				// remove previously added extensions
-				ProjectGenerationHelper.removeExtensions(project, contributedExtensions);
-	//			for (IProject proj : extensionMap.keySet()) {
-	//				ProjectGenerationHelper.removeExtensions(proj, extensionMap.get(proj));
-	//			}
 			}
 		}
 		// clear the map so the generation starts with an empty map
@@ -167,6 +206,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					fragment);
 			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
 			fragment.cleanUp(pattern, fsa);
+			removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));
 		}
 	}
 	

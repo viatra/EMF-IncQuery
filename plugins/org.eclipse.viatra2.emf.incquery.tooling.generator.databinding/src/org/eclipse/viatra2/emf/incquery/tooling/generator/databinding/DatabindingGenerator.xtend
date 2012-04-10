@@ -10,9 +10,13 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
+import org.eclipse.xtext.xbase.lib.Pair
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 
 class DatabindingGenerator implements IGenerationFragment {
 	
+	private static String DATABINDINGEXTENSION_PREFIX = "extension.databinding."
+	private static String DATABINDINGEXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding"
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	private static String annotationLiteral = "Databinding"
 
@@ -24,6 +28,10 @@ class DatabindingGenerator implements IGenerationFragment {
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.deleteFile(pattern.packagePath + "/databinding/" + pattern.realPatternName.toFirstUpper + "DatabindingAdapter.java")
+	}
+	
+	override removeExtension(Pattern pattern) {
+		newArrayList(Pair::of(DATABINDINGEXTENSION_PREFIX+pattern.name, DATABINDINGEXTENSION_POINT))
 	}
 	
 	override getProjectDependencies() {
@@ -54,7 +62,7 @@ class DatabindingGenerator implements IGenerationFragment {
 			val message = tmp;
 			
 			newArrayList(
-			exGen.contribExtension("", "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding") [
+			exGen.contribExtension(DATABINDINGEXTENSION_PREFIX + CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT) [
 				exGen.contribElement(it, "databinding") [
 					exGen.contribAttribute(it, "class", pattern.packagePath+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
 					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
