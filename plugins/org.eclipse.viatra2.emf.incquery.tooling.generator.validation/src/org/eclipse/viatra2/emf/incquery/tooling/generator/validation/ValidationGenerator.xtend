@@ -49,7 +49,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			return newArrayList(
 				exGen.contribExtension(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT) [
 					exGen.contribElement(it, "constraint") [
-						exGen.contribAttribute(it, "class", pattern.packagePath+".validation."+pattern.name.toFirstUpper+annotationLiteral)
+						exGen.contribAttribute(it, "class", pattern.packageName+".validation."+pattern.name.toFirstUpper+annotationLiteral)
 						exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
 					]
 				]
@@ -74,7 +74,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override patternHandler(Pattern pattern) '''
-		package «pattern.fullyQualifiedName».validation;
+		package «pattern.packageName».validation;
 		
 		import org.eclipse.emf.ecore.EObject;
 

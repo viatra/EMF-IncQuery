@@ -490,13 +490,9 @@ public abstract class ProjectGenerationHelper {
 	public static void ensureExtensions(IProject project,
 			Iterable<IPluginExtension> contributedExtensions, Iterable<Pair<String, String>> removedExtensions,
 			IProgressMonitor monitor) throws CoreException {
-		for (Pair<String, String> ext : removedExtensions) {
-			System.out.println("Removeable extension " + ext.getKey());
-		}
 		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap
 				.create();
 		for (IPluginExtension extension : contributedExtensions) {
-			System.out.println("Additive extension: " + extension.getId());
 			extensionMap.put(extension.getId(), extension);
 		}
 		// XXX Using two APIs to extension generation: one to read and one to
@@ -519,7 +515,6 @@ public abstract class ProjectGenerationHelper {
 					id = id.substring(
 						project.getName().length() + 1);
 				}
-				System.out.println("Before continue: " + extension.getId());
 				if (extensionMap.containsKey(id)) {
 					String point = extension.getPoint();
 					for (IPluginExtension ex : extensionMap.get(id)) {
@@ -528,7 +523,6 @@ public abstract class ProjectGenerationHelper {
 						}
 					}
 				}
-				System.out.println("After continue: " + extension.getId());
 				// remove if contained in the removables
 				final String extensionId = id;
 				Pair<String, String> removable = IterableExtensions.findFirst(removedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {

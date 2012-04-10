@@ -64,10 +64,10 @@ class DatabindingGenerator implements IGenerationFragment {
 			newArrayList(
 			exGen.contribExtension(DATABINDINGEXTENSION_PREFIX + CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT) [
 				exGen.contribElement(it, "databinding") [
-					exGen.contribAttribute(it, "class", pattern.packagePath+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
+					exGen.contribAttribute(it, "class", pattern.packageName+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
 					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
 					exGen.contribAttribute(it, "message", message)
-					exGen.contribAttribute(it, "matcherFactoryClass", pattern.packagePath+"."+pattern.matcherFactoryClassName)
+					exGen.contribAttribute(it, "matcherFactoryClass", pattern.packageName+"."+pattern.matcherFactoryClassName)
 				]
 			]
 			)
@@ -97,7 +97,7 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	def patternHandler(Pattern pattern) '''
-		package «pattern.fullyQualifiedName».databinding;
+		package «pattern.packageName».databinding;
 		
 		import java.util.HashMap;
 		import java.util.Map;
