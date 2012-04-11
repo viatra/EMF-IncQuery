@@ -9,4 +9,6 @@ public final class EMFIssueCodes {
 	
 	public static final String DUPLICATE_IMPORT = ISSUE_CODE_PREFIX + "duplicate_import";
 	
+	public static final String UNUSED_VARIABLE = ISSUE_CODE_PREFIX + "unused_variable";
+
 }
