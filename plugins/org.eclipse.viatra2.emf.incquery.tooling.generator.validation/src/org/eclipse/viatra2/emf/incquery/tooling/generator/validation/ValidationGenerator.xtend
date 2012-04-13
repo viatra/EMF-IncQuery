@@ -10,11 +10,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl
 import org.eclipse.viatra2.emf.incquery.tooling.generator.databinding.DatabindingGenerator
+import org.eclipse.xtext.xbase.lib.Pair
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	
+	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
+	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
 	private static String annotationLiteral = "Constraint"
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
@@ -25,6 +28,10 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.deleteFile(pattern.packagePath + "/validation/" + pattern.realPatternName.toFirstUpper + annotationLiteral + ".java")
+	}
+	
+	override removeExtension(Pattern pattern) {
+		newArrayList(Pair::of(VALIDATIONEXTENSION_PREFIX+pattern.name, VALIDATION_EXTENSION_POINT))
 	}
 	
 	override getProjectDependencies() {
@@ -40,9 +47,9 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {		
 			return newArrayList(
-				exGen.contribExtension("", "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint") [
+				exGen.contribExtension(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT) [
 					exGen.contribElement(it, "constraint") [
-						exGen.contribAttribute(it, "class", pattern.packagePath+".validation."+pattern.name.toFirstUpper+annotationLiteral)
+						exGen.contribAttribute(it, "class", pattern.packageName+".validation."+pattern.name.toFirstUpper+annotationLiteral)
 						exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
 					]
 				]
@@ -67,7 +74,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override patternHandler(Pattern pattern) '''
-		package «pattern.fullyQualifiedName».validation;
+		package «pattern.packageName».validation;
 		
 		import org.eclipse.emf.ecore.EObject;
 

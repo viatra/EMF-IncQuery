@@ -4,13 +4,13 @@ import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 /**
  * {@link IMatcherFactory} implementation inferrer.
@@ -22,7 +22,6 @@ class PatternMatcherFactoryClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
-	@Inject extension IQualifiedNameProvider
 
 	/**
 	 * Infers the {@link IMatcherFactory} implementation class from {@link Pattern}.
@@ -71,7 +70,7 @@ class PatternMatcherFactoryClassInferrer {
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = [append('''
-				return "«pattern.fullyQualifiedName»";
+				return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
 			''')]
 		]
   	}

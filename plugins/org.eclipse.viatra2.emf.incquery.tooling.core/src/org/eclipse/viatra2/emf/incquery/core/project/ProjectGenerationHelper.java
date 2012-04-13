@@ -468,9 +468,9 @@ public abstract class ProjectGenerationHelper {
 	 * @throws CoreException
 	 */
 	public static void ensureExtensions(IProject project,
-			Iterable<IPluginExtension> contributedExtensions)
+			Iterable<IPluginExtension> contributedExtensions, Iterable<Pair<String, String>> removedExtensions)
 			throws CoreException {
-		ensureExtensions(project, contributedExtensions,
+		ensureExtensions(project, contributedExtensions, removedExtensions,
 				new NullProgressMonitor());
 	}
 
@@ -478,16 +478,17 @@ public abstract class ProjectGenerationHelper {
 	 * Updates the selected project to contain the selected extension. The
 	 * extensions are identified using an identifier and extension point
 	 * together; old extensions are replaced with the new ones, other extensions
-	 * are kept intact.
+	 * are kept intact. An extension will be ignored, if exist in the removedExtensions list. 
 	 * 
 	 * @param project
 	 * @param contributedExtensions
+	 * @param removedExtensions
 	 * @param monitor
 	 * @throws CoreException
 	 */
 	@SuppressWarnings("restriction")
 	public static void ensureExtensions(IProject project,
-			Iterable<IPluginExtension> contributedExtensions,
+			Iterable<IPluginExtension> contributedExtensions, Iterable<Pair<String, String>> removedExtensions,
 			IProgressMonitor monitor) throws CoreException {
 		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap
 				.create();
@@ -507,7 +508,7 @@ public abstract class ProjectGenerationHelper {
 		// Storing a read-only plugin.xml model
 		if (plugin != null) {
 			IExtensions readExtension = plugin.getExtensions();
-			nextExtension: for (IPluginExtension extension : readExtension
+			nextExtension: for (final IPluginExtension extension : readExtension
 					.getExtensions()) {
 				String id = extension.getId();
 				if (id.startsWith(project.getName())) {
@@ -522,16 +523,31 @@ public abstract class ProjectGenerationHelper {
 						}
 					}
 				}
-				// XXX cloning extensions to remove project name prefixes
-				IPluginExtension cloneExtension = fModel.createExtension();
-				cloneExtension.setId(id);
-				cloneExtension.setName(extension.getName());
-				cloneExtension.setPoint(extension.getPoint());
-				for (IPluginObject obj : extension.getChildren()) {
-					cloneExtension.add(obj);
+				// remove if contained in the removables
+				final String extensionId = id;
+				Pair<String, String> removable = IterableExtensions.findFirst(removedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
+					@Override
+					public Boolean apply(Pair<String, String> p) {
+						if (p.getKey().equals(extensionId)) {
+							if (p.getValue().equals(extension.getPoint())) {
+								return true;
+							}
+						}
+						return false;
+					}
+				});
+				if (removable == null) {
+					// XXX cloning extensions to remove project name prefixes
+					IPluginExtension cloneExtension = fModel.createExtension();
+					cloneExtension.setId(id);
+					cloneExtension.setName(extension.getName());
+					cloneExtension.setPoint(extension.getPoint());
+					for (IPluginObject obj : extension.getChildren()) {
+						cloneExtension.add(obj);
+					}
+					cloneExtension.setInTheModel(true);
+					extensions.add(cloneExtension);					
 				}
-				cloneExtension.setInTheModel(true);
-				extensions.add(cloneExtension);
 			}
 			for (IPluginExtensionPoint point : readExtension
 					.getExtensionPoints()) {
@@ -556,84 +572,6 @@ public abstract class ProjectGenerationHelper {
 	public static void removePackageExports(IProject project,
 			ArrayList<String> dependencies) throws CoreException {
 		removePackageExports(project, dependencies, new NullProgressMonitor());
-	}
-
-	/**
-	 * Updates the selected project to not contain the selected extension. The
-	 * extensions are identified using an identifier and extension point
-	 * together; other extensions are kept intact.
-	 * 
-	 * @param project
-	 * @param contributedExtensions
-	 * @throws CoreException
-	 */
-	public static void removeExtensions(IProject project,
-			List<Pair<String, String>> contributedExtensions) throws CoreException {
-		removeExtensions(project, contributedExtensions, new NullProgressMonitor());
-	}
-	
-	/**
-	 * Updates the selected project to not contain the selected extension. The
-	 * extensions are identified using an identifier and extension point
-	 * together; other extensions are kept intact.
-	 * 
-	 * @param project
-	 * @param contributedExtensions
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	@SuppressWarnings("restriction")
-	public static void removeExtensions(IProject project,
-			List<Pair<String, String>> contributedExtensions, IProgressMonitor monitor) throws CoreException {
-		IFile pluginXml = PDEProject.getPluginXml(project);
-		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
-				.getModelManager().findModel(project);
-		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
-		fModel.setEditable(true);
-		fModel.load();
-		// Storing a write-only plugin.xml model
-		IExtensions extensions = fModel.getExtensions();
-		if (plugin != null) {
-			IExtensions readExtension = plugin.getExtensions();
-			for (final IPluginExtension extension : readExtension.getExtensions()) {
-				String id = extension.getId();
-				if (id.startsWith(project.getName())) {
-					id = id.substring(
-						project.getName().length() + 1);
-				}
-				final String extensionId = id;
-				Pair<String, String> contrExt = IterableExtensions.
-						findFirst(contributedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
-					@Override
-					public Boolean apply(Pair<String, String> input) {
-						if (input.getKey().equals(extensionId)) {
-							if (input.getValue().equals(extension.getPoint())) {
-								return true;
-							}
-						}
-						return false;
-					}
-				});
-				// add this extension if not generated previously
-				// XXX cloning extensions to remove project name prefixes
-				if (contrExt == null) {
-					IPluginExtension cloneExtension = fModel.createExtension();
-					cloneExtension.setId(id);
-					cloneExtension.setName(extension.getName());
-					cloneExtension.setPoint(extension.getPoint());
-					for (IPluginObject obj : extension.getChildren()) {
-						cloneExtension.add(obj);
-					}
-					cloneExtension.setInTheModel(true);
-					extensions.add(cloneExtension);
-				}
-			}
-			for (IPluginExtensionPoint point : readExtension
-					.getExtensionPoints()) {
-				extensions.add(point);
-			}
-		}
-		fModel.save();
 	}
 	
 }

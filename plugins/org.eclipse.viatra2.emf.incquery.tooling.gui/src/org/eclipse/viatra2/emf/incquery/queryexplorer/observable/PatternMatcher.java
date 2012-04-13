@@ -70,29 +70,29 @@ public class PatternMatcher {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 	
-	private void processNewMatches(Collection<? extends IPatternMatch> signatures) {
-		for (IPatternMatch s : signatures) {
-			addSignature(s);
+	private void processNewMatches(Collection<? extends IPatternMatch> matches) {
+		for (IPatternMatch s : matches) {
+			addMatch(s);
 		}
 	}
 
-	private void processLostMatches(Collection<? extends IPatternMatch> signatures) {
-		for (IPatternMatch s : signatures) {
-			removeSignature(s);
+	private void processLostMatches(Collection<? extends IPatternMatch> matches) {
+		for (IPatternMatch s : matches) {
+			removeMatch(s);
 		}
 	}
 	
-	private void addSignature(IPatternMatch signature) {
+	private void addMatch(IPatternMatch match) {
 		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
-		PatternMatch pm = new PatternMatch(this, signature);
-		this.sigMap.put(signature, pm);
+		PatternMatch pm = new PatternMatch(this, match);
+		this.sigMap.put(match, pm);
 		this.matches.add(pm);
 		this.propertyChangeSupport.firePropertyChange(MATCHES_ID, oldValue, matches);
 	}
 	
-	private void removeSignature(IPatternMatch signature) {
+	private void removeMatch(IPatternMatch match) {
 		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
-		this.matches.remove(this.sigMap.remove(signature));
+		this.matches.remove(this.sigMap.remove(match));
 		this.propertyChangeSupport.firePropertyChange(MATCHES_ID, oldValue, matches);
 	}
 

@@ -7,10 +7,12 @@ import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import org.eclipse.xtext.xbase.lib.Pair
 
 class SampleUIGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	private static String SAMPLEUI_EXTENSION_POINT = "org.eclipse.ui.commands"
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.generateFile(pattern.packagePath + "/handlers/" + pattern.realPatternName.toFirstUpper + "Handler.java", pattern.patternHandler)
@@ -18,6 +20,10 @@ class SampleUIGenerator implements IGenerationFragment {
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.deleteFile(pattern.packagePath + "/handlers/" + pattern.realPatternName.toFirstUpper + "Handler.java")
+	}
+	
+	override removeExtension(Pattern pattern) {
+		newArrayList(Pair::of(pattern.name+"Command", SAMPLEUI_EXTENSION_POINT))
 	}
 	
 	override getProjectDependencies() {
@@ -31,7 +37,7 @@ class SampleUIGenerator implements IGenerationFragment {
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
-		exGen.contribExtension(pattern.getFullyQualifiedName + "Command", "org.eclipse.ui.commands") [
+		exGen.contribExtension(pattern.getFullyQualifiedName + "Command", SAMPLEUI_EXTENSION_POINT) [
 			exGen.contribElement(it, "command") [
 				exGen.contribAttribute(it, "commandId", pattern.getFullyQualifiedName + "CommandId")
 				exGen.contribAttribute(it, "style", "push")
