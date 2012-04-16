@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.emf.tests;
+package org.eclipse.viatra2.patternlanguage.emf.tests.util;
 
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics.DiagnosticPredicate;

@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.patternlanguage.emf.tests.imports
 
-import org.eclipse.viatra2.patternlanguage.emf.tests.AbstractValidatorTest
+import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.junit.runner.RunWith
