@@ -87,23 +87,27 @@ public class PatternMatcherRoot {
 	}
 	
 	public void registerPatternsFromFile(IFile file, PatternModel pm) {	
-		
-		try {
-			if (!runtimeMatcherRegistry.containsKey(file)) {
-				Set<IncQueryMatcher<? extends IPatternMatch>> setTmp = new HashSet<IncQueryMatcher<? extends IPatternMatch>>();
-				EList<Pattern> patterns = pm.getPatterns();
+		if (!runtimeMatcherRegistry.containsKey(file)) {
+			Set<IncQueryMatcher<? extends IPatternMatch>> setTmp = new HashSet<IncQueryMatcher<? extends IPatternMatch>>();
+			EList<Pattern> patterns = pm.getPatterns();
+			IncQueryMatcher<GenericPatternMatch> matcher = null;
 				
-				for (Pattern pattern : patterns) {	
-					IncQueryMatcher<GenericPatternMatch> matcher = new GenericPatternMatcher(pattern, key.getNotifier());
+			for (Pattern pattern : patterns) {
+				try {
+					matcher = new GenericPatternMatcher(pattern, key.getNotifier());
+				}
+				catch (IncQueryRuntimeException e) {
+					//Such Exception may be thrown when the pattern definition is incorrect but the editor does not recognize it
+					System.out.println("Error during creation of matcher for pattern "+pattern.getName());
+					//e.printStackTrace();
+				}
+				if (matcher != null) {
 					setTmp.add(matcher);
 					addMatcher(matcher, false);
 				}
-				
-				runtimeMatcherRegistry.put(file, setTmp);
 			}
-		}
-		catch (IncQueryRuntimeException e) {
-			e.printStackTrace();
+				
+			runtimeMatcherRegistry.put(file, setTmp);
 		}
 	}
 	
