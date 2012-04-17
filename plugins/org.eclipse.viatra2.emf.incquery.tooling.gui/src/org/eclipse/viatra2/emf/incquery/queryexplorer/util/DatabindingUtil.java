@@ -272,8 +272,8 @@ public class DatabindingUtil {
 					if (obj instanceof IMatcherFactory<?, ?>) {
 						IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>) obj;
 						IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
-
-						result.addMatcher(matcher, true);
+						String patternFqn = factory.getPatternFullyQualifiedName();
+						result.addMatcher(matcher, patternFqn, true);
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
