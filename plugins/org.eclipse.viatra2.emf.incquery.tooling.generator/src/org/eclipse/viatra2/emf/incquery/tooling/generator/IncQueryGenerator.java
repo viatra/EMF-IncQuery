@@ -183,11 +183,11 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					EObject obj = it.next();
 					if (obj instanceof Pattern) {
 						packageNames.add(util.getPackageName((Pattern) obj));
-						// only the extension id and point name is needed for removal
-						String extensionId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
-						removableExtensionMap.put(project, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+						executeCleanUpOnModelProject(project, (Pattern) obj);
 						// execute code clean up for all fragments
 						executeCleanUpOnFragments(project, (Pattern)obj);
+						// clean up code in the modelProject
+						
 					}
 				}
 				// remove previously exported packages
@@ -198,6 +198,17 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		extensionMap.clear();
 	}
 
+	private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) throws CoreException {
+		EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(modelProject);
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matchClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherFactoryClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.processorClassName(pattern) + ".java");
+		// only the extension id and point name is needed for removal
+		String extensionId = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+		removableExtensionMap.put(modelProject, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+	}
+	
 	private void executeCleanUpOnFragments(IProject modelProject, Pattern pattern) throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(pattern)) {

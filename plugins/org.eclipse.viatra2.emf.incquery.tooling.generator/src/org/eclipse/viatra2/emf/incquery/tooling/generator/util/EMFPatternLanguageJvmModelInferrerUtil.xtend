@@ -51,28 +51,44 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
 	 */
 	def matcherFactoryClassName(Pattern pattern) {
-		pattern.name.toFirstUpper+"MatcherFactory"
+		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+		name.toFirstUpper+"MatcherFactory"
 	}
 	
 	/**
 	 * Returns the MatcherClass name based on the Pattern's name
 	 */
    	def matcherClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Matcher"
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Matcher"
    	}
 
 	/**
 	 * Returns the MatchClass name based on the Pattern's name
 	 */   	 
    	def matchClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Match"
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Match"
    	}
    	
 	/**
 	 * Returns the ProcessorClass name based on the Pattern's name
 	 */   	
    	def processorClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Processor"
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Processor"
    	}
    	
    	/**
