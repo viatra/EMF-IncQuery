@@ -11,7 +11,11 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.osgi.framework.internal.core.BundleResourceHandler;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -27,8 +31,8 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 		extends BaseMatcherFactory<Signature, Matcher> 
 {
 	
-	private static Resource globalXmiResource;
-	private static PatternModel modelRoot;
+	private static Map<String, PatternModel> bundleNameToPatternModelMap = new HashMap<String, PatternModel>();
+	private static Map<String, Resource> bundleNameToResourceMap = new HashMap<String, Resource>();
 	private Pattern pattern;
 	
 	/* (non-Javadoc)
@@ -86,13 +90,15 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 	 */
 	public static PatternModel getModelRoot(String bundleName) {
 		if (bundleName == null || bundleName.isEmpty()) return null;
-		if (modelRoot == null) {
-			if (globalXmiResource == null) {
-				globalXmiResource = XmiModelUtil.getGlobalXmiResource(bundleName);
+		if (bundleNameToPatternModelMap.get(bundleName) == null) {
+			Resource bundleResource = bundleNameToResourceMap.get(bundleName);
+			if (bundleResource == null) {
+				bundleResource = XmiModelUtil.getGlobalXmiResource(bundleName);
+				bundleNameToResourceMap.put(bundleName, bundleResource);
 			}
-			modelRoot = (PatternModel) globalXmiResource.getContents().get(0);
+			bundleNameToPatternModelMap.put(bundleName, (PatternModel) bundleResource.getContents().get(0));
 		}
-		return modelRoot;
+		return bundleNameToPatternModelMap.get(bundleName);
 	}
 	
 //	private PatternModel parseRoot(InputStream inputStream) {
