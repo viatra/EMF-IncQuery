@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,30 @@ public class DatabindingAdapterUtil {
 						value.addValueChangeListener(changeListener);
 						affectedValues.add(value);
 					}
+				}
+			}
+		}
+		return affectedValues;
+	}
+	
+	/**
+	 * Registers the given change listener on the given object's all accessible fields. 
+	 * This function uses Java Reflection.
+	 * 
+	 * @param changeListener the changle listener 
+	 * @param object the observed object
+	 * @return the list of IObservableValue instances for which the IValueChangeListener was registered
+	 */
+	public static List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
+		List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
+		if (object != null && object instanceof EObject) {
+			Class<?> clazz = object.getClass();
+			for (Field field : clazz.getDeclaredFields()) {
+				if (field.isAccessible()) {
+					EStructuralFeature feature = getFeature(object, field.getName());
+					IObservableValue val = EMFProperties.value(feature).observe(object);
+					affectedValues.add(val);
+					val.addValueChangeListener(changeListener);
 				}
 			}
 		}
