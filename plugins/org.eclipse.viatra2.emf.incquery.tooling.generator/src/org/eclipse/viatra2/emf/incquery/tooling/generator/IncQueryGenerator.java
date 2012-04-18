@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -56,7 +57,7 @@ import com.google.inject.Injector;
  */
 public class IncQueryGenerator extends JvmModelGenerator {
 
-	Logger logger = Logger.getLogger(getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	
 	@Inject
 	IGenerationFragmentProvider fragmentProvider;
@@ -72,7 +73,6 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	Multimap<IProject, IPluginExtension> extensionMap = ArrayListMultimap.create();
 	Multimap<IProject, Pair<String, String>> removableExtensionMap = ArrayListMultimap.create();
 	
-	// EXPERIMENTAL
 	@Inject
 	ResourceDescriptionsProvider resourceDescriptionsProvider;
 	@Inject
@@ -170,12 +170,18 @@ public class IncQueryGenerator extends JvmModelGenerator {
 		}
 	}
 
+	/**
+	 * Full cleanUp based on the Global XMI model saved before, 
+	 * if no model found, no cleanUp needed.
+	 * @param project
+	 * @throws CoreException
+	 */
 	private void cleanUp(IProject project) throws CoreException {
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		// load previous global xmi resource
 		if (project.getFolder(XmiModelUtil.XMI_OUTPUT_FOLDER).exists()) {
-			Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
-			if (gxr != null) {
+			try {
+				Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
 				// do the clean up based on the previous model
 				ArrayList<String> packageNames = new ArrayList<String>();
 				TreeIterator<EObject> it = gxr.getAllContents();
@@ -183,21 +189,36 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					EObject obj = it.next();
 					if (obj instanceof Pattern) {
 						packageNames.add(util.getPackageName((Pattern) obj));
-						// only the extension id and point name is needed for removal
-						String extensionId = CorePatternLanguageHelper.getFullyQualifiedName((Pattern) obj);
-						removableExtensionMap.put(project, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+						executeCleanUpOnModelProject(project, (Pattern) obj);
 						// execute code clean up for all fragments
 						executeCleanUpOnFragments(project, (Pattern)obj);
+						// clean up code in the modelProject
+						
 					}
 				}
 				// remove previously exported packages
 				ProjectGenerationHelper.removePackageExports(project, packageNames);
+			} catch (WrappedException e) {
+				logger.info("Allowed wrapped exception during cleanUp!", e);
+			} catch (Exception e) {
+				logger.error("Exception during cleanUp Phase!", e);
 			}
 		}
 		// clear the map so the generation starts with an empty map
 		extensionMap.clear();
 	}
 
+	private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) throws CoreException {
+		EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(modelProject);
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matchClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherFactoryClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.processorClassName(pattern) + ".java");
+		// only the extension id and point name is needed for removal
+		String extensionId = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+		removableExtensionMap.put(modelProject, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+	}
+	
 	private void executeCleanUpOnFragments(IProject modelProject, Pattern pattern) throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(pattern)) {

@@ -5,19 +5,14 @@ import org.apache.log4j.Logger
 import org.eclipse.core.resources.IWorkspaceRoot
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.xtend2.lib.StringConcatenation
-import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
-import org.eclipse.xtext.serializer.ISerializer
-import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.xtext.xbase.typing.ITypeProvider
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -27,7 +22,6 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 class EMFPatternLanguageJvmModelInferrerUtil {
 	
 	@Inject extension EMFJvmTypesBuilder
-	@Inject ISerializer serializer
 	Logger logger = Logger::getLogger(getClass())
 	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 	@Inject	IWorkspaceRoot workspaceRoot
@@ -57,28 +51,44 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
 	 */
 	def matcherFactoryClassName(Pattern pattern) {
-		pattern.name.toFirstUpper+"MatcherFactory"
+		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+		name.toFirstUpper+"MatcherFactory"
 	}
 	
 	/**
 	 * Returns the MatcherClass name based on the Pattern's name
 	 */
    	def matcherClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Matcher"
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Matcher"
    	}
 
 	/**
 	 * Returns the MatchClass name based on the Pattern's name
 	 */   	 
    	def matchClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Match"
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Match"
    	}
    	
 	/**
 	 * Returns the ProcessorClass name based on the Pattern's name
 	 */   	
    	def processorClassName(Pattern pattern) {
-   		pattern.name.toFirstUpper+"Processor"
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Processor"
    	}
    	
    	/**
@@ -175,7 +185,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	   	} else {
 	   		packageName = packageName + "."
 	   	}
-	   	return packageName + pattern.name
+	   	return (packageName + pattern.name).toLowerCase
   	}
 	
 	def getPackagePath(Pattern pattern) {

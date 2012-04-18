@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -35,6 +38,7 @@ import com.google.inject.Singleton;
 public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
 	private Logger logger = Logger.getLogger(getClass());
+	private static Map<String, Class<?>> WRAPPERCLASSES = getWrapperClasses();
 	
 	@Inject
 	private TypeReferences typeReferences;
@@ -64,18 +68,31 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		return typeRef;
 	}
 
+	/**
+	 * If declared, resolves the variable's type from its own type, otherwise returns null.
+	 * @param variable
+	 * @return
+	 */
 	private JvmTypeReference resolveClassType(Variable variable) {
 		// first try to get the type through the variable's type ref
 		if (variable.getType() instanceof ClassType) {
 			EClassifier classifier = ((ClassType) variable.getType())
 					.getClassname();
 			if (classifier != null && classifier.getInstanceClass() != null) {
-				return typeReferences.getTypeForName(classifier.getInstanceClass(), variable);
+				return typeReferenceFromClazz(classifier.getInstanceClass(), variable);
 			}
 		}
 		return null;
 	}
 	
+	/**
+	 * Resolves the variable from an eObject as context 
+	 * (Possible context: {@link Pattern}, {@link PatternBody}).
+	 * Returns a {@link JvmTypeReference} if the type successfully resolved, otherwise returns null.
+	 * @param eObject
+	 * @param variable
+	 * @return
+	 */
 	private JvmTypeReference resolveClassType(EObject eObject, Variable variable) {
 		if (eObject instanceof Pattern) {
 			Pattern pattern = (Pattern) eObject;
@@ -92,6 +109,14 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		return null;
 	}
 
+	/**
+	 * Resolves the variable's type from the context of a {@link PatternBody}.
+	 * For now this method only searches for {@link EClassifierConstraint}s.
+	 * 
+	 * @param body
+	 * @param variable
+	 * @return
+	 */
 	private JvmTypeReference resolveClassType(PatternBody body, Variable variable) {
 		for (Constraint constraint : body.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
@@ -134,10 +159,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			Class<?> clazz = ((ClassType) entityType).getClassname()
 					.getInstanceClass();
 			if (clazz != null) {
-				JvmTypeReference typeref = typeReferences.getTypeForName(clazz, variable);
-				if (typeref != null) {
-					return typeref;
-				}
+				return typeReferenceFromClazz(clazz, variable);
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Clazz not found for " + entityType);
@@ -145,5 +167,50 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns a {@link JvmTypeReference} for the parameter clazz.
+	 * If the clazz is a primitive class, the corresponding wrapper class is returned. 
+	 * @param clazz
+	 * @param variable
+	 * @return
+	 */
+	private JvmTypeReference typeReferenceFromClazz(Class<?> clazz,
+			Variable variable) {
+		if (clazz.isPrimitive()) {
+			clazz = wrapperClazzForPrimitive(clazz);
+		}
+		return typeReferences.getTypeForName(clazz, variable);
+	}
+
+	/**
+	 * Returns the wrapper class for the input class if it is a primitive type class.
+	 * @param clazz
+	 * @return
+	 */
+	private Class<?> wrapperClazzForPrimitive(Class<?> clazz) {
+		if (WRAPPERCLASSES.containsKey(clazz.getCanonicalName())) {
+			return WRAPPERCLASSES.get(clazz.getCanonicalName());
+		}
+		return clazz;
+	}
+	
+	/**
+	 * Returns a map that contains the wrapper classes for primitive types. 
+	 * Keys are the primitive type names.
+	 * @return
+	 */
+	public static Map<String, Class<?>> getWrapperClasses() {
+		Map<String, Class<?>> wrapperClasses = new HashMap<String, Class<?>>();
+		wrapperClasses.put(boolean.class.getCanonicalName(), Boolean.class);
+		wrapperClasses.put(byte.class.getCanonicalName(), Byte.class);
+		wrapperClasses.put(char.class.getCanonicalName(), Character.class);
+		wrapperClasses.put(double.class.getCanonicalName(), Double.class);
+		wrapperClasses.put(float.class.getCanonicalName(), Float.class);
+		wrapperClasses.put(int.class.getCanonicalName(), Integer.class);
+		wrapperClasses.put(long.class.getCanonicalName(), Long.class);
+		wrapperClasses.put(short.class.getCanonicalName(), Short.class);
+		return wrapperClasses;
 	}
 }

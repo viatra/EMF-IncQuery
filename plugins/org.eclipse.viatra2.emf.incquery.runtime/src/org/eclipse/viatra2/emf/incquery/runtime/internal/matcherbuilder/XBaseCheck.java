@@ -17,16 +17,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.BaseTypeSafePredicateCheck;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -67,7 +64,7 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 			throws RetePatternBuildException {
 		Set<Integer> affectedIndices = new HashSet<Integer>();
 		Map<QualifiedName, Integer> qualifiedNameMap = new HashMap<QualifiedName, Integer>();
-		Set<Variable> variables = getExternalPatternVariableReferencesOfXExpression(xExpression);
+		Set<Variable> variables = CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(xExpression);
 		for (Variable variable : variables) {
 			PVariable pNode = pGraph.getPNode(variable);
 			Integer position = stub.getVariablesIndex().get(pNode);
@@ -97,24 +94,9 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 			EPMBodyToPSystem<?, ?> pGraph, 
 			XExpression xExpression) {
 		Set<PVariable> result = new HashSet<PVariable>();
-		Set<Variable> variables = getExternalPatternVariableReferencesOfXExpression(xExpression);
+		Set<Variable> variables = CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(xExpression);
 		for (Variable variable : variables) {
 			result.add(pGraph.getPNode(variable));
-		}
-		return result;
-	}
-
-	private static Set<Variable> getExternalPatternVariableReferencesOfXExpression(
-			XExpression xExpression) {
-		Set<Variable> result = new HashSet<Variable>();
-		TreeIterator<EObject> eAllContents = xExpression.eAllContents();
-		while (eAllContents.hasNext()) {
-			EList<EObject> eCrossReferences = eAllContents.next().eCrossReferences();
-			for (EObject eObject : eCrossReferences) {
-				if (eObject instanceof Variable && !EcoreUtil.isAncestor(xExpression, eObject)) {
-					result.add((Variable)eObject);
-				}
-			}
 		}
 		return result;
 	}

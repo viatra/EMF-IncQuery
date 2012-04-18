@@ -14,7 +14,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
 
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation.
- * These elements will be the children of the top level elements is the treeviewer.
+ * These elements will be the children of the top level elements in the treeviewer.
  * 
  * @author Tamas Szabo
  *
@@ -29,36 +29,43 @@ public class PatternMatcher {
 	private PatternMatcherRoot parent;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this); 
 	private boolean generated;
+	private String patternFqn;
 	
-	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternMatch> matcher, boolean generated) {
+	public PatternMatcher(PatternMatcherRoot parent, IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
+		this.patternFqn = patternFqn;
 		this.matches = new ArrayList<PatternMatch>();
-		this.sigMap = new HashMap<IPatternMatch, PatternMatch>();
 		this.matcher = matcher;
 		this.generated = generated;
-		this.deltaMonitor = this.matcher.newDeltaMonitor(true);
-		this.processMatchesRunnable = new Runnable() {		
-			@Override
-			public void run() {
-				processNewMatches(deltaMonitor.matchFoundEvents);
-				processLostMatches(deltaMonitor.matchLostEvents);
-				deltaMonitor.clear();
-			}
-		};
 		
-		this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
-		this.processMatchesRunnable.run();
+		if (matcher != null) {
+			this.sigMap = new HashMap<IPatternMatch, PatternMatch>();
+			this.deltaMonitor = this.matcher.newDeltaMonitor(true);
+			this.processMatchesRunnable = new Runnable() {		
+				@Override
+				public void run() {
+					processNewMatches(deltaMonitor.matchFoundEvents);
+					processLostMatches(deltaMonitor.matchLostEvents);
+					deltaMonitor.clear();
+				}
+			};
+			
+			this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
+			this.processMatchesRunnable.run();
+		}
 	}
 	
 	/**
 	 * Call this method to remove the callback handler from the delta monitor of the matcher.
 	 */
 	public void dispose() {
-		for (PatternMatch pm : matches) {
-			pm.dispose();
+		if (matcher != null) {
+			for (PatternMatch pm : matches) {
+				pm.dispose();
+			}
+			this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+			processMatchesRunnable = null;
 		}
-		this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
-		processMatchesRunnable = null;
 	}
 	
 	public void addPropertyChangeListener(String propertyName,
@@ -101,7 +108,12 @@ public class PatternMatcher {
 	}
 
 	public String getText() {
-		return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)");
+		if (matcher == null) {
+			return "Matcher could not be created for "+patternFqn+ (isGenerated() ? " (Generated)" : " (Runtime)");
+		}
+		else {
+			return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)");
+		}
 	}
 
 	public static final String MATCHES_ID = "matches";
