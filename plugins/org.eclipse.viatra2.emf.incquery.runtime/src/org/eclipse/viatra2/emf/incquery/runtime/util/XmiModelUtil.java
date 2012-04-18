@@ -5,6 +5,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 
+/**
+ * Utility class for loading Global XMI model on path queries/globalEiqModel.xmi.
+ * @author Mark Czotter
+ *
+ */
 public class XmiModelUtil {
 
 	public static final String XMI_OUTPUT_FOLDER = "queries";
@@ -12,19 +17,14 @@ public class XmiModelUtil {
 	
 	/**
 	 * Returns the global EIQ resource (XMI), that is hosted in the given bundle.
-	 * If no resource is found, null is returned.
-	 * @param bundleName, cant be null
-	 * @return
+	 * If something happened during model load, an exception is thrown.
+	 * @param bundleName
+	 * @return the global xmi resource
+	 * @see {@link ResourceSet#getResource(URI, boolean)}.
 	 */
 	public static Resource getGlobalXmiResource(String bundleName) {
-		Resource globalXmiResource = null;
 		ResourceSet set = IncQueryRuntimePlugin.getDefault().getInjector().getInstance(ResourceSet.class);
-		try { 
-			globalXmiResource = set.getResource(getGlobalEiqModelUri(bundleName), true);
-		} catch (Exception e) {
-			System.err.println("Exception during Global XMi Resource load: " + e.getMessage());
-			globalXmiResource = null;
-		}
+		Resource globalXmiResource = set.getResource(getGlobalEiqModelUri(bundleName), true);;
 		return globalXmiResource;
 	}
 	
@@ -33,7 +33,7 @@ public class XmiModelUtil {
 	 * @param bundleName
 	 * @return
 	 */
-	private static URI getGlobalEiqModelUri(String bundleName) {
+	public static URI getGlobalEiqModelUri(String bundleName) {
 		return URI.createPlatformResourceURI(String.format("%s/%s/%s",
 				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
 	}

@@ -14,8 +14,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.osgi.framework.internal.core.BundleResourceHandler;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -30,12 +30,12 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatch, Matcher extends BaseGeneratedMatcher<Signature>>
 		extends BaseMatcherFactory<Signature, Matcher> 
 {
-	
+	private Logger logger = Logger.getLogger(getClass());
 	private static Map<String, PatternModel> bundleNameToPatternModelMap = new HashMap<String, PatternModel>();
 	private static Map<String, Resource> bundleNameToResourceMap = new HashMap<String, Resource>();
 	private Pattern pattern;
 	
-	/* (non-Javadoc)
+	/* (non-Javadoc)	
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPattern()
 	 */
 	@Override
@@ -62,7 +62,7 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 			PatternModel model = getModelRoot(getBundleName());
 			return findPattern(model, patternName());
 		} catch (Exception e) {
-			System.out.println("Exception during parse pattern: " + e.getMessage());
+			logger.error("Exception during parsePattern!", e);
 		}
 		return null;
 	}
@@ -71,7 +71,7 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 	 * Returns the pattern with the given patternName.
 	 * @param model
 	 * @param patternName
-	 * @return
+	 * @return {@link Pattern} instance or null if not found.
 	 */
 	private Pattern findPattern(PatternModel model, String patternName) {
 		if (model == null) return null;
@@ -94,6 +94,9 @@ public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatc
 			Resource bundleResource = bundleNameToResourceMap.get(bundleName);
 			if (bundleResource == null) {
 				bundleResource = XmiModelUtil.getGlobalXmiResource(bundleName);
+				if (bundleResource == null) {
+					return null;
+				}
 				bundleNameToResourceMap.put(bundleName, bundleResource);
 			}
 			bundleNameToPatternModelMap.put(bundleName, (PatternModel) bundleResource.getContents().get(0));
