@@ -39,6 +39,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.PatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
@@ -54,6 +55,7 @@ import org.eclipse.xtext.util.PolymorphicDispatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -76,7 +78,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	@Override
 	protected Predicate<Method> getPredicate(EObject context, EClass type) {
 		String methodName = "scope_" + type.getName();
-		//System.out.println(methodName + " ctx " + context.eClass().getName());
+		System.out.println(methodName + " ctx " + context.eClass().getName());
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 
@@ -87,7 +89,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	@Override
 	protected Predicate<Method> getPredicate(EObject context, EReference reference) {
 		String methodName = "scope_" + reference.getEContainingClass().getName() + "_" + reference.getName();
-		//System.out.println(methodName + " ctx " + context.eClass().getName());
+		System.out.println(methodName + " ctx " + context.eClass().getName());
 		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
 	}
 	
@@ -154,6 +156,18 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	
 	public IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
 		return expressionParentScopeProvider.doSwitch(ctx.eContainer());
+	}
+	
+	public IScope scope_EEnum(EnumValue ctx, EReference ref) {
+		PatternModel model = (PatternModel) getRootContainer(ctx);
+		final Collection<EEnum> enums = Lists.newArrayList();
+		for (PackageImport decl : model.getImportPackages()) {
+			if (decl.getEPackage() != null) {
+				Iterables.addAll(enums, Iterables.filter(decl.getEPackage()
+						.getEClassifiers(), EEnum.class));
+			}
+		}
+		return Scopes.scopeFor(enums);
 	}
 	
 	public IScope scope_EEnumLiteral(PathExpressionHead ctx, EReference ref) {
