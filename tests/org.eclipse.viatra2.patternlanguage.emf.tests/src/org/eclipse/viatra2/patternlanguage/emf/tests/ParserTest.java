@@ -225,6 +225,10 @@ public class ParserTest {
 	public void patternCallEnumConstantParameter() {
 		testParserRule("find a(Name, ::in)", PATTERN_COMPOSITION_RULE);
 	}
+	@Test
+	public void patternCallQualifiedEnumConstantParameter() {
+		testParserRule("find a(Name, eenum::in)", PATTERN_COMPOSITION_RULE);
+	}
 
 	@Test
 	public void negPatternCall() {
@@ -241,6 +245,10 @@ public class ParserTest {
 	@Test
 	public void negPatternCallEnumConstantParameter() {
 		testParserRule("neg find a(Name, ::in)", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void negPatternCallQualifiedEnumConstantParameter() {
+		testParserRule("neg find a(Name, enum::in)", PATTERN_COMPOSITION_RULE);
 	}
 
 	@Test
