@@ -71,7 +71,7 @@ class XmiOutputBuilder {
 				}	
 			}
 			// then iterate over all added PatternCompositonConstraint and change the patternRef
-			for (constraint : xmiResource.allContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
+			for (constraint : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
 				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(constraint.patternRef)
 				val p = fqnToPatternMap.get(fqn)
 				if (p == null) {
