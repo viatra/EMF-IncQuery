@@ -34,11 +34,11 @@
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
+   <!--<plugin
          id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="false"/>-->
 
 </feature>

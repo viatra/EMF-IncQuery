@@ -22,7 +22,7 @@
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf</module>
+		<!--  <module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf</module>-->
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.validation</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
