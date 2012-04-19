@@ -12,6 +12,8 @@ package org.eclipse.viatra2.patternlanguage.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
+import org.eclipse.xtext.common.types.access.jdt.JdtTypeProviderFactory;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 
@@ -21,7 +23,9 @@ import com.google.inject.name.Names;
 /**
  * Use this class to register components to be used within the IDE.
  */
-public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlanguage.ui.AbstractEMFPatternLanguageUiModule {
+public class EMFPatternLanguageUiModule
+		extends
+		org.eclipse.viatra2.patternlanguage.ui.AbstractEMFPatternLanguageUiModule {
 	public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
@@ -34,11 +38,15 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 						Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 				.toInstance(".,");
 	}
-	
+
 	/*
 	 * Registering model inferrer from the tooling.generator project
 	 */
-		public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
-			return EMFPatternLanguageJvmModelInferrer.class;
-		}
+	public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
+		return EMFPatternLanguageJvmModelInferrer.class;
+	}
+
+	public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+		return JdtTypeProviderFactory.class;
+	}
 }
