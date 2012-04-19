@@ -30,6 +30,8 @@
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
 	<properties>

@@ -12,5 +12,11 @@
    <feature url="features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature" version="0.6.0.qualifier">
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
+   <feature url="features/org.eclipse.viatra2.emf.incquery.validation.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.validation.feature" version="0.6.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.validation.tooling.feature" version="0.6.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
    <category-def name="org.eclipse.viatra2.patternlanguage" label="EMF-IncQuery"/>
 </site>
