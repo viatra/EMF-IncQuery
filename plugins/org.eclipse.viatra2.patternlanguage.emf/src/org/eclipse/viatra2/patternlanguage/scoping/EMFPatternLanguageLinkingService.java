@@ -49,10 +49,16 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 		} else if (ref == EMFPatternLanguagePackage.eINSTANCE.getEnumValue_Literal() && context instanceof EnumValue) {
 			try {
 				EnumValue value = (EnumValue) context;
-				EEnum type = (value.getEnumeration() != null) ? value
-						.getEnumeration() : EMFPatternLanguageScopeHelper
+				EEnum type = null;
+				if (value.getEnumeration() != null) {
+					type = value.getEnumeration();
+				} else if (value.eContainer() instanceof PathExpressionHead) {
+					type = EMFPatternLanguageScopeHelper
 						.calculateEnumerationType(getExpressionHead(context
 								.eContainer()));
+				} else {
+					return Collections.emptyList();
+				}
 				String typename = ((ILeafNode)node).getText();
 				EEnumLiteral literal = type.getEEnumLiteral(typename);
 				if (literal != null) {
