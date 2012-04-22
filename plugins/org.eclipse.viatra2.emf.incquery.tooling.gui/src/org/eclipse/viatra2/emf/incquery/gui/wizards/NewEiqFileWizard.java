@@ -120,11 +120,14 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		if (page.getPackageName() != null && !page.getPackageName().isEmpty()) {
 			pm.setPackageName(page.getPackageName());
 		}
-		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
-		pattern.setName(patternName);
-		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
-		pattern.getBodies().add(body);
-		pm.getPatterns().add(pattern);
+		if (patternName != null && patternName.length() > 0) {
+			Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
+			pattern.setName(patternName);
+			PatternBody body = PatternLanguageFactory.eINSTANCE
+					.createPatternBody();
+			pattern.getBodies().add(body);
+			pm.getPatterns().add(pattern);
+		}
 		resource.getContents().add(pm);
 
 		try {
