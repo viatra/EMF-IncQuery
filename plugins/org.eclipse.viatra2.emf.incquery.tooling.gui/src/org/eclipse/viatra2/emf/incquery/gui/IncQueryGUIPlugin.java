@@ -11,7 +11,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 	/**
 	 *  The plug-in ID
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.gui";
+	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.tooling.gui";
 
 	// The shared instance
 	private static IncQueryGUIPlugin plugin;
