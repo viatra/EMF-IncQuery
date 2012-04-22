@@ -128,4 +128,8 @@ public class PatternMatcher {
 	public boolean isGenerated() {
 		return generated;
 	}
+	
+	public boolean isCreated() {
+		return matcher != null;
+	}
 }

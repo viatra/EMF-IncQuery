@@ -1,23 +1,17 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
-import org.osgi.framework.Bundle;
 
 /**
  * Custom tree label provider implementation.
@@ -26,14 +20,11 @@ import org.osgi.framework.Bundle;
  * @author Tamas Szabo
  *
  */
-@SuppressWarnings("restriction")
 public class TreeLabelProviderImpl extends StyledCellLabelProvider {
 
 	private IMapChangeListener mapChangeListener;
-	private Map<Class<?>, Image> imageCache;
 	
 	public TreeLabelProviderImpl(IObservableMap[] attributeMaps) {
-		this.imageCache = new HashMap<Class<?>, Image>();
 		
 		mapChangeListener = new IMapChangeListener() {
 			public void handleMapChange(MapChangeEvent event) {
@@ -79,28 +70,21 @@ public class TreeLabelProviderImpl extends StyledCellLabelProvider {
 	}
 
 	private Image getImage(Object element) {
-		Bundle bundle = Platform.getBundle(IncQueryGUIPlugin.PLUGIN_ID);
+		ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
 
-		if (imageCache.containsKey(element.getClass())) {
-			return imageCache.get(element.getClass());
-		}
-		else if (element instanceof PatternMatcherRoot) {
-			URL fullPathString = BundleUtility.find(bundle, "icons/root.gif");
-			Image img = ImageDescriptor.createFromURL(fullPathString).createImage();
-			imageCache.put(PatternMatcherRoot.class, img);
-			return img;
+
+		if (element instanceof PatternMatcherRoot) {
+			return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
 		}
 		else if (element instanceof PatternMatcher) {
-			URL fullPathString = BundleUtility.find(bundle, "icons/matcher.gif");
-			Image img = ImageDescriptor.createFromURL(fullPathString).createImage();
-			imageCache.put(PatternMatcher.class, img);
-			return img;
+			if (((PatternMatcher) element).isCreated()) {
+				return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCHER);
+			} else {
+				return imageRegistry.get(IncQueryGUIPlugin.ICON_ERROR);
+			}
 		} 
 		else if (element instanceof PatternMatch) {
-			URL fullPathString = BundleUtility.find(bundle, "icons/match.gif");
-			Image img = ImageDescriptor.createFromURL(fullPathString).createImage();
-			imageCache.put(PatternMatch.class, img);
-			return img;
+			return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCH);
 		} 
 		else {
 			return null;
