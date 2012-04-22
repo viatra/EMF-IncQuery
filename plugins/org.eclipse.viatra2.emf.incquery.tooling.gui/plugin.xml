@@ -23,7 +23,7 @@
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
-            name="EMF-IncQuery query definition "
+            name="EMF-IncQuery Query Definition "
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
       </wizard>
      <!-- <wizard
