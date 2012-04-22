@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.DatabindingUIPluginActivator;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.osgi.framework.Bundle;
 
 /**
@@ -79,7 +79,7 @@ public class TreeLabelProviderImpl extends StyledCellLabelProvider {
 	}
 
 	private Image getImage(Object element) {
-		Bundle bundle = Platform.getBundle(DatabindingUIPluginActivator.PLUGIN_ID);
+		Bundle bundle = Platform.getBundle(IncQueryGUIPlugin.PLUGIN_ID);
 
 		if (imageCache.containsKey(element.getClass())) {
 			return imageCache.get(element.getClass());
