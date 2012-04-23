@@ -49,6 +49,9 @@ public class ShowLocationHandler extends AbstractHandler {
 			ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
 			selectionProvider.setSelection(treeSelection);
 			
+			//bring editor part to top
+			editorPart.getSite().getPage().bringToTop(editorPart);
+			
 			//Reflection API is used here!!!
 			try {
 				Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
