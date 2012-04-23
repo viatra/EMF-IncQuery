@@ -42,8 +42,7 @@ public class TreeStructureAdvisorImpl extends TreeStructureAdvisor {
 //			return root.getMatchers().size() > 0;
 			return true;
 		} else if (element instanceof PatternMatcher) {
-			PatternMatcher matcher = (PatternMatcher) element;
-			return matcher.getMatches().size() > 0;
+			return true;
 		} else {
 			return false;
 		}
