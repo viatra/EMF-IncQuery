@@ -119,6 +119,18 @@ public class TupleMask {
 		int[] indices = {selected};
 		return new TupleMask(indices, sourceWidth);
 	}
+	/**
+	 * Creates a TupleMask instance that selects whatever is selected by left, and appends whatever is selected by right.
+	 * PRE: left and right have the same sourcewidth
+	 */
+	public static TupleMask append(TupleMask left, TupleMask right) {
+		int leftLength = left.indices.length;
+		int rightLength = right.indices.length;
+		int[] indices = new int[leftLength + rightLength];
+		for (int i=0; i<leftLength; ++i) indices[i] = left.indices[i];
+		for (int i=0; i<rightLength; ++i) indices[i+leftLength] = right.indices[i];
+		return new TupleMask(indices, left.sourceWidth);
+	}
 
 	/**
 	 * Generates indicesSorted from indices

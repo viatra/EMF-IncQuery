@@ -14,12 +14,13 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.p
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable; import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 
 /**
  * @author Bergmann Gábor
@@ -72,22 +73,26 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		Stub<StubHandle> sideStub = getSideStub();
 		BuildHelper.JoinHelper<StubHandle> joinHelper = getJoinHelper(stub, sideStub);
-		Integer resultPosition = stub.getVariablesIndex().get(resultVariable);
-		if (resultPosition == null) {
+		Integer resultPositionLeft = stub.getVariablesIndex().get(resultVariable);
+		TupleMask primaryMask = joinHelper.getPrimaryMask();
+		TupleMask secondaryMask = joinHelper.getSecondaryMask();
+		if (resultPositionLeft == null) {
 			return buildable.buildCounterBetaNode(
 					stub, 
 					sideStub, 
-					joinHelper.getPrimaryMask(), 
-					joinHelper.getSecondaryMask(), 
+					primaryMask, 
+					secondaryMask, 
 					joinHelper.getComplementerMask(), 
 					resultVariable);
 		} else {
+			int resultPositionFinal = primaryMask.indices.length; // append to the last position
+			primaryMask = TupleMask.append(primaryMask, TupleMask.selectSingle(resultPositionLeft, primaryMask.sourceWidth));
 			return buildable.buildCountCheckBetaNode(
 					stub, 
 					sideStub, 
-					joinHelper.getPrimaryMask(), 
-					joinHelper.getSecondaryMask(), 
-					resultPosition);
+					primaryMask, 
+					secondaryMask, 
+					resultPositionFinal);
 		}
 		
 	}

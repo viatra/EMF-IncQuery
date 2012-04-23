@@ -51,10 +51,10 @@ public class Stub<HandleType> {
 		this.primaryParentStub = primaryParent;
 		constraints.addAll(primaryParent.getAllEnforcedConstraints());
 	}	
-	public Stub(Stub<HandleType> secondaryParent, Tuple variablesTuple, HandleType handle) {
+	public Stub(Stub<HandleType> primaryParent, Tuple variablesTuple, HandleType handle) {
 		this(variablesTuple.invertIndex(), variablesTuple, handle);
-		this.primaryParentStub = secondaryParent;
-		constraints.addAll(secondaryParent.getAllEnforcedConstraints());
+		this.primaryParentStub = primaryParent;
+		constraints.addAll(primaryParent.getAllEnforcedConstraints());
 	}	
 	public Stub(Stub<HandleType> primaryParent, Stub<HandleType> secondaryParent, Tuple variablesTuple, HandleType handle) {
 		this(variablesTuple.invertIndex(), variablesTuple, handle);
