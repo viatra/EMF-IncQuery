@@ -45,6 +45,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeLabelProvid
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.TreeStructureAdvisorImpl;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -93,9 +94,6 @@ public class QueryExplorer extends ViewPart {
 	
 	public void refreshTreeViewer() {
 		treeViewer.refresh();
-//		if (rootsObservableList != null) {
-//			treeViewer.setInput(rootsProp.observe(viewerRoot));
-//		}
 	}
 	
 	public static void clearTableViewer() {
@@ -113,7 +111,7 @@ public class QueryExplorer extends ViewPart {
 		treeViewer = new TreeViewer(form);
 		tableViewer = new TableViewer(form);
 		
-		//treeViewer configuration
+		//treeViewer configuration with observables
 		ObservableListTreeContentProvider cp = new ObservableListTreeContentProvider(
 				new TreeFactoryImpl(), new TreeStructureAdvisorImpl());
 		treeViewer.setContentProvider(cp);
@@ -132,6 +130,8 @@ public class QueryExplorer extends ViewPart {
 		IObservableValue selection = ViewersObservables.observeSingleSelection(treeViewer);
 		selection.addValueChangeListener(new SelectionChangleListener());
 		
+		treeViewer.addDoubleClickListener(new DoubleClickListener());
+		
 		// Create menu manager.
         MenuManager menuMgr = new MenuManager();
         menuMgr.setRemoveAllWhenShown(true);
@@ -141,7 +141,7 @@ public class QueryExplorer extends ViewPart {
             }
         });
            
-           // Create menu.
+        // Create menu.
         Menu menu = menuMgr.createContextMenu(treeViewer.getControl());
         
 		treeViewer.getControl().setMenu(menu);
@@ -251,8 +251,7 @@ public class QueryExplorer extends ViewPart {
 	
 	private void initFileListener() {
 		IResourceChangeListener listener = new ResourceChangeListener();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,  
-				IResourceChangeEvent.PRE_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
 	}
 	
 	public static PartListener getPartListener() {
