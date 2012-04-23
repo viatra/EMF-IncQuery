@@ -155,7 +155,7 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 			}
 	
 			if (patternName == null || patternName.length() == 0) {
-				si.setWarning("Pattern name must be specified");
+				si.setWarning("Pattern name should be specified");
 			}
 		}
 		
