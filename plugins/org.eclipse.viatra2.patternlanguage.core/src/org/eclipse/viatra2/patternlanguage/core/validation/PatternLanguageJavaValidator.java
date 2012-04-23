@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.validation;
 
-import static org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__PATTERN_REF;
 import static org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals.PATTERN__NAME;
 import static org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals.PATTERN__PARAMETERS;
 import static org.eclipse.xtext.util.Strings.equal;
@@ -28,7 +27,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
@@ -87,19 +86,19 @@ public class PatternLanguageJavaValidator extends
 	}
 
 	@Check
-	public void checkPatternCompositionConstraintParameters(
-			PatternCompositionConstraint constraint) {
-		if (constraint.getPatternRef() != null
-				&& constraint.getParameters() != null) {
-			final int definitionParameterSize = constraint.getPatternRef()
+	public void checkPatternCallParameters(
+			PatternCall call) {
+		if (call.getPatternRef() != null &&  call.getPatternRef().getName() != null
+				&& call.getParameters() != null) {
+			final int definitionParameterSize = call.getPatternRef()
 					.getParameters().size();
-			final int callParameterSize = constraint.getParameters().size();
+			final int callParameterSize = call.getParameters().size();
 			if (definitionParameterSize != callParameterSize) {
 				error("The pattern "
-						+ getFormattedPattern(constraint.getPatternRef())
+						+ getFormattedPattern(call.getPatternRef())
 						+ " is not applicable for the arguments("
-						+ getFormattedArgumentsList(constraint) + ")",
-						PATTERN_COMPOSITION_CONSTRAINT__PATTERN_REF,
+						+ getFormattedArgumentsList(call) + ")",
+						PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF,
 						IssueCodes.WRONG_NUMBER_PATTERNCALL_PARAMETER);
 			}
 		}
@@ -290,9 +289,9 @@ public class PatternLanguageJavaValidator extends
 	}
 
 	protected String getFormattedArgumentsList(
-			PatternCompositionConstraint constraint) {
+			PatternCall call) {
 		StringBuilder builder = new StringBuilder();
-		for (Iterator<ValueReference> iter = constraint.getParameters()
+		for (Iterator<ValueReference> iter = call.getParameters()
 				.iterator(); iter.hasNext();) {
 			ValueReference parameter = iter.next();
 			builder.append(getConstantAsString(parameter));

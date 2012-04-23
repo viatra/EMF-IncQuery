@@ -19,6 +19,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHe
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
@@ -68,7 +69,11 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 	
 	String text(PatternCompositionConstraint constraint) {
 		String modifiers = (constraint.isNegative()) ? "neg " : "";
-		return String.format("find %s%s/%d", modifiers, constraint.getPatternRef().getName(), constraint.getParameters().size());
+		return String.format("find %s%s", modifiers, text(constraint.getCall()));
+	}
+	
+	String text(PatternCall call) {
+		return String.format("%s/%d", call.getPatternRef().getName(), call.getParameters().size());
 	}
 	
 	String text(PathExpressionConstraint constraint) {
@@ -87,6 +92,10 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		}
 		return String.format("%s %s",type, varName);
 	}
+
+//	String text(ComputationValue computation) {
+//		
+//	}
 	
 	String getValueText(ValueReference ref) {
 		if (ref instanceof VariableValue) {

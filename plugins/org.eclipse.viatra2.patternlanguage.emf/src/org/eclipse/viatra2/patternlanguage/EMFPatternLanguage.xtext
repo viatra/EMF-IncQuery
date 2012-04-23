@@ -47,10 +47,10 @@ RefType returns core::RelationType:
 	refname=[ecore::EStructuralFeature]
 ;
 
-ValueReference returns core::ValueReference:
-	IntValue | StringValue | VariableValue 
-    | DoubleValue | BoolValue | ListValue  //Copied from PatternLanguage 
-	| EnumValue							   //Additions
+LiteralValueReference returns core::ValueReference:
+	IntValue | StringValue | 
+	DoubleValue | BoolValue | ListValue	//Copied from PatternLanguage 
+	| EnumValue							//Additions
 ;
 
 EnumValue:
