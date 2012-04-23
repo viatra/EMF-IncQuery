@@ -14,20 +14,25 @@ import java.util.List;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
+import org.eclipse.xtext.formatting.impl.AbstractFormattingConfig.ElementPattern;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -64,46 +69,54 @@ public class EMFPatternLanguageJavaValidator extends
 	}
 	
 	@Check
-	public void checkUnusedVariables(VariableReference variableReference) {
-		EObject container = variableReference.eContainer();
-		
-		while (!Constraint.class.isAssignableFrom(container.getClass())) {
-			container = container.eContainer();
-		}
-		
-		Constraint containingConstraint = (Constraint)container;
-		
-		while (!PatternBody.class.isAssignableFrom(container.getClass())) {
-			container = container.eContainer();
-		}
-		
-		PatternBody body = (PatternBody)container;
-		
-		Pattern pattern = (Pattern)body.eContainer();
-		
+	public void checkUnusedVariables(Pattern pattern) {
 		for (Variable var : pattern.getParameters()) {
-			if (var.getName().equals(variableReference.getVar())) {
-				return;
+			if (!var.getReferences().isEmpty()) {
+				return; // itt lenne jó
 			}
 		}
-		
-		for (Constraint constraint : body.getConstraints()) {
-			if (constraint != containingConstraint) {
-				if (EClassifierConstraint.class.isAssignableFrom(constraint.getClass())) {
-					if (((EClassifierConstraint)constraint).getVar().getVar().equals(variableReference.getVar())) {
-						return;
-					}
-				}
-				else if (PathExpressionConstraint.class.isAssignableFrom(constraint.getClass()))
-				{
-					if (((PathExpressionConstraint)constraint).getHead().getSrc().getVar().equals(variableReference.getVar())) {
-						return;
-					}
+	}
+	
+	@Check
+	public void checkUnusedVariables(PatternBody patternBody) {
+		if (!patternBody.getVariables().isEmpty()) {
+			return; // itt lenne jó
+		}
+	}
+	
+	@Check
+	public void checkUnusedVariables(Constraint constraint) {
+		if (constraint instanceof EClassifierConstraint) {
+			if (((EClassifierConstraint)constraint).getVar().getVariable() != null) {
+				return; // itt lenne jó
+			}
+		}
+		else if (constraint instanceof PathExpressionConstraint) {
+			PathExpressionConstraint peConstr = (PathExpressionConstraint)constraint;
+			if (peConstr.getHead().getSrc().getVariable() != null) {
+				return; // itt lenne jó
+			}
+			
+			if (peConstr.getHead().getDst() instanceof VariableValue) {
+				if (((VariableValue)peConstr.getHead().getDst()).getValue().getVariable() != null) {
+					return; // itt lenne jó
 				}
 			}
 		}
-		
-		warning(String.format(UNUSED_VARIABLE_MESSAGE, variableReference.getVar()), PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, EMFIssueCodes.UNUSED_VARIABLE);
+	}
+	
+	@Check
+	public void checkUnusedVariables(VariableReference variableRef) {
+		if (variableRef.getVariable() != null) {
+			return; // itt lenne jó
+		}
+	}
+	
+	@Check
+	public void checkUnusedVariables(Variable variable) {
+		if (!variable.getReferences().isEmpty()) {
+			return; // itt lenne jó
+		}
 	}
 
 	@Override
