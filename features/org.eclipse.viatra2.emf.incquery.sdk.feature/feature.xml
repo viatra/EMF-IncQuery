@@ -23,10 +23,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.viatra2.emf.incquery.databinding.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature"
          version="0.0.0"/>
 
