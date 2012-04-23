@@ -2,6 +2,7 @@ package org.eclipse.viatra2.patternlanguage.core.helper;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +11,15 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.xtext.xbase.XExpression;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class CorePatternLanguageHelper {
 	/**
@@ -60,4 +67,41 @@ public class CorePatternLanguageHelper {
 		return result;
 	}
 
+	
+	public static EList<Variable> getAllVariablesInBody(PatternBody body,
+			EList<Variable> previous) {
+		EList<Variable> variables = previous;
+
+		EList<Variable> parameters = ((Pattern) body.eContainer())
+				.getParameters();
+		Multimap<String, VariableReference> varRefs = HashMultimap.create();
+		HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
+		Iterator<EObject> it = body.eAllContents();
+		while (it.hasNext()) {
+			EObject obj = it.next();
+			if (obj instanceof VariableReference) {
+				String varName = ((VariableReference) obj).getVar();
+				varRefs.put(varName, (VariableReference) obj);
+			}
+		}
+		for (Variable var : parameters) {
+			parameterMap.put(var.getName(), var);
+		}
+		for (String varName : varRefs.keySet()) {
+			Variable decl;
+			if (parameterMap.containsKey(varName)) {
+				decl = parameterMap.get(varName);
+			} else {
+				decl = PatternLanguageFactory.eINSTANCE
+						.createVariable();
+				decl.setName(varName);
+				variables.add(decl);
+			}
+			for (VariableReference ref : varRefs.get(varName)) {
+				ref.setVariable(decl);
+			}
+		}
+
+		return variables;
+	}
 }
