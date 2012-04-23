@@ -22,7 +22,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
-			fsa.generateFile(pattern.packagePath + "/validation/" + pattern.name.toFirstUpper + annotationLiteral + ".java", pattern.patternHandler)
+			fsa.generateFile(pattern.packagePath + "/" + pattern.name.toFirstUpper + annotationLiteral + ".java", pattern.patternHandler)
 		}
 	}
 	
@@ -49,7 +49,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			return newArrayList(
 				exGen.contribExtension(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT) [
 					exGen.contribElement(it, "constraint") [
-						exGen.contribAttribute(it, "class", pattern.packageName+".validation."+pattern.name.toFirstUpper+annotationLiteral)
+						exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+annotationLiteral)
 						exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
 					]
 				]
@@ -74,7 +74,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override patternHandler(Pattern pattern) '''
-		package «pattern.packageName».validation;
+		package «pattern.packageName»;
 		
 		import org.eclipse.emf.ecore.EObject;
 
