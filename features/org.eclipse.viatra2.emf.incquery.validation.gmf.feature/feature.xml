@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra2.emf.incquery.validation.gmf.feature"
+      label="EMF-IncQuery Validation Framework - GMF Integration"
+      version="0.6.0.qualifier"
+      license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      EMF-IncQuery Validation framework runtime - GMF integration
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="">
+      [Enter Licence here.]
+   </license>
+
+   <includes
+         id="org.eclipse.viatra2.emf.incquery.runtime.feature"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
