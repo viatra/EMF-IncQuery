@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature"
-      label="EMF-IncQuery Databinding Tooling Feature"
-      version="0.6.0.qualifier"
-      license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
-      license-feature-version="1.0.0.qualifier">
+      id="org.eclipse.viatra2.emf.incquery.licence.feature"
+      label="EMF-IncQuery licence feature"
+      version="1.0.0.qualifier">
 
    <description>
-      Code generator for JFace Databinding support for EMF-IncQuery results.
+      EMF-IncQuery licence feature
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -212,30 +210,5 @@ Agreement more than one year after the cause of action arose.
 Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
-
-   <includes
-         id="org.eclipse.viatra2.emf.incquery.databinding.feature"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.databinding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.databinding.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.databinding.runtime.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>
