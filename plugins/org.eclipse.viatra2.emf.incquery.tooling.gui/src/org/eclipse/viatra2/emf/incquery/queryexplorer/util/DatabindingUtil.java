@@ -21,7 +21,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
@@ -30,6 +29,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Injector;
 
@@ -289,13 +289,12 @@ public class DatabindingUtil {
 		return result;
 	}
 	
-	public static PatternModel parseEPM(IFile file) {
-		Injector injector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+	public static PatternModel parseEPM(IFile file, Injector injector) {
 		if (file == null) {
 			return null;
 		}
-
-		ResourceSet resourceSet = injector.getInstance(ResourceSet.class);
+		IResourceSetProvider resSetProvider = injector.getInstance(IResourceSetProvider.class);
+		ResourceSet resourceSet = resSetProvider.get(file.getProject());
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);
 		if (resource != null && resource.getContents().size() >= 1) {

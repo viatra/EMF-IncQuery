@@ -50,6 +50,9 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 /**
  * MatchSetViewer is used to display the match sets for those matchers which are annotated with PatternUI. 
  * 
@@ -67,9 +70,8 @@ public class QueryExplorer extends ViewPart {
 	private IObservableList rootsObservableList;
 	private IBeanListProperty rootsProp;
 	
-	public QueryExplorer() {
-		
-	}
+	@Inject
+	Injector injector;
 	
 	public static ViewerRoot getViewerRoot() {
 		return viewerRoot;
@@ -250,7 +252,7 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	private void initFileListener() {
-		IResourceChangeListener listener = new ResourceChangeListener();
+		IResourceChangeListener listener = new ResourceChangeListener(injector);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
 	}
 	
