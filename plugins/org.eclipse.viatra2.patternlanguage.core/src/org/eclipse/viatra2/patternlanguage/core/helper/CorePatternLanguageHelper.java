@@ -19,6 +19,7 @@ public class CorePatternLanguageHelper {
 	 * Returns the name of the pattern, qualified by package name.
 	 */
 	public static String getFullyQualifiedName(Pattern p) {
+		if (p == null) return null;
 		PatternModel patternModel = (PatternModel) p.eContainer();
 
 		String packageName = patternModel.getPackageName();

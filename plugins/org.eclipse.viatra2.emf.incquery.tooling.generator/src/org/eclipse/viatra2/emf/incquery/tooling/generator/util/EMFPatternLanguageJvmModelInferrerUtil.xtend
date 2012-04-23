@@ -92,10 +92,37 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	}
    	
    	/**
-   	 * Returns the field name of Variable
+   	 * Returns field name for Variable
    	 */
    	def fieldName(Variable variable) {
    		"f"+variable.name.toFirstUpper
+   	}
+   	
+   	/**
+   	 * Returns parameter name for Variable
+   	 */
+   	def parameterName(Variable variable) {
+   		"p"+variable.name.toFirstUpper
+   	}
+   	
+   	/**
+   	 * Returns correct getter method name for variable.
+   	 * For variable with name 'class' returns getValueOfClass, otherwise returns <code>get#variable.name.toFirstUpper#</code>.
+   	 */
+   	def getterMethodName(Variable variable) {
+   		if (variable.name == "class") {
+   			return "getValueOfClass"
+   		} else {
+   			return "get" + variable.name.toFirstUpper
+   		}
+   	}
+   	
+   	/**
+   	 * Returns correct setter method name for variable.
+   	 * Currently returns <code>set#variable.name.toFirstUpper#</code>.
+   	 */
+   	def setterMethodName(Variable variable) {
+   		"set" + variable.name.toFirstUpper
    	}
    	
 	/**
