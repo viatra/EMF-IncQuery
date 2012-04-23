@@ -14,10 +14,6 @@
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
-   </license>
-
    <includes
          id="org.eclipse.viatra2.emf.incquery.validation.feature"
          version="0.0.0"/>

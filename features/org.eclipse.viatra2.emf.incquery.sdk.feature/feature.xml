@@ -14,10 +14,6 @@
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="">
-      [Enter Licence here.]
-   </license>
-
    <includes
          id="org.eclipse.viatra2.emf.incquery.runtime.feature"
          version="0.0.0"/>
