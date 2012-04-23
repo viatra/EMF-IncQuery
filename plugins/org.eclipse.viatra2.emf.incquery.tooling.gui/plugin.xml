@@ -23,7 +23,7 @@
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile"
-            name="EMF-IncQuery query definition "
+            name="EMF-IncQuery Query Definition "
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
       </wizard>
      <!-- <wizard
@@ -58,7 +58,7 @@
       </category>
       <view
             category="org.eclipse.viatra2.emf.incquery.tooling.gui"
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
             icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"
             name="Query Explorer">
@@ -107,7 +107,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherMenuRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherMenuRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg">
       </handler>
       <handler
@@ -127,7 +127,7 @@
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherEditorRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherEditorRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor">
       </handler>
       <handler

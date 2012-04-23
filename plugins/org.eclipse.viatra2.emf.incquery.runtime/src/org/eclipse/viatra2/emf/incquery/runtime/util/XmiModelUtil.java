@@ -3,7 +3,9 @@ package org.eclipse.viatra2.emf.incquery.runtime.util;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 
 /**
  * Utility class for loading Global XMI model on path queries/globalEiqModel.xmi.
@@ -24,18 +26,30 @@ public class XmiModelUtil {
 	 */
 	public static Resource getGlobalXmiResource(String bundleName) {
 		ResourceSet set = IncQueryRuntimePlugin.getDefault().getInjector().getInstance(ResourceSet.class);
-		Resource globalXmiResource = set.getResource(getGlobalEiqModelUri(bundleName), true);;
+		Resource globalXmiResource = set.getResource(getGlobalXmiResourceURI(bundleName), true);;
 		return globalXmiResource;
 	}
 	
 	/**
-	 * Creates a platformplugin URI from bundleName and default location of the global EIQ model file path
-	 * @param bundleName
+	 * Returns the URI for global XMI Model URI located at path queries/globalEiqModel.xmi in the given bundle/project.
+	 * First tries to resolve the path with platformResource (in workspace), 
+	 * if not found, uses the platformPluginURI (in bundles), if not found in here either, throws {@link IncQueryRuntimeException}.
+	 * @param bundleName - workspace project name or platform bundle name.
 	 * @return
+	 * @throws IncQueryRuntimeException - when the global XMI model is not found in bundle/project.
 	 */
-	public static URI getGlobalEiqModelUri(String bundleName) {
-		return URI.createPlatformResourceURI(String.format("%s/%s/%s",
+	public static URI getGlobalXmiResourceURI(String bundleName) {
+		URI resourceURI = URI.createPlatformResourceURI(String.format("%s/%s/%s",
 				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
+		if (URIConverter.INSTANCE.exists(resourceURI, null)) {
+			return resourceURI;
+		}
+		resourceURI = URI.createPlatformPluginURI(String.format("%s/%s/%s",
+				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
+		if (URIConverter.INSTANCE.exists(resourceURI, null)) {
+			return resourceURI;
+		}
+		throw new IncQueryRuntimeException("Global XMI resource not found in bundle/project: " + bundleName);
 	}
 	
 }

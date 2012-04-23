@@ -39,6 +39,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.util.PatternLanguageSwitch;
 import org.eclipse.viatra2.patternlanguage.core.scoping.PatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
@@ -54,6 +55,7 @@ import org.eclipse.xtext.util.PolymorphicDispatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -156,20 +158,25 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		return expressionParentScopeProvider.doSwitch(ctx.eContainer());
 	}
 	
-	public IScope scope_EEnumLiteral(PathExpressionHead ctx, EReference ref) {
-		EEnum type;
-		try {
-			type = EMFPatternLanguageScopeHelper.calculateEnumerationType(ctx);
-		} catch (ResolutionException e) {
-			return IScope.NULLSCOPE;
+	public IScope scope_EEnum(EnumValue ctx, EReference ref) {
+		PatternModel model = (PatternModel) getRootContainer(ctx);
+		final Collection<EEnum> enums = Lists.newArrayList();
+		for (PackageImport decl : model.getImportPackages()) {
+			if (decl.getEPackage() != null) {
+				Iterables.addAll(enums, Iterables.filter(decl.getEPackage()
+						.getEClassifiers(), EEnum.class));
+			}
 		}
-		return calculateEnumLiteralScope(type);
+		return Scopes.scopeFor(enums);
 	}
 	
-	public IScope scope_EEnumLiteral(PathExpressionTail ctx, EReference ref) {
+	public IScope scope_EEnumLiteral(EnumValue ctx, EReference ref) {
 		EEnum type;
 		try {
-			type = EMFPatternLanguageScopeHelper.calculateEnumerationType(ctx);
+			type = ctx.getEnumeration();
+			type = (type != null) ? type : EMFPatternLanguageScopeHelper
+					.calculateEnumerationType((PathExpressionHead) ctx
+							.eContainer());
 		} catch (ResolutionException e) {
 			return IScope.NULLSCOPE;
 		}
@@ -183,7 +190,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	
 	private ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();
 	
-	class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
+	static class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
 
 		@Override
 		public IScope casePathExpressionHead(PathExpressionHead object) {

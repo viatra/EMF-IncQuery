@@ -162,10 +162,12 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
     java.util.HashMap<String, org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference> variables = new java.util.HashMap<String, org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference>();
     while(it.hasNext()) {
        org.eclipse.emf.ecore.EObject obj = it.next(); 
-       if (obj instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference 
-         && !variables.containsKey(((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj).getVar())) {
-         variables.put(((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference)obj).getVar(), (org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj);
-      }
+       if (obj instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) {
+             String varName = ((org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj).getVar();
+			 if (varName != null && !variables.containsKey(varName)) {
+				 variables.put(varName, (org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) obj);
+             }
+       }
     }
     java.util.Hashtable<String, Variable> varDefs = new java.util.Hashtable<String, Variable>();
     for (Variable var : parameters) {
@@ -192,8 +194,10 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
       if (obj instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference) {
       org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference ref = (org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference)obj;
       String name = ref.getVar();
-      Variable var = varDefs.get(name);
-      ref.setVariable(var);
+      if (name != null) {
+      	  Variable var = varDefs.get(name);
+          ref.setVariable(var);
+      }
 
       }
     }

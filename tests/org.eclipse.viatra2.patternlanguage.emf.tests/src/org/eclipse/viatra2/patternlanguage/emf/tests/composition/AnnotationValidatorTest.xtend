@@ -12,7 +12,7 @@ import com.google.inject.Inject
 import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
-import org.eclipse.viatra2.patternlanguage.emf.tests.AbstractValidatorTest
+import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.junit.Ignore
 
 

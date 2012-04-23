@@ -48,7 +48,7 @@ class PatternMatchProcessorClassInferrer {
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.parameters += pattern.toParameter("match", cloneWithProxies(matchClassRef))
 			it.body = [it.append('''
-				process(«FOR p : pattern.parameters SEPARATOR ', '»match.get«p.name.toFirstUpper»()«ENDFOR»);  				
+				process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);  				
 			''')]
 		]
   	}

@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
       <fragment
+            annotation="Constraint"
             fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.validation.ValidationGenerator"></fragment>
    </extension>
 

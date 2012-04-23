@@ -223,6 +223,10 @@ litigation.
          id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.viatra2.emf.incquery.validation.tooling.feature"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.viatra2.emf.incquery.runtime.source"
          download-size="0"

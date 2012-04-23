@@ -11,18 +11,23 @@
 package org.eclipse.viatra2.patternlanguage.validation;
 
 import java.util.List;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -32,9 +37,10 @@ import org.eclipse.xtext.validation.Check;
  * </p>
  * <ul>
  * <li>Duplicate import of EPackage</li>
+ * <li>Enum type validators</li>
  * </ul>
  * 
- * @author Mark Czotter
+ * @author Mark Czotter, Zoltan Ujhelyi
  * 
  */
 public class EMFPatternLanguageJavaValidator extends
@@ -108,4 +114,36 @@ public class EMFPatternLanguageJavaValidator extends
 		return result;
 	}
 
+	@Check
+	public void checkEnumValues(EnumValue value) {
+		if (value.eContainer() instanceof PathExpressionHead) {
+			//If container is PathExpression check for enum type assignability
+			EEnum enumType = value.getEnumeration();
+			PathExpressionHead expression = (PathExpressionHead) value
+					.eContainer();
+			try {
+				EEnum expectedType = EMFPatternLanguageScopeHelper
+						.calculateEnumerationType(expression);
+				if (!expectedType.equals(enumType)) {
+					error(String
+							.format("Inconsistent enumeration types: found %s but expected %s",
+									enumType.getName(), expectedType.getName()),
+							value,
+							EMFPatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION,
+							EMFIssueCodes.INVALID_ENUM_LITERAL);
+				}
+			} catch (ResolutionException e) {
+				// EClassifier type =
+				// EMFPatternLanguageScopeHelper.calculateExpressionType(expression);
+				error(String.format("Invalid enumeration constant %s",
+						enumType.getName()),
+						value,
+						EMFPatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION,
+						EMFIssueCodes.INVALID_ENUM_LITERAL);
+			}
+		} //else {
+			//If container is not a PathExpression, the entire enum type has to be specified
+			//However, the it is checked during reference resolution
+		//}
+	}
 }

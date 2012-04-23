@@ -22,46 +22,48 @@ public class ShowLocationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
-		
 		if (selection instanceof TreeSelection) {
-			Object obj = ((TreeSelection) selection).getFirstElement();
-			
-			if (obj != null && obj instanceof PatternMatch) {
-				PatternMatch pm = (PatternMatch) obj;
-				
-				IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
-				Object[] locationObjects = pm.getLocationObjects();
-				TreePath[] paths = new TreePath[locationObjects.length];
-				int i = 0;
-				
-				for (Object o: locationObjects) {
-					TreePath path = createTreePath((EObject) o);
-					paths[i] = path;
-					i++;
-				}
-
-				TreeSelection treeSelection = new TreeSelection(paths);
-				ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
-				selectionProvider.setSelection(treeSelection);
-				
-				//Reflection API is used here!!!
-				try {
-					Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
-					m.invoke(editorPart, treeSelection.toList());
-				} 
-				catch (Exception e) {
-					System.out.println(e.getMessage());
-				} 
-
-				//System.out.println(selectionProvider.getSelection());
-			}
-			
+			showLocation((TreeSelection) selection);
 		}
-		
 		return null;
 	}
 	
-	private TreePath createTreePath(EObject obj) {
+	public static void showLocation(TreeSelection selection) {
+		Object obj = selection.getFirstElement();
+		
+		if (obj != null && obj instanceof PatternMatch) {
+			PatternMatch pm = (PatternMatch) obj;
+			
+			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
+			Object[] locationObjects = pm.getLocationObjects();
+			TreePath[] paths = new TreePath[locationObjects.length];
+			int i = 0;
+			
+			for (Object o: locationObjects) {
+				TreePath path = createTreePath((EObject) o);
+				paths[i] = path;
+				i++;
+			}
+
+			TreeSelection treeSelection = new TreeSelection(paths);
+			ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
+			selectionProvider.setSelection(treeSelection);
+			
+			//bring editor part to top
+			editorPart.getSite().getPage().bringToTop(editorPart);
+			
+			//Reflection API is used here!!!
+			try {
+				Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
+				m.invoke(editorPart, treeSelection.toList());
+			} 
+			catch (Exception e) {
+				System.out.println(e.getMessage());
+			} 
+		}
+	}
+	
+	private static TreePath createTreePath(EObject obj) {
 		List<Object> nodes = new ArrayList<Object>();
 		nodes.add(obj);
 		EObject tmp = obj.eContainer();

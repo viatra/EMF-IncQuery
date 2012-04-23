@@ -10,8 +10,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -36,6 +40,8 @@ public class PatternMatcherRoot {
 	private Map<String, PatternMatcher> matchers;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ViewerRootKey key;
+	
+	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
 	public PatternMatcherRoot(ViewerRootKey key) {
 		matchers = new HashMap<String, PatternMatcher>();
@@ -98,6 +104,10 @@ public class PatternMatcherRoot {
 					matcher = new GenericPatternMatcher(pattern, key.getNotifier());
 				}
 				catch (IncQueryRuntimeException e) {
+					logger.log(new Status(IStatus.ERROR,
+							IncQueryGUIPlugin.PLUGIN_ID,
+							"Cannot initialize pattern matcher for pattern "
+									+ pattern.getName(), e));
 					matcher = null;
 				}
 				_patterns.add(CorePatternLanguageHelper.getFullyQualifiedName(pattern));

@@ -66,11 +66,11 @@ class PatternMatchClassInferrer {
    			it.visibility = JvmVisibility::PUBLIC
    			for (Variable variable : pattern.parameters) {
    				val javaType = variable.calculateType
-   				it.parameters += variable.toParameter(variable.name, javaType)
+   				it.parameters += variable.toParameter(variable.parameterName, javaType)
    			}
    			it.body = [append('''
    				«FOR variable : pattern.parameters»
-   				this.«variable.fieldName» = «variable.name»;
+   				this.«variable.fieldName» = «variable.parameterName»;
    				«ENDFOR»
    			''')]
    		]
@@ -91,11 +91,11 @@ class PatternMatchClassInferrer {
    			''')]
    		]
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += pattern.toMethod("get" + variable.name.toFirstUpper, variable.calculateType) [
-   				it.body = [append('''
-   					return this.«variable.fieldName»;
-   				''')]
-   			]
+			matchClass.members += pattern.toMethod(variable.getterMethodName, variable.calculateType) [
+	   			it.body = [append('''
+	   				return this.«variable.fieldName»;
+	   			''')]
+	   		]
    		}
    	}
    	
@@ -118,10 +118,10 @@ class PatternMatchClassInferrer {
    			''')]
    		]
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += pattern.toMethod("set" + variable.name.toFirstUpper, null) [
-   				it.parameters += pattern.toParameter(variable.name, variable.calculateType)
+   			matchClass.members += pattern.toMethod(variable.setterMethodName, null) [
+   				it.parameters += pattern.toParameter(variable.parameterName, variable.calculateType)
    				it.body = [append('''
-   					this.«variable.fieldName» = «variable.name»;
+   					this.«variable.fieldName» = «variable.parameterName»;
    				''')]
    			]
    		}

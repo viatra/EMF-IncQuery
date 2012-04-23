@@ -7,6 +7,8 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
+import com.google.inject.Injector;
+
 /**
  * Runnable unit of registering patterns in given file.
  * 
@@ -20,9 +22,11 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 public class RuntimeMatcherRegistrator implements Runnable {
 
 	private IFile file;
+	private Injector injector;
 	
-	public RuntimeMatcherRegistrator(IFile file) {
+	public RuntimeMatcherRegistrator(IFile file, Injector injector) {
 		this.file = file;
+		this.injector = injector;
 	}
 
 	@Override
@@ -30,7 +34,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 		QueryExplorer.openView();
 		ViewerRoot vr = QueryExplorer.getViewerRoot();
 
-		PatternModel parsedEPM = DatabindingUtil.parseEPM(file);
+		PatternModel parsedEPM = DatabindingUtil.parseEPM(file, injector);
 			
 		DatabindingUtil.registeredPatterModels.remove(file);
 			

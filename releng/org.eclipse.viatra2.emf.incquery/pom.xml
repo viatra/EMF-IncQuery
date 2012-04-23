@@ -20,12 +20,18 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.gui</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core.ui</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui</module>
+		<!--  <module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf</module>-->
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.validation</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
 	<properties>
