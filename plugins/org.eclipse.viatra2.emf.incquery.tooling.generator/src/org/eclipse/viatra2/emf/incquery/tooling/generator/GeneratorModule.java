@@ -6,6 +6,8 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.ExtensionBas
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
+import org.eclipse.xtext.common.types.access.jdt.JdtTypeProviderFactory;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 
 public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
@@ -28,5 +30,10 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 	// contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
 	public IWorkspaceRoot bindIWorkspaceRootToInstance() {
 		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
+	// contributed by org.eclipse.xtext.generator.types.TypesGeneratorFragment
+	public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+		return JdtTypeProviderFactory.class;
 	}
 }
