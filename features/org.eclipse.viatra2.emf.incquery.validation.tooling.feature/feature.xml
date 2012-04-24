@@ -2,19 +2,17 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.validation.tooling.feature"
       label="EMF-IncQuery Validation Tooling"
-      version="0.6.0.qualifier">
+      version="0.6.0.qualifier"
+      license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      EMF-IncQuery Validation framework tooling feature.
    </description>
 
    <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
    </copyright>
-
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
-   </license>
 
    <includes
          id="org.eclipse.viatra2.emf.incquery.validation.feature"

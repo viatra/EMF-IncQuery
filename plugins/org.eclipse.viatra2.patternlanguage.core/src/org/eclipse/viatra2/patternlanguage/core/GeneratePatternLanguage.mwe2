@@ -26,7 +26,7 @@ Workflow {
         platformUri = "${runtimeProject}/.."
         registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
         registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
-registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
+		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
     }
 
     component = DirectoryCleaner {
@@ -113,8 +113,8 @@ registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/
             // modelFileExtension = file.extensions
             // }
             
-// rename refactoring
-fragment = refactoring.RefactorElementNameFragment {}
+			// rename refactoring
+			fragment = refactoring.RefactorElementNameFragment {}
 
             // provides the necessary bindings for java types integration
             fragment = types.TypesGeneratorFragment {}
@@ -123,17 +123,17 @@ fragment = refactoring.RefactorElementNameFragment {}
             fragment = xbase.XbaseGeneratorFragment { }
             
             // Code generator
-fragment = generator.GeneratorFragment {
-}
+			fragment = generator.GeneratorFragment {
+			}
 
             // provides a preference page for template proposals
             //fragment = templates.CodetemplatesGeneratorFragment {}
 
 
             // provides a compare view
-// fragment = compare.CompareFragment {
-// fileExtensions = file.extensions
-// }
+			// fragment = compare.CompareFragment {
+			// fileExtensions = file.extensions
+			// }
 
         }
     }

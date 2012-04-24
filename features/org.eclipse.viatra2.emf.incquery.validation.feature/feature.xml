@@ -2,19 +2,17 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.validation.feature"
       label="EMF-IncQuery Validation Framework"
-      version="0.6.0.qualifier">
+      version="0.6.0.qualifier"
+      license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      EMF-IncQuery Validation framework runtime
    </description>
 
    <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
    </copyright>
-
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
-   </license>
 
    <includes
          id="org.eclipse.viatra2.emf.incquery.runtime.feature"
@@ -33,12 +31,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!--<plugin
-         id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>-->
 
 </feature>
