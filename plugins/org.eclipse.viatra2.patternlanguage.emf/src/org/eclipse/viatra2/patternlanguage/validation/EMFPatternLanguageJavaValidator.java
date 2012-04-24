@@ -11,18 +11,17 @@
 package org.eclipse.viatra2.patternlanguage.validation;
 
 import java.util.List;
+import java.util.Map.Entry;
+
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
@@ -32,7 +31,6 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguage
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
-import org.eclipse.xtext.formatting.impl.AbstractFormattingConfig.ElementPattern;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -52,7 +50,8 @@ public class EMFPatternLanguageJavaValidator extends
 		AbstractEMFPatternLanguageJavaValidator {
 
 	public static final String DUPLICATE_IMPORT = "Duplicate import of ";
-	public static final String UNUSED_VARIABLE_MESSAGE = "Variable %s is used only once";
+	public static final String UNUSED_LOCAL_VARIABLE_MESSAGE = "Local variable '%s' is used only once.";
+	public static final String UNUSED_PARAM_VARIABLE_MESSAGE = "Pattern parameter '%s' is never used in body '%s'.";
 
 	@Check
 	public void checkPatternModelPackageImports(PatternModel patternModel) {
@@ -69,56 +68,43 @@ public class EMFPatternLanguageJavaValidator extends
 	}
 	
 	@Check
-	public void checkUnusedVariables(Pattern pattern) {
-		for (Variable var : pattern.getParameters()) {
-			if (!var.getReferences().isEmpty()) {
-				return; // itt lenne jó
-			}
-		}
-	}
-	
-	@Check
 	public void checkUnusedVariables(PatternBody patternBody) {
-		if (!patternBody.getVariables().isEmpty()) {
-			return; // itt lenne jó
-		}
-	}
-	
-	@Check
-	public void checkUnusedVariables(Constraint constraint) {
-		if (constraint instanceof EClassifierConstraint) {
-			if (((EClassifierConstraint)constraint).getVar().getVariable() != null) {
-				return; // itt lenne jó
+		// Check number of references for local variables.
+		// NOTE: This step has to come first, because the getVariables() function finds/initializes the references.
+		for (Variable var : patternBody.getVariables()) {
+			if (var.getReferences().size() == 1) {
+				warning(String.format(UNUSED_LOCAL_VARIABLE_MESSAGE, var.getName()), var.getReferences().get(0), null, EMFIssueCodes.UNUSED_VARIABLE);
 			}
 		}
-		else if (constraint instanceof PathExpressionConstraint) {
-			PathExpressionConstraint peConstr = (PathExpressionConstraint)constraint;
-			if (peConstr.getHead().getSrc().getVariable() != null) {
-				return; // itt lenne jó
-			}
-			
-			if (peConstr.getHead().getDst() instanceof VariableValue) {
-				if (((VariableValue)peConstr.getHead().getDst()).getValue().getVariable() != null) {
-					return; // itt lenne jó
+
+		// Create and initialize reference counter for pattern parameter variables.
+		java.util.Map<Variable, Integer> referenceCount = new java.util.HashMap<Variable, Integer>();
+		for (Variable var : ((Pattern)patternBody.eContainer()).getParameters()) {
+			referenceCount.put(var, 0);
+		}
+		
+		// Iterate through all contents of the pattern body and increment the number of references referring to any pattern parameter variable.
+		java.util.Iterator<EObject> it = patternBody.eAllContents();
+		while(it.hasNext()) {
+			EObject obj = it.next();
+			if (obj instanceof VariableReference) {
+				Variable referencedVar = ((VariableReference)obj).getVariable();
+				Integer count = referenceCount.get(referencedVar);
+				if (count != null) {
+					referenceCount.put(referencedVar, count + 1);
 				}
 			}
 		}
-	}
-	
-	@Check
-	public void checkUnusedVariables(VariableReference variableRef) {
-		if (variableRef.getVariable() != null) {
-			return; // itt lenne jó
+		
+		// Check the number of local references for pattern parameter variables.
+		for (Entry<Variable, Integer> entry : referenceCount.entrySet()) {
+			if (entry.getValue() == 0) {
+				String patternBodyName = (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d", ((Pattern)patternBody.eContainer()).getBodies().indexOf(patternBody));
+				warning(String.format(UNUSED_PARAM_VARIABLE_MESSAGE, entry.getKey().getName(), patternBodyName), entry.getKey(), null, EMFIssueCodes.UNUSED_VARIABLE);
+			}
 		}
 	}
 	
-	@Check
-	public void checkUnusedVariables(Variable variable) {
-		if (!variable.getReferences().isEmpty()) {
-			return; // itt lenne jó
-		}
-	}
-
 	@Override
 	protected List<EPackage> getEPackages() {
 		// PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the validation process
