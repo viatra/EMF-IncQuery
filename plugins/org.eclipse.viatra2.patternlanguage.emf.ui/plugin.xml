@@ -322,5 +322,11 @@
             extensions="eiq">
     </provider>
   </extension>
+  <extension
+        point="org.eclipse.viatra2.emf.incquery.runtime.injectorprovider">
+     <injector
+           injector="org.eclipse.viatra2.patternlanguage.ui.UiPluginInjectorProvider">
+     </injector>
+  </extension>
 
 </plugin>
