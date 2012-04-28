@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
 
+import java.awt.Container;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -21,6 +22,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionCo
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
@@ -50,8 +52,6 @@ public class EMFPatternLanguageJavaValidator extends
 		AbstractEMFPatternLanguageJavaValidator {
 
 	public static final String DUPLICATE_IMPORT = "Duplicate import of ";
-	public static final String UNUSED_LOCAL_VARIABLE_MESSAGE = "Local variable '%s' is used only once.";
-	public static final String UNUSED_PARAM_VARIABLE_MESSAGE = "Pattern parameter '%s' is never used in body '%s'.";
 
 	@Check
 	public void checkPatternModelPackageImports(PatternModel patternModel) {
@@ -67,20 +67,64 @@ public class EMFPatternLanguageJavaValidator extends
 		}
 	}
 	
+	private boolean isVariableReferenceNegative(VariableReference varRef) {
+		EObject container = varRef.eContainer();
+		while (!(container instanceof Constraint)) {
+			container = container.eContainer();
+		}
+		
+		if (container instanceof PathExpressionConstraint) {
+			return ((PathExpressionConstraint)container).isNegative();
+		}
+		else if (container instanceof PatternCompositionConstraint) {
+			return ((PatternCompositionConstraint)container).isNegative();
+		}
+		
+		return false;
+	}
+	
+	private String getPatternBodyName(PatternBody patternBody) {
+		return (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d", ((Pattern)patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
+	}
+	
 	@Check
 	public void checkUnusedVariables(PatternBody patternBody) {
 		// Check number of references for local variables.
 		// NOTE: This step has to come first, because the getVariables() function finds/initializes the references.
-		for (Variable var : patternBody.getVariables()) {
-			if (var.getReferences().size() == 1) {
-				warning(String.format(UNUSED_LOCAL_VARIABLE_MESSAGE, var.getName()), var.getReferences().get(0), null, EMFIssueCodes.UNUSED_VARIABLE);
+		variables: for (Variable var : patternBody.getVariables()) {
+			if (var.getReferences().size() == 1) {	// There is only 1 reference to the variable:
+				if (!isVariableReferenceNegative(var.getReferences().get(0))) {
+					warning(String.format("Local variable '%s' is referenced only once.", var.getName()), var.getReferences().get(0), null, EMFIssueCodes.UNUSED_VARIABLE);
+				}
+			}
+			else {	// There are at least 2 references to the variable:
+				for (VariableReference varRef : var.getReferences()) {
+					if (!isVariableReferenceNegative(varRef)) {	// The reference is positive:
+						continue variables;	// The variable has at least one positive reference, so we're good. Move to next variable.
+					}
+				}
+				error(String.format("There is no positive reference to local variable '%s'.", var.getName()), var.getReferences().get(0), null, EMFIssueCodes.UNUSED_VARIABLE);
 			}
 		}
 
+		class ReferenceCount {
+			public Integer Positive;
+			public Integer Negative;
+			
+			public ReferenceCount() {
+				Positive = 0;
+				Negative = 0;
+			}
+			
+			public Integer getAll() {
+				return Positive + Negative;
+			}
+		}
+	
 		// Create and initialize reference counter for pattern parameter variables.
-		java.util.Map<Variable, Integer> referenceCount = new java.util.HashMap<Variable, Integer>();
+		java.util.Map<Variable, ReferenceCount> referenceCount = new java.util.HashMap<Variable, ReferenceCount>();
 		for (Variable var : ((Pattern)patternBody.eContainer()).getParameters()) {
-			referenceCount.put(var, 0);
+			referenceCount.put(var, new ReferenceCount());
 		}
 		
 		// Iterate through all contents of the pattern body and increment the number of references referring to any pattern parameter variable.
@@ -88,19 +132,26 @@ public class EMFPatternLanguageJavaValidator extends
 		while(it.hasNext()) {
 			EObject obj = it.next();
 			if (obj instanceof VariableReference) {
-				Variable referencedVar = ((VariableReference)obj).getVariable();
-				Integer count = referenceCount.get(referencedVar);
+				VariableReference varRef = (VariableReference)obj;
+				ReferenceCount count = referenceCount.get(varRef.getVariable());
 				if (count != null) {
-					referenceCount.put(referencedVar, count + 1);
+					if (isVariableReferenceNegative(varRef)) {
+						count.Negative++;
+					}
+					else {
+						count.Positive++;
+					}
 				}
 			}
 		}
 		
 		// Check the number of local references for pattern parameter variables.
-		for (Entry<Variable, Integer> entry : referenceCount.entrySet()) {
-			if (entry.getValue() == 0) {
-				String patternBodyName = (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d", ((Pattern)patternBody.eContainer()).getBodies().indexOf(patternBody));
-				warning(String.format(UNUSED_PARAM_VARIABLE_MESSAGE, entry.getKey().getName(), patternBodyName), entry.getKey(), null, EMFIssueCodes.UNUSED_VARIABLE);
+		for (Entry<Variable, ReferenceCount> entry : referenceCount.entrySet()) {
+			if (entry.getValue().getAll().equals(0)) {
+				error(String.format("Symbolic variable '%s' is never referenced in body '%s'.", entry.getKey().getName(), getPatternBodyName(patternBody)), entry.getKey(), null, EMFIssueCodes.UNUSED_VARIABLE);
+			}
+			else if (entry.getValue().Positive.equals(0)) {
+				error(String.format("Symbolic variable '%s' has no positive reference in body '%s'.", entry.getKey().getName(), getPatternBodyName(patternBody)), entry.getKey(), null, EMFIssueCodes.UNUSED_VARIABLE);
 			}
 		}
 	}
