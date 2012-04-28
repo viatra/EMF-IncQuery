@@ -1,13 +1,12 @@
-package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
@@ -27,7 +26,6 @@ public class PatternMatcher {
 	private Runnable processMatchesRunnable;
 	private Map<IPatternMatch, PatternMatch> sigMap;
 	private PatternMatcherRoot parent;
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this); 
 	private boolean generated;
 	private String patternFqn;
 	
@@ -68,15 +66,6 @@ public class PatternMatcher {
 		}
 	}
 	
-	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
-	}
-
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(listener);
-	}
-	
 	private void processNewMatches(Collection<? extends IPatternMatch> matches) {
 		for (IPatternMatch s : matches) {
 			addMatch(s);
@@ -90,17 +79,15 @@ public class PatternMatcher {
 	}
 	
 	private void addMatch(IPatternMatch match) {
-		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
 		PatternMatch pm = new PatternMatch(this, match);
 		this.sigMap.put(match, pm);
 		this.matches.add(pm);
-		this.propertyChangeSupport.firePropertyChange(MATCHES_ID, oldValue, matches);
+		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 	
 	private void removeMatch(IPatternMatch match) {
-		List<PatternMatch> oldValue = new ArrayList<PatternMatch>(matches);
 		this.matches.remove(this.sigMap.remove(match));
-		this.propertyChangeSupport.firePropertyChange(MATCHES_ID, oldValue, matches);
+		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 
 	public PatternMatcherRoot getParent() {
@@ -109,20 +96,16 @@ public class PatternMatcher {
 
 	public String getText() {
 		if (matcher == null) {
-			return "Matcher could not be created for "+patternFqn+ (isGenerated() ? " (Generated)" : " (Runtime)");
+			return "Matcher could not be created for pattern '"+patternFqn+ "'" + (isGenerated() ? " (Generated)" : " (Runtime)");
 		}
 		else {
-			return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)");
+			return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)"+" [size of matchset: "+matches.size()+"]");
 		}
 	}
 
 	public static final String MATCHES_ID = "matches";
 	public List<PatternMatch> getMatches() {
 		return matches;
-	}
-
-	public void setMatches(List<PatternMatch> matches) {
-		this.matches = matches;
 	}
 
 	public boolean isGenerated() {

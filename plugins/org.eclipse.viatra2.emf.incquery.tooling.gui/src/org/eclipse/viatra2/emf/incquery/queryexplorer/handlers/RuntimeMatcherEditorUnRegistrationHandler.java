@@ -11,6 +11,7 @@ public class RuntimeMatcherEditorUnRegistrationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);	
+		
 		if (file != null) {
 			RuntimeMatcherUnRegistrator job = new RuntimeMatcherUnRegistrator(file);
 			job.run();

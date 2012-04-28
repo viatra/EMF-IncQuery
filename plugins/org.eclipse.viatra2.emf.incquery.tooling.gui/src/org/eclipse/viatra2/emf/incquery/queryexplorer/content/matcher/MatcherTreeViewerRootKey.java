@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -12,12 +12,12 @@ import org.eclipse.ui.IEditorPart;
  * @author Tamas Szabo
  *
  */
-public class ViewerRootKey {
+public class MatcherTreeViewerRootKey {
 
 	private IEditorPart editor;
 	private Notifier notifier;
 
-	public ViewerRootKey(IEditorPart editor, Notifier notifier) {
+	public MatcherTreeViewerRootKey(IEditorPart editor, Notifier notifier) {
 		super();
 		this.editor = editor;
 		this.notifier = notifier;
@@ -41,8 +41,8 @@ public class ViewerRootKey {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ViewerRootKey) {
-			ViewerRootKey key = (ViewerRootKey) obj;
+		if (obj instanceof MatcherTreeViewerRootKey) {
+			MatcherTreeViewerRootKey key = (MatcherTreeViewerRootKey) obj;
 			if (key.getEditor().equals(editor)
 					&& key.getNotifier().equals(notifier))
 				return true;

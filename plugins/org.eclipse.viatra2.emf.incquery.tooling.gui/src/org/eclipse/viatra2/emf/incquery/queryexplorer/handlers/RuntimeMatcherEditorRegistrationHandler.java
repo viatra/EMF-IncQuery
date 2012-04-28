@@ -15,7 +15,7 @@ public class RuntimeMatcherEditorRegistrationHandler extends AbstractHandler {
 	Injector injector;
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {		
 		IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);	
 		if (file != null) {
 			RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file, injector);

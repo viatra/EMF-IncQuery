@@ -22,16 +22,14 @@ public class LoadModelHandler extends AbstractHandler {
 				
 				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(QueryExplorer.getPartListener());
-					QueryExplorer.getViewerRoot().addPatternMatcherRoot(editorPart, resourceSet);
+					HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(QueryExplorer.getInstance().getModelPartListener());
+					QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(editorPart, resourceSet);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//QueryExplorer.refreshTreeViewer();
-		
+				
 		return null;
 	}
 }

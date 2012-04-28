@@ -15,9 +15,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.RuntimeDatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -258,7 +257,7 @@ public class DatabindingUtil {
 	 * @return the PatternMatcherRoot element
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static PatternMatcherRoot createPatternMatcherRoot(ViewerRootKey key) {
+	public static PatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		PatternMatcherRoot result = new PatternMatcherRoot(key);
 
 		//generated matchers

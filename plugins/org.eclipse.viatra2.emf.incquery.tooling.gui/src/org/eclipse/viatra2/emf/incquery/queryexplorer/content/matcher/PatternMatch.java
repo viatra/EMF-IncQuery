@@ -1,18 +1,17 @@
-package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
- * A PatternMatch is associated to every Signature of a matcher.
+ * A PatternMatch is associated to every match of a matcher.
  * It is the lowest level element is the treeviewer.
  * 
  * @author Tamas Szabo
@@ -24,7 +23,6 @@ public class PatternMatch {
 	private IPatternMatch match;
 	private PatternMatcher parent;
 	private String message;
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ParameterValueChangedListener listener;
 	private List<IObservableValue> affectedValues;
 	
@@ -49,18 +47,11 @@ public class PatternMatch {
 			}
 		}
 	}
-
-	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
-	}
-
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(listener);
-	}
 	
 	public void setText(String text) {
-		propertyChangeSupport.firePropertyChange("text", this.text,	this.text = text);
+		this.text = text;
+		String[] properties = new String[] {"text"};
+		QueryExplorer.getInstance().getMatcherTreeViewer().update(this, properties);
 	}
 
 	public String getText() {
@@ -78,7 +69,7 @@ public class PatternMatch {
 		}
 	}
 
-	public IPatternMatch getSignature() {
+	public IPatternMatch getPatternMatch() {
 		return match;
 	}
 	

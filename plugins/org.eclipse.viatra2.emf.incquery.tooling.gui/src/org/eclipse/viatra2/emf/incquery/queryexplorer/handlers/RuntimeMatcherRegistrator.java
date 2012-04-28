@@ -2,8 +2,8 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
@@ -31,8 +31,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
 	@Override
 	public void run() {
-		QueryExplorer.openView();
-		ViewerRoot vr = QueryExplorer.getViewerRoot();
+			
+		MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file, injector);
 			

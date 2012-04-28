@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.HashMap;
 

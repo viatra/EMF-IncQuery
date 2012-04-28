@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.queryexplorer.observable;
+package org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable;
 
 /**
  * This class represents a single row in the table viewer and is associated to a single 

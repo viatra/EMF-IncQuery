@@ -8,13 +8,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 /**
- * The PartListener is used to observer EditorPart close actions.
+ * The PartListener is used to observe EditorPart close actions.
  * 
  * @author Tamas Szabo
  *
  */
-public class PartListener implements IPartListener {
-
+public class ModelEditorPartListener implements IPartListener {
+	
 	@Override
 	public void partActivated(IWorkbenchPart part) {
 
@@ -35,7 +35,7 @@ public class PartListener implements IPartListener {
 			if (closedEditor instanceof IEditingDomainProvider) {
 				ResourceSet resourceSet = ((IEditingDomainProvider) closedEditor).getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					QueryExplorer.getViewerRoot().removePatternMatcherRoot(closedEditor, resourceSet);
+					QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(closedEditor, resourceSet);
 				}
 			}
 		}
