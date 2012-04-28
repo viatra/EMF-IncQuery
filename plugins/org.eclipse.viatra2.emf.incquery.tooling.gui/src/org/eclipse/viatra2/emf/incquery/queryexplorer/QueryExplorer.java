@@ -6,6 +6,9 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.gef.ui.palette.FlyoutPaletteComposite;
+import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -62,6 +66,9 @@ public class QueryExplorer extends ViewPart {
 	private MatcherLabelProvider matcherLabelProvider = new MatcherLabelProvider();
 	private MatcherTreeViewerRoot matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 	
+	//observable view
+	FlyoutPreferences flyoutPreferences = FlyoutPaletteComposite.createFlyoutPreferences(new Preferences());
+	
 	private SashForm form;
 	private ModelEditorPartListener modelPartListener = new ModelEditorPartListener();
 	private FileEditorPartListener filePartListener = new FileEditorPartListener();
@@ -92,6 +99,11 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
+		
+//		PaletteViewerProvider pvp = new PaletteViewerProvider(new EditDomain());
+//		FlyoutPaletteComposite flyoutComposite = new FlyoutPaletteComposite(
+//				parent, SWT.BORDER, this.getSite().getPage(), pvp, flyoutPreferences);
+//		flyoutComposite.setVisible(true);
 		
 		form = new SashForm(parent, SWT.HORIZONTAL);
 		matcherTreeViewer = new TreeViewer(form);
@@ -139,6 +151,7 @@ public class QueryExplorer extends ViewPart {
 		getSite().setSelectionProvider(matcherTreeViewer);
 		
 		initFileListener();
+		initFileEditorListener();
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {
@@ -221,6 +234,11 @@ public class QueryExplorer extends ViewPart {
 			}
 		}
 		
+	}
+	
+	private void initFileEditorListener() {
+		IPartService service = (IPartService) getSite().getService(IPartService.class);
+		service.addPartListener(filePartListener);
 	}
 	
 	private void initFileListener() {

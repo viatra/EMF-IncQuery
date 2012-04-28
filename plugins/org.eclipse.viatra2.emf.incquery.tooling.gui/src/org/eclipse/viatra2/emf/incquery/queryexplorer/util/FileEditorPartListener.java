@@ -7,7 +7,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherUnRegistrator;
 
 /**
@@ -32,24 +31,23 @@ public class FileEditorPartListener implements IPartListener {
 
 	@Override
 	public void partClosed(IWorkbenchPart part) {
-//		if (part != null && part instanceof IEditorPart) {
-//			IEditorPart closedEditor = (IEditorPart) part;
-//			
-//			closedEditor.getSite().getPage().removePartListener(QueryExplorer.getInstance().getFilePartListener());
-//			IEditorInput editorInput = closedEditor.getEditorInput();
-//			IFile file = null;
-//			String question = "";
-//			
-//			if (editorInput instanceof FileEditorInput) {
-//				file = ((FileEditorInput) editorInput).getFile();
-//				question = "There are patterns (from file named '"+file.getName()+"') registered in the Query Explorer.\nWould you like to unregister them?";
-//				boolean answer = MessageDialog.openQuestion(closedEditor.getSite().getShell(), dialogTitle, question);
-//				if (answer) {
-//					RuntimeMatcherUnRegistrator job = new RuntimeMatcherUnRegistrator(closedEditor, file);
-//					job.run();
-//				}
-//			}
-//		}
+		if (part != null && part instanceof IEditorPart) {
+			IEditorPart closedEditor = (IEditorPart) part;
+			IEditorInput editorInput = closedEditor.getEditorInput();
+			
+			if (editorInput != null && editorInput instanceof FileEditorInput) {
+				IFile file = ((FileEditorInput) editorInput).getFile();
+				
+				if (file != null && file.getFileExtension().matches("eiq") && DatabindingUtil.registeredPatterModels.containsKey(file)) {
+					String question = "There are patterns (from file named '"+file.getName()+"') registered in the Query Explorer.\nWould you like to unregister them?";
+					boolean answer = MessageDialog.openQuestion(closedEditor.getSite().getShell(), dialogTitle, question);
+					if (answer) {
+						RuntimeMatcherUnRegistrator job = new RuntimeMatcherUnRegistrator(file);
+						job.run();
+					}
+				}
+			}
+		}
 	}
 
 	@Override
