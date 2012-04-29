@@ -1,5 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -37,11 +39,12 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLab
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailElement;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailObservable;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailObserver;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.FileEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
@@ -58,6 +61,7 @@ public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	private TableViewer tableViewer;
+	private TableViewer patternsViewer;
 	
 	//matcher tree viewer
 	private TreeViewer matcherTreeViewer;
@@ -95,14 +99,19 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
-		IFlyoutPreferences preferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 400);
-		FlyoutControlComposite flyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, preferences);
-		flyoutControlComposite.setTitleText("Observer view");
-		flyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
+		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 400);
+		FlyoutControlComposite rightFlyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
+		rightFlyoutControlComposite.setTitleText("Observer view");
+		rightFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
-		//form = new SashForm(parent, SWT.HORIZONTAL);
-		matcherTreeViewer = new TreeViewer(flyoutControlComposite.getClientParent());
-		tableViewer = new TableViewer(flyoutControlComposite.getFlyoutParent());
+		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 150);
+		FlyoutControlComposite leftFlyoutControlComposite = new FlyoutControlComposite(rightFlyoutControlComposite.getClientParent(), SWT.NONE, leftFlyoutPreferences);
+		leftFlyoutControlComposite.setTitleText("Registered patterns");
+		leftFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
+		
+		matcherTreeViewer = new TreeViewer(leftFlyoutControlComposite.getClientParent());
+		tableViewer = new TableViewer(rightFlyoutControlComposite.getFlyoutParent());
+		patternsViewer = new TableViewer(leftFlyoutControlComposite.getFlyoutParent());
 		
 		//matcherTreeViewer configuration
 		matcherTreeViewer.setContentProvider(matcherContentProvider);
@@ -112,6 +121,11 @@ public class QueryExplorer extends ViewPart {
 		IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
 		selection.addValueChangeListener(new SelectionChangleListener());
 		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
+		
+		//patternsViewer configuration
+		patternsViewer.setContentProvider(new ObservableListContentProvider());
+		IObservableList list = BeansObservables.observeList(PatternRegistry.getInstance(), "patternNames", String.class);
+		patternsViewer.setInput(list);
 		
 		// Create menu manager.
         MenuManager menuMgr = new MenuManager();
@@ -219,7 +233,7 @@ public class QueryExplorer extends ViewPart {
 					tableViewer.setInput(null);
 				}
 				else {
-					DetailObservable observer = new DetailObservable(databindableMatcher, pm);
+					DetailObserver observer = new DetailObserver(databindableMatcher, pm);
 					tableViewer.setInput(observer);
 					//ViewerSupport.bind(tableViewer, observer, new LabelPropety());
 				}

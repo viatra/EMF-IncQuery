@@ -4,7 +4,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 
 public class RuntimeMatcherUnRegistrator implements Runnable {
 
@@ -21,7 +21,8 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 		for (PatternMatcherRoot root : vr.getRoots()) {
 			root.unregisterPatternsFromFile(file);
 		}
-		DatabindingUtil.registeredPatterModels.remove(file);
+		
+		PatternRegistry.getInstance().unregisterPatternModel(file);
 	}
 
 }

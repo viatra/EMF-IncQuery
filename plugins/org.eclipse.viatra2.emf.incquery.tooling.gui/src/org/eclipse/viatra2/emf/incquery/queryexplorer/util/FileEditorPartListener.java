@@ -38,7 +38,7 @@ public class FileEditorPartListener implements IPartListener {
 			if (editorInput != null && editorInput instanceof FileEditorInput) {
 				IFile file = ((FileEditorInput) editorInput).getFile();
 				
-				if (file != null && file.getFileExtension().matches("eiq") && DatabindingUtil.registeredPatterModels.containsKey(file)) {
+				if (file != null && file.getFileExtension().matches("eiq") && PatternRegistry.getInstance().getFiles().contains(file)) {
 					String question = "There are patterns (from file named '"+file.getName()+"') registered in the Query Explorer.\nWould you like to unregister them?";
 					boolean answer = MessageDialog.openQuestion(closedEditor.getSite().getShell(), dialogTitle, question);
 					if (answer) {

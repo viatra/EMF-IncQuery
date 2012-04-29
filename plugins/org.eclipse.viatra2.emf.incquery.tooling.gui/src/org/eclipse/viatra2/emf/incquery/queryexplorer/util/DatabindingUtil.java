@@ -40,7 +40,6 @@ import com.google.inject.Injector;
  */
 public class DatabindingUtil {
 
-	public static Map<IFile, PatternModel> registeredPatterModels = new HashMap<IFile, PatternModel>();
 	public static Map<URI, AdapterFactory> registeredItemProviders = collectItemProviders();
 	
 	private static Map<URI, AdapterFactory> collectItemProviders() {
@@ -110,18 +109,16 @@ public class DatabindingUtil {
 		Pattern pattern = null;
 		
 		//find PatternUI annotation
-		for (IFile key : registeredPatterModels.keySet()) {
-			for (Pattern p : registeredPatterModels.get(key).getPatterns()) {
-				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
-					pattern = p;
-					for (Annotation a : p.getAnnotations()) {
-						if (a.getName().matches("PatternUI")) {							
-							for (AnnotationParameter ap : a.getParameters()) {
-								if (ap.getName().matches("message")) {
-									ValueReference valRef = ap.getValue();
-									if (valRef instanceof StringValueImpl) {
-										return ((StringValueImpl) valRef).getValue();
-									}
+		for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
+			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
+				pattern = p;
+				for (Annotation a : p.getAnnotations()) {
+					if (a.getName().matches("PatternUI")) {							
+						for (AnnotationParameter ap : a.getParameters()) {
+							if (ap.getName().matches("message")) {
+								ValueReference valRef = ap.getValue();
+								if (valRef instanceof StringValueImpl) {
+									return ((StringValueImpl) valRef).getValue();
 								}
 							}
 						}
@@ -129,6 +126,7 @@ public class DatabindingUtil {
 				}
 			}
 		}
+		
 		
 //		Object tmp = match.get(0);
 //		if (tmp instanceof EObject) {
@@ -205,8 +203,8 @@ public class DatabindingUtil {
 		Pattern pattern = null;
 		
 		//process annotations if present
-		for (IFile file : registeredPatterModels.keySet()) {
-			for (Pattern p : registeredPatterModels.get(file).getPatterns()) {
+
+			for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
 				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 					pattern = p;
 					
@@ -238,7 +236,7 @@ public class DatabindingUtil {
 					}
 				}
 			}
-		}
+		
 		
 		//try to show parameters with a name attribute
 		if (!annotationFound && pattern != null) {
@@ -281,8 +279,8 @@ public class DatabindingUtil {
 		}
 		
 		//runtime matchers
-		for (IFile file : registeredPatterModels.keySet()) {
-			result.registerPatternsFromFile(file, registeredPatterModels.get(file));
+		for (IFile file : PatternRegistry.getInstance().getFiles()) {
+			result.registerPatternsFromFile(file, PatternRegistry.getInstance().getPatternModel(file));
 		}
 
 		return result;

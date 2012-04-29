@@ -5,6 +5,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 import com.google.inject.Injector;
@@ -36,13 +37,13 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file, injector);
 			
-		DatabindingUtil.registeredPatterModels.remove(file);
+		PatternRegistry.getInstance().unregisterPatternModel(file);
 			
 		for (PatternMatcherRoot root : vr.getRoots()) {
 			root.unregisterPatternsFromFile(file);
 		}
 
-		DatabindingUtil.registeredPatterModels.put(file, parsedEPM);
+		PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
 			
 		for (PatternMatcherRoot root : vr.getRoots()) {
 			root.registerPatternsFromFile(file, parsedEPM);

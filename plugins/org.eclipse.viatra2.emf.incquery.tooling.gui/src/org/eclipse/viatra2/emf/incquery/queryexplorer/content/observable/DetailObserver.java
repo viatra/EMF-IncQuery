@@ -23,14 +23,14 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
  * @author Tamas Szabo
  *
  */
-public class DetailObservable extends AbstractObservableList {
+public class DetailObserver extends AbstractObservableList {
 
 	private PatternMatch patternMatch;
 	private List<DetailElement> details;
 	private ValueChangeListener listener;
 	private Map<IObservableValue, DetailElement> valueMap;
 	
-	public DetailObservable(DatabindingAdapter<IPatternMatch> databindableMatcher, PatternMatch pm) {
+	public DetailObserver(DatabindingAdapter<IPatternMatch> databindableMatcher, PatternMatch pm) {
 		this.patternMatch = pm;
 		this.details = new ArrayList<DetailElement>();
 		this.valueMap = new HashMap<IObservableValue, DetailElement>();

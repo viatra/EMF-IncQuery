@@ -11,7 +11,7 @@ public final class FlyoutControlComposite extends Composite {
 
 	private final IFlyoutPreferences preferences;
 	private final FlyoutContainer flyoutContainer;
-	private int minWidth = 400;
+	private int minWidth = 150;
 	private int validDockLocations = -1;
 
 	public FlyoutControlComposite(Composite parent, int style,
