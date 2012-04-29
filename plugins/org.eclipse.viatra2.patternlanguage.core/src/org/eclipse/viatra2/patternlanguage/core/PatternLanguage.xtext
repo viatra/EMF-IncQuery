@@ -143,7 +143,7 @@ ComputationValue returns ValueReference:
 	AggregatedValue;
 	
 AggregatedValue returns ComputationValue:
- 	{AggregatedValue} aggregator=AggregatorExpression call=PatternCall;
+ 	{AggregatedValue} 'aggregate' aggregator=AggregatorExpression call=PatternCall;
 
 AggregatorExpression returns AggregatorExpression:
 	{CountAggregator} 'count';
