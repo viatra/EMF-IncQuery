@@ -10,10 +10,23 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.ui.labeling;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatorExpression;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CountAggregator;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
@@ -26,10 +39,12 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.eclipse.xtext.util.Strings;
 
 import com.google.inject.Inject;
 
@@ -67,13 +82,23 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		return String.format("%s (%s)", typename, constraint.getVar().getVar());
 	}
 	
+	String text(CompareConstraint constraint) {
+		CompareFeature feature = constraint.getFeature();
+		String op = feature.equals(CompareFeature.EQUALITY) ? "==" : 
+					feature.equals(CompareFeature.INEQUALITY) ? "!=" :
+					"<???>";
+		String left = getValueText(constraint.getLeftOperand());
+		String right = getValueText(constraint.getRightOperand());
+		return String.format("%s %s %s", left, op, right);
+	}
+	
 	String text(PatternCompositionConstraint constraint) {
 		String modifiers = (constraint.isNegative()) ? "neg " : "";
-		return String.format("find %s%s", modifiers, text(constraint.getCall()));
+		return String.format("%s%s", modifiers, text(constraint.getCall()));
 	}
 	
 	String text(PatternCall call) {
-		return String.format("%s/%d", call.getPatternRef().getName(), call.getParameters().size());
+		return String.format("find %s/%d", call.getPatternRef().getName(), call.getParameters().size());
 	}
 	
 	String text(PathExpressionConstraint constraint) {
@@ -82,6 +107,16 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		return String.format("%s (%s)", typename, varName);
 	}
 	
+	String text(CheckConstraint constraint) {
+		return String.format("check()");
+	}
+	
+	String text(AggregatedValue aggregate) {
+		String aggregator = getAggregatorText(aggregate.getAggregator());
+		String call = text(aggregate.getCall());
+		return String.format("aggregate %s %s", aggregator, call);
+	}
+
 	String text(PathExpressionTail tail) {
 		EStructuralFeature refname = ((ReferenceType)tail.getType()).getRefname();
 		String type = (refname != null) ? refname.getName() : "«type»";
@@ -92,18 +127,42 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 		}
 		return String.format("%s %s",type, varName);
 	}
-
+	
+	
 //	String text(ComputationValue computation) {
 //		
 //	}
 	
+	private String getAggregatorText(AggregatorExpression aggregator) {
+		if (aggregator instanceof CountAggregator) {
+			return String.format("count");
+		}
+		else return aggregator.toString();
+	}
+
 	String getValueText(ValueReference ref) {
 		if (ref instanceof VariableValue) {
 			return ((VariableValue) ref).getValue().getVar();
 		} else if (ref instanceof IntValue) {
 			return Integer.toString(((IntValue) ref).getValue());
+		} else if (ref instanceof BoolValue) {
+			return Boolean.toString(((BoolValue) ref).isValue());
+		} else if (ref instanceof DoubleValue) {
+			return Double.toString(((DoubleValue) ref).getValue());
+		} else if (ref instanceof ListValue) {
+			EList<ValueReference> values = ((ListValue) ref).getValues();
+			List<String> valueStrings = new ArrayList<String>();
+			for (ValueReference valueReference : values) {
+				valueStrings.add(getValueText(valueReference));
+			}
+			return "{" + Strings.concat(", ", valueStrings)+ "}";
 		} else if (ref instanceof StringValue) {
-			return ((StringValue) ref).getValue();
+			return "\"" + ((StringValue) ref).getValue() + "\"";
+		} else if (ref instanceof EnumValue) {
+			EnumValue enumVal = (EnumValue) ref;
+			return enumVal.getEnumeration().getName() + "::" + enumVal.getLiteral().getLiteral();
+		} else if (ref instanceof AggregatedValue) {
+			return text((AggregatedValue)ref);
 		}
 		return null;
 	}
