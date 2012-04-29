@@ -40,13 +40,13 @@ public class RuntimeMatcherRegistrator implements Runnable {
 		PatternRegistry.getInstance().unregisterPatternModel(file);
 			
 		for (PatternMatcherRoot root : vr.getRoots()) {
-			root.unregisterPatternsFromFile(file);
+			root.unregisterPatternModelFromFile(file);
 		}
 
 		PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
 			
 		for (PatternMatcherRoot root : vr.getRoots()) {
-			root.registerPatternsFromFile(file, parsedEPM);
+			root.registerPatternModelFromFile(file, parsedEPM);
 		}
 
 	}

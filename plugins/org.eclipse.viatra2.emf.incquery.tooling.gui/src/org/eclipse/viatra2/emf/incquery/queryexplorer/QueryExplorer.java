@@ -14,7 +14,10 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -40,6 +43,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTre
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailElement;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailObserver;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.FileEditorPartListener;
@@ -61,7 +65,7 @@ public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	private TableViewer tableViewer;
-	private TableViewer patternsViewer;
+	private CheckboxTableViewer patternsViewer;
 	
 	//matcher tree viewer
 	private TreeViewer matcherTreeViewer;
@@ -111,7 +115,14 @@ public class QueryExplorer extends ViewPart {
 		
 		matcherTreeViewer = new TreeViewer(leftFlyoutControlComposite.getClientParent());
 		tableViewer = new TableViewer(rightFlyoutControlComposite.getFlyoutParent());
-		patternsViewer = new TableViewer(leftFlyoutControlComposite.getFlyoutParent());
+		
+		Table table = new Table(leftFlyoutControlComposite.getFlyoutParent(), SWT.CHECK | SWT.BORDER);
+        TableLayout layout = new TableLayout();
+        layout.addColumnData(new ColumnWeightData(100));
+        table.setLayout(layout);
+		
+		patternsViewer = new CheckboxTableViewer(table);
+		patternsViewer.addCheckStateListener(new CheckStateListener());
 		
 		//matcherTreeViewer configuration
 		matcherTreeViewer.setContentProvider(matcherContentProvider);
@@ -144,7 +155,7 @@ public class QueryExplorer extends ViewPart {
 		
 		//tableView configuration
 		createColumns(parent, tableViewer);
-		final Table table = tableViewer.getTable();
+		table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
@@ -261,5 +272,9 @@ public class QueryExplorer extends ViewPart {
 	
 	public FileEditorPartListener getFilePartListener() {
 		return filePartListener;
+	}
+	
+	public TableViewer getPatternsViewer() {
+		return patternsViewer;
 	}
 }

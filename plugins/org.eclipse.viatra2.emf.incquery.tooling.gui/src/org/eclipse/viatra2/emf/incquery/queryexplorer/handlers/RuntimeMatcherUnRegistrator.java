@@ -19,7 +19,7 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 		MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
 
 		for (PatternMatcherRoot root : vr.getRoots()) {
-			root.unregisterPatternsFromFile(file);
+			root.unregisterPatternModelFromFile(file);
 		}
 		
 		PatternRegistry.getInstance().unregisterPatternModel(file);

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
@@ -16,6 +17,7 @@ public class PatternRegistry {
 	private static PatternRegistry instance;
 	private Map<IFile, PatternModel> registeredPatterModels;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+	private Map<Pattern, String> patternNameMap;
 	
 	public static PatternRegistry getInstance() {
 		if (instance == null) {
@@ -26,29 +28,38 @@ public class PatternRegistry {
 	
 	protected PatternRegistry() {
 		registeredPatterModels = new HashMap<IFile, PatternModel>();
+		patternNameMap = new HashMap<Pattern, String>();
 	}
 	
 	public void registerPatternModel(IFile file, PatternModel pm) {
 		List<String> oldValue = getPatternNames();
 		this.registeredPatterModels.put(file, pm);
+		
+		for (Pattern p : pm.getPatterns()) {
+			patternNameMap.put(p, CorePatternLanguageHelper.getFullyQualifiedName(p));
+		}
+		
 		List<String> newValue = getPatternNames();
 		this.propertyChangeSupport.firePropertyChange("patternNames", oldValue, newValue);
 	}
 	
 	public void unregisterPatternModel(IFile file) {
 		List<String> oldValue = getPatternNames();
-		this.registeredPatterModels.remove(file);
+		PatternModel pm = this.registeredPatterModels.remove(file);
+		
+		if (pm != null) {
+			for (Pattern p : pm.getPatterns()) {
+				patternNameMap.remove(p);
+			}
+		}
+		
 		List<String> newValue = getPatternNames();
 		this.propertyChangeSupport.firePropertyChange("patternNames", oldValue, newValue);
 	}
 	
 	public List<String> getPatternNames() {
 		List<String> patterns = new ArrayList<String>();
-		for (PatternModel pm : registeredPatterModels.values()) {
-			for (Pattern p : pm.getPatterns()) {
-				patterns.add(p.getName());
-			}
-		}
+		patterns.addAll(patternNameMap.values());
 		return patterns;
 	}
 	

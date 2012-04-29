@@ -280,7 +280,7 @@ public class DatabindingUtil {
 		
 		//runtime matchers
 		for (IFile file : PatternRegistry.getInstance().getFiles()) {
-			result.registerPatternsFromFile(file, PatternRegistry.getInstance().getPatternModel(file));
+			result.registerPatternModelFromFile(file, PatternRegistry.getInstance().getPatternModel(file));
 		}
 
 		return result;

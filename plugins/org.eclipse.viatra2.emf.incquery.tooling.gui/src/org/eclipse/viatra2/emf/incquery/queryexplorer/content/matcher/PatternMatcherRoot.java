@@ -79,7 +79,7 @@ public class PatternMatcherRoot {
 		return this.key.getEditor();
 	}
 	
-	public void registerPatternsFromFile(IFile file, PatternModel pm) {	
+	public void registerPatternModelFromFile(IFile file, PatternModel pm) {	
 		if (!runtimeMatcherRegistry.containsKey(file)) {
 			Set<String> _patterns = new HashSet<String>();
 			EList<Pattern> patterns = pm.getPatterns();
@@ -104,7 +104,7 @@ public class PatternMatcherRoot {
 		}
 	}
 	
-	public void unregisterPatternsFromFile(IFile file) {
+	public void unregisterPatternModelFromFile(IFile file) {
 		Set<String> setTmp = runtimeMatcherRegistry.get(file);
 		if (setTmp != null) {
 			for (String pattern : setTmp) {
