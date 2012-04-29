@@ -196,10 +196,17 @@ public class PatternLanguageJavaValidator extends
 	
 	@Check
 	public void checkCompareConstraints(CompareConstraint constraint) { 
-		//If none of the operands are variables, issues a warning
-		boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getLeftOperand().eClass());
-		boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getRightOperand().eClass());
-		if (!op1Variable && !op2Variable) {
+		ValueReference op1 = constraint.getLeftOperand();
+		ValueReference op2 = constraint.getRightOperand();
+		if (op1 == null || op2 == null) return;
+			
+		boolean op1Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op1.eClass());
+		boolean op2Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op2.eClass());
+		boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(op1.eClass());
+		boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(op2.eClass());
+		
+		//If both operands are constant literals, issue a warning
+		if (op1Constant && op2Constant) {
 			warning("Both operands are constants - constraint is always true or always false.",
 					PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
 					IssueCodes.CONSTANT_COMPARE_CONSTRAINT);
@@ -209,9 +216,9 @@ public class PatternLanguageJavaValidator extends
 		}
 		//If both operands are the same, issues a warning
 		if (op1Variable && op2Variable) {
-			VariableValue op1 = (VariableValue) constraint.getLeftOperand();
-			VariableValue op2 = (VariableValue) constraint.getRightOperand();
-			if (op1.getValue().getVar().equals(op2.getValue().getVar())) {
+			VariableValue op1v = (VariableValue) op1;
+			VariableValue op2v = (VariableValue) op2;
+			if (op1v.getValue().getVar().equals(op2v.getValue().getVar())) {
 				warning("Comparing a variable with itself.",
 						PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
 						IssueCodes.SELF_COMPARE_CONSTRAINT);
