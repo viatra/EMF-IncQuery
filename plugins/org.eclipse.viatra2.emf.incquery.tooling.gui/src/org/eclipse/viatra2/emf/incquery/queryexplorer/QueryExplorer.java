@@ -6,9 +6,6 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.gef.ui.palette.FlyoutPaletteComposite;
-import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -20,7 +17,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -33,6 +29,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutControlComposite;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutPreferences;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.IFlyoutPreferences;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
@@ -67,9 +66,6 @@ public class QueryExplorer extends ViewPart {
 	private MatcherTreeViewerRoot matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 	
 	//observable view
-	FlyoutPreferences flyoutPreferences = FlyoutPaletteComposite.createFlyoutPreferences(new Preferences());
-	
-	private SashForm form;
 	private ModelEditorPartListener modelPartListener = new ModelEditorPartListener();
 	private FileEditorPartListener filePartListener = new FileEditorPartListener();
 	private static QueryExplorer instance;
@@ -99,15 +95,14 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
+		IFlyoutPreferences preferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 400);
+		FlyoutControlComposite flyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, preferences);
+		flyoutControlComposite.setTitleText("Observer view");
+		flyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
-//		PaletteViewerProvider pvp = new PaletteViewerProvider(new EditDomain());
-//		FlyoutPaletteComposite flyoutComposite = new FlyoutPaletteComposite(
-//				parent, SWT.BORDER, this.getSite().getPage(), pvp, flyoutPreferences);
-//		flyoutComposite.setVisible(true);
-		
-		form = new SashForm(parent, SWT.HORIZONTAL);
-		matcherTreeViewer = new TreeViewer(form);
-		tableViewer = new TableViewer(form);
+		//form = new SashForm(parent, SWT.HORIZONTAL);
+		matcherTreeViewer = new TreeViewer(flyoutControlComposite.getClientParent());
+		tableViewer = new TableViewer(flyoutControlComposite.getFlyoutParent());
 		
 		//matcherTreeViewer configuration
 		matcherTreeViewer.setContentProvider(matcherContentProvider);
