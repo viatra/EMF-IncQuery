@@ -12,8 +12,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositi
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
 import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
 
 /**
  * @author Mark Czotter
@@ -74,13 +75,13 @@ class XmiOutputBuilder {
 				}	
 			}
 			// then iterate over all added PatternCompositonConstraint and change the patternRef
-			for (constraint : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
-				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(constraint.patternRef)
+			for (call : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCall))) {
+				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(call.patternRef)
 				val p = fqnToPatternMap.get(fqn)
 				if (p == null) {
 					logger.error("Pattern not found: " +fqn)
 				} else {
-					constraint.setPatternRef(p as Pattern)
+					call.setPatternRef(p as Pattern)
 				}
 			}
 			// save the xmi file 

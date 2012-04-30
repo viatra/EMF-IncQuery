@@ -64,14 +64,15 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 	
 	@Test
 	def void testMissingComposition() {
-		parseHelper.parse(
+		var parsed = parseHelper.parse(
 			'
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			pattern callPattern(p : Pattern) = {
 				find calledPatternMissing(p);
 			}'
-		).assertError(PatternLanguagePackage::eINSTANCE.patternCompositionConstraint, 
+		);
+		parsed.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
 			Diagnostic::LINKING_DIAGNOSTIC, 
 			"Couldn't resolve reference to Pattern 'calledPatternMissing'."
 		)

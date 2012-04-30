@@ -79,8 +79,12 @@ CheckConstraint |
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint;
 
 PatternCompositionConstraint returns Constraint:
-	{PatternCompositionConstraint} negative?='neg'? 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
-	parameters+=ValueReference)*)? ')';
+	{PatternCompositionConstraint} negative?='neg'? call=PatternCall;
+	
+	//'count' 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
+	//parameters+=ValueReference)*)? ')';
+PatternCall:
+	'find' patternRef=[Pattern] '(' (parameters+=ValueReference (',' parameters+=ValueReference)*)? ')';
 
 CompareConstraint returns Constraint:
 	{CompareConstraint} leftOperand = ValueReference feature=CompareFeature rightOperand = ValueReference 
@@ -103,24 +107,27 @@ PathExpressionTail returns PathExpressionElement:
 	{PathExpressionTail} type=RefType ('[' index=INT ']')? closure?='*'? ('.' tail=PathExpressionTail)?;
 
 ValueReference:
-	IntValue | StringValue | VariableValue | DoubleValue | BoolValue | ListValue;
+	LiteralValueReference | VariableValue | ComputationValue;
 
-IntValue returns ValueReference:
+LiteralValueReference returns ValueReference:
+	IntValue | StringValue | DoubleValue | BoolValue | ListValue;
+
+IntValue returns LiteralValueReference:
 	{IntValue} value=INTNUMBER;
 
 INTNUMBER returns ecore::EInt:
 	('-')? INT;
 
-StringValue returns ValueReference:
+StringValue returns LiteralValueReference:
 	{StringValue} value=STRING;
 
-BoolValue returns ValueReference:
+BoolValue returns LiteralValueReference:
 	{BoolValue} value=BOOLEAN;
 
 BOOLEAN returns ecore::EBoolean:
 	'true' | 'false' | 'TRUE' | 'FALSE';
 
-DoubleValue returns ValueReference:
+DoubleValue returns LiteralValueReference:
 	{DoubleValue} value=DOUBLE;
 
 DOUBLE returns ecore::EDouble:
@@ -129,5 +136,14 @@ DOUBLE returns ecore::EDouble:
 VariableValue returns ValueReference:
 	{VariableValue} value=VariableReference;
 
-ListValue returns ValueReference:
+ListValue returns LiteralValueReference:
 	{ListValue} '{' values+=ValueReference (',' values+=ValueReference)* '}';
+	
+ComputationValue returns ValueReference:
+	AggregatedValue;
+	
+AggregatedValue returns ComputationValue:
+ 	{AggregatedValue} /*'aggregate'*/ aggregator=AggregatorExpression call=PatternCall;
+
+AggregatorExpression returns AggregatorExpression:
+	{CountAggregator} 'count';
