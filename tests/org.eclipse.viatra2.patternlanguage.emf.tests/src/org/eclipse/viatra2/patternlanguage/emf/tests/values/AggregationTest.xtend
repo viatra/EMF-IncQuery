@@ -30,7 +30,7 @@ class AggregationTest {
 			}
 
 			pattern callerPattern(output) = {
-				output == aggregate count find calledPattern(anyp, anyv);
+				output == count find calledPattern(anyp, anyv);
 			}'
 		).assertNoErrors
 	}
@@ -47,7 +47,7 @@ class AggregationTest {
 
 			pattern callerPattern(p : Pattern, output) = {
 				Pattern(p);
-				output == aggregate count find calledPattern(p, anyv);
+				output == count find calledPattern(p, anyv);
 			}'
 		).assertNoErrors
 	}
@@ -64,7 +64,7 @@ class AggregationTest {
 
 			pattern callerPattern(p : Pattern) = {
 				Pattern(p);
-				3 == aggregate count find calledPattern(p, anyv);
+				3 == count find calledPattern(p, anyv);
 			}'
 		).assertNoErrors
 	}
@@ -82,7 +82,7 @@ class AggregationTest {
 			pattern callerPattern(p : Pattern, output) = {
 				Pattern(p);
 				Variable(v);
-				output == aggregate count find calledPattern(p, v);
+				output == count find calledPattern(p, v);
 			}'
 		).assertNoErrors			
 	}
@@ -95,7 +95,7 @@ class AggregationTest {
 
 			pattern callerPattern(p : Pattern, output) = {
 				Pattern(p);
-				output == aggregate count find calledPatternMissing(p, anyv);
+				output == count find calledPatternMissing(p, anyv);
 			}'
 		);
 		parsed.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 

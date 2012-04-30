@@ -114,7 +114,7 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 	String text(AggregatedValue aggregate) {
 		String aggregator = getAggregatorText(aggregate.getAggregator());
 		String call = text(aggregate.getCall());
-		return String.format("aggregate %s %s", aggregator, call);
+		return String.format(/*"aggregate %s %s"*/"%s %s", aggregator, call);
 	}
 
 	String text(PathExpressionTail tail) {
