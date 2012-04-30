@@ -12,7 +12,7 @@
               extensions="eiq"
               icon="icons/file_icon.gif"
               id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-              name="EMFPatternLanguage Editor">
+              name="EMF-IncQuery Pattern Definition Editor">
         </editor>
     </extension>
     <extension
@@ -53,7 +53,7 @@
         <page
             class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-            name="EMFPatternLanguage">
+            name="EMF-IncQuery">
             <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
         </page>
         <page
@@ -76,7 +76,7 @@
         <page
             class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-            name="EMFPatternLanguage">
+            name="EMF-IncQuery">
             <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
