@@ -62,6 +62,8 @@ import com.google.inject.Injector;
  *
  */
 public class QueryExplorer extends ViewPart {
+	public QueryExplorer() {
+	}
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	private TableViewer tableViewer;
@@ -130,7 +132,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.setInput(matcherTreeViewerRoot);
 		
 		IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
-		selection.addValueChangeListener(new SelectionChangleListener());
+		selection.addValueChangeListener(new SelectionChangeListener());
 		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
 		
 		//patternsViewer configuration
@@ -154,7 +156,7 @@ public class QueryExplorer extends ViewPart {
 		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", menuMgr, matcherTreeViewer);
 		
 		//tableView configuration
-		createColumns(parent, tableViewer);
+		createColumns(tableViewer);
 		table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -178,7 +180,7 @@ public class QueryExplorer extends ViewPart {
         mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-	private void createColumns(Composite parent, TableViewer viewer) {
+	private void createColumns(TableViewer viewer) {
 		String[] titles = { "Parameter", "Value" };
 
 		//parameter
@@ -203,7 +205,7 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	/**
-	 * Creates a column for the table viewer with the given paramters.
+	 * Creates a column for the table viewer with the given parameters.
 	 * 
 	 * @param viewer the viewer to create the column for
 	 * @param title the title of the column
@@ -225,17 +227,13 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.getControl().setFocus();
 	}
 	
-	private class SelectionChangleListener implements IValueChangeListener {
-
-		public SelectionChangleListener() {
-			
-		}
+	private class SelectionChangeListener implements IValueChangeListener {
 		
 		@Override
 		public void handleValueChange(ValueChangeEvent event) {
 			Object value = event.getObservableValue().getValue();
 			
-			if (value != null && value instanceof PatternMatch) {
+			if (value instanceof PatternMatch) {
 				PatternMatch pm = (PatternMatch) value;
 				DatabindingAdapter<IPatternMatch> databindableMatcher = 
 						DatabindingUtil.getDatabindingAdapter(pm.getPatternMatch().patternName(), pm.getParent().isGenerated());
