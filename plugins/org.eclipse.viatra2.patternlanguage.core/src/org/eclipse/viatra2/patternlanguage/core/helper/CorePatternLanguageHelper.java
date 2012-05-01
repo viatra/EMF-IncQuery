@@ -10,6 +10,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
@@ -80,12 +81,14 @@ public class CorePatternLanguageHelper {
 				.getParameters();
 		Multimap<String, VariableReference> varRefs = HashMultimap.create();
 		HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
-		Iterator<EObject> it = body.eAllContents();
-		while (it.hasNext()) {
-			EObject obj = it.next();
-			if (obj instanceof VariableReference) {
-				String varName = ((VariableReference) obj).getVar();
-				varRefs.put(varName, (VariableReference) obj);
+		for (Constraint constraint : body.getConstraints()){
+			Iterator<EObject> it = constraint.eAllContents();			
+			while (it.hasNext()) {
+				EObject obj = it.next();
+				if (obj instanceof VariableReference) {
+					String varName = ((VariableReference) obj).getVar();
+					varRefs.put(varName, (VariableReference) obj);
+				}
 			}
 		}
 		for (Variable var : parameters) {
