@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
@@ -67,7 +68,6 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 				try {
 					doFinish(containerName, packageName, fileName, patternName, monitor);
 				} catch (Exception e) {
-					e.printStackTrace();
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
@@ -80,15 +80,18 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 			BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
 			IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//This is never thrown as of false cancellable parameter of getContainer().run
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
+			IncQueryGUIPlugin.getDefault().logException(
+					"Cannot create Query Definition file: "
+							+ realException.getMessage(), realException);
+			MessageDialog.openError(getShell(), "Error",
+					realException.getMessage());
 			return false;
 		} catch (PartInitException e) {
-			e.printStackTrace();
+			IncQueryGUIPlugin.getDefault().logException("Cannot open editor: " + e.getMessage(), e);
 			MessageDialog.openError(getShell(), "Error", e.getMessage());
 		}
 		return true;
