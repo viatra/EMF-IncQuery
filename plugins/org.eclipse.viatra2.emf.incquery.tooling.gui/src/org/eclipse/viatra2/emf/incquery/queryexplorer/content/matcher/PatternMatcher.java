@@ -95,11 +95,24 @@ public class PatternMatcher {
 	}
 
 	public String getText() {
+		String isGeneratedString = isGenerated() ? " (Generated)" : " (Runtime)";
 		if (matcher == null) {
-			return "Matcher could not be created for pattern '"+patternFqn+ "'" + (isGenerated() ? " (Generated)" : " (Runtime)");
+			return String.format("Matcher could not be created for pattern '%s' %s", patternFqn, isGeneratedString);
 		}
 		else {
-			return this.matcher.getPatternName() + (isGenerated() ? " (Generated)" : " (Runtime)"+" [size of matchset: "+matches.size()+"]");
+			String matchString;
+			switch (matches.size()){
+			case 0: 
+				matchString = "No matches";
+				break;
+			case 1:
+				matchString = "1 match";
+				break;
+			default:
+				matchString = String.format("%d matches", matches.size());
+			}
+			//return this.matcher.getPatternName() + (isGeneratedString +" [size of matchset: "+matches.size()+"]");
+			return String.format("%s - %s %s", matcher.getPatternName(), matchString, isGeneratedString);
 		}
 	}
 
