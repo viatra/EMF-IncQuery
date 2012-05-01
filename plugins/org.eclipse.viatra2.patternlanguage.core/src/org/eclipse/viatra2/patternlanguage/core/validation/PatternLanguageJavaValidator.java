@@ -198,7 +198,9 @@ public class PatternLanguageJavaValidator extends
 	public void checkCompareConstraints(CompareConstraint constraint) { 
 		ValueReference op1 = constraint.getLeftOperand();
 		ValueReference op2 = constraint.getRightOperand();
-		if (op1 == null || op2 == null) return;
+		if (op1 == null || op2 == null) {
+			return;
+		}
 			
 		boolean op1Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op1.eClass());
 		boolean op2Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op2.eClass());

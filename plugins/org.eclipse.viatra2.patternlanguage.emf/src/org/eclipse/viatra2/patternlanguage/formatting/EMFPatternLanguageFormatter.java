@@ -18,7 +18,6 @@ import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAcc
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
-import org.eclipse.xtext.util.Pair;
 
 /**
  * Formatting rules for the EMF pattern language.

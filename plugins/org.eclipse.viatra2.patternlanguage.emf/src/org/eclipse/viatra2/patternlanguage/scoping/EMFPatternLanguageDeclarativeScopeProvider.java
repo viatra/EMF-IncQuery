@@ -124,16 +124,18 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		EObject root = getRootContainer(ctx);
 		if (root instanceof PatternModel){
 			return createReferencedPackagesScope((PatternModel) root);
-		} else 
+		} else {
 			return IScope.NULLSCOPE;
+		}
 	}
 	
 	public IScope scope_EClassifier(Variable ctx, EReference ref) {
 		EObject root = getRootContainer(ctx);
 		if (root instanceof PatternModel){
 			return createReferencedPackagesScope((PatternModel) root);
-		} else 
+		} else {
 			return IScope.NULLSCOPE;
+		}
 	}
 	
 	protected IScope createClassifierScope(Iterable<EClassifier> classifiers) {
@@ -143,8 +145,9 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	protected IScope createReferencedPackagesScope(PatternModel model) {
 		final Collection<EClassifier> allClassifiers = new ArrayList<EClassifier>();
 		for(PackageImport decl: model.getImportPackages()) {
-			if (decl.getEPackage() != null)
+			if (decl.getEPackage() != null) {
 				allClassifiers.addAll(decl.getEPackage().getEClassifiers());
+			}
 		}
 		return createClassifierScope(allClassifiers);
 	}

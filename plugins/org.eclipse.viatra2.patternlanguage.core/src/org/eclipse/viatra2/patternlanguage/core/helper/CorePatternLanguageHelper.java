@@ -22,11 +22,15 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class CorePatternLanguageHelper {
+	
+	private CorePatternLanguageHelper(){}
 	/**
 	 * Returns the name of the pattern, qualified by package name.
 	 */
 	public static String getFullyQualifiedName(Pattern p) {
-		if (p == null) return null;
+		if (p == null) {
+			throw new IllegalArgumentException("No pattern specified for getFullyQualifiedName");
+		}
 		PatternModel patternModel = (PatternModel) p.eContainer();
 
 		String packageName = patternModel.getPackageName();

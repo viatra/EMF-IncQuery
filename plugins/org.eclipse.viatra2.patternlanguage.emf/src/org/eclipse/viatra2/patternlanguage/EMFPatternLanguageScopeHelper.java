@@ -20,9 +20,13 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 public class EMFPatternLanguageScopeHelper {
 
 	public static final String NOT_AN_ENUMERATION_REFERENCE_ERROR = "Not an enumeration reference";
+	
+	private EMFPatternLanguageScopeHelper(){}
 
 	public static EEnum calculateEnumerationType(PathExpressionHead head) throws ResolutionException{
-		if (head.getTail() == null) throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+		if (head.getTail() == null) {
+			throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+		}
 		return calculateEnumerationType(head.getTail());
 	}
 	
@@ -35,7 +39,9 @@ public class EMFPatternLanguageScopeHelper {
 	}
 	
 	public static EClassifier calculateExpressionType(PathExpressionHead head) throws ResolutionException{
-		if (head.getTail() == null) throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+		if (head.getTail() == null) {
+			throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+		}
 		return calculateExpressionType(head.getTail());
 	}
 
