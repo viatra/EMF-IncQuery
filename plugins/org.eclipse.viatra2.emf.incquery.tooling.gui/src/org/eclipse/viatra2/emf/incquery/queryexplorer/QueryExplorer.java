@@ -272,7 +272,7 @@ public class QueryExplorer extends ViewPart {
 		return filePartListener;
 	}
 	
-	public TableViewer getPatternsViewer() {
+	public CheckboxTableViewer getPatternsViewer() {
 		return patternsViewer;
 	}
 }
