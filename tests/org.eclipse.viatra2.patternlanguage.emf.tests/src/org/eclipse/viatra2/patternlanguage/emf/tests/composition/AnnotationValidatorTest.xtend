@@ -13,7 +13,6 @@ import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaVali
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.junit.Ignore
 
 
 @RunWith(typeof(XtextRunner))
