@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
@@ -9,7 +10,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
 
-	private HashMap<String, String> parameterMap;
+	private Map<String, String> parameterMap;
 	
 	public RuntimeDatabindingAdapter() {
 		parameterMap = new HashMap<String, String>();

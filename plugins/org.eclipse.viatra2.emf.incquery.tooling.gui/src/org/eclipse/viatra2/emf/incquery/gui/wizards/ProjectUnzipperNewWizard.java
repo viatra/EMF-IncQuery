@@ -302,16 +302,10 @@ abstract public class ProjectUnzipperNewWizard extends Wizard implements
 	 * @param monitor
 	 *            Monitor to display progress and/or cancel operation
 	 * @throws IOException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws FileNotFoundException
-	 *
-	 * @throws FileNotFoundException
 	 * @throws InterruptedException
 	 */
 	private void extractProject(File projectFolderFile, URL url,
-			IProgressMonitor monitor) throws FileNotFoundException,
-			IOException, InterruptedException {
+			IProgressMonitor monitor) throws IOException, InterruptedException {
 
 		/*
 		 * Get project archive
@@ -353,7 +347,7 @@ abstract public class ProjectUnzipperNewWizard extends Wizard implements
 	 */
 	private void unzip(ZipFile zipFile, File projectFolderFile,
 			IProgressMonitor monitor) throws IOException,
-			FileNotFoundException, InterruptedException {
+			InterruptedException {
 
 		Enumeration<? extends ZipEntry> e = zipFile.entries();
 
@@ -361,13 +355,13 @@ abstract public class ProjectUnzipperNewWizard extends Wizard implements
 			ZipEntry zipEntry = e.nextElement();
 			File file = new File(projectFolderFile, zipEntry.getName());
 
-			if (false == zipEntry.isDirectory()) {
+			if (!zipEntry.isDirectory()) {
 
 				/*
 				 * Copy files (and make sure parent directory exist)
 				 */
 				File parentFile = file.getParentFile();
-				if (null != parentFile && false == parentFile.exists()) {
+				if (null != parentFile && !parentFile.exists()) {
 					parentFile.mkdirs();
 				}
 

@@ -20,8 +20,7 @@ public class CheckStateListener implements ICheckStateListener {
 				root.registerPattern(pattern);
 			}
 			PatternRegistry.getInstance().addActivePattern(pattern);
-		}
-		else {
+		} else {
 			for (PatternMatcherRoot root : vr.getRoots()) {
 				root.unregisterPattern(PatternRegistry.getInstance().getPatternByFqn(patternFqn));
 			}
