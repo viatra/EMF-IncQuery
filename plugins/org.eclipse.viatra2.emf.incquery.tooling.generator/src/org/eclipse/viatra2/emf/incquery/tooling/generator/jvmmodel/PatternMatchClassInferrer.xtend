@@ -12,6 +12,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -41,6 +42,7 @@ class PatternMatchClassInferrer {
    		matchClass.inferMatchClassGetters(pattern)
    		matchClass.inferMatchClassSetters(pattern)
    		matchClass.inferMatchClassMethods(pattern)
+   		matchClass.inferCheckBodies(pattern)
    		return matchClass
    	}
    	
@@ -210,4 +212,17 @@ class PatternMatchClassInferrer {
    	def equalsMethodBody(Pattern pattern, ITreeAppendable appendable) {
    	}
 	
+	def inferCheckBodies(JvmDeclaredType matchClass, Pattern pattern) {
+//		var i=1;
+//		for (body : pattern.bodies) {
+//			for (variable : body.variables) {
+//				matchClass.members += variable.toField(variable.name, variable.calculateType)
+//			}
+//			for (CheckConstraint constraint : body.constraints.filter(typeof(CheckConstraint))) {
+//				matchClass.members += pattern.toMethod("check" + i, pattern.newTypeRef(typeof(Boolean))) [
+//					it.body = constraint.expression
+//				]
+//			}
+//		}
+	}
 }
