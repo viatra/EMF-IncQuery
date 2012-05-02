@@ -20,7 +20,7 @@ class DeltaVisitor implements IResourceDeltaVisitor {
 		IResource res = delta.getResource();
 		
 		if (res != null && res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
-			//System.out.println("File changed");
+			
 			IFile file = (IFile) res;
 			if (PatternRegistry.getInstance().getFiles().contains(file)) {
 				RuntimeMatcherRegistrator job = new RuntimeMatcherRegistrator((IFile) file, injector);

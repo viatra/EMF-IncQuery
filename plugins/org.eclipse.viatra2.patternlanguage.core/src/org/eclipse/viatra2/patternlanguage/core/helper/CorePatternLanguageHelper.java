@@ -10,6 +10,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
@@ -22,11 +23,15 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class CorePatternLanguageHelper {
+	
+	private CorePatternLanguageHelper(){}
 	/**
 	 * Returns the name of the pattern, qualified by package name.
 	 */
 	public static String getFullyQualifiedName(Pattern p) {
-		if (p == null) return null;
+		if (p == null) {
+			throw new IllegalArgumentException("No pattern specified for getFullyQualifiedName");
+		}
 		PatternModel patternModel = (PatternModel) p.eContainer();
 
 		String packageName = patternModel.getPackageName();
@@ -55,7 +60,8 @@ public class CorePatternLanguageHelper {
 		Set<Variable> result = new HashSet<Variable>();
 		TreeIterator<EObject> eAllContents = xExpression.eAllContents();
 		while (eAllContents.hasNext()) {
-			EList<EObject> eCrossReferences = eAllContents.next()
+			EObject expression = eAllContents.next();
+			EList<EObject> eCrossReferences = expression
 					.eCrossReferences();
 			for (EObject eObject : eCrossReferences) {
 				if (eObject instanceof Variable
@@ -76,12 +82,14 @@ public class CorePatternLanguageHelper {
 				.getParameters();
 		Multimap<String, VariableReference> varRefs = HashMultimap.create();
 		HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
-		Iterator<EObject> it = body.eAllContents();
-		while (it.hasNext()) {
-			EObject obj = it.next();
-			if (obj instanceof VariableReference) {
-				String varName = ((VariableReference) obj).getVar();
-				varRefs.put(varName, (VariableReference) obj);
+		for (Constraint constraint : body.getConstraints()){
+			Iterator<EObject> it = constraint.eAllContents();			
+			while (it.hasNext()) {
+				EObject obj = it.next();
+				if (obj instanceof VariableReference) {
+					String varName = ((VariableReference) obj).getVar();
+					varRefs.put(varName, (VariableReference) obj);
+				}
 			}
 		}
 		for (Variable var : parameters) {

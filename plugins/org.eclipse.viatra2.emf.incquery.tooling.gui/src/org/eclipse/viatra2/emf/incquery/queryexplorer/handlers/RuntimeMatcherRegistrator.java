@@ -1,11 +1,16 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
+import java.util.Set;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 import com.google.inject.Injector;
@@ -37,18 +42,24 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
 		PatternModel parsedEPM = DatabindingUtil.parseEPM(file, injector);
 			
-		PatternRegistry.getInstance().unregisterPatternModel(file);
-			
+		Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
 		for (PatternMatcherRoot root : vr.getRoots()) {
-			root.unregisterPatternModelFromFile(file);
+			for (Pattern pattern : removedPatterns) {
+				root.unregisterPattern(pattern);
+			}
 		}
 
-		PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
-			
+		Set<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
 		for (PatternMatcherRoot root : vr.getRoots()) {
-			root.registerPatternModelFromFile(file, parsedEPM);
+			for (Pattern pattern : newPatterns) {
+				root.registerPattern(pattern);
+			}
 		}
 
+		CheckboxTableViewer patternsViewer = QueryExplorer.getInstance().getPatternsViewer();
+		for (Pattern pattern : newPatterns) {
+			patternsViewer.setChecked(CorePatternLanguageHelper.getFullyQualifiedName(pattern), true);
+		}
 	}
 
 }

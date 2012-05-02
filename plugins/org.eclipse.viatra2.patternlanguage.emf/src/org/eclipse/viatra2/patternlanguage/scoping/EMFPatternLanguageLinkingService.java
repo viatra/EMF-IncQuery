@@ -44,9 +44,15 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 	
 	@Override
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) {
-		if (ref == EMFPatternLanguagePackage.eINSTANCE.getPackageImport_EPackage() && context instanceof PackageImport) {
-			return getPackage((PackageImport)context, (ILeafNode) node);
-		} else if (ref == EMFPatternLanguagePackage.eINSTANCE.getEnumValue_Literal() && context instanceof EnumValue) {
+		if (ref == EMFPatternLanguagePackage.eINSTANCE
+				.getPackageImport_EPackage()
+				&& context instanceof PackageImport
+				&& node instanceof ILeafNode) {
+			return getPackage((PackageImport) context, (ILeafNode) node);
+		} else if (ref == EMFPatternLanguagePackage.eINSTANCE
+				.getEnumValue_Literal()
+				&& context instanceof EnumValue
+				&& node instanceof ILeafNode) {
 			try {
 				EnumValue value = (EnumValue) context;
 				EEnum type = null;
@@ -63,7 +69,9 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 				EEnumLiteral literal = type.getEEnumLiteral(typename);
 				if (literal != null) {
 					return Collections.<EObject>singletonList(literal);
-				} else return Collections.emptyList();
+				} else {
+					return Collections.emptyList();
+				}
 			} catch (ResolutionException e) {
 				return Collections.emptyList();
 			}

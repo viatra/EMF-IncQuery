@@ -4,6 +4,8 @@ package org.eclipse.viatra2.patternlanguage.core.validation;
  * @author Mark Czotter
  */
 public class IssueCodes {
+	
+	private IssueCodes() {}
 
 	protected static final String ISSUE_CODE_PREFIX = "org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes.";
 	

@@ -2,6 +2,7 @@ package org.eclipse.viatra2.patternlanguage.core.annotations;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -13,8 +14,25 @@ import com.google.common.collect.Iterables;
 
 public class PatternAnnotationProvider {
 
+	private final static class ExtensionConverter
+			implements
+			Function<IConfigurationElement, ExtensionBasedPatternAnnotationParameter> {
+		@Override
+		public ExtensionBasedPatternAnnotationParameter apply(
+				IConfigurationElement input) {
+			final String parameterName = input.getAttribute("name");
+			final boolean mandatory = Boolean.parseBoolean(input
+					.getAttribute("mandatory"));
+			final boolean multiple = Boolean.parseBoolean(input
+					.getAttribute("multiple"));
+			final String type = input.getAttribute("type");
+			return new ExtensionBasedPatternAnnotationParameter(parameterName,
+					type, multiple, mandatory);
+		}
+	}
+
 	static final String EXTENSIONID = "org.eclipse.viatra2.patternlanguage.core.annotation";
-	Hashtable<String, IPatternAnnotationValidator> annotationValidators;
+	Map<String, IPatternAnnotationValidator> annotationValidators;
 
 	protected void initializeValidators() {
 		annotationValidators = new Hashtable<String, IPatternAnnotationValidator>();
@@ -29,26 +47,7 @@ public class PatternAnnotationProvider {
 			final Iterable<ExtensionBasedPatternAnnotationParameter> parameterIterable = Iterables
 					.transform(
 							Arrays.asList(parameters),
-							new Function<IConfigurationElement, ExtensionBasedPatternAnnotationParameter>() {
-
-								@Override
-								public ExtensionBasedPatternAnnotationParameter apply(
-										IConfigurationElement input) {
-									final String parameterName = input
-											.getAttribute("name");
-									final boolean mandatory = Boolean
-											.parseBoolean(input
-													.getAttribute("mandatory"));
-									final boolean multiple = Boolean
-											.parseBoolean(input
-													.getAttribute("multiple"));
-									final String type = input
-											.getAttribute("type");
-									return new ExtensionBasedPatternAnnotationParameter(
-											parameterName, type, multiple,
-											mandatory);
-								}
-							});
+							new ExtensionConverter());
 			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, languageName, parameterIterable);
 			annotationValidators.put(annotationName, annotationValidator);
 		}

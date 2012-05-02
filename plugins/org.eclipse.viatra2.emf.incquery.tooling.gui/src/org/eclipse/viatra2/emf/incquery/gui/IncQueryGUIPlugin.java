@@ -1,6 +1,9 @@
 package org.eclipse.viatra2.emf.incquery.gui;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -74,4 +77,8 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 		reg.put(ICON_ARROW_BOTTOM, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_bottom.gif"));
 	}
 
+	public void logException(String message, Throwable exception) {
+		ILog logger = getLog();
+		logger.log(new Status(IStatus.ERROR, PLUGIN_ID, message, exception));
+	}
 }
