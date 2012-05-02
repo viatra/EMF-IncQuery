@@ -148,19 +148,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <adapt
-                              type="org.eclipse.core.resources.IFile">
-                           <test
-                                 property="org.eclipse.core.resources.name"
-                                 value="*.eiq">
-                           </test>
-                        </adapt>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -168,31 +158,15 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false">
-                        <adapt
-                              type="org.eclipse.core.resources.IFile">
-                           <test
-                                 property="org.eclipse.core.resources.name"
-                                 value="*.eiq">
-                           </test>
-                        </adapt>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
+                  </reference>
                </visibleWhen>
             </command>
             <separator
                   name="additions"
                   visible="true">
             </separator>
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-               </reference>
-            </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -228,7 +202,7 @@
                   <iterate
                         ifEmpty="false">
                      <instanceof
-                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatch">
+                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch">
                      </instanceof>
                   </iterate>
                </with>

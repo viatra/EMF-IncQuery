@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.common.util.BasicEMap
 import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.util.EcoreUtil
 
 class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProcessor {
 	
@@ -51,10 +52,12 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        varClass.generateReferenceToVariableDecl(varRefClass)
        bodyClass.generateEOperation(varClass)
        
+       patternClass.addFileNameToPattern
+       
        pathExpressionConstraint.changeHeadType(pathExpressionHead)
        pathExpressionElement.changeTailType(pathExpressionTail)
        
-       varClass.addJvmIdentifiableOperations;
+       varClass.addJvmIdentifiableOperations
 	}
 	
 	def addJvmIdentifiableOperations(EClass varClass) {
@@ -164,6 +167,18 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	        bodyClass.EOperations += op
 	}
 	
+	def addFileNameToPattern(EClass patternClass) {
+		val nameAttr = EcoreFactory::eINSTANCE.createEAttribute
+		nameAttr.name = "fileName"
+		nameAttr.EType = EcorePackage::eINSTANCE.EString
+		nameAttr.lowerBound = 0
+		nameAttr.upperBound = 1
+		EcoreUtil::setDocumentation(nameAttr, 
+			"Stores a filename where the pattern comes from. It is only set in the build pattern store
+			 inside the IncQuery generator - it is not available anywhere else.")
+		
+		patternClass.EStructuralFeatures += nameAttr
+	}
 	
 	def changeHeadType(EClass constraint, EClass head){
 		constraint.EStructuralFeatures.findFirst(e | e.name == "head").EType = head

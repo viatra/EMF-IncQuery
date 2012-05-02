@@ -141,13 +141,10 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 			
 			if (!fileName.contains(".")) {
 				wrongExtension = true;
-			}
-			else {
+			} else {
 				int dotLoc = fileName.lastIndexOf('.');
 				String ext = fileName.substring(dotLoc + 1);
-				if (ext.equalsIgnoreCase("eiq") == false) {
-					wrongExtension = true;
-				}
+				wrongExtension = !ext.equalsIgnoreCase("eiq"); 
 			}
 			
 			if (wrongExtension) {
@@ -203,7 +200,8 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 				root.createPackageFragment(getPackageText(), true, new NullProgressMonitor());
 			} 
 			catch (JavaModelException e) {
-				e.printStackTrace();
+				IncQueryGUIPlugin.getDefault().logException(
+						"Cannot load packages " + e.getMessage(), e);
 			}
 		}
 

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.formatting;
 
+import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.AnnotationElements;
 import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.PatternBodyElements;
+import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.PatternElements;
 import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAccess;
 import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAccess.EMFPatternModelElements;
 import org.eclipse.xtext.Keyword;
@@ -39,15 +41,27 @@ public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
 			c.setSpace(" ").after(keyword);
 		}
 		for (Keyword keyword : grammar.findKeywords("::")) {
-			c.setSpace(" ").before(keyword);
+			c.setNoSpace().before(keyword);
 			c.setNoSpace().after(keyword);
 		}
 		for (Keyword keyword : grammar.findKeywords(",")) {
 			c.setNoSpace().before(keyword);
 			c.setSpace(" ").after(keyword);
 		}
-		for (Keyword keyword : grammar.findKeywords("(", ")")) {
+		for (Keyword keyword : grammar.findKeywords("(")) {
 			c.setNoSpace().before(keyword);
+			c.setNoSpace().after(keyword);
+		}
+		AnnotationElements annotationAccess = grammar.getAnnotationAccess();
+		for (Keyword keyword : grammar.findKeywords(")")) { 
+			if (!keyword.equals(annotationAccess.getRightParenthesisKeyword_2_3())) {
+				c.setNoSpace().before(keyword);
+				c.setNoSpace().after(keyword);
+			} else {
+				c.setLinewrap(1).after(keyword);
+			}
+		}
+		for (Keyword keyword : grammar.findKeywords("@")) {
 			c.setNoSpace().after(keyword);
 		}
 		
@@ -55,6 +69,10 @@ public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(2).after(patternModelAccess.getPackageNameAssignment_1_1());
 		c.setLinewrap(1).after(patternModelAccess.getImportPackagesAssignment_2());
 		c.setLinewrap().before(patternModelAccess.getPatternsAssignment_3());
+		
+		
+		PatternElements patternAccess = grammar.getPatternAccess();
+		c.setLinewrap(1).after(patternAccess.getAnnotationsAssignment_0());
 		
 		PatternBodyElements patternBodyAccess = grammar.getPatternBodyAccess();
 		c.setLinewrap(1, 1, 2).before(patternBodyAccess.getConstraintsAssignment_3_0());

@@ -10,7 +10,6 @@ public class EMFPatternLanguageUIActivator extends EMFPatternLanguageActivator {
 	@Override
 	protected Module getRuntimeModule(String grammar) {
 		if (ORG_ECLIPSE_VIATRA2_PATTERNLANGUAGE_EMFPATTERNLANGUAGE.equals(grammar)) {
-			//return IncQueryRuntimePlugin.getDefault().getRuntimeModule();
 			return IncQueryGeneratorPlugin.INSTANCE.getRuntimeModule();
 		}
 		

@@ -1,6 +1,9 @@
 package org.eclipse.viatra2.emf.incquery.gui;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -20,6 +23,11 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 	public static final String ICON_MATCHER = "matcher";
 	public static final String ICON_MATCH = "match";
 	public static final String ICON_ERROR = "error";
+	public static final String ICON_ARROW_RIGHT = "arrow_right";
+	public static final String ICON_ARROW_LEFT = "arrow_left";
+	public static final String ICON_PIN = "pin";
+	public static final String ICON_ARROW_TOP = "arrow_top";
+	public static final String ICON_ARROW_BOTTOM = "arrow_bottom";
 
 	// The shared instance
 	private static IncQueryGUIPlugin plugin;
@@ -56,11 +64,21 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		super.initializeImageRegistry(reg);
+		@SuppressWarnings("unused")
 		Bundle bundle = Platform.getBundle(PLUGIN_ID);
 		reg.put(ICON_ROOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/root.gif"));
 		reg.put(ICON_MATCHER, imageDescriptorFromPlugin(PLUGIN_ID, "icons/matcher.gif"));
 		reg.put(ICON_MATCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/match.gif"));
 		reg.put(ICON_ERROR, imageDescriptorFromPlugin(PLUGIN_ID, "icons/error.gif"));
+		reg.put(ICON_PIN, imageDescriptorFromPlugin(PLUGIN_ID, "icons/pin.gif"));
+		reg.put(ICON_ARROW_RIGHT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_right.gif"));
+		reg.put(ICON_ARROW_LEFT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_left.gif"));
+		reg.put(ICON_ARROW_TOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_top.gif"));
+		reg.put(ICON_ARROW_BOTTOM, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_bottom.gif"));
 	}
 
+	public void logException(String message, Throwable exception) {
+		ILog logger = getLog();
+		logger.log(new Status(IStatus.ERROR, PLUGIN_ID, message, exception));
+	}
 }

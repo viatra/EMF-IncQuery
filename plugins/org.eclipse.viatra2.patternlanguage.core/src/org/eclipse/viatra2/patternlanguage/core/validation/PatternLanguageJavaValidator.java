@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.validation;
 
-import static org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__PATTERN_REF;
 import static org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals.PATTERN__NAME;
 import static org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.Literals.PATTERN__PARAMETERS;
 import static org.eclipse.xtext.util.Strings.equal;
@@ -28,7 +27,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
@@ -87,19 +86,19 @@ public class PatternLanguageJavaValidator extends
 	}
 
 	@Check
-	public void checkPatternCompositionConstraintParameters(
-			PatternCompositionConstraint constraint) {
-		if (constraint.getPatternRef() != null
-				&& constraint.getParameters() != null) {
-			final int definitionParameterSize = constraint.getPatternRef()
+	public void checkPatternCallParameters(
+			PatternCall call) {
+		if (call.getPatternRef() != null &&  call.getPatternRef().getName() != null
+				&& call.getParameters() != null) {
+			final int definitionParameterSize = call.getPatternRef()
 					.getParameters().size();
-			final int callParameterSize = constraint.getParameters().size();
+			final int callParameterSize = call.getParameters().size();
 			if (definitionParameterSize != callParameterSize) {
 				error("The pattern "
-						+ getFormattedPattern(constraint.getPatternRef())
+						+ getFormattedPattern(call.getPatternRef())
 						+ " is not applicable for the arguments("
-						+ getFormattedArgumentsList(constraint) + ")",
-						PATTERN_COMPOSITION_CONSTRAINT__PATTERN_REF,
+						+ getFormattedArgumentsList(call) + ")",
+						PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF,
 						IssueCodes.WRONG_NUMBER_PATTERNCALL_PARAMETER);
 			}
 		}
@@ -197,10 +196,19 @@ public class PatternLanguageJavaValidator extends
 	
 	@Check
 	public void checkCompareConstraints(CompareConstraint constraint) { 
-		//If none of the operands are variables, issues a warning
-		boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getLeftOperand().eClass());
-		boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(constraint.getRightOperand().eClass());
-		if (!op1Variable && !op2Variable) {
+		ValueReference op1 = constraint.getLeftOperand();
+		ValueReference op2 = constraint.getRightOperand();
+		if (op1 == null || op2 == null) {
+			return;
+		}
+			
+		boolean op1Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op1.eClass());
+		boolean op2Constant = PatternLanguagePackage.Literals.LITERAL_VALUE_REFERENCE.isSuperTypeOf(op2.eClass());
+		boolean op1Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(op1.eClass());
+		boolean op2Variable = PatternLanguagePackage.Literals.VARIABLE_VALUE.isSuperTypeOf(op2.eClass());
+		
+		//If both operands are constant literals, issue a warning
+		if (op1Constant && op2Constant) {
 			warning("Both operands are constants - constraint is always true or always false.",
 					PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
 					IssueCodes.CONSTANT_COMPARE_CONSTRAINT);
@@ -210,9 +218,9 @@ public class PatternLanguageJavaValidator extends
 		}
 		//If both operands are the same, issues a warning
 		if (op1Variable && op2Variable) {
-			VariableValue op1 = (VariableValue) constraint.getLeftOperand();
-			VariableValue op2 = (VariableValue) constraint.getRightOperand();
-			if (op1.getValue().getVar().equals(op2.getValue().getVar())) {
+			VariableValue op1v = (VariableValue) op1;
+			VariableValue op2v = (VariableValue) op2;
+			if (op1v.getValue().getVar().equals(op2v.getValue().getVar())) {
 				warning("Comparing a variable with itself.",
 						PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__LEFT_OPERAND,
 						IssueCodes.SELF_COMPARE_CONSTRAINT);
@@ -290,9 +298,9 @@ public class PatternLanguageJavaValidator extends
 	}
 
 	protected String getFormattedArgumentsList(
-			PatternCompositionConstraint constraint) {
+			PatternCall call) {
 		StringBuilder builder = new StringBuilder();
-		for (Iterator<ValueReference> iter = constraint.getParameters()
+		for (Iterator<ValueReference> iter = call.getParameters()
 				.iterator(); iter.hasNext();) {
 			ValueReference parameter = iter.next();
 			builder.append(getConstantAsString(parameter));

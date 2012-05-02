@@ -35,8 +35,8 @@ import com.google.inject.name.Named;
  */
 public class MyAbstractDeclarativeScopeProvider extends AbstractScopeProvider {
 
-	public final static String NAMED_DELEGATE = "org.eclipse.xtext.scoping.impl.MyAbstractDeclarativeScopeProvider.delegate";
-	public final static String NAMED_ERROR_HANDLER = "org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider.errorHandler";
+	public static final String NAMED_DELEGATE = "org.eclipse.xtext.scoping.impl.MyAbstractDeclarativeScopeProvider.delegate";
+	public static final String NAMED_ERROR_HANDLER = "org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider.errorHandler";
 
 	public final Logger logger = Logger.getLogger(getClass());
 
@@ -93,8 +93,9 @@ public class MyAbstractDeclarativeScopeProvider extends AbstractScopeProvider {
 			@Override
 			protected IScope handleNoSuchMethod(Object... params) {
 				if (PolymorphicDispatcher.NullErrorHandler.class
-						.equals(errorHandler.getClass()))
+						.equals(errorHandler.getClass())) {
 					return null;
+				}
 				return super.handleNoSuchMethod(params);
 			}
 		};
@@ -106,8 +107,9 @@ public class MyAbstractDeclarativeScopeProvider extends AbstractScopeProvider {
 		current = context;
 		while (scope == null && current != null) {
 			scope = dispatcher.invoke(current, reference.getEReferenceType());
-			if (scope != null)
+			if (scope != null) {
 				logger.warn("scope_<EClass>(EObject,EClass) is deprecated. Use scope_<EClass>(EObject,EReference) instead.");
+			}
 			current = current.eContainer();
 		}
 		return scope;
@@ -121,8 +123,9 @@ public class MyAbstractDeclarativeScopeProvider extends AbstractScopeProvider {
 			@Override
 			protected IScope handleNoSuchMethod(Object... params) {
 				if (PolymorphicDispatcher.NullErrorHandler.class
-						.equals(errorHandler.getClass()))
+						.equals(errorHandler.getClass())) {
 					return null;
+				}
 				return super.handleNoSuchMethod(params);
 			}
 		};

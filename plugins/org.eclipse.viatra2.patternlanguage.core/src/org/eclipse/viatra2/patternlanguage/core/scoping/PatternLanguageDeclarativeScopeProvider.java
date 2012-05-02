@@ -11,7 +11,7 @@
 package org.eclipse.viatra2.patternlanguage.core.scoping;
 
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.FilteringScope;
@@ -30,13 +30,13 @@ public class PatternLanguageDeclarativeScopeProvider extends
 		MyAbstractDeclarativeScopeProvider {
 	
 	/**
-	 * Custom scoping for patternRef in {@link PatternCompositionConstraint}. 
+	 * Custom scoping for patternRef in {@link PatternCall}. 
 	 * Currently returns all Pattern that is visible from the current context.
 	 * @param ctx
 	 * @param ref
 	 * @return
 	 */
-	public IScope scope_PatternCompositionConstraint_patternRef(PatternCompositionConstraint ctx, EReference ref) {
+	public IScope scope_PatternCall_patternRef(PatternCall ctx, EReference ref) {
 		IScope scope = delegateGetScope(ctx, ref);
 		return new FilteringScope(scope, new Predicate<IEObjectDescription>() {
 			@Override

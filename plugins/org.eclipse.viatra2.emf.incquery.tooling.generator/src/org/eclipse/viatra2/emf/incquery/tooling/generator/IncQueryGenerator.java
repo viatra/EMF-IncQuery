@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -91,7 +92,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 					.getProject();
 			ExtensionGenerator generator = new ExtensionGenerator();
 			generator.setProject(project);
-			cleanUp(project);
+			cleanUp(project, input);
 			// create a resourcedescription for the input, 
 			// this way we can find all relevant EIQ file in the context of this input.
 			IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
@@ -104,7 +105,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 				}
 			}
 			// build xmi file
-			builder.build(input.getResourceSet(), project);
+			builder.build(input.getResourceSet(), project, input);
 			super.doGenerate(input, fsa);
 			ArrayList<String> packageNames = new ArrayList<String>();
 			TreeIterator<EObject> it = input.getAllContents();
@@ -133,12 +134,8 @@ public class IncQueryGenerator extends JvmModelGenerator {
 							Pair<String, String> found = IterableExtensions.findFirst(removableExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
 								@Override
 								public Boolean apply(Pair<String, String> p) {
-									if (p.getKey().equals(ext.getId())) {
-										if (p.getValue().equals(ext.getPoint())) {
-											return true;
-										}
-									}
-									return false;
+									return (p.getKey().equals(ext.getId())) 
+											&& (p.getValue().equals(ext.getPoint()));
 								}
 							});
 							removableExtensions.remove(found);
@@ -174,12 +171,16 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	 * Full cleanUp based on the Global XMI model saved before, 
 	 * if no model found, no cleanUp needed.
 	 * @param project
+	 * @param input 
 	 * @throws CoreException
 	 */
-	private void cleanUp(IProject project) throws CoreException {
+	private void cleanUp(IProject project, Resource input) throws CoreException {
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		// load previous global xmi resource
-		if (project.getFolder(XmiModelUtil.XMI_OUTPUT_FOLDER).exists()) {
+		
+		IFolder folder = project.getFolder(XmiModelUtil.XMI_OUTPUT_FOLDER);
+		IFile file = folder.getFile(XmiModelUtil.GLOBAL_EIQ_FILENAME);
+		if (file.exists()) {
 			try {
 				Resource gxr = XmiModelUtil.getGlobalXmiResource(project.getName());
 				// do the clean up based on the previous model
@@ -188,12 +189,15 @@ public class IncQueryGenerator extends JvmModelGenerator {
 				while (it.hasNext()) {
 					EObject obj = it.next();
 					if (obj instanceof Pattern) {
-						packageNames.add(util.getPackageName((Pattern) obj));
-						executeCleanUpOnModelProject(project, (Pattern) obj);
-						// execute code clean up for all fragments
-						executeCleanUpOnFragments(project, (Pattern)obj);
-						// clean up code in the modelProject
-						
+						Pattern pattern = (Pattern) obj;
+						if (pattern.getFileName().equals(
+								input.getURI().toString())) {
+							packageNames.add(util.getPackageName(pattern));
+							executeCleanUpOnModelProject(project, pattern);
+							// execute code clean up for all fragments
+							executeCleanUpOnFragments(project, pattern);
+							// clean up code in the modelProject
+						}
 					}
 				}
 				// remove previously exported packages

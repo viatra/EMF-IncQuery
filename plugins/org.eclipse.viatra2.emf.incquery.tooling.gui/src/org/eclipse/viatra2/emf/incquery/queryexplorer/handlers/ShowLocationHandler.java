@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch;
 
 public class ShowLocationHandler extends AbstractHandler {
 	

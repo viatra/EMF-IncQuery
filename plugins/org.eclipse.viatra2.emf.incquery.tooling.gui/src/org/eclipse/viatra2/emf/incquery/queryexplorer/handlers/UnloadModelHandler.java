@@ -21,8 +21,8 @@ public class UnloadModelHandler extends AbstractHandler {
 				IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
 				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					HandlerUtil.getActivePart(event).getSite().getPage().removePartListener(QueryExplorer.getPartListener());
-					QueryExplorer.getViewerRoot().removePatternMatcherRoot(editorPart, resourceSet);
+					HandlerUtil.getActivePart(event).getSite().getPage().removePartListener(QueryExplorer.getInstance().getModelPartListener());
+					QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(editorPart, resourceSet);
 				}
 			}
 		}
@@ -30,8 +30,7 @@ public class UnloadModelHandler extends AbstractHandler {
 			e.printStackTrace();
 		}
 		
-		//QueryExplorer.refreshTreeViewer();
-		QueryExplorer.clearTableViewer();
+		QueryExplorer.getInstance().clearTableViewer();
 		
 		return null;
 	}

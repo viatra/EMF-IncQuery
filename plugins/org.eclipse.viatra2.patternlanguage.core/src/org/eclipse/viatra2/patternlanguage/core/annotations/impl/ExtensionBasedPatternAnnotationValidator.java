@@ -1,7 +1,6 @@
 package org.eclipse.viatra2.patternlanguage.core.annotations.impl;
 
 import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator;
-import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
@@ -27,16 +26,12 @@ import com.google.common.collect.Iterables;
 public class ExtensionBasedPatternAnnotationValidator implements
 		IPatternAnnotationValidator {
 
-	String name;
-	String languageID;
 	Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
 
 	public ExtensionBasedPatternAnnotationValidator(String name,
 			String languageID,
 			Iterable<ExtensionBasedPatternAnnotationParameter> parameters) {
 		super();
-		this.name = name;
-		this.languageID = languageID;
 		this.definedAttributes = parameters;
 	}
 	

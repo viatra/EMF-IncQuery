@@ -12,7 +12,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositi
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
 
 /**
  * @author Mark Czotter
@@ -24,10 +26,11 @@ class XmiOutputBuilder {
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
 	 */
-	def build(ResourceSet resourceSet, IProject project) {
+	def build(ResourceSet resourceSet, IProject project, Resource resource) {
 		try {
 			val folder = project.getFolder(XmiModelUtil::XMI_OUTPUT_FOLDER)
 			val file = folder.getFile(XmiModelUtil::GLOBAL_EIQ_FILENAME)
+			val resourceFileName = resource.URI.toString
 			if (!folder.exists) {
 				folder.create(IResource::DEPTH_INFINITE, false, null)
 			}
@@ -62,7 +65,8 @@ class XmiOutputBuilder {
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
 				val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
 				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(pattern)
-				p.setName(fqn)
+				p.name = fqn
+				p.fileName = pattern.eResource.URI.toString
 				if (fqnToPatternMap.get(fqn) != null) {
 					logger.error("Pattern already set in the Map: " + fqn)
 				} else {
@@ -71,13 +75,13 @@ class XmiOutputBuilder {
 				}	
 			}
 			// then iterate over all added PatternCompositonConstraint and change the patternRef
-			for (constraint : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCompositionConstraint))) {
-				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(constraint.patternRef)
+			for (call : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCall))) {
+				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(call.patternRef)
 				val p = fqnToPatternMap.get(fqn)
 				if (p == null) {
 					logger.error("Pattern not found: " +fqn)
 				} else {
-					constraint.setPatternRef(p as Pattern)
+					call.setPatternRef(p as Pattern)
 				}
 			}
 			// save the xmi file 

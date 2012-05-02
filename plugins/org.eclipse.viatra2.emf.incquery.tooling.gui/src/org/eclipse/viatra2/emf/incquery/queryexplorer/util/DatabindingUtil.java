@@ -15,9 +15,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.PatternMatcherRoot;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.RuntimeDatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.observable.ViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -41,7 +40,6 @@ import com.google.inject.Injector;
  */
 public class DatabindingUtil {
 
-	public static Map<IFile, PatternModel> registeredPatterModels = new HashMap<IFile, PatternModel>();
 	public static Map<URI, AdapterFactory> registeredItemProviders = collectItemProviders();
 	
 	private static Map<URI, AdapterFactory> collectItemProviders() {
@@ -111,18 +109,16 @@ public class DatabindingUtil {
 		Pattern pattern = null;
 		
 		//find PatternUI annotation
-		for (IFile key : registeredPatterModels.keySet()) {
-			for (Pattern p : registeredPatterModels.get(key).getPatterns()) {
-				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
-					pattern = p;
-					for (Annotation a : p.getAnnotations()) {
-						if (a.getName().matches("PatternUI")) {							
-							for (AnnotationParameter ap : a.getParameters()) {
-								if (ap.getName().matches("message")) {
-									ValueReference valRef = ap.getValue();
-									if (valRef instanceof StringValueImpl) {
-										return ((StringValueImpl) valRef).getValue();
-									}
+		for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
+			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
+				pattern = p;
+				for (Annotation a : p.getAnnotations()) {
+					if (a.getName().matches("PatternUI")) {							
+						for (AnnotationParameter ap : a.getParameters()) {
+							if (ap.getName().matches("message")) {
+								ValueReference valRef = ap.getValue();
+								if (valRef instanceof StringValueImpl) {
+									return ((StringValueImpl) valRef).getValue();
 								}
 							}
 						}
@@ -130,6 +126,7 @@ public class DatabindingUtil {
 				}
 			}
 		}
+		
 		
 //		Object tmp = match.get(0);
 //		if (tmp instanceof EObject) {
@@ -206,40 +203,40 @@ public class DatabindingUtil {
 		Pattern pattern = null;
 		
 		//process annotations if present
-		for (IFile file : registeredPatterModels.keySet()) {
-			for (Pattern p : registeredPatterModels.get(file).getPatterns()) {
-				if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
-					pattern = p;
-					
-					for (Annotation a : p.getAnnotations()) {
-						if (a.getName().matches("ObservableValue")) {
-							annotationFound = true;
-							String key = null, value = null;
-							
-							for (AnnotationParameter ap : a.getParameters()) {
-								if (ap.getName().matches("name")) {
-									ValueReference valRef = ap.getValue();
-									if (valRef instanceof StringValueImpl) {
-										key = ((StringValueImpl) valRef).getValue();
-									}
-								}
-								
-								if (ap.getName().matches("expression")) {
-									ValueReference valRef = ap.getValue();
-									if (valRef instanceof StringValueImpl) {
-										value = ((StringValueImpl) valRef).getValue();
-									}
+
+		for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
+			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
+				pattern = p;
+
+				for (Annotation a : p.getAnnotations()) {
+					if (a.getName().matches("ObservableValue")) {
+						annotationFound = true;
+						String key = null, value = null;
+
+						for (AnnotationParameter ap : a.getParameters()) {
+							if (ap.getName().matches("name")) {
+								ValueReference valRef = ap.getValue();
+								if (valRef instanceof StringValueImpl) {
+									key = ((StringValueImpl) valRef).getValue();
 								}
 							}
-							
-							if (key != null && value != null) {
-								adapter.putToParameterMap(key, value);
+
+							if (ap.getName().matches("expression")) {
+								ValueReference valRef = ap.getValue();
+								if (valRef instanceof StringValueImpl) {
+									value = ((StringValueImpl) valRef).getValue();
+								}
 							}
+						}
+
+						if (key != null && value != null) {
+							adapter.putToParameterMap(key, value);
 						}
 					}
 				}
 			}
 		}
+		
 		
 		//try to show parameters with a name attribute
 		if (!annotationFound && pattern != null) {
@@ -258,8 +255,8 @@ public class DatabindingUtil {
 	 * @return the PatternMatcherRoot element
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static PatternMatcherRoot createPatternMatcherRoot(ViewerRootKey key) {
-		PatternMatcherRoot result = new PatternMatcherRoot(key);
+	public static PatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
+		PatternMatcherRoot root = new PatternMatcherRoot(key);
 
 		//generated matchers
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -273,7 +270,7 @@ public class DatabindingUtil {
 						IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>) obj;
 						IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
 						String patternFqn = factory.getPatternFullyQualifiedName();
-						result.addMatcher(matcher, patternFqn, true);
+						root.addMatcher(matcher, patternFqn, true);
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -282,11 +279,11 @@ public class DatabindingUtil {
 		}
 		
 		//runtime matchers
-		for (IFile file : registeredPatterModels.keySet()) {
-			result.registerPatternsFromFile(file, registeredPatterModels.get(file));
+		for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
+			root.registerPattern(pattern);
 		}
 
-		return result;
+		return root;
 	}
 	
 	public static PatternModel parseEPM(IFile file, Injector injector) {
