@@ -60,7 +60,8 @@ public class CorePatternLanguageHelper {
 		Set<Variable> result = new HashSet<Variable>();
 		TreeIterator<EObject> eAllContents = xExpression.eAllContents();
 		while (eAllContents.hasNext()) {
-			EList<EObject> eCrossReferences = eAllContents.next()
+			EObject expression = eAllContents.next();
+			EList<EObject> eCrossReferences = expression
 					.eCrossReferences();
 			for (EObject eObject : eCrossReferences) {
 				if (eObject instanceof Variable
