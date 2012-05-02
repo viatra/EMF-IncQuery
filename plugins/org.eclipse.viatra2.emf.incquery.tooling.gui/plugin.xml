@@ -278,4 +278,37 @@
             name="EMF-IncQuery">
       </category>
    </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.tooling.gui.extensions"
+         name="EMF-IncQuery Content Extensions"
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonFilter
+            activeByDefault="true"
+            class="org.eclipse.viatra2.emf.incquery.gui.content.QueryFolderFilter"
+            description="Hides EMF-IncQuery queries folder"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter"
+            name="EMF-IncQuery output folder"
+            visibleInUI="true">
+      </commonFilter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding
+            viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+         <includes>
+            <contentExtension
+                  pattern="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            class="org.eclipse.viatra2.emf.incquery.gui.content.QueryFolderFilter"
+            description="Hides EMF-IncQuery queries folder"
+            enabled="true"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter"
+            name="EMF-IncQuery output folder"></filter>
+   </extension>
 </plugin>
