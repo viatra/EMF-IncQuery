@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFPatternMatcherContext;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
@@ -47,6 +47,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	protected Collection<EMFVisitor> waitingVisitors;
 	boolean traversalCoalescing;
 	protected ExtensibleEMFManipulationListener listener;
+
 	
 	/**
 	 * @param visitor
@@ -85,8 +86,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	public static class ForResourceSet<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
 		ResourceSet root;
 		Collection<Resource> additionalResources;
-		public ForResourceSet(ResourceSet root) {
-			super();
+		public ForResourceSet(ResourceSet root, IncQueryEngine iqEngine) {
+			super(iqEngine);
 			this.root = root;
 			this.additionalResources = new HashSet<Resource>();
 		}
@@ -113,8 +114,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	}
 	public static class ForResource<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
 		Resource root;
-		public ForResource(Resource root) {
-			super();
+		public ForResource(Resource root, IncQueryEngine iqEngine) {
+			super(iqEngine);
 			this.root = root;
 		}
 		@Override
@@ -130,8 +131,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	}
 	public static class ForEObject<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
 		EObject root;
-		public ForEObject(EObject root) {
-			super();
+		public ForEObject(EObject root, IncQueryEngine iqEngine) {
+			super(iqEngine);
 			this.root = root;
 		}
 		@Override
@@ -168,7 +169,8 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	 * Notifier must be EObject, Resource or ResourceSet
 	 * @param notifier
 	 */
-	protected EMFPatternMatcherRuntimeContext() {
+	protected EMFPatternMatcherRuntimeContext(IncQueryEngine iqEngine) {
+		super(iqEngine);
 		this.waitingVisitors = new ArrayList<EMFVisitor>();
 		this.traversalCoalescing = false;
 	}

@@ -24,6 +24,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ps
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.NegativePatternCall;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.TypeBinary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.TypeTernary;
@@ -33,10 +34,13 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatorExpression;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CountAggregator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
@@ -44,6 +48,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHe
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
@@ -143,6 +148,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	protected PVariable getPNode(ValueReference reference) throws RetePatternBuildException {
 		if (reference instanceof VariableValue)
 			return getPNode(((VariableValue) reference).getValue());
+		else if (reference instanceof AggregatedValue)
+			return aggregate((AggregatedValue) reference);
 		else if (reference instanceof IntValue)
 			return pSystem.newConstantVariable(((IntValue) reference).getValue());
 		else if (reference instanceof StringValue)
@@ -159,12 +166,13 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		else throw new RetePatternBuildException(
 				"Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
 				new String[]{
-						reference.eClass().getEPackage().getNsURI(),
-						reference.eClass().getName(),
-						
+						reference != null? reference.eClass().getName() : "(null)",
+						reference != null? reference.eClass().getEPackage().getNsURI() : "(null)",
+						pattern.getName()
 				}, pattern);
 	}
 	
+
 	protected PVariable newVirtual() {
 		return pSystem.newVirtualVariable();
 	}
@@ -211,8 +219,9 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
 		} else if (constraint instanceof PatternCompositionConstraint) {
 			PatternCompositionConstraint constraint2 = (PatternCompositionConstraint) constraint;
-			Pattern patternRef = constraint2.getPatternRef();
-			Tuple pNodeTuple = getPNodeTuple(constraint2.getParameters());
+			PatternCall call = constraint2.getCall();
+			Pattern patternRef = call.getPatternRef();
+			Tuple pNodeTuple = getPNodeTuple(call.getParameters());
 			if (constraint2.isNegative()) 
 				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
 			else 
@@ -276,6 +285,25 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	}
 
 
+	protected PVariable aggregate(AggregatedValue reference) throws RetePatternBuildException {
+		PVariable result = newVirtual();
+		
+		PatternCall call = reference.getCall();
+		Pattern patternRef = call.getPatternRef();
+		Tuple pNodeTuple = getPNodeTuple(call.getParameters());
+		
+		AggregatorExpression aggregator = reference.getAggregator();
+		if (aggregator instanceof CountAggregator) {
+			new PatternMatchCounter<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef, result);
+		} else throw new RetePatternBuildException(
+				"Unsupported aggregator expression type {1} in pattern {2}.", 
+				new String[]{aggregator.eClass().getName(), patternFQN}, 
+				pattern);	
+		
+		
+		return result;
+	}
+	
 	private void gatherInequalityAssertions() {
 		// TODO CHECK IF SHAREABLE, ETC.
 
