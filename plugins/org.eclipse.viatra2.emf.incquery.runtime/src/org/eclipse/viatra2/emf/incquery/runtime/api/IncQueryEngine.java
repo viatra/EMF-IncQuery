@@ -154,7 +154,13 @@ public class IncQueryEngine {
 
 	/**
 	 * Run-time events (such as exceptions during expression evaluation) will be logged to this logger.
-	 * The default logger pipes to the Eclipse Error Log (if Eclipse is running), or to stderr otherwise. 
+	 * <p>
+	 * DEFAULT BEHAVIOUR:
+	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
+	 * Otherwise, messages are written to stderr.
+	 * In both cases, debug messages are ignored.
+	 * </p>
+	 * Custom logger can be provided via setter to override the default behaviour.
 	 * @return the logger that errors will be logged to during runtime execution.
 	 */
 	public EMFIncQueryRuntimeLogger getLogger() {
@@ -163,7 +169,7 @@ public class IncQueryEngine {
 			if (plugin !=null) logger = new EMFIncQueryRuntimeLogger() {
 				@Override
 				public void logDebug(String message) {
-					plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
+					//plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
 				}
 	
 				@Override
@@ -188,7 +194,7 @@ public class IncQueryEngine {
 			}; else logger = new EMFIncQueryRuntimeLogger() {
 				@Override
 				public void logDebug(String message) {
-					System.err.println("[DEBUG] " + message);
+					//System.err.println("[DEBUG] " + message);
 				}
 				@Override
 				public void logError(String message) {
@@ -215,8 +221,13 @@ public class IncQueryEngine {
 
 	/**
 	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
-	 * The default logger pipes to the Eclipse Error Log (if Eclipse is running), or to stderr otherwise. 
-	 * @param logger that errors will be logged to during runtime execution.
+	 * <p>
+	 * DEFAULT BEHAVIOUR:
+	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
+	 * Otherwise, messages are written to stderr.
+	 * In both cases, debug messages are ignored.
+	 * </p>
+	 * @param logger a custom logger that errors will be logged to during runtime execution.
 	 */
 	public void setLogger(EMFIncQueryRuntimeLogger logger) {
 		this.logger = logger;
