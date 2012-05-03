@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
@@ -50,12 +52,13 @@ public class ConstraintViolation<T extends IPatternMatch> {
 				.findMember(platformString);
 		try {
 			marker = markerLoc
-					.createMarker("org.eclipse.emf.validation.problem");
+					.createMarker(EValidator.MARKER);
 			marker.setAttribute(IMarker.SEVERITY, this.adapter.getConstraint()
 					.getSeverity());
 			marker.setAttribute(IMarker.TRANSIENT, true);
-			marker.setAttribute(IMarker.LOCATION, this.adapter.getConstraint()
-					.getLocationObject(patternMatch));
+			marker.setAttribute(IMarker.LOCATION, location);
+			marker.setAttribute(EValidator.URI_ATTRIBUTE,
+					EcoreUtil.getURI(location).toString());
 			updateText(DatabindingAdapterUtil.getMessage(patternMatch, message));
 		} catch (CoreException e) {
 			ValidationRuntimeActivator.getDefault().logException(
