@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
+package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,9 +20,9 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
-
-
 
 /**
  * TODO generics? 
@@ -31,6 +31,16 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
  */
 public class EMFPatternMatcherContext<PatternDescription> implements IPatternMatcherContext<PatternDescription> {
 		
+	private IncQueryEngine iqEngine;
+	
+	/**
+	 * @param iqEngine
+	 */
+	public EMFPatternMatcherContext(IncQueryEngine iqEngine) {
+		super();
+		this.iqEngine = iqEngine;
+	}
+	
 	@Override
 	public EdgeInterpretation edgeInterpretation() {
 		return EdgeInterpretation.BINARY;
@@ -111,7 +121,6 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	 */
 	@Override
 	public boolean isTernaryEdgeType(Object typeObject) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
@@ -152,35 +161,23 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 		// Ignore, because we don't support changing machines here
 	}
 
-	// Logging support
-	public interface Logger {
-		public void logDebug(String message);
-		public void logError(String message);
-		public void logError(String message, Throwable cause);
-		public void logWarning(String message);
-		public void logWarning(String message, Throwable cause);
-	}	
-	Logger logger;
-	public Logger getLogger() {
-		return logger;
-	}
-	public void setLogger(Logger logger) {
-		this.logger = logger;
+	public EMFIncQueryRuntimeLogger getLogger() {
+		return iqEngine.getLogger();
 	}
 	
 	@Override
 	public void logDebug(String message) {
-		if (logger!=null) logger.logDebug(message);
+		if (getLogger()!=null) getLogger().logDebug(message);
 	}
 
 	@Override
 	public void logError(String message) {
-		if (logger!=null) logger.logError(message);
+		if (getLogger()!=null) getLogger().logError(message);
 	}
 
 	@Override
 	public void logError(String message, Throwable cause) {
-		if (logger!=null) logger.logError(message, cause);
+		if (getLogger()!=null) getLogger().logError(message, cause);
 	}
 	
 	 /* (non-Javadoc)
@@ -188,7 +185,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	 */
 	@Override
 	public void logWarning(String message) {
-		if (logger!=null) logger.logWarning(message);
+		if (getLogger()!=null) getLogger().logWarning(message);
 	}
 
 	/* (non-Javadoc)
@@ -196,7 +193,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	 */
 	@Override
 	public void logWarning(String message, Throwable cause) {
-		if (logger!=null) logger.logWarning(message, cause);
+		if (getLogger()!=null) getLogger().logWarning(message, cause);
 	}
 
 

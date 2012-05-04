@@ -11,11 +11,15 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
@@ -58,6 +62,8 @@ public class IncQueryEngine {
 	 * EXPERIMENTAL
 	 */
 	private int reteThreads = 0;
+	
+	private EMFIncQueryRuntimeLogger logger;
 	// TODO IncQueryBase?
 	
 	/**
@@ -83,13 +89,13 @@ public class IncQueryEngine {
 	 */
 	public ReteEngine<Pattern> getReteEngine() throws IncQueryRuntimeException {
 		if (reteEngine == null) {
-			IPatternMatcherRuntimeContext<Pattern> context;
+			EMFPatternMatcherRuntimeContext<Pattern> context;
 			if (emfRoot instanceof EObject) 
-				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot);
+				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
 			else if (emfRoot instanceof Resource) 
-				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot);
+				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot, this);
 			else if (emfRoot instanceof ResourceSet) 
-				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot);
+				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
 			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 			
 			reteEngine = buildReteEngineInternal(context);
@@ -146,6 +152,89 @@ public class IncQueryEngine {
 		}
 	}
 
+	/**
+	 * Run-time events (such as exceptions during expression evaluation) will be logged to this logger.
+	 * <p>
+	 * DEFAULT BEHAVIOUR:
+	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
+	 * Otherwise, messages are written to stderr.
+	 * In both cases, debug messages are ignored.
+	 * </p>
+	 * Custom logger can be provided via setter to override the default behaviour.
+	 * @return the logger that errors will be logged to during runtime execution.
+	 */
+	public EMFIncQueryRuntimeLogger getLogger() {
+		if (logger == null) {
+			final IncQueryRuntimePlugin plugin = IncQueryRuntimePlugin.getDefault();
+			if (plugin !=null) logger = new EMFIncQueryRuntimeLogger() {
+				@Override
+				public void logDebug(String message) {
+					//plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
+				}
+	
+				@Override
+				public void logError(String message) {
+					plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message));
+				}
+	
+				@Override
+				public void logError(String message, Throwable cause) {
+					plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
+				}
+	
+				@Override
+				public void logWarning(String message) {
+					plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message));
+				}
+	
+				@Override
+				public void logWarning(String message, Throwable cause) {
+					plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
+				}
+			}; else logger = new EMFIncQueryRuntimeLogger() {
+				@Override
+				public void logDebug(String message) {
+					//System.err.println("[DEBUG] " + message);
+				}
+				@Override
+				public void logError(String message) {
+					System.err.println("[ERROR] " + message);
+				}
+				@Override
+				public void logError(String message, Throwable cause) {
+					System.err.println("[ERROR] " + message);
+					cause.printStackTrace();
+				}
+				@Override
+				public void logWarning(String message) {
+					System.err.println("[WARNING] " + message);
+				}
+				@Override
+				public void logWarning(String message, Throwable cause) {
+					System.err.println("[WARNING] " + message);
+					cause.printStackTrace();
+				}				
+			};
+		}
+		return logger;
+	}
+
+	/**
+	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
+	 * <p>
+	 * DEFAULT BEHAVIOUR:
+	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
+	 * Otherwise, messages are written to stderr.
+	 * In both cases, debug messages are ignored.
+	 * </p>
+	 * @param logger a custom logger that errors will be logged to during runtime execution.
+	 */
+	public void setLogger(EMFIncQueryRuntimeLogger logger) {
+		this.logger = logger;
+	}
+	
+	
+
 	
 //	/**
 //	 * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.
@@ -165,4 +254,5 @@ public class IncQueryEngine {
 //		}
 //		return engine;
 //	}	
+	
 }

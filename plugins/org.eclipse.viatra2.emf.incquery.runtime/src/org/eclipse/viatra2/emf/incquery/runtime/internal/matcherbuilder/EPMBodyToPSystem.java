@@ -166,9 +166,9 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		else throw new RetePatternBuildException(
 				"Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
 				new String[]{
-						reference.eClass().getEPackage().getNsURI(),
-						reference.eClass().getName(),
-						
+						reference != null? reference.eClass().getName() : "(null)",
+						reference != null? reference.eClass().getEPackage().getNsURI() : "(null)",
+						pattern.getName()
 				}, pattern);
 	}
 	
