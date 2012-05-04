@@ -18,7 +18,7 @@ class DatabindingGenerator implements IGenerationFragment {
 	private static String DATABINDINGEXTENSION_PREFIX = "extension.databinding."
 	private static String DATABINDINGEXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding"
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	private static String annotationLiteral = "Databinding"
+	private static String annotationLiteral = "ObservableValue"
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
