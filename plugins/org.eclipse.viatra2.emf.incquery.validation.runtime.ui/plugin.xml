@@ -30,7 +30,7 @@
                <visibleWhen
                      checkEnabled="false">
                   <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
                   </reference>
                </visibleWhen>
             </command>
@@ -49,7 +49,7 @@
                <visibleWhen
                      checkEnabled="false">
                   <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
                   </reference>
                </visibleWhen>
             </command>
@@ -68,7 +68,7 @@
                <visibleWhen
                      checkEnabled="false">
                   <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
                   </reference>
                </visibleWhen>
             </command>
@@ -87,7 +87,7 @@
                <visibleWhen
                      checkEnabled="false">
                   <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
                   </reference>
                </visibleWhen>
             </command>
@@ -97,13 +97,14 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
-            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.eobjectdef">
+            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
          <with
                variable="selection">
             <iterate
-                  ifEmpty="false">
+                  ifEmpty="false"
+                  operator="or">
                <instanceof
-                     value="org.eclipse.emf.ecore.EObject">
+                     value="org.eclipse.emf.common.notify.Notifier">
                </instanceof>
             </iterate>
          </with>
