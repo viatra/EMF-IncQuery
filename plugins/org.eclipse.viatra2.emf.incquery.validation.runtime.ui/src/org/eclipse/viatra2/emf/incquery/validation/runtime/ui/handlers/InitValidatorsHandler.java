@@ -30,6 +30,7 @@ public class InitValidatorsHandler extends AbstractHandler {
 				adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
 			}
 			ValidationUtil.getAdapterMap().put(activeEditor, adapters);
+			activeEditor.getEditorSite().getPage().addPartListener(ValidationUtil.editorPartListener);
 		}
 
 		return null;

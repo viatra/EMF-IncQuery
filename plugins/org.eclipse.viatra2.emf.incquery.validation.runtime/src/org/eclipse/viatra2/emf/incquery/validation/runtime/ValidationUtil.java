@@ -23,12 +23,16 @@ public class ValidationUtil {
 	 */
 	private static List<Constraint<IPatternMatch>> constraints;
 
+	
+	
 	/**
 	 * Maps the registered validation adapter instances to a given editor
 	 * instance
 	 */
 	private static Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = new HashMap<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>>();
 
+	public static ModelEditorPartListener editorPartListener = new ModelEditorPartListener();
+	
 	public static Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> getAdapterMap() {
 		return adapterMap;
 	}

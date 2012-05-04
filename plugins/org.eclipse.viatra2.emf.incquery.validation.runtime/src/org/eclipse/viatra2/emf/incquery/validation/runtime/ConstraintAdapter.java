@@ -55,4 +55,9 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 		return this.constraint;
 	}
 	
+	public void dispose() {
+		for (ConstraintViolation<T> violation : constraintViolations.values()) {
+			violation.dispose();
+		}
+	}
 }
