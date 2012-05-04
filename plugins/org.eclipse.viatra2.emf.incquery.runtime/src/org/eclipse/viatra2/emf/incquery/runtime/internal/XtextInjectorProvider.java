@@ -3,6 +3,8 @@
  */
 package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
+
 import com.google.inject.Injector;
 
 /**
@@ -28,5 +30,9 @@ public class XtextInjectorProvider {
 		this.injector = injector;
 	}
 	
-	
+	public void initializeHeadlessInjector() {
+		EMFPatternLanguageStandaloneSetup setup = 
+				new EMFPatternLanguageStandaloneSetup();
+		injector = setup.createInjectorAndDoEMFRegistration();
+	}
 }

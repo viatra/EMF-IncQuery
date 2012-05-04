@@ -6,7 +6,11 @@
          <meta.schema plugin="org.eclipse.viatra2.emf.incquery.runtime" id="injectorprovider" name="EMF-IncQuery Injector provider"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;The EMF-IncQuery injector provider is used to add extra dependencies to the EMF-IncQuery runtime based on a Guice Injector.&lt;/p&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Warning!&lt;/strong&gt; Generally, it is not supported to use several injector providers in the same Eclipse instance, and the EMF-IncQuery tooling already implements an injector provider used by the developer interface of EMF-IncQuery. If you need a specific implementation, you have to use it without the EMF-IncQuery tooling.&lt;/p&gt;
+
       </documentation>
    </annotation>
 
