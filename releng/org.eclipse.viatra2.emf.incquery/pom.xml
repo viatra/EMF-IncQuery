@@ -12,6 +12,7 @@
 	<modules>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf</module>
+		<module>../../plugins/org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
