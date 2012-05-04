@@ -6,6 +6,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
+
+import com.google.inject.Injector;
 
 /**
  * Utility class for loading Global XMI model on path queries/globalEiqModel.xmi.
@@ -25,7 +28,8 @@ public class XmiModelUtil {
 	 * @see {@link ResourceSet#getResource(URI, boolean)}.
 	 */
 	public static Resource getGlobalXmiResource(String bundleName) {
-		ResourceSet set = IncQueryRuntimePlugin.getDefault().getInjector().getInstance(ResourceSet.class);
+		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		ResourceSet set = injector.getInstance(ResourceSet.class);
 		Resource globalXmiResource = set.getResource(getGlobalXmiResourceURI(bundleName), true);;
 		return globalXmiResource;
 	}
@@ -53,3 +57,4 @@ public class XmiModelUtil {
 	}
 	
 }
+

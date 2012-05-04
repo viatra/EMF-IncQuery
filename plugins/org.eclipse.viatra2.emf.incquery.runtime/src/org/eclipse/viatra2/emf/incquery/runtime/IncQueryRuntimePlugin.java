@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IInjectorProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.osgi.framework.BundleContext;
 
 import com.google.inject.Injector;
@@ -30,7 +31,6 @@ public class IncQueryRuntimePlugin extends Plugin {
 
 	// The shared instance
 	private static IncQueryRuntimePlugin plugin;
-	private Injector injector;
 	
 	public static final String PLUGIN_ID="org.eclipse.viatra2.emf.incquery.runtime";
 	private static final String INJECTOREXTENSIONID = "org.eclipse.viatra2.emf.incquery.runtime.injectorprovider";
@@ -43,10 +43,11 @@ public class IncQueryRuntimePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		// TODO Builder regisry may be used later
+		// TODO Builder registry may be used later
 		//BuilderRegistry.initRegistry();
 		MatcherFactoryRegistry.initRegistry();
 		WellbehavingDerivedFeatureRegistry.initRegistry();
+		XtextInjectorProvider.INSTANCE.setInjector(createInjector());
 	}
 
 	/*
@@ -56,6 +57,7 @@ public class IncQueryRuntimePlugin extends Plugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		XtextInjectorProvider.INSTANCE.setInjector(null);
 		super.stop(context);
 	}
 
@@ -66,24 +68,6 @@ public class IncQueryRuntimePlugin extends Plugin {
 	 */
 	public static IncQueryRuntimePlugin getDefault() {
 		return plugin;
-	}
-
-	
-	/**
-	 * Returns injector for the EMFPatternLanguage.
-	 * @return
-	 */
-	public Injector getInjector() {
-		try {
-			if (injector == null) {
-				injector = createInjector();
-			}
-			return injector;
-		} catch (CoreException e) {
-			getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "Cannot initialize IncQuery Runtime.", e));
-		}
-		return null;
-//		return EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage");
 	}
 
 	private Injector createInjector() throws CoreException {
