@@ -15,6 +15,9 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import java.util.HashSet
+import org.eclipse.emf.ecore.EPackage
 
 /**
  * @author Mark Czotter
@@ -41,7 +44,7 @@ class XmiOutputBuilder {
 			val xmiModelRoot = EMFPatternLanguageFactory::eINSTANCE.createPatternModel()
 			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(file.fullPath.toOSString, true))
 			// add import declarations 
-			val importDeclarations = newHashSet()
+			val HashSet<EPackage> importDeclarations = newHashSet()
 			/*
 			 * The following change avoids two different errors:
 			 *  * concurrentmodification of the growing list of resources
@@ -50,16 +53,28 @@ class XmiOutputBuilder {
 			//val packageImports = resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (PackageImport))).flatten
 			val resources = new ArrayList(resourceSet.resources)
 			for (r : resources) {
-				val packageImports = r.allContents.toIterable.filter(typeof (PackageImport))
-				if (!packageImports.empty) {
-					for (importDecl : packageImports) {
-						if (!importDeclarations.contains(importDecl.EPackage)) {
-							importDeclarations.add(importDecl.EPackage)
-							xmiModelRoot.importPackages.add(importDecl)
+				for (obj : r.contents) {
+					if (obj instanceof PatternModel && !obj.equals(xmiModelRoot)) {
+						for (importDecl : (obj as PatternModel).importPackages){
+							if (!importDeclarations.contains(importDecl.EPackage)) {
+								importDeclarations.add(importDecl.EPackage)
+							}
 						}
+						
 					}
-				} 
+				}
+//				val packageImports = r.allContents.toIterable.filter(typeof (PackageImport))
+//				if (!packageImports.empty) {
+//					for (importDecl : packageImports) {
+//						if (!importDeclarations.contains(importDecl.EPackage)) {
+//							importDeclarations.add(importDecl.EPackage)
+//							xmiModelRoot.importPackages.add(importDecl)
+//						}
+//					}
+//				} 
 			}
+			
+			xmiModelRoot.importPackages.addAll(importDeclarations.map[EMFPatternLanguageFactory::eINSTANCE.createPackageImport])				
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
