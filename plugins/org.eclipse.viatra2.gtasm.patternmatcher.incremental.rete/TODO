@@ -1,0 +1,54 @@
+viatra.inremental
+-----------------
+TODO
+   * RESOLVE: Network lock versus Modelspace lock összeakadás
+   * dualinputnode, child of the same Indexer twice?
+   * goal: párhuzamosság
+    * gyors epites
+    * conténer lebontás?
+    * parhuz + triggers?
+    * parhuz modelspace
+    
+
+   * javítás:
+    * [error] Negative org.eclipse.viatra2.gtasm.patternmatcher.patterns or check expressions cannot output variables - [call(name: isMatched, id: 0, fqn: isMatched)] in [name: hasCommonSrcMatched, id: 0, fqn: composition_02.hasCommonSrcMatched]
+    * check expressionből find
+    
+   * korrekt sideStub + optimalizáció kétféle mask-kal multiplicitással és anélkül
+   * PatternGraph overhaul (graph helyett constraint systems vagy valami)?
+   
+   * TermEval output ertek
+
+   * Constant modelelement megsinyli a torlest
+   * PatternGraph kiemelese packagebe?
+   * PatternMemory -> generikus (Clearable nyilvan nem lehet)
+HALASZTVA/NEM AKT/REMLHETLEG OK
+   * injectivity mint pEdge?
+   * GTRuleMatcher -> állítólag nem kell
+   * gtPattern.isDistinctMatching() -> specin kivuli; majd r3-ba esetleg lesz
+   * quantificationOrder? -> meg a sima se tudja            
+OPTI
+   * internalMessageQueue = externalMessageQueue; gyors masolas
+   * dupla oroklodesu Tuple, transform Tuple
+   * oroklos Tuple-ok ancestort cserelne, ha !=, de equals
+   * tuple tipusok varialhatosaga halozaton belul (pl. JoinNode parameterezese) + heurisztika meret alapjan
+   * trivialis maszk
+      * trimmer node, mindket szelsoseg
+      * trivialis indexer, mindket szelsoseg
+   	  * kulonleges memoryk? torekves rajuk epiteskor   
+   * LEAPS után: lazy eval message, iterátorokat tárol a köv receiver-re és a köv tuple-re
+      * igazan depth-first eseten lenne jo, mert igy rendes sorrendezessel haram ki lesznek fejtve a queue vegere;
+         * rendes sorrendezes helyett eleg az egy csomopontbol indulokat sorrendezni? Ekkor cimzett szerint nem lehet lazy!
+   * wrap: org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network objectknt id, fqn vagy marad ModelElement? 
+
+   * epites: jobb bejaras, bizonyos elek elonyben reszesitese (PatternEdge.compareTo())
+   * epites: reszgrafok cache-elese
+   * epites: több típusú entity-k egyszerűsítése, mi adódik az élekből is? 
+   * epites: több típusú relation-ök?
+   * epites: több típus (és konstans containment?) külön részhálóban csekkolva, nem lineárisan
+   * matchAll()-nál Indexer használata, plusz szkópok vertikális ellenőrzése
+   * Constant-kezeles optimalizalas : csekkeles meg a jobb oldalon, de ne jusson be a foaramba
+   
+   * Slot-bl maszk nlkli az lekhez -> gyorsts       
+   * hol legyen Tree, Hash, List a klnbz Collectionkben? Szfa?    
+ 
