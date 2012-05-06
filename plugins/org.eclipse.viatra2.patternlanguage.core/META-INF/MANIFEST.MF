@@ -23,6 +23,7 @@ Import-Package: org.apache.commons.logging,
  org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.patternlanguage.core,
+ org.eclipse.viatra2.patternlanguage.core.annotations,
  org.eclipse.viatra2.patternlanguage.core.formatting,
  org.eclipse.viatra2.patternlanguage.core.helper,
  org.eclipse.viatra2.patternlanguage.core.jvmmodel,
