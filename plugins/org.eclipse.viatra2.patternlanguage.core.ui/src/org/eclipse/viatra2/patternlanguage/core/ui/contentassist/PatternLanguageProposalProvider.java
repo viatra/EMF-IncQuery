@@ -12,6 +12,7 @@ package org.eclipse.viatra2.patternlanguage.core.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
@@ -32,7 +33,14 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 			acceptor.accept(createCompletionProposal(prefixedName, prefixedName, null, context));
 		}
 	}
+
 	public void complete_AnnotationParameter(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		// subclasses may override
+		if (model instanceof Annotation) {
+			Annotation annotation = (Annotation) model;
+			for (String paramName : annotationProvider.getAnnotationParameters(annotation.getName())){
+				String outputName = String.format("%s = ", paramName);
+				acceptor.accept(createCompletionProposal(outputName, paramName, null, context));
+			}
+		}
 	}
 }

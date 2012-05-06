@@ -28,4 +28,6 @@ public interface IPatternAnnotationValidator {
 	 * @return the expected class of the parameter variable
 	 */
 	public Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter);
+
+	public Iterable<String> getAllAvailableParameterNames();
 }

@@ -86,4 +86,12 @@ public class PatternAnnotationProvider {
 		}
 		return annotationValidators.keySet();
 	}
+	
+	public Iterable<String> getAnnotationParameters(String annotationName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName)
+				.getAllAvailableParameterNames();
+	}
 }
