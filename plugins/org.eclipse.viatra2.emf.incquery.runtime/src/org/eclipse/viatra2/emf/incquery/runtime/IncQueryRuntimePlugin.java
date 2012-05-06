@@ -12,10 +12,8 @@ package org.eclipse.viatra2.emf.incquery.runtime;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IInjectorProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
@@ -45,9 +43,9 @@ public class IncQueryRuntimePlugin extends Plugin {
 		plugin = this;
 		// TODO Builder registry may be used later
 		//BuilderRegistry.initRegistry();
+		XtextInjectorProvider.INSTANCE.setInjector(createInjector());
 		MatcherFactoryRegistry.initRegistry();
 		WellbehavingDerivedFeatureRegistry.initRegistry();
-		XtextInjectorProvider.INSTANCE.setInjector(createInjector());
 	}
 
 	/*
