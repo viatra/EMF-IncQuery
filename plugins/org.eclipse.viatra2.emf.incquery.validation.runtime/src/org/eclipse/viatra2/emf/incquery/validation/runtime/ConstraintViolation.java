@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 
 public class ConstraintViolation<T extends IPatternMatch> {
 
@@ -53,7 +54,8 @@ public class ConstraintViolation<T extends IPatternMatch> {
 			marker.setAttribute(IMarker.SEVERITY, this.adapter.getConstraint()
 					.getSeverity());
 			marker.setAttribute(IMarker.TRANSIENT, true);
-			marker.setAttribute(IMarker.LOCATION, location);
+			String locationString = String.format("%1$s %2$s", location.eClass().getName(), BasePatternMatch.prettyPrintValue(location));
+			marker.setAttribute(IMarker.LOCATION, locationString);
 			marker.setAttribute(EValidator.URI_ATTRIBUTE,
 					EcoreUtil.getURI(location).toString());
 			updateText(DatabindingAdapterUtil.getMessage(patternMatch, message));
