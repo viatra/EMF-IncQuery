@@ -202,7 +202,7 @@
                   <iterate
                         ifEmpty="false">
                      <instanceof
-                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch">
+                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
                      </instanceof>
                   </iterate>
                </with>

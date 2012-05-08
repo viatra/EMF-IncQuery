@@ -31,6 +31,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher,
- org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable,
  org.eclipse.viatra2.emf.incquery.queryexplorer.util
 
