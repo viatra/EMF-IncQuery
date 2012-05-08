@@ -15,42 +15,36 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail.TableViewerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutPreferences;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.IFlyoutPreferences;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailElement;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.observable.DetailObserver;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.FileEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -105,18 +99,18 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
-		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 400);
+		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 300);
 		FlyoutControlComposite rightFlyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
 		rightFlyoutControlComposite.setTitleText("Observer view");
 		rightFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
-		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 150);
+		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
 		FlyoutControlComposite leftFlyoutControlComposite = new FlyoutControlComposite(rightFlyoutControlComposite.getClientParent(), SWT.NONE, leftFlyoutPreferences);
 		leftFlyoutControlComposite.setTitleText("Registered patterns");
 		leftFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
 		
 		matcherTreeViewer = new TreeViewer(leftFlyoutControlComposite.getClientParent());
-		tableViewer = new TableViewer(rightFlyoutControlComposite.getFlyoutParent());
+		tableViewer = new TableViewer(rightFlyoutControlComposite.getFlyoutParent(), SWT.FULL_SELECTION);
 		
 		Table table = new Table(leftFlyoutControlComposite.getFlyoutParent(), SWT.CHECK | SWT.BORDER);
         TableLayout layout = new TableLayout();
@@ -156,12 +150,12 @@ public class QueryExplorer extends ViewPart {
 		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", menuMgr, matcherTreeViewer);
 		
 		//tableView configuration
-		createColumns(tableViewer);
+		//createColumns(tableViewer);
 		table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		tableViewer.setContentProvider(new ObservableListContentProvider());
+		//tableViewer.setContentProvider(new ObservableListContentProvider());
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.horizontalSpan = 2;
@@ -179,49 +173,6 @@ public class QueryExplorer extends ViewPart {
 	private void fillContextMenu(IMenuManager mgr) {
         mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-	
-	private void createColumns(TableViewer viewer) {
-		String[] titles = { "Parameter", "Value" };
-
-		//parameter
-		TableViewerColumn col = createTableViewerColumn(viewer, titles[0], 0);
-		col.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				DetailElement de = (DetailElement) element;
-				return de.getKey();
-			}
-		});
-
-		// value
-		col = createTableViewerColumn(viewer, titles[1], 1);
-		col.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				DetailElement de = (DetailElement) element;
-				return de.getValue();
-			}
-		});
-	}
-	
-	/**
-	 * Creates a column for the table viewer with the given parameters.
-	 * 
-	 * @param viewer the viewer to create the column for
-	 * @param title the title of the column
-	 * @param index the index of the column
-	 * @return the column object
-	 */
-	private TableViewerColumn createTableViewerColumn(TableViewer viewer, String title, int index) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE, index);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setResizable(true);
-		column.setMoveable(true);
-		column.setWidth(200);
-		return viewerColumn;
-
-	}
 
 	public void setFocus() {
 		matcherTreeViewer.getControl().setFocus();
@@ -233,22 +184,19 @@ public class QueryExplorer extends ViewPart {
 		public void handleValueChange(ValueChangeEvent event) {
 			Object value = event.getObservableValue().getValue();
 			
-			if (value instanceof PatternMatch) {
-				PatternMatch pm = (PatternMatch) value;
-				DatabindingAdapter<IPatternMatch> databindableMatcher = 
-						DatabindingUtil.getDatabindingAdapter(pm.getPatternMatch().patternName(), pm.getParent().isGenerated());
-				
-				if (databindableMatcher == null) {
-					tableViewer.setInput(null);
-				}
-				else {
-					DetailObserver observer = new DetailObserver(databindableMatcher, pm);
-					tableViewer.setInput(observer);
-					//ViewerSupport.bind(tableViewer, observer, new LabelPropety());
-				}
+			if (value instanceof ObservablePatternMatcher) {
+				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
+				TableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
+			}
+			else if (value instanceof ObservablePatternMatch) {
+				ObservablePatternMatch match = (ObservablePatternMatch) value;
+				TableViewerUtil.prepareTableViewerForObservableInput(match, tableViewer);
 			}
 			else {
-				tableViewer.setInput(null);
+				TableViewerUtil.clearTableViewerColumns(tableViewer);
+				if (tableViewer.getContentProvider() != null) {
+					tableViewer.setInput(null);
+				}
 			}
 		}
 		

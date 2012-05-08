@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 
 public class ShowLocationHandler extends AbstractHandler {
 	
@@ -31,8 +31,8 @@ public class ShowLocationHandler extends AbstractHandler {
 	public static void showLocation(TreeSelection selection) {
 		Object obj = selection.getFirstElement();
 		
-		if (obj != null && obj instanceof PatternMatch) {
-			PatternMatch pm = (PatternMatch) obj;
+		if (obj != null && obj instanceof ObservablePatternMatch) {
+			ObservablePatternMatch pm = (ObservablePatternMatch) obj;
 			
 			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
 			Object[] locationObjects = pm.getLocationObjects();

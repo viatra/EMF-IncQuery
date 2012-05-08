@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -141,15 +141,20 @@ public class DatabindingUtil {
 		
 		//PatternUI annotation was not found
 		if (pattern != null) {
-			String message = ""; int i = 0;
-			for (Variable v : pattern.getParameters()) {
-				if (i > 0) {
-					message += ", ";
-				}
-				message += v.getName()+"=$"+v.getName()+"$";
-				i++;
+			String message = ""; 
+			if (pattern.getParameters().size() == 0) {
+				message = match.toString();
 			}
-			
+			else {
+				int i = 0;
+				for (Variable v : pattern.getParameters()) {
+					if (i > 0) {
+						message += ", ";
+					}
+					message += v.getName()+"=$"+v.getName()+"$";
+					i++;
+				}
+			}
 			return message;
 		}
 		
@@ -255,8 +260,8 @@ public class DatabindingUtil {
 	 * @return the PatternMatcherRoot element
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static PatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
-		PatternMatcherRoot root = new PatternMatcherRoot(key);
+	public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
+		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
 
 		//generated matchers
 		IExtensionRegistry reg = Platform.getExtensionRegistry();

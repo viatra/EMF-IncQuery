@@ -523,10 +523,9 @@ public class FlyoutContainer extends Composite {
 			try {
 				gc.setBackground(getBackground());
 				gc.fillRectangle(0, 0, titleWidth, titleHeight);
-				int x = 0;
 				gc.setForeground(FlyoutConstants.BLACK);
 				gc.setFont(TITLE_FONT);
-				gc.drawText(text, x, 0);
+				gc.drawText(text, 0, 0);
 				
 			} finally {
 				gc.dispose();

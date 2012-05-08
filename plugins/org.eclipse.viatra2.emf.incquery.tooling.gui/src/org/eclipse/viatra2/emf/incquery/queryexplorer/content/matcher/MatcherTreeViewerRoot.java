@@ -11,16 +11,16 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
 public class MatcherTreeViewerRoot {
-private Map<MatcherTreeViewerRootKey, PatternMatcherRoot> roots;
+private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 	
 	public MatcherTreeViewerRoot() {
-		roots = new HashMap<MatcherTreeViewerRootKey, PatternMatcherRoot>();
+		roots = new HashMap<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot>();
 	}
 	
 	public void addPatternMatcherRoot(IEditorPart editorPart, ResourceSet res) {
 		MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, res);
 		if (!roots.containsKey(key)) {
-			PatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);	
+			ObservablePatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);	
 			this.roots.put(key, root);
 			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 		}
@@ -35,11 +35,11 @@ private Map<MatcherTreeViewerRootKey, PatternMatcherRoot> roots;
 		}
 	}
 	
-	public Map<MatcherTreeViewerRootKey, PatternMatcherRoot> getRootsMap() {
+	public Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> getRootsMap() {
 		return roots;
 	}
 	
-	public List<PatternMatcherRoot> getRoots() {
-		return new ArrayList<PatternMatcherRoot>(roots.values());
+	public List<ObservablePatternMatcherRoot> getRoots() {
+		return new ArrayList<ObservablePatternMatcherRoot>(roots.values());
 	}
 }
