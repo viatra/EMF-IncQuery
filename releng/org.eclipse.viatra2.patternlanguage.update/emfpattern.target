@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
 
-<target name="emfpattern" sequenceNumber="11">
+<target name="emfpattern" sequenceNumber="12">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtend.sdk.feature.group" version="2.3.0.v201203201034"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.3.0.v201203201034"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.platform.sdk" version="3.7.2.M20120208-0800"/>
 <unit id="org.eclipse.sdk.ide" version="3.7.2.M20120208-0800"/>
@@ -22,5 +17,11 @@
 <unit id="de.itemis.xtext.antlr.sdk.feature.group" version="2.0.0.v201108011202"/>
 <repository location="http://download.itemis.com/updates/releases"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtend.sdk.feature.group" version="2.3.0.v201205081025"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.3.0.v201205081025"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
+</location>
 </locations>
+<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 </target>
