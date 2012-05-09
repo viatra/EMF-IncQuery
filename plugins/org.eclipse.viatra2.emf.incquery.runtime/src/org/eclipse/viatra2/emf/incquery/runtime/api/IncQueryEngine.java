@@ -64,6 +64,7 @@ public class IncQueryEngine {
 	private int reteThreads = 0;
 	
 	private EMFIncQueryRuntimeLogger logger;
+	private static EMFIncQueryRuntimeLogger defaultLogger;
 	// TODO IncQueryBase?
 	
 	/**
@@ -165,58 +166,67 @@ public class IncQueryEngine {
 	 */
 	public EMFIncQueryRuntimeLogger getLogger() {
 		if (logger == null) {
-			final IncQueryRuntimePlugin plugin = IncQueryRuntimePlugin.getDefault();
-			if (plugin !=null) logger = new EMFIncQueryRuntimeLogger() {
-				@Override
-				public void logDebug(String message) {
-					//plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
-				}
-	
-				@Override
-				public void logError(String message) {
-					plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message));
-				}
-	
-				@Override
-				public void logError(String message, Throwable cause) {
-					plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
-				}
-	
-				@Override
-				public void logWarning(String message) {
-					plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message));
-				}
-	
-				@Override
-				public void logWarning(String message, Throwable cause) {
-					plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
-				}
-			}; else logger = new EMFIncQueryRuntimeLogger() {
-				@Override
-				public void logDebug(String message) {
-					//System.err.println("[DEBUG] " + message);
-				}
-				@Override
-				public void logError(String message) {
-					System.err.println("[ERROR] " + message);
-				}
-				@Override
-				public void logError(String message, Throwable cause) {
-					System.err.println("[ERROR] " + message);
-					cause.printStackTrace();
-				}
-				@Override
-				public void logWarning(String message) {
-					System.err.println("[WARNING] " + message);
-				}
-				@Override
-				public void logWarning(String message, Throwable cause) {
-					System.err.println("[WARNING] " + message);
-					cause.printStackTrace();
-				}				
-			};
+			logger = createLogger();
 		}
 		return logger;
+	}
+
+	/**
+	 * Creates a new logger instance
+	 */
+	private static EMFIncQueryRuntimeLogger createLogger() {
+		final IncQueryRuntimePlugin plugin = IncQueryRuntimePlugin.getDefault();
+		EMFIncQueryRuntimeLogger newLogger;
+		if (plugin !=null) newLogger = new EMFIncQueryRuntimeLogger() {
+			@Override
+			public void logDebug(String message) {
+				//plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
+			}
+
+			@Override
+			public void logError(String message) {
+				plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message));
+			}
+
+			@Override
+			public void logError(String message, Throwable cause) {
+				plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
+			}
+
+			@Override
+			public void logWarning(String message) {
+				plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message));
+			}
+
+			@Override
+			public void logWarning(String message, Throwable cause) {
+				plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
+			}
+		}; else newLogger = new EMFIncQueryRuntimeLogger() {
+			@Override
+			public void logDebug(String message) {
+				//System.err.println("[DEBUG] " + message);
+			}
+			@Override
+			public void logError(String message) {
+				System.err.println("[ERROR] " + message);
+			}
+			@Override
+			public void logError(String message, Throwable cause) {
+				System.err.println("[ERROR] " + message);
+				cause.printStackTrace();
+			}
+			@Override
+			public void logWarning(String message) {
+				System.err.println("[WARNING] " + message);
+			}
+			@Override
+			public void logWarning(String message, Throwable cause) {
+				System.err.println("[WARNING] " + message);
+				cause.printStackTrace();
+			}				
+		};
+		return newLogger;
 	}
 
 	/**
@@ -233,7 +243,15 @@ public class IncQueryEngine {
 		this.logger = logger;
 	}
 	
-	
+	/**
+	 * Returns the default logger
+	 */
+	public static EMFIncQueryRuntimeLogger getDefaultLogger() {
+		if(defaultLogger == null) {
+			defaultLogger = createLogger();
+		}
+		return defaultLogger;
+	}
 
 	
 //	/**
