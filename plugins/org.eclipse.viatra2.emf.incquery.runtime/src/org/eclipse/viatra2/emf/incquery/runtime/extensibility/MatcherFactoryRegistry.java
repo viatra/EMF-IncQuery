@@ -75,8 +75,7 @@ public class MatcherFactoryRegistry {
 							IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Exception during matcher factory registry initialization " + e.getMessage(),e);
 						}
 					} else {
-						throw new UnsupportedOperationException(
-								"Unknown configuration element " + el.getName() + " in plugin.xml of "
+						IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Unknown configuration element " + el.getName() + " in plugin.xml of "
 								+ el.getDeclaringExtension().getUniqueIdentifier());
 					}
 				}
