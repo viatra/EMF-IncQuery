@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +24,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
@@ -83,14 +83,13 @@ public class IncqueryFeatureHandler {
 				// after each model update, check the delta monitor
 				// FIXME should be: after each complete transaction, check the delta monitor
 				try {
-					System.out.print("");
 					updateMemory = null;
 					dm.matchFoundEvents.removeAll( processNewMatches(dm.matchFoundEvents) );
 					dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );	
 					checkUnhandledNewMatch();
 					sendNextNotfication();
 				} catch (CoreException e) {
-					e.printStackTrace();
+					IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
 				}
 				
 			}
@@ -114,11 +113,11 @@ public class IncqueryFeatureHandler {
 		this(source, feature, matcher, sourceParamName, targetParamName);
 		this.kind = kind;
 		if((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
-				System.err.println("Invalid configuration (no targetParamName needed for Counter)!");
+			IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
 				return;
 		}
 		if(kind == FeatureKind.AGGREGATE && !(feature instanceof EAttribute)) {
-			System.err.println("Invalid configuration (Aggregate can be used only with EAttribute)!");
+			IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
 		}
 	}
 
@@ -157,7 +156,7 @@ public class IncqueryFeatureHandler {
 	}
 	
 	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws CoreException {
-		Vector<IPatternMatch> processed = new Vector<IPatternMatch>();
+		List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
 		for (IPatternMatch signature : signatures) {
 			if(source.equals(signature.get(sourceParamName))) {
 				Object target = signature.get(targetParamName);
@@ -176,7 +175,7 @@ public class IncqueryFeatureHandler {
 						}
 					} else {
 						if(updateMemory != null) {
-							System.err.println("Space-time continuum breached (should never happen)");
+							IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
 							//source.eNotify(new ENotificationImpl((InternalEObject) source, Notification.SET,
 							//		feature, updateMemory, signature.get(targetParamName)));
 						} else {
@@ -211,7 +210,7 @@ public class IncqueryFeatureHandler {
 	}
 
 	private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws CoreException {
-		Vector<IPatternMatch> processed = new Vector<IPatternMatch>();
+		List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
 		for (IPatternMatch signature : signatures) {
 			if(source.equals(signature.get(sourceParamName))) {
 				Object target = signature.get(targetParamName);
