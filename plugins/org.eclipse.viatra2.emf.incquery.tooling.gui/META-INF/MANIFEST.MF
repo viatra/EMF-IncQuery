@@ -27,7 +27,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core,
  org.eclipse.gef;bundle-version="3.7.1",
  org.eclipse.core.databinding.beans;bundle-version="1.2.100",
- org.eclipse.ui.navigator
+ org.eclipse.ui.navigator,
+ org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0"
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher,

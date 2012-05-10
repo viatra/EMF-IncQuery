@@ -186,14 +186,14 @@ public class QueryExplorer extends ViewPart {
 			
 			if (value instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
-				TableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
+				TableViewerUtil.getInstance().prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
 			}
 			else if (value instanceof ObservablePatternMatch) {
 				ObservablePatternMatch match = (ObservablePatternMatch) value;
-				TableViewerUtil.prepareTableViewerForObservableInput(match, tableViewer);
+				TableViewerUtil.getInstance().prepareTableViewerForObservableInput(match, tableViewer);
 			}
 			else {
-				TableViewerUtil.clearTableViewerColumns(tableViewer);
+				TableViewerUtil.getInstance().clearTableViewerColumns(tableViewer);
 				if (tableViewer.getContentProvider() != null) {
 					tableViewer.setInput(null);
 				}

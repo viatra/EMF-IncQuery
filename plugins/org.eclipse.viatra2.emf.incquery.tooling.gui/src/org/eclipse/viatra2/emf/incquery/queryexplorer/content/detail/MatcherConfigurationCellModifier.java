@@ -1,9 +1,16 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Item;
 
 public class MatcherConfigurationCellModifier implements ICellModifier {
+	
+	private TableViewer viewer;
+	
+	public MatcherConfigurationCellModifier(TableViewer viewer) {
+		this.viewer = viewer;
+	}
 	
 	@Override
 	public boolean canModify(Object element, String property) {
@@ -39,6 +46,7 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 		
 		if (property.equalsIgnoreCase("value")) {
 			conf.setValue(value);
+			viewer.update(conf, null);
 		}
 	}
 

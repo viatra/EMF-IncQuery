@@ -13,10 +13,26 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 
 public class TableViewerUtil {
 
-	public static void prepareTableViewerForObservableInput(ObservablePatternMatch match, TableViewer viewer) {
+	EMFPatternLanguageJvmModelInferrerUtil inferrerUtil;
+	
+	private static TableViewerUtil instance;
+	
+	public static TableViewerUtil getInstance() {
+		if (instance == null) {
+			instance = new TableViewerUtil();
+		}
+		return instance;
+	}
+	
+	protected TableViewerUtil() {
+		inferrerUtil = new EMFPatternLanguageJvmModelInferrerUtil();
+	}
+	
+	public void prepareTableViewerForObservableInput(ObservablePatternMatch match, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
 		String[] titles = { "Parameter", "Value" };
 		createColumns(viewer, titles);
@@ -35,7 +51,7 @@ public class TableViewerUtil {
 		}
 	}
 	
-	public static void prepareTableViewerForMatcherConfiguration(ObservablePatternMatcher observableMatcher, TableViewer viewer) {
+	public void prepareTableViewerForMatcherConfiguration(ObservablePatternMatcher observableMatcher, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
 		String[] titles = { "Parameter", "Class", "Value" };
 		createColumns(viewer, titles);
@@ -43,7 +59,7 @@ public class TableViewerUtil {
 		viewer.setColumnProperties(titles);
 		viewer.setContentProvider(new MatcherConfigurationContentProvider());
 		viewer.setLabelProvider(new MatcherConfigurationLabelProvider());
-		viewer.setCellModifier(new MatcherConfigurationCellModifier());
+		viewer.setCellModifier(new MatcherConfigurationCellModifier(viewer));
 		
 		Table table = viewer.getTable();
 		CellEditor[] editors = new CellEditor[titles.length];
@@ -60,10 +76,22 @@ public class TableViewerUtil {
 			input[i] = new MatcherConfiguration(parameterNames[i], Integer.class, "");
 		}
 		
+//		String matchClassName = inferrerUtil.matchClassName(PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName()));
+//		try {
+//			Class<?> clazz = Class.forName(matchClassName);
+//			Object match = clazz.newInstance();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (InstantiationException e) {
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		}
+		
 		viewer.setInput(input);
 	}
 	
-	public static void clearTableViewerColumns(TableViewer viewer) {
+	public void clearTableViewerColumns(TableViewer viewer) {
 				
 		if (viewer.getContentProvider() != null) {
 			viewer.setInput(null);
@@ -75,13 +103,13 @@ public class TableViewerUtil {
 		viewer.refresh();
 	}
 	
-	private static void createColumns(TableViewer viewer, String[] titles) {
+	private void createColumns(TableViewer viewer, String[] titles) {
 		for (int i = 0;i<titles.length;i++) {
 			createTableViewerColumn(viewer, titles[i], i);
 		}
 	}
 	
-	private static TableViewerColumn createTableViewerColumn(TableViewer viewer, String title, int index) {
+	private TableViewerColumn createTableViewerColumn(TableViewer viewer, String title, int index) {
 		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE, index);
 		final TableColumn column = viewerColumn.getColumn();
 		column.setText(title);

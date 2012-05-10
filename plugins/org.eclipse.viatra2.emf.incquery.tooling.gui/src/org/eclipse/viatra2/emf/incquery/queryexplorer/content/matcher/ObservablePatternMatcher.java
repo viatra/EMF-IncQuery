@@ -97,6 +97,10 @@ public class ObservablePatternMatcher {
 	public IncQueryMatcher<? extends IPatternMatch> getMatcher() {
 		return matcher;
 	}
+	
+	public String getPatternName() {
+		return patternFqn;
+	}
 
 	public String getText() {
 		String isGeneratedString = isGenerated() ? " (Generated)" : " (Runtime)";
