@@ -1,8 +1,13 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
+import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
 public final class MatcherConfigurationLabelProvider extends LabelProvider implements ITableLabelProvider {
 
@@ -19,6 +24,15 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
 		case 1:
 			return mc.getClazz().getSimpleName();
 		case 2:
+			if (mc.getValue() instanceof EObject) {
+				EObject eObj = (EObject) mc.getValue();
+				URI uri = eObj.eClass().eResource().getURI();
+				AdapterFactory af = DatabindingUtil.getAdapterFactory(uri);
+				if (af != null) {
+					AdapterFactoryLabelProvider aflp = new AdapterFactoryLabelProvider(af);
+					return aflp.getText(eObj);
+				}
+			}
 			return mc.getValue().toString();
 		default:
 			return "";

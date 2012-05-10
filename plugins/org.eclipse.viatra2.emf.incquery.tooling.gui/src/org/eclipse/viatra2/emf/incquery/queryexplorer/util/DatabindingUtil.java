@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -40,21 +41,40 @@ import com.google.inject.Injector;
  */
 public class DatabindingUtil {
 
-	public static Map<URI, AdapterFactory> registeredItemProviders = collectItemProviders();
+	private static Map<URI, AdapterFactory> registeredItemProviders = new HashMap<URI, AdapterFactory>();
+	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	
-	private static Map<URI, AdapterFactory> collectItemProviders() {
-		Map<URI, AdapterFactory> result = new HashMap<URI, AdapterFactory>();
+	public static AdapterFactory getAdapterFactory(URI uri) {
+		if (uriConfElementMap == null) {
+			uriConfElementMap = collectItemProviders();
+		}
+		AdapterFactory af = registeredItemProviders.get(uri);
+		if (af != null) {
+			return af;
+		}
+		else {
+			IConfigurationElement ce = uriConfElementMap.get(uri);
+			try {
+				Object obj = ce.createExecutableExtension("class");
+				registeredItemProviders.put(uri, (AdapterFactory) obj);
+				return (AdapterFactory) obj;
+			} catch (CoreException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+	
+	private static Map<URI, IConfigurationElement> collectItemProviders() {
+		Map<URI, IConfigurationElement> result = new HashMap<URI, IConfigurationElement>();
 		try {
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
 			IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.emf.edit.itemProviderAdapterFactories");
 			for (IExtension e : ep.getExtensions()) {
 				for (IConfigurationElement ce : e.getConfigurationElements()) {
 					if (ce.getName().matches("factory")) {
-						Object obj = ce.createExecutableExtension("class");
 						URI uri = URI.createURI(ce.getAttribute("uri"));
-						if (obj instanceof AdapterFactory) {
-							result.put(uri, (AdapterFactory) obj);
-						}
+						result.put(uri, ce);
 					}
 				}
 			}
