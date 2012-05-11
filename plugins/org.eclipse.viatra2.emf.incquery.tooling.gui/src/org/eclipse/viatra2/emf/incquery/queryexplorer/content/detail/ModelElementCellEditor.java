@@ -134,7 +134,7 @@ public class ModelElementCellEditor extends CellEditor {
             	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
             	if (!TableViewerUtil.isPrimitiveType(conf.getClazz())) {                    
                 	button.setToolTipText("");
-            		Object newValue = openDialogBox(editor);
+            		Object newValue = openDialogBox(editor, conf.getClazz());
 
                 	if (newValue != null) {
                         boolean newValidState = isCorrect(newValue);
@@ -208,7 +208,7 @@ public class ModelElementCellEditor extends CellEditor {
         return inputText;
     }
 
-    protected Object openDialogBox(Control cellEditorWindow) {
+    protected Object openDialogBox(Control cellEditorWindow, String restriction) {
     	ElementListSelectionDialog listDialog = 
     			new ElementListSelectionDialog(
     					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
@@ -216,7 +216,7 @@ public class ModelElementCellEditor extends CellEditor {
     			);
     	listDialog.setTitle("Model element selection");
     	listDialog.setMessage("Select a model element (* = any string, ? = any char):");
-    	Object[] input = getElements(this.root);
+    	Object[] input = getElements(this.root, restriction);
     	listDialog.setElements(input);
     	listDialog.open();
     	Object[] result = listDialog.getResult();
@@ -238,33 +238,61 @@ public class ModelElementCellEditor extends CellEditor {
         inputText.setText(text);
     }
     
-    private Object[] getElements(Object inputElement) {
+    private Object[] getElements(Object inputElement, String restrictionFqn) {
 		List<Object> result = new ArrayList<Object>();
 		TreeIterator<EObject> iterator = null;
+		EObject obj = null;
 		
 		if (root instanceof EObject) {
 			iterator = ((EObject) root).eAllContents();
 			
 			while (iterator.hasNext()) {
-				result.add(iterator.next());
+				obj = iterator.next();
+				if (isOfType(obj.getClass(), restrictionFqn)) {
+					result.add(obj);
+				}
 			}
 		}
 		else if (root instanceof Resource) {
 			iterator = ((Resource) root).getAllContents();
 			
 			while (iterator.hasNext()) {
-				result.add(iterator.next());
+				obj = iterator.next();
+				if (isOfType(obj.getClass(), restrictionFqn)) {
+					result.add(obj);
+				}
 			}
 		}
 		else if (root instanceof ResourceSet) {
 			for (Resource res : ((ResourceSet) root).getResources()) {
 				iterator = res.getAllContents();
 				while (iterator.hasNext()) {
-					result.add(iterator.next());
+					obj = iterator.next();
+					if (isOfType(obj.getClass(), restrictionFqn)) {
+						result.add(obj);
+					}
 				}
 			}
 		}
 		
 		return result.toArray();
+    }
+    
+	private boolean isOfType(Class<?> clazz, String restrictionFqn) {
+    	List<String> classes = collectAllInterfaces(clazz);
+    	return classes.contains(restrictionFqn);
+    }
+    
+    @SuppressWarnings("rawtypes")
+	private List<String> collectAllInterfaces(Class clazz) {
+    	List<String> result = new ArrayList<String>();
+    	Class[] interfaces = clazz.getInterfaces();
+    	
+    	for (Class i : interfaces) {
+    		result.add(i.getName());
+    		result.addAll(collectAllInterfaces(i));
+    	}
+
+    	return result;
     }
 }
