@@ -276,6 +276,10 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		return dm;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawNewFilteredDeltaMonitor(boolean, java.lang.Object[])
+	 */
+	@Override
 	public DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
 		final int length = parameters.length;
 		DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
@@ -297,6 +301,9 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		return dm;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newFilteredDeltaMonitor(boolean, org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+	 */
 	@Override
 	public DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch) {
 		return rawNewFilteredDeltaMonitor(fillAtStart, partialMatch.toArray());

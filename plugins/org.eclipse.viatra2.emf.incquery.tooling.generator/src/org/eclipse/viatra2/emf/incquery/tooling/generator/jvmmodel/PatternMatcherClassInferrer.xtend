@@ -20,6 +20,7 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -137,6 +138,16 @@ class PatternMatcherClassInferrer {
    				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
    				it.body = [append('''
    					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
+   				''')]
+   			]
+   			matcherClass.members += pattern.toMethod("newFilteredDeltaMonitor", pattern.newTypeRef(typeof(DeltaMonitor), cloneWithProxies(matchClassRef))) [
+   				it.documentation = pattern.javadocNewFilteredDeltaMonitorMethod.toString
+    			it.parameters += pattern.toParameter("fillAtStart", pattern.newTypeRef(typeof (boolean)))
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
+   				}
+   				it.body = [append('''
+   					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
    				''')]
    			]
 		} else {
