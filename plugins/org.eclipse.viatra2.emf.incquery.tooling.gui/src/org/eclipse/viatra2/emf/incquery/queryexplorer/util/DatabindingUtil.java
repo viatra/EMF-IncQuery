@@ -165,7 +165,7 @@ public class DatabindingUtil {
 		if (pattern != null) {
 			String message = ""; 
 			if (pattern.getParameters().size() == 0) {
-				message = match.toString();
+				message = "(Match)";
 			}
 			else {
 				int i = 0;
