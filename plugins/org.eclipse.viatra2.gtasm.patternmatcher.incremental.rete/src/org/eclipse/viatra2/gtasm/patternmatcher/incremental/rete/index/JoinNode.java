@@ -15,8 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 
 
 /**
@@ -62,12 +62,39 @@ public class JoinNode extends DualInputNode {
 	 */
 	@Override
 	public void notifyUpdate(Side side, Direction direction,
-			Tuple updateElement, Tuple signature, boolean change) {
+			Tuple updateElement, Tuple signature, boolean change) 
+	{
 		Collection<Tuple> opposites = retrieveOpposites(side, signature);
-		if (opposites != null)
+		
+		if (opposites != null) {
 			for (Tuple opposite : opposites) {
 				propagateUpdate(direction, unify(side, updateElement, opposite));
 			}
+		}
+		
+		// compensate for coincidence of slots
+		if (coincidence) {
+			if (opposites != null) {
+				for (Tuple opposite : opposites) {
+					if (opposite.equals(updateElement)) continue; // INSERT: already joined with itself
+					propagateUpdate(direction, unify(opposite, updateElement));
+				}
+			}
+			if (direction==Direction.REVOKE) // missed joining with itself
+				propagateUpdate(direction, unify(updateElement, updateElement));
+//			
+//			switch(direction) {
+//			case INSERT:
+//				opposites = new ArrayList<Tuple>(opposites);
+//				opposites.remove(updateElement);
+//				break;
+//			case REVOKE:
+//				opposites = (opposites == null) ? new ArrayList<Tuple>() : new ArrayList<Tuple>(opposites);
+//				opposites.add(updateElement);
+//				break;
+//			}
+//			
+		}
 	}
 
 	/*
@@ -83,7 +110,7 @@ public class JoinNode extends DualInputNode {
 			Collection<Tuple> opposites = secondarySlot.get(signature);
 			if (opposites != null)
 				for (Tuple ps: primaries) for (Tuple opposite : opposites) {
-					collector.add(unify(Side.PRIMARY, ps, opposite));
+					collector.add(unify(ps, opposite));
 				}
 		}
 

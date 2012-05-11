@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
@@ -56,6 +57,12 @@ public class GenericProjectionIndexer extends MemoryIndexer implements Projectio
 		return memory.getSignatures();
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer#getActiveNode()
+	 */
+	@Override
+	public Receiver getActiveNode() {
+		return this;
+	}
 	
 }

@@ -75,6 +75,14 @@ public class OuterJoinNode extends DualInputNode {
 						propagateUpdate(direction.opposite(), unifyWithDefaults(opposite));
 				}
 			break;
+		case BOTH:
+				for (Tuple opposite : opposites) {
+					propagateUpdate(direction, unify(updateElement, opposite));
+					if (updateElement.equals(opposite)) continue;
+					propagateUpdate(direction, unify(opposite, updateElement));
+				}
+				if (direction==Direction.REVOKE) // missed joining with itself
+					propagateUpdate(direction, unify(updateElement, updateElement));
 		}
 	}
 
@@ -89,7 +97,7 @@ public class OuterJoinNode extends DualInputNode {
 			Collection<Tuple> opposites = secondarySlot.get(signature);
 			if (opposites != null)
 				for (Tuple ps: primaries) for (Tuple opposite : opposites) {
-					collector.add(unify(Side.PRIMARY, ps, opposite));
+					collector.add(unify(ps, opposite));
 				}
 			else
 				for (Tuple ps: primaries) {

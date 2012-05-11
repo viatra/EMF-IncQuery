@@ -80,6 +80,14 @@ public class ExistenceNode extends DualInputNode {
 					}
 			}
 			break;
+		case BOTH:
+			// in case the slots coincide, 
+			//	negative --> always empty
+			//	!positive --> identity
+			if (!negative) { 
+				propagateUpdate(direction, updateElement);
+			}			
+			break;
 		}
 	}
 

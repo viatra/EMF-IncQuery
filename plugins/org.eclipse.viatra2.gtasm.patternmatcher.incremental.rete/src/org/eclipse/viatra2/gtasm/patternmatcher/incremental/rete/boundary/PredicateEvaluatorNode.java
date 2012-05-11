@@ -94,9 +94,9 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 				reteContainer));
 
 		if (Options.employTrivialIndexers) {
-			nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this);
+			nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this, this);
 			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
-			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this);
+			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
 			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
 		}
 
@@ -201,14 +201,13 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		try {
 			result = evaluator.evaluate(ps);
 		} catch (Throwable e) {
-			e.printStackTrace();
 			engine.getContext().logWarning( 
-					"(Note: this is most likely a transient problem and can be usually ignored.) " +
 					"The incremental pattern matcher encountered an error during check() evaluation over variables "
-					+ prettyPrintTuple(ps) + 
-					" (Developer note: " + e.getClass().getSimpleName() + " in RETE term evaluator node). " + 
-					"Error message: " + e.getMessage(), e);
-			engine.logEvaluatorException(e);
+					+ prettyPrintTuple(ps) 
+					+ " Error message: " + e.getMessage()
+					+ " (Developer note: " + e.getClass().getSimpleName() + " in " + this + ")"
+					, e);
+//			engine.logEvaluatorException(e);
 			
 			result = Boolean.FALSE;
 		}

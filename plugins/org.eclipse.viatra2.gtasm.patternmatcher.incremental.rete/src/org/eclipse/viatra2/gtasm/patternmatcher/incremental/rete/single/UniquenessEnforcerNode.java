@@ -46,9 +46,9 @@ public class UniquenessEnforcerNode extends SingleInputNode {
 		reteContainer.registerClearable(memory);
 		
 		if (Options.employTrivialIndexers) {
-			nullIndexer = new NullIndexer(reteContainer, tupleWidth, memory, this);
+			nullIndexer = new NullIndexer(reteContainer, tupleWidth, memory, this, this);
 			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
-			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, memory, this);
+			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, memory, this, this);
 			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
 		}
 	}

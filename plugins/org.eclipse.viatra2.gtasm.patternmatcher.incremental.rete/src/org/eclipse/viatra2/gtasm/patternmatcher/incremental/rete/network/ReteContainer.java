@@ -61,7 +61,7 @@ public class ReteContainer {
 		if (threaded)
 		{
 			terminationCriteria = new HashMap<ReteContainer, Long>();
-			consumerThread = new Thread() {
+			consumerThread = new Thread("Rete thread of " + ReteContainer.super.toString()) {
 				@Override
 				public void run() {
 					messageConsumptionCycle();

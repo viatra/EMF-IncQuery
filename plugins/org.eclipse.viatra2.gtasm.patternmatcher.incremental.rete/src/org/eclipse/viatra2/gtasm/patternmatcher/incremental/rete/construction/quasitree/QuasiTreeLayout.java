@@ -30,6 +30,20 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
 
 /**
+ * Layout ideas
+ * 
+ * Order of preference
+ *  - trivial joins (stub a = stub b)
+ *  - high selectivity filters
+ *   - supressed by joincandidate if already checked on other side
+ *   - apply first to narrower stubs
+ *  - aggregator quasijoins, let-expressions (?)
+ *  - true joins 
+ *   - except cartesians 
+ *   - TBD: ranking based on what constraints the join will enable
+ *  - low-selectivity filters (injectivity)
+ *  - cartesian joins
+ * 
  * @author Bergmann Gábor
  *
  */

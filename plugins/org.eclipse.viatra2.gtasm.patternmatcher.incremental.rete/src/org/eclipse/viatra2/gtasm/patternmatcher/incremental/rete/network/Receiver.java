@@ -14,8 +14,10 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
- * @author Gabor Bergmann ALL METHODS: FOR INTERNAL USE ONLY; ONLY INVOKE FROM
+ * ALL METHODS: FOR INTERNAL USE ONLY; ONLY INVOKE FROM
  *         org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer
+ *         
+ * @author Gabor Bergmann 
  */
 public interface Receiver extends Node {
 

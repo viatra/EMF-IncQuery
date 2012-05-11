@@ -18,8 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.Disconnectable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
@@ -62,7 +60,7 @@ public class ReteEngine<PatternDescription> {
 	protected boolean parallelExecutionEnabled; // TRUE if Viatra can go on
 												// while RETE does its job.
 	
-	protected BlockingQueue<Throwable> caughtExceptions;
+//	protected BlockingQueue<Throwable> caughtExceptions;
 	
 	/**
 	 * These runnables will be called after updates by the manipulationListener at its own discretion.
@@ -95,7 +93,7 @@ public class ReteEngine<PatternDescription> {
 		this.parallelExecutionEnabled = reteThreads > 0;
 		
 		this.disconnectables = new LinkedList<Disconnectable>();
-		this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
+//		this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
 		this.reteNet = new Network(reteThreads);
 		this.boundary = new ReteBoundary<PatternDescription>(this); // prerequisite: network
@@ -429,26 +427,26 @@ public class ReteEngine<PatternDescription> {
 		return builder;
 	}
 
-	/**
-	 * For internal use only: logs exceptions occurring during term evaluation inside the RETE net.
-	 * @param e
-	 */
-	public void logEvaluatorException(Throwable e) {
-		try {
-			caughtExceptions.put(e);
-		} catch (InterruptedException e1) {
-			logEvaluatorException(e);
-		}
-	}
-	/**
-	 * Polls the exceptions caught and logged during term evaluation by this RETE engine.
-	 * Recommended usage: iterate polling until null is returned.
-	 * 
-	 * @return the next caught exception, or null if there are no more.
-	 */
-	public Throwable getNextLoggedEvaluatorException() {
-		return caughtExceptions.poll();
-	}
+//	/**
+//	 * For internal use only: logs exceptions occurring during term evaluation inside the RETE net.
+//	 * @param e
+//	 */
+//	public void logEvaluatorException(Throwable e) {
+//		try {
+//			caughtExceptions.put(e);
+//		} catch (InterruptedException e1) {
+//			logEvaluatorException(e);
+//		}
+//	}
+//	/**
+//	 * Polls the exceptions caught and logged during term evaluation by this RETE engine.
+//	 * Recommended usage: iterate polling until null is returned.
+//	 * 
+//	 * @return the next caught exception, or null if there are no more.
+//	 */
+//	public Throwable getNextLoggedEvaluatorException() {
+//		return caughtExceptions.poll();
+//	}
 	
 	/**
 	 * These runnables will be called after updates by the manipulationListener at its own discretion.

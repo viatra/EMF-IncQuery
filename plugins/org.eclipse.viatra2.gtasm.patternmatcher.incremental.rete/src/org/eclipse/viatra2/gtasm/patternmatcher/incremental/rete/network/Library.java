@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,13 +31,14 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.RemoteSu
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.DefaultProductionNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.EqualityFilterNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.InequalityFilterNode;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.TransparentNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.TrimmerNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.UniquenessEnforcerNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.ValueBinderFilterNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
 
 
@@ -67,6 +70,7 @@ public class Library {
 	Map<Tuple, TrimmerNode> trimmers; // Tuple<supplierId, mask>
 	Map<Supplier, TransparentNode> transparentNodes; // Tuple<supplierId, mask>
 	Map<Tuple, ConstantNode> constantNodes; // Tuple constants
+	Map<Tuple, TransitiveClosureNode> tcNodes;
 
 	Map<Supplier, RemoteReceiver> remoteReceivers;
 	Map<Address<? extends Supplier>, RemoteSupplier> remoteSuppliers;
@@ -89,6 +93,7 @@ public class Library {
 		transparentNodes = new HashMap<Supplier, TransparentNode>();
 		constantNodes = new HashMap<Tuple, ConstantNode>();
 		countNodes = new HashMap<Tuple, CountNode>();
+		tcNodes = new HashMap<Tuple, TransitiveClosureNode>();
 		
 		remoteReceivers = new HashMap<Supplier, RemoteReceiver>();
 		remoteSuppliers = new HashMap<Address<? extends Supplier>, RemoteSupplier>();
@@ -175,10 +180,10 @@ public class Library {
 		ProjectionIndexer result = projectionIndexers.get(params);
 		if (result == null) {
 			result = new GenericProjectionIndexer(reteContainer, mask);
-			reteContainer.connectAndSynchronize(supplier, result);
-
 			if (Options.nodeSharingOption != Options.NodeSharingOption.NEVER)
 				projectionIndexers.put(params, result);
+			
+			reteContainer.connectAndSynchronize(supplier, result);
 		}
 		return result;
 	}
@@ -212,7 +217,7 @@ public class Library {
 	}
 
 	// local, read-only version
-	public synchronized Indexer peekProjectionIndexer(Supplier supplier, TupleMask mask) {
+	public synchronized ProjectionIndexer peekProjectionIndexer(Supplier supplier, TupleMask mask) {
 		Object[] paramsArray = { supplier.getNodeId(), mask };
 		Tuple params = new FlatTuple(paramsArray);
 		return projectionIndexers.get(params);
@@ -224,9 +229,13 @@ public class Library {
 	public synchronized Address<JoinNode> accessJoinNode(
 			Address<? extends IterableIndexer> primaryIndexer, 
 			Address<? extends Indexer> secondaryIndexer,
-			TupleMask complementer) {
-		IterableIndexer primarySlot = reteContainer.resolveLocal(primaryIndexer);
-		Indexer secondarySlot = reteContainer.resolveLocal(secondaryIndexer);
+			TupleMask complementer) 
+	{
+		Slots slots = avoidActiveNodeConflict(
+				reteContainer.resolveLocal(primaryIndexer), reteContainer.resolveLocal(secondaryIndexer));
+		IterableIndexer primarySlot = slots.primary;
+		Indexer secondarySlot = slots.secondary;
+
 		Object[] paramsArray = { primarySlot.getNodeId(),
 				secondarySlot.getNodeId(), complementer };
 		Tuple params = new FlatTuple(paramsArray);
@@ -243,14 +252,73 @@ public class Library {
 	}
 
 	/**
+	 * If two indexers share their active node, joining them via DualInputNode is error-prone.
+	 * Exception: coincidence of the two indexers is supported.
+	 * @return a replacement for the secondary Indexers, if needed
+	 */
+	private Slots avoidActiveNodeConflict(
+			final IterableIndexer primarySlot,
+			final Indexer secondarySlot) {
+		Slots result = new Slots(){{primary = primarySlot; secondary = secondarySlot;}};
+		if (activeNodeConflict(primarySlot, secondarySlot)) 
+			if (secondarySlot instanceof IterableIndexer) 
+				result.secondary = accessActiveIndexer((IterableIndexer)secondarySlot);
+			else
+				result.primary = accessActiveIndexer(primarySlot);
+		return result;
+	}
+	private static class Slots {
+		IterableIndexer primary;
+		Indexer secondary;
+	}
+
+	/**
+	 * Returns a copy of the given indexer that is an active node by itself (created if does not exist).
+	 * (Convention: attached with same mask to a transparent node that is attached to parent node.) 
+	 * Node is created if it does not exist yet.
+	 * @return an identical but active indexer
+	 */
+	private ProjectionIndexer accessActiveIndexer(IterableIndexer indexer) {
+		TransparentNode transparent = accessTransparentNodeInternal(indexer.getParent());
+		return accessProjectionIndexer(transparent, indexer.getMask());
+	}
+
+	/**
+	 * Read-only-check for a copy of the given indexer that is an active node by itself.
+	 * (Expected convention: attached with same mask to a transparent node that is attached to parent node.) 
+	 * @return an identical but active indexer, if such exists, null otherwise
+	 */
+	private ProjectionIndexer peekActiveIndexer(Indexer indexer) {
+		TransparentNode transparent = transparentNodes.get(indexer.getParent());
+		if (transparent != null) {
+			return peekProjectionIndexer(transparent, indexer.getMask());
+		}
+		return null;
+	}
+
+	/**
+	 * If two indexers share their active node, joining them via DualInputNode is error-prone.
+	 * Exception: coincidence of the two indexers is supported.
+	 * @return true if there is a conflict of active nodes.
+	 */
+	private boolean activeNodeConflict(Indexer primarySlot, Indexer secondarySlot) {
+		return !primarySlot.equals(secondarySlot) && 
+				primarySlot.getActiveNode().equals(secondarySlot.getActiveNode());
+	}
+
+	/**
 	 * @pre: both projectionIndexers must be local to this container.
 	 */
 	public synchronized Address<ExistenceNode> accessExistenceNode(
 			Address<? extends IterableIndexer> primaryIndexer, 
 			Address<? extends Indexer> secondaryIndexer,
-			boolean negative) {
-		IterableIndexer primarySlot = reteContainer.resolveLocal(primaryIndexer);
-		Indexer secondarySlot = reteContainer.resolveLocal(secondaryIndexer);
+			boolean negative) 
+	{
+		Slots slots = avoidActiveNodeConflict(
+				reteContainer.resolveLocal(primaryIndexer), reteContainer.resolveLocal(secondaryIndexer));
+		IterableIndexer primarySlot = slots.primary;
+		Indexer secondarySlot = slots.secondary;
+
 		Object[] paramsArray = { primarySlot.getNodeId(),
 				secondarySlot.getNodeId(), negative };
 		Tuple params = new FlatTuple(paramsArray);
@@ -341,6 +409,10 @@ public class Library {
 	public synchronized Address<TransparentNode> accessTransparentNode(
 			Address<? extends Supplier> supplierAddress) {
 		Supplier supplier = asSupplier(supplierAddress);
+		TransparentNode result = accessTransparentNodeInternal(supplier);
+		return reteContainer.makeAddress(result);
+	}
+	private TransparentNode accessTransparentNodeInternal(Supplier supplier) {
 		Supplier params = supplier;
 		TransparentNode result = transparentNodes.get(params);
 		if (result == null) {
@@ -351,7 +423,7 @@ public class Library {
 			if (Options.nodeSharingOption == Options.NodeSharingOption.ALL)
 				transparentNodes.put(params, result);
 		}
-		return reteContainer.makeAddress(result);
+		return result;
 	}
 
 	public synchronized Address<ConstantNode> accessConstantNode(Tuple constants) {
@@ -406,5 +478,23 @@ public class Library {
 		}
 		
 		return address;
+	}
+	
+	public synchronized Address<TransitiveClosureNode> accessTransitiveClosureNode(Address<? extends Supplier> supplierAddress) {
+		Supplier supplier = asSupplier(supplierAddress);
+		Object[] paramsArray = { supplier.getNodeId() };
+		Tuple params = new FlatTuple(paramsArray);
+		TransitiveClosureNode result = tcNodes.get(params);
+		if (result == null) {
+			Collection<Tuple> tuples = new ArrayList<Tuple>();
+			supplier.pullInto(tuples);
+			result = new TransitiveClosureNode(reteContainer, tuples);
+			//reteContainer.connectAndSynchronize(supplier, result);
+			reteContainer.connect(supplier, result);
+
+			if (Options.nodeSharingOption == Options.NodeSharingOption.ALL)
+				tcNodes.put(params, result);
+		}
+		return reteContainer.makeAddress(result);
 	}
 }

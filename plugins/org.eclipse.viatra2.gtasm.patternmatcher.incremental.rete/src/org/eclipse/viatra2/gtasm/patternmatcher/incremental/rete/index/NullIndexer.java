@@ -16,11 +16,12 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 
 
 /**
@@ -31,6 +32,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 public class NullIndexer extends StandardIndexer implements ProjectionIndexer {
 
 	Collection<Tuple> memory;
+	Receiver activeNode;
 	static Object[] empty = {};
 	static Tuple nullSignature = new FlatTuple(empty);
 	static Collection<Tuple> nullSingleton = Collections.singleton(nullSignature);
@@ -42,10 +44,11 @@ public class NullIndexer extends StandardIndexer implements ProjectionIndexer {
 	 * @param memory the memory whose contents are to be null-indexed
 	 * @param parent the parent node that owns the memory
 	 */
-	public NullIndexer(ReteContainer reteContainer, int tupleWidth, Collection<Tuple> memory, Supplier parent) {
+	public NullIndexer(ReteContainer reteContainer, int tupleWidth, Collection<Tuple> memory, Supplier parent, Receiver activeNode) {
 		super(reteContainer, TupleMask.linear(0, tupleWidth));
 		this.memory = memory;
 		this.parent = parent;
+		this.activeNode = activeNode;
 	}
 
 	public Collection<Tuple> get(Tuple signature) {
@@ -60,7 +63,11 @@ public class NullIndexer extends StandardIndexer implements ProjectionIndexer {
 	public Iterator<Tuple> iterator() {
 		return memory.iterator();
 	}
-
+	
+	@Override
+	public Receiver getActiveNode() {
+		return activeNode;
+	}
 
 	public void appendParent(Supplier supplier) {
 		throw new UnsupportedOperationException("A nullIndexer allows no explicit parent nodes");

@@ -13,12 +13,11 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index;
 
 import java.util.Collection;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
- * An aggregation node that simply count the number of tuples conforming to the signature.
+ * An aggregation node that simply counts the number of tuples conforming to the signature.
  * @author Bergmann Gábor
  *
  */
@@ -39,18 +38,5 @@ public class CountNode extends AggregatorNode {
 	public Object aggregateGroup(Tuple signature, Collection<Tuple> group) {
 		return sizeOf(group);
 	}
-
-	@Override
-	public Object[] aggregateGroupBeforeAndNow(Tuple signature,
-			Collection<Tuple> currentGroup, Direction direction,
-			Tuple updateElement, boolean change) 
-	{
-		int currentSize = sizeOf(currentGroup);
-		int previousSize = (direction==Direction.INSERT) ? currentSize - 1 : currentSize + 1;
-		Object[] result = {previousSize, currentSize};
-		return result;
-	}
-
-
-
+	
 }

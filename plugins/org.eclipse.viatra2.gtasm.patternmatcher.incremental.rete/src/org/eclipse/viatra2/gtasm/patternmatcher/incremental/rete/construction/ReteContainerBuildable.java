@@ -26,6 +26,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplie
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.EqualityFilterNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.InequalityFilterNode;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.TrimmerNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.LeftInheritanceTuple;
@@ -113,10 +114,8 @@ public class ReteContainerBuildable<PatternDescription> implements Buildable<Pat
 	
 	@Override
 	public Stub<Address<? extends Supplier>> buildTransitiveClosure(Stub<Address<? extends Supplier>> stub) {
-		throw new UnsupportedOperationException("Transitive closure not supported yet");
-// TODO(Tomi) uncomment after library method is implemented
-//		Address<TransitiveClosureNode> checker = library.accessTransitiveClosureNode(stub.getHandle());
-//		return new Stub<Address<? extends Supplier>>(stub, checker);
+		Address<TransitiveClosureNode> checker = library.accessTransitiveClosureNode(stub.getHandle());
+		return new Stub<Address<? extends Supplier>>(stub, checker);
 	}
 
 	public Stub<Address<? extends Supplier>> patternCallStub(Tuple nodes, PatternDescription supplierKey)

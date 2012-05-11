@@ -34,7 +34,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 	 * 
 	 */
 	public enum Side {
-		PRIMARY, SECONDARY;
+		PRIMARY, SECONDARY, BOTH;
 
 		public Side opposite() {
 			switch (this) {
@@ -42,8 +42,10 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 				return SECONDARY;
 			case SECONDARY:
 				return PRIMARY;
+			case BOTH:
+				return BOTH;
 			default:
-				return PRIMARY;
+				return BOTH;
 			}
 		}
 	}
@@ -62,6 +64,11 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 	 * Optional complementer mask
 	 */
 	protected TupleMask complementerSecondaryMask;
+	
+	/**
+	 * true if the primary and secondary slots coincide
+	 */
+	protected final boolean coincidence;
 
 	/**
 	 * @param reteContainer
@@ -72,25 +79,38 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 		this.complementerSecondaryMask = complementerSecondaryMask;
 		this.primarySlot = primarySlot;
 		this.secondarySlot = secondarySlot;
+		coincidence = primarySlot.equals(secondarySlot);
 		final DualInputNode me = this;
-		primarySlot.attachListener(new IndexerListener() {
-			public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-				notifyUpdate(Side.PRIMARY, direction, updateElement, signature, change);
-			}	
-			@Override
-			public String toString() {
-				return "primary@"+me;
-			}
-		});
-		secondarySlot.attachListener(new IndexerListener() {
-			public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-				notifyUpdate(Side.SECONDARY, direction, updateElement, signature, change);
-			}	
-			@Override
-			public String toString() {
-				return "secondary@"+me;
-			}
-		});		
+		if (!coincidence) {
+			primarySlot.attachListener(new IndexerListener() {
+				public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+					notifyUpdate(Side.PRIMARY, direction, updateElement, signature, change);
+				}	
+				@Override
+				public String toString() {
+					return "primary@"+me;
+				}
+			});
+			secondarySlot.attachListener(new IndexerListener() {
+				public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+					notifyUpdate(Side.SECONDARY, direction, updateElement, signature, change);
+				}	
+				@Override
+				public String toString() {
+					return "secondary@"+me;
+				}
+			});	
+		} else {
+			primarySlot.attachListener(new IndexerListener() {
+				public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+					notifyUpdate(Side.BOTH, direction, updateElement, signature, change);
+				}	
+				@Override
+				public String toString() {
+					return "both@"+me;
+				}
+			});			
+		}
 	}
 
 	
@@ -153,6 +173,8 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 			return unify(ps, opposite);
 		case SECONDARY:
 			return unify(opposite, ps);
+		case BOTH:
+			return unify(ps, opposite);
 		default:
 			return null;
 		}
@@ -194,8 +216,8 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 	 * Retrieves the slot corresponding to the specified side.
 	 */
 	protected Indexer getSlot(Side side) {
-		if (side==Side.PRIMARY) 
-			return primarySlot;
-		else return secondarySlot;
+		if (side==Side.SECONDARY) 
+			return secondarySlot;
+		else return primarySlot;
 	}
 }
