@@ -41,10 +41,12 @@ public class PatternRegistry {
 		Set<Pattern> newPatterns = new HashSet<Pattern>();
 		
 		for (Pattern p : pm.getPatterns()) {
-			String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
-			patternNameMap.put(patternFqn, p);
-			newPatterns.add(p);
-			activePatterns.add(p);
+			if (!DatabindingUtil.hasOffAnnotation(p)) {
+				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
+				patternNameMap.put(patternFqn, p);
+				newPatterns.add(p);
+				activePatterns.add(p);
+			}
 		}
 		
 		List<String> newValue = getPatternNames();

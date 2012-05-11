@@ -28,6 +28,9 @@
                type="string">
          </annotationparameter>
       </annotation>
+      <annotation
+            name="Off">
+      </annotation>
    </extension>
 
 </plugin>

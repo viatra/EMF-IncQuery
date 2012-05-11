@@ -15,6 +15,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
@@ -41,14 +42,14 @@ import com.google.inject.Injector;
  */
 public class DatabindingUtil {
 
-	private static Map<URI, AdapterFactory> registeredItemProviders = new HashMap<URI, AdapterFactory>();
+	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	
-	public static AdapterFactory getAdapterFactory(URI uri) {
+	public static AdapterFactoryLabelProvider getAdapterFactory(URI uri) {
 		if (uriConfElementMap == null) {
 			uriConfElementMap = collectItemProviders();
 		}
-		AdapterFactory af = registeredItemProviders.get(uri);
+		AdapterFactoryLabelProvider af = registeredItemProviders.get(uri);
 		if (af != null) {
 			return af;
 		}
@@ -56,8 +57,9 @@ public class DatabindingUtil {
 			IConfigurationElement ce = uriConfElementMap.get(uri);
 			try {
 				Object obj = ce.createExecutableExtension("class");
-				registeredItemProviders.put(uri, (AdapterFactory) obj);
-				return (AdapterFactory) obj;
+				AdapterFactoryLabelProvider lp = new AdapterFactoryLabelProvider((AdapterFactory) obj);
+				registeredItemProviders.put(uri, lp);
+				return lp;
 			} catch (CoreException e) {
 				e.printStackTrace();
 				return null;
@@ -309,6 +311,15 @@ public class DatabindingUtil {
 		}
 
 		return root;
+	}
+	
+	public static boolean hasOffAnnotation(Pattern pattern) {
+		for (Annotation a : pattern.getAnnotations()) {
+			if (a.getName().equalsIgnoreCase("Off")) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static PatternModel parseEPM(IFile file, Injector injector) {
