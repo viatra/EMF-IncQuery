@@ -18,13 +18,17 @@ public class ModelElementCellEditor extends DialogCellEditor {
 
     protected Object openDialogBox(Control cellEditorWindow) {
     	ListDialog listDialog = new ListDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+    	listDialog.setTitle("Parameter selection dialog");
     	listDialog.setAddCancelButton(true);
     	listDialog.setContentProvider(new ModelElementListDialogContentProvider(root));
     	listDialog.setLabelProvider(new ModelElementListDialogLabelProvider());
     	listDialog.setInput(root);
     	listDialog.open();
-    	Object result = listDialog.getResult()[0];
-        return result;
+    	Object[] result = listDialog.getResult();
+    	if (result != null && result.length > 0) {
+    		return result[0];
+    	}
+        return null;
     }
 
 }

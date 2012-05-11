@@ -1,6 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
-import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -22,15 +21,14 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
 		case 0:
 			return mc.getParameterName();
 		case 1:
-			return mc.getClazz().getSimpleName();
+			return mc.getClazz();
 		case 2:
 			if (mc.getValue() instanceof EObject) {
 				EObject eObj = (EObject) mc.getValue();
 				URI uri = eObj.eClass().eResource().getURI();
-				AdapterFactory af = DatabindingUtil.getAdapterFactory(uri);
-				if (af != null) {
-					AdapterFactoryLabelProvider aflp = new AdapterFactoryLabelProvider(af);
-					return aflp.getText(eObj);
+				AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+				if (lp != null) {
+					return lp.getText(eObj);
 				}
 			}
 			return mc.getValue().toString();
