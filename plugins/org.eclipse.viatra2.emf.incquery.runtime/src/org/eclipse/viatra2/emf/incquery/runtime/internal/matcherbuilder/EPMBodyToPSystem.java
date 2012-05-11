@@ -104,8 +104,6 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	//			preProcessAssignments();
 				preProcessParameters();
 				gatherBodyConstraints();
-				
-				gatherInequalityAssertions();
 			}
 			return pSystem;
 		} catch (RetePatternBuildException e) {
@@ -214,52 +212,20 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			throws RetePatternBuildException {
 		if (constraint instanceof EClassifierConstraint) {  // EMF-specific
 			EClassifierConstraint constraint2 = (EClassifierConstraint) constraint;
-			EClassifier classname = ((ClassType)constraint2.getType()).getClassname();
-			PVariable pNode = getPNode(constraint2.getVar());
-			new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+			gatherClassifierConstraint(constraint2);
 		} else if (constraint instanceof PatternCompositionConstraint) {
 			PatternCompositionConstraint constraint2 = (PatternCompositionConstraint) constraint;
-			PatternCall call = constraint2.getCall();
-			Pattern patternRef = call.getPatternRef();
-			Tuple pNodeTuple = getPNodeTuple(call.getParameters());
-			if (constraint2.isNegative()) 
-				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
-			else 
-				new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+			gatherCompositionConstraint(constraint2);
 		} else if (constraint instanceof CompareConstraint) {
 			CompareConstraint compare = (CompareConstraint) constraint;
-			PVariable left = getPNode(compare.getLeftOperand()); 
-			PVariable right = getPNode(compare.getRightOperand()); 
-			switch(compare.getFeature()) {
-			case EQUALITY:
-				new Equality<Pattern, StubHandle>(pSystem, left, right);
-				break;
-			case INEQUALITY:
-				new Inequality<Pattern, StubHandle>(pSystem, left, right, false);
-			}
+			gatherCompareConstraint(compare);
 		} else if (constraint instanceof PathExpressionConstraint) {
-			// TODO advanced features here
-			PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;
-			PathExpressionHead head = pathExpression.getHead();
-			
-			PVariable currentSrc = getPNode(head.getSrc());
-			PVariable finalDst = getPNode(head.getDst());
-			Type currentPathSegmentType = head.getType(); // IGNORED
-			PathExpressionTail currentTail = head.getTail();
-			
-			while (currentTail != null) {
-				currentPathSegmentType = currentTail.getType();
-				currentTail = currentTail.getTail();
-				
-				PVariable intermediate = newVirtual();
-				gatherPathSegment(currentPathSegmentType, currentSrc, intermediate);
-				
-				currentSrc = intermediate;
-			}
-			new Equality<Pattern, StubHandle>(pSystem, currentSrc, finalDst);
+			// TODO advanced features here?
+			PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;			
+			gatherPathExpression(pathExpression);
 		} else if (constraint instanceof CheckConstraint) {
-			XExpression expression = ((CheckConstraint) constraint).getExpression();
-			new XBaseCheck<StubHandle>(this, expression);
+			final CheckConstraint check = (CheckConstraint) constraint;
+			gatherCheckConstraint(check);
 		// TODO OTHER CONSTRAINT TYPES
 		} else {
 			throw new RetePatternBuildException(
@@ -269,6 +235,92 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		}
 	}
 
+	/**
+	 * @param check
+	 */
+	protected void gatherCheckConstraint(final CheckConstraint check) {
+		XExpression expression = check.getExpression();
+		new XBaseCheck<StubHandle>(this, expression);
+	}
+
+	/**
+	 * @param pathExpression
+	 * @throws RetePatternBuildException
+	 */
+	protected void gatherPathExpression(PathExpressionConstraint pathExpression)
+			throws RetePatternBuildException {
+		PathExpressionHead head = pathExpression.getHead();
+		PVariable currentSrc = getPNode(head.getSrc());
+		PVariable finalDst = getPNode(head.getDst());
+		PathExpressionTail currentTail = head.getTail();
+		
+		// type constraint on source
+		Type headType = head.getType(); 
+		if (headType instanceof ClassType) {
+			EClassifier headClassname =  ((ClassType)headType).getClassname();
+			new TypeUnary<Pattern, StubHandle>(pSystem, currentSrc, headClassname);
+		} else {
+			throw new RetePatternBuildException(
+				"Unsupported path expression head type {1} in pattern {2}: {3}", 
+				new String[]{headType.eClass().getName(), patternFQN, typeStr(headType)}, 
+				pattern);
+		}
+
+		// process each segment			
+		while (currentTail != null) {
+			Type currentPathSegmentType = currentTail.getType();
+			currentTail = currentTail.getTail();
+			
+			PVariable intermediate = newVirtual();
+			gatherPathSegment(currentPathSegmentType, currentSrc, intermediate);
+			
+			currentSrc = intermediate;
+		}
+		// link the final step to the overall destination
+		new Equality<Pattern, StubHandle>(pSystem, currentSrc, finalDst);
+	}
+
+	/**
+	 * @param compare
+	 * @throws RetePatternBuildException
+	 */
+	protected void gatherCompareConstraint(CompareConstraint compare)
+			throws RetePatternBuildException {
+		PVariable left = getPNode(compare.getLeftOperand()); 
+		PVariable right = getPNode(compare.getRightOperand()); 
+		switch(compare.getFeature()) {
+		case EQUALITY:
+			new Equality<Pattern, StubHandle>(pSystem, left, right);
+			break;
+		case INEQUALITY:
+			new Inequality<Pattern, StubHandle>(pSystem, left, right, false);
+		}
+	}
+
+	/**
+	 * @param constraint
+	 * @throws RetePatternBuildException
+	 */
+	protected void gatherCompositionConstraint(
+			PatternCompositionConstraint constraint)
+			throws RetePatternBuildException {
+		PatternCall call = constraint.getCall();
+		Pattern patternRef = call.getPatternRef();
+		Tuple pNodeTuple = getPNodeTuple(call.getParameters());
+		if (constraint.isNegative()) 
+			new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+		else 
+			new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+	}
+
+	/**
+	 * @param constraint
+	 */
+	protected void gatherClassifierConstraint(EClassifierConstraint constraint) {
+		EClassifier classname = ((ClassType)constraint.getType()).getClassname();
+		PVariable pNode = getPNode(constraint.getVar());
+		new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+	}
 
 	protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg) throws RetePatternBuildException {
 		if (segmentType instanceof ReferenceType) {  // EMF-specific
@@ -279,8 +331,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 				new TypeBinary<Pattern, StubHandle>(pSystem, context, src, trg, typeObject);
 			}
 		} else throw new RetePatternBuildException(
-				"Unsupported path segment type {1} in pattern {2}.", 
-				new String[]{segmentType.eClass().getName(), patternFQN}, 
+				"Unsupported path segment type {1} in pattern {2}: {3}", 
+				new String[]{segmentType.eClass().getName(), patternFQN, typeStr(segmentType)}, 
 				pattern);		
 	}
 
@@ -304,10 +356,11 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		return result;
 	}
 	
-	private void gatherInequalityAssertions() {
-		// TODO CHECK IF SHAREABLE, ETC.
-
-		
+	/**
+	 * @return the string describing a metamodel type, for debug / exception purposes
+	 */
+	private String typeStr(Type type) {
+		return type.getTypename() == null ? "(null)" : type.getTypename();
 	}
 
 }

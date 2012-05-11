@@ -275,6 +275,32 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		patternMatcher.connect(dm, fillAtStart);
 		return dm;
 	}
+	
+	public DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
+		final int length = parameters.length;
+		DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
+			@Override
+			public boolean statelessFilter(Tuple tuple) {
+				for (int i=0; i<length; ++i) {
+					final Object positionalFilter = parameters[i];
+					if (positionalFilter != null && !positionalFilter.equals(tuple.get(i)))
+						return false;
+				}
+				return true;
+			}
+			@Override
+			public Match statelessConvert(Tuple t) {
+				return tupleToMatch(t);
+			}
+		};
+		patternMatcher.connect(dm, fillAtStart);
+		return dm;
+	}
+	
+	@Override
+	public DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch) {
+		return rawNewFilteredDeltaMonitor(fillAtStart, partialMatch.toArray());
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackAfterUpdates(java.lang.Runnable)
