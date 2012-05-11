@@ -1,5 +1,8 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
@@ -29,6 +32,25 @@ public class TableViewerUtil {
 	@Inject
 	ITypeProvider typeProvider;
 	
+	private static Set<String> primitiveTypes = new HashSet<String>();
+	
+	protected TableViewerUtil() {
+		primitiveTypes.add(Boolean.class.getName());
+		primitiveTypes.add(Character.class.getName());
+		primitiveTypes.add(Byte.class.getName());
+		primitiveTypes.add(Short.class.getName());
+		primitiveTypes.add(Integer.class.getName());
+		primitiveTypes.add(Long.class.getName());
+		primitiveTypes.add(Float.class.getName());
+		primitiveTypes.add(Double.class.getName());
+		primitiveTypes.add(Void.class.getName());
+		primitiveTypes.add(String.class.getName());
+	}
+	
+	public static boolean isPrimitiveType(String fqn) {
+		return primitiveTypes.contains(fqn);
+	}
+
 	public void prepareTableViewerForObservableInput(ObservablePatternMatch match, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
 		String[] titles = { "Parameter", "Value" };
