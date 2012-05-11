@@ -45,7 +45,7 @@ public class DatabindingUtil {
 	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	
-	public static AdapterFactoryLabelProvider getAdapterFactory(URI uri) {
+	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
 			uriConfElementMap = collectItemProviders();
 		}

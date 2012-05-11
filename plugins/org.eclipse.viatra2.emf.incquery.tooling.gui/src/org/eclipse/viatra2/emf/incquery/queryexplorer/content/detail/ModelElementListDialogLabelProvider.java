@@ -1,6 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
-import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -33,6 +32,14 @@ public class ModelElementListDialogLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
+		if (element instanceof EObject) {
+			EObject eObj = (EObject) element;
+			URI uri = eObj.eClass().eResource().getURI();
+			AdapterFactoryLabelProvider al = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+			if (al != null) {
+				return al.getImage(element);
+			}
+		}
 		return null;
 	}
 
@@ -41,10 +48,9 @@ public class ModelElementListDialogLabelProvider implements ILabelProvider {
 		if (element instanceof EObject) {
 			EObject eObj = (EObject) element;
 			URI uri = eObj.eClass().eResource().getURI();
-			AdapterFactory af = DatabindingUtil.getAdapterFactory(uri);
-			if (af != null) {
-				AdapterFactoryLabelProvider aflp = new AdapterFactoryLabelProvider(af);
-				return aflp.getText(eObj);
+			AdapterFactoryLabelProvider al = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+			if (al != null) {
+				return al.getText(element);
 			}
 		}
 		return element.toString();

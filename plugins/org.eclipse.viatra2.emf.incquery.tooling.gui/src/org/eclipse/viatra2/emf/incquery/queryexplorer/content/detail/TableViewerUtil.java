@@ -12,25 +12,22 @@ import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+@SuppressWarnings("restriction")
+@Singleton
 public class TableViewerUtil {
-
-	EMFPatternLanguageJvmModelInferrerUtil inferrerUtil;
 	
-	private static TableViewerUtil instance;
-	
-	public static TableViewerUtil getInstance() {
-		if (instance == null) {
-			instance = new TableViewerUtil();
-		}
-		return instance;
-	}
-	
-	protected TableViewerUtil() {
-		inferrerUtil = new EMFPatternLanguageJvmModelInferrerUtil();
-	}
+	@Inject
+	ITypeProvider typeProvider;
 	
 	public void prepareTableViewerForObservableInput(ObservablePatternMatch match, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
@@ -70,11 +67,15 @@ public class TableViewerUtil {
 		
 		viewer.setCellEditors(editors);
 		
-		String[] parameterNames = observableMatcher.getMatcher().getParameterNames();
-		MatcherConfiguration[] input = new MatcherConfiguration[parameterNames.length];
-		for (int i = 0;i<parameterNames.length;i++) {
-			input[i] = new MatcherConfiguration(parameterNames[i], Integer.class, "");
-		}
+		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
+		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
+		for (int i = 0;i<pattern.getParameters().size();i++) {
+			Variable var = pattern.getParameters().get(i);
+			String name = var.getName();
+			JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
+			String clazz = ref.getType().getQualifiedName();
+			input[i] = new MatcherConfiguration(name, clazz, "");
+		}	
 		
 //		String matchClassName = inferrerUtil.matchClassName(PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName()));
 //		try {

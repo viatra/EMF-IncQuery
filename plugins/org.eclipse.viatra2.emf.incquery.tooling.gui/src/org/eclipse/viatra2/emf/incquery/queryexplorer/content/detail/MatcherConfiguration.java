@@ -3,11 +3,10 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 public class MatcherConfiguration {
 
 	private String parameterName;
-	private Class<?> clazz;
+	private String clazz;
 	private Object value;
 
-	public MatcherConfiguration(String parameterName, Class<?> clazz,
-			Object value) {
+	public MatcherConfiguration(String parameterName, String clazz,	Object value) {
 		super();
 		this.parameterName = parameterName;
 		this.clazz = clazz;
@@ -22,11 +21,11 @@ public class MatcherConfiguration {
 		this.parameterName = parameterName;
 	}
 
-	public Class<?> getClazz() {
+	public String getClazz() {
 		return clazz;
 	}
 
-	public void setClazz(Class<?> clazz) {
+	public void setClazz(String clazz) {
 		this.clazz = clazz;
 	}
 

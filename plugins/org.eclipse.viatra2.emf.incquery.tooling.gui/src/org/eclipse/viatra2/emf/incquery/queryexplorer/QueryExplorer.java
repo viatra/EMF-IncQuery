@@ -56,8 +56,6 @@ import com.google.inject.Injector;
  *
  */
 public class QueryExplorer extends ViewPart {
-	public QueryExplorer() {
-	}
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	private TableViewer tableViewer;
@@ -76,6 +74,13 @@ public class QueryExplorer extends ViewPart {
 		
 	@Inject
 	Injector injector;
+	
+	@Inject
+	TableViewerUtil tableViewerUtil;
+	
+	public QueryExplorer() {
+		
+	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
 		return matcherTreeViewerRoot;
@@ -186,14 +191,14 @@ public class QueryExplorer extends ViewPart {
 			
 			if (value instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
-				TableViewerUtil.getInstance().prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
+				tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
 			}
 			else if (value instanceof ObservablePatternMatch) {
 				ObservablePatternMatch match = (ObservablePatternMatch) value;
-				TableViewerUtil.getInstance().prepareTableViewerForObservableInput(match, tableViewer);
+				tableViewerUtil.prepareTableViewerForObservableInput(match, tableViewer);
 			}
 			else {
-				TableViewerUtil.getInstance().clearTableViewerColumns(tableViewer);
+				tableViewerUtil.clearTableViewerColumns(tableViewer);
 				if (tableViewer.getContentProvider() != null) {
 					tableViewer.setInput(null);
 				}

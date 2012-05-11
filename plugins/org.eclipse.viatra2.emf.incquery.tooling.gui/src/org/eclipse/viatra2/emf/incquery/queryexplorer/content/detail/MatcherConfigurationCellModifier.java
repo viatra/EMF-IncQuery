@@ -1,8 +1,12 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
 public class MatcherConfigurationCellModifier implements ICellModifier {
 	
@@ -26,6 +30,14 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 	public Object getValue(Object element, String property) {
 		MatcherConfiguration conf = (MatcherConfiguration) element;
 		if (property.equalsIgnoreCase("value")) {
+			if (conf.getValue() instanceof EObject) {
+				EObject eObj = (EObject) conf.getValue();
+				URI uri = eObj.eClass().eResource().getURI();
+				AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+				if (lp != null) {
+					return lp.getText(eObj);
+				}
+			}
 			return conf.getValue();
 		}
 		else if (property.equalsIgnoreCase("class")) {

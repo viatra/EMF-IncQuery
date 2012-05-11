@@ -28,6 +28,7 @@ public class ObservablePatternMatcher {
 	private ObservablePatternMatcherRoot parent;
 	private boolean generated;
 	private String patternFqn;
+	private Object[] parameterRestriction;
 	
 	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
@@ -100,6 +101,10 @@ public class ObservablePatternMatcher {
 	
 	public String getPatternName() {
 		return patternFqn;
+	}
+	
+	public void setParameterRestriction(Object[] parameterRestriction) {
+		this.parameterRestriction = parameterRestriction;
 	}
 
 	public String getText() {
