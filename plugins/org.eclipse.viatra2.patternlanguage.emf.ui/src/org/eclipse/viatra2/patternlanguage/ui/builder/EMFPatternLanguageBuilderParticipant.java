@@ -1,12 +1,15 @@
 package org.eclipse.viatra2.patternlanguage.ui.builder;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -17,10 +20,12 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
@@ -28,7 +33,9 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationF
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XmiModelBuilder;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.builder.BuilderParticipant;
 import org.eclipse.xtext.builder.DerivedResourceMarkers.GeneratorIdProvider;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
@@ -38,9 +45,12 @@ import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
+import org.eclipse.xtext.xbase.lib.Functions;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -90,6 +100,10 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	@Inject
 	private IContainer.Manager containerManager;
 	
+	@Inject
+	private IResourceServiceProvider resourceServiceProvider;
+	
+	private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
 	private Multimap<IProject, IPluginExtension> extensionMap = ArrayListMultimap.create();
 	private Multimap<IProject, Pair<String, String>> removableExtensionMap = ArrayListMultimap.create();
 	
@@ -111,25 +125,125 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-		IProject project = context.getBuiltProject();
-		// do clean build
+		final IProject project = context.getBuiltProject();
+		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		// do Clean build cleanUp
 		if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
 			// TODO add clean logic for all added extension (first: matcherfactory, validation.constraint)
 			// TODO add clean logic for all exported packages
-			removeXmiModel(context.getBuiltProject());
+			removeXmiModel(project);
 			if (context.getBuildType() == BuildType.CLEAN) {
 				return;
 			}
+		} else {
+			// clear maps for new build
+			exportedPackageMap.clear();
+			extensionMap.clear();
+			removableExtensionMap.clear();
+			if (getGlobalXmiFile(project).exists()) {
+				try {
+					Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName());
+					for (Delta delta : deltas) {
+						Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
+						if (delta.getNew() != null && shouldGenerate(deltaResource, context)) {
+							cleanUp(project, deltaResource, globalXmiModel);
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Exception during cleanUp Phase!", e);
+				}
+			}
 		}
+		super.build(context, monitor);
+		// Normal CleanUp done on every delta, do XMI Model build 
 		try {
 			IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
 			xmiBuildMonitor.beginTask("Building XMI model", 1);
 			buildXmiModel(context);	
 			xmiBuildMonitor.done();
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			logger.error("Exception during XMI Model Building Phase", e);
 		}
-		super.build(context, monitor);
+		// ensure exported package and extensions
+		for (IProject proj : exportedPackageMap.keySet()) {
+			// ensure package exports per project
+			ProjectGenerationHelper.ensurePackageExports(project, exportedPackageMap.get(proj));
+		}
+	}
+	
+	private IFile getGlobalXmiFile(IProject project) {
+		String xmiModelPath = String.format("%s/%s", XmiModelUtil.XMI_OUTPUT_FOLDER, XmiModelUtil.GLOBAL_EIQ_FILENAME);
+		return project.getFile(new Path(xmiModelPath));
+	}
+	
+	/**
+	 * Full cleanUp for current deltaResource based on the Global XMI model saved before. 
+	 * @param project
+	 * @param deltaResource 
+	 * @param globalXmiModel
+	 * @throws CoreException
+	 */
+	private void cleanUp(IProject project, Resource deltaResource, Resource globalXmiModel) throws CoreException {
+		// do the clean up based on the previous model
+		ArrayList<String> packageNames = new ArrayList<String>();
+		TreeIterator<EObject> it = globalXmiModel.getAllContents();
+		while (it.hasNext()) {
+			EObject obj = it.next();
+			if (obj instanceof Pattern) {
+				Pattern pattern = (Pattern) obj;
+				if (pattern.getFileName().equals(
+						deltaResource.getURI().toString())) {
+					// add package name for removal
+					packageNames.add(util.getPackageName(pattern));
+					// clean up code and extensions in the modelProject
+					executeCleanUpOnModelProject(project, pattern);
+					// clean up code and extensions for all fragments
+					executeCleanUpOnFragments(project, pattern);
+				}
+			}
+		}
+		// remove previously exported packages
+		ProjectGenerationHelper.removePackageExports(project, packageNames);
+	}
+	
+	/**
+	 * Executes Normal Build cleanUp on the current Built Project
+	 * (modelProject). Removes all code generated previously for the
+	 * {@link Pattern}, and marks current {@link Pattern} related extensions for
+	 * removal.
+	 * 
+	 * @param modelProject
+	 * @param pattern
+	 * @throws CoreException
+	 */
+	private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) throws CoreException {
+		EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(modelProject);
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matchClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherFactoryClassName(pattern) + ".java");
+		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.processorClassName(pattern) + ".java");
+		// only the extension id and point name is needed for removal
+//		String extensionId = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+//		removableExtensionMap.put(modelProject, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+	}
+	
+	/**
+	 * Executes Normal Build cleanUp on every {@link IGenerationFragment} registered to the current {@link Pattern}. Marks current {@link Pattern} related extensions for
+	 * removal.
+	 * @param modelProject
+	 * @param pattern
+	 * @throws CoreException
+	 */
+	private void executeCleanUpOnFragments(IProject modelProject, Pattern pattern) throws CoreException {
+		for (IGenerationFragment fragment : fragmentProvider
+				.getFragmentsForPattern(pattern)) {
+			injector.injectMembers(fragment);
+			IProject targetProject = createOrGetTargetProject(modelProject,
+					fragment);
+			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
+			fragment.cleanUp(pattern, fsa);
+//			removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));
+		}
 	}
 	
 	/**
@@ -146,9 +260,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	}
 
 	/**
-	 * 
+	 * Builds a global XMI model with a {@link XmiModelBuilder} builder.
+	 * Before the actual build, finds all relevant eiq resources, so the XMI build is performed on all currently available {@link PatternModel}.
 	 * @param context
-	 * @param subProgressMonitor
 	 */
 	private void buildXmiModel(IBuildContext context) {
 		Delta delta = getRelevantDeltas(context).get(0);
@@ -161,7 +275,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		// load all visible resource to the resourceset of the input resource
 		for (IContainer container : visibleContainers) {
 			for (IResourceDescription rd : container.getResourceDescriptions()) {
-				context.getResourceSet().getResource(rd.getURI(), true);				
+				if (resourceServiceProvider.canHandle(rd.getURI())) {
+					context.getResourceSet().getResource(rd.getURI(), true);
+				}
 			}
 		}
 		xmiModelBuilder.build(context.getResourceSet(), context.getBuiltProject());
@@ -200,7 +316,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		injector.injectMembers(matcherFactoryExtensionGenerator);
 		ExtensionGenerator generator = new ExtensionGenerator();
 		generator.setProject(project);
-		ArrayList<String> packageNames = new ArrayList<String>();
 		TreeIterator<EObject> it = deltaResource.getAllContents();
 		while (it.hasNext()) {
 			EObject obj = it.next();
@@ -208,9 +323,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				Iterable<IPluginExtension> extensionContribution = matcherFactoryExtensionGenerator.extensionContribution((Pattern)obj, generator);
 				extensionMap.putAll(project, extensionContribution);
 				executeGeneratorFragments(context.getBuiltProject(), (Pattern) obj);
-				packageNames.add(util.getPackageName((Pattern) obj));
+				exportedPackageMap.put(project, util.getPackageName((Pattern) obj));
 			}
-		}		
+		}
 	}
 
 	private void executeGeneratorFragments(IProject modelProject, Pattern pattern)

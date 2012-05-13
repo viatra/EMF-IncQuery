@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -335,7 +336,7 @@ public abstract class ProjectGenerationHelper {
 	 * @throws CoreException
 	 */
 	public static void ensurePackageExports(IProject project,
-			final List<String> dependencies) throws CoreException {
+			final Collection<String> dependencies) throws CoreException {
 		ensurePackageExports(project, dependencies, new NullProgressMonitor());
 	}
 
@@ -349,7 +350,7 @@ public abstract class ProjectGenerationHelper {
 	 * @throws CoreException
 	 */
 	public static void ensurePackageExports(IProject project,
-			final List<String> dependencies, IProgressMonitor monitor)
+			final Collection<String> dependencies, IProgressMonitor monitor)
 			throws CoreException {
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
@@ -405,7 +406,7 @@ public abstract class ProjectGenerationHelper {
 	 */
 	public static void ensurePackageExports(
 			final IBundleProjectService service,
-			IBundleProjectDescription bundleDesc, final List<String> exports) {
+			IBundleProjectDescription bundleDesc, final Collection<String> exports) {
 		IPackageExportDescription[] packageExports = bundleDesc
 				.getPackageExports();
 		List<String> missingExports = new ArrayList<String>(exports);
