@@ -31,7 +31,7 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	override removeExtension(Pattern pattern) {
-		newArrayList(Pair::of(DATABINDINGEXTENSION_PREFIX+pattern.name, DATABINDINGEXTENSION_POINT))
+		newArrayList(Pair::of(DATABINDINGEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT))
 	}
 	
 	override getProjectDependencies() {

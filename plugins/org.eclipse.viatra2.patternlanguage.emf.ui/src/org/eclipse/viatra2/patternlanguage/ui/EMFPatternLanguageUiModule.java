@@ -12,6 +12,8 @@ package org.eclipse.viatra2.patternlanguage.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.viatra2.patternlanguage.ui.builder.EMFPatternLanguageBuilderParticipant;
+import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 
@@ -38,7 +40,13 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	/*
 	 * Registering model inferrer from the tooling.generator project
 	 */
-		public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
-			return EMFPatternLanguageJvmModelInferrer.class;
-		}
+	public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
+		return EMFPatternLanguageJvmModelInferrer.class;
+	}
+	
+	@Override
+	public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
+		return EMFPatternLanguageBuilderParticipant.class;
+	}
+	
 }

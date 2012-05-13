@@ -22,10 +22,10 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 	}
 
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-	@Override
-	public Class<? extends org.eclipse.xtext.generator.IGenerator> bindIGenerator() {
-		return IncQueryGenerator.class;
-	}
+//	@Override
+//	public Class<? extends org.eclipse.xtext.generator.IGenerator> bindIGenerator() {
+//		return IncQueryGenerator.class;
+//	}
 
 	// contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
 	public IWorkspaceRoot bindIWorkspaceRootToInstance() {
