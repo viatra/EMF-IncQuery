@@ -34,61 +34,72 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 
 public class ModelElementCellEditor extends CellEditor {
 
     private Composite editor;
     private Control contents;
     private Text inputText;
-    private Button button;
+    private Button dialogButton;
+    private Button clearButton;
 	private KeyListener keyListener;
     private Object value = null;
     private Notifier root;
     private Table table;
-    
-    public ModelElementCellEditor(Table table, Notifier root) {
+    private ObservablePatternMatcher observableMatcher;
+        
+    public ModelElementCellEditor(Table table, ObservablePatternMatcher observableMatcher) {
         super(table, SWT.NONE);
-        this.root = root;
+        this.root = observableMatcher.getParent().getNotifier();
         this.table = table;
+        this.observableMatcher = observableMatcher;
     }
 
     private class DialogCellLayout extends Layout {
+    	
         public void layout(Composite editor, boolean force) {
             Rectangle bounds = editor.getClientArea();
-            Point size = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+            Point dialogButtonSize = dialogButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+            Point clearButtonSize = clearButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             if (contents != null) {
-				contents.setBounds(0, 0, bounds.width - size.x, bounds.height);
+				contents.setBounds(0, 0, bounds.width - dialogButtonSize.x - clearButtonSize.x, bounds.height);
 			}
-            button.setBounds(bounds.width - size.x, 0, size.x, bounds.height);
+            
+            clearButton.setBounds(bounds.width - dialogButtonSize.x - clearButtonSize.x, 0, clearButtonSize.x, bounds.height);
+            dialogButton.setBounds(bounds.width - dialogButtonSize.x, 0, dialogButtonSize.x, bounds.height);
         }
 
-        public Point computeSize(Composite editor, int wHint, int hHint,
-                boolean force) {
+        public Point computeSize(Composite editor, int wHint, int hHint, boolean force) {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
 			}
-            Point contentsSize = contents.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-                    force);
-            Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-                    force);
+            Point contentsSize = contents.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+            Point buttonSize = dialogButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             // Just return the button width to ensure the button is not clipped
             // if the label is long.
             // The label will just use whatever extra width there is
-            Point result = new Point(buttonSize.x, Math.max(contentsSize.y,
-                    buttonSize.y));
+            Point result = new Point(buttonSize.x, Math.max(contentsSize.y, buttonSize.y));
             return result;
         }
     }
 
-    private Button createButton(Composite parent) {
+    private Button createDialogButton(Composite parent) {
         Button result = new Button(parent, SWT.DOWN);
-        result.setText("..."); //$NON-NLS-1$
+        result.setText("...");
+        return result;
+    }
+    
+    private Button createClearButton(Composite parent) {
+    	Button result = new Button(parent, SWT.DOWN);
+        result.setText("X");
         return result;
     }
 
@@ -96,7 +107,7 @@ public class ModelElementCellEditor extends CellEditor {
         inputText = new Text(cell, SWT.LEFT);
         inputText.setEditable(true);
         inputText.setFont(cell.getFont());
-        inputText.setBackground(cell.getBackground());
+        inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         return inputText;
     }
 
@@ -113,10 +124,13 @@ public class ModelElementCellEditor extends CellEditor {
         contents = createContents(editor);
         updateContents(value);
 
-        button = createButton(editor);
-        button.setFont(font);
+        clearButton = createClearButton(editor);
+        clearButton.setFont(font);
+        
+        dialogButton = createDialogButton(editor);
+        dialogButton.setFont(font);
 
-        button.addKeyListener(new KeyAdapter() {
+        dialogButton.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.character == '\u001b') { // Escape
                     fireCancelEditor();
@@ -124,16 +138,14 @@ public class ModelElementCellEditor extends CellEditor {
             }
         });
         
-        button.addSelectionListener(new SelectionAdapter() {
+        dialogButton.addSelectionListener(new SelectionAdapter() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             public void widgetSelected(SelectionEvent event) {
-            	
             	TableItem selection = table.getSelection()[0];
             	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
             	if (!TableViewerUtil.isPrimitiveType(conf.getClazz())) {                    
-                	button.setToolTipText("");
             		Object newValue = openDialogBox(editor, conf.getClazz());
 
                 	if (newValue != null) {
@@ -149,11 +161,19 @@ public class ModelElementCellEditor extends CellEditor {
                         fireApplyEditorValue();
                     }
             	}
-            	else {
-            		button.setToolTipText("No selection - input value!");
-            	}
             }
         });
+        
+        clearButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		TableItem selection = table.getSelection()[0];
+            	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
+        		inputText.setText("");
+        		value = "";
+        		conf.setValue("");
+        	}
+		});
 
         setValueValid(true);
 
@@ -173,8 +193,19 @@ public class ModelElementCellEditor extends CellEditor {
     }
 
     protected void doSetFocus() {
+    	TableItem selection = table.getSelection()[0];
+    	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
+    	
+    	if (!TableViewerUtil.isPrimitiveType(conf.getClazz())) {
+    		inputText.setEditable(false);
+    	}
+    	else {
+    		inputText.setEditable(true);
+    	}
+    	
         inputText.setFocus();
         inputText.addKeyListener(getTextKeyListener());
+        inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     }
 
     private KeyListener getTextKeyListener() {
@@ -183,10 +214,21 @@ public class ModelElementCellEditor extends CellEditor {
 				
 				@Override
 				public void keyReleased(KeyEvent e) {
+					
+					String newValue = inputText.getText();
 					TableItem ti = table.getSelection()[0];
 					MatcherConfiguration conf = (MatcherConfiguration) ti.getData();
-					conf.setValue(inputText.getText());
-					value = inputText.getText();
+					
+					if (TableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
+						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+						conf.setValue(inputText.getText());
+						value = inputText.getText();
+						//set restriction for observable matcher
+						observableMatcher.setParameterRestriction(valuesOfTableItems(table));
+					}
+					else {
+						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 				}
 				
 				@Override
@@ -238,6 +280,16 @@ public class ModelElementCellEditor extends CellEditor {
         inputText.setText(text);
     }
     
+    private Object[] valuesOfTableItems(Table table) {
+    	Object[] result = new Object[table.getItems().length];
+    	
+    	for (int i = 0;i<table.getItems().length;i++) {
+    		result[i] = ((MatcherConfiguration) table.getItem(i).getData()).getValue();
+    	}
+    	
+    	return result;
+    }
+    
     private Object[] getElements(Object inputElement, String restrictionFqn) {
 		List<Object> result = new ArrayList<Object>();
 		TreeIterator<EObject> iterator = null;
@@ -280,6 +332,7 @@ public class ModelElementCellEditor extends CellEditor {
     
 	private boolean isOfType(Class<?> clazz, String restrictionFqn) {
     	List<String> classes = collectAllInterfaces(clazz);
+    	classes.add("java.lang.Object");
     	return classes.contains(restrictionFqn);
     }
     

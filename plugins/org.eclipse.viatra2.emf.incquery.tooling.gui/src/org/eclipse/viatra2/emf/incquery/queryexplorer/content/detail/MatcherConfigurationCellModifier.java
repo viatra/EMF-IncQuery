@@ -56,7 +56,7 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 	    }
 		MatcherConfiguration conf = (MatcherConfiguration) element;
 		
-		if (property.equalsIgnoreCase("value")) {
+		if (conf != null && property.equalsIgnoreCase("value")) {
 			conf.setValue(value);
 			viewer.update(conf, null);
 		}
