@@ -529,12 +529,8 @@ public abstract class ProjectGenerationHelper {
 				Pair<String, String> removable = IterableExtensions.findFirst(removedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
 					@Override
 					public Boolean apply(Pair<String, String> p) {
-						if (p.getKey().equals(extensionId)) {
-							if (p.getValue().equals(extension.getPoint())) {
-								return true;
-							}
-						}
-						return false;
+						return p.getKey().equals(extensionId) && 
+								p.getValue().equals(extension.getPoint());
 					}
 				});
 				if (removable == null) {
@@ -547,7 +543,7 @@ public abstract class ProjectGenerationHelper {
 						cloneExtension.add(obj);
 					}
 					cloneExtension.setInTheModel(true);
-					extensions.add(cloneExtension);					
+					extensions.add(cloneExtension);
 				}
 			}
 			for (IPluginExtensionPoint point : readExtension
@@ -573,6 +569,49 @@ public abstract class ProjectGenerationHelper {
 	public static void removePackageExports(IProject project,
 			ArrayList<String> dependencies) throws CoreException {
 		removePackageExports(project, dependencies, new NullProgressMonitor());
+	}
+
+
+	/**
+	 * Removes all extensions from the project, if the extension's pointId equals the given pointId. 
+	 * @param project
+	 * @param pointId
+	 * @throws CoreException 
+	 */
+	@SuppressWarnings("restriction")
+	public static void removeAllExtension(IProject project, String pointId) throws CoreException {
+		IFile pluginXml = PDEProject.getPluginXml(project);
+		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
+				.getModelManager().findModel(project);
+		WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
+		fModel.setEditable(true);
+		fModel.load();
+		// Storing a write-only plugin.xml model
+		IExtensions extensions = fModel.getExtensions();
+		if (plugin != null) {
+			// Storing a read-only plugin.xml model
+			IExtensions readExtension = plugin.getExtensions();
+			for (final IPluginExtension extension : readExtension.getExtensions()) {
+				String id = extension.getId();
+				if (id.startsWith(project.getName())) {
+					id = id.substring(
+						project.getName().length() + 1);
+				}
+				if (!extension.getPoint().equals(pointId)) {
+					// XXX cloning extensions to remove project name prefixes
+					IPluginExtension cloneExtension = fModel.createExtension();
+					cloneExtension.setId(id);
+					cloneExtension.setName(extension.getName());
+					cloneExtension.setPoint(extension.getPoint());
+					for (IPluginObject obj : extension.getChildren()) {
+						cloneExtension.add(obj);
+					}
+					cloneExtension.setInTheModel(true);
+					extensions.add(cloneExtension);
+				}
+			}
+		}
+		fModel.save();
 	}
 	
 }

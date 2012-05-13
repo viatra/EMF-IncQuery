@@ -117,12 +117,12 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		// do Clean build cleanUp
 		if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
-			// TODO add clean logic for all added extension (first: matcherfactory, validation.constraint)
-			cleanAllExtension(project, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
-//			IProject validationProject = workspaceRoot.getProject(project.getName() + ".validation");
-//			if (validationProject.exists()) {
-//				cleanAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
-//			}
+			ProjectGenerationHelper.removeAllExtension(project, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
+			IProject validationProject = workspaceRoot.getProject(project.getName() + ".validation");
+			if (validationProject.exists()) {
+				ProjectGenerationHelper.removeAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
+			}
+			// TODO add clean logic for remaining extensions
 			// TODO add clean logic for all exported packages
 			removeXmiModel(project);
 			if (context.getBuildType() == BuildType.CLEAN) {
@@ -205,16 +205,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		}
 	}
 	
-	/**
-	 * Cleans all extensions that's point equals the given point. 
-	 * @param project
-	 * @param pointId
-	 */
-	private void cleanAllExtension(IProject project,
-			String pointId) {
-		// TODO implement
-	}
-
 	/**
 	 * Returns an {@link IFile} on the path 'queries/globalEiqModel.xmi' in the project.
 	 * @param project
