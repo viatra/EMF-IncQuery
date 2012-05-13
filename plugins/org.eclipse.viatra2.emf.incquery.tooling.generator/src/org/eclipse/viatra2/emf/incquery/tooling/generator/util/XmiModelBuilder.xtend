@@ -1,39 +1,34 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.util
 
 import java.util.ArrayList
+import java.util.HashSet
 import org.apache.log4j.Logger
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IResource
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
-import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import java.util.HashSet
-import org.eclipse.emf.ecore.EPackage
-
+import org.eclipse.xtext.EcoreUtil2
 /**
  * @author Mark Czotter
  */
-class XmiOutputBuilder {
+class XmiModelBuilder {
 	
 	Logger logger = Logger::getLogger(getClass())
 	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
 	 */
-	def build(ResourceSet resourceSet, IProject project, Resource resource) {
+	def build(ResourceSet resourceSet, IProject project) {
 		try {
 			val folder = project.getFolder(XmiModelUtil::XMI_OUTPUT_FOLDER)
 			val file = folder.getFile(XmiModelUtil::GLOBAL_EIQ_FILENAME)
-			val resourceFileName = resource.URI.toString
 			if (!folder.exists) {
 				folder.create(IResource::DEPTH_INFINITE, false, null)
 			}
