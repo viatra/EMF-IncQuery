@@ -27,13 +27,11 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-		println("Deleting file ("+pattern.name+"):" + pattern.packagePath + "/" + pattern.realPatternName.toFirstUpper + annotationLiteral + ".java")
 		fsa.deleteFile(pattern.packagePath + "/" + pattern.realPatternName.toFirstUpper + annotationLiteral + ".java")
 	}
 	
 	override removeExtension(Pattern pattern) {
 		val p = Pair::of(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT)
-		println("Removing extension: ("+pattern.name+"):" + p)
 		newArrayList(p)
 	}
 	
