@@ -23,7 +23,10 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
 		case 1:
 			return mc.getClazz();
 		case 2:
-			if (mc.getValue() instanceof EObject) {
+			if (mc.getValue() == null) {
+				return "";
+			}
+			else if (mc.getValue() instanceof EObject) {
 				EObject eObj = (EObject) mc.getValue();
 				URI uri = eObj.eClass().eResource().getURI();
 				AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
@@ -31,7 +34,9 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
 					return lp.getText(eObj);
 				}
 			}
-			return mc.getValue().toString();
+			else {
+				return mc.getValue().toString();
+			}
 		default:
 			return "";
 		}

@@ -3,8 +3,10 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -21,25 +23,28 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
 public class ObservablePatternMatcher {
 	
 	private List<ObservablePatternMatch> matches;
-	private IncQueryMatcher<? extends IPatternMatch> matcher;
-	private DeltaMonitor<? extends IPatternMatch> deltaMonitor;
+	private IncQueryMatcher<IPatternMatch> matcher;
+	private DeltaMonitor<IPatternMatch> deltaMonitor;
 	private Runnable processMatchesRunnable;
 	private Map<IPatternMatch, ObservablePatternMatch> sigMap;
 	private ObservablePatternMatcherRoot parent;
 	private boolean generated;
 	private String patternFqn;
+	private IPatternMatch restriction;
 	private Object[] parameterRestriction;
 	
-	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
+	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
 		this.patternFqn = patternFqn;
 		this.matches = new ArrayList<ObservablePatternMatch>();
 		this.matcher = matcher;
 		this.generated = generated;
 		
+		initRestriction();
+		
 		if (matcher != null) {
 			this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
-			this.deltaMonitor = this.matcher.newDeltaMonitor(true);
+			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, restriction);
 			this.processMatchesRunnable = new Runnable() {		
 				@Override
 				public void run() {
@@ -67,13 +72,13 @@ public class ObservablePatternMatcher {
 		}
 	}
 	
-	private void processNewMatches(Collection<? extends IPatternMatch> matches) {
+	private void processNewMatches(Collection<IPatternMatch> matches) {
 		for (IPatternMatch s : matches) {
 			addMatch(s);
 		}
 	}
 
-	private void processLostMatches(Collection<? extends IPatternMatch> matches) {
+	private void processLostMatches(Collection<IPatternMatch> matches) {
 		for (IPatternMatch s : matches) {
 			removeMatch(s);
 		}
@@ -87,7 +92,9 @@ public class ObservablePatternMatcher {
 	}
 	
 	private void removeMatch(IPatternMatch match) {
-		this.matches.remove(this.sigMap.remove(match));
+		ObservablePatternMatch observableMatch = this.sigMap.remove(match);
+		this.matches.remove(observableMatch);
+		observableMatch.dispose();
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 
@@ -95,7 +102,7 @@ public class ObservablePatternMatcher {
 		return parent;
 	}
 	
-	public IncQueryMatcher<? extends IPatternMatch> getMatcher() {
+	public IncQueryMatcher<IPatternMatch> getMatcher() {
 		return matcher;
 	}
 	
@@ -103,8 +110,33 @@ public class ObservablePatternMatcher {
 		return patternFqn;
 	}
 	
-	public void setParameterRestriction(Object[] parameterRestriction) {
+	private void initRestriction() {
+		parameterRestriction = new Object[this.matcher.getParameterNames().length];
+		
+		for (int i = 0;i<this.matcher.getParameterNames().length;i++) {
+			parameterRestriction[i] = null;
+		}
+		
+		this.restriction = this.matcher.arrayToMatch(parameterRestriction);
+	}
+	
+	public void setRestriction(Object[] parameterRestriction) {
 		this.parameterRestriction = parameterRestriction;
+		this.restriction = this.matcher.arrayToMatch(parameterRestriction);
+		
+		Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(sigMap.keySet());
+		
+		for (IPatternMatch match : tmp) {
+			removeMatch(match);
+		}
+		
+		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, restriction);
+		this.processMatchesRunnable.run();
+ 	}
+	
+	public Object[] getRestriction() {
+		return parameterRestriction;
 	}
 
 	public String getText() {

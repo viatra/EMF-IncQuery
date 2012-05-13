@@ -153,6 +153,8 @@ public class ModelElementCellEditor extends CellEditor {
                         if (newValidState) {
                             markDirty();
                             doSetValue(newValue);
+                            conf.setValue(newValue);
+                            observableMatcher.setRestriction(valuesOfTableItems(table));
                         } else {
                             // try to insert the current value into the error message.
                             setErrorMessage(MessageFormat.format(getErrorMessage(),
@@ -172,6 +174,7 @@ public class ModelElementCellEditor extends CellEditor {
         		inputText.setText("");
         		value = "";
         		conf.setValue("");
+        		observableMatcher.setRestriction(valuesOfTableItems(table));
         	}
 		});
 
@@ -224,7 +227,7 @@ public class ModelElementCellEditor extends CellEditor {
 						conf.setValue(inputText.getText());
 						value = inputText.getText();
 						//set restriction for observable matcher
-						observableMatcher.setParameterRestriction(valuesOfTableItems(table));
+						observableMatcher.setRestriction(valuesOfTableItems(table));
 					}
 					else {
 						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -284,7 +287,8 @@ public class ModelElementCellEditor extends CellEditor {
     	Object[] result = new Object[table.getItems().length];
     	
     	for (int i = 0;i<table.getItems().length;i++) {
-    		result[i] = ((MatcherConfiguration) table.getItem(i).getData()).getValue();
+    		MatcherConfiguration mc = (MatcherConfiguration) table.getItem(i).getData();
+    		result[i] = TableViewerUtil.createValue(mc.getClazz(), mc.getValue());
     	}
     	
     	return result;

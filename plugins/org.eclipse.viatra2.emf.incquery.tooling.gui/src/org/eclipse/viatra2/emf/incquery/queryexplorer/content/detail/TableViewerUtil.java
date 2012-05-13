@@ -90,13 +90,14 @@ public class TableViewerUtil {
 		viewer.setCellEditors(editors);
 		
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
+		Object[] restriction = observableMatcher.getRestriction();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
 		for (int i = 0;i<pattern.getParameters().size();i++) {
 			Variable var = pattern.getParameters().get(i);
 			String name = var.getName();
 			JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
 			String clazz = ref.getType().getQualifiedName();
-			input[i] = new MatcherConfiguration(name, clazz, "");
+			input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
 		}	
 		
 		viewer.setInput(input);
@@ -130,41 +131,47 @@ public class TableViewerUtil {
 		return viewerColumn;
 	}
 	
-	public static Object createValue(String classFqn, String value) {
-		classFqn = classFqn.toLowerCase();
-		
-		if (value.matches("")) {
-			return null;
-		}
-		else if (Boolean.class.getName().toLowerCase().matches(classFqn)) {
-			return new Boolean(value.toLowerCase());
-		}
-		else if (Character.class.getName().toLowerCase().matches(classFqn)) {
-			return new Character(value.charAt(0));
-		}
-		else if (Byte.class.getName().toLowerCase().matches(classFqn)) {
-			return new Byte(value);
-		}
-		else if (Short.class.getName().toLowerCase().matches(classFqn)) {
-			return new Short(value);
-		}
-		else if (Integer.class.getName().toLowerCase().matches(classFqn)) {
-			return new Integer(value);
-		}
-		else if (Long.class.getName().toLowerCase().matches(classFqn)) {
-			return new Long(value);
-		}
-		else if (Float.class.getName().toLowerCase().matches(classFqn)) {
-			return new Float(value);
-		}
-		else if (Double.class.getName().toLowerCase().matches(classFqn)) {
-			return new Double(value);
-		}
-		else if (String.class.getName().toLowerCase().matches(classFqn)) {
+	public static Object createValue(String classFqn, Object value) {
+		if (!(value instanceof String)) {
 			return value;
 		}
 		else {
-			return null;
+			classFqn = classFqn.toLowerCase();
+			String strValue = value.toString();
+			
+			if (strValue.matches("")) {
+				return null;
+			}
+			else if (Boolean.class.getName().toLowerCase().matches(classFqn)) {
+				return new Boolean(strValue.toLowerCase());
+			}
+			else if (Character.class.getName().toLowerCase().matches(classFqn)) {
+				return new Character(strValue.charAt(0));
+			}
+			else if (Byte.class.getName().toLowerCase().matches(classFqn)) {
+				return new Byte(strValue);
+			}
+			else if (Short.class.getName().toLowerCase().matches(classFqn)) {
+				return new Short(strValue);
+			}
+			else if (Integer.class.getName().toLowerCase().matches(classFqn)) {
+				return new Integer(strValue);
+			}
+			else if (Long.class.getName().toLowerCase().matches(classFqn)) {
+				return new Long(strValue);
+			}
+			else if (Float.class.getName().toLowerCase().matches(classFqn)) {
+				return new Float(strValue);
+			}
+			else if (Double.class.getName().toLowerCase().matches(classFqn)) {
+				return new Double(strValue);
+			}
+			else if (String.class.getName().toLowerCase().matches(classFqn)) {
+				return value;
+			}
+			else {
+				return null;
+			}
 		}
 	}
 	
