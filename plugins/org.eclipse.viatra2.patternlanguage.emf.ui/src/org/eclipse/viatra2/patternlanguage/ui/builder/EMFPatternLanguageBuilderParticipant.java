@@ -3,6 +3,7 @@ package org.eclipse.viatra2.patternlanguage.ui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				ProjectGenerationHelper.removeAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
 			}
 			// TODO add clean logic for remaining extensions
-			// TODO add clean logic for all exported packages
+			removeExportedPackages(project);
 			removeXmiModel(project);
 			if (context.getBuildType() == BuildType.CLEAN) {
 				return;
@@ -205,6 +206,26 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		}
 	}
 	
+	/**
+	 * Removes all packages, based on the Xmi Model.
+	 * @param project
+	 * @throws CoreException
+	 */
+	private void removeExportedPackages(IProject project) throws CoreException {
+		if (getGlobalXmiFile(project).exists()) {
+			ArrayList<String> packageNames = new ArrayList<String>();
+			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName());
+			Iterator<EObject> iter = globalXmiModel.getAllContents();
+			while(iter.hasNext()) {
+				EObject obj = iter.next();
+				if (obj instanceof Pattern) {
+					packageNames.add(util.getPackageName((Pattern) obj));
+				}
+			}
+			ProjectGenerationHelper.removePackageExports(project, packageNames);
+		}		
+	}
+
 	/**
 	 * Returns an {@link IFile} on the path 'queries/globalEiqModel.xmi' in the project.
 	 * @param project
