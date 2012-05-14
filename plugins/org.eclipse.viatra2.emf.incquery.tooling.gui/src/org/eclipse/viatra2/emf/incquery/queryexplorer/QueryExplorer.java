@@ -70,7 +70,6 @@ public class QueryExplorer extends ViewPart {
 	//observable view
 	private ModelEditorPartListener modelPartListener = new ModelEditorPartListener();
 	private FileEditorPartListener filePartListener = new FileEditorPartListener();
-	private static QueryExplorer instance;
 		
 	@Inject
 	Injector injector;
@@ -87,12 +86,9 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public static QueryExplorer getInstance() {
-		if (instance == null) {
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	        IViewPart form = page.findView(ID);
-	        instance = (QueryExplorer) form;
-		}
-        return instance;
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	    IViewPart form = page.findView(ID);
+	    return (QueryExplorer) form;
 	}
 	
 	public TreeViewer getMatcherTreeViewer() {
