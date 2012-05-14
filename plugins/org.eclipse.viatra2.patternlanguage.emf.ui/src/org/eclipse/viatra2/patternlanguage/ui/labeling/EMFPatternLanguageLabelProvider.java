@@ -98,7 +98,8 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 	}
 	
 	String text(PatternCall call) {
-		return String.format("find %s/%d", call.getPatternRef().getName(), call.getParameters().size());
+		String transitiveOp = call.isTransitive() ? "+" : "";
+		return String.format("find %s/%d%s", call.getPatternRef().getName(), call.getParameters().size(), transitiveOp);
 	}
 	
 	String text(PathExpressionConstraint constraint) {
