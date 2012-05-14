@@ -25,6 +25,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ps
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.TypeBinary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.TypeTernary;
@@ -307,10 +308,29 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		PatternCall call = constraint.getCall();
 		Pattern patternRef = call.getPatternRef();
 		Tuple pNodeTuple = getPNodeTuple(call.getParameters());
-		if (constraint.isNegative()) 
-			new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
-		else 
-			new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+		if (!call.isTransitive()) {
+			if (constraint.isNegative()) 
+				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+			else 
+				new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+		} else {
+			if (pNodeTuple.getSize() != 2)
+				throw new RetePatternBuildException(
+						"Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.", 
+						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
+						pattern); 
+			else if (constraint.isNegative()) 
+				throw new RetePatternBuildException(
+						"Unsupported negated transitive closure of {1} in pattern {2}", 
+						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
+						pattern);
+			else 
+				new BinaryTransitiveClosure<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+//				throw new RetePatternBuildException(
+//						"Unsupported positive transitive closure of {1} in pattern {2}", 
+//						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
+//						pattern);
+		}
 	}
 
 	/**
