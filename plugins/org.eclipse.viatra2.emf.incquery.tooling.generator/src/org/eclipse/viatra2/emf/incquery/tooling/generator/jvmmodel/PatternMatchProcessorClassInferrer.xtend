@@ -26,7 +26,7 @@ class PatternMatchProcessorClassInferrer {
 		val processorClass = pattern.toClass(pattern.processorClassName) [
   			it.packageName = processorPackageName
   			it.documentation = pattern.javadocProcessorClass.toString
-  			it.abstract = true
+  			it.setAbstract(true)
   			it.superTypes += pattern.newTypeRef(typeof(IMatchProcessor), cloneWithProxies(matchClassRef))
   		]
   		processorClass.inferProcessorClassMethods(pattern, matchClassRef)
@@ -39,7 +39,7 @@ class PatternMatchProcessorClassInferrer {
   	def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmTypeReference matchClassRef) {
   		processorClass.members += pattern.toMethod("process", null) [
 			it.documentation = pattern.javadocProcessMethod.toString
-			it.abstract = true
+			it.setAbstract (true)
 			for (parameter : pattern.parameters){
 				it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)
 			}
