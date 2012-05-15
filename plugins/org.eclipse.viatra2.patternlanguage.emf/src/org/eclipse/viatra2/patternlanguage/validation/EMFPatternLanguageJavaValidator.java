@@ -10,23 +10,29 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
 
-import java.awt.Container;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
@@ -34,6 +40,9 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.xtext.validation.Check;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Validators for EMFPattern Language.
@@ -56,109 +65,225 @@ public class EMFPatternLanguageJavaValidator extends
 	@Check
 	public void checkPatternModelPackageImports(PatternModel patternModel) {
 		for (int i = 0; i < patternModel.getImportPackages().size(); ++i) {
-			EPackage leftPackage = patternModel.getImportPackages().get(i).getEPackage();
+			EPackage leftPackage = patternModel.getImportPackages().get(i)
+					.getEPackage();
 			for (int j = i + 1; j < patternModel.getImportPackages().size(); ++j) {
-				EPackage rightPackage = patternModel.getImportPackages().get(j).getEPackage();
+				EPackage rightPackage = patternModel.getImportPackages().get(j)
+						.getEPackage();
 				if (leftPackage.equals(rightPackage)) {
-					warning(DUPLICATE_IMPORT + leftPackage.getNsURI(), EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, i, EMFIssueCodes.DUPLICATE_IMPORT);
-					warning(DUPLICATE_IMPORT + rightPackage.getNsURI(), EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, j, EMFIssueCodes.DUPLICATE_IMPORT);
+					warning(DUPLICATE_IMPORT + leftPackage.getNsURI(),
+							EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES,
+							i, EMFIssueCodes.DUPLICATE_IMPORT);
+					warning(DUPLICATE_IMPORT + rightPackage.getNsURI(),
+							EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES,
+							j, EMFIssueCodes.DUPLICATE_IMPORT);
 				}
 			}
 		}
 	}
-	
-	private boolean isVariableReferenceNegative(VariableReference varRef) {
-		EObject container = varRef.eContainer();
-		while (!(container instanceof Constraint)) {
-			container = container.eContainer();
-		}
-		
-		if (container instanceof PathExpressionConstraint) {
-			return ((PathExpressionConstraint)container).isNegative();
-		}
-		else if (container instanceof PatternCompositionConstraint) {
-			return ((PatternCompositionConstraint)container).isNegative();
-		}
-		
-		return false;
+
+	private enum VariableReferenceClass {
+		PositiveExistential, NegativeExistential, ReadOnly
 	}
-	
-	private String getPatternBodyName(PatternBody patternBody) {
-		return (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d", ((Pattern)patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
-	}
-	
-	@Check
-	public void checkUnusedVariables(PatternBody patternBody) {
-		// Check number of references for local variables.
-		// NOTE: This step has to come first, because the getVariables() function finds/initializes the references.
-		variables: for (Variable var : patternBody.getVariables()) {
-			if (var.getReferences().size() == 1) {	// There is only 1 reference to the variable:
-				if (!isVariableReferenceNegative(var.getReferences().get(0))) {
-					warning(String.format("Local variable '%s' is referenced only once.", var.getName()), var.getReferences().get(0), null, EMFIssueCodes.UNUSED_VARIABLE);
-				}
-			}
-			else {	// There are at least 2 references to the variable:
-				for (VariableReference varRef : var.getReferences()) {
-					if (!isVariableReferenceNegative(varRef)) {	// The reference is positive:
-						continue variables;	// The variable has at least one positive reference, so we're good. Move to next variable.
-					}
-				}
-				error(String.format("There is no positive reference to local variable '%s'.", var.getName()), var.getReferences().get(0), null, EMFIssueCodes.UNUSED_VARIABLE);
-			}
+
+	private class ClassifiedVariableReferences {
+		private Variable referredVariable;
+		private boolean isLocalVariable;
+
+		private Map<VariableReferenceClass, Integer> classifiedReferenceCount;
+
+		public Variable getReferredVariable() {
+			return referredVariable;
 		}
 
-		class ReferenceCount {
-			public Integer Positive;
-			public Integer Negative;
-			
-			public ReferenceCount() {
-				Positive = 0;
-				Negative = 0;
-			}
-			
-			public Integer getAll() {
-				return Positive + Negative;
-			}
+		public int getReferenceCount(VariableReferenceClass forClass) {
+			Integer count = classifiedReferenceCount.get(forClass);
+			return count == null ? 0 : count;
 		}
-	
-		// Create and initialize reference counter for pattern parameter variables.
-		java.util.Map<Variable, ReferenceCount> referenceCount = new java.util.HashMap<Variable, ReferenceCount>();
-		for (Variable var : ((Pattern)patternBody.eContainer()).getParameters()) {
-			referenceCount.put(var, new ReferenceCount());
+
+		public int getReferenceCountSum() {
+			int sum = 0;
+
+			for (Integer val : classifiedReferenceCount.values()) {
+				sum += val;
+			}
+
+			return sum;
 		}
-		
-		// Iterate through all contents of the pattern body and increment the number of references referring to any pattern parameter variable.
-		java.util.Iterator<EObject> it = patternBody.eAllContents();
-		while(it.hasNext()) {
-			EObject obj = it.next();
+
+		public boolean isVariableLocal() {
+			return isLocalVariable;
+		}
+
+		public ClassifiedVariableReferences(Variable referredVariable,
+				boolean isLocal) {
+			this.referredVariable = referredVariable;
+			this.isLocalVariable = isLocal;
+
+			classifiedReferenceCount = new HashMap<VariableReferenceClass, Integer>();
+		}
+
+		public void incrementCounter(VariableReferenceClass forClass) {
+			Integer count = classifiedReferenceCount.get(forClass);
+			classifiedReferenceCount.put(forClass, count == null ? 1
+					: count + 1);
+		}
+	}
+
+	private VariableReferenceClass classifyVariableReference(
+			VariableReference varRef) {
+		EObject container = varRef.eContainer();
+
+		while (container != null && !(container instanceof Constraint)) {
+			container = container.eContainer();
+		}
+
+		if (container instanceof EClassifierConstraint) {
+			return VariableReferenceClass.PositiveExistential;
+		} else if (container instanceof CheckConstraint) {
+			return VariableReferenceClass.ReadOnly;
+		} else if (container instanceof CompareConstraint) {
+			CompareConstraint constraint = (CompareConstraint) container;
+
+			if (constraint.getFeature() == CompareFeature.EQUALITY) {
+				// TODO: check this again later. this is definitely not true.
+				return VariableReferenceClass.ReadOnly;
+			} else if (constraint.getFeature() == CompareFeature.INEQUALITY) {
+				// TODO: check this again later. this might not be true.
+				return VariableReferenceClass.ReadOnly;
+			} else {
+				throw new UnsupportedOperationException(
+						"Unrecognised compare feature.");
+			}
+		} else if (container instanceof PathExpressionConstraint) {
+			if (((PathExpressionConstraint) container).isNegative()) {
+				return VariableReferenceClass.NegativeExistential;
+			} else {
+				return VariableReferenceClass.PositiveExistential;
+			}
+		} else if (container instanceof PatternCompositionConstraint) {
+			if (((PatternCompositionConstraint) container).isNegative()) {
+				return VariableReferenceClass.NegativeExistential;
+			} else {
+				return VariableReferenceClass.PositiveExistential;
+			}
+		} else {
+			throw new UnsupportedOperationException("Unrecognised constraint.");
+		}
+	}
+
+	private Collection<ClassifiedVariableReferences> processVariableReferences(
+			PatternBody inBody) {
+		Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesCollection = new HashMap<Variable, ClassifiedVariableReferences>();
+
+		// NOTE: This is also a work-around to fill in connections between
+		// variables and their references.
+		EList<Variable> bodyVars = inBody.getVariables();
+
+		Pattern pattern = (Pattern) inBody.eContainer();
+
+		for (Variable var : pattern.getParameters()) {
+			classifiedVariableReferencesCollection.put(var,
+					new ClassifiedVariableReferences(var, false));
+		}
+
+		TreeIterator<EObject> iter = inBody.eAllContents();
+		while (iter.hasNext()) {
+			EObject obj = iter.next();
 			if (obj instanceof VariableReference) {
-				VariableReference varRef = (VariableReference)obj;
-				ReferenceCount count = referenceCount.get(varRef.getVariable());
-				if (count != null) {
-					if (isVariableReferenceNegative(varRef)) {
-						count.Negative++;
+				VariableReference varRef = (VariableReference) obj;
+				ClassifiedVariableReferences classifiedVariableReferences = classifiedVariableReferencesCollection
+						.get(varRef.getVariable());
+				if (classifiedVariableReferences == null) {
+					classifiedVariableReferences = new ClassifiedVariableReferences(
+							varRef.getVariable(), true); // All symbolic
+															// variables are
+															// already added.
+				}
+				classifiedVariableReferences
+						.incrementCounter(classifyVariableReference(varRef));
+				classifiedVariableReferencesCollection.put(
+						classifiedVariableReferences.getReferredVariable(),
+						classifiedVariableReferences);
+			}
+		}
+		return classifiedVariableReferencesCollection.values();
+	}
+
+	private String getPatternBodyName(PatternBody patternBody) {
+		return (patternBody.getName() != null) ? patternBody.getName() : String
+				.format("#%d", ((Pattern) patternBody.eContainer()).getBodies()
+						.indexOf(patternBody) + 1);
+	}
+
+	@Check
+	public void checkUnusedVariables(PatternBody patternBody) {
+		Collection<ClassifiedVariableReferences> classifiedVariableReferencesCollection = processVariableReferences(patternBody);
+
+		for (ClassifiedVariableReferences classifiedVariableReferences : classifiedVariableReferencesCollection) {
+			if (classifiedVariableReferences.isVariableLocal()) {
+				if (classifiedVariableReferences
+						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 1
+						&& classifiedVariableReferences.getReferenceCountSum() == 1) {
+					warning(String.format(
+							"Local variable '%s' is referenced only once.",
+							classifiedVariableReferences.getReferredVariable()
+									.getName()), classifiedVariableReferences
+							.getReferredVariable().getReferences().get(0),
+							null, EMFIssueCodes.UNUSED_VARIABLE);
+				} else if (classifiedVariableReferences
+						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
+					if (classifiedVariableReferences
+							.getReferenceCount(VariableReferenceClass.NegativeExistential) == 0
+							&& classifiedVariableReferences
+									.getReferenceCountSum() != 0) {
+						error(String.format(
+								"Local variable '%s' has no quantifying reference.",
+								classifiedVariableReferences
+										.getReferredVariable().getName()),
+								classifiedVariableReferences
+										.getReferredVariable().getReferences()
+										.get(0), null,
+								EMFIssueCodes.UNUSED_VARIABLE);
+					} else if (classifiedVariableReferences
+							.getReferenceCountSum() > 1) {
+						error(String.format(
+								"Local variable '%s' has no positive reference.",
+								classifiedVariableReferences
+										.getReferredVariable().getName()),
+								classifiedVariableReferences
+										.getReferredVariable().getReferences()
+										.get(0), null,
+								EMFIssueCodes.UNUSED_VARIABLE);
 					}
-					else {
-						count.Positive++;
-					}
+				}
+			} else { // Symbolic variable:
+				if (classifiedVariableReferences.getReferenceCountSum() == 0) {
+					error(String
+							.format("Symbolic variable '%s' is never referenced in body '%s'.",
+									classifiedVariableReferences
+											.getReferredVariable().getName(),
+									getPatternBodyName(patternBody)),
+							classifiedVariableReferences.getReferredVariable(),
+							null, EMFIssueCodes.UNUSED_VARIABLE);
+				} else if (classifiedVariableReferences
+						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
+					error(String
+							.format("Symbolic variable '%s' has no positive reference in body '%s'.",
+									classifiedVariableReferences
+											.getReferredVariable().getName(),
+									getPatternBodyName(patternBody)),
+							classifiedVariableReferences.getReferredVariable(),
+							null, EMFIssueCodes.UNUSED_VARIABLE);
 				}
 			}
 		}
-		
-		// Check the number of local references for pattern parameter variables.
-		for (Entry<Variable, ReferenceCount> entry : referenceCount.entrySet()) {
-			if (entry.getValue().getAll().equals(0)) {
-				error(String.format("Symbolic variable '%s' is never referenced in body '%s'.", entry.getKey().getName(), getPatternBodyName(patternBody)), entry.getKey(), null, EMFIssueCodes.UNUSED_VARIABLE);
-			}
-			else if (entry.getValue().Positive.equals(0)) {
-				error(String.format("Symbolic variable '%s' has no positive reference in body '%s'.", entry.getKey().getName(), getPatternBodyName(patternBody)), entry.getKey(), null, EMFIssueCodes.UNUSED_VARIABLE);
-			}
-		}
 	}
-	
+
 	@Override
 	protected List<EPackage> getEPackages() {
-		// PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the validation process
+		// PatternLanguagePackage must be added to the defaults, otherwise the
+		// core language validators not used in the validation process
 		List<EPackage> result = super.getEPackages();
 		result.add(org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.eINSTANCE);
 		return result;
@@ -167,7 +292,7 @@ public class EMFPatternLanguageJavaValidator extends
 	@Check
 	public void checkEnumValues(EnumValue value) {
 		if (value.eContainer() instanceof PathExpressionHead) {
-			//If container is PathExpression check for enum type assignability
+			// If container is PathExpression check for enum type assignability
 			EEnum enumType = value.getEnumeration();
 			PathExpressionHead expression = (PathExpressionHead) value
 					.eContainer();
@@ -191,9 +316,10 @@ public class EMFPatternLanguageJavaValidator extends
 						EMFPatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION,
 						EMFIssueCodes.INVALID_ENUM_LITERAL);
 			}
-		} //else {
-			//If container is not a PathExpression, the entire enum type has to be specified
-			//However, the it is checked during reference resolution
-		//}
+		} // else {
+			// If container is not a PathExpression, the entire enum type has to
+			// be specified
+			// However, the it is checked during reference resolution
+		// }
 	}
 }
