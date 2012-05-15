@@ -71,7 +71,7 @@ class JavadocInferrer {
 	def javadocGetAllMatchesMethod(Pattern pattern) '''
 		Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
 		«FOR p : pattern.parameters»
-		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return matches represented as a «pattern.matchClassName» object.
 	'''
@@ -80,7 +80,7 @@ class JavadocInferrer {
 		Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
 		Neither determinism nor randomness of selection is guaranteed.
 		«FOR p : pattern.parameters»
-		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return a match represented as a «pattern.matchClassName» object, or null if no match is found.
 	'''
@@ -89,7 +89,7 @@ class JavadocInferrer {
 		Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
 		under any possible substitution of the unspecified parameters (if any).
 		«FOR p : pattern.parameters»
-		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return true if the input is a valid (partial) match of the pattern.
 	'''
@@ -102,7 +102,7 @@ class JavadocInferrer {
 	def javadocCountMatchesMethod(Pattern pattern) '''
 		Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
 		«FOR p : pattern.parameters»
-		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return the number of pattern matches found.
 	'''
@@ -110,7 +110,7 @@ class JavadocInferrer {
 	def javadocForEachMatchMethod(Pattern pattern) '''
 		Executes the given processor on each match of the pattern that conforms to the given fixed values of some parameters.
 		«FOR p : pattern.parameters»
-		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@param processor the action that will process each pattern match.
 	'''
@@ -119,7 +119,7 @@ class JavadocInferrer {
 		Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.  
 		Neither determinism nor randomness of selection is guaranteed.
 		«FOR p : pattern.parameters»
-		@param «p.name» the fixed value of pattern parameter «p.name», or null if not bound.
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@param processor the action that will process the selected match. 
 		@return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
@@ -128,8 +128,20 @@ class JavadocInferrer {
 	def javadocProcessMethod(Pattern pattern) '''
 		Defines the action that is to be executed on each match.
 		«FOR p : pattern.parameters»
-		@param «p.name» the value of pattern parameter «p.name» in the currently processed match 
+		@param «p.parameterName» the value of pattern parameter «p.name» in the currently processed match 
 		«ENDFOR»
 	'''
 	
+	def javadocNewFilteredDeltaMonitorMethod(Pattern pattern) '''
+		Registers a new filtered delta monitor on this pattern matcher.
+		The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters. 
+		It can also be reset to track changes from a later point in time, 
+		and changes can even be acknowledged on an individual basis. 
+		See {@link DeltaMonitor} for details.
+		@param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
+		«FOR p : pattern.parameters»
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+	 @return the delta monitor.
+	'''
 }

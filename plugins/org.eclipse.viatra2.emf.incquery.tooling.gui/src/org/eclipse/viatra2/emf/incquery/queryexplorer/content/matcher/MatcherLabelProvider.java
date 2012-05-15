@@ -44,18 +44,18 @@ public class MatcherLabelProvider implements ILabelProvider {
 	public Image getImage(Object element) {
 		ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
 
-		if (element instanceof PatternMatcherRoot) {
+		if (element instanceof ObservablePatternMatcherRoot) {
 			return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
 		}
-		else if (element instanceof PatternMatcher) {
-			if (((PatternMatcher) element).isCreated()) {
+		else if (element instanceof ObservablePatternMatcher) {
+			if (((ObservablePatternMatcher) element).isCreated()) {
 				return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCHER);
 			} 
 			else {
 				return imageRegistry.get(IncQueryGUIPlugin.ICON_ERROR);
 			}
 		} 
-		else if (element instanceof PatternMatch) {
+		else if (element instanceof ObservablePatternMatch) {
 			return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCH);
 		} 
 		else {
@@ -65,14 +65,14 @@ public class MatcherLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof PatternMatcherRoot) {
-			return ((PatternMatcherRoot) element).getText();
+		if (element instanceof ObservablePatternMatcherRoot) {
+			return ((ObservablePatternMatcherRoot) element).getText();
 		}
-		else if (element instanceof PatternMatcher) {
-			return ((PatternMatcher) element).getText();
+		else if (element instanceof ObservablePatternMatcher) {
+			return ((ObservablePatternMatcher) element).getText();
 		}
-		else if (element instanceof PatternMatch) {
-			return ((PatternMatch) element).getText();
+		else if (element instanceof ObservablePatternMatch) {
+			return ((ObservablePatternMatch) element).getText();
 		}
 		return null;
 	}

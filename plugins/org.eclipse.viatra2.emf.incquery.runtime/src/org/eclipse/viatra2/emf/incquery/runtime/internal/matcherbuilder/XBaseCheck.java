@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
@@ -31,6 +32,8 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.xbase.XExpression;
 
+import com.google.inject.Injector;
+
 /**
  * XExpression check constraint: the given XExpression formed over the variables must evaluate to true.
  * @author Bergmann Gábor
@@ -40,8 +43,7 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 
 	private final XExpression xExpression;
 	private final EPMBodyToPSystem<StubHandle, ?> pGraph;
-	private final IQualifiedNameProvider nameProvider =
-			IncQueryRuntimePlugin.getDefault().getInjector().getInstance(PatternNameProvider.class);
+	private final IQualifiedNameProvider nameProvider;
 //	private final IExpressionInterpreter interpreter = 
 //			IncQueryRuntimePlugin.getDefault().getInjector().getInstance(IExpressionInterpreter.class);
 
@@ -54,6 +56,9 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 		super(pGraph.pSystem, getExternalPNodeReferencesOfXExpression(pGraph, xExpression));
 		this.pGraph = pGraph;
 		this.xExpression = xExpression;
+		
+		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		nameProvider = injector.getInstance(IQualifiedNameProvider.class);
 	}	
 
 	/* (non-Javadoc)

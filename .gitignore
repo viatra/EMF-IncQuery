@@ -2,6 +2,7 @@ plugin.xml_gen
 bin
 target
 plugin.xml_gen
+MANIFEST.MF_gen
 .DS_Store*
 src-gen
 xtend-gen

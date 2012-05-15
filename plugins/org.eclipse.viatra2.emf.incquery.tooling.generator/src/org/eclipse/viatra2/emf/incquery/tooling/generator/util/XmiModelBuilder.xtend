@@ -1,36 +1,34 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.util
 
 import java.util.ArrayList
+import java.util.HashSet
 import org.apache.log4j.Logger
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IResource
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport
-import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
-
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.xtext.EcoreUtil2
 /**
  * @author Mark Czotter
  */
-class XmiOutputBuilder {
+class XmiModelBuilder {
 	
 	Logger logger = Logger::getLogger(getClass())
 	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
 	 */
-	def build(ResourceSet resourceSet, IProject project, Resource resource) {
+	def build(ResourceSet resourceSet, IProject project) {
 		try {
 			val folder = project.getFolder(XmiModelUtil::XMI_OUTPUT_FOLDER)
 			val file = folder.getFile(XmiModelUtil::GLOBAL_EIQ_FILENAME)
-			val resourceFileName = resource.URI.toString
 			if (!folder.exists) {
 				folder.create(IResource::DEPTH_INFINITE, false, null)
 			}
@@ -41,7 +39,7 @@ class XmiOutputBuilder {
 			val xmiModelRoot = EMFPatternLanguageFactory::eINSTANCE.createPatternModel()
 			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(file.fullPath.toOSString, true))
 			// add import declarations 
-			val importDeclarations = newHashSet()
+			val HashSet<EPackage> importDeclarations = newHashSet()
 			/*
 			 * The following change avoids two different errors:
 			 *  * concurrentmodification of the growing list of resources
@@ -50,16 +48,28 @@ class XmiOutputBuilder {
 			//val packageImports = resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (PackageImport))).flatten
 			val resources = new ArrayList(resourceSet.resources)
 			for (r : resources) {
-				val packageImports = r.allContents.toIterable.filter(typeof (PackageImport))
-				if (!packageImports.empty) {
-					for (importDecl : packageImports) {
-						if (!importDeclarations.contains(importDecl.EPackage)) {
-							importDeclarations.add(importDecl.EPackage)
-							xmiModelRoot.importPackages.add(importDecl)
+				for (obj : r.contents) {
+					if (obj instanceof PatternModel && !obj.equals(xmiModelRoot)) {
+						for (importDecl : (obj as PatternModel).importPackages){
+							if (!importDeclarations.contains(importDecl.EPackage)) {
+								importDeclarations.add(importDecl.EPackage)
+							}
 						}
+						
 					}
-				} 
+				}
+//				val packageImports = r.allContents.toIterable.filter(typeof (PackageImport))
+//				if (!packageImports.empty) {
+//					for (importDecl : packageImports) {
+//						if (!importDeclarations.contains(importDecl.EPackage)) {
+//							importDeclarations.add(importDecl.EPackage)
+//							xmiModelRoot.importPackages.add(importDecl)
+//						}
+//					}
+//				} 
 			}
+			
+			xmiModelRoot.importPackages.addAll(importDeclarations.map[EMFPatternLanguageFactory::eINSTANCE.createPackageImport])				
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {

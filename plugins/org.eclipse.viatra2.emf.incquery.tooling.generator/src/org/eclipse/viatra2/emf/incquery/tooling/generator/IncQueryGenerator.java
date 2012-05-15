@@ -26,7 +26,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XmiOutputBuilder;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XmiModelBuilder;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
@@ -79,7 +79,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	@Inject
 	IContainer.Manager containerManager;
 	@Inject
-	XmiOutputBuilder builder;
+	XmiModelBuilder builder;
 	
 
 	@Override
@@ -105,7 +105,7 @@ public class IncQueryGenerator extends JvmModelGenerator {
 				}
 			}
 			// build xmi file
-			builder.build(input.getResourceSet(), project, input);
+			builder.build(input.getResourceSet(), project);
 			super.doGenerate(input, fsa);
 			ArrayList<String> packageNames = new ArrayList<String>();
 			TreeIterator<EObject> it = input.getAllContents();

@@ -12,6 +12,7 @@
 	<modules>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf</module>
+		<module>../../plugins/org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
@@ -25,7 +26,10 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.validation</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base.itc</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.base.itc.test</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>

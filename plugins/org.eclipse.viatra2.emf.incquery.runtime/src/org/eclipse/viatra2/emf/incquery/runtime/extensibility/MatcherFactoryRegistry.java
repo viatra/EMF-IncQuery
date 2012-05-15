@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -71,11 +72,10 @@ public class MatcherFactoryRegistry {
 						}
 						catch (Exception e)
 						{
-							e.printStackTrace();
+							IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Exception during matcher factory registry initialization " + e.getMessage(),e);
 						}
 					} else {
-						throw new UnsupportedOperationException(
-								"Unknown configuration element " + el.getName() + " in plugin.xml of "
+						IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Unknown configuration element " + el.getName() + " in plugin.xml of "
 								+ el.getDeclaringExtension().getUniqueIdentifier());
 					}
 				}

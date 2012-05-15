@@ -103,6 +103,36 @@
             </iterate>
          </with>
       </definition>
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.root">
+         <with
+               variable="selection">
+            <count
+                  value="1">
+            </count>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.match">
+         <with
+               variable="selection">
+            <count
+                  value="1">
+            </count>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -111,15 +141,7 @@
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherMenuUnRegistrationHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg">
-      </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.UnloadModelHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unloadmodel">
-      </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
       </handler>
       <handler
@@ -131,8 +153,8 @@
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherEditorUnRegistrationHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor">
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.UnloadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel">
       </handler>
    </extension>
    <extension
@@ -145,16 +167,6 @@
                label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
-                  </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -178,12 +190,6 @@
                label="Load model"
                style="push">
          </command>
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unloadmodel"
-               icon="icons/unload.gif"
-               label="Unload model"
-               style="push">
-         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -194,18 +200,21 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <count
-                        value="1">
-                  </count>
-                  <iterate
-                        ifEmpty="false">
-                     <instanceof
-                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatch">
-                     </instanceof>
-                  </iterate>
-               </with>
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.match">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel"
+               icon="icons/unload.gif"
+               label="Unload model"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.root">
+               </reference>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -217,10 +226,6 @@
                label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor"
                   style="push">
             </command>
             <visibleWhen
@@ -244,18 +249,8 @@
       </command>
       <command
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
-            id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg"
-            name="Unregister patterns from Query Explorer">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel"
             name="Load model">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
-            id="org.eclipse.viatra2.emf.incquery.tooling.gui.unloadmodel"
-            name="Unload model">
       </command>
       <command
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
@@ -267,15 +262,48 @@
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
             name="Register patterns in Query Explorer">
       </command>
-      <command
-            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
-            id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherunreg_editor"
-            name="Unregister patterns from Query Explorer">
-      </command>
       <category
             description="Commands related to EMF-IncQuery"
             id="org.eclipse.viatra2.emf.incquery.tooling.category"
             name="EMF-IncQuery">
       </category>
+      <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel"
+            name="Unload model">
+      </command>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.tooling.gui.extensions"
+         name="EMF-IncQuery Content Extensions"
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonFilter
+            activeByDefault="true"
+            class="org.eclipse.viatra2.emf.incquery.gui.content.QueryFolderFilter"
+            description="Hides EMF-IncQuery queries folder"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter"
+            name="EMF-IncQuery output folder"
+            visibleInUI="true">
+      </commonFilter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding
+            viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+         <includes>
+            <contentExtension
+                  pattern="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            class="org.eclipse.viatra2.emf.incquery.gui.content.QueryFolderFilter"
+            description="Hides EMF-IncQuery queries folder"
+            enabled="true"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter"
+            name="EMF-IncQuery output folder"></filter>
    </extension>
 </plugin>

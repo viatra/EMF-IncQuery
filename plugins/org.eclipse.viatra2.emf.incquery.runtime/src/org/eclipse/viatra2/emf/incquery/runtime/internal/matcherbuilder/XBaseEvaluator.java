@@ -14,8 +14,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -25,6 +25,7 @@ import org.eclipse.xtext.xbase.interpreter.IEvaluationContext;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationResult;
 import org.eclipse.xtext.xbase.interpreter.IExpressionInterpreter;
 
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 /**
@@ -36,10 +37,8 @@ public class XBaseEvaluator extends AbstractEvaluator {
 	private final XExpression xExpression;
 	private final Map<QualifiedName, Integer> qualifiedMapping;
 	
-	private final IExpressionInterpreter interpreter = 
-			IncQueryRuntimePlugin.getDefault().getInjector().getInstance(IExpressionInterpreter.class);
-	private final Provider<IEvaluationContext> contextProvider =
-			IncQueryRuntimePlugin.getDefault().getInjector().getProvider(IEvaluationContext.class);
+	private final IExpressionInterpreter interpreter;
+	private final Provider<IEvaluationContext> contextProvider;
 			
 	/**
 	 * @param xExpression the expression to evaluate
@@ -50,6 +49,10 @@ public class XBaseEvaluator extends AbstractEvaluator {
 		super();
 		this.xExpression = xExpression;
 		this.qualifiedMapping = qualifiedMapping;
+		
+		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		interpreter = injector.getInstance(IExpressionInterpreter.class);
+		contextProvider = injector.getProvider(IEvaluationContext.class);
 	}
 
 

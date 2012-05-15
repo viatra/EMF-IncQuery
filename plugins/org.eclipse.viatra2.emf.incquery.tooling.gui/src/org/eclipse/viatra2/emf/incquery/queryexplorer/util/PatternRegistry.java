@@ -41,10 +41,12 @@ public class PatternRegistry {
 		Set<Pattern> newPatterns = new HashSet<Pattern>();
 		
 		for (Pattern p : pm.getPatterns()) {
-			String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
-			patternNameMap.put(patternFqn, p);
-			newPatterns.add(p);
-			activePatterns.add(p);
+			if (!DatabindingUtil.hasOffAnnotation(p)) {
+				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
+				patternNameMap.put(patternFqn, p);
+				newPatterns.add(p);
+				activePatterns.add(p);
+			}
 		}
 		
 		List<String> newValue = getPatternNames();
@@ -107,17 +109,6 @@ public class PatternRegistry {
 		files.addAll(registeredPatterModels.keySet());
 		return files;
 	}
-//	
-//	public PatternModel getPatternModel(IFile file) {
-//		return registeredPatterModels.get(file);
-//	}
-//	
-//	public List<PatternModel> getPatternModels() {
-//		List<PatternModel> models = new ArrayList<PatternModel>();
-//		models.addAll(registeredPatterModels.values());
-//		return models;
-//	}
-	
 
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);

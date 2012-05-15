@@ -96,4 +96,24 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.validation.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.validation.runtime.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 </feature>

@@ -36,25 +36,25 @@ public class MatcherContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof MatcherTreeViewerRoot) {
 			return input.getRoots().toArray();
 		}
-		else if (parentElement instanceof PatternMatcherRoot) {
-			return ((PatternMatcherRoot) parentElement).getMatchers().toArray();
+		else if (parentElement instanceof ObservablePatternMatcherRoot) {
+			return ((ObservablePatternMatcherRoot) parentElement).getMatchers().toArray();
 		}
-		else if (parentElement instanceof PatternMatcher) {
-			return ((PatternMatcher) parentElement).getMatches().toArray();
+		else if (parentElement instanceof ObservablePatternMatcher) {
+			return ((ObservablePatternMatcher) parentElement).getMatches().toArray();
 		}
 		return null;
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof PatternMatcherRoot) {
+		if (element instanceof ObservablePatternMatcherRoot) {
 			return input;
 		}
-		else if (element instanceof PatternMatcher) {
-			return ((PatternMatcher) element).getParent();
+		else if (element instanceof ObservablePatternMatcher) {
+			return ((ObservablePatternMatcher) element).getParent();
 		}
-		else if (element instanceof PatternMatch) {
-			return ((PatternMatch) element).getParent();
+		else if (element instanceof ObservablePatternMatch) {
+			return ((ObservablePatternMatch) element).getParent();
 		}
 		return null;
 	}
@@ -65,11 +65,11 @@ public class MatcherContentProvider implements ITreeContentProvider {
 			if (element instanceof MatcherTreeViewerRoot) {
 				return (!input.getRoots().isEmpty());
 			}
-			else if (element instanceof PatternMatcherRoot) {
-				return (!((PatternMatcherRoot) element).getMatchers().isEmpty());
+			else if (element instanceof ObservablePatternMatcherRoot) {
+				return (!((ObservablePatternMatcherRoot) element).getMatchers().isEmpty());
 			}
-			else if (element instanceof PatternMatcher) {
-				return (!(((PatternMatcher) element).getMatches().isEmpty()));
+			else if (element instanceof ObservablePatternMatcher) {
+				return (!(((ObservablePatternMatcher) element).getMatches().isEmpty()));
 			}
 		}
 		return false;

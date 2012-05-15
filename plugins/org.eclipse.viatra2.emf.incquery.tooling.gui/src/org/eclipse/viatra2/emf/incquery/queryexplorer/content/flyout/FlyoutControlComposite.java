@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Google, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Google, Inc. - initial API and implementation
+ *    Tamas Szabo - code extensions, modifications
+ *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout;
 
 import org.eclipse.swt.SWT;
@@ -11,7 +22,7 @@ public final class FlyoutControlComposite extends Composite {
 
 	private final IFlyoutPreferences preferences;
 	private final FlyoutContainer flyoutContainer;
-	private int minWidth = 150;
+	private int minWidth = 100;
 	private int validDockLocations = -1;
 
 	public FlyoutControlComposite(Composite parent, int style,

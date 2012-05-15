@@ -20,6 +20,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor;
 
@@ -58,8 +60,8 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
 			EStructuralFeature navigationFeature, EStructuralFeature dependantFeature, EStructuralFeature localFeature) {
 		this(source, derivedFeature);
-		addNavigatedDependency(navigationFeature, dependantFeature);
-		addLocalDependency(localFeature);
+		addNavigatedDependencyInternal(navigationFeature, dependantFeature);
+		addLocalDependencyInternal(localFeature);
 	}
 
 	/*
@@ -68,7 +70,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
 			EStructuralFeature navigationFeature, EStructuralFeature dependantFeature) {
 		this(source, derivedFeature);
-		addNavigatedDependency(navigationFeature, dependantFeature);
+		addNavigatedDependencyInternal(navigationFeature, dependantFeature);
 	}
 
 	/*
@@ -77,7 +79,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
 			EStructuralFeature localFeature) {
 		this(source, derivedFeature);
-		addLocalDependency(localFeature);
+		addLocalDependencyInternal(localFeature);
 	}
 
 	public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature) {
@@ -89,10 +91,34 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
 	public void addNavigatedDependency(EStructuralFeature navigationFeature,
 			EStructuralFeature dependantFeature) {
-		featurePaths.add(new DependentFeaturePath(navigationFeature, dependantFeature));
+		if(navigationFeature == null || dependantFeature == null) {
+			return;	
+		}
+		if(!source.eClass().getEAllStructuralFeatures().contains(navigationFeature)) {
+			return;
+		}
+		if(!(navigationFeature.getEType() instanceof EClass) || !dependantFeature.getEContainingClass().isSuperTypeOf((EClass) navigationFeature.getEType())) {
+			return;
+		}
+		addNavigatedDependencyInternal(navigationFeature, dependantFeature);
 	}
 
 	public void addLocalDependency(EStructuralFeature localFeature) {
+		if(localFeature == null) {
+			return;	
+		}
+		if(!source.eClass().getEAllStructuralFeatures().contains(localFeature)) {
+			return;
+		}
+		addLocalDependencyInternal(localFeature);
+	}
+	
+	private void addNavigatedDependencyInternal(EStructuralFeature navigationFeature,
+			EStructuralFeature dependantFeature) {
+		featurePaths.add(new DependentFeaturePath(navigationFeature, dependantFeature));
+	}
+	
+	private void addLocalDependencyInternal(EStructuralFeature localFeature) {
 		localFeatures.add(localFeature);
 	}
 
@@ -105,13 +131,19 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 				switch (notification.getEventType()) {
 				case Notification.SET:
 					EObject newValue = (EObject) notification.getNewValue();
-					EObject oldValue = (EObject) notification.getOldValue();
-					if (oldValue != null)
-						oldValue.eAdapters().remove(path.getDependantAdapter());
-					else System.err.println("oldValue null");
-					if (newValue != null)
+					EObject tempOldValue = (EObject) notification.getOldValue();
+					if (tempOldValue != null) {
+						tempOldValue.eAdapters().remove(path.getDependantAdapter());
+					}
+					else {
+						IncQueryEngine.getDefaultLogger().logDebug("[DerivedFeatureAdapter] oldValue is not set");
+					}
+					if (newValue != null) {
 						newValue.eAdapters().add(path.getDependantAdapter());
-					else System.err.println("newValue null");
+					}
+					else {
+						IncQueryEngine.getDefaultLogger().logDebug("[DerivedFeatureAdapter] new value is not set");
+					}
 					break;
 				case Notification.ADD:
 					EObject added = (EObject) notification.getNewValue();
@@ -143,7 +175,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 				case Notification.REMOVING_ADAPTER:
 					break;
 				default:
-					System.err.println("Unhandled notification: " + notification.getEventType());
+					IncQueryEngine.getDefaultLogger().logDebug("[DerivedFeatureAdapter] Unhandled notification: " + notification.getEventType());
 					return; // No notification
 				}
 				refreshDerivedFeature();
@@ -200,23 +232,6 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 			public void notifyChanged(Notification msg) {
 				//System.err.println("[Dependant: " + derivedFeature.getName() + "] New notification: " + msg);
 				if (msg.getFeature().equals(dependantFeature) ) {
-					//System.err.println("Handling notification.");
-					switch (msg.getEventType()) {
-						case Notification.ADD:
-						case Notification.ADD_MANY:
-						case Notification.SET:
-						case Notification.UNSET:
-						case Notification.REMOVE:
-						case Notification.REMOVE_MANY:
-						case Notification.CREATE:
-						case Notification.MOVE:
-						case Notification.RESOLVE:
-						case Notification.REMOVING_ADAPTER:
-							break;
-						default:
-							System.err.println("Unhandled notification: " + msg.getEventType());
-							return; // No notification
-						}
 					refreshDerivedFeature();
 				}
 			}
@@ -334,10 +349,10 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	 * @param feature
 	 * @param target
 	 */
-	private void sendRemoveNotification(EObject source, EStructuralFeature feature, Object oldTarget) {
+	/*private void sendRemoveNotification(EObject source, EStructuralFeature feature, Object oldTarget) {
 		source.eNotify(new ENotificationImpl((InternalEObject) source, Notification.REMOVE,
 				feature, oldTarget, null));
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
 	private void sendNotificationForEReference(EObject source, EReference feature, EObject target) {

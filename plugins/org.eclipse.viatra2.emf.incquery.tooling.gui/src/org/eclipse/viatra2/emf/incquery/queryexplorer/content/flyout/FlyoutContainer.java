@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Google, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Google, Inc. - initial API and implementation
+ *    Tamas Szabo - code extensions, modifications
+ *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout;
 
 import org.eclipse.jface.action.IMenuListener;
@@ -512,10 +523,9 @@ public class FlyoutContainer extends Composite {
 			try {
 				gc.setBackground(getBackground());
 				gc.fillRectangle(0, 0, titleWidth, titleHeight);
-				int x = 0;
 				gc.setForeground(FlyoutConstants.BLACK);
 				gc.setFont(TITLE_FONT);
-				gc.drawText(text, x, 0);
+				gc.drawText(text, 0, 0);
 				
 			} finally {
 				gc.dispose();

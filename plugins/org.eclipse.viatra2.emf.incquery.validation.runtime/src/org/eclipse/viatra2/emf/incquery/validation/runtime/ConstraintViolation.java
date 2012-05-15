@@ -9,13 +9,13 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 
 public class ConstraintViolation<T extends IPatternMatch> {
 
@@ -50,12 +50,14 @@ public class ConstraintViolation<T extends IPatternMatch> {
 				.findMember(platformString);
 		try {
 			marker = markerLoc
-					.createMarker("org.eclipse.emf.validation.problem");
+					.createMarker(EValidator.MARKER);
 			marker.setAttribute(IMarker.SEVERITY, this.adapter.getConstraint()
 					.getSeverity());
 			marker.setAttribute(IMarker.TRANSIENT, true);
-			marker.setAttribute(IMarker.LOCATION, this.adapter.getConstraint()
-					.getLocationObject(patternMatch));
+			String locationString = String.format("%1$s %2$s", location.eClass().getName(), BasePatternMatch.prettyPrintValue(location));
+			marker.setAttribute(IMarker.LOCATION, locationString);
+			marker.setAttribute(EValidator.URI_ATTRIBUTE,
+					EcoreUtil.getURI(location).toString());
 			updateText(DatabindingAdapterUtil.getMessage(patternMatch, message));
 		} catch (CoreException e) {
 			ValidationRuntimeActivator.getDefault().logException(

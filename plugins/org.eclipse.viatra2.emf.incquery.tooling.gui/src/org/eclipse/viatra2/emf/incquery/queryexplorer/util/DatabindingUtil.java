@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -14,9 +15,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.PatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -31,6 +33,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 /**
  * The util contains several useful methods for the databinding operations.
@@ -38,23 +41,44 @@ import com.google.inject.Injector;
  * @author Tamas Szabo
  *
  */
+@Singleton
 public class DatabindingUtil {
 
-	public static Map<URI, AdapterFactory> registeredItemProviders = collectItemProviders();
+	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
+	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	
-	private static Map<URI, AdapterFactory> collectItemProviders() {
-		Map<URI, AdapterFactory> result = new HashMap<URI, AdapterFactory>();
+	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
+		if (uriConfElementMap == null) {
+			uriConfElementMap = collectItemProviders();
+		}
+		AdapterFactoryLabelProvider af = registeredItemProviders.get(uri);
+		if (af != null) {
+			return af;
+		}
+		else {
+			IConfigurationElement ce = uriConfElementMap.get(uri);
+			try {
+				Object obj = ce.createExecutableExtension("class");
+				AdapterFactoryLabelProvider lp = new AdapterFactoryLabelProvider((AdapterFactory) obj);
+				registeredItemProviders.put(uri, lp);
+				return lp;
+			} catch (CoreException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+	
+	private static Map<URI, IConfigurationElement> collectItemProviders() {
+		Map<URI, IConfigurationElement> result = new HashMap<URI, IConfigurationElement>();
 		try {
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
 			IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.emf.edit.itemProviderAdapterFactories");
 			for (IExtension e : ep.getExtensions()) {
 				for (IConfigurationElement ce : e.getConfigurationElements()) {
 					if (ce.getName().matches("factory")) {
-						Object obj = ce.createExecutableExtension("class");
 						URI uri = URI.createURI(ce.getAttribute("uri"));
-						if (obj instanceof AdapterFactory) {
-							result.put(uri, (AdapterFactory) obj);
-						}
+						result.put(uri, ce);
 					}
 				}
 			}
@@ -141,15 +165,20 @@ public class DatabindingUtil {
 		
 		//PatternUI annotation was not found
 		if (pattern != null) {
-			String message = ""; int i = 0;
-			for (Variable v : pattern.getParameters()) {
-				if (i > 0) {
-					message += ", ";
-				}
-				message += v.getName()+"=$"+v.getName()+"$";
-				i++;
+			String message = ""; 
+			if (pattern.getParameters().size() == 0) {
+				message = "(Match)";
 			}
-			
+			else {
+				int i = 0;
+				for (Variable v : pattern.getParameters()) {
+					if (i > 0) {
+						message += ", ";
+					}
+					message += v.getName()+"=$"+v.getName()+"$";
+					i++;
+				}
+			}
 			return message;
 		}
 		
@@ -255,8 +284,8 @@ public class DatabindingUtil {
 	 * @return the PatternMatcherRoot element
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static PatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
-		PatternMatcherRoot root = new PatternMatcherRoot(key);
+	public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
+		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
 
 		//generated matchers
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -284,6 +313,15 @@ public class DatabindingUtil {
 		}
 
 		return root;
+	}
+	
+	public static boolean hasOffAnnotation(Pattern pattern) {
+		for (Annotation a : pattern.getAnnotations()) {
+			if (a.getName().equalsIgnoreCase("Off")) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static PatternModel parseEPM(IFile file, Injector injector) {

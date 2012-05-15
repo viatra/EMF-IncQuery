@@ -3,6 +3,7 @@ package org.eclipse.viatra2.patternlanguage.core.annotations;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -14,7 +15,7 @@ import com.google.common.collect.Iterables;
 
 public class PatternAnnotationProvider {
 
-	private final static class ExtensionConverter
+	private static final class ExtensionConverter
 			implements
 			Function<IConfigurationElement, ExtensionBasedPatternAnnotationParameter> {
 		@Override
@@ -77,5 +78,20 @@ public class PatternAnnotationProvider {
 			initializeValidators();
 		}
 		return annotationValidators.containsKey(annotationName);
+	}
+	
+	public Set<String> getAllAnnotationNames() {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.keySet();
+	}
+	
+	public Iterable<String> getAnnotationParameters(String annotationName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName)
+				.getAllAvailableParameterNames();
 	}
 }

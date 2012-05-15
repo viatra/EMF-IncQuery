@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.patternlanguage.core.annotations.impl;
 
 import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator;
+import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
@@ -42,6 +43,17 @@ public class ExtensionBasedPatternAnnotationValidator implements
 			return input.name;
 		}
 		
+	}
+	
+	@Override
+	public Iterable<String> getAllAvailableParameterNames() {
+		return Iterables.transform(definedAttributes, new Function<ExtensionBasedPatternAnnotationParameter, String>() {
+
+			@Override
+			public String apply(ExtensionBasedPatternAnnotationParameter input) {
+				return input.getName();
+			}
+		});
 	}
 	
 	private Iterable<String> getParameterNames(Annotation annotation) {

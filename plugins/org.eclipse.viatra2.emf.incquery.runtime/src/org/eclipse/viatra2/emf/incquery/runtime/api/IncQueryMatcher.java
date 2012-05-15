@@ -133,6 +133,18 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @return the delta monitor.
 	 */
 	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
+	/** 
+	 * Registers a new filtered delta monitor on this pattern matcher.
+	 * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, 
+	 *   considering those matches only that conform to the given fixed values of some parameters. 
+	 * It can also be reset to track changes from a later point in time, 
+	 * and changes can even be acknowledged on an individual basis. 
+	 * See {@link DeltaMonitor} for details.
+	 * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
+	 * @param partialMatch a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value. 
+	 * @return the delta monitor.
+	 */
+	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
 	/**
 	 * Registers a callback that will be run each time EMF-IncQuery match sets are refreshed after a model update.
 	 * Typically useful to check delta monitors. 
@@ -205,5 +217,16 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
 	 */
 	public abstract boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor);
-	
+	/** 
+	 * Registers a new filtered delta monitor on this pattern matcher.
+	 * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, 
+	 *   considering those matches only that conform to the given fixed values of some parameters. 
+	 * It can also be reset to track changes from a later point in time, 
+	 * and changes can even be acknowledged on an individual basis. 
+	 * See {@link DeltaMonitor} for details.
+	 * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
+	 * @param parameters array where each non-null element binds the corresponding pattern parameter to a fixed value. 
+	 * @return the delta monitor.
+	 */
+	public abstract DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters);
 }
