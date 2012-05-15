@@ -37,6 +37,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.builder.BuilderParticipant;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
+import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.resource.IContainer;
@@ -49,6 +50,7 @@ import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -149,7 +151,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			}
 		}
 		super.build(context, monitor);
-		// Normal CleanUp done on every delta, do XMI Model build 
+		// Normal CleanUp and codegen done on every delta, do XMI Model build 
 		try {
 			IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
 			xmiBuildMonitor.beginTask("Building XMI model", 1);
@@ -278,18 +280,37 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	 */
 	private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) throws CoreException {
 		EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(modelProject);
-		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matchClassName(pattern) + ".java");
-		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherClassName(pattern) + ".java");
-		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.matcherFactoryClassName(pattern) + ".java");
-		fsa.deleteFile(util.getPackagePath(pattern) + "/" + util.processorClassName(pattern) + ".java");
+		final String packageName = util.getPackagePath(pattern);
+		List<String> classNames = Lists.newArrayList(util.matchClassName(pattern), util.matcherClassName(pattern), util.matcherFactoryClassName(pattern), util.processorClassName(pattern));
+		List<String> classPackagePaths = Lists.transform(classNames, new Function<String, String>() {
+			@Override
+			public String apply(String input) {
+				return String.format("%s/%s.java", packageName, input);
+			}
+		});
+		String outputDir = fsa.getOutputConfigurations().get(IFileSystemAccess.DEFAULT_OUTPUT).getOutputDirectory();
+		for (String classPackagePath : classPackagePaths) {
+			try {
+				fsa.deleteFile(classPackagePath);				
+			} catch (Exception e) {
+				// TODO log this to Eclipse Log if needed
+				logger.error("Java file cannot be deleted through IFileSystemAccess: " + classPackagePath, e);
+				IFile classFile = modelProject.getFile(new Path(outputDir + "/" + classPackagePath));
+				if (classFile != null && classFile.exists()) {
+					classFile.delete(IResource.KEEP_HISTORY, null);
+				}
+			}
+		}
 		// only the extension id and point name is needed for removal
 		String extensionId = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 		removableExtensionMap.put(modelProject, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
 	}
 	
 	/**
-	 * Executes Normal Build cleanUp on every {@link IGenerationFragment} registered to the current {@link Pattern}. Marks current {@link Pattern} related extensions for
-	 * removal.
+	 * Executes Normal Build cleanUp on every {@link IGenerationFragment}
+	 * registered to the current {@link Pattern}. Marks current {@link Pattern}
+	 * related extensions for removal.
+	 * 
 	 * @param modelProject
 	 * @param pattern
 	 * @throws CoreException
@@ -314,14 +335,16 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private void removeXmiModel(IProject project) throws CoreException {
 		String xmiModelPath = String.format("%s/%s", XmiModelUtil.XMI_OUTPUT_FOLDER, XmiModelUtil.GLOBAL_EIQ_FILENAME);
 		IFile file = project.getFile(new Path(xmiModelPath));
-		if (file.exists()) {
+		if (file != null && file.exists()) {
 			file.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
 		}
 	}
 
 	/**
-	 * Builds a global XMI model with a {@link XmiModelBuilder} builder.
-	 * Before the actual build, finds all relevant eiq resources, so the XMI build is performed on all currently available {@link PatternModel}.
+	 * Builds a global XMI model with a {@link XmiModelBuilder} builder. Before
+	 * the actual build, finds all relevant eiq resources, so the XMI build is
+	 * performed on all currently available {@link PatternModel}.
+	 * 
 	 * @param context
 	 */
 	private void buildXmiModel(IBuildContext context) {

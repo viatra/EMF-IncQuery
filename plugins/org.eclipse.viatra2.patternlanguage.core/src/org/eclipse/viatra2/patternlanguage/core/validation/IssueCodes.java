@@ -12,6 +12,8 @@ public class IssueCodes {
 	public static final String DUPLICATE_PATTERN_PARAMETER_NAME = ISSUE_CODE_PREFIX + "duplicate_pattern_parameter_name";
 	public static final String DUPLICATE_PATTERN_DEFINITION = ISSUE_CODE_PREFIX + "duplicate_pattern_definition";
 	public static final String WRONG_NUMBER_PATTERNCALL_PARAMETER = ISSUE_CODE_PREFIX + "wrong_number_pattern_parameter";
+	public static final String TRANSITIVE_PATTERNCALL_NOT_APPLICABLE = ISSUE_CODE_PREFIX + "transitive_patterncall_not_applicable";
+	public static final String TRANSITIVE_PATTERNCALL_ARITY = ISSUE_CODE_PREFIX + "transitive_patterncall_wrong_arity"; 
 	public static final String PATTERN_BODY_EMPTY = ISSUE_CODE_PREFIX + "patternbody_empty";
 	
 	public static final String UNKNOWN_ANNOTATION = ISSUE_CODE_PREFIX + "unknown_annotation";

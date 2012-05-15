@@ -16,6 +16,7 @@ import static org.eclipse.xtext.util.Strings.equal;
 
 import java.util.Iterator;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
@@ -28,6 +29,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
@@ -63,7 +65,11 @@ public class PatternLanguageJavaValidator extends
 	public static final String UNKNOWN_ANNOTATION_ATTRIBUTE = "Undefined annotation attribute ";
 	public static final String MISSING_ANNOTATION_ATTRIBUTE = "Required attribute missing ";
 	public static final String ANNOTATION_PARAMETER_TYPE_ERROR = "Invalid parameter type %s. Expected %s";
-
+	public static final String TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL = 
+			"The pattern %s is not of binary arity (it has %d parameters), therefore transitive closure is not supported.";
+	public static final String TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION = 
+			"Transitive closure of %s is currently only allowed in simple positive pattern calls (no negation or aggregation).";
+	
 	@Inject
 	PatternAnnotationProvider annotationProvider;
 
@@ -103,6 +109,36 @@ public class PatternLanguageJavaValidator extends
 			}
 		}
 	}
+	
+	@Check
+	public void checkApplicabilityOfTransitiveClosureInPatternCall(PatternCall call) {
+		final Pattern patternRef = call.getPatternRef();
+		final EObject eContainer = call.eContainer();
+		if (patternRef != null && call.isTransitive()) {
+			if (patternRef.getParameters() != null) {
+				final int arity = patternRef.getParameters().size();
+				if (2 != arity) {
+					error(String.format(TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL, 
+							getFormattedPattern(patternRef), arity),
+						PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
+						IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);						
+				}
+			} 
+			if (eContainer != null) {
+				if(! (eContainer instanceof PatternCompositionConstraint) || 
+					((PatternCompositionConstraint)eContainer).isNegative()) 
+				{
+					error(String.format(TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION, 
+							getFormattedPattern(patternRef)),
+						PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
+						IssueCodes.TRANSITIVE_PATTERNCALL_NOT_APPLICABLE);						
+				}	
+			}
+		
+		}
+
+	}
+
 
 	@Check
 	public void checkPatterns(PatternModel model) {
