@@ -415,11 +415,12 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		HashSet<V> targets = new HashSet<V>(sccs.setMap.get(sourceRoot));
 		Set<V> rootSet = countingAlg.getAllReachableTargets(sourceRoot);
 
-		if (rootSet != null)
+		if (rootSet != null) {
 			for (V _root : rootSet) {
 				targets.addAll(sccs.setMap.get(_root));
 			}
-		targets.remove(source);
+		}
+		//targets.remove(source);
 		return targets;
 	}
 
@@ -429,11 +430,12 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		HashSet<V> sources = new HashSet<V>(sccs.setMap.get(targetRoot));
 		Set<V> rootSet = countingAlg.getAllReachableSources(targetRoot);
 		
-		if (rootSet != null)
+		if (rootSet != null) {
 			for (V _root : rootSet) {
 				sources.addAll(sccs.setMap.get(_root));
 			}
-		sources.remove(target);
+		}
+		//sources.remove(target);
 		return sources;
 	}
 
