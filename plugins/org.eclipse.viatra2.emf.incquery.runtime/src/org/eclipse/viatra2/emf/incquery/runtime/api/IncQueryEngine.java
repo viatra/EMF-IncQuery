@@ -180,7 +180,7 @@ public class IncQueryEngine {
 		if (plugin !=null) newLogger = new EMFIncQueryRuntimeLogger() {
 			@Override
 			public void logDebug(String message) {
-				//plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
+				plugin.getLog().log(new Status(IStatus.OK, IncQueryRuntimePlugin.PLUGIN_ID, message));
 			}
 
 			@Override
@@ -205,7 +205,7 @@ public class IncQueryEngine {
 		}; else newLogger = new EMFIncQueryRuntimeLogger() {
 			@Override
 			public void logDebug(String message) {
-				//System.err.println("[DEBUG] " + message);
+				System.err.println("[DEBUG] " + message);
 			}
 			@Override
 			public void logError(String message) {

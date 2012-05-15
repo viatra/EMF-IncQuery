@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -92,6 +93,11 @@ public abstract class ProjectGenerationHelper {
 	 * A single source folder named src
 	 */
 	public static final String[] singleSourceFolder = { "src" };
+	
+	/**
+	 * Entries that are required to be included in the build for proper deployability 
+	 */
+	public static final IPath[] binIncludes = {new Path("queries/"), new Path("plugin.xml")};
 
 	/**
 	 * Adds a collection of natures to the project
@@ -240,7 +246,8 @@ public abstract class ProjectGenerationHelper {
 		bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
 		bundleDesc.setSymbolicName(project.getName());
 		bundleDesc.setExtensionRegistry(true);
-
+		bundleDesc.setBinIncludes(binIncludes);
+		
 		IBundleClasspathEntry[] classpathEntries = Lists.transform(
 				sourceFolders, new Function<String, IBundleClasspathEntry>() {
 

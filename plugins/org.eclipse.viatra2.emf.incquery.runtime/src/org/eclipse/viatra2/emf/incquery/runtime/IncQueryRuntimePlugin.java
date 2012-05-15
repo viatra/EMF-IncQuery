@@ -18,6 +18,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatu
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IInjectorProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
+import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.osgi.framework.BundleContext;
 
 import com.google.inject.Injector;
@@ -70,9 +71,13 @@ public class IncQueryRuntimePlugin extends Plugin {
 
 	private Injector createInjector() throws CoreException {
 		IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(INJECTOREXTENSIONID);
-		IConfigurationElement provider = providers[0]; //XXX multiple providers not supported
-		IInjectorProvider injectorProvider = (IInjectorProvider) provider.createExecutableExtension("injector");
-		return injectorProvider.getInjector();
+		if (providers.length > 0) {
+			IConfigurationElement provider = providers[0]; //XXX multiple providers not supported
+			IInjectorProvider injectorProvider = (IInjectorProvider) provider.createExecutableExtension("injector");
+			return injectorProvider.getInjector();
+		} else {
+			return new EMFPatternLanguageStandaloneSetup().createInjector();
+		}
 	}
 
 }
