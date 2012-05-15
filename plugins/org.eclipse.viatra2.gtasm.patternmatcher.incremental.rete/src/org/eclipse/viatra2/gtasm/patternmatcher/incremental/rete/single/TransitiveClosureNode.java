@@ -2,7 +2,6 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single;
 
 import java.util.Collection;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.Tuple;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
@@ -23,9 +22,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple
  */
 public class TransitiveClosureNode extends SingleInputNode implements Clearable, ITcObserver<Object> {
 	
-	private Graph<Object> gds;
-	private ITcDataSource<Object> tcAlg;
-	public static byte alg = 1;
+	private Graph<Object> graphDataSource;
+	private ITcDataSource<Object> transitiveClosureAlgorithm;
 	
 	/**
 	 * Create a new transitive closure rete node.
@@ -36,57 +34,33 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
 	 */
 	public TransitiveClosureNode(ReteContainer reteContainer, Collection<org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple> tuples) {
 		super(reteContainer);
-		gds = new Graph<Object>();
+		graphDataSource = new Graph<Object>();
 		
 		for (org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple t : tuples) {
 			Object source = t.get(0);
 			Object target = t.get(1);
-			gds.insertNode(source);
-			gds.insertNode(target);
-			gds.insertEdge(source, target);
+			graphDataSource.insertNode(source);
+			graphDataSource.insertNode(target);
+			graphDataSource.insertEdge(source, target);
 		}
-		
-		if (alg == 0) {
-			tcAlg = new IncSCCAlg<Object>(gds);
-		}
-		else {
-			tcAlg = new DRedAlg<Object>(gds);
-		}
-		
-		tcAlg.attachObserver(this);
+		transitiveClosureAlgorithm = new IncSCCAlg<Object>(graphDataSource);	
+		transitiveClosureAlgorithm.attachObserver(this);
 		reteContainer.registerClearable(this);
 	}
 	
 	public TransitiveClosureNode(ReteContainer reteContainer) {
 		super(reteContainer);
-		gds = new Graph<Object>();
-		if (alg == 0) {
-			tcAlg = new IncSCCAlg<Object>(gds);
-		}
-		else {
-			tcAlg = new DRedAlg<Object>(gds);
-		}
-		tcAlg.attachObserver(this);
+		graphDataSource = new Graph<Object>();
+		transitiveClosureAlgorithm = new IncSCCAlg<Object>(graphDataSource);
+		transitiveClosureAlgorithm.attachObserver(this);
 		reteContainer.registerClearable(this);
 	}
 
 	@Override
 	public void pullInto(Collection<org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple> collector) {
-		if (alg == 0) {
-			for (Tuple<Object> tuple : ((IncSCCAlg<Object>) tcAlg).getTcRelation()) {
-				collector.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
-			}
-		}
-		else {
-			DRedAlg<Object> dred = (DRedAlg<Object>) tcAlg;
-			
-			for (Object s : dred.getTcRelation().getTupleStarts()) {
-				for (Object t : dred.getTcRelation().getTupleEnds(s)) {
-					collector.add(new FlatTuple(s,t));
-				}
-			}
-		}
-		
+		for (Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
+			collector.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
+		}	
 	}
 
 	@Override
@@ -97,22 +71,19 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
 			
 			if (direction == Direction.INSERT) {
 				//Nodes are stored in a set
-				gds.insertNode(source);
-				gds.insertNode(target);
-				gds.insertEdge(source, target);
+				graphDataSource.insertNode(source);
+				graphDataSource.insertNode(target);
+				graphDataSource.insertEdge(source, target);
 			}
 			if (direction == Direction.REVOKE) {
-				gds.deleteEdge(source, target);
-				
-				if (alg == 0) {
-					IncSCCAlg<Object> incscc = (IncSCCAlg<Object>) tcAlg;
+				graphDataSource.deleteEdge(source, target);
+				IncSCCAlg<Object> incscc = (IncSCCAlg<Object>) transitiveClosureAlgorithm;
 					
-					if (incscc.isIsolated(source)) {
-						gds.deleteNode(source);
-					}
-					if (incscc.isIsolated(target)) {
-						gds.deleteNode(target);
-					}
+				if (incscc.isIsolated(source)) {
+					graphDataSource.deleteNode(source);
+				}
+				if (incscc.isIsolated(target)) {
+					graphDataSource.deleteNode(target);
 				}
 			}
 		}
@@ -120,13 +91,8 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
 	
 	@Override
 	public void clear() {
-		gds = new Graph<Object>();
-		if (alg == 0) {
-			tcAlg = new IncSCCAlg<Object>(gds);
-		}
-		else {
-			tcAlg = new DRedAlg<Object>(gds);
-		}
+		graphDataSource = new Graph<Object>();
+		transitiveClosureAlgorithm = new IncSCCAlg<Object>(graphDataSource);
 	}
 
 	@Override
