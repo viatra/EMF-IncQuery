@@ -16,12 +16,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
@@ -205,6 +207,25 @@ public class EMFPatternLanguageJavaValidator extends
 				classifiedVariableReferencesCollection.put(
 						classifiedVariableReferences.getReferredVariable(),
 						classifiedVariableReferences);
+			} else if (obj instanceof CheckConstraint) {
+				Set<Variable> vars = CorePatternLanguageHelper
+						.getReferencedPatternVariablesOfXExpression(((CheckConstraint) obj)
+								.getExpression());
+				for (Variable var : vars) {
+					ClassifiedVariableReferences classifiedVariableReferences = classifiedVariableReferencesCollection
+							.get(var);
+					if (classifiedVariableReferences == null) {
+						classifiedVariableReferences = new ClassifiedVariableReferences(
+								var, true); // All symbolic variables are
+											// already added.
+					}
+					classifiedVariableReferences
+							.incrementCounter(VariableReferenceClass.ReadOnly);
+					classifiedVariableReferencesCollection.put(
+							classifiedVariableReferences.getReferredVariable(),
+							classifiedVariableReferences);
+
+				}
 			}
 		}
 		return classifiedVariableReferencesCollection.values();
@@ -230,7 +251,7 @@ public class EMFPatternLanguageJavaValidator extends
 							classifiedVariableReferences.getReferredVariable()
 									.getName()), classifiedVariableReferences
 							.getReferredVariable().getReferences().get(0),
-							null, EMFIssueCodes.UNUSED_VARIABLE);
+							null, EMFIssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
 				} else if (classifiedVariableReferences
 						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
 					if (classifiedVariableReferences
@@ -243,8 +264,9 @@ public class EMFPatternLanguageJavaValidator extends
 										.getReferredVariable().getName()),
 								classifiedVariableReferences
 										.getReferredVariable().getReferences()
-										.get(0), null,
-								EMFIssueCodes.UNUSED_VARIABLE);
+										.get(0),
+								null,
+								EMFIssueCodes.LOCAL_VARIABLE_NO_QUANTIFYING_REFERENCE);
 					} else if (classifiedVariableReferences
 							.getReferenceCountSum() > 1) {
 						error(String.format(
@@ -253,8 +275,9 @@ public class EMFPatternLanguageJavaValidator extends
 										.getReferredVariable().getName()),
 								classifiedVariableReferences
 										.getReferredVariable().getReferences()
-										.get(0), null,
-								EMFIssueCodes.UNUSED_VARIABLE);
+										.get(0),
+								null,
+								EMFIssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);
 					}
 				}
 			} else { // Symbolic variable:
@@ -265,7 +288,8 @@ public class EMFPatternLanguageJavaValidator extends
 											.getReferredVariable().getName(),
 									getPatternBodyName(patternBody)),
 							classifiedVariableReferences.getReferredVariable(),
-							null, EMFIssueCodes.UNUSED_VARIABLE);
+							null,
+							EMFIssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
 				} else if (classifiedVariableReferences
 						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
 					error(String
@@ -274,7 +298,8 @@ public class EMFPatternLanguageJavaValidator extends
 											.getReferredVariable().getName(),
 									getPatternBodyName(patternBody)),
 							classifiedVariableReferences.getReferredVariable(),
-							null, EMFIssueCodes.UNUSED_VARIABLE);
+							null,
+							EMFIssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
 				}
 			}
 		}

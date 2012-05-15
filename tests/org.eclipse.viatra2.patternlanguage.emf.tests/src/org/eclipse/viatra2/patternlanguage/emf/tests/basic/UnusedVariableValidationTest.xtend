@@ -34,132 +34,236 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
-	def testAllOK() {
+	def testSymbolicVariableNoReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 			
-			pattern helperPattern(p, q) = {
+			pattern testPattern(p) = {
+				Pattern(h);
+				Pattern.name(h, "");
+			}'
+		)
+		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
+	}
+	
+	@Test
+	def testSymbolicVariableOnePositiveReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern(p) = {
 				Pattern(p);
-				Pattern(q);
-			}
-			
-			pattern negHelperPattern(n) = {
-				Constraint(n);
-			}
-			
-			pattern testPattern(p, q)= {
-				Pattern(p);
-				Pattern.name(q, r);
-				r == "";
-			} or {
-				find helperPattern(p, q);
-				neg find negHelperPattern(p);
 			}'
 		)
 		tester.validate(model).assertOK
 	}
 	
 	@Test
-	def testSymbolicParameterNeverReferenced() {
+	def testSymbolicVariableOneNegativeReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			
-			pattern helperPattern(p, q) = {
-				Pattern(p);
-				Pattern(q);
-			}
-			
-			pattern negHelperPattern(n) = {
-				Constraint(n);
-			}
-			
-			pattern testPattern(p, q)= {
-				Pattern.name(q, r);
-				r == "";
-			} or {
-				find helperPattern(p, q);
-				neg find negHelperPattern(p);
+
+			pattern testPattern(p) = {
+				neg Pattern.name(p, "");
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::UNUSED_VARIABLE)
+		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
 	@Test
-	def testSymbolicParameterHasNoPositiveReferences() {
+	def testSymbolicVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			
-			pattern helperPattern(p, q) = {
+
+			pattern helper(p) = {
 				Pattern(p);
-				Pattern(q);
 			}
-			
-			pattern negHelperPattern(n) = {
-				Constraint(n);
-			}
-			
-			pattern testPattern(p, q)= {
-				Pattern(p);
-				neg Pattern.name(q, r);
-				r == "";
-			} or {
-				find helperPattern(p, q);
-				neg find negHelperPattern(p);
+
+			pattern testPattern(p) = {
+				Pattern(h);
+				h == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::UNUSED_VARIABLE)
+		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
 	@Test
-	def testLocalVariableHasOnlyOneReference() {
+	def testSymbolicVariableNoPositiveReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			
-			pattern helperPattern(p, q) = {
+
+			pattern helper(p) = {
 				Pattern(p);
-				Pattern(q);
 			}
-			
-			pattern negHelperPattern(n) = {
-				Constraint(n);
-			}
-			
-			pattern testPattern(p, q)= {
-				Pattern(p);
-				Pattern.name(q, r);
-			} or {
-				find helperPattern(p, q);
-				neg find negHelperPattern(p);
+
+			pattern testPattern(p) = {
+				neg Pattern.name(p, "");
+				neg find helper(p);
+				check(p == 0);
+				Pattern(h);
+				h == p;
 			}'
 		)
-		tester.validate(model).assertWarning(EMFIssueCodes::UNUSED_VARIABLE)		
+		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
 	@Test
-	def testLocalVariableHasNoPositiveReferences() {
+	def testSymbolicVariableAllReferences() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			
-			pattern helperPattern(p, q) = {
+
+			pattern helper(p) = {
 				Pattern(p);
-				Pattern(q);
 			}
-			
-			pattern negHelperPattern(n) = {
-				Constraint(n);
-			}
-			
-			pattern testPattern(p, q)= {
+
+			pattern testPattern(p) = {
 				Pattern(p);
-				Pattern.name(q, r);
-				r == "";
-			} or {
-				neg find helperPattern(p, r);
-				neg find helperPattern(r, q);
-				find negHelperPattern(p);
-				find negHelperPattern(q);
+				neg Pattern.name(p, "");
+				neg find helper(p);
+				check(p == 0);
+				Pattern(h);
+				h == p;
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::UNUSED_VARIABLE)		
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testLocalVariableOnePositiveReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				Pattern(p);
+			}'
+		)
+		tester.validate(model).assertWarning(EMFIssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE)
+	}
+	
+	@Test
+	def testLocalVariableOneNegativeReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				neg Pattern.name(p, "");
+			}'
+		)
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testLocalVariableOneReadOnlyReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern helper(p) = {
+				Pattern(p);
+			}
+
+			pattern testPattern() = {
+				Pattern(h);
+				h == count find helper(p);
+			}'
+		)
+		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_QUANTIFYING_REFERENCE)
+	}
+	
+	@Test
+	def testLocalVariableMultiplePositiveReferences() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				Pattern(p);
+				Pattern.name(p, "");
+			}'
+		)
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testLocalVariableOnePositiveOneNegativeReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				Pattern(p);
+				neg Pattern.name(p, "");
+			}'
+		)
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testLocalVariableOnePositiveOneReadOnlyReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern helper(p) = {
+				Pattern(p);
+			}
+
+			pattern testPattern() = {
+				Pattern(p);
+				Pattern(h);
+				h == count find helper(p);
+			}'
+		)
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testLocalVariableMultipleNegativeReferences() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern helper(p) = {
+				Pattern(p);
+			}
+
+			pattern testPattern() = {
+				neg Pattern.name(p, "");
+				neg find helper(p);
+			}'
+		)
+		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
+	}
+	
+	@Test
+	def testLocalVariableOneNegativeOneReadOnlyReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern helper(p) = {
+				Pattern(p);
+			}
+
+			pattern testPattern() = {
+				neg Pattern.name(p, "");
+				Pattern(h);
+				h == count find helper(p);
+			}'
+		)
+		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
+	}
+	
+	@Test
+	def testLocalVariableMultipleReadOnlyReferences() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern helper(p) = {
+				Pattern(p);
+			}
+
+			pattern testPattern() = {
+				Pattern(h);
+				Pattern(i);
+				h == count find helper(p);
+				i == count find helper(p);
+			}'
+		)
+		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_QUANTIFYING_REFERENCE)
 	}
 }
