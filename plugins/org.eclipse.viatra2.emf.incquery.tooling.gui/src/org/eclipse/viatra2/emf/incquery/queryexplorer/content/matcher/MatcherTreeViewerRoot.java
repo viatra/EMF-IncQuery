@@ -28,6 +28,10 @@ private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 	
 	public void removePatternMatcherRoot(IEditorPart editorPart, ResourceSet res) {
 		MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, res);
+		removePatternMatcherRoot(key);
+	}
+	
+	public void removePatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		if (roots.containsKey(key)) {
 			this.roots.get(key).dispose();
 			this.roots.remove(key);

@@ -30,7 +30,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.navigator,
  org.eclipse.xtext.xbase;bundle-version="2.3.0",
  com.google.guava,
- org.eclipse.xtext.xbase.lib
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.xbase.ui;bundle-version="2.3.0"
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher,

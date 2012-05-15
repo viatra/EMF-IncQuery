@@ -33,6 +33,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 /**
  * The util contains several useful methods for the databinding operations.
@@ -40,6 +41,7 @@ import com.google.inject.Injector;
  * @author Tamas Szabo
  *
  */
+@Singleton
 public class DatabindingUtil {
 
 	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();

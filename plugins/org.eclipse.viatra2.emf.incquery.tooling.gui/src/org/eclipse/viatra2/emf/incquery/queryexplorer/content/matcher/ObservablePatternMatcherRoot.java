@@ -71,6 +71,10 @@ public class ObservablePatternMatcherRoot {
 		}
 	}
 	
+	public MatcherTreeViewerRootKey getKey() {
+		return key;
+	}
+	
 	public IEditorPart getEditorPart() {
 		return this.key.getEditor();
 	}

@@ -16,6 +16,8 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -24,7 +26,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -39,12 +40,13 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLab
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.FileEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -69,7 +71,6 @@ public class QueryExplorer extends ViewPart {
 	
 	//observable view
 	private ModelEditorPartListener modelPartListener = new ModelEditorPartListener();
-	private FileEditorPartListener filePartListener = new FileEditorPartListener();
 		
 	@Inject
 	Injector injector;
@@ -87,8 +88,11 @@ public class QueryExplorer extends ViewPart {
 	
 	public static QueryExplorer getInstance() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	    IViewPart form = page.findView(ID);
-	    return (QueryExplorer) form;
+		if (page != null) {
+			IViewPart form = page.findView(ID);
+	    	return (QueryExplorer) form;
+		}
+		return null;
 	}
 	
 	public TreeViewer getMatcherTreeViewer() {
@@ -96,7 +100,9 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void clearTableViewer() {
-		tableViewer.setInput(null);
+		if (tableViewer.getContentProvider() != null) {
+			tableViewer.setInput(null);
+		}
 	}
 	
 	public void createPartControl(Composite parent) {
@@ -119,6 +125,7 @@ public class QueryExplorer extends ViewPart {
         table.setLayout(layout);
 		
 		patternsViewer = new CheckboxTableViewer(table);
+		patternsViewer.addSelectionChangedListener(new PatternsViewerSelectionChangedListener());
 		patternsViewer.addCheckStateListener(new CheckStateListener());
 		
 		//matcherTreeViewer configuration
@@ -127,7 +134,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.setInput(matcherTreeViewerRoot);
 		
 		IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
-		selection.addValueChangeListener(new SelectionChangeListener());
+		selection.addValueChangeListener(new MatcherTreeViewerSelectionChangeListener());
 		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
 		
 		//patternsViewer configuration
@@ -168,7 +175,6 @@ public class QueryExplorer extends ViewPart {
 		getSite().setSelectionProvider(matcherTreeViewer);
 		
 		initFileListener();
-		initFileEditorListener();
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {
@@ -179,7 +185,19 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.getControl().setFocus();
 	}
 	
-	private class SelectionChangeListener implements IValueChangeListener {
+	private class PatternsViewerSelectionChangedListener implements ISelectionChangedListener {
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			System.out.println(event.getSelection());
+			
+//			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn("");
+//			for (ObservablePatternMatcherRoot root : matcherTreeViewerRoot.getRoots()) {
+//				root.unregisterPattern(pattern);
+//			}
+		}
+	}
+	
+	private class MatcherTreeViewerSelectionChangeListener implements IValueChangeListener {
 		
 		@Override
 		public void handleValueChange(ValueChangeEvent event) {
@@ -195,17 +213,10 @@ public class QueryExplorer extends ViewPart {
 			}
 			else {
 				tableViewerUtil.clearTableViewerColumns(tableViewer);
-				if (tableViewer.getContentProvider() != null) {
-					tableViewer.setInput(null);
-				}
+				clearTableViewer();
 			}
 		}
 		
-	}
-	
-	private void initFileEditorListener() {
-		IPartService service = (IPartService) getSite().getService(IPartService.class);
-		service.addPartListener(filePartListener);
 	}
 	
 	private void initFileListener() {
@@ -215,10 +226,6 @@ public class QueryExplorer extends ViewPart {
 	
 	public ModelEditorPartListener getModelPartListener() {
 		return modelPartListener;
-	}
-	
-	public FileEditorPartListener getFilePartListener() {
-		return filePartListener;
 	}
 	
 	public CheckboxTableViewer getPatternsViewer() {

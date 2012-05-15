@@ -109,17 +109,6 @@ public class PatternRegistry {
 		files.addAll(registeredPatterModels.keySet());
 		return files;
 	}
-//	
-//	public PatternModel getPatternModel(IFile file) {
-//		return registeredPatterModels.get(file);
-//	}
-//	
-//	public List<PatternModel> getPatternModels() {
-//		List<PatternModel> models = new ArrayList<PatternModel>();
-//		models.addAll(registeredPatterModels.values());
-//		return models;
-//	}
-	
 
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
