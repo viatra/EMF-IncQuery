@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -78,15 +79,20 @@ public class IncqueryFeatureHelper {
 			String targetParamName,
 			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind) {
 		try {
+			if(matcherFactory == null) {
+				throw new IncQueryRuntimeException("Matcher factory not set!");
+			}
 			IncQueryMatcher<IPatternMatch> matcher = matcherFactory.getMatcher(source);
+			if(matcher == null) {
+				throw new IncQueryRuntimeException("Matcher cannot be initiated!");
+			}
 			IncqueryFeatureHandler handler = new IncqueryFeatureHandler(
 					(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind);
 			handler.startMonitoring();
 			//featureMap.put(feature, handler);
 			return handler;
 		} catch (IncQueryRuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			IncQueryEngine.getDefaultLogger().logError("Handler initialization failed", e);
 		}
 		return null;
 	}
