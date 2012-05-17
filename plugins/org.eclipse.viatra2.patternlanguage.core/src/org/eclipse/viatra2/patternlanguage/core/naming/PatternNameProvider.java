@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.xbase.scoping.XbaseQualifiedNameProvider;
@@ -36,6 +37,9 @@ public class PatternNameProvider extends XbaseQualifiedNameProvider {
 			Pattern pattern = (Pattern) patternBody.eContainer();
 			return getFullyQualifiedName(pattern).append(
 					Integer.toString(pattern.getBodies().indexOf(patternBody)));
+		} else if(obj instanceof Variable) {
+			Variable variable = (Variable) obj;
+			return getFullyQualifiedName(variable.eContainer()).append(variable.getName());
 		}
 		return super.getFullyQualifiedName(obj);
 	}
