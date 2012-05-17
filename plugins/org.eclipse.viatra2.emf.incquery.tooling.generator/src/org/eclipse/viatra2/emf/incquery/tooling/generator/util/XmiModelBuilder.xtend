@@ -15,12 +15,19 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.xbase.XFeatureCall
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
+import com.google.inject.Inject
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 /**
  * @author Mark Czotter
  */
 class XmiModelBuilder {
 	
 	Logger logger = Logger::getLogger(getClass())
+	
+	@Inject
+	IQualifiedNameProvider nameProvider
 	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
@@ -82,9 +89,43 @@ class XmiModelBuilder {
 				} else {
 					fqnToPatternMap.put(fqn, p)
 					xmiModelRoot.patterns.add(p)
-				}	
+				}
+				
+				// first add all variables
+				val nameToVariableMap = newHashMap();
+				for (variable : p.parameters) {
+					val vfqn = variable.name
+					if (nameToVariableMap.get(vfqn) != null) {
+						logger.error("Variable already set in the Map: " + vfqn)
+					} else {
+						nameToVariableMap.put(vfqn, variable)
+					}	
+				}
+				for(body : p.bodies) {
+					for(variable : body.variables){
+						val vfqn = variable.name
+						if (nameToVariableMap.get(vfqn) != null) {
+							logger.error("Variable already set in the Map: " + vfqn)
+						} else {
+							nameToVariableMap.put(vfqn, variable)
+						}	
+					}
+				}
+				// then iterate over all added FeatureCalls and change feature
+				for(expression : p.eAllContents.toIterable.filter(typeof (XFeatureCall))){
+					val f = expression.feature
+					if(f instanceof Variable){
+						val vfqn = (f as Variable).name
+						val v = nameToVariableMap.get(vfqn);
+						if(v == null){
+							logger.error("Variable not found: " + vfqn)
+						} else {
+							expression.setFeature(v as Variable)
+						}
+					}
+				}
 			}
-			// then iterate over all added PatternCompositonConstraint and change the patternRef
+			// then iterate over all added PatternCall and change the patternRef
 			for (call : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCall))) {
 				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(call.patternRef)
 				val p = fqnToPatternMap.get(fqn)
@@ -94,6 +135,9 @@ class XmiModelBuilder {
 					call.setPatternRef(p as Pattern)
 				}
 			}
+			
+			
+			
 			// save the xmi file 
 			xmiResource.contents.add(xmiModelRoot)
 			xmiResource.save(null)
