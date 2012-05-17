@@ -9,7 +9,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -17,6 +20,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
@@ -46,6 +50,7 @@ public class DatabindingUtil {
 
 	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
+	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
 	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
@@ -58,14 +63,16 @@ public class DatabindingUtil {
 		else {
 			IConfigurationElement ce = uriConfElementMap.get(uri);
 			try {
-				Object obj = ce.createExecutableExtension("class");
-				AdapterFactoryLabelProvider lp = new AdapterFactoryLabelProvider((AdapterFactory) obj);
-				registeredItemProviders.put(uri, lp);
-				return lp;
+				if (ce != null) {
+					Object obj = ce.createExecutableExtension("class");
+					AdapterFactoryLabelProvider lp = new AdapterFactoryLabelProvider((AdapterFactory) obj);
+					registeredItemProviders.put(uri, lp);
+					return lp;
+				}
 			} catch (CoreException e) {
-				e.printStackTrace();
-				return null;
+				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "AdapterFactory could not be created for uri: " + uri.toString(), e));
 			}
+			return null;
 		}
 	}
 	
