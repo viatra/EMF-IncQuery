@@ -156,7 +156,9 @@ class PatternMatchClassInferrer {
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.body = [append('''
 				StringBuilder result = new StringBuilder();
-				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" »result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)«ENDFOR»);
+				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");"»
+					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
+				«ENDFOR»
 				return result.toString();
 			''')]
 		]
