@@ -92,15 +92,18 @@ public class TableViewerUtil {
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
 		Object[] restriction = observableMatcher.getRestriction();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
-		for (int i = 0;i<pattern.getParameters().size();i++) {
-			Variable var = pattern.getParameters().get(i);
-			String name = var.getName();
-			JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
-			String clazz = ref.getType().getQualifiedName();
-			input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
-		}	
+		if (restriction != null) {
+			for (int i = 0;i<pattern.getParameters().size();i++) {
+				Variable var = pattern.getParameters().get(i);
+				String name = var.getName();
+				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
+				String clazz = ref.getType().getQualifiedName();
+				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
+			}	
+			viewer.setInput(input);
+		}
 		
-		viewer.setInput(input);
+		
 	}
 	
 	public void clearTableViewerColumns(TableViewer viewer) {

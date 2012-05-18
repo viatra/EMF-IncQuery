@@ -40,9 +40,8 @@ public class ObservablePatternMatcher {
 		this.matcher = matcher;
 		this.generated = generated;
 		
-		initRestriction();
-		
 		if (matcher != null) {
+			initRestriction();
 			this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
 			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, restriction);
 			this.processMatchesRunnable = new Runnable() {		
@@ -111,13 +110,15 @@ public class ObservablePatternMatcher {
 	}
 	
 	private void initRestriction() {
-		parameterRestriction = new Object[this.matcher.getParameterNames().length];
-		
-		for (int i = 0;i<this.matcher.getParameterNames().length;i++) {
-			parameterRestriction[i] = null;
+		if (matcher != null) {
+			parameterRestriction = new Object[this.matcher.getParameterNames().length];
+			
+			for (int i = 0;i<this.matcher.getParameterNames().length;i++) {
+				parameterRestriction[i] = null;
+			}
+			
+			this.restriction = this.matcher.arrayToMatch(parameterRestriction);
 		}
-		
-		this.restriction = this.matcher.arrayToMatch(parameterRestriction);
 	}
 	
 	public void setRestriction(Object[] parameterRestriction) {
