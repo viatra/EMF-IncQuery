@@ -91,36 +91,44 @@ class XmiModelBuilder {
 					xmiModelRoot.patterns.add(p)
 				}
 				
-				// first add all variables
-				val nameToVariableMap = newHashMap();
+				// first add all parameter variables
+				val nameToParameterMap = newHashMap();
 				for (variable : p.parameters) {
 					val vfqn = variable.name
-					if (nameToVariableMap.get(vfqn) != null) {
+					if (nameToParameterMap.get(vfqn) != null) {
 						logger.error("Variable already set in the Map: " + vfqn)
 					} else {
-						nameToVariableMap.put(vfqn, variable)
+						nameToParameterMap.put(vfqn, variable)
 					}	
 				}
+				// iterate over each body
 				for(body : p.bodies) {
+					// add local variables
+					val nameToLocalVariableParameterMap = newHashMap();
 					for(variable : body.variables){
 						val vfqn = variable.name
-						if (nameToVariableMap.get(vfqn) != null) {
+						if (nameToLocalVariableParameterMap.get(vfqn) != null) {
 							logger.error("Variable already set in the Map: " + vfqn)
 						} else {
-							nameToVariableMap.put(vfqn, variable)
+							nameToLocalVariableParameterMap.put(vfqn, variable)
 						}	
 					}
-				}
-				// then iterate over all added FeatureCalls and change feature
-				for(expression : p.eAllContents.toIterable.filter(typeof (XFeatureCall))){
-					val f = expression.feature
-					if(f instanceof Variable){
-						val vfqn = (f as Variable).name
-						val v = nameToVariableMap.get(vfqn);
-						if(v == null){
-							logger.error("Variable not found: " + vfqn)
-						} else {
-							expression.setFeature(v as Variable)
+					// then iterate over all added FeatureCalls and change feature to proper variable
+					for(expression : p.eAllContents.toIterable.filter(typeof (XFeatureCall))){
+						val f = expression.feature
+						if(f instanceof Variable){
+							val vfqn = (f as Variable).name
+							val v = nameToLocalVariableParameterMap.get(vfqn);
+							if(v == null){
+								val par = nameToParameterMap.get(vfqn);
+								if(par == null){								
+									logger.error("Variable not found: " + vfqn)
+								} else {
+									expression.setFeature(par as Variable)
+								}
+							} else {
+								expression.setFeature(v as Variable)
+							}
 						}
 					}
 				}
