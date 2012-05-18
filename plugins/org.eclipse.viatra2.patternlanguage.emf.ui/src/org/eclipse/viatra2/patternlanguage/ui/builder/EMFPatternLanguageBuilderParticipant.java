@@ -480,6 +480,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private EclipseResourceFileSystemAccess2 createProjectFileSystemAccess(
 			IProject targetProject) {
 		EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
+		injector.injectMembers(fsa);
 		fsa.setProject(targetProject);
 		fsa.setMonitor(new NullProgressMonitor());
 		Map<String, OutputConfiguration> outputs = new HashMap<String, OutputConfiguration>(); 
