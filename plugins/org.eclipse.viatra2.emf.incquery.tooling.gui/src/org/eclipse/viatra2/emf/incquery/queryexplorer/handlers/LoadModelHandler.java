@@ -39,6 +39,7 @@ public class LoadModelHandler extends AbstractHandler {
 				IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);	
 				if (file != null) {
 					RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file, injector);
+					injector.injectMembers(registrator);
 					registrator.run();
 				}
 			}

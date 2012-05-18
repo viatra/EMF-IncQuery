@@ -36,6 +36,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
@@ -330,12 +331,15 @@ public class DatabindingUtil {
 		}
 		return false;
 	}
+
+	@Inject
+	IResourceSetProvider resSetProvider;
 	
-	public static PatternModel parseEPM(IFile file, Injector injector) {
+	public PatternModel parseEPM(IFile file) {
 		if (file == null) {
 			return null;
 		}
-		IResourceSetProvider resSetProvider = injector.getInstance(IResourceSetProvider.class);
+		//IResourceSetProvider resSetProvider = injector.getInstance(IResourceSetProvider.class);
 		ResourceSet resourceSet = resSetProvider.get(file.getProject());
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);

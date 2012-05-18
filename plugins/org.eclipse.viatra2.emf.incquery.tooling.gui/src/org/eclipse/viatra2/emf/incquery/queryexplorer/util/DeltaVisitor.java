@@ -24,6 +24,7 @@ class DeltaVisitor implements IResourceDeltaVisitor {
 			IFile file = (IFile) res;
 			if (PatternRegistry.getInstance().getFiles().contains(file)) {
 				RuntimeMatcherRegistrator job = new RuntimeMatcherRegistrator((IFile) file, injector);
+				injector.injectMembers(job);
 				Display.getDefault().syncExec(job);
 			}
 			return false;
