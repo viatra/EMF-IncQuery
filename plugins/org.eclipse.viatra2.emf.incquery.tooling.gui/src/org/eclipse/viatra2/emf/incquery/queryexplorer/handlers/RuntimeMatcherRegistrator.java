@@ -45,7 +45,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 		Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
 		for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 			for (Pattern pattern : removedPatterns) {
-				root.unregisterPattern(pattern);
+				root.unregisterPattern(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 			}
 		}
 

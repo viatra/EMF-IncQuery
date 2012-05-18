@@ -16,8 +16,6 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -123,7 +121,6 @@ public class QueryExplorer extends ViewPart {
         table.setLayout(layout);
 		
 		patternsViewer = new CheckboxTableViewer(table);
-		patternsViewer.addSelectionChangedListener(new PatternsViewerSelectionChangedListener());
 		patternsViewer.addCheckStateListener(new CheckStateListener());
 		
 		//matcherTreeViewer configuration
@@ -149,11 +146,15 @@ public class QueryExplorer extends ViewPart {
             }
         });
            
-        // Create menu.
-        Menu menu = menuMgr.createContextMenu(matcherTreeViewer.getControl());
-        
-		matcherTreeViewer.getControl().setMenu(menu);
+        // Create menu for tree viewer
+        Menu matcherTreeViewerMenu = menuMgr.createContextMenu(matcherTreeViewer.getControl());
+		matcherTreeViewer.getControl().setMenu(matcherTreeViewerMenu);
 		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", menuMgr, matcherTreeViewer);
+		
+		// Create menu for patterns viewer
+		Menu patternsViewerMenu = menuMgr.createContextMenu(patternsViewer.getControl());
+		patternsViewer.getControl().setMenu(patternsViewerMenu);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu", menuMgr, patternsViewer);
 		
 		//tableView configuration
 		//createColumns(tableViewer);
@@ -181,18 +182,6 @@ public class QueryExplorer extends ViewPart {
 
 	public void setFocus() {
 		matcherTreeViewer.getControl().setFocus();
-	}
-	
-	private class PatternsViewerSelectionChangedListener implements ISelectionChangedListener {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			System.out.println(event.getSelection());
-			
-//			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn("");
-//			for (ObservablePatternMatcherRoot root : matcherTreeViewerRoot.getRoots()) {
-//				root.unregisterPattern(pattern);
-//			}
-		}
 	}
 	
 	private class MatcherTreeViewerSelectionChangeListener implements IValueChangeListener {

@@ -156,6 +156,10 @@
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.UnloadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel">
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PatternUnregistrationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -239,6 +243,15 @@
             </visibleWhen>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern"
+               label="Unregister pattern"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -271,6 +284,11 @@
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel"
             name="Unload model">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern"
+            name="Unregister pattern">
       </command>
    </extension>
    <extension

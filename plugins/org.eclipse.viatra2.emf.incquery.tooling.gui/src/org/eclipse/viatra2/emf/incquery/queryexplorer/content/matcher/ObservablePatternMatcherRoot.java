@@ -50,9 +50,13 @@ public class ObservablePatternMatcherRoot {
 	}
 	
 	public void removeMatcher(String patternFqn) {
-		this.matchers.get(patternFqn).dispose();
-		this.matchers.remove(patternFqn);		
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		//if the pattern is first deactivated then removed, than the matcher corresponding matcher is disposed
+		ObservablePatternMatcher matcher = this.matchers.get(patternFqn);
+		if (matcher != null) {
+			this.matchers.get(patternFqn).dispose();
+			this.matchers.remove(patternFqn);		
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 	
 	public static final String MATCHERS_ID = "matchers";
@@ -100,7 +104,7 @@ public class ObservablePatternMatcherRoot {
 		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
 	}
 	
-	public void unregisterPattern(Pattern pattern) {
-		removeMatcher(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+	public void unregisterPattern(String patternFqn) {
+		removeMatcher(patternFqn);
 	}
 }
