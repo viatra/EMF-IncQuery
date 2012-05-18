@@ -13,10 +13,16 @@ package org.eclipse.viatra2.patternlanguage.core.ui.contentassist;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.ui.editor.contentassist.AbstractJavaBasedContentProposalProvider.ReferenceProposalCreator;
 
+import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
 /**
@@ -26,6 +32,10 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 
 	@Inject
 	PatternAnnotationProvider annotationProvider;
+	@Inject
+	IScopeProvider scopeProvider;
+	@Inject
+	ReferenceProposalCreator crossReferenceProposalCreator;
 	
 	public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		for (String annotationName : annotationProvider.getAllAnnotationNames()) {
@@ -42,5 +52,17 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 				acceptor.accept(createCompletionProposal(outputName, paramName, null, context));
 			}
 		}
+	}
+
+	@Override
+	public void complete_VariableReference(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		IScope scope = scopeProvider.getScope(model, PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE);
+		crossReferenceProposalCreator.lookupCrossReference(scope, model,
+				PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
+				acceptor, Predicates.<IEObjectDescription> alwaysTrue(),
+				getProposalFactory(ruleCall.getRule().getName(), context));
+		
+
 	}
 }
