@@ -90,7 +90,7 @@ public class TableViewerUtil {
 		viewer.setCellEditors(editors);
 		
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
-		Object[] restriction = observableMatcher.getRestriction();
+		Object[] restriction = observableMatcher.getFilter();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
 		if (restriction != null) {
 			for (int i = 0;i<pattern.getParameters().size();i++) {

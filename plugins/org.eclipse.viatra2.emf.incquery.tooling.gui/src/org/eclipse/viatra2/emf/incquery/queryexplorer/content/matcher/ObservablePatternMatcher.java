@@ -30,8 +30,8 @@ public class ObservablePatternMatcher {
 	private ObservablePatternMatcherRoot parent;
 	private boolean generated;
 	private String patternFqn;
-	private IPatternMatch restriction;
-	private Object[] parameterRestriction;
+	private IPatternMatch filter;
+	private Object[] parameterFilter;
 	
 	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
@@ -41,9 +41,9 @@ public class ObservablePatternMatcher {
 		this.generated = generated;
 		
 		if (matcher != null) {
-			initRestriction();
+			initFilter();
 			this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
-			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, restriction);
+			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
 			this.processMatchesRunnable = new Runnable() {		
 				@Override
 				public void run() {
@@ -109,21 +109,21 @@ public class ObservablePatternMatcher {
 		return patternFqn;
 	}
 	
-	private void initRestriction() {
+	private void initFilter() {
 		if (matcher != null) {
-			parameterRestriction = new Object[this.matcher.getParameterNames().length];
+			parameterFilter = new Object[this.matcher.getParameterNames().length];
 			
 			for (int i = 0;i<this.matcher.getParameterNames().length;i++) {
-				parameterRestriction[i] = null;
+				parameterFilter[i] = null;
 			}
 			
-			this.restriction = this.matcher.arrayToMatch(parameterRestriction);
+			this.filter = this.matcher.arrayToMatch(parameterFilter);
 		}
 	}
 	
-	public void setRestriction(Object[] parameterRestriction) {
-		this.parameterRestriction = parameterRestriction;
-		this.restriction = this.matcher.arrayToMatch(parameterRestriction);
+	public void setFilter(Object[] parameterFilter) {
+		this.parameterFilter = parameterFilter;
+		this.filter = this.matcher.arrayToMatch(parameterFilter);
 		
 		Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(sigMap.keySet());
 		
@@ -132,12 +132,24 @@ public class ObservablePatternMatcher {
 		}
 		
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
-		this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, restriction);
+		this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
 		this.processMatchesRunnable.run();
  	}
 	
-	public Object[] getRestriction() {
-		return parameterRestriction;
+	private boolean isFiltered() {	
+		if (matcher != null) {
+			for (int i = 0;i<this.matcher.getParameterNames().length;i++) {
+				if (parameterFilter[i] != null) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public Object[] getFilter() {
+		return parameterFilter;
 	}
 
 	public String getText() {
@@ -157,8 +169,11 @@ public class ObservablePatternMatcher {
 			default:
 				matchString = String.format("%d matches", matches.size());
 			}
+			
+			String filtered = isFiltered() ? " - Filtered" : "";
+			
 			//return this.matcher.getPatternName() + (isGeneratedString +" [size of matchset: "+matches.size()+"]");
-			return String.format("%s - %s %s", matcher.getPatternName(), matchString, isGeneratedString);
+			return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, filtered, isGeneratedString);
 		}
 	}
 

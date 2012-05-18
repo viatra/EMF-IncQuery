@@ -154,7 +154,7 @@ public class ModelElementCellEditor extends CellEditor {
                             markDirty();
                             doSetValue(newValue);
                             conf.setValue(newValue);
-                            observableMatcher.setRestriction(valuesOfTableItems(table));
+                            observableMatcher.setFilter(valuesOfTableItems(table));
                         } else {
                             // try to insert the current value into the error message.
                             setErrorMessage(MessageFormat.format(getErrorMessage(),
@@ -174,7 +174,7 @@ public class ModelElementCellEditor extends CellEditor {
         		inputText.setText("");
         		value = "";
         		conf.setValue("");
-        		observableMatcher.setRestriction(valuesOfTableItems(table));
+        		observableMatcher.setFilter(valuesOfTableItems(table));
         	}
 		});
 
@@ -227,7 +227,7 @@ public class ModelElementCellEditor extends CellEditor {
 						conf.setValue(inputText.getText());
 						value = inputText.getText();
 						//set restriction for observable matcher
-						observableMatcher.setRestriction(valuesOfTableItems(table));
+						observableMatcher.setFilter(valuesOfTableItems(table));
 					}
 					else {
 						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
