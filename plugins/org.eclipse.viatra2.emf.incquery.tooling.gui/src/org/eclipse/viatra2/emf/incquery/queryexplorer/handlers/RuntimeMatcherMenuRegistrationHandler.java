@@ -23,6 +23,7 @@ public class RuntimeMatcherMenuRegistrationHandler extends AbstractHandler {
 		if (firstElement != null && firstElement instanceof IFile) {
 			IFile file = (IFile) firstElement;
 			RuntimeMatcherRegistrator job = new RuntimeMatcherRegistrator(file, injector);
+			injector.injectMembers(job);
 			job.run();
 		}
 		
