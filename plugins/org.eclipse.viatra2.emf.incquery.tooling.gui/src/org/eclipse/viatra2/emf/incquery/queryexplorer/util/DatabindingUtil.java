@@ -37,7 +37,6 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 /**
@@ -339,7 +338,6 @@ public class DatabindingUtil {
 		if (file == null) {
 			return null;
 		}
-		//IResourceSetProvider resSetProvider = injector.getInstance(IResourceSetProvider.class);
 		ResourceSet resourceSet = resSetProvider.get(file.getProject());
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);

@@ -137,7 +137,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherMenuRegistrationHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherRegistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg">
       </handler>
       <handler
@@ -147,10 +147,6 @@
       <handler
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
-      </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RuntimeMatcherEditorRegistrationHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor">
       </handler>
       <handler
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.UnloadModelHandler"
@@ -229,7 +225,7 @@
                id="org.eclipse.viatra2.emf.incquery.tooling.gui.menu.emfpatternlanguage"
                label="EMF-IncQuery">
             <command
-                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
+                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
                   style="push">
             </command>
             <visibleWhen
@@ -269,11 +265,6 @@
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation"
             name="Show location">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
-            id="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg_editor"
-            name="Register patterns in Query Explorer">
       </command>
       <category
             description="Commands related to EMF-IncQuery"

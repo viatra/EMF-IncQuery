@@ -38,7 +38,7 @@ public class LoadModelHandler extends AbstractHandler {
 			else if (editorPart instanceof XbaseEditor) {
 				IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);	
 				if (file != null) {
-					RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file, injector);
+					RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
 					injector.injectMembers(registrator);
 					registrator.run();
 				}

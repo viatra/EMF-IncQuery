@@ -138,23 +138,30 @@ public class QueryExplorer extends ViewPart {
 		patternsViewer.setInput(list);
 		
 		// Create menu manager.
-        MenuManager menuMgr = new MenuManager();
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
+        MenuManager matcherTreeViewerMenuManager = new MenuManager();
+        matcherTreeViewerMenuManager.setRemoveAllWhenShown(true);
+        matcherTreeViewerMenuManager.addMenuListener(new IMenuListener() {
+        	public void menuAboutToShow(IMenuManager mgr) {
+        		fillContextMenu(mgr);
+            }
+        });   
+        // Create menu for tree viewer
+        Menu matcherTreeViewerMenu = matcherTreeViewerMenuManager.createContextMenu(matcherTreeViewer.getControl());
+		matcherTreeViewer.getControl().setMenu(matcherTreeViewerMenu);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", matcherTreeViewerMenuManager, matcherTreeViewer);
+		
+		
+        MenuManager patternsViewerMenuManager = new MenuManager();
+        patternsViewerMenuManager.setRemoveAllWhenShown(true);
+        patternsViewerMenuManager.addMenuListener(new IMenuListener() {
         	public void menuAboutToShow(IMenuManager mgr) {
         		fillContextMenu(mgr);
             }
         });
-           
-        // Create menu for tree viewer
-        Menu matcherTreeViewerMenu = menuMgr.createContextMenu(matcherTreeViewer.getControl());
-		matcherTreeViewer.getControl().setMenu(matcherTreeViewerMenu);
-		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", menuMgr, matcherTreeViewer);
-		
 		// Create menu for patterns viewer
-		Menu patternsViewerMenu = menuMgr.createContextMenu(patternsViewer.getControl());
+		Menu patternsViewerMenu = patternsViewerMenuManager.createContextMenu(patternsViewer.getControl());
 		patternsViewer.getControl().setMenu(patternsViewerMenu);
-		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu", menuMgr, patternsViewer);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu", patternsViewerMenuManager, patternsViewer);
 		
 		//tableView configuration
 		//createColumns(tableViewer);

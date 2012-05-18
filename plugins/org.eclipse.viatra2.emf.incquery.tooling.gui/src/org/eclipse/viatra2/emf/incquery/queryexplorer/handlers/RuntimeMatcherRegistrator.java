@@ -14,7 +14,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 /**
  * Runnable unit of registering patterns in given file.
@@ -29,14 +28,12 @@ import com.google.inject.Injector;
 public class RuntimeMatcherRegistrator implements Runnable {
 
 	private IFile file;
-	private Injector injector;
 	
 	@Inject
 	DatabindingUtil dbUtil;
 	
-	public RuntimeMatcherRegistrator(IFile file, Injector injector) {
+	public RuntimeMatcherRegistrator(IFile file) {
 		this.file = file;
-		this.injector = injector;
 	}
 
 	@Override
