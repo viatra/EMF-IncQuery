@@ -22,12 +22,12 @@ class DatabindingGenerator implements IGenerationFragment {
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
-			fsa.generateFile(pattern.packagePath + "/databinding/" + pattern.name.toFirstUpper + "DatabindingAdapter.java", pattern.patternHandler)
+			fsa.generateFile(pattern.packagePath + "/" + pattern.name.toFirstUpper + "DatabindingAdapter.java", pattern.patternHandler)
 		}
 	}
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-		fsa.deleteFile(pattern.packagePath + "/databinding/" + pattern.realPatternName.toFirstUpper + "DatabindingAdapter.java")
+		fsa.deleteFile(pattern.packagePath + "/" + pattern.realPatternName.toFirstUpper + "DatabindingAdapter.java")
 	}
 	
 	override removeExtension(Pattern pattern) {
@@ -97,7 +97,7 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	def patternHandler(Pattern pattern) '''
-		package «pattern.packageName».databinding;
+		package «pattern.packageName»;
 		
 		import java.util.HashMap;
 		import java.util.Map;
