@@ -48,6 +48,7 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
@@ -498,6 +499,9 @@ public abstract class ProjectGenerationHelper {
 	public static void ensureExtensions(IProject project,
 			Iterable<IPluginExtension> contributedExtensions, Iterable<Pair<String, String>> removedExtensions,
 			IProgressMonitor monitor) throws CoreException {
+		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
+			return;
+		}
 		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap
 				.create();
 		for (IPluginExtension extension : contributedExtensions) {
@@ -518,11 +522,7 @@ public abstract class ProjectGenerationHelper {
 			IExtensions readExtension = plugin.getExtensions();
 			nextExtension: for (final IPluginExtension extension : readExtension
 					.getExtensions()) {
-				String id = extension.getId();
-				if (id.startsWith(project.getName())) {
-					id = id.substring(
-						project.getName().length() + 1);
-				}
+				String id = getExtensionId(extension, project);
 				if (extensionMap.containsKey(id)) {
 					String point = extension.getPoint();
 					for (IPluginExtension ex : extensionMap.get(id)) {
@@ -587,6 +587,9 @@ public abstract class ProjectGenerationHelper {
 	 */
 	@SuppressWarnings("restriction")
 	public static void removeAllExtension(IProject project, String pointId) throws CoreException {
+		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
+			return;
+		}
 		IFile pluginXml = PDEProject.getPluginXml(project);
 		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
 				.getModelManager().findModel(project);
@@ -599,11 +602,7 @@ public abstract class ProjectGenerationHelper {
 			// Storing a read-only plugin.xml model
 			IExtensions readExtension = plugin.getExtensions();
 			for (final IPluginExtension extension : readExtension.getExtensions()) {
-				String id = extension.getId();
-				if (id.startsWith(project.getName())) {
-					id = id.substring(
-						project.getName().length() + 1);
-				}
+				String id = getExtensionId(extension, project);
 				if (!extension.getPoint().equals(pointId)) {
 					// XXX cloning extensions to remove project name prefixes
 					IPluginExtension cloneExtension = fModel.createExtension();
@@ -619,6 +618,23 @@ public abstract class ProjectGenerationHelper {
 			}
 		}
 		fModel.save();
+	}
+	
+	/**
+	 * Returns the extension Id. Removes the plug-in name if the extension id prefixed with it.
+	 * @param extension
+	 * @param project
+	 * @return
+	 */
+	private static String getExtensionId(IPluginExtension extension, IProject project) {
+		String id = extension.getId();
+		if (id.startsWith(project.getName())) {
+			int beginIndex = project.getName().length() + 1;
+			if (beginIndex >= 0) {
+				id = id.substring(beginIndex);				
+			}
+		}
+		return id;
 	}
 	
 }

@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
       <fragment
-            annotation="PatternUI"
+            annotation="ObservableValue"
             fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.databinding.DatabindingGenerator"></fragment>
    </extension>
 </plugin>
