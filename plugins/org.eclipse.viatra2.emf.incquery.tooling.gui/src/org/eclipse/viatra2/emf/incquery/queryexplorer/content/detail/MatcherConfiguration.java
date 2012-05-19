@@ -4,13 +4,13 @@ public class MatcherConfiguration {
 
 	private String parameterName;
 	private String clazz;
-	private Object value;
+	private Object filter;
 
-	public MatcherConfiguration(String parameterName, String clazz,	Object value) {
+	public MatcherConfiguration(String parameterName, String clazz,	Object filter) {
 		super();
 		this.parameterName = parameterName;
 		this.clazz = clazz;
-		this.value = value;
+		this.filter = filter;
 	}
 
 	public String getParameterName() {
@@ -29,11 +29,11 @@ public class MatcherConfiguration {
 		this.clazz = clazz;
 	}
 
-	public Object getValue() {
-		return value;
+	public Object getFilter() {
+		return filter;
 	}
 
-	public void setValue(Object value) {
-		this.value = value;
+	public void setFilter(Object filter) {
+		this.filter = filter;
 	}
 }

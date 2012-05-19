@@ -72,7 +72,7 @@ public class TableViewerUtil {
 	
 	public void prepareTableViewerForMatcherConfiguration(ObservablePatternMatcher observableMatcher, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
-		String[] titles = { "Parameter", "Class", "Value" };
+		String[] titles = { "Parameter", "Filter", "Class" };
 		createColumns(viewer, titles);
 		viewer.setUseHashlookup(true);
 		viewer.setColumnProperties(titles);
@@ -84,8 +84,8 @@ public class TableViewerUtil {
 		CellEditor[] editors = new CellEditor[titles.length];
 
 		editors[0] = new TextCellEditor(table);
-		editors[1] = new TextCellEditor(table);
-		editors[2] = new ModelElementCellEditor(table, observableMatcher);
+		editors[1] = new ModelElementCellEditor(table, observableMatcher);
+		editors[2] = new TextCellEditor(table);
 		
 		viewer.setCellEditors(editors);
 		
@@ -130,7 +130,7 @@ public class TableViewerUtil {
 		column.setText(title);
 		column.setResizable(true);
 		column.setMoveable(true);
-		column.setWidth(200);
+		column.setWidth(150);
 		return viewerColumn;
 	}
 	

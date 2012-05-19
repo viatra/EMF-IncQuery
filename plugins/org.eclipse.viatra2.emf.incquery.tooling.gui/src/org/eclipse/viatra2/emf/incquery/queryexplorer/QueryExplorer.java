@@ -104,12 +104,12 @@ public class QueryExplorer extends ViewPart {
 	public void createPartControl(Composite parent) {
 		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 300);
 		FlyoutControlComposite rightFlyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
-		rightFlyoutControlComposite.setTitleText("Observer view");
+		rightFlyoutControlComposite.setTitleText("Details / Filters");
 		rightFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
 		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
 		FlyoutControlComposite leftFlyoutControlComposite = new FlyoutControlComposite(rightFlyoutControlComposite.getClientParent(), SWT.NONE, leftFlyoutPreferences);
-		leftFlyoutControlComposite.setTitleText("Registered patterns");
+		leftFlyoutControlComposite.setTitleText("Pattern registry");
 		leftFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
 		
 		matcherTreeViewer = new TreeViewer(leftFlyoutControlComposite.getClientParent());

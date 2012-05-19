@@ -18,7 +18,7 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 	
 	@Override
 	public boolean canModify(Object element, String property) {
-		if (property.equalsIgnoreCase("value")) {
+		if (property.equalsIgnoreCase("filter")) {
 			return true;
 		}
 		else {
@@ -29,16 +29,16 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 	@Override
 	public Object getValue(Object element, String property) {
 		MatcherConfiguration conf = (MatcherConfiguration) element;
-		if (property.equalsIgnoreCase("value")) {
-			if (conf.getValue() instanceof EObject) {
-				EObject eObj = (EObject) conf.getValue();
+		if (property.equalsIgnoreCase("filter")) {
+			if (conf.getFilter() instanceof EObject) {
+				EObject eObj = (EObject) conf.getFilter();
 				URI uri = eObj.eClass().eResource().getURI();
 				AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
 				if (lp != null) {
 					return lp.getText(eObj);
 				}
 			}
-			return conf.getValue();
+			return conf.getFilter();
 		}
 		else if (property.equalsIgnoreCase("class")) {
 			return conf.getClazz();
@@ -56,8 +56,8 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 	    }
 		MatcherConfiguration conf = (MatcherConfiguration) element;
 		
-		if (conf != null && property.equalsIgnoreCase("value")) {
-			conf.setValue(value);
+		if (conf != null && property.equalsIgnoreCase("filter")) {
+			conf.setFilter(value);
 			viewer.update(conf, null);
 		}
 	}
