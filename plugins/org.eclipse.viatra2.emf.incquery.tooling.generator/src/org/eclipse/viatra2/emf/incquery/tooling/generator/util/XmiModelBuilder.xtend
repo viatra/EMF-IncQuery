@@ -26,9 +26,6 @@ class XmiModelBuilder {
 	
 	Logger logger = Logger::getLogger(getClass())
 	
-	@Inject
-	IQualifiedNameProvider nameProvider
-	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
 	 */
