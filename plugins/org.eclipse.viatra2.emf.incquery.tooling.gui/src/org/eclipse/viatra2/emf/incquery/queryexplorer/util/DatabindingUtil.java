@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -17,6 +18,7 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
@@ -34,7 +36,13 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
+import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
+import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -334,6 +342,9 @@ public class DatabindingUtil {
 	@Inject
 	IResourceSetProvider resSetProvider;
 	
+	@Inject IResourceValidator validator;
+	@Inject EObjectAtOffsetHelper helper;
+	
 	public PatternModel parseEPM(IFile file) {
 		if (file == null) {
 			return null;
@@ -341,6 +352,16 @@ public class DatabindingUtil {
 		ResourceSet resourceSet = resSetProvider.get(file.getProject());
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);
+		for (Diagnostic d : resource.getErrors()) {
+			System.err.println("Diagnostic error: " + d.getMessage());
+		}
+		List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+		for (Issue issue : issues) {
+			System.err.println("Validator error: " + issue.getMessage());
+			if (resource instanceof XtextResource) {
+				System.err.println("EObject: " + helper.resolveElementAt((XtextResource) resource, issue.getOffset()));				
+			}
+		}
 		if (resource != null && resource.getContents().size() >= 1) {
 			EObject topElement = resource.getContents().get(0);
 			return topElement instanceof PatternModel ? (PatternModel) topElement : null;
