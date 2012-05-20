@@ -43,7 +43,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 
 			pattern resolutionTest(Model) = {
 				GenModel(Model);
-				GenModel.runtimeVersion(Model, EMF23);
+				GenModel.runtimeVersion(Model, ::EMF23);
 			}
 		') as PatternModel
 		model.assertNoErrors

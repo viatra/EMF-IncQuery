@@ -62,7 +62,11 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME), getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME), getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED))
+		tester.validate(model).assertAll(
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
+		)
 	}	
 	@Test
 	def void testTooFewParameters() {

@@ -121,6 +121,10 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				Name == Name;
 			}
 		') as PatternModel
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT), getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE))
+		tester.validate(model).assertAll(
+			getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT),
+			getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT),
+			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
+		)
 	}
 }
