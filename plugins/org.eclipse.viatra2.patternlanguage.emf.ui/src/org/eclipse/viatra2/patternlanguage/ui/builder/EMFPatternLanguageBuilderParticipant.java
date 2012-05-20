@@ -144,7 +144,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 					Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName());
 					for (Delta delta : deltas) {
 						Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
-						if (delta.getNew() != null && shouldGenerate(deltaResource, context)) {
+						if (delta.getNew() != null /*&& shouldGenerate(deltaResource, context)*/) {
 							cleanUp(project, deltaResource, globalXmiModel);
 						}
 					}
