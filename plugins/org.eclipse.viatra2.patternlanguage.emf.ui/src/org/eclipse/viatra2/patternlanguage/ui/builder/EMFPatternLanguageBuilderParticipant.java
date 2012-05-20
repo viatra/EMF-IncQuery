@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -62,7 +61,7 @@ import com.google.inject.Injector;
  */
 public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
-	private Logger logger = Logger.getLogger(getClass());
+//	private Logger logger = Logger.getLogger(getClass());
 	
 	@Inject
 	private Injector injector;
@@ -120,18 +119,23 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		// do Clean build cleanUp
 		if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
-			ProjectGenerationHelper.removeAllExtension(project, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
-			IProject validationProject = workspaceRoot.getProject(project.getName() + ".validation");
-			IProject databindingProject = workspaceRoot.getProject(project.getName() + ".databinding");
-			if (validationProject.exists()) {
-				ProjectGenerationHelper.removeAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
-			}
-			if (databindingProject.exists()) {
-				ProjectGenerationHelper.removeAllExtension(databindingProject, "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");				
-			}
-			removeExportedPackages(project);
-			removeXmiModel(project);
-			if (context.getBuildType() == BuildType.CLEAN) {
+			try {
+				ProjectGenerationHelper.removeAllExtension(project, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
+				IProject validationProject = workspaceRoot.getProject(project.getName() + ".validation");
+				IProject databindingProject = workspaceRoot.getProject(project.getName() + ".databinding");
+				if (validationProject.exists()) {
+					ProjectGenerationHelper.removeAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
+				}
+				if (databindingProject.exists()) {
+					ProjectGenerationHelper.removeAllExtension(databindingProject, "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");				
+				}
+				removeExportedPackages(project);
+				removeXmiModel(project);
+				if (context.getBuildType() == BuildType.CLEAN) {
+					return;
+				}
+			} catch (Exception e) {
+				LoggingUtil.error("Exception during Clean Build!", e);
 				return;
 			}
 		} else {
@@ -149,26 +153,46 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 						}
 					}
 				} catch (Exception e) {
-					logger.error("Exception during cleanUp Phase!", e);
+					LoggingUtil.error("Exception during normal cleanUp Phase!", e);
 				}
 			}
 		}
-		super.build(context, monitor);
-		// Normal CleanUp and codegen done on every delta, do XMI Model build 
-		try {
-			IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
-			xmiBuildMonitor.beginTask("Building XMI model", 1);
-			buildXmiModel(context);	
-			xmiBuildMonitor.done();
-		} catch (Exception e) {
-			logger.error("Exception during XMI Model Building Phase", e);
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
 		}
+		super.build(context, monitor);
+		// Normal CleanUp and codegen done on every delta, do XMI Model build
+		IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
+		try {
+			buildXmiModel(context, xmiBuildMonitor);	
+		} catch (Exception e) {
+			LoggingUtil.error("Exception during XMI Model Building Phase", e);
+		} finally {
+			xmiBuildMonitor.done();
+		}
+		// normal code generation done, extensions, packages ready to add to the plug-ins
+		IProgressMonitor ensureMonitor = new SubProgressMonitor(monitor, 1);
+		try {
+			ensurePhase(project, ensureMonitor);
+		} catch (Exception e) {
+			LoggingUtil.error("Exception during Extension/Package ensure Phase", e);
+		} finally {
+			ensureMonitor.done();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param ensureMonitor
+	 * @throws CoreException 
+	 */
+	private void ensurePhase(IProject project, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("Extension/Package ensure phase", 1);
 		// ensure exported package and extensions
 		for (IProject proj : exportedPackageMap.keySet()) {
 			// ensure package exports per project
 			ProjectGenerationHelper.ensurePackageExports(project, exportedPackageMap.get(proj));
 		}
-	
 		// Loading extensions to the generated projects
 		// if new contributed extensions exists remove the removables from the 
 		// contributed extensions, so the truly removed extensions remain in the removedExtensions
@@ -210,7 +234,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes all packages, based on the Xmi Model.
 	 * @param project
@@ -296,8 +320,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			try {
 				fsa.deleteFile(classPackagePath);				
 			} catch (Exception e) {
-				// TODO log this to Eclipse Log if needed
-				logger.error("Java file cannot be deleted through IFileSystemAccess: " + classPackagePath, e);
+				String msg = String.format("Java file cannot be deleted through IFileSystemAccess: %s", classPackagePath);
+				LoggingUtil.warning(msg, e);
 				IFile classFile = modelProject.getFile(new Path(outputDir + "/" + classPackagePath));
 				if (classFile != null && classFile.exists()) {
 					classFile.delete(IResource.KEEP_HISTORY, null);
@@ -323,14 +347,19 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private void executeCleanUpOnFragments(IProject modelProject, Pattern pattern) throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(pattern)) {
-			injector.injectMembers(fragment);
-			// clean if the project still exist
-			String fragmentProjectName = getFragmentProjectName(modelProject, fragment);
-			IProject targetProject = workspaceRoot.getProject(fragmentProjectName);
-			if (targetProject.exists()) {
-				EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
-				fragment.cleanUp(pattern, fsa);
-				removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));				
+			try {
+				injector.injectMembers(fragment);
+				// clean if the project still exist
+				String fragmentProjectName = getFragmentProjectName(modelProject, fragment);
+				IProject targetProject = workspaceRoot.getProject(fragmentProjectName);
+				if (targetProject.exists()) {
+					EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
+					fragment.cleanUp(pattern, fsa);
+					removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));				
+				}				
+			} catch (Exception e) {
+				String msg = String.format("Exception when executing clean for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
+				LoggingUtil.error(msg, e);
 			}
 		}
 	}
@@ -355,7 +384,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	 * 
 	 * @param context
 	 */
-	private void buildXmiModel(IBuildContext context) {
+	private void buildXmiModel(IBuildContext context, IProgressMonitor monitor) {
+		monitor.beginTask("Building XMI model", 1);
 		Delta delta = getRelevantDeltas(context).get(0);
 		Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
 		// create a resourcedescription for the input, 
@@ -433,18 +463,23 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			throws CoreException {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(pattern)) {
-			injector.injectMembers(fragment);
-			IProject targetProject = createOrGetTargetProject(modelProject,
-					fragment);
-			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
-			fragment.generateFiles(pattern, fsa);
-			// Generating Eclipse extensions
-			ExtensionGenerator generator = new ExtensionGenerator();
-			generator.setProject(targetProject);
-			Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, generator);
-			// Gathering all registered extensions together to avoid unnecessary plugin.xml modifications
-			// Both for performance and for avoiding race conditions
-			extensionMap.putAll(targetProject, extensionContribution);
+			try {
+				injector.injectMembers(fragment);
+				IProject targetProject = createOrGetTargetProject(modelProject,
+						fragment);
+				EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
+				fragment.generateFiles(pattern, fsa);
+				// Generating Eclipse extensions
+				ExtensionGenerator generator = new ExtensionGenerator();
+				generator.setProject(targetProject);
+				Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, generator);
+				// Gathering all registered extensions together to avoid unnecessary plugin.xml modifications
+				// Both for performance and for avoiding race conditions
+				extensionMap.putAll(targetProject, extensionContribution);				
+			} catch (Exception e) {
+				String msg = String.format("Exception when executing generation for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
+				LoggingUtil.error(msg, e);
+			}
 		}
 	}
 	
