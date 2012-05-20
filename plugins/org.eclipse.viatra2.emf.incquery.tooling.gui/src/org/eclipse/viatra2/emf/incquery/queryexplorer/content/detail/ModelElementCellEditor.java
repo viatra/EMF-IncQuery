@@ -43,6 +43,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 
+import com.google.inject.Inject;
+
 public class ModelElementCellEditor extends CellEditor {
 
     private Composite editor;
@@ -55,6 +57,9 @@ public class ModelElementCellEditor extends CellEditor {
     private Notifier root;
     private Table table;
     private ObservablePatternMatcher observableMatcher;
+    
+    @Inject
+    TableViewerUtil tableViewerUtil;
         
     public ModelElementCellEditor(Table table, ObservablePatternMatcher observableMatcher) {
         super(table, SWT.NONE);
@@ -145,7 +150,7 @@ public class ModelElementCellEditor extends CellEditor {
             public void widgetSelected(SelectionEvent event) {
             	TableItem selection = table.getSelection()[0];
             	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
-            	if (!TableViewerUtil.isPrimitiveType(conf.getClazz())) {                    
+            	if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {                    
             		Object newValue = openDialogBox(editor, conf.getClazz());
 
                 	if (newValue != null) {
@@ -199,7 +204,7 @@ public class ModelElementCellEditor extends CellEditor {
     	TableItem selection = table.getSelection()[0];
     	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
     	
-    	if (!TableViewerUtil.isPrimitiveType(conf.getClazz())) {
+    	if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {
     		inputText.setEditable(false);
     	}
     	else {
@@ -222,7 +227,7 @@ public class ModelElementCellEditor extends CellEditor {
 					TableItem ti = table.getSelection()[0];
 					MatcherConfiguration conf = (MatcherConfiguration) ti.getData();
 					
-					if (TableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
+					if (tableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
 						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 						conf.setFilter(inputText.getText());
 						value = inputText.getText();
@@ -288,7 +293,7 @@ public class ModelElementCellEditor extends CellEditor {
     	
     	for (int i = 0;i<table.getItems().length;i++) {
     		MatcherConfiguration mc = (MatcherConfiguration) table.getItem(i).getData();
-    		result[i] = TableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
+    		result[i] = tableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
     	}
     	
     	return result;
