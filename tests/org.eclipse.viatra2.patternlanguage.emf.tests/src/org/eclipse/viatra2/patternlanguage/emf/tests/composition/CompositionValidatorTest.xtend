@@ -127,7 +127,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertOK;
 	}
-	@Test @Ignore
+	@Test
 	def void testSymbolicParameterUnsafe() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -138,6 +138,6 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				neg find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertError(/*TODO*/IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER);
+		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
 	}
 }
