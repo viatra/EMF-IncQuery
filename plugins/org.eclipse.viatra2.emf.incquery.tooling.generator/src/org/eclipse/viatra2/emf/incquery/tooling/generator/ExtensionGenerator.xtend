@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IFile
 import org.eclipse.pde.internal.core.project.PDEProject
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel
+import org.eclipse.pde.core.plugin.IPluginParent
 
 class ExtensionGenerator {
 	
@@ -29,8 +30,8 @@ class ExtensionGenerator {
 	def contribElement(IPluginObject parent, String name, (IPluginElement) => void initializer) {
 		val el = factory.createElement(parent)
 		el.name = name
-		if (parent instanceof IPluginExtension){
-			(parent as IPluginExtension).add(el)
+		if (parent instanceof IPluginParent) {
+			(parent as IPluginParent).add(el)
 		}
 		el.init(initializer)
 	}

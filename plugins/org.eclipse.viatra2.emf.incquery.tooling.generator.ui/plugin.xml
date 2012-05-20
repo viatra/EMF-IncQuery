@@ -4,7 +4,14 @@
    <extension
          point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
       <fragment
+            annotation="Handler"
             fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.SampleUIGenerator">
       </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+      <annotation
+            name="Handler">
+      </annotation>
    </extension>
 </plugin>

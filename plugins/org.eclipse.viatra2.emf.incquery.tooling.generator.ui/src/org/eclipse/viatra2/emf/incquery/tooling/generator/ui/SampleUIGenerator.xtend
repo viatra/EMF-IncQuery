@@ -12,18 +12,24 @@ import org.eclipse.xtext.xbase.lib.Pair
 class SampleUIGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	private static String SAMPLEUI_EXTENSION_POINT = "org.eclipse.ui.commands"
+	private static String ECLIPSE_UI_COMMANDS_EXTENSION_POINT = "org.eclipse.ui.commands"
+	private static String ECLIPSE_UI_HANDLERS_EXTENSION_POINT = "org.eclipse.ui.handlers"
+	private static String ECLIPSE_UI_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		fsa.generateFile(pattern.packagePath + "/handlers/" + pattern.realPatternName.toFirstUpper + "Handler.java", pattern.patternHandler)
+		fsa.generateFile(pattern.handlerClassJavaFile, pattern.patternHandler)
 	}
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-		fsa.deleteFile(pattern.packagePath + "/handlers/" + pattern.realPatternName.toFirstUpper + "Handler.java")
+		fsa.deleteFile(pattern.handlerClassJavaFile)
 	}
 	
 	override removeExtension(Pattern pattern) {
-		newArrayList(Pair::of(pattern.name+"Command", SAMPLEUI_EXTENSION_POINT))
+		newArrayList(
+			Pair::of(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT),
+			Pair::of(pattern.handlerExtensionId, ECLIPSE_UI_HANDLERS_EXTENSION_POINT),
+			Pair::of(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT)
+		)
 	}
 	
 	override getProjectDependencies() {
@@ -37,13 +43,56 @@ class SampleUIGenerator implements IGenerationFragment {
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
-		exGen.contribExtension(pattern.getFullyQualifiedName + "Command", SAMPLEUI_EXTENSION_POINT) [
+		exGen.contribExtension(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT) [
 			exGen.contribElement(it, "command") [
-				exGen.contribAttribute(it, "commandId", pattern.getFullyQualifiedName + "CommandId")
-				exGen.contribAttribute(it, "style", "push")
+				exGen.contribAttribute(it, "id", pattern.commandId)
+				exGen.contribAttribute(it, "name", "Command for " + pattern.fullyQualifiedName)
+			]
+		],
+		exGen.contribExtension(pattern.handlerExtensionId, ECLIPSE_UI_HANDLERS_EXTENSION_POINT) [
+			exGen.contribElement(it, "handler") [
+				exGen.contribAttribute(it, "commandId", pattern.commandId)
+				exGen.contribAttribute(it, "class", pattern.handlerClassName)
+			]
+		],
+		exGen.contribExtension(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT) [
+			exGen.contribElement(it, "menuContribution") [
+				exGen.contribAttribute(it, "locationURI", "popup:org.eclipse.jdt.ui.PackageExplorer")
+				exGen.contribElement(it, "menu") [
+					exGen.contribAttribute(it, "label", "Sample EIQ Test")
+					exGen.contribElement(it, "command") [
+						exGen.contribAttribute(it, "commandId", pattern.commandId)
+						exGen.contribAttribute(it, "style", "push")
+					]
+				]
 			]
 		]
 		)
+	}
+	
+	def handlerClassName(Pattern pattern) {
+		String::format("%s.handlers.%sHandler", pattern.packageName, pattern.realPatternName.toFirstUpper)
+	}
+	
+	def handlerClassPath(Pattern pattern) {
+		String::format("%s/handlers/%sHandler", pattern.packagePath, pattern.realPatternName.toFirstUpper) 
+	}
+	
+	def handlerClassJavaFile(Pattern pattern) {
+		pattern.handlerClassPath + ".java"
+	}
+	
+	def handlerExtensionId(Pattern pattern) {
+		pattern.getFullyQualifiedName + "Handler"
+	}
+	def commandExtensionId(Pattern pattern) {
+		pattern.getFullyQualifiedName + "Command"
+	}
+	def menuExtensionId(Pattern pattern) {
+		pattern.getFullyQualifiedName + "MenuContribution"
+	}
+	def commandId(Pattern pattern) {
+		pattern.getFullyQualifiedName + "CommandId"
 	}
 	
 	def patternHandler(Pattern pattern) '''
