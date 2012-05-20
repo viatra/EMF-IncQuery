@@ -312,7 +312,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	/**
 	 * Executes Normal Build cleanUp on every {@link IGenerationFragment}
 	 * registered to the current {@link Pattern}. Marks current {@link Pattern}
-	 * related extensions for removal.
+	 * related extensions for removal. If the {@link IProject} related to
+	 * {@link IGenerationFragment} does not exist, clean up skipped for the
+	 * fragment.
 	 * 
 	 * @param modelProject
 	 * @param pattern
@@ -322,11 +324,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		for (IGenerationFragment fragment : fragmentProvider
 				.getFragmentsForPattern(pattern)) {
 			injector.injectMembers(fragment);
-			IProject targetProject = createOrGetTargetProject(modelProject,
-					fragment);
-			EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
-			fragment.cleanUp(pattern, fsa);
-			removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));
+			// clean if the project still exist
+			String fragmentProjectName = getFragmentProjectName(modelProject, fragment);
+			IProject targetProject = workspaceRoot.getProject(fragmentProjectName);
+			if (targetProject.exists()) {
+				EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
+				fragment.cleanUp(pattern, fsa);
+				removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));				
+			}
 		}
 	}
 	
@@ -463,8 +468,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 					dependencies);
 			return modelProject;
 		} else {
-			String projectName = String.format("%s.%s", modelProject.getName(),
-					postfix);
+			String projectName = getFragmentProjectName(modelProject, fragment);
 			IProject targetProject = workspaceRoot.getProject(projectName);
 			if (!targetProject.exists()) {
 				ProjectGenerationHelper.initializePluginProject(targetProject, dependencies);
@@ -473,6 +477,16 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			}
 			return targetProject;
 		}
+	}
+	
+	/**
+	 * Returns the project name for {@link IGenerationFragment}.
+	 * @param base
+	 * @param fragment
+	 * @return
+	 */
+	private String getFragmentProjectName(IProject base, IGenerationFragment fragment) {
+		return String.format("%s.%s", base.getName(), fragment.getProjectPostfix());
 	}
 	
 	/**
