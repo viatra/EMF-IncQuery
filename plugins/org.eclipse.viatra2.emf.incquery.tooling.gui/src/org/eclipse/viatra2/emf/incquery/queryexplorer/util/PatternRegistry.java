@@ -101,6 +101,15 @@ public class PatternRegistry {
 		return activePatterns;
 	}
 	
+	public boolean isActive(String patternFqn) {
+		for (Pattern p : activePatterns) {
+			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternFqn)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public List<String> getPatternNames() {
 		List<String> patterns = new ArrayList<String>();
 		patterns.addAll(patternNameMap.keySet());

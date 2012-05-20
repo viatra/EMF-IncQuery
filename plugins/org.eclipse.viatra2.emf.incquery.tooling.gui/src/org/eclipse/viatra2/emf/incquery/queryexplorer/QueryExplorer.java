@@ -42,6 +42,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.QueryExplorerPerspectiveAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 
 import com.google.inject.Inject;
@@ -61,13 +62,15 @@ public class QueryExplorer extends ViewPart {
 	
 	//matcher tree viewer
 	private TreeViewer matcherTreeViewer;
-	private MatcherContentProvider matcherContentProvider = new MatcherContentProvider();
-	private MatcherLabelProvider matcherLabelProvider = new MatcherLabelProvider();
-	private MatcherTreeViewerRoot matcherTreeViewerRoot = new MatcherTreeViewerRoot();
+	private MatcherContentProvider matcherContentProvider;
+	private MatcherLabelProvider matcherLabelProvider;
+	private MatcherTreeViewerRoot matcherTreeViewerRoot;
 	
 	//observable view
-	private ModelEditorPartListener modelPartListener = new ModelEditorPartListener();
+	private ModelEditorPartListener modelPartListener;
 		
+	private QueryExplorerPerspectiveAdapter perspectiveAdapter;
+	
 	@Inject
 	Injector injector;
 	
@@ -75,7 +78,11 @@ public class QueryExplorer extends ViewPart {
 	TableViewerUtil tableViewerUtil;
 	
 	public QueryExplorer() {
-		
+		matcherContentProvider = new MatcherContentProvider();
+		matcherLabelProvider = new MatcherLabelProvider();
+		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
+		modelPartListener = new ModelEditorPartListener();
+		perspectiveAdapter = new QueryExplorerPerspectiveAdapter();
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
@@ -102,6 +109,8 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
+		getViewSite().getWorkbenchWindow().addPerspectiveListener(perspectiveAdapter);
+		
 		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 300);
 		FlyoutControlComposite rightFlyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
 		rightFlyoutControlComposite.setTitleText("Details / Filters");
