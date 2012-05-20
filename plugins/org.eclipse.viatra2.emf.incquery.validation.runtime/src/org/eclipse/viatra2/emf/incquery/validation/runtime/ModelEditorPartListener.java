@@ -32,13 +32,14 @@ public class ModelEditorPartListener implements IPartListener {
 			
 			Set<ConstraintAdapter<IPatternMatch>> adapters = ValidationUtil.getAdapterMap().get(closedEditor);
 			
-			for (ConstraintAdapter<IPatternMatch> adapter : adapters) {
-				adapter.dispose();
+			if (adapters != null) {
+				for (ConstraintAdapter<IPatternMatch> adapter : adapters) {
+					adapter.dispose();
+				}
 			}
 			
 			closedEditor.getEditorSite().getPage().removePartListener(ValidationUtil.editorPartListener);
 		}
-
 	}
 
 	@Override

@@ -154,10 +154,14 @@ class PatternMatchClassInferrer {
    		]
 		matchClass.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.body = [append('''
+			it.body = [
+				if (pattern.parameters.empty)
+					append('''return "[]";''')
+				else 
+					append('''
 				StringBuilder result = new StringBuilder();
-				«FOR variable : pattern.parameters»
-				result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName») + "\n");
+				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");"»
+					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
 				«ENDFOR»
 				return result.toString();
 			''')]

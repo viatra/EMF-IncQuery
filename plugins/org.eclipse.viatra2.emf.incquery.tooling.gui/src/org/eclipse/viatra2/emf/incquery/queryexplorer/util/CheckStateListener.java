@@ -22,7 +22,7 @@ public class CheckStateListener implements ICheckStateListener {
 			PatternRegistry.getInstance().addActivePattern(pattern);
 		} else {
 			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-				root.unregisterPattern(PatternRegistry.getInstance().getPatternByFqn(patternFqn));
+				root.unregisterPattern(patternFqn);
 			}
 			PatternRegistry.getInstance().removeActivePattern(pattern);
 		}

@@ -95,6 +95,9 @@ public class CorePatternLanguageHelper {
 		for (Variable var : parameters) {
 			parameterMap.put(var.getName(), var);
 		}
+		for(Variable var : variables) {
+			parameterMap.put(var.getName(), var);
+		}
 		for (String varName : varRefs.keySet()) {
 			Variable decl;
 			if (parameterMap.containsKey(varName)) {

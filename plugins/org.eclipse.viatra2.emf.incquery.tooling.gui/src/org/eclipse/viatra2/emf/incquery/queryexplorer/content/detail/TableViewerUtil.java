@@ -72,7 +72,7 @@ public class TableViewerUtil {
 	
 	public void prepareTableViewerForMatcherConfiguration(ObservablePatternMatcher observableMatcher, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
-		String[] titles = { "Parameter", "Class", "Value" };
+		String[] titles = { "Parameter", "Filter", "Class" };
 		createColumns(viewer, titles);
 		viewer.setUseHashlookup(true);
 		viewer.setColumnProperties(titles);
@@ -84,23 +84,26 @@ public class TableViewerUtil {
 		CellEditor[] editors = new CellEditor[titles.length];
 
 		editors[0] = new TextCellEditor(table);
-		editors[1] = new TextCellEditor(table);
-		editors[2] = new ModelElementCellEditor(table, observableMatcher);
+		editors[1] = new ModelElementCellEditor(table, observableMatcher);
+		editors[2] = new TextCellEditor(table);
 		
 		viewer.setCellEditors(editors);
 		
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
-		Object[] restriction = observableMatcher.getRestriction();
+		Object[] restriction = observableMatcher.getFilter();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
-		for (int i = 0;i<pattern.getParameters().size();i++) {
-			Variable var = pattern.getParameters().get(i);
-			String name = var.getName();
-			JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
-			String clazz = ref.getType().getQualifiedName();
-			input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
-		}	
+		if (restriction != null) {
+			for (int i = 0;i<pattern.getParameters().size();i++) {
+				Variable var = pattern.getParameters().get(i);
+				String name = var.getName();
+				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
+				String clazz = ref.getType().getQualifiedName();
+				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
+			}	
+			viewer.setInput(input);
+		}
 		
-		viewer.setInput(input);
+		
 	}
 	
 	public void clearTableViewerColumns(TableViewer viewer) {
@@ -127,7 +130,7 @@ public class TableViewerUtil {
 		column.setText(title);
 		column.setResizable(true);
 		column.setMoveable(true);
-		column.setWidth(200);
+		column.setWidth(150);
 		return viewerColumn;
 	}
 	

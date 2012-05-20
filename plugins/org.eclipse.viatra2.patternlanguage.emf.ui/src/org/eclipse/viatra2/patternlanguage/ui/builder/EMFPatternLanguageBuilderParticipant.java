@@ -122,10 +122,13 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
 			ProjectGenerationHelper.removeAllExtension(project, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
 			IProject validationProject = workspaceRoot.getProject(project.getName() + ".validation");
+			IProject databindingProject = workspaceRoot.getProject(project.getName() + ".databinding");
 			if (validationProject.exists()) {
 				ProjectGenerationHelper.removeAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
 			}
-			// TODO add clean logic for remaining extensions
+			if (databindingProject.exists()) {
+				ProjectGenerationHelper.removeAllExtension(databindingProject, "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");				
+			}
 			removeExportedPackages(project);
 			removeXmiModel(project);
 			if (context.getBuildType() == BuildType.CLEAN) {
@@ -141,7 +144,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 					Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName());
 					for (Delta delta : deltas) {
 						Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
-						if (delta.getNew() != null && shouldGenerate(deltaResource, context)) {
+						if (delta.getNew() != null /*&& shouldGenerate(deltaResource, context)*/) {
 							cleanUp(project, deltaResource, globalXmiModel);
 						}
 					}
@@ -165,7 +168,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			// ensure package exports per project
 			ProjectGenerationHelper.ensurePackageExports(project, exportedPackageMap.get(proj));
 		}
-		
+	
 		// Loading extensions to the generated projects
 		// if new contributed extensions exists remove the removables from the 
 		// contributed extensions, so the truly removed extensions remain in the removedExtensions
@@ -480,6 +483,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private EclipseResourceFileSystemAccess2 createProjectFileSystemAccess(
 			IProject targetProject) {
 		EclipseResourceFileSystemAccess2 fsa = new EclipseResourceFileSystemAccess2();
+		injector.injectMembers(fsa);
 		fsa.setProject(targetProject);
 		fsa.setMonitor(new NullProgressMonitor());
 		Map<String, OutputConfiguration> outputs = new HashMap<String, OutputConfiguration>(); 

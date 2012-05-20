@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -9,14 +10,19 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
@@ -30,9 +36,15 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
+import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
+import org.eclipse.xtext.validation.Issue;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
@@ -46,6 +58,7 @@ public class DatabindingUtil {
 
 	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
+	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
 	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
@@ -58,14 +71,16 @@ public class DatabindingUtil {
 		else {
 			IConfigurationElement ce = uriConfElementMap.get(uri);
 			try {
-				Object obj = ce.createExecutableExtension("class");
-				AdapterFactoryLabelProvider lp = new AdapterFactoryLabelProvider((AdapterFactory) obj);
-				registeredItemProviders.put(uri, lp);
-				return lp;
+				if (ce != null) {
+					Object obj = ce.createExecutableExtension("class");
+					AdapterFactoryLabelProvider lp = new AdapterFactoryLabelProvider((AdapterFactory) obj);
+					registeredItemProviders.put(uri, lp);
+					return lp;
+				}
 			} catch (CoreException e) {
-				e.printStackTrace();
-				return null;
+				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "AdapterFactory could not be created for uri: " + uri.toString(), e));
 			}
+			return null;
 		}
 	}
 	
@@ -323,15 +338,30 @@ public class DatabindingUtil {
 		}
 		return false;
 	}
+
+	@Inject
+	IResourceSetProvider resSetProvider;
 	
-	public static PatternModel parseEPM(IFile file, Injector injector) {
+	@Inject IResourceValidator validator;
+	@Inject EObjectAtOffsetHelper helper;
+	
+	public PatternModel parseEPM(IFile file) {
 		if (file == null) {
 			return null;
 		}
-		IResourceSetProvider resSetProvider = injector.getInstance(IResourceSetProvider.class);
 		ResourceSet resourceSet = resSetProvider.get(file.getProject());
 		URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 		Resource resource = resourceSet.getResource(fileURI, true);
+		for (Diagnostic d : resource.getErrors()) {
+			System.err.println("Diagnostic error: " + d.getMessage());
+		}
+		List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+		for (Issue issue : issues) {
+			System.err.println("Validator error: " + issue.getMessage());
+			if (resource instanceof XtextResource) {
+				System.err.println("EObject: " + helper.resolveElementAt((XtextResource) resource, issue.getOffset()));				
+			}
+		}
 		if (resource != null && resource.getContents().size() >= 1) {
 			EObject topElement = resource.getContents().get(0);
 			return topElement instanceof PatternModel ? (PatternModel) topElement : null;

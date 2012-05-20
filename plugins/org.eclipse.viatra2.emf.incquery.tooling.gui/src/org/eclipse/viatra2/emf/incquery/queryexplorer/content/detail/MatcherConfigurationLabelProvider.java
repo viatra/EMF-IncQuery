@@ -21,13 +21,11 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
 		case 0:
 			return mc.getParameterName();
 		case 1:
-			return mc.getClazz();
-		case 2:
-			if (mc.getValue() == null) {
+			if (mc.getFilter() == null) {
 				return "";
 			}
-			else if (mc.getValue() instanceof EObject) {
-				EObject eObj = (EObject) mc.getValue();
+			else if (mc.getFilter() instanceof EObject) {
+				EObject eObj = (EObject) mc.getFilter();
 				URI uri = eObj.eClass().eResource().getURI();
 				AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
 				if (lp != null) {
@@ -35,8 +33,10 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
 				}
 			}
 			else {
-				return mc.getValue().toString();
+				return mc.getFilter().toString();
 			}
+		case 2:
+			return mc.getClazz();
 		default:
 			return "";
 		}

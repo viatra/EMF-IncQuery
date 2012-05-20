@@ -35,6 +35,17 @@ public class PatternRegistry {
 		activePatterns = new HashSet<Pattern>();
 	}
 	
+	public void unregisterPattern(String patternFqn) {
+		Pattern pattern = this.patternNameMap.get(patternFqn);
+		
+		if (pattern != null) {
+			List<String> oldValue = getPatternNames();
+			this.patternNameMap.remove(patternFqn);
+			List<String> newValue = getPatternNames();
+			this.propertyChangeSupport.firePropertyChange("patternNames", oldValue, newValue);
+		}
+	}
+	
 	public Set<Pattern> registerPatternModel(IFile file, PatternModel pm) {
 		List<String> oldValue = getPatternNames();
 		this.registeredPatterModels.put(file, pm);

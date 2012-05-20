@@ -153,8 +153,8 @@ public class ModelElementCellEditor extends CellEditor {
                         if (newValidState) {
                             markDirty();
                             doSetValue(newValue);
-                            conf.setValue(newValue);
-                            observableMatcher.setRestriction(valuesOfTableItems(table));
+                            conf.setFilter(newValue);
+                            observableMatcher.setFilter(valuesOfTableItems(table));
                         } else {
                             // try to insert the current value into the error message.
                             setErrorMessage(MessageFormat.format(getErrorMessage(),
@@ -173,8 +173,8 @@ public class ModelElementCellEditor extends CellEditor {
             	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
         		inputText.setText("");
         		value = "";
-        		conf.setValue("");
-        		observableMatcher.setRestriction(valuesOfTableItems(table));
+        		conf.setFilter("");
+        		observableMatcher.setFilter(valuesOfTableItems(table));
         	}
 		});
 
@@ -224,10 +224,10 @@ public class ModelElementCellEditor extends CellEditor {
 					
 					if (TableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
 						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-						conf.setValue(inputText.getText());
+						conf.setFilter(inputText.getText());
 						value = inputText.getText();
 						//set restriction for observable matcher
-						observableMatcher.setRestriction(valuesOfTableItems(table));
+						observableMatcher.setFilter(valuesOfTableItems(table));
 					}
 					else {
 						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -288,7 +288,7 @@ public class ModelElementCellEditor extends CellEditor {
     	
     	for (int i = 0;i<table.getItems().length;i++) {
     		MatcherConfiguration mc = (MatcherConfiguration) table.getItem(i).getData();
-    		result[i] = TableViewerUtil.createValue(mc.getClazz(), mc.getValue());
+    		result[i] = TableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
     	}
     	
     	return result;

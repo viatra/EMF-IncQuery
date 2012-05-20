@@ -16,8 +16,6 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -40,13 +38,11 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLab
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -108,12 +104,12 @@ public class QueryExplorer extends ViewPart {
 	public void createPartControl(Composite parent) {
 		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 300);
 		FlyoutControlComposite rightFlyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
-		rightFlyoutControlComposite.setTitleText("Observer view");
+		rightFlyoutControlComposite.setTitleText("Details / Filters");
 		rightFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
 		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
 		FlyoutControlComposite leftFlyoutControlComposite = new FlyoutControlComposite(rightFlyoutControlComposite.getClientParent(), SWT.NONE, leftFlyoutPreferences);
-		leftFlyoutControlComposite.setTitleText("Registered patterns");
+		leftFlyoutControlComposite.setTitleText("Pattern registry");
 		leftFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
 		
 		matcherTreeViewer = new TreeViewer(leftFlyoutControlComposite.getClientParent());
@@ -125,7 +121,6 @@ public class QueryExplorer extends ViewPart {
         table.setLayout(layout);
 		
 		patternsViewer = new CheckboxTableViewer(table);
-		patternsViewer.addSelectionChangedListener(new PatternsViewerSelectionChangedListener());
 		patternsViewer.addCheckStateListener(new CheckStateListener());
 		
 		//matcherTreeViewer configuration
@@ -143,19 +138,30 @@ public class QueryExplorer extends ViewPart {
 		patternsViewer.setInput(list);
 		
 		// Create menu manager.
-        MenuManager menuMgr = new MenuManager();
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
+        MenuManager matcherTreeViewerMenuManager = new MenuManager();
+        matcherTreeViewerMenuManager.setRemoveAllWhenShown(true);
+        matcherTreeViewerMenuManager.addMenuListener(new IMenuListener() {
+        	public void menuAboutToShow(IMenuManager mgr) {
+        		fillContextMenu(mgr);
+            }
+        });   
+        // Create menu for tree viewer
+        Menu matcherTreeViewerMenu = matcherTreeViewerMenuManager.createContextMenu(matcherTreeViewer.getControl());
+		matcherTreeViewer.getControl().setMenu(matcherTreeViewerMenu);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", matcherTreeViewerMenuManager, matcherTreeViewer);
+		
+		
+        MenuManager patternsViewerMenuManager = new MenuManager();
+        patternsViewerMenuManager.setRemoveAllWhenShown(true);
+        patternsViewerMenuManager.addMenuListener(new IMenuListener() {
         	public void menuAboutToShow(IMenuManager mgr) {
         		fillContextMenu(mgr);
             }
         });
-           
-        // Create menu.
-        Menu menu = menuMgr.createContextMenu(matcherTreeViewer.getControl());
-        
-		matcherTreeViewer.getControl().setMenu(menu);
-		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu", menuMgr, matcherTreeViewer);
+		// Create menu for patterns viewer
+		Menu patternsViewerMenu = patternsViewerMenuManager.createContextMenu(patternsViewer.getControl());
+		patternsViewer.getControl().setMenu(patternsViewerMenu);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu", patternsViewerMenuManager, patternsViewer);
 		
 		//tableView configuration
 		//createColumns(tableViewer);
@@ -183,18 +189,6 @@ public class QueryExplorer extends ViewPart {
 
 	public void setFocus() {
 		matcherTreeViewer.getControl().setFocus();
-	}
-	
-	private class PatternsViewerSelectionChangedListener implements ISelectionChangedListener {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			System.out.println(event.getSelection());
-			
-//			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn("");
-//			for (ObservablePatternMatcherRoot root : matcherTreeViewerRoot.getRoots()) {
-//				root.unregisterPattern(pattern);
-//			}
-		}
 	}
 	
 	private class MatcherTreeViewerSelectionChangeListener implements IValueChangeListener {
