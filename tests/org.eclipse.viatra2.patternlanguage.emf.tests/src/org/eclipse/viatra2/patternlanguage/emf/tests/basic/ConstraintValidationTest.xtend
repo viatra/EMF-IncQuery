@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -34,8 +35,8 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def intConstantCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest(Name) = {
-				1 == 2
+			pattern constantCompareTest() = {
+				1 == 2;
 			}
 		') as PatternModel
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
@@ -43,8 +44,8 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def stringDoubleConstantCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest(Name) = {
-				1.2 == "String"
+			pattern constantCompareTest() = {
+				1.2 == "String";
 			}
 		') as PatternModel
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
@@ -52,8 +53,8 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def enumIntConstantCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest(Name) = {
-				false == 2
+			pattern constantCompareTest() = {
+				false == 2;
 			}
 		') as PatternModel
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
@@ -62,7 +63,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	def rightVariableCompareValidation() {
 		val model = parseHelper.parse('
 			pattern constantCompareTest(Name) = {
-				1 == Name
+				1 == Name;
+				IntValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
+				IntValue(Name2);				// Then this line can be deleted.
 			}
 		') as PatternModel
 		tester.validate(model).assertOK
@@ -70,8 +73,10 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightNewVariableCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest(Name) = {
-				1 == Name2
+			pattern constantCompareTest() = {
+				1 == Name2;
+				IntValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
+				IntValue(Name3);				// Then this line can be deleted.
 			}
 		') as PatternModel
 		tester.validate(model).assertOK
@@ -80,7 +85,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	def leftVariableCompareValidation() {
 		val model = parseHelper.parse('
 			pattern constantCompareTest(Name) = {
-				Name == "Test"
+				Name == "Test";
+				StringValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
+				StringValue(Name2);				// Then this line can be deleted.
 			}
 		') as PatternModel
 		tester.validate(model).assertOK
@@ -88,8 +95,10 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftNewVariableCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest(Name) = {
-				Name2 == "Test"
+			pattern constantCompareTest() = {
+				Name2 == "Test";
+				StringValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
+				StringValue(Name3);					// Then this line can be deleted.
 			}
 		') as PatternModel
 		tester.validate(model).assertOK
@@ -98,18 +107,20 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	def bothVariableCompareValidation() {
 		val model = parseHelper.parse('
 			pattern constantCompareTest(Name) = {
-				Name == Name2
+				Name == Name2;
+				Pattern(Name2);
 			}
 		') as PatternModel
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE))
+		//tester.validate(model).assertOK
 	}
 	@Test
 	def selfCompareValidation() {
 		val model = parseHelper.parse('
 			pattern constantCompareTest(Name) = {
-				Name == Name
+				Name == Name;
 			}
 		') as PatternModel
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT), getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE))
 	}
 }

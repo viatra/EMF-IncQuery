@@ -31,7 +31,7 @@ class EClassResolutionTest {
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
-				Pattern(Name2);
+				Pattern(Name);
 			}
 		') as PatternModel
 		model.assertNoErrors
@@ -63,7 +63,7 @@ class EClassResolutionTest {
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
-				UndefinedType(Name2);
+				UndefinedType(Name);
 			}
 		') as PatternModel
 		val pattern = model.patterns.get(0)
@@ -77,7 +77,7 @@ class EClassResolutionTest {
 	def eClassResolutionFailedMissingImport() {
 		val model = parseHelper.parse('
 			pattern resolutionTest(Name) = {
-				Pattern(Name2);
+				Pattern(Name);
 			}
 		') as PatternModel
 		val pattern = model.patterns.get(0)

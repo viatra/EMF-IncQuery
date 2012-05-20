@@ -30,7 +30,11 @@ class AggregationTest {
 			}
 
 			pattern callerPattern(output) = {
-				output == count find calledPattern(anyp, anyv);
+				output == count find calledPattern(anyp, anyv);	// anyp and anyv should be single variables, e.g. _anyp, _anyv
+				Pattern(anyp);									// Then these lines...
+				Variable(anyv);									// ...can be deleted.
+				IntValue.value(h, output);	// h should be a single variable, e.g. _h
+				IntValue(h);				// Then this line can be deleted.
 			}'
 		).assertNoErrors
 	}
@@ -47,7 +51,10 @@ class AggregationTest {
 
 			pattern callerPattern(p : Pattern, output) = {
 				Pattern(p);
-				output == count find calledPattern(p, anyv);
+				output == count find calledPattern(p, anyv);	// anyv should be a single variable, e.g. _anyv
+				Variable(anyv);									// Then this line can be deleted.
+				IntValue.value(h, output);	// h should be a single variable, e.g. _h
+				IntValue(h);				// Then this line can be deleted.
 			}'
 		).assertNoErrors
 	}
@@ -64,7 +71,8 @@ class AggregationTest {
 
 			pattern callerPattern(p : Pattern) = {
 				Pattern(p);
-				3 == count find calledPattern(p, anyv);
+				3 == count find calledPattern(p, anyv);	// anyv should be a single variable, e.g. _anyv
+				Variable(anyv);							// Then this line can be deleted.
 			}'
 		).assertNoErrors
 	}
@@ -83,6 +91,8 @@ class AggregationTest {
 				Pattern(p);
 				Variable(v);
 				output == count find calledPattern(p, v);
+				IntValue.value(h, output);	// h should be a single variable, e.g. _h
+				IntValue(h);				// Then this line can be deleted.
 			}'
 		).assertNoErrors			
 	}
@@ -95,7 +105,7 @@ class AggregationTest {
 
 			pattern callerPattern(p : Pattern, output) = {
 				Pattern(p);
-				output == count find calledPatternMissing(p, anyv);
+				output == count find calledPatternMissing(p, anyv);	// anyv should be a single variable, e.g. _anyv
 			}'
 		);
 		parsed.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 

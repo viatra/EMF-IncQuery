@@ -14,6 +14,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.junit.Ignore
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 
 
 @RunWith(typeof(XtextRunner))
@@ -61,7 +62,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME), getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME));
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME), getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME), getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED))
 	}	
 	@Test
 	def void testTooFewParameters() {
@@ -70,6 +71,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 
 			pattern calledPattern(p : Pattern, p2) = {
 				Pattern(p);
+				Pattern(p2);
 			}
 
 			pattern callPattern(p : Pattern) = {

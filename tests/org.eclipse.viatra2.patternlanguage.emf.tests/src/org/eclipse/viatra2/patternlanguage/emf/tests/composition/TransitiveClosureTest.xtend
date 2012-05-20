@@ -43,7 +43,8 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 			}
 
 			pattern transitive(p : Pattern) = {
-				find patternDependency+(p,p2);
+				find patternDependency+(p,p2);	// p2 should be a single variable, e.g. _p2
+				Pattern(p2);					// Then this line can be deleted.
 			}'
 		) 
 		tester.validate(model).assertOK;
@@ -59,7 +60,9 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 			}
 
 			pattern transitive(p : Pattern) = {
-				find patternDependency+(p,p2,c);
+				find patternDependency+(p,p2,c);	// p2 and c should be single variables, e.g. _p2, _s
+				Pattern(p2);						// Then these lines...
+				Constraint(c);						// ...can be deleted.
 			}'
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY));
@@ -93,7 +96,8 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 
 			pattern transitive(p : Pattern) = {
 				Pattern(p);
-				3 == count find patternDependency+(p,p2);
+				3 == count find patternDependency+(p,p2);	// p2 should be a single variable, e.g. _p2
+				Pattern(p2);								// Then this line can be deleted.
 			}'
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE));

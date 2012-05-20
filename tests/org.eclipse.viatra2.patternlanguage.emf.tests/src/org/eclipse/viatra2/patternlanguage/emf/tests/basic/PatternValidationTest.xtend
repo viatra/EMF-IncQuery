@@ -34,7 +34,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 	}
 	@Test
 	def emptyBodyValidation() {
-		val model = parseHelper.parse('pattern resolutionTest(Name) = {}') as PatternModel
+		val model = parseHelper.parse('pattern resolutionTest() = {}') as PatternModel
 		tester.validate(model).assertError(IssueCodes::PATTERN_BODY_EMPTY)
 	}
 	
