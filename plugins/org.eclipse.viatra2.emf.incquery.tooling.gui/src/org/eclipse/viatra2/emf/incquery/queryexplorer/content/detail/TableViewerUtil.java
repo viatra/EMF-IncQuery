@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 @SuppressWarnings("restriction")
@@ -32,9 +33,13 @@ public class TableViewerUtil {
 	@Inject
 	ITypeProvider typeProvider;
 	
-	private static Set<String> primitiveTypes = new HashSet<String>();
+	@Inject 
+	Injector injector;
 	
-	public TableViewerUtil() {
+	private Set<String> primitiveTypes;
+	
+	protected TableViewerUtil() {
+		primitiveTypes = new HashSet<String>();
 		primitiveTypes.add(Boolean.class.getName());
 		primitiveTypes.add(Character.class.getName());
 		primitiveTypes.add(Byte.class.getName());
@@ -47,7 +52,7 @@ public class TableViewerUtil {
 		primitiveTypes.add(String.class.getName());
 	}
 	
-	public static boolean isPrimitiveType(String fqn) {
+	public boolean isPrimitiveType(String fqn) {
 		return primitiveTypes.contains(fqn);
 	}
 
@@ -84,7 +89,9 @@ public class TableViewerUtil {
 		CellEditor[] editors = new CellEditor[titles.length];
 
 		editors[0] = new TextCellEditor(table);
-		editors[1] = new ModelElementCellEditor(table, observableMatcher);
+		ModelElementCellEditor cellEditor = new ModelElementCellEditor(table, observableMatcher);
+		injector.injectMembers(cellEditor);
+		editors[1] = cellEditor;
 		editors[2] = new TextCellEditor(table);
 		
 		viewer.setCellEditors(editors);
@@ -134,7 +141,7 @@ public class TableViewerUtil {
 		return viewerColumn;
 	}
 	
-	public static Object createValue(String classFqn, Object value) {
+	public Object createValue(String classFqn, Object value) {
 		if (!(value instanceof String)) {
 			return value;
 		}
@@ -178,7 +185,7 @@ public class TableViewerUtil {
 		}
 	}
 	
-	public static boolean isValidValue(String classFqn, String value) {
+	public boolean isValidValue(String classFqn, String value) {
 		classFqn = classFqn.toLowerCase();
 		
 		if (Boolean.class.getName().toLowerCase().matches(classFqn)) {
