@@ -11,14 +11,9 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -535,43 +530,7 @@ public class FlyoutContainer extends Composite {
 		titleImageRotated = DrawUtils.createRotatedImage(titleImage);
 	}
 
-	private void configureMenu() {
-		final MenuManager manager = new MenuManager();
-		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager menuMgr) {
-				addDockActions();
-			}
-
-			private void addDockActions() {
-				MenuManager dockManager = new MenuManager("menuManager");
-				addDockAction(dockManager, "west",
-						IFlyoutPreferences.DOCK_WEST);
-				addDockAction(dockManager, "east",
-						IFlyoutPreferences.DOCK_EAST);
-				addDockAction(dockManager, "top",
-						IFlyoutPreferences.DOCK_NORTH);
-				addDockAction(dockManager, "bottom",
-						IFlyoutPreferences.DOCK_SOUTH);
-				manager.add(dockManager);
-			}
-
-			private void addDockAction(MenuManager dockManager,
-					String text, int location) {
-				if ((flyoutControl.getValidDockLocations() & location) != 0) {
-					dockManager.add(new DockAction(flyoutControl, text, location));
-				}
-			}
-		});
-		// set menu
-		setMenu(manager.createContextMenu(this));
-		// dispose it later
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				manager.dispose();
-			}
-		});
-	}
+	private void configureMenu() {}
 	
 	public int getTitleHeight() {
 		return titleHeight;
