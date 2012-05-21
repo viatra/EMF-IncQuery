@@ -1,13 +1,18 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui
 
-import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.xtext.generator.IFileSystemAccess
 import com.google.inject.Inject
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.pde.core.plugin.IPluginExtension
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
-import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
+import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
+
+import static org.eclipse.viatra2.emf.incquery.tooling.generator.ui.SampleUIGenerator.*
+
+import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 
 class SampleUIGenerator implements IGenerationFragment {
 	
@@ -42,6 +47,7 @@ class SampleUIGenerator implements IGenerationFragment {
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+		val menuContribution = pattern.menuContribution(exGen)
 		newArrayList(
 		exGen.contribExtension(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT) [
 			exGen.contribElement(it, "command") [
@@ -56,6 +62,15 @@ class SampleUIGenerator implements IGenerationFragment {
 				exGen.contribAttribute(it, "class", pattern.handlerClassName)
 			]
 		],
+		menuContribution
+		)
+	}
+	
+	def IPluginExtension menuContribution(Pattern pattern, ExtensionGenerator exGen) {
+		val fileExtension = pattern.handlerFileExtension
+		if (fileExtension.nullOrEmpty) {
+			throw new IllegalArgumentException("FileExtension must be defined for Handler annotation in pattern: " + pattern.fullyQualifiedName);
+		}
 		exGen.contribExtension(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT) [
 			exGen.contribElement(it, "menuContribution") [
 				exGen.contribAttribute(it, "locationURI", "popup:org.eclipse.ui.popup.any")
@@ -64,11 +79,41 @@ class SampleUIGenerator implements IGenerationFragment {
 					exGen.contribElement(it, "command") [
 						exGen.contribAttribute(it, "commandId", pattern.commandId)
 						exGen.contribAttribute(it, "style", "push")
+						exGen.contribElement(it, "visibleWhen") [
+							exGen.contribAttribute(it, "checkEnabled", "false")
+							exGen.contribElement(it, "with") [
+								exGen.contribAttribute(it, "variable", "selection")
+								exGen.contribElement(it, "iterate") [
+									exGen.contribAttribute(it, "ifEmpty", "false")
+									exGen.contribElement(it, "adapt") [
+										exGen.contribAttribute(it, "type", "org.eclipse.core.resources.IFile")
+										exGen.contribElement(it, "test") [
+											exGen.contribAttribute(it, "property", "org.eclipse.core.resources.name")
+											exGen.contribAttribute(it, "value", String::format("*.%s", fileExtension))
+										]
+									]	
+								]
+							]
+						]
 					]
 				]
 			]
 		]
-		)
+	}
+	
+	def handlerFileExtension(Pattern pattern) {
+		for (annotation : pattern.annotations) {
+			if ("Handler".equals(annotation.name)) {
+				for (parameter : annotation.parameters) {
+					if ("fileExtension".equals(parameter.name)) {
+						if (parameter.value instanceof StringValue) {
+							return (parameter.value as StringValue).value
+						}
+					}
+				}
+			}
+		}
+		return null
 	}
 	
 	def handlerClassName(Pattern pattern) {

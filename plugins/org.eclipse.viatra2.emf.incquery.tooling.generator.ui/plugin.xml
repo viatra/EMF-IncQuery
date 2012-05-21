@@ -12,6 +12,12 @@
          point="org.eclipse.viatra2.patternlanguage.core.annotation">
       <annotation
             name="Handler">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="fileExtension"
+               type="string">
+         </annotationparameter>
       </annotation>
    </extension>
 </plugin>
