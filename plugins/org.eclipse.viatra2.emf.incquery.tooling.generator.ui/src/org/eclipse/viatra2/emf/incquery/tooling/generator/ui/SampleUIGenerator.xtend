@@ -46,7 +46,8 @@ class SampleUIGenerator implements IGenerationFragment {
 		exGen.contribExtension(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT) [
 			exGen.contribElement(it, "command") [
 				exGen.contribAttribute(it, "id", pattern.commandId)
-				exGen.contribAttribute(it, "name", "Command for " + pattern.fullyQualifiedName)
+				exGen.contribAttribute(it, "name", "Get All Matches for " + pattern.fullyQualifiedName)
+				exGen.contribAttribute(it, "categoryId", "org.eclipse.viatra2.emf.incquery.tooling.category")
 			]
 		],
 		exGen.contribExtension(pattern.handlerExtensionId, ECLIPSE_UI_HANDLERS_EXTENSION_POINT) [
@@ -57,9 +58,9 @@ class SampleUIGenerator implements IGenerationFragment {
 		],
 		exGen.contribExtension(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT) [
 			exGen.contribElement(it, "menuContribution") [
-				exGen.contribAttribute(it, "locationURI", "popup:org.eclipse.jdt.ui.PackageExplorer")
+				exGen.contribAttribute(it, "locationURI", "popup:org.eclipse.ui.popup.any")
 				exGen.contribElement(it, "menu") [
-					exGen.contribAttribute(it, "label", "Sample EIQ Test")
+					exGen.contribAttribute(it, "label", "EMF-IncQuery")
 					exGen.contribElement(it, "command") [
 						exGen.contribAttribute(it, "commandId", pattern.commandId)
 						exGen.contribAttribute(it, "style", "push")
