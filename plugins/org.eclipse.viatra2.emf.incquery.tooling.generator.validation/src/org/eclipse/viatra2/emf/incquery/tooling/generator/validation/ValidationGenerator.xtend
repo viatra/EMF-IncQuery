@@ -46,8 +46,8 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
-		if (hasAnnotationLiteral(pattern, annotationLiteral)) {		
-			return newArrayList(
+		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
+			val extensionList = newArrayList(
 				exGen.contribExtension(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT) [
 					exGen.contribElement(it, "constraint") [
 						exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+annotationLiteral)
@@ -55,8 +55,31 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 					]
 				]
 			)
-		}
-		else {
+			val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
+			if (!editorId.nullOrEmpty) {
+				val editorMenuContribution = exGen.contribExtension("", "org.eclipse.ui.menus") [
+					exGen.contribElement(it, "menuContribution") [
+						exGen.contribAttribute(it, "locationURI", String::format("popup:%s", editorId))
+						exGen.contribElement(it, "menu") [
+							exGen.contribAttribute(it, "label", "EMF-IncQuery")
+							exGen.contribElement(it, "command") [
+								exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators")
+								exGen.contribAttribute(it, "style", "push")
+								exGen.contribAttribute(it, "label", "Initialize EMF-IncQuery Validators")
+								exGen.contribElement(it, "visibleWhen") [
+									exGen.contribAttribute(it, "checkEnabled", "false")
+									exGen.contribElement(it, "reference") [
+										exGen.contribAttribute(it, "definitionId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef")	
+									]
+								]
+							]
+						]
+					]	
+				]
+				extensionList.add(editorMenuContribution)
+			}
+			return extensionList
+		} else {
 			return newArrayList()
 		}
 	}

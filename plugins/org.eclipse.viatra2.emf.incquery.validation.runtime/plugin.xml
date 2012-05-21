@@ -24,6 +24,12 @@
                name="severity"
                type="string">
          </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="targetEditorId"
+               type="string">
+         </annotationparameter>
       </annotation>
    </extension>
 
