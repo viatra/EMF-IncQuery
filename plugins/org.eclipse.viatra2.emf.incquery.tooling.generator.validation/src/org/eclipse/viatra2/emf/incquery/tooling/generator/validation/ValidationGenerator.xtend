@@ -24,7 +24,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
-			fsa.generateFile(pattern.packagePath + "/" + pattern.name.toFirstUpper + annotationLiteral + ".java", pattern.patternHandler)
+			fsa.generateFile(pattern.constraintClassJavaFile, pattern.patternHandler)
 		}
 	}
 	
@@ -32,12 +32,17 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		if (!contributedEditorIds.empty) {
 			contributedEditorIds.clear
 		}
-		fsa.deleteFile(pattern.packagePath + "/" + pattern.realPatternName.toFirstUpper + annotationLiteral + ".java")
+		fsa.deleteFile(pattern.constraintClassJavaFile)
 	}
 	
 	override removeExtension(Pattern pattern) {
-		val p = Pair::of(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT)
-		newArrayList(p)
+		val p = Pair::of(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT)
+		val extensionList = newArrayList(p)
+		val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
+		if (!editorId.nullOrEmpty) {
+			extensionList.add(Pair::of(menuContributionId(editorId), "org.eclipse.ui.menus"))
+		}
+		return extensionList
 	}
 	
 	override getProjectDependencies() {
@@ -53,16 +58,16 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
 			val extensionList = newArrayList(
-				exGen.contribExtension(VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), VALIDATION_EXTENSION_POINT) [
+				exGen.contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
 					exGen.contribElement(it, "constraint") [
-						exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+annotationLiteral)
+						exGen.contribAttribute(it, "class", pattern.constraintClassName)
 						exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
 					]
 				]
 			)
 			val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
 			if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
-				val editorMenuContribution = exGen.contribExtension("", "org.eclipse.ui.menus") [
+				val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), "org.eclipse.ui.menus") [
 					exGen.contribElement(it, "menuContribution") [
 						exGen.contribAttribute(it, "locationURI", String::format("popup:%s", editorId))
 						exGen.contribElement(it, "menu") [
@@ -88,6 +93,26 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		} else {
 			return newArrayList()
 		}
+	}
+	
+	def constraintClassName(Pattern pattern) {
+		String::format("%s.%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, annotationLiteral)
+	}
+	
+	def constraintClassPath(Pattern pattern) {
+		String::format("%s/%s%s", pattern.packagePath, pattern.realPatternName.toFirstUpper, annotationLiteral)
+	}
+	
+	def constraintClassJavaFile(Pattern pattern) {
+		pattern.constraintClassPath + ".java"
+	}
+	
+	def constraintContributionId(Pattern pattern) {
+		return VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern)
+	}
+	
+	def menuContributionId(String editorId) {
+		return String::format("validation.menucontribution.%s", editorId)
 	}
 		
 	def getElementOfConstraintAnnotation(Pattern pattern, String elementName) {
