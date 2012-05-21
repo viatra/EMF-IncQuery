@@ -2,7 +2,6 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,12 +37,6 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	private Graph<V> reducedGraph;
 	private IBiDirectionalGraphDataSource<V> reducedGraphIndexer;
 	private ArrayList<ITcObserver<V>> observers;
-	private SCCResult<V> sccres;
-	public static long sumOfUpdateTime = 0;
-	public static long updateCount = 0;
-	public static long sumOfSCCCount = 0;
-	public static long initTime = 0;
-	public static int maxSCCSize = 0;
 		
 	public IncSCCAlg(IGraphDataSource<V> gds) {
 		
@@ -62,22 +55,18 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void init() {
-
-		long tmp = System.nanoTime();
-		
+	private void init() {	
 		SCCResult<V> _sccres = SCC.computeSCC(gds);
 		Set<Set<V>> _sccs = _sccres.getSccs();
-
-		this.sccres = _sccres;
 		
 		for (Set<V> _set : _sccs) {
 			sccs.makeSet((V[]) _set.toArray());
 		}
 
 		//init reduced graph
-		for (V n : sccs.setMap.keySet())
+		for (V n : sccs.setMap.keySet()) {
 			reducedGraph.insertNode(n);
+		}
 
 		for (V source : gds.getAllNodes()) {
 			for (V target : gds.getTargetNodes(source)) {
@@ -90,15 +79,10 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}
 
 		this.countingAlg = new CountingAlg<V>(reducedGraph);
-		
-		initTime = (System.nanoTime() - tmp);
 	}
 	
 	@Override
 	public void edgeInserted(V source, V target) {
-		updateCount++;
-		long startTime = System.nanoTime();
-		
 		V sourceRoot = sccs.find(source);
 		V targetRoot = sccs.find(target);
 		
@@ -234,22 +218,11 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				}
 			}
 		}
-		
-		sumOfUpdateTime += (System.nanoTime() - startTime);
-		
-		if (sccs.setMap.keySet().size() > maxSCCSize) {
-			maxSCCSize = sccs.setMap.keySet().size();
-		}
-		
-		sumOfSCCCount += sccs.setMap.keySet().size();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void edgeDeleted(V source, V target) {		
-		updateCount++;
-		long startTime = System.nanoTime();
-		
 		V sourceRoot = sccs.find(source);
 		V targetRoot = sccs.find(target);
 		
@@ -366,14 +339,6 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				}
 			}
 		}
-		
-		sumOfUpdateTime += (System.nanoTime() - startTime);
-		
-		if (sccs.setMap.keySet().size() > maxSCCSize) {
-			maxSCCSize = sccs.setMap.keySet().size();
-		}
-		
-		sumOfSCCCount += sccs.setMap.keySet().size();
 	}
 
 	@Override
@@ -596,110 +561,6 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 			}
 			//new NotifierThread<V>(sources, targets, o, dir).start();
 		}
-	}
-	
-	@SuppressWarnings("unused")
-	private void printDEBUGInformations() {
-//		System.out.println("eINSERT_TOTAL "+eINSERT_TOTAL);
-//		System.out.println("eINSERT_SAME_SCC "+eINSERT_SAME_SCC);
-//		System.out.println("eINSERT_DIFF_SCC_CYCLE "+eINSERT_DIFF_SCC_CYCLE);
-//		System.out.println("eINSERT_DIFF_SCC_NO_CYCLE "+eINSERT_DIFF_SCC_NO_CYCLE);
-//		
-//		System.out.println("eDELETE_TOTAL "+eDELETE_TOTAL);
-//		System.out.println("eDELETE_DIFF_SCC "+eDELETE_DIFF_SCC);
-//		System.out.println("eDELETE_SAME_SCC_NOT_REACHABLE "+eDELETE_SAME_SCC_NOT_REACHABLE);
-//		System.out.println("eDELETE_SAME_SCC_REACHABLE "+eDELETE_SAME_SCC_REACHABLE);
-		
-		//DEBUG
-		
-		System.out.println("SCC-k száma: "+sccres.getSCCCount());
-//		System.out.println("SCC átlagos csomópont szám: "+_sccres.getAverageNodeCount());
-//		System.out.println("SCC átlagos élszám: "+_sccres.getAverageEdgeCount());
-		System.out.println("Legnagyobb SCC mérete: "+sccres.getBiggestSCCSize());
-//		System.out.println("SCC-k méretének négyzetösszege: "+_sccres.getSumOfSquares());
-		
-		//p1
-//		double p1 = (double) this.sccres.getSumOfSquares() / (double) (gds.getAllNodes().size() * gds.getAllNodes().size());
-//		System.out.println("p1 = "+p1);
-//		
-//		int p2_sum = 0;
-//		int p3_sum = 0;
-//		
-//		for (Set<V> sccsrc : this.sccres.getSccs()) {
-//			for (Set<V> scctrg : this.sccres.getSccs()) {
-//				V srcf = sccsrc.iterator().next();
-//				V srcroot = sccs.find(srcf);
-//				
-//				V trgf = scctrg.iterator().next();
-//				V trgroot = sccs.find(trgf);
-//				
-//				if (!srcroot.equals(trgroot)) {
-//					if (BFS.isReachable(srcroot, trgroot, reducedGraph)) {
-//						p2_sum += sccsrc.size() * scctrg.size();
-//					}
-//					else {
-//						p3_sum += sccsrc.size() * scctrg.size();
-//					}
-//				}
-//			}
-//		}
-//		
-//		double p2 = (double) p2_sum / (double) (gds.getAllNodes().size() * gds.getAllNodes().size());
-//		double p3 = (double) p3_sum / (double) (gds.getAllNodes().size() * gds.getAllNodes().size());
-//		
-//		System.out.println("p2 = "+p2);
-//		System.out.println("p3 = "+p3);
-//		
-//		IBiDirectionalGraphDataSource<V> bGds = new IBiDirectionalWrapper<V>(reducedGraph);
-//		stringBuilder = new StringBuilder();
-//		
-//		for (Set<V> scc : this.sccs.setMap.values()) {
-//			stringBuilder.append(SCC.getDEBUGInformations(scc, gds));
-//			
-//			V firstNode = scc.iterator().next();
-//			
-//			V root = sccs.find(firstNode);
-//			//direct sources
-//			ArrayList<V> srcNodes = bGds.getSourceNodes(root);
-//			stringBuilder.append("\t"+((srcNodes == null) ? 0 : srcNodes.size()));
-//			
-//			//direct sources total size
-//			stringBuilder.append("\t"+((srcNodes == null) ? 0 : getSumOfSizes(srcNodes)));
-//			
-//			//direct targets
-//			stringBuilder.append("\t"+bGds.getTargetNodes(root).size());
-//			
-//			//direct targets total size
-//			stringBuilder.append("\t"+getSumOfSizes(bGds.getTargetNodes(root)));
-//			
-//			//all reachable sources
-//			Set<V> allRS = countingAlg.getAllReachableSources(root);
-//			stringBuilder.append("\t"+((allRS == null) ? 0 : allRS.size()));
-//			
-//			//all reachable sources total size
-//			stringBuilder.append("\t"+((allRS == null) ? 0 : getSumOfSizes(allRS)));
-//			
-//			//all reachable targets
-//			Set<V> allRT = countingAlg.getAllReachableTargets(root);
-//			stringBuilder.append("\t"+((allRT == null) ? 0 : allRT.size()));
-//			
-//			//all reachable targets total size
-//			stringBuilder.append("\t"+((allRT == null) ? 0 : getSumOfSizes(allRT)));
-//			
-//			stringBuilder.append("\n");
-//		}
-		
-	}
-	
-	@SuppressWarnings("unused")
-	private int getSumOfSizes(Collection<V> roots) {
-		int ret = 0;
-		
-		for (V s : roots) {
-			ret += this.sccs.setMap.get(s).size();
-		}
-		
-		return ret;
 	}
 
 	public Set<Tuple<V>> getTcRelation() {
