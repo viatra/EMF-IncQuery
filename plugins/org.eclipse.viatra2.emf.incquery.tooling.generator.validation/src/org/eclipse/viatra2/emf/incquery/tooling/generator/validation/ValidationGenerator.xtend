@@ -12,6 +12,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValue
 import org.eclipse.viatra2.emf.incquery.tooling.generator.databinding.DatabindingGenerator
 import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
+import java.util.Set
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
@@ -19,6 +20,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
 	private static String annotationLiteral = "Constraint"
+	private Set<String> contributedEditorIds = newHashSet(); 
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
@@ -27,6 +29,9 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
+		if (!contributedEditorIds.empty) {
+			contributedEditorIds.clear
+		}
 		fsa.deleteFile(pattern.packagePath + "/" + pattern.realPatternName.toFirstUpper + annotationLiteral + ".java")
 	}
 	
@@ -56,7 +61,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 				]
 			)
 			val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
-			if (!editorId.nullOrEmpty) {
+			if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
 				val editorMenuContribution = exGen.contribExtension("", "org.eclipse.ui.menus") [
 					exGen.contribElement(it, "menuContribution") [
 						exGen.contribAttribute(it, "locationURI", String::format("popup:%s", editorId))
@@ -77,6 +82,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 					]	
 				]
 				extensionList.add(editorMenuContribution)
+				contributedEditorIds.add(editorId)
 			}
 			return extensionList
 		} else {
