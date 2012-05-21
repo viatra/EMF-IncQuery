@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
@@ -61,8 +62,6 @@ import com.google.inject.Injector;
  */
 public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
-//	private Logger logger = Logger.getLogger(getClass());
-	
 	@Inject
 	private Injector injector;
 	
@@ -135,7 +134,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 					return;
 				}
 			} catch (Exception e) {
-				LoggingUtil.error("Exception during Clean Build!", e);
+				IncQueryEngine.getDefaultLogger().logError("Exception during Clean Build!", e);
 				return;
 			}
 		} else {
@@ -153,7 +152,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 						}
 					}
 				} catch (Exception e) {
-					LoggingUtil.error("Exception during normal cleanUp Phase!", e);
+					IncQueryEngine.getDefaultLogger().logError("Exception during normal cleanUp Phase!", e);
 				}
 			}
 		}
@@ -166,7 +165,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		try {
 			buildXmiModel(context, xmiBuildMonitor);	
 		} catch (Exception e) {
-			LoggingUtil.error("Exception during XMI Model Building Phase", e);
+			IncQueryEngine.getDefaultLogger().logError("Exception during XMI Model Building Phase", e);
 		} finally {
 			xmiBuildMonitor.done();
 		}
@@ -175,7 +174,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		try {
 			ensurePhase(project, ensureMonitor);
 		} catch (Exception e) {
-			LoggingUtil.error("Exception during Extension/Package ensure Phase", e);
+			IncQueryEngine.getDefaultLogger().logError("Exception during Extension/Package ensure Phase", e);
 		} finally {
 			ensureMonitor.done();
 		}
@@ -321,7 +320,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				fsa.deleteFile(classPackagePath);				
 			} catch (Exception e) {
 				String msg = String.format("Java file cannot be deleted through IFileSystemAccess: %s", classPackagePath);
-				LoggingUtil.warning(msg, e);
+				IncQueryEngine.getDefaultLogger().logWarning(msg, e);
 				IFile classFile = modelProject.getFile(new Path(outputDir + "/" + classPackagePath));
 				if (classFile != null && classFile.exists()) {
 					classFile.delete(IResource.KEEP_HISTORY, null);
@@ -359,7 +358,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				}				
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing clean for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				LoggingUtil.error(msg, e);
+				IncQueryEngine.getDefaultLogger().logError(msg, e);
 			}
 		}
 	}
@@ -478,7 +477,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				extensionMap.putAll(targetProject, extensionContribution);				
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing generation for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				LoggingUtil.error(msg, e);
+				IncQueryEngine.getDefaultLogger().logError(msg, e);
 			}
 		}
 	}
