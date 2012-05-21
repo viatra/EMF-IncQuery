@@ -179,8 +179,11 @@ public class EMFPatternLanguageJavaValidator extends
 		Pattern pattern = (Pattern) inBody.eContainer();
 
 		for (Variable var : pattern.getParameters()) {
-			classifiedVariableReferencesCollection.put(var,
-					new ClassifiedVariableReferences(var, false));
+			final ClassifiedVariableReferences varRefs = new ClassifiedVariableReferences(var, false);
+			classifiedVariableReferencesCollection.put(var,varRefs);
+			if (var.getType() != null) { // type assertion on parameter
+				varRefs.incrementCounter(VariableReferenceClass.PositiveExistential);
+			}
 		}
 
 		TreeIterator<EObject> iter = inBody.eAllContents();
