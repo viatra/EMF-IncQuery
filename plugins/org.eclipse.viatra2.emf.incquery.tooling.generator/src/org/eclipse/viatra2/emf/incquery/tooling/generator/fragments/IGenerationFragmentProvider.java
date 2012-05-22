@@ -18,4 +18,10 @@ public interface IGenerationFragmentProvider {
 	 * @return a non-null collection of code generation fragments. May be empty.
 	 */
 	public Iterable<IGenerationFragment> getFragmentsForPattern(Pattern pattern);
+	
+	/**
+	 * Collects all {@link IGenerationFragment}.
+	 * @return a non-null collection of code generation fragments.
+	 */
+	public Iterable<IGenerationFragment> getAllFragments();
 }

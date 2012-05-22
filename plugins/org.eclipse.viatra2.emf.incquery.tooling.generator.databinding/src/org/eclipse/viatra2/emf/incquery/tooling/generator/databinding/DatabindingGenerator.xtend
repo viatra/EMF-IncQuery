@@ -34,6 +34,10 @@ class DatabindingGenerator implements IGenerationFragment {
 		newArrayList(Pair::of(DATABINDINGEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT))
 	}
 	
+	override getRemovableExtensions() {
+		newArrayList(DATABINDINGEXTENSION_POINT)
+	}
+	
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.core.databinding.property", 
 		"org.eclipse.core.databinding.observable", 
@@ -64,7 +68,7 @@ class DatabindingGenerator implements IGenerationFragment {
 			newArrayList(
 			exGen.contribExtension(DATABINDINGEXTENSION_PREFIX + CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT) [
 				exGen.contribElement(it, "databinding") [
-					exGen.contribAttribute(it, "class", pattern.packageName+".databinding."+pattern.name.toFirstUpper+"DatabindingAdapter")
+					exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+"DatabindingAdapter")
 					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
 					exGen.contribAttribute(it, "message", message)
 					exGen.contribAttribute(it, "matcherFactoryClass", pattern.packageName+"."+pattern.matcherFactoryClassName)

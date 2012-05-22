@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -119,17 +120,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		// do Clean build cleanUp
 		if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
 			try {
-				ProjectGenerationHelper.removeAllExtension(project, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
-				IProject validationProject = workspaceRoot.getProject(project.getName() + ".validation");
-				IProject databindingProject = workspaceRoot.getProject(project.getName() + ".databinding");
-				if (validationProject.exists()) {
-					ProjectGenerationHelper.removeAllExtension(validationProject, "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");				
-				}
-				if (databindingProject.exists()) {
-					ProjectGenerationHelper.removeAllExtension(databindingProject, "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");				
-				}
+				// clean all fragments
+				cleanAllFragment(project);
+				// clean current model project
+				ProjectGenerationHelper.removeAllExtension(project, Lists.newArrayList(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
 				removeExportedPackages(project);
 				removeXmiModel(project);
+				// invoke clean build on main project src-gen
+				super.build(context, monitor);
 				if (context.getBuildType() == BuildType.CLEAN) {
 					return;
 				}
@@ -180,6 +178,36 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		}
 	}
 	
+	/**
+	 * Performs full Clean on every registered {@link IGenerationFragment}.
+	 * @param project
+	 * @throws CoreException
+	 */
+	private void cleanAllFragment(IProject project) throws CoreException {
+		for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {
+			try {
+				String fragmentProjectName = getFragmentProjectName(project, fragment);
+				IProject fragmentProject = workspaceRoot.getProject(fragmentProjectName);
+				if (fragmentProject.exists()) {
+					// full clean on output directories
+					EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(fragmentProject);
+					for (OutputConfiguration config : fsa.getOutputConfigurations().values()) {
+						IFolder folder = fragmentProject.getFolder(config.getOutputDirectory());
+						if (folder.exists()) {
+							for (IResource resource : folder.members()) {
+								resource.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
+							}
+						}
+					}
+					// clean all removable extensions
+					ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
+				}
+			} catch (Exception e) {
+				IncQueryEngine.getDefaultLogger().logError("Exception during full Clean on " + fragment.getClass().getCanonicalName(), e);
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * @param ensureMonitor

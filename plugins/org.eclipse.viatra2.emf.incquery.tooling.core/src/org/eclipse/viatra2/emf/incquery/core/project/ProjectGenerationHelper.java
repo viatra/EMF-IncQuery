@@ -580,13 +580,13 @@ public abstract class ProjectGenerationHelper {
 
 
 	/**
-	 * Removes all extensions from the project, if the extension's pointId equals the given pointId. 
+	 * Removes all extensions from the project, if the extension's pointId equals to one of the given pointId. 
 	 * @param project
-	 * @param pointId
+	 * @param pointIds
 	 * @throws CoreException 
 	 */
 	@SuppressWarnings("restriction")
-	public static void removeAllExtension(IProject project, String pointId) throws CoreException {
+	public static void removeAllExtension(IProject project, Collection<String> pointIds) throws CoreException {
 		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
@@ -603,7 +603,7 @@ public abstract class ProjectGenerationHelper {
 			IExtensions readExtension = plugin.getExtensions();
 			for (final IPluginExtension extension : readExtension.getExtensions()) {
 				String id = getExtensionId(extension, project);
-				if (!extension.getPoint().equals(pointId)) {
+				if (!pointIds.contains(extension.getPoint())) {
 					// XXX cloning extensions to remove project name prefixes
 					IPluginExtension cloneExtension = fModel.createExtension();
 					cloneExtension.setId(id);
@@ -615,6 +615,11 @@ public abstract class ProjectGenerationHelper {
 					cloneExtension.setInTheModel(true);
 					extensions.add(cloneExtension);
 				}
+			}
+			// add extension points
+			for (IPluginExtensionPoint point : readExtension
+					.getExtensionPoints()) {
+				extensions.add(point);
 			}
 		}
 		fModel.save();

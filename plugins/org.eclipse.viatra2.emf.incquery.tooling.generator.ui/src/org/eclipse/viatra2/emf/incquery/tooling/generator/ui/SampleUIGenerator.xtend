@@ -37,6 +37,10 @@ class SampleUIGenerator implements IGenerationFragment {
 		)
 	}
 	
+	override getRemovableExtensions() {
+		newArrayList(ECLIPSE_UI_COMMANDS_EXTENSION_POINT, ECLIPSE_UI_HANDLERS_EXTENSION_POINT, ECLIPSE_UI_MENUS_EXTENSION_POINT)
+	}
+	
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.core.runtime", "org.eclipse.ui",
 		 "org.eclipse.emf.ecore", "org.eclipse.pde.core", "org.eclipse.core.resources", "org.eclipse.viatra2.emf.incquery.runtime")

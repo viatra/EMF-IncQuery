@@ -54,4 +54,13 @@ public class ExtensionBasedGenerationFragmentProvider implements
 		return fragmentSet;
 	}
 
+	@Override
+	public Iterable<IGenerationFragment> getAllFragments() {
+		if (fragments == null) {
+			initializeFragments();
+		}
+		HashSet<IGenerationFragment> fragmentSet = new HashSet<IGenerationFragment>(fragments.values());
+		return fragmentSet;
+	}
+
 }

@@ -3,6 +3,8 @@
  */
 package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
+import java.util.Collection;
+
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -73,5 +75,14 @@ public interface IGenerationFragment {
 	 * @return
 	 */
 	public Iterable<Pair<String, String>> removeExtension(Pattern pattern);
+	
+	/**
+	 * Returns extension point ids. All extension with one of these ids will be
+	 * removed from the fragments project's plugin.xml. This method only invoked
+	 * during Clean Build.
+	 * 
+	 * @return
+	 */
+	public Collection<String> getRemovableExtensions();
 	
 }

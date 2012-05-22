@@ -19,6 +19,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
+	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
 	private Set<String> contributedEditorIds = newHashSet(); 
 	
@@ -45,6 +46,13 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		return extensionList
 	}
 	
+	override getRemovableExtensions() {
+		if (!contributedEditorIds.empty) {
+			contributedEditorIds.clear
+		}
+		newArrayList(VALIDATION_EXTENSION_POINT, ECLIPSE_MENUS_EXTENSION_POINT)
+	}
+	
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.viatra2.emf.incquery.runtime",
 			"org.eclipse.viatra2.emf.incquery.validation.runtime"
@@ -67,7 +75,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			)
 			val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
 			if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
-				val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), "org.eclipse.ui.menus") [
+				val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
 					exGen.contribElement(it, "menuContribution") [
 						exGen.contribAttribute(it, "locationURI", String::format("popup:%s", editorId))
 						exGen.contribElement(it, "menu") [
