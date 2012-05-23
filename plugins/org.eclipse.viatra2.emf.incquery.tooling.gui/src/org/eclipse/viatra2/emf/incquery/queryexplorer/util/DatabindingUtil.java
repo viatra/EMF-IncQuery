@@ -180,21 +180,22 @@ public class DatabindingUtil {
 		
 		//PatternUI annotation was not found
 		if (pattern != null) {
-			String message = ""; 
+			StringBuilder message = new StringBuilder();
 			if (pattern.getParameters().size() == 0) {
-				message = "(Match)";
+				message.append("(Match)");
 			}
 			else {
 				int i = 0;
 				for (Variable v : pattern.getParameters()) {
 					if (i > 0) {
-						message += ", ";
+						message.append(", ");
 					}
-					message += v.getName()+"=$"+v.getName()+"$";
+					//message += v.getName()+"=$"+v.getName()+"$";
+					message.append(String.format("%s=$%s$", v.getName(), v.getName()));
 					i++;
 				}
 			}
-			return message;
+			return message.toString();
 		}
 		
 		return null;
