@@ -20,6 +20,8 @@ import com.google.common.collect.ImmutableList;
  */
 public class IncQueryProjectSupport {
 
+	
+	private IncQueryProjectSupport() {}
 	/**
 	 * Creates a new IncQuery project: a plug-in project with src and src-gen
 	 * folders and specific dependencies.
@@ -31,8 +33,7 @@ public class IncQueryProjectSupport {
 	 * @throws OperationCanceledException
 	 */
 	public static void createProject(IProjectDescription description,
-			IProject proj, IProgressMonitor monitor) throws CoreException,
-			OperationCanceledException {
+			IProject proj, IProgressMonitor monitor) throws CoreException {
 		ImmutableList<String> dependencies = ImmutableList.of(
 				"org.eclipse.pde.core", "org.eclipse.emf.ecore",
 				"org.eclipse.emf.transaction",
@@ -57,8 +58,9 @@ public class IncQueryProjectSupport {
 					"org.eclipse.xtext.ui.shared.xtextNature" }, monitor);
 		} finally {
 			monitor.done();
-			if (context != null && ref != null)
+			if (context != null && ref != null) {
 				context.ungetService(ref);
+			}
 		}
 	}
 

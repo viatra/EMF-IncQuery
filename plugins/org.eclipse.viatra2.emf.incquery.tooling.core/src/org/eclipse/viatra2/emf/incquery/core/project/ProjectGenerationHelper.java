@@ -88,17 +88,17 @@ public abstract class ProjectGenerationHelper {
 	 * Two source folders: src to be manually written and src-gen to contain
 	 * generated code
 	 */
-	public static final List<String> sourceFolders = ImmutableList.of(
+	public static final List<String> SOURCEFOLDERS = ImmutableList.of(
 			IncQueryNature.SRC_DIR, IncQueryNature.SRCGEN_DIR);
 	/**
 	 * A single source folder named src
 	 */
-	public static final String[] singleSourceFolder = { "src" };
+	public static final String[] SINGLESOURCEFOLDER = { "src" };
 	
 	/**
 	 * Entries that are required to be included in the build for proper deployability 
 	 */
-	public static final IPath[] binIncludes = {new Path("queries/"), new Path("plugin.xml")};
+	public static final IPath[] BININCLUDES = {new Path("queries/"), new Path("plugin.xml")};
 
 	/**
 	 * Adds a collection of natures to the project
@@ -160,47 +160,6 @@ public abstract class ProjectGenerationHelper {
 		}
 	}
 
-	/**
-	 * The method will create a new query definiton file inside the given
-	 * container.
-	 * 
-	 * @param containerPath
-	 *            the full path of the container of the file to be generated
-	 * @param fileName
-	 *            must end with eiq extension
-	 * @param patternName
-	 *            the name of the initial pattern in the generated query
-	 *            definition file
-	 */
-	public static void createEiqFile(String containerPath, String packageName,
-			String fileName, String patternName) {
-
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource containerResource = root.findMember(new Path(containerPath));
-		ResourceSet resourceSet = resourceSetProvider.get(containerResource
-				.getProject());
-
-		URI fileURI = URI.createPlatformResourceURI(containerResource
-				.getFullPath().append(packageName + "/" + fileName).toString(),
-				false);
-		Resource resource = resourceSet.createResource(fileURI);
-
-		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE
-				.createPatternModel();
-		Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
-		pattern.setName(patternName);
-		PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
-		pattern.getBodies().add(body);
-		pm.getPatterns().add(pattern);
-		resource.getContents().add(pm);
-
-		try {
-			resource.save(Collections.EMPTY_MAP);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void initializePluginProject(IProject project,
 			final List<String> dependencies) throws CoreException {
 		initializePluginProject(project, dependencies,
@@ -221,8 +180,9 @@ public abstract class ProjectGenerationHelper {
 			fillProjectMetadata(project, dependencies, service, bundleDesc);
 			bundleDesc.apply(monitor);
 		} finally {
-			if (context != null && ref != null)
+			if (context != null && ref != null) {
 				context.ungetService(ref);
+			}
 		}
 	}
 
@@ -247,17 +207,17 @@ public abstract class ProjectGenerationHelper {
 		bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
 		bundleDesc.setSymbolicName(project.getName());
 		bundleDesc.setExtensionRegistry(true);
-		bundleDesc.setBinIncludes(binIncludes);
+		bundleDesc.setBinIncludes(BININCLUDES);
 		
 		IBundleClasspathEntry[] classpathEntries = Lists.transform(
-				sourceFolders, new Function<String, IBundleClasspathEntry>() {
+				SOURCEFOLDERS, new Function<String, IBundleClasspathEntry>() {
 
 					@Override
 					public IBundleClasspathEntry apply(String input) {
 						return service.newBundleClasspathEntry(new Path(input),
 								null, null);
 					}
-				}).toArray(new IBundleClasspathEntry[sourceFolders.size()]);
+				}).toArray(new IBundleClasspathEntry[SOURCEFOLDERS.size()]);
 		bundleDesc.setBundleClasspath(classpathEntries);
 		bundleDesc
 				.setExecutionEnvironments(new String[] { IncQueryNature.EXECUTION_ENVIRONMENT });
@@ -305,8 +265,9 @@ public abstract class ProjectGenerationHelper {
 			ensureBundleDependencies(service, bundleDesc, dependencies);
 			bundleDesc.apply(monitor);
 		} finally {
-			if (context != null && ref != null)
+			if (context != null && ref != null) {
 				context.ungetService(ref);
+			}
 		}
 	}
 
@@ -574,7 +535,7 @@ public abstract class ProjectGenerationHelper {
 	 * @throws CoreException
 	 */
 	public static void removePackageExports(IProject project,
-			ArrayList<String> dependencies) throws CoreException {
+			List<String> dependencies) throws CoreException {
 		removePackageExports(project, dependencies, new NullProgressMonitor());
 	}
 
