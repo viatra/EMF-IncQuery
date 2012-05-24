@@ -5,18 +5,14 @@ import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 public class Graph2 extends Graph<Integer> {
 
 	private static final long serialVersionUID = -970373253476554580L;
-
-	public Graph2() {
-
-	}
 	
 	public void modify() {
-    	Integer n1 = new Integer(1);
-		Integer n2 = new Integer(2);
-		Integer n3 = new Integer(3);
-		Integer n4 = new Integer(4);
-		Integer n5 = new Integer(5);
-		Integer n6 = new Integer(6);
+		Integer n1 = Integer.valueOf(1);
+		Integer n2 = Integer.valueOf(2);
+		Integer n3 = Integer.valueOf(3);
+		Integer n4 = Integer.valueOf(4);
+		Integer n5 = Integer.valueOf(5);
+		Integer n6 = Integer.valueOf(6);
 			
 		this.insertNode(n1);
 		this.insertNode(n2);
