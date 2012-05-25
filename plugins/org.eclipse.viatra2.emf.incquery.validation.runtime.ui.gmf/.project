@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf</name>
+	<name>org.eclipse.viatra2.emf.incquery.runtime.gmf</name>
 	<comment></comment>
 	<projects>
 	</projects>
