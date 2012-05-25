@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra2.emf.incquery.runtime.gmf.feature"
+      label="EMF-IncQuery Runtime feature"
+      version="0.6.0.qualifier"
+      provider-name="Zoltan Ujhelyi/FTSRG"
+      license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
+
+   <description>
+      EMF-IncQuery GMF extensions. Validator and query browser support for various GMF editors.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.runtime.gmf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
