@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra2.emf.incquery.runtime.gmf.feature"
-      label="EMF-IncQuery Runtime feature"
+      label="EMF-IncQuery GMF Extensions"
       version="0.6.0.qualifier"
       provider-name="Zoltan Ujhelyi/FTSRG"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
