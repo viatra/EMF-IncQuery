@@ -62,8 +62,7 @@ public class ShowLocationHandler extends AbstractHandler {
 			
 			Object[] locationObjects = pm.getLocationObjects();
 			IStructuredSelection preparedSelection = prepareSelection(editorPart, locationObjects);
-			ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
-			selectionProvider.setSelection(preparedSelection);
+			navigateToElements(editorPart, preparedSelection);
 			
 			reflectiveSetSelection(editorPart, preparedSelection); 
 		}
@@ -99,6 +98,11 @@ public class ShowLocationHandler extends AbstractHandler {
 
 		TreeSelection treeSelection = new TreeSelection((TreePath[]) paths.toArray(new TreePath[0]));
 		return treeSelection;
+	}
+	
+	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
+		ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
+		selectionProvider.setSelection(selection);
 	}
 	
 	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
