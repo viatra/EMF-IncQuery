@@ -1,7 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
@@ -19,7 +18,6 @@ public class PatternRegistry {
 	private static PatternRegistry instance;
 	private Map<IFile, PatternModel> registeredPatterModels;
 	private Set<Pattern> activePatterns;
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private Map<String, Pattern> patternNameMap;
 	
 	public static PatternRegistry getInstance() {
@@ -37,17 +35,13 @@ public class PatternRegistry {
 	
 	public void unregisterPattern(String patternFqn) {
 		Pattern pattern = this.patternNameMap.get(patternFqn);
-		
 		if (pattern != null) {
-			List<String> oldValue = getPatternNames();
 			this.patternNameMap.remove(patternFqn);
-			List<String> newValue = getPatternNames();
-			this.propertyChangeSupport.firePropertyChange("patternNames", oldValue, newValue);
+			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(patternFqn);
 		}
 	}
 	
 	public Set<Pattern> registerPatternModel(IFile file, PatternModel pm) {
-		List<String> oldValue = getPatternNames();
 		this.registeredPatterModels.put(file, pm);
 		Set<Pattern> newPatterns = new HashSet<Pattern>();
 		
@@ -57,11 +51,10 @@ public class PatternRegistry {
 				patternNameMap.put(patternFqn, p);
 				newPatterns.add(p);
 				activePatterns.add(p);
+				QueryExplorer.getInstance().getPatternsViewerInput().addComponent(patternFqn);
 			}
 		}
-		
-		List<String> newValue = getPatternNames();
-		this.propertyChangeSupport.firePropertyChange("patternNames", oldValue, newValue);
+
 		return newPatterns;
 	}
 	
@@ -70,7 +63,6 @@ public class PatternRegistry {
 	}
 	
 	public Set<Pattern> unregisterPatternModel(IFile file) {
-		List<String> oldValue = getPatternNames();
 		Set<Pattern> removedPatterns = new HashSet<Pattern>();
 		PatternModel pm = this.registeredPatterModels.remove(file);
 		
@@ -81,11 +73,10 @@ public class PatternRegistry {
 					removedPatterns.add(p);
 				}
 				patternNameMap.remove(patternFqn);
+				QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(patternFqn);
 			}
 		}
 		
-		List<String> newValue = getPatternNames();
-		this.propertyChangeSupport.firePropertyChange("patternNames", oldValue, newValue);
 		return removedPatterns;
 	}
 	
@@ -128,13 +119,5 @@ public class PatternRegistry {
 		List<IFile> files = new ArrayList<IFile>();
 		files.addAll(registeredPatterModels.keySet());
 		return files;
-	}
-
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
-	}
-
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 }
