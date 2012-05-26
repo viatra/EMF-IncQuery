@@ -36,7 +36,7 @@
             project="true">
       </wizard>-->
    </extension>
-   <extension
+   <!-- <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             id="org.eclipse.viatra2.emf.incquery"
@@ -49,7 +49,7 @@
             id="org.eclipse.viatra2.emf.incquery.gui.cheatsheet"
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
-   </extension>
+   </extension> -->
 <extension
          point="org.eclipse.ui.views">
       <category
@@ -143,6 +143,26 @@
       <handler
             class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
+         <activeWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.emf.edit.domain.IEditingDomainProvider">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RegisterPatternFileHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
+         <activeWhen>
+            <with
+                  variable="activeEditorId">
+               <equals
+                     value="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage">
+               </equals>
+            </with>
+         </activeWhen>
       </handler>
       <handler
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler"

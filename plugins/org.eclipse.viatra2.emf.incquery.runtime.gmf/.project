@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf</name>
+	<name>org.eclipse.viatra2.emf.incquery.runtime.gmf</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -22,6 +22,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.sonar.ide.eclipse.core.sonarNature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>

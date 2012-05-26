@@ -33,8 +33,7 @@ public class XmiModelUtil {
 		ResourceSet set = injector.getInstance(ResourceSet.class);
 		ClasspathTypeProviderFactory cptf = injector.getInstance(ClasspathTypeProviderFactory.class);
 		cptf.createTypeProvider(set);
-		Resource globalXmiResource = set.getResource(getGlobalXmiResourceURI(bundleName), true);;
-		return globalXmiResource;
+		return set.getResource(getGlobalXmiResourceURI(bundleName), true);
 	}
 	
 	/**

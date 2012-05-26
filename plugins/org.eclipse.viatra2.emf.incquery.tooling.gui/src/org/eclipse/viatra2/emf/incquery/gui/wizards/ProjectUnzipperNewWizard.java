@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +59,7 @@ import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
  *
  * @see Wizard
  */
-abstract public class ProjectUnzipperNewWizard extends Wizard implements
+public abstract class ProjectUnzipperNewWizard extends Wizard implements
 		INewWizard, IExecutableExtension {
 
 	/**
@@ -378,8 +377,9 @@ abstract public class ProjectUnzipperNewWizard extends Wizard implements
 						char[] buffer = new char[102400];
 						while (true) {
 							int len = is.read(buffer);
-							if (len < 0)
+							if (len < 0) {
 								break;
+							}
 							os.write(buffer, 0, len);
 						}
 					} finally {
@@ -401,8 +401,9 @@ abstract public class ProjectUnzipperNewWizard extends Wizard implements
 						byte[] buffer = new byte[102400];
 						while (true) {
 							int len = is.read(buffer);
-							if (len < 0)
+							if (len < 0) {
 								break;
+							}
 							os.write(buffer, 0, len);
 						}
 					} finally {

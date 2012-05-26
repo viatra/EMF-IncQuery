@@ -347,4 +347,13 @@ public class PatternLanguageJavaValidator extends
 		return builder.toString();
 	}
 
+	@Check
+	public void checkPackageDeclaration(PatternModel model) {
+		String packageName = model.getPackageName();
+		if (!packageName.toLowerCase().equals(packageName)) {
+			error("Only lowercase package names supported",
+					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
+					IssueCodes.LOWERCASE_PATTERN_NAME);
+		}
+	}
 }

@@ -27,7 +27,7 @@ public class ModelEditorPartListener implements IPartListener {
 
 	@Override
 	public void partClosed(IWorkbenchPart part) {
-		if (part != null && part instanceof IEditorPart) {
+		if (part instanceof IEditorPart) {
 			IEditorPart closedEditor = (IEditorPart) part;
 			
 			Set<ConstraintAdapter<IPatternMatch>> adapters = ValidationUtil.getAdapterMap().get(closedEditor);

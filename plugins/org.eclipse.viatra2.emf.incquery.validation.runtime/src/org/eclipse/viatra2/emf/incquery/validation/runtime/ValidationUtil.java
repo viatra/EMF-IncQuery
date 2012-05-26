@@ -23,7 +23,7 @@ public class ValidationUtil {
 	 */
 	private static List<Constraint<IPatternMatch>> constraints;
 
-	
+	private ValidationUtil() {}
 	
 	/**
 	 * Maps the registered validation adapter instances to a given editor
@@ -31,7 +31,7 @@ public class ValidationUtil {
 	 */
 	private static Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = new HashMap<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>>();
 
-	public static ModelEditorPartListener editorPartListener = new ModelEditorPartListener();
+	public static final ModelEditorPartListener editorPartListener = new ModelEditorPartListener();
 	
 	public static Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> getAdapterMap() {
 		return adapterMap;
@@ -58,13 +58,13 @@ public class ValidationUtil {
 
 	public static List<Constraint<IPatternMatch>> getConstraints() {
 		if (constraints == null) {
-			constraints = _getConstraints();
+			constraints = loadConstraintsFromExtensions();
 		}
 		return constraints;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<Constraint<IPatternMatch>> _getConstraints() {
+	private static List<Constraint<IPatternMatch>> loadConstraintsFromExtensions() {
 		List<Constraint<IPatternMatch>> result = new ArrayList<Constraint<IPatternMatch>>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
