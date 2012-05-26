@@ -169,17 +169,13 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 	
 	private IStatus validatePackageName(String text) {
 		if (text == null || text.isEmpty()) {
-			return new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, "The use of default package is discouraged.");
+			return new Status(WARNING, IncQueryGUIPlugin.PLUGIN_ID, "The use of default package is discouraged.");
 		}
 		IJavaProject project= getJavaProject();
 		if (project == null || !project.exists()) {
-			 return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
+			return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
 		}
-		IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-		if (status.getSeverity() != ERROR && !text.toLowerCase().equals(text)) {
-			return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Only lower case package names supported.");
-		}
-		return status;
+		return JavaConventionsUtil.validatePackageName(text, project);
 	}
 
 	public String getFileName() {
