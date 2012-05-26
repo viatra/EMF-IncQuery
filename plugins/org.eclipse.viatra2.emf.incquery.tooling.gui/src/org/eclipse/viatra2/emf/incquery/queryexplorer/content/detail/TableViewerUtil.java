@@ -60,8 +60,11 @@ public class TableViewerUtil {
 		clearTableViewerColumns(viewer);
 		String[] titles = { "Parameter", "Value" };
 		createColumns(viewer, titles);
+		viewer.setUseHashlookup(true);
+		viewer.setColumnProperties(titles);
 		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.setLabelProvider(new DetailElementLabelProvider());
+		viewer.setCellModifier(new DetailElementCellModifier());
 		
 		DatabindingAdapter<IPatternMatch> databindableMatcher = 
 				DatabindingUtil.getDatabindingAdapter(match.getPatternMatch().patternName(), match.getParent().isGenerated());
