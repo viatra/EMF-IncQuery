@@ -12,7 +12,8 @@ public class DoubleClickListener implements IDoubleClickListener {
 	public void doubleClick(DoubleClickEvent event) {
 		ISelection selection = event.getSelection();
 		if (selection != null && selection instanceof TreeSelection) {
-			ShowLocationHandler.showLocation((TreeSelection) selection);
+			// FIXME how to invoke GMF?
+			new ShowLocationHandler().showLocation((TreeSelection) selection);
 		}
 	}
 

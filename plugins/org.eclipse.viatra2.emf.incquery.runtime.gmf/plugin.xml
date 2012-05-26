@@ -45,6 +45,30 @@
             </with>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.GMFShowLocationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
+         <activeWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.GMFUnloadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel">
+         <activeWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
 
 </plugin>

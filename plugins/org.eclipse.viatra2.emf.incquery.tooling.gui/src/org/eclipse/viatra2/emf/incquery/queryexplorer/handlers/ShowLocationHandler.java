@@ -28,7 +28,7 @@ public class ShowLocationHandler extends AbstractHandler {
 		return null;
 	}
 	
-	public static void showLocation(TreeSelection selection) {
+	public void showLocation(TreeSelection selection) {
 		Object obj = selection.getFirstElement();
 		
 		if (obj != null && obj instanceof ObservablePatternMatch) {
@@ -36,38 +36,51 @@ public class ShowLocationHandler extends AbstractHandler {
 			
 			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
 			Object[] locationObjects = pm.getLocationObjects();
-			TreePath[] paths = new TreePath[locationObjects.length];
-			int i = 0;
-			
-			for (Object o: locationObjects) {
-				TreePath path = createTreePath((EObject) o);
-				paths[i] = path;
-				i++;
-			}
-
-			TreeSelection treeSelection = new TreeSelection(paths);
+			IStructuredSelection preparedSelection = prepareSelection(editorPart, locationObjects);
 			ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
-			selectionProvider.setSelection(treeSelection);
+			selectionProvider.setSelection(preparedSelection);
 			
 			//bring editor part to top
 			editorPart.getSite().getPage().bringToTop(editorPart);
 			
-			//Reflection API is used here!!!
-			try {
-				Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
-				m.invoke(editorPart, treeSelection.toList());
-			} 
-			catch (Exception e) {
-				System.out.println(e.getMessage());
-			} 
+			reflectiveSetSelection(editorPart, preparedSelection); 
 		}
 	}
+
+	private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
+		//Reflection API is used here!!!
+		try {
+			Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
+			m.invoke(editorPart, preparedSelection.toList());
+		} 
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	/**
+	 * @param editorPart
+	 * @param locationObjects
+	 * @return
+	 */
+	private TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
+		List<TreePath> paths = new ArrayList<TreePath>(); //[locationObjects.length]
+		for (Object o: locationObjects) {
+			TreePath path = createTreePath(editorPart, (EObject) o);
+			if(path != null) {
+				paths.add(path);
+			}
+		}
+
+		TreeSelection treeSelection = new TreeSelection((TreePath[]) paths.toArray(new TreePath[0]));
+		return treeSelection;
+	}
 	
-	private static TreePath createTreePath(EObject obj) {
+	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
 		List<Object> nodes = new ArrayList<Object>();
 		nodes.add(obj);
-		EObject tmp = obj.eContainer();
-		
+		EObject tmp = ((EObject) obj).eContainer();
+			
 		while (tmp != null) {
 			nodes.add(0, tmp);
 			tmp = tmp.eContainer();
@@ -75,4 +88,5 @@ public class ShowLocationHandler extends AbstractHandler {
 		
 		return new TreePath(nodes.toArray());
 	}
+	
 }
