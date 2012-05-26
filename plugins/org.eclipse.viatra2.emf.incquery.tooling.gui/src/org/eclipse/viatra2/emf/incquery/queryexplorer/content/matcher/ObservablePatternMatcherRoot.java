@@ -104,7 +104,7 @@ public class ObservablePatternMatcherRoot {
 		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
 	}
 	
-	public void unregisterPattern(String patternFqn) {
-		removeMatcher(patternFqn);
+	public void unregisterPattern(Pattern pattern) {
+		removeMatcher(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 	}
 }
