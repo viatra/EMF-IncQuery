@@ -21,8 +21,7 @@ public class RegisterPatternFileHandler extends AbstractHandler {
 			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event)
 					.getAdapter(IFile.class);
 			if (file != null) {
-				RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(
-						file);
+				RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
 				injector.injectMembers(registrator);
 				registrator.run();
 			}

@@ -34,14 +34,8 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 				unregisterPattern(((PatternLeaf) leaf).getFullPatternNamePrefix());
 			}
 			
-			//if there are no more children of the composite element then it should be also removed
-			if (composite.getChildren().size() == 0) {
-				QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(composite.getFullPatternNamePrefix());
-				QueryExplorer.getInstance().getPatternsViewer().refresh();
-			}
-			else {
-				QueryExplorer.getInstance().getPatternsViewer().refresh(composite);
-			}
+			QueryExplorer.getInstance().getPatternsViewerInput().purge();
+			QueryExplorer.getInstance().getPatternsViewer().refresh();
 		}
 		
 		return null;
