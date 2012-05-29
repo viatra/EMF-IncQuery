@@ -316,7 +316,7 @@ public class EMFPatternLanguageJavaValidator extends
 		if (value.eContainer() instanceof PathExpressionHead) {
 			// If container is PathExpression check for enum type assignability
 			EEnum enumType = value.getEnumeration();
-			if (enumType == null) {
+			if (enumType == null && value.getLiteral() != null) {
 				enumType = value.getLiteral().getEEnum();
 			}
 			PathExpressionHead expression = (PathExpressionHead) value
@@ -324,7 +324,7 @@ public class EMFPatternLanguageJavaValidator extends
 			try {
 				EEnum expectedType = EMFPatternLanguageScopeHelper
 						.calculateEnumerationType(expression);
-				if (!expectedType.equals(enumType)) {
+				if (enumType != null && !expectedType.equals(enumType)) {
 					error(String
 							.format("Inconsistent enumeration types: found %s but expected %s",
 									enumType.getName(), expectedType.getName()),

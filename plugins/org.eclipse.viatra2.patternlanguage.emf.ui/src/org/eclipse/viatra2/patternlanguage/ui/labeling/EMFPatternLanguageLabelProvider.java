@@ -162,6 +162,9 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
 			return "\"" + ((StringValue) ref).getValue() + "\"";
 		} else if (ref instanceof EnumValue) {
 			EnumValue enumVal = (EnumValue) ref;
+			if (enumVal.getLiteral() == null || enumVal.getLiteral().getLiteral() == null) {
+				return "";
+			}
 			String enumName;
 			if (enumVal.getEnumeration() != null) {
 				enumName = enumVal.getEnumeration().getName();
