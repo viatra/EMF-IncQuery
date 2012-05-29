@@ -45,13 +45,15 @@ public class PatternRegistry {
 		this.registeredPatterModels.put(file, pm);
 		Set<Pattern> newPatterns = new HashSet<Pattern>();
 		
-		for (Pattern p : pm.getPatterns()) {
-			if (!DatabindingUtil.hasOffAnnotation(p)) {
-				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
-				patternNameMap.put(patternFqn, p);
-				newPatterns.add(p);
-				activePatterns.add(p);
-				QueryExplorer.getInstance().getPatternsViewerInput().addComponent(patternFqn);
+		if (pm != null) {
+			for (Pattern p : pm.getPatterns()) {
+				if (!DatabindingUtil.hasOffAnnotation(p)) {
+					String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
+					patternNameMap.put(patternFqn, p);
+					newPatterns.add(p);
+					activePatterns.add(p);
+					QueryExplorer.getInstance().getPatternsViewerInput().addComponent(patternFqn);
+				}
 			}
 		}
 
