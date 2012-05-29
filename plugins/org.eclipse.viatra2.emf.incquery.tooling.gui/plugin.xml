@@ -133,6 +133,21 @@
             </iterate>
          </with>
       </definition>
+      <definition
+            id="org.eclipse.viatra2.patternlanguage.emf.patterncomponent">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent">
+               </instanceof>
+            </iterate>
+            <count
+                  value="1">
+            </count>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -264,6 +279,7 @@
             locationURI="popup:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu">
          <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern"
+               icon="icons/unload.gif"
                label="Unregister pattern"
                style="push">
          </command>

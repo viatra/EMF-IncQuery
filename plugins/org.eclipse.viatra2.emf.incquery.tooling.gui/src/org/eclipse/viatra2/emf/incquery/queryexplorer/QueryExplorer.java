@@ -133,7 +133,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
 		
 		//patternsViewer configuration		
-		patternsViewer = new CheckboxTreeViewer(leftFlyoutControlComposite.getFlyoutParent(), SWT.CHECK | SWT.BORDER);
+		patternsViewer = new CheckboxTreeViewer(leftFlyoutControlComposite.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		patternsViewer.addCheckStateListener(new CheckStateListener());
 		patternsViewer.setContentProvider(new PatternsViewerContentProvider());
 		patternsViewer.setLabelProvider(new PatternsViewerLabelProvider());

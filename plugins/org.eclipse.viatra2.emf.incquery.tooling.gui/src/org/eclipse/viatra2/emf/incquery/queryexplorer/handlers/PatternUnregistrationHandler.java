@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
@@ -13,34 +13,44 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
+/**
+ * Handler used for pattern unregistration (called from Pattern Registry). 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class PatternUnregistrationHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IStructuredSelection selection = (IStructuredSelection) 
-				QueryExplorer.getInstance().getPatternsViewer().getSelection();
-		Object element = selection.getFirstElement();
+		TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
 		
-		if (element instanceof PatternLeaf) {
-			PatternLeaf leaf = (PatternLeaf) element;
-			PatternComposite composite = (PatternComposite) leaf.getParent();
-			unregisterPattern(leaf.getFullPatternNamePrefix());
-			QueryExplorer.getInstance().getPatternsViewer().refresh(composite);
-		}
-		else {
-			PatternComposite composite = (PatternComposite) element;
-			List<PatternLeaf> leaves = composite.getLeaves();
-			for (PatternLeaf leaf : leaves) {
-				unregisterPattern(((PatternLeaf) leaf).getFullPatternNamePrefix());
+		for (Object element : selection.toArray()) {	
+			if (element instanceof PatternLeaf) {
+				PatternLeaf leaf = (PatternLeaf) element;
+				PatternComposite composite = (PatternComposite) leaf.getParent();
+				unregisterPattern(leaf.getFullPatternNamePrefix());
+				QueryExplorer.getInstance().getPatternsViewer().refresh(composite);
 			}
-			
-			QueryExplorer.getInstance().getPatternsViewerInput().purge();
-			QueryExplorer.getInstance().getPatternsViewer().refresh();
+			else {
+				PatternComposite composite = (PatternComposite) element;
+				List<PatternLeaf> leaves = composite.getLeaves();
+				for (PatternLeaf leaf : leaves) {
+					unregisterPattern(((PatternLeaf) leaf).getFullPatternNamePrefix());
+				}
+				
+				QueryExplorer.getInstance().getPatternsViewerInput().purge();
+				QueryExplorer.getInstance().getPatternsViewer().refresh();
+			}
 		}
-		
 		return null;
 	}
 	
+	/**
+	 * Unregisters the given pattern both from the QueryExplorer and the Pattern Registry.
+	 * 
+	 * @param patternFqn the fully qualified name of the pattern
+	 */
 	private void unregisterPattern(String patternFqn) {
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
 		PatternRegistry.getInstance().unregisterPattern(patternFqn);
