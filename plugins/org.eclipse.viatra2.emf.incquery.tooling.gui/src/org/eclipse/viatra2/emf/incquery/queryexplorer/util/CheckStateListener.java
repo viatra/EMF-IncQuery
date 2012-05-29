@@ -41,24 +41,15 @@ public class CheckStateListener implements ICheckStateListener {
 		String patternFqn = leaf.getFullPatternNamePrefix();
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
 		if (event.getChecked()) {
-			register(pattern);
+			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+				root.registerPattern(pattern);
+			}
 			PatternRegistry.getInstance().addActivePattern(pattern);
 		} else {
-			unregister(pattern);
+			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+				root.unregisterPattern(pattern);
+			}
 			PatternRegistry.getInstance().removeActivePattern(pattern);
 		}
 	}
-	
-	private void unregister(Pattern pattern) {
-		for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
-			root.unregisterPattern(pattern);
-		}
-	}
-	
-	private void register(Pattern pattern) {
-		for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
-			root.registerPattern(pattern);
-		}
-	}
-
 }

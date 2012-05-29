@@ -1,5 +1,11 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
+/**
+ * This class represents a leaf element inside a pattern hierarchy.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class PatternLeaf implements PatternComponent {
 
 	private String patternNameFragment;

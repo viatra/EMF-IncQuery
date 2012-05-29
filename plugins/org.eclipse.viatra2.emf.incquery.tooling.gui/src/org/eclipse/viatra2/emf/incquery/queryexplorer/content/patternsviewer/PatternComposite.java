@@ -7,6 +7,12 @@ import java.util.Map;
 
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
+/**
+ * This class represents a composite element inside a pattern hierarchy.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class PatternComposite implements PatternComponent {
 
 	private String patternNameFragment;
@@ -85,6 +91,11 @@ public class PatternComposite implements PatternComponent {
 		}
 	}
 	
+	/**
+	 * Returns ALL children elements under the given composite. 
+	 * 
+	 * @return
+	 */
 	public List<PatternComponent> getAllChildren() {
 		List<PatternComponent> result = new ArrayList<PatternComponent>(this.children);
 		
@@ -127,6 +138,11 @@ public class PatternComposite implements PatternComponent {
 		}
 	}
 	
+	/**
+	 * Returns the list of direct children element under the composite.
+	 * 
+	 * @return the list of children elements
+	 */
 	public List<PatternComponent> getChildren() {
 		return children;
 	}
