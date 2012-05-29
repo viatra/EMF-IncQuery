@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 public class DoubleClickListener implements IDoubleClickListener {
 
@@ -17,22 +18,17 @@ public class DoubleClickListener implements IDoubleClickListener {
 	public void doubleClick(DoubleClickEvent event) {
 		ISelection selection = event.getSelection();
 		if (selection != null && selection instanceof TreeSelection) {
-			// FIXME how to invoke GMF?
 			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(IHandlerService.class);
 			try {
 				handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
 			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
 			} catch (NotDefinedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
 			} catch (NotEnabledException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
 			} catch (NotHandledException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
 			}
 			//new ShowLocationHandler().showLocation((TreeSelection) selection);
 		}
