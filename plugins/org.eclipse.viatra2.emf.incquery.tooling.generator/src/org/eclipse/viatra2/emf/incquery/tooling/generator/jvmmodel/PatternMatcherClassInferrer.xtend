@@ -58,12 +58,12 @@ class PatternMatcherClassInferrer {
    			it.simpleName = pattern.matcherClassName
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorNotifier.toString
-			it.parameters += pattern.toParameter("notifier", pattern.newTypeRef(typeof (Notifier)))
+			it.parameters += pattern.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
 			it.body = [
 				append('''this(''')
 				referClass(pattern, typeof(EngineManager))
-				append('''.getInstance().getIncQueryEngine(notifier));''')
+				append('''.getInstance().getIncQueryEngine(emfRoot));''')
 			]
 		]
 		
