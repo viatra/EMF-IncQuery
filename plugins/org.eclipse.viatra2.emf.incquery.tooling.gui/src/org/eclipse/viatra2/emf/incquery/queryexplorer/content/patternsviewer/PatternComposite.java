@@ -32,11 +32,13 @@ public class PatternComposite implements PatternComponent {
 	 *  
 	 * @param patternFragment the pattern name fragment
 	 */
-	public void addComponent(String patternFragment) {
+	public PatternComponent addComponent(String patternFragment) {
 		String[] tokens = patternFragment.split("\\.");
 		
 		if (tokens.length == 1) {
-			children.add(new PatternLeaf(patternFragment, this));
+			PatternLeaf leaf = new PatternLeaf(patternFragment, this);
+			children.add(leaf);
+			return leaf;
 		}
 		else {
 			String fragment = tokens[0];
@@ -48,7 +50,7 @@ public class PatternComposite implements PatternComponent {
 				fragmentMap.put(fragment, composite);
 				children.add(composite);
 			}
-			composite.addComponent(patternFragment.substring(fragment.length()+1));
+			return composite.addComponent(patternFragment.substring(fragment.length()+1));
 		}
 	}
 	
@@ -106,6 +108,23 @@ public class PatternComposite implements PatternComponent {
 		}
 		
 		return result;
+	}
+	
+	public void propagateSelectionToBottom() {
+		boolean allSelected = true;
+		for (PatternComponent component : children) {
+			if (!QueryExplorer.getInstance().getPatternsViewer().getChecked(component)) {
+				allSelected = false;
+			}
+			
+			if (component instanceof PatternComposite) {
+				((PatternComposite) component).propagateSelectionToBottom();
+			}
+		}
+		
+		if (allSelected) {
+			QueryExplorer.getInstance().getPatternsViewer().setChecked(this, true);
+		}
 	}
 	
 	/**

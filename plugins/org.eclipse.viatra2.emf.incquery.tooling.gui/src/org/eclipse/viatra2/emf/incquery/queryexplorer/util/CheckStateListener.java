@@ -19,22 +19,29 @@ public class CheckStateListener implements ICheckStateListener {
 			processLeaf((PatternLeaf) element, event);
 		}
 		else if (element instanceof PatternComposite){
-			PatternComposite composite = (PatternComposite) element;
-			for (PatternLeaf leaf : composite.getLeaves()) {
-				processLeaf(leaf, event);
+			processComposite((PatternComposite) element, event);
+		}
+		
+		if (event.getChecked()) {
+			QueryExplorer.getInstance().getPatternsViewerInput().propagateSelectionToBottom();
+		}
+	}
+	
+	private void processComposite(PatternComposite composite, CheckStateChangedEvent event) {
+		for (PatternLeaf leaf : composite.getLeaves()) {
+			processLeaf(leaf, event);
+		}
+		
+		if (event.getChecked()) {
+			for (PatternComponent component : composite.getAllChildren()) {
+				QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
 			}
-			
-			if (event.getChecked()) {
-				for (PatternComponent component : composite.getAllChildren()) {
-					QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
-				}
+		}
+		else {
+			for (PatternComponent component : composite.getAllChildren()) {
+				QueryExplorer.getInstance().getPatternsViewer().setChecked(component, false);
 			}
-			else {
-				for (PatternComponent component : composite.getAllChildren()) {
-					QueryExplorer.getInstance().getPatternsViewer().setChecked(component, false);
-				}
-			}
-		}		
+		}
 	}
 	
 	private void processLeaf(PatternLeaf leaf, CheckStateChangedEvent event) {
