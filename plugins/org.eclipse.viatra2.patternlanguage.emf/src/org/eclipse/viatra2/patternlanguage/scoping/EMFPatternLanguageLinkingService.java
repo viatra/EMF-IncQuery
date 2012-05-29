@@ -66,7 +66,10 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 					return Collections.emptyList();
 				}
 				String typename = ((ILeafNode)node).getText();
-				EEnumLiteral literal = type.getEEnumLiteral(typename);
+				EEnumLiteral literal = type.getEEnumLiteralByLiteral(typename);
+				if (literal == null) {
+					literal = type.getEEnumLiteral(typename);
+				}
 				if (literal != null) {
 					return Collections.<EObject>singletonList(literal);
 				} else {

@@ -51,6 +51,7 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 import org.eclipse.xtext.util.PolymorphicDispatcher;
+import org.eclipse.xtext.util.SimpleAttributeResolver;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -188,7 +189,12 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	
 	private IScope calculateEnumLiteralScope(EEnum enumeration) {
 		EList<EEnumLiteral> literals = enumeration.getELiterals();
-		return Scopes.scopeFor(literals);
+		return Scopes.scopeFor(literals, new Function<EEnumLiteral, QualifiedName>() {
+			public QualifiedName apply(EEnumLiteral literal) {
+				QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(literal.getLiteral());
+				return qualifiedName;
+			}
+		}, IScope.NULLSCOPE);
 	}
 	
 	private ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();
