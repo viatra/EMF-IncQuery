@@ -316,6 +316,9 @@ public class EMFPatternLanguageJavaValidator extends
 		if (value.eContainer() instanceof PathExpressionHead) {
 			// If container is PathExpression check for enum type assignability
 			EEnum enumType = value.getEnumeration();
+			if (enumType == null) {
+				enumType = value.getLiteral().getEEnum();
+			}
 			PathExpressionHead expression = (PathExpressionHead) value
 					.eContainer();
 			try {
