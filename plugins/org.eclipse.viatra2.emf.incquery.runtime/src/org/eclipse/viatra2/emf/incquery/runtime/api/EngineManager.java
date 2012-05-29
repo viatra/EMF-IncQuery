@@ -42,12 +42,12 @@ public class EngineManager {
 	}
 	
 	/**
-	 * Creates an EMF-IncQuery engine at an EMF root or retrieves an already existing one.
+	 * Creates an EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet) or retrieves an already existing one. 
 	 * 
-	 * Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the resourceSet but are referenced. 
-	 * 	This is mainly to support nsURI-based instance-level references to registered EPackages.
+	 * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition). 
+	 * The match set of any patterns will be incrementally refreshed upon updates from this scope.
 	 * 
-	 * @param emfRoot the EMF root where this engine should operate
+	 * @param emfRoot the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or ResourceSet.
 	 * @param reteThreads experimental feature; 0 is recommended
 	 * @return a new or previously existing engine
 	 * @throws IncQueryRuntimeException

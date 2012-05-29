@@ -41,13 +41,12 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	/**
 	 * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
 	 * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon updates from the given EMF root and below.
 	 * 
-	 * <p>Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the resourceSet but are referenced. 
-	 * 	This is mainly to support nsURI-based instance-level references to registered EPackages.
+	 * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
+	 * The match set will be incrementally refreshed upon updates from this scope.
 	 * 
 	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
-	 * @param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
+	 * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
 	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
 	 */
 	public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) 
