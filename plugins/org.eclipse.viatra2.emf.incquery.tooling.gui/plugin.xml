@@ -134,6 +134,21 @@
          </with>
       </definition>
       <definition
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.matcher">
+         <with
+               variable="selection">
+            <count
+                  value="1">
+            </count>
+            <iterate
+                  ifEmpty="false">
+               <instanceof
+                     value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+      <definition
             id="org.eclipse.viatra2.patternlanguage.emf.patterncomponent">
          <with
                variable="selection">
@@ -180,7 +195,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowMatchLocationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
       </handler>
       <handler
@@ -235,9 +250,14 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.match">
-               </reference>
+                  <or>
+                    <reference
+                       definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.match">
+                    </reference>
+                    <reference
+                       definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.matcher">
+                    </reference>
+                  </or>
             </visibleWhen>
          </command>
          <command

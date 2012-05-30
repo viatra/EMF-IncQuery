@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -121,5 +123,17 @@ public class PatternRegistry {
 		List<IFile> files = new ArrayList<IFile>();
 		files.addAll(registeredPatterModels.keySet());
 		return files;
+	}
+	
+	public IFile getFileForPattern(Pattern pattern) {
+		if(pattern != null && patternNameMap.containsValue(pattern)) {
+			for (Entry<IFile, PatternModel> entry : registeredPatterModels.entrySet()) {
+				EList<Pattern> patterns = entry.getValue().getPatterns();
+				if(patterns.size() > 0 && patterns.contains(pattern)) {
+					return entry.getKey();
+				}
+			}
+		}
+		return null;
 	}
 }

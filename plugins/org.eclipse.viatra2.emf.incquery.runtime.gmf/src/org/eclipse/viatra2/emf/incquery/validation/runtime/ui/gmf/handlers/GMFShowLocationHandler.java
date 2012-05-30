@@ -11,9 +11,9 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowMatchLocationHandler;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler;
 
-public class GMFShowLocationHandler extends ShowMatchLocationHandler {
+public class GMFShowLocationHandler extends ShowLocationHandler {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler#createTreePath(java.lang.Object)
@@ -22,18 +22,12 @@ public class GMFShowLocationHandler extends ShowMatchLocationHandler {
 	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
 		if (editor instanceof DiagramDocumentEditor) {
 			DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editor;
-			//IDiagramGraphicalViewer viewer = providerEditor.getDiagramGraphicalViewer();
 			EditPart epBegin = providerEditor.getDiagramEditPart().getPrimaryChildEditPart();
 			if(epBegin instanceof GraphicalEditPart) {
 				List<Object> nodes = new ArrayList<Object>();
 				epBegin = ((GraphicalEditPart) epBegin).findEditPart(epBegin.getRoot() , obj);
 				if(epBegin != null) {
 					nodes.add(epBegin);
-					//EditPart part = ((EditPart) epBegin).getParent();
-					/*while(part != null && part instanceof GraphicalEditPart) {
-						nodes.add(part);
-						part = part.getParent();
-					}*/
 					return new TreePath(nodes.toArray());
 				}
 			}

@@ -8,17 +8,24 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
 
-public class ShowMatchLocationHandler extends AbstractHandler {
+@SuppressWarnings("restriction")
+public class ShowLocationHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -32,27 +39,10 @@ public class ShowMatchLocationHandler extends AbstractHandler {
 	public void showLocation(TreeSelection selection) {
 		Object obj = selection.getFirstElement();
 		
-		if (obj != null && obj instanceof ObservablePatternMatch) {
+		if (obj instanceof ObservablePatternMatch) {
 			ObservablePatternMatch pm = (ObservablePatternMatch) obj;
 			
 			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
-			/*if(editorPart.getSite().getPage().getActiveEditor() != editorPart) {
-				//bring editor part to top
-				IHandlerService handlerService = (IHandlerService) editorPart.getSite().getService(IHandlerService.class);
-				try {
-					handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
-					return;
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
-				} catch (NotDefinedException e) {
-					IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
-				} catch (NotEnabledException e) {
-					IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
-				} catch (NotHandledException e) {
-					IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
-				}
-			}*/
 			
 			Object[] locationObjects = pm.getLocationObjects();
 			IStructuredSelection preparedSelection = prepareSelection(editorPart, locationObjects);
@@ -61,7 +51,27 @@ public class ShowMatchLocationHandler extends AbstractHandler {
 			editorPart.getSite().getPage().bringToTop(editorPart);
 			
 			reflectiveSetSelection(editorPart, preparedSelection); 
+		} else if(obj instanceof ObservablePatternMatcher) {
+			ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
+			IFile file = PatternRegistry.getInstance().getFileForPattern(matcher.getMatcher().getPattern());
+			
+			IEditorPart editorPart = matcher.getParent().getEditorPart();
+			for (IEditorReference ref : editorPart.getSite().getPage().getEditorReferences()) {
+				String id = ref.getId();
+				IEditorPart editor = ref.getEditor(true);
+				if(id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
+					if (editor instanceof XbaseEditor) {
+						
+						XbaseEditor providerEditor = (XbaseEditor) editor;
+						IXtextDocument doc = providerEditor.getDocument();
+						//ResourceSet resourceSet = doc.resource
+						System.out.println("now to find pattern in model and navigate");
+					}
+				}
+			}
+			
 		}
+		
 	}
 
 	private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
@@ -86,14 +96,15 @@ public class ShowMatchLocationHandler extends AbstractHandler {
 	private TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
 		List<TreePath> paths = new ArrayList<TreePath>(); //[locationObjects.length]
 		for (Object o: locationObjects) {
-			TreePath path = createTreePath(editorPart, (EObject) o);
-			if(path != null) {
-				paths.add(path);
+			if(o instanceof EObject) {
+				TreePath path = createTreePath(editorPart, (EObject) o);
+				if(path != null) {
+					paths.add(path);
+				}
 			}
 		}
 
-		TreeSelection treeSelection = new TreeSelection((TreePath[]) paths.toArray(new TreePath[0]));
-		return treeSelection;
+		return new TreeSelection((TreePath[]) paths.toArray(new TreePath[1]));
 	}
 	
 	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
