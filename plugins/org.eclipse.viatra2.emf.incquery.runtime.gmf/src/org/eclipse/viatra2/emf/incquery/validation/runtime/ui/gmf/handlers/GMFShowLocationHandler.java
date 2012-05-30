@@ -11,9 +11,9 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowMatchLocationHandler;
 
-public class GMFShowLocationHandler extends ShowLocationHandler {
+public class GMFShowLocationHandler extends ShowMatchLocationHandler {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler#createTreePath(java.lang.Object)

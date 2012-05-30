@@ -30,7 +30,6 @@ public class DoubleClickListener implements IDoubleClickListener {
 			} catch (NotHandledException e) {
 				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
 			}
-			//new ShowLocationHandler().showLocation((TreeSelection) selection);
 		}
 	}
 

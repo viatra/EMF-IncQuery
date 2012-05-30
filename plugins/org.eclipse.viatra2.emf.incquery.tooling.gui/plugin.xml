@@ -180,7 +180,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowMatchLocationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
       </handler>
       <handler

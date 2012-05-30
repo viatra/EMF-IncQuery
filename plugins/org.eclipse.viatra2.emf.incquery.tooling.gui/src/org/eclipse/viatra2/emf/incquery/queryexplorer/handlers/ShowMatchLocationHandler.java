@@ -8,9 +8,6 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -18,12 +15,10 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CommandConstants;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
-public class ShowLocationHandler extends AbstractHandler {
+public class ShowMatchLocationHandler extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -41,9 +36,8 @@ public class ShowLocationHandler extends AbstractHandler {
 			ObservablePatternMatch pm = (ObservablePatternMatch) obj;
 			
 			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
-			if(editorPart.getSite().getPage().getActiveEditor() != editorPart) {
+			/*if(editorPart.getSite().getPage().getActiveEditor() != editorPart) {
 				//bring editor part to top
-				editorPart.getSite().getPage().bringToTop(editorPart);
 				IHandlerService handlerService = (IHandlerService) editorPart.getSite().getService(IHandlerService.class);
 				try {
 					handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
@@ -58,11 +52,13 @@ public class ShowLocationHandler extends AbstractHandler {
 				} catch (NotHandledException e) {
 					IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
 				}
-			}
+			}*/
 			
 			Object[] locationObjects = pm.getLocationObjects();
 			IStructuredSelection preparedSelection = prepareSelection(editorPart, locationObjects);
 			navigateToElements(editorPart, preparedSelection);
+
+			editorPart.getSite().getPage().bringToTop(editorPart);
 			
 			reflectiveSetSelection(editorPart, preparedSelection); 
 		}
