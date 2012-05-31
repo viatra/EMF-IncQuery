@@ -8,17 +8,16 @@ import org.eclipse.core.resources.IResource
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.emf.ecore.xmi.XMLResource
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.xbase.XFeatureCall
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
-import com.google.inject.Inject
-import org.eclipse.xtext.naming.IQualifiedNameProvider
 /**
  * @author Mark Czotter
  */
@@ -59,7 +58,6 @@ class XmiModelBuilder {
 								importDeclarations.add(importDecl.EPackage)
 							}
 						}
-						
 					}
 				}
 //				val packageImports = r.allContents.toIterable.filter(typeof (PackageImport))
@@ -73,7 +71,11 @@ class XmiModelBuilder {
 //				} 
 			}
 			
-			xmiModelRoot.importPackages.addAll(importDeclarations.map[EMFPatternLanguageFactory::eINSTANCE.createPackageImport])				
+			xmiModelRoot.importPackages.addAll(importDeclarations.map[
+				val imp = EMFPatternLanguageFactory::eINSTANCE.createPackageImport
+				imp.setEPackage(it)
+				return imp
+			])				
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
 			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
@@ -145,7 +147,8 @@ class XmiModelBuilder {
 			
 			// save the xmi file 
 			xmiResource.contents.add(xmiModelRoot)
-			xmiResource.save(null)
+			val options = newHashMap(XMLResource::OPTION_URI_HANDLER -> new EMFPatternURIHandler(importDeclarations))
+			xmiResource.save(options) 
 		} catch(Exception e) {
 			logger.error("Exception during XMI build!", e)
 		}
