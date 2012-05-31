@@ -14,9 +14,11 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
@@ -66,6 +68,14 @@ public class ShowLocationHandler extends AbstractHandler {
 						IXtextDocument doc = providerEditor.getDocument();
 						//ResourceSet resourceSet = doc.resource
 						System.out.println("now to find pattern in model and navigate");
+						
+						IEditorInput input = providerEditor.getEditorInput();
+						if(input instanceof FileEditorInput) {
+							FileEditorInput editorInput = (FileEditorInput) input;
+							if(editorInput.getFile().equals(file)) {
+								editorPart.getSite().getPage().bringToTop(editor);
+							}
+						}
 					}
 				}
 			}
@@ -104,7 +114,10 @@ public class ShowLocationHandler extends AbstractHandler {
 			}
 		}
 
-		return new TreeSelection((TreePath[]) paths.toArray(new TreePath[1]));
+		if(paths.size() > 0) {
+			return new TreeSelection((TreePath[]) paths.toArray(new TreePath[1]));
+		}
+		return new TreeSelection();
 	}
 	
 	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
