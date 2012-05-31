@@ -21,6 +21,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilde
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.apache.log4j.Logger
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -57,6 +58,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
    		if (pattern.name.nullOrEmpty) return;
+   		if (CorePatternLanguageHelper::isPrivate(pattern)) {
+   			return;
+   		}
    		logger.debug("Inferring Jvm Model for " + pattern.name);
 	   	try {
 	   		val packageName = pattern.getPackageName

@@ -11,6 +11,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
@@ -33,7 +34,7 @@ public class CorePatternLanguageHelper {
 			throw new IllegalArgumentException("No pattern specified for getFullyQualifiedName");
 		}
 		PatternModel patternModel = (PatternModel) p.eContainer();
-
+		
 		String packageName = patternModel.getPackageName();
 		if (packageName == null || packageName.isEmpty()) {
 			return p.getName();
@@ -41,6 +42,21 @@ public class CorePatternLanguageHelper {
 			return packageName + "." + p.getName();
 		}
 		// TODO ("local pattern?")
+	}
+	
+	/**
+	 * Returns true if the pattern has a private modifier, false otherwise.
+	 * @param pattern
+	 * @return
+	 */
+	public static boolean isPrivate(Pattern pattern) {
+		boolean isPrivate = false;
+		for (Modifiers mod : pattern.getModifiers()) {
+			if (mod.isPrivate()) {
+				isPrivate = true;
+			}
+		}
+		return isPrivate;
 	}
 
 	/** Compiles a map for name-based lookup of symbolic parameter positions. */

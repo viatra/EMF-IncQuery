@@ -161,7 +161,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		// Normal CleanUp and codegen done on every delta, do XMI Model build
 		IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
 		try {
-			buildXmiModel(context, xmiBuildMonitor);	
+			buildXmiModel(context, xmiBuildMonitor);
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during XMI Model Building Phase", e);
 		} finally {
@@ -471,7 +471,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		TreeIterator<EObject> it = deltaResource.getAllContents();
 		while (it.hasNext()) {
 			EObject obj = it.next();
-			if (obj instanceof Pattern) {
+			if (obj instanceof Pattern && !CorePatternLanguageHelper.isPrivate((Pattern)obj)) {
 				Iterable<IPluginExtension> extensionContribution = matcherFactoryExtensionGenerator.extensionContribution((Pattern)obj, generator);
 				extensionMap.putAll(project, extensionContribution);
 				executeGeneratorFragments(context.getBuiltProject(), (Pattern) obj);

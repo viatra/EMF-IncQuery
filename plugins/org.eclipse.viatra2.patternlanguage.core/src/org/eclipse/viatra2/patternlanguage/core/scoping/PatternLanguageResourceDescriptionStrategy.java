@@ -3,7 +3,7 @@ package org.eclipse.viatra2.patternlanguage.core.scoping;
 import java.util.Collections;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
@@ -23,7 +23,7 @@ public class PatternLanguageResourceDescriptionStrategy extends DefaultResourceD
 	public boolean createEObjectDescriptions(EObject eObject,
 			IAcceptor<IEObjectDescription> acceptor) {
 		if (eObject instanceof Pattern) {
-			boolean isPrivate = isPrivate((Pattern)eObject);
+			boolean isPrivate = CorePatternLanguageHelper.isPrivate((Pattern)eObject);
 			QualifiedName qualifiedName = getQualifiedNameProvider().getFullyQualifiedName(eObject);
 			if (qualifiedName != null) {
 				acceptor.accept(EObjectDescription.create(qualifiedName, eObject, Collections.singletonMap("private", String.valueOf(isPrivate))));
@@ -31,16 +31,6 @@ public class PatternLanguageResourceDescriptionStrategy extends DefaultResourceD
 			return true;
 		}
 		return super.createEObjectDescriptions(eObject, acceptor);
-	}
-
-	private boolean isPrivate(Pattern pattern) {
-		boolean isPrivate = false;
-		for (Modifiers mod : pattern.getModifiers()) {
-			if (mod.isPrivate()) {
-				isPrivate = true;
-			}
-		}
-		return isPrivate;
 	}
 
 }

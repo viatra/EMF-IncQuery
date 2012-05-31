@@ -68,17 +68,16 @@ class XmiModelBuilder {
 //							xmiModelRoot.importPackages.add(importDecl)
 //						}
 //					}
-//				} 
+//				}
 			}
-			
 			xmiModelRoot.importPackages.addAll(importDeclarations.map[
 				val imp = EMFPatternLanguageFactory::eINSTANCE.createPackageImport
 				imp.setEPackage(it)
 				return imp
-			])				
+			])
 			// first add all patterns
 			val fqnToPatternMap = newHashMap();
-			for (pattern : resourceSet.resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
+			for (pattern : resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
 				val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
 				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(pattern)
 				p.name = fqn
