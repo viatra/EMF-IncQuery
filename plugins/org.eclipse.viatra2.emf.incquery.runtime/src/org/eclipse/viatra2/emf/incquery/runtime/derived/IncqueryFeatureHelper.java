@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 
 /**
@@ -82,7 +87,20 @@ public class IncqueryFeatureHelper {
 			if(matcherFactory == null) {
 				throw new IncQueryRuntimeException("Matcher factory not set!");
 			}
-			IncQueryMatcher<IPatternMatch> matcher = matcherFactory.getMatcher(source);
+			IncQueryMatcher<IPatternMatch> matcher = null;
+			Resource eResource = source.eResource();
+			if(eResource != null) {
+				ResourceSet resourceSet = eResource.getResourceSet();
+				if(resourceSet != null) {
+					matcher = matcherFactory.getMatcher(resourceSet);
+				} else {
+					matcher = matcherFactory.getMatcher(eResource);
+					IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
+				}
+			} else {
+				matcher = matcherFactory.getMatcher(source);
+				IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
+			}
 			if(matcher == null) {
 				throw new IncQueryRuntimeException("Matcher cannot be initiated!");
 			}
@@ -97,4 +115,32 @@ public class IncqueryFeatureHelper {
 		return null;
 	}
 
+	public static EList getManyReferenceValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
+		if(handler != null) {
+			return handler.getManyReferenceValueAsEList();
+		} else {
+			if(source != null && feature != null) {
+			  return new EcoreEList.UnmodifiableEList(source,	feature, 0, null);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param source
+	 * @param feature
+	 * @param patternFQN
+	 * @param sourceParamName
+	 * @param targetParamName
+	 * @param kind
+	 * @return
+	 */
+	public static IncqueryFeatureHandler createHandler(EObject source, EStructuralFeature feature, String patternFQN,
+			String sourceParamName, String targetParamName, FeatureKind kind) {
+		IMatcherFactory matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+		if(matcherFactory != null) {
+			return createHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind);
+		}
+		return null;
+	}
 }
