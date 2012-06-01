@@ -38,4 +38,15 @@ class PatternValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(IssueCodes::PATTERN_BODY_EMPTY)
 	}
 	
+	@Test
+	def unusedPrivatePatternValidation() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			private pattern unusedPrivatePattern(Pattern) = {
+				Pattern(Pattern);
+			}
+		')
+		tester.validate(model).assertWarning(IssueCodes::UNUSED_PRIVATE_PATTERN, "The pattern 'unusedPrivatePattern'")
+	}
+	
 }
