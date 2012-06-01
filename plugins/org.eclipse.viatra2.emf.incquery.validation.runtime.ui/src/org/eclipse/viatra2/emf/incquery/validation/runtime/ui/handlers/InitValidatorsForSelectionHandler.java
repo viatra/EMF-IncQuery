@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.handlers;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -15,8 +16,10 @@ import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ConstraintAdapter;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
-public class InitValidatorsHandler extends AbstractHandler {
 
+
+public class InitValidatorsForSelectionHandler extends AbstractHandler {
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
@@ -24,15 +27,31 @@ public class InitValidatorsHandler extends AbstractHandler {
 		Object selectedElement = selection.getFirstElement();
 		
 		if (selectedElement instanceof Notifier) {
-			Notifier notifier = (Notifier) selectedElement;
-			Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
+			initializeAdapters(activeEditor, (Notifier) selectedElement);
+		}
+	
+		return null;
+	}
+
+	/**
+	 * @param activeEditor
+	 * @param root
+	 */
+	protected void initializeAdapters(IEditorPart activeEditor, Notifier root) {
+		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
+		
+		Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = ValidationUtil.getAdapterMap();
+		if(adapterMap.containsKey(activeEditor)) {
+			// FIXME define proper semantics for validation based on selection
+			// FIXME handle already existing violations
+			
+			//adapterMap.get(activeEditor).addAll(adapters);
+		} else {
 			for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
-				adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
+				adapters.add(new ConstraintAdapter<IPatternMatch>(c, root));
 			}
-			ValidationUtil.getAdapterMap().put(activeEditor, adapters);
+			adapterMap.put(activeEditor, adapters);
 			activeEditor.getEditorSite().getPage().addPartListener(ValidationUtil.editorPartListener);
 		}
-
-		return null;
 	}
 }
