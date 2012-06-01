@@ -7,6 +7,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class RuntimeMatcherUnRegistrator implements Runnable {
@@ -21,10 +22,11 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 	public void run() {		
 		MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
 		Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
-		for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-			for (Pattern pattern : removedPatterns) {
+		for (Pattern pattern : removedPatterns) {
+			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 				root.unregisterPattern(pattern);
 			}
+			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 		}
 		
 		QueryExplorer.getInstance().getPatternsViewer().refresh();
