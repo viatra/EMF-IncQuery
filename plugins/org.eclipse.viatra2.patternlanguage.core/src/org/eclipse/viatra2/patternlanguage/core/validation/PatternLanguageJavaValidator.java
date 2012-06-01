@@ -19,6 +19,7 @@ import java.util.Iterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
@@ -37,6 +38,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.xbase.util.XbaseUsageCrossReferencer;
 
 import com.google.inject.Inject;
 
@@ -69,10 +71,11 @@ public class PatternLanguageJavaValidator extends
 			"The pattern %s is not of binary arity (it has %d parameters), therefore transitive closure is not supported.";
 	public static final String TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION = 
 			"Transitive closure of %s is currently only allowed in simple positive pattern calls (no negation or aggregation).";
+	public static final String UNUSED_PRIVATE_PATTERN_MESSAGE = "The pattern '%s' is never used locally.";
 	
 	@Inject
 	PatternAnnotationProvider annotationProvider;
-
+	
 	@Check
 	public void checkPatternParameters(Pattern pattern) {
 		for (int i = 0; i < pattern.getParameters().size(); ++i) {
@@ -88,6 +91,14 @@ public class PatternLanguageJavaValidator extends
 							IssueCodes.DUPLICATE_PATTERN_PARAMETER_NAME);
 				}
 			}
+		}
+	}
+	
+	@Check
+	public void checkPrivatePatternUsage(Pattern pattern) {
+		if (CorePatternLanguageHelper.isPrivate(pattern) && !isLocallyUsed(pattern, pattern.eContainer())) {
+			String message = String.format(UNUSED_PRIVATE_PATTERN_MESSAGE, pattern.getName());
+			warning(message, PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.UNUSED_PRIVATE_PATTERN);
 		}
 	}
 
