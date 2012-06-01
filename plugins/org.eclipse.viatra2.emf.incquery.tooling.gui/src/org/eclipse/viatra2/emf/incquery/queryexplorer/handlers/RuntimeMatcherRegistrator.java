@@ -50,6 +50,9 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 				root.unregisterPattern(pattern);
 			}
+		}
+		
+		for (Pattern pattern : parsedEPM.getPatterns()) {
 			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 		}
 		
@@ -76,8 +79,9 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
 		}
 		
+		//it is enough to just call selection propagation for one pattern
 		if (components.size() > 0) {
-			QueryExplorer.getInstance().getPatternsViewerInput().propagateSelectionToBottom();
+			components.get(0).getParent().propagateSelectionToTop(components.get(0));
 		}
 	}
 }

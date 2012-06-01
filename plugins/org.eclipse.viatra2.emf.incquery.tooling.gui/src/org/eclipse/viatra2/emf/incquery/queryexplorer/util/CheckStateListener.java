@@ -23,7 +23,13 @@ public class CheckStateListener implements ICheckStateListener {
 		}
 		
 		if (event.getChecked()) {
-			QueryExplorer.getInstance().getPatternsViewerInput().propagateSelectionToBottom();
+			PatternComponent component = (PatternComponent) element;
+			component.getParent().propagateSelectionToTop(component);
+		}
+		else {
+			PatternComposite composite = 
+					(element instanceof PatternLeaf) ? ((PatternLeaf) element).getParent() : (PatternComposite) element;
+			composite.propagateDeSelectionToTop();
 		}
 	}
 	

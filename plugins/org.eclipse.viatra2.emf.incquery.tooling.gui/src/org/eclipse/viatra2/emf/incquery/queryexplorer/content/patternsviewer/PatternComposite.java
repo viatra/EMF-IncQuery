@@ -17,10 +17,10 @@ public class PatternComposite implements PatternComponent {
 
 	private String patternNameFragment;
 	private List<PatternComponent> children;
-	private PatternComponent parent;
+	private PatternComposite parent;
 	private Map<String, PatternComposite> fragmentMap;
 	
-	public PatternComposite(String patternNameFragment, PatternComponent parent) {
+	public PatternComposite(String patternNameFragment, PatternComposite parent) {
 		this.patternNameFragment = patternNameFragment;
 		this.children = new ArrayList<PatternComponent>();
 		this.fragmentMap = new HashMap<String, PatternComposite>();
@@ -110,20 +110,32 @@ public class PatternComposite implements PatternComponent {
 		return result;
 	}
 	
-	public void propagateSelectionToBottom() {
+	/**
+	 * Propagates element deselection upwards in the hierarchy.
+	 */
+	public void propagateDeSelectionToTop() {
+		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, false);
+		if (this.parent != null) {
+			this.parent.propagateDeSelectionToTop();
+		}
+	}
+	
+	/**
+	 * Propagates element selection upwards in the hierarchy.
+	 */
+	public void propagateSelectionToTop(PatternComponent selected) {
 		boolean allSelected = true;
 		for (PatternComponent component : children) {
-			if (!QueryExplorer.getInstance().getPatternsViewer().getChecked(component)) {
+			if (!(component == selected) && (!QueryExplorer.getInstance().getPatternsViewer().getChecked(component))) {
 				allSelected = false;
-			}
-			
-			if (component instanceof PatternComposite) {
-				((PatternComposite) component).propagateSelectionToBottom();
 			}
 		}
 		
 		if (allSelected) {
 			QueryExplorer.getInstance().getPatternsViewer().setChecked(this, true);
+			if (this.parent != null) {
+				this.parent.propagateSelectionToTop(this);
+			}
 		}
 	}
 	
@@ -184,7 +196,7 @@ public class PatternComposite implements PatternComponent {
 	}
 
 	@Override
-	public PatternComponent getParent() {
+	public PatternComposite getParent() {
 		return parent;
 	}
 }
