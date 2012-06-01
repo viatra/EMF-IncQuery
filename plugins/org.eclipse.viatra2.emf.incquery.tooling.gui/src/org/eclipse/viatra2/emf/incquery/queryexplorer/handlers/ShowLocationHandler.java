@@ -23,7 +23,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
 
 @SuppressWarnings("restriction")
@@ -65,7 +64,7 @@ public class ShowLocationHandler extends AbstractHandler {
 					if (editor instanceof XbaseEditor) {
 						
 						XbaseEditor providerEditor = (XbaseEditor) editor;
-						IXtextDocument doc = providerEditor.getDocument();
+						//IXtextDocument doc = providerEditor.getDocument();
 						//ResourceSet resourceSet = doc.resource
 						System.out.println("now to find pattern in model and navigate");
 						

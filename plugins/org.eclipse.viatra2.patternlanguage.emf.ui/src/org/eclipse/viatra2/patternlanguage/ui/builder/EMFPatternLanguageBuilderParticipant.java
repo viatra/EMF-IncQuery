@@ -170,7 +170,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		// normal code generation done, extensions, packages ready to add to the plug-ins
 		IProgressMonitor ensureMonitor = new SubProgressMonitor(monitor, 1);
 		try {
-			ensurePhase(project, ensureMonitor);
+			ensurePhase(ensureMonitor);
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during Extension/Package ensure Phase", e);
 		} finally {
@@ -188,6 +188,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			try {
 				String fragmentProjectName = getFragmentProjectName(project, fragment);
 				IProject fragmentProject = workspaceRoot.getProject(fragmentProjectName);
+				fragmentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 				if (fragmentProject.exists()) {
 					// full clean on output directories
 					EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(fragmentProject);
@@ -209,16 +210,16 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	}
 
 	/**
-	 * 
+	 * The ensure phase performs changes to plugin.xml and MANIFEST.MF descriptors.
 	 * @param ensureMonitor
 	 * @throws CoreException 
 	 */
-	private void ensurePhase(IProject project, IProgressMonitor monitor) throws CoreException {
+	private void ensurePhase(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Extension/Package ensure phase", 1);
 		// ensure exported package and extensions
 		for (IProject proj : exportedPackageMap.keySet()) {
 			// ensure package exports per project
-			ProjectGenerationHelper.ensurePackageExports(project, exportedPackageMap.get(proj));
+			ProjectGenerationHelper.ensurePackageExports(proj, exportedPackageMap.get(proj));
 		}
 		// Loading extensions to the generated projects
 		// if new contributed extensions exists remove the removables from the 
@@ -380,6 +381,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				String fragmentProjectName = getFragmentProjectName(modelProject, fragment);
 				IProject targetProject = workspaceRoot.getProject(fragmentProjectName);
 				if (targetProject.exists()) {
+					targetProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 					EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(targetProject);
 					fragment.cleanUp(pattern, fsa);
 					removableExtensionMap.putAll(targetProject, fragment.removeExtension(pattern));				
