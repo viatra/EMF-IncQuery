@@ -192,16 +192,7 @@ public abstract class ProjectGenerationHelper {
 		bundleDesc.setExtensionRegistry(true);
 		bundleDesc.setBinIncludes(BININCLUDES);
 		
-		IBundleClasspathEntry[] classpathEntries = Lists.transform(
-				SOURCEFOLDERS, new Function<String, IBundleClasspathEntry>() {
-
-					@Override
-					public IBundleClasspathEntry apply(String input) {
-						return service.newBundleClasspathEntry(new Path(input),
-								null, null);
-					}
-				}).toArray(new IBundleClasspathEntry[SOURCEFOLDERS.size()]);
-		bundleDesc.setBundleClasspath(classpathEntries);
+		bundleDesc.setBundleClasspath(getBundleClasspathEntries(service));
 		bundleDesc
 				.setExecutionEnvironments(new String[] { IncQueryNature.EXECUTION_ENVIRONMENT });
 		// Adding dependencies
@@ -616,6 +607,48 @@ public abstract class ProjectGenerationHelper {
 			}
 		}
 		return id;
+	}
+	
+	/**
+	 * Ensures that the project contains the src and src-gen folders as source folders.
+	 * @param project
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			bundleDesc.setBundleClasspath(getBundleClasspathEntries(service));
+			bundleDesc.apply(monitor);
+		} finally {
+			if (context != null && ref != null) {
+				context.ungetService(ref);
+			}
+		}
+	}
+	
+	/**
+	 * Returns an array of {@link IBundleClasspathEntry}. This array contains
+	 * entries for the main source folders.
+	 * 
+	 * @param service
+	 * @return
+	 */
+	private static IBundleClasspathEntry[] getBundleClasspathEntries(final IBundleProjectService service) {
+		return Lists.transform(
+				SOURCEFOLDERS, new Function<String, IBundleClasspathEntry>() {
+					@Override
+					public IBundleClasspathEntry apply(String input) {
+						return service.newBundleClasspathEntry(new Path(input),
+								null, null);
+					}
+				}).toArray(new IBundleClasspathEntry[SOURCEFOLDERS.size()]);
 	}
 	
 }
