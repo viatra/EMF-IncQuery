@@ -17,10 +17,10 @@ public class PatternComposite implements PatternComponent {
 
 	private String patternNameFragment;
 	private List<PatternComponent> children;
-	private PatternComponent parent;
+	private PatternComposite parent;
 	private Map<String, PatternComposite> fragmentMap;
 	
-	public PatternComposite(String patternNameFragment, PatternComponent parent) {
+	public PatternComposite(String patternNameFragment, PatternComposite parent) {
 		this.patternNameFragment = patternNameFragment;
 		this.children = new ArrayList<PatternComponent>();
 		this.fragmentMap = new HashMap<String, PatternComposite>();
@@ -32,11 +32,13 @@ public class PatternComposite implements PatternComponent {
 	 *  
 	 * @param patternFragment the pattern name fragment
 	 */
-	public void addComponent(String patternFragment) {
+	public PatternComponent addComponent(String patternFragment) {
 		String[] tokens = patternFragment.split("\\.");
 		
 		if (tokens.length == 1) {
-			children.add(new PatternLeaf(patternFragment, this));
+			PatternLeaf leaf = new PatternLeaf(patternFragment, this);
+			children.add(leaf);
+			return leaf;
 		}
 		else {
 			String fragment = tokens[0];
@@ -48,7 +50,7 @@ public class PatternComposite implements PatternComponent {
 				fragmentMap.put(fragment, composite);
 				children.add(composite);
 			}
-			composite.addComponent(patternFragment.substring(fragment.length()+1));
+			return composite.addComponent(patternFragment.substring(fragment.length()+1));
 		}
 	}
 	
@@ -109,6 +111,35 @@ public class PatternComposite implements PatternComponent {
 	}
 	
 	/**
+	 * Propagates element deselection upwards in the hierarchy.
+	 */
+	public void propagateDeSelectionToTop() {
+		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, false);
+		if (this.parent != null) {
+			this.parent.propagateDeSelectionToTop();
+		}
+	}
+	
+	/**
+	 * Propagates element selection upwards in the hierarchy.
+	 */
+	public void propagateSelectionToTop(PatternComponent selected) {
+		boolean allSelected = true;
+		for (PatternComponent component : children) {
+			if (!(component == selected) && (!QueryExplorer.getInstance().getPatternsViewer().getChecked(component))) {
+				allSelected = false;
+			}
+		}
+		
+		if (allSelected) {
+			QueryExplorer.getInstance().getPatternsViewer().setChecked(this, true);
+			if (this.parent != null) {
+				this.parent.propagateSelectionToTop(this);
+			}
+		}
+	}
+	
+	/**
 	 * This method removes the component matching the given pattern name fragment.
 	 * 
 	 * @param patternFragment the pattern name fragment
@@ -165,7 +196,7 @@ public class PatternComposite implements PatternComponent {
 	}
 
 	@Override
-	public PatternComponent getParent() {
+	public PatternComposite getParent() {
 		return parent;
 	}
 }

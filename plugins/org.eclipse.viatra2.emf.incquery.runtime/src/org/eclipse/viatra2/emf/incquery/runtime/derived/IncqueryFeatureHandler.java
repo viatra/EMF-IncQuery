@@ -19,10 +19,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -153,6 +155,21 @@ public class IncqueryFeatureHandler {
 	
 	public Collection<Object> getManyReferenceValue(){
 		return manyRefMemory;
+	}
+	
+	public EList getManyReferenceValueAsEList() {
+		if (manyRefMemory.size() > 0) {
+			return new EcoreEList.UnmodifiableEList(source,
+					feature,
+					manyRefMemory.size(),
+					manyRefMemory.toArray());
+		}
+		else {
+			return new EcoreEList.UnmodifiableEList(source,
+					feature,
+					0,
+					null);
+		}
 	}
 	
 	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws CoreException {

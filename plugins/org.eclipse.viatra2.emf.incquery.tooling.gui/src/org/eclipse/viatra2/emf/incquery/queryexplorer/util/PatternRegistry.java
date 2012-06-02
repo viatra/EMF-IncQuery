@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
@@ -39,7 +38,6 @@ public class PatternRegistry {
 		Pattern pattern = this.patternNameMap.get(patternFqn);
 		if (pattern != null) {
 			this.patternNameMap.remove(patternFqn);
-			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(patternFqn);
 		}
 	}
 	
@@ -54,7 +52,6 @@ public class PatternRegistry {
 					patternNameMap.put(patternFqn, p);
 					newPatterns.add(p);
 					activePatterns.add(p);
-					QueryExplorer.getInstance().getPatternsViewerInput().addComponent(patternFqn);
 				}
 			}
 		}
@@ -77,7 +74,6 @@ public class PatternRegistry {
 					removedPatterns.add(p);
 				}
 				patternNameMap.remove(patternFqn);
-				QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(patternFqn);
 			}
 		}
 		
