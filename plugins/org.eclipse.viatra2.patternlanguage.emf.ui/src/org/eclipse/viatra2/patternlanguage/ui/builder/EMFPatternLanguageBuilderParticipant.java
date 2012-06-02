@@ -123,7 +123,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				// clean all fragments
 				cleanAllFragment(project);
 				// clean current model project
-				ProjectGenerationHelper.removeAllExtension(project, Lists.newArrayList(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+				ProjectGenerationHelper.removeAllExtension(project, GenerateMatcherFactoryExtension.getRemovableExtensionIdentifiers());
 				removeExportedPackages(project);
 				removeXmiModel(project);
 				// invoke clean build on main project src-gen

@@ -1,14 +1,15 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator
 
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import com.google.inject.Inject
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.IExtensions
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmIdentifiableElement
 import org.eclipse.xtext.common.types.JvmType
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.emf.incquery.runtime.IExtensions
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.xtext.xbase.lib.Pair
+
+import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 
 class GenerateMatcherFactoryExtension {
 	
@@ -26,6 +27,12 @@ class GenerateMatcherFactoryExtension {
 				exGen.contribAttribute(it, "factory", el.qualifiedName)
 			]
 		]
+		)
+	}
+	
+	def static getRemovableExtensionIdentifiers() {
+		newArrayList(
+			Pair::of("", IExtensions::MATCHERFACTORY_EXTENSION_POINT_ID)
 		)
 	}
 }
