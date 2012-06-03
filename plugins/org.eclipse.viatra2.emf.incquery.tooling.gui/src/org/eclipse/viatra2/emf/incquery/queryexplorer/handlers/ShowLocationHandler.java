@@ -10,6 +10,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -23,10 +24,19 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.xtext.resource.ILocationInFileProvider;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
+
+import com.google.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class ShowLocationHandler extends AbstractHandler {
+	
+	@Inject
+	ILocationInFileProvider locationProvider;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -61,21 +71,31 @@ public class ShowLocationHandler extends AbstractHandler {
 				String id = ref.getId();
 				IEditorPart editor = ref.getEditor(true);
 				if(id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
-					if (editor instanceof XbaseEditor) {
-						
-						XbaseEditor providerEditor = (XbaseEditor) editor;
-						//IXtextDocument doc = providerEditor.getDocument();
-						//ResourceSet resourceSet = doc.resource
-						System.out.println("now to find pattern in model and navigate");
-						
-						IEditorInput input = providerEditor.getEditorInput();
-						if(input instanceof FileEditorInput) {
-							FileEditorInput editorInput = (FileEditorInput) input;
-							if(editorInput.getFile().equals(file)) {
-								editorPart.getSite().getPage().bringToTop(editor);
-							}
+					//The editor id always registers an Xtext editor
+					assert editor instanceof XtextEditor;
+					XtextEditor providerEditor = (XtextEditor) editor;
+					// Bringing editor to top
+					IEditorInput input = providerEditor.getEditorInput();
+					if (input instanceof FileEditorInput) {
+						FileEditorInput editorInput = (FileEditorInput) input;
+						if (editorInput.getFile().equals(file)) {
+							editorPart.getSite().getPage().bringToTop(editor);
 						}
 					}
+					// Finding location using location service
+					ITextRegion location = locationProvider
+							.getSignificantTextRegion(matcher.getMatcher()
+									.getPattern());
+					//Location can be null in case of error
+					if (location == null) {
+						return;
+					}
+					providerEditor.reveal(location.getOffset(),
+							location.getLength());
+					providerEditor.getSelectionProvider().setSelection(
+							new TextSelection(location.getOffset(), location
+									.getLength()));
+
 				}
 			}
 			
