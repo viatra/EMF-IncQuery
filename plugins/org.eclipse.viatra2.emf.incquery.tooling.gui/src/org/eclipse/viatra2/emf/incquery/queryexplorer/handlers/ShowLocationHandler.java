@@ -26,13 +26,10 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.ui.editor.XtextEditor;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.ITextRegion;
-import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
 
 import com.google.inject.Inject;
 
-@SuppressWarnings("restriction")
 public class ShowLocationHandler extends AbstractHandler {
 	
 	@Inject

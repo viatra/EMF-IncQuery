@@ -52,6 +52,11 @@ public class DatabindingUtil {
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
+	public static final String OFF_ANNOTATION = "Off";
+	public static final String PATTERNUI_ANNOTATION = "PatternUI";
+	public static final String ORDERBY_ANNOTATION = "OrderBy";
+	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
+	
 	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
 			uriConfElementMap = collectItemProviders();
@@ -323,13 +328,13 @@ public class DatabindingUtil {
 		return root;
 	}
 	
-	public static boolean hasOffAnnotation(Pattern pattern) {
+	public static Annotation getAnnotation(Pattern pattern, String literal) {
 		for (Annotation a : pattern.getAnnotations()) {
-			if (a.getName().equalsIgnoreCase("Off")) {
-				return true;
+			if (a.getName().equalsIgnoreCase(literal)) {
+				return a;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	@Inject

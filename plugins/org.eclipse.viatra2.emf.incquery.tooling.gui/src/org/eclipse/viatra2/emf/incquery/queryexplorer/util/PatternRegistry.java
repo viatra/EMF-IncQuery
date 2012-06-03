@@ -11,6 +11,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
@@ -47,7 +48,9 @@ public class PatternRegistry {
 		
 		if (pm != null) {
 			for (Pattern p : pm.getPatterns()) {
-				if (!DatabindingUtil.hasOffAnnotation(p)) {
+				Annotation annotation = DatabindingUtil.getAnnotation(p, DatabindingUtil.OFF_ANNOTATION);
+				
+				if (annotation == null) {
 					String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
 					patternNameMap.put(patternFqn, p);
 					newPatterns.add(p);
