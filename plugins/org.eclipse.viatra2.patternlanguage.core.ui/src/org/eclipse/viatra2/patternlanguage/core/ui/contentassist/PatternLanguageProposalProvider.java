@@ -11,14 +11,17 @@
 package org.eclipse.viatra2.patternlanguage.core.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.text.Region;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
+import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext.Builder;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.AbstractJavaBasedContentProposalProvider.ReferenceProposalCreator;
 
@@ -40,7 +43,28 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 	public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		for (String annotationName : annotationProvider.getAllAnnotationNames()) {
 			String prefixedName = String.format("@%s", annotationName);
-			acceptor.accept(createCompletionProposal(prefixedName, prefixedName, null, context));
+			String prefix = context.getPrefix();
+			ContentAssistContext modifiedContext = context;
+			INode lastNode = context.getLastCompleteNode();
+			if (prefix == ""
+					&& lastNode.getSemanticElement() instanceof Annotation) {
+				Annotation previousNode = (Annotation) lastNode
+						.getSemanticElement();
+				String annotationPrefix = previousNode.getName();
+				if (previousNode.getParameters().isEmpty()
+						&& !annotationProvider.getAllAnnotationNames()
+								.contains(annotationPrefix)) {
+					modifiedContext = context
+							.copy()
+							.setReplaceRegion(
+									new Region(lastNode.getOffset(), lastNode
+											.getLength() + prefix.length()))
+							.toContext();
+					prefixedName = annotationName;
+				}
+			}
+			acceptor.accept(createCompletionProposal(prefixedName,
+					prefixedName, null, modifiedContext));
 		}
 	}
 
