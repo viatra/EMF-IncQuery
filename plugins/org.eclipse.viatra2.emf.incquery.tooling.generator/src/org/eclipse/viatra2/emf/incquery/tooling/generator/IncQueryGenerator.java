@@ -20,6 +20,9 @@ import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
@@ -296,13 +299,17 @@ public class IncQueryGenerator extends JvmModelGenerator {
 	private IProject createOrGetTargetProject(IProject modelProject,
 			IGenerationFragment fragment) throws CoreException {
 		String postfix = fragment.getProjectPostfix();
-		List<String> dependencies = Lists.asList(modelProject.getName(), fragment.getProjectDependencies());
+		
+		String modelProjectName = ProjectGenerationHelper.getBundleSymbolicName(modelProject);
+		List<String> dependencies = Lists.asList(
+				modelProjectName,
+				fragment.getProjectDependencies());
 		if (postfix == null || postfix.isEmpty()) {
 			ProjectGenerationHelper.ensureBundleDependencies(modelProject,
 					dependencies);
 			return modelProject;
 		} else {
-			String projectName = String.format("%s.%s", modelProject.getName(),
+			String projectName = String.format("%s.%s", modelProjectName,
 					postfix);
 			IProject targetProject = workspaceRoot.getProject(projectName);
 			if (!targetProject.exists()) {

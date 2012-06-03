@@ -535,7 +535,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private IProject createOrGetTargetProject(IProject modelProject,
 			IGenerationFragment fragment) throws CoreException {
 		String postfix = fragment.getProjectPostfix();
-		List<String> dependencies = Lists.asList(modelProject.getName(), fragment.getProjectDependencies());
+		String modelProjectName = ProjectGenerationHelper.getBundleSymbolicName(modelProject);;
+		List<String> dependencies = Lists.asList(modelProjectName, fragment.getProjectDependencies());
 		if (postfix == null || postfix.isEmpty()) {
 			ProjectGenerationHelper.ensureBundleDependencies(modelProject,
 					dependencies);
@@ -559,7 +560,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	 * @return
 	 */
 	private String getFragmentProjectName(IProject base, IGenerationFragment fragment) {
-		return String.format("%s.%s", base.getName(), fragment.getProjectPostfix());
+		return String.format("%s.%s",
+				ProjectGenerationHelper.getBundleSymbolicName(base),
+				fragment.getProjectPostfix());
 	}
 	
 	/**

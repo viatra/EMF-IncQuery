@@ -651,4 +651,10 @@ public abstract class ProjectGenerationHelper {
 				}).toArray(new IBundleClasspathEntry[SOURCEFOLDERS.size()]);
 	}
 	
+	@SuppressWarnings("restriction")
+	public static String getBundleSymbolicName(IProject project) {
+		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
+				.getModelManager().findModel(project);
+		return plugin.getBundleDescription().getSymbolicName();
+	}
 }
