@@ -12,7 +12,7 @@
               extensions="eiq"
               icon="icons/file_icon.gif"
               id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-              name="EMFPatternLanguage Editor">
+              name="EMF-IncQuery Pattern Editor">
         </editor>
     </extension>
     <extension
@@ -53,7 +53,7 @@
         <page
             class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-            name="EMFPatternLanguage">
+            name="EMF-IncQuery">
             <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
         </page>
         <page
@@ -76,7 +76,7 @@
         <page
             class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-            name="EMFPatternLanguage">
+            name="EMF-IncQuery">
             <keywordReference id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
@@ -155,21 +155,21 @@
     <!-- marker definitions for org.eclipse.viatra2.patternlanguage.EMFPatternLanguage -->
     <extension
             id="emfpatternlanguage.check.fast"
-            name="EMFPatternLanguage Problem"
+            name="EMF-IncQuery Problem"
             point="org.eclipse.core.resources.markers">
         <super type="org.eclipse.xtext.ui.check.fast"/>
         <persistent value="true"/>
     </extension>
     <extension
             id="emfpatternlanguage.check.normal"
-            name="EMFPatternLanguage Problem"
+            name="EMF-IncQuery Problem"
             point="org.eclipse.core.resources.markers">
         <super type="org.eclipse.xtext.ui.check.normal"/>
         <persistent value="true"/>
     </extension>
     <extension
             id="emfpatternlanguage.check.expensive"
-            name="EMFPatternLanguage Problem"
+            name="EMF-IncQuery Problem"
             point="org.eclipse.core.resources.markers">
         <super type="org.eclipse.xtext.ui.check.expensive"/>
         <persistent value="true"/>
@@ -411,7 +411,7 @@
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage.compare.contentMergeViewers"
             class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="eiq" label="EMFPatternLanguage Compare">
+            extensions="eiq" label="EMF-IncQuery Pattern Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
