@@ -100,7 +100,7 @@ public class PatternLanguageDeclarativeScopeProvider extends
 			}
 			it = it.eContainer();
 		}
-		if (it == null) {
+		if (it == null || body == null) {
 			return IScope.NULLSCOPE;
 		}
 		Pattern pattern = (Pattern) it;
