@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.ui.builder;
+package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;

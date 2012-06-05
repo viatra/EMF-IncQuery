@@ -11,17 +11,15 @@
 package org.eclipse.viatra2.patternlanguage.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
-import org.eclipse.viatra2.patternlanguage.ui.builder.EMFPatternLanguageBuilderParticipant;
-import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
+import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
-import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingCalculator;
-import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
