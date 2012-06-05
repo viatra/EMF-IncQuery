@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
@@ -39,10 +40,11 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteCon
  */
 public class CoreEMFManipulationListener {
 	
-	protected ReteEngine<?> engine;
+	protected ReteEngine<?> reteEngine;
 	protected ReteBoundary<?> boundary;
 	protected ReteContainer headContainer;
 	protected EMFPatternMatcherRuntimeContext<?> context;
+	protected EMFIncQueryRuntimeLogger logger;
 	
 //	/** 
 //	 * Contains the set of resources that have finished loading and are not unloaded yet.
@@ -55,56 +57,66 @@ public class CoreEMFManipulationListener {
 	protected Map<Object, Set<PredicateEvaluatorNode>> sensitiveTerms;
 	
 	/**
-	 * Prerequisite: engine has its network, framework and boundary fields
+	 * Prerequisite: reteEngine has its network, framework and boundary fields
 	 * initialized
 	 * 
-	 * @param engine
+	 * @param reteEngine
 	 */
-	public CoreEMFManipulationListener(ReteEngine<?> engine, EMFPatternMatcherRuntimeContext<?> context){ //, boolean resourceLoadingFilter) {
+	public CoreEMFManipulationListener(ReteEngine<?> reteEngine, EMFPatternMatcherRuntimeContext<?> context, EMFIncQueryRuntimeLogger logger) { 
+		//, boolean resourceLoadingFilter) {
 		super();
-		this.engine = engine;
+		this.reteEngine = reteEngine;
 		this.context = context;
-		this.boundary = engine.getBoundary();
-		this.headContainer = engine.getReteNet().getHeadContainer();
+		this.boundary = reteEngine.getBoundary();
+		this.headContainer = reteEngine.getReteNet().getHeadContainer();
 
 		this.sensitiveTerms = new HashMap<Object, Set<PredicateEvaluatorNode>>();
+		this.logger = logger;
 //		if (resourceLoadingFilter) this.activeResources = new HashSet<Resource>();
 	}
 	
 	// TODO deferred notifications from TransactionalEditingDomains?
 	@SuppressWarnings("deprecation")
 	public void handleEMFNotification(final Notification notification) {
-		final Object oldValue = notification.getOldValue();
-		final Object newValue = notification.getNewValue();
-		final int eventType = notification.getEventType();
-		switch(eventType) {
-		case Notification.ADD: 
-			featureUpdate(Direction.INSERT, newValue, notification);
-			break;
-		case Notification.ADD_MANY: 
-			for (Object newElement: (Collection<?>)newValue) 
-				featureUpdate(Direction.INSERT, newElement, notification);
-			break;
-		case Notification.CREATE: 
-			break;
-		case Notification.MOVE: break; // currently no support for ordering
-		case Notification.REMOVE: 
-			featureUpdate(Direction.REVOKE, oldValue, notification);
-			break;
-		case Notification.REMOVE_MANY:
-			for (Object oldElement: (Collection<?>)oldValue) 
-				featureUpdate(Direction.REVOKE, oldElement, notification);
-			break;
-		//case Notification.REMOVING_ADAPTER: break;
-		case Notification.RESOLVE:  //TODO is it safe to ignore all of them? 
-			break;
-		case Notification.UNSET:  //TODO Fallthrough?			
-		case Notification.SET:
-			featureUpdate(Direction.REVOKE, oldValue, notification);
-			featureUpdate(Direction.INSERT, newValue, notification);			
-			break;
-		case Notification.REMOVING_ADAPTER:
-			break;
+		try {
+			final Object oldValue = notification.getOldValue();
+			final Object newValue = notification.getNewValue();
+			final int eventType = notification.getEventType();
+			switch(eventType) {
+			case Notification.ADD: 
+				featureUpdate(Direction.INSERT, newValue, notification);
+				break;
+			case Notification.ADD_MANY: 
+				for (Object newElement: (Collection<?>)newValue) 
+					featureUpdate(Direction.INSERT, newElement, notification);
+				break;
+			case Notification.CREATE: 
+				break;
+			case Notification.MOVE: break; // currently no support for ordering
+			case Notification.REMOVE: 
+				featureUpdate(Direction.REVOKE, oldValue, notification);
+				break;
+			case Notification.REMOVE_MANY:
+				for (Object oldElement: (Collection<?>)oldValue) 
+					featureUpdate(Direction.REVOKE, oldElement, notification);
+				break;
+			//case Notification.REMOVING_ADAPTER: break;
+			case Notification.RESOLVE:  //TODO is it safe to ignore all of them? 
+				break;
+			case Notification.UNSET:  //TODO Fallthrough?			
+			case Notification.SET:
+				featureUpdate(Direction.REVOKE, oldValue, notification);
+				featureUpdate(Direction.INSERT, newValue, notification);			
+				break;
+			case Notification.REMOVING_ADAPTER:
+				break;
+			}
+		} catch (Exception ex) {
+			logger.logError(
+					"EMF-IncQuery encountered an error in processing the EMF model. " +
+					"This happened while handling the following update notification: " + 
+					notification, ex);
+			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
 	}
 	
