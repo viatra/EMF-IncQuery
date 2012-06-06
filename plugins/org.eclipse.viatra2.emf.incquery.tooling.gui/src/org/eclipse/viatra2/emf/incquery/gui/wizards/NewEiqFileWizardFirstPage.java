@@ -87,11 +87,6 @@ public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
 			}
 		});
 		
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gd_3 = new GridData(GridData.FILL_HORIZONTAL);
-		gd_3.horizontalSpan = 4;
-		label.setLayoutData(gd_3);
-		
 		setControl(composite);
 		
 		dialogChanged();
