@@ -42,7 +42,7 @@
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
 	<properties>
-		<tycho.version>0.14.1</tycho.version>
+		<tycho.version>0.15.0</tycho.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
@@ -187,9 +187,7 @@
 		<repository>
 			<id>fornax.repository</id>
 			<name>Fornax Repository</name>
-			<url>
-			http://www.fornax-platform.org/m2/repository
-		</url>
+			<url>http://www.fornax-platform.org/m2/repository</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
