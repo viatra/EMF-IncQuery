@@ -35,7 +35,8 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import com.google.inject.Inject;
 
 public class NewEiqFileWizard extends Wizard implements INewWizard {
-	private NewEiqFileWizardPage page;
+	private NewEiqFileWizardFirstPage page1;
+	private NewEiqFileWizardSecondPage page2;
 	private ISelection selection;
 	private IWorkbench workbench;
 	
@@ -50,18 +51,28 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		setNeedsProgressMonitor(true);
 	}
 	
+	@Override
 	public void addPages() {
-		page = new NewEiqFileWizardPage();
-		page.init((IStructuredSelection) selection);
-		addPage(page);
+		page1 = new NewEiqFileWizardFirstPage();
+		page1.init((IStructuredSelection) selection);
+		page2 = new NewEiqFileWizardSecondPage();
+		page2.init((IStructuredSelection) selection);
+		addPage(page1);
+		addPage(page2);
 		setForcePreviousAndNextButtons(false);
 	}
 
+	@Override
 	public boolean performFinish() {
-		final String containerName = page.getContainerName();
-		final String fileName = page.getFileName();
-		final String patternName = page.getPatternName();
-		final String packageName = page.getPackageName().replaceAll("\\.", "/");
+		//page 1 is completed and finished button is pressed
+		if (page1.isPageComplete()) {
+			
+		}
+		final String containerName = page1.getContainerName();
+		final String fileName = page1.getFileName();
+		final String patternName = "";
+				//page1.getPatternName();
+		final String packageName = page1.getPackageName().replaceAll("\\.", "/");
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
@@ -103,6 +114,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		monitor.worked(1);
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 		this.workbench = workbench;
@@ -120,8 +132,8 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		Resource resource = resourceSet.createResource(fileURI);
 
 		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
-		if (page.getPackageName() != null && !page.getPackageName().isEmpty()) {
-			pm.setPackageName(page.getPackageName());
+		if (page1.getPackageName() != null && !page1.getPackageName().isEmpty()) {
+			pm.setPackageName(page1.getPackageName());
 		}
 		if (patternName != null && patternName.length() > 0) {
 			Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
