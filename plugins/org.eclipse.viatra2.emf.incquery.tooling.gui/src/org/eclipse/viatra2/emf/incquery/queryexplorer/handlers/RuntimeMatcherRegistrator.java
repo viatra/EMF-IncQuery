@@ -40,48 +40,49 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
 	@Override
 	public void run() {
-			
-		MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-		PatternModel parsedEPM = dbUtil.parseEPM(file);
-			
-		//unregistering patterns
-		Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
-		for (Pattern pattern : removedPatterns) {
-			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-				root.unregisterPattern(pattern);
+		if (QueryExplorer.getInstance() != null) {	
+			MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
+			PatternModel parsedEPM = dbUtil.parseEPM(file);
+				
+			//unregistering patterns
+			Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
+			for (Pattern pattern : removedPatterns) {
+				for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+					root.unregisterPattern(pattern);
+				}
 			}
-		}
-		
-		for (Pattern pattern : parsedEPM.getPatterns()) {
-			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
-		}
-		
-		QueryExplorer.getInstance().getPatternsViewer().refresh();
-
-		//registering patterns
-		Set<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
-		for (Pattern pattern : newPatterns) {
-			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-				root.registerPattern(pattern);
+			
+			for (Pattern pattern : parsedEPM.getPatterns()) {
+				QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 			}
-		}
-		
-		//setting check states
-		List<PatternComponent> components = new ArrayList<PatternComponent>();
-		for (Pattern pattern : newPatterns) {
-			PatternComponent component = QueryExplorer.getInstance().getPatternsViewerInput().addComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
-			components.add(component);
-		}
-		//note that after insertion a refresh is necessary otherwise setting check state will not work
-		QueryExplorer.getInstance().getPatternsViewer().refresh();
-		
-		for (PatternComponent component : components) {
-			QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
-		}
-		
-		//it is enough to just call selection propagation for one pattern
-		if (components.size() > 0) {
-			components.get(0).getParent().propagateSelectionToTop(components.get(0));
+			
+			QueryExplorer.getInstance().getPatternsViewer().refresh();
+	
+			//registering patterns
+			Set<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
+			for (Pattern pattern : newPatterns) {
+				for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+					root.registerPattern(pattern);
+				}
+			}
+			
+			//setting check states
+			List<PatternComponent> components = new ArrayList<PatternComponent>();
+			for (Pattern pattern : newPatterns) {
+				PatternComponent component = QueryExplorer.getInstance().getPatternsViewerInput().addComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+				components.add(component);
+			}
+			//note that after insertion a refresh is necessary otherwise setting check state will not work
+			QueryExplorer.getInstance().getPatternsViewer().refresh();
+			
+			for (PatternComponent component : components) {
+				QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
+			}
+			
+			//it is enough to just call selection propagation for one pattern
+			if (components.size() > 0) {
+				components.get(0).getParent().propagateSelectionToTop(components.get(0));
+			}
 		}
 	}
 }
