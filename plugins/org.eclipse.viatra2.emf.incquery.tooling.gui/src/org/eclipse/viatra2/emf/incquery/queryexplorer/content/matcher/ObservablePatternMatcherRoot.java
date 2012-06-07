@@ -101,7 +101,7 @@ public class ObservablePatternMatcherRoot {
 			matcher = null;
 		}
 
-		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
+		if (matcher!=null) addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
 	}
 	
 	public void unregisterPattern(Pattern pattern) {
