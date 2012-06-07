@@ -14,6 +14,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -131,4 +132,20 @@ public class CorePatternLanguageHelper {
 
 		return variables;
 	}
+	
+	/** Finds all patterns referenced from the given pattern. */
+	public static Set<Pattern> getReferencedPatterns(Pattern sourcePattern) {
+		Set<Pattern> result = new HashSet<Pattern>();
+		TreeIterator<EObject> eAllContents = sourcePattern.eAllContents();
+		while (eAllContents.hasNext()) {
+			EObject element = eAllContents.next();
+			if (element instanceof PatternCall) {
+				PatternCall call = (PatternCall)element;
+				final Pattern patternRef = call.getPatternRef();
+				if (patternRef != null) result.add(patternRef);
+			}
+		}
+		return result;
+	}
+
 }
