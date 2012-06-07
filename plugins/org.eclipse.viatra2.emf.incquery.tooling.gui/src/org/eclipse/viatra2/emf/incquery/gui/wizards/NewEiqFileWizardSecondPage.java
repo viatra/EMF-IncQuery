@@ -25,7 +25,8 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelPro
 @SuppressWarnings("restriction")
 public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 
-	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified!";
+	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
+	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least parameter is set!";
 	private Text patternText;
 	private ListDialogField<Resource> importList;
 	private ListDialogField<ObjectParameter> objectsList;
@@ -33,10 +34,12 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	private ObjectsListLabelProvider objectsListLabelProvider;
 	private ImportsListAdapter importsListAdapter;
 	private ObjectsListAdapter objectsListAdapter;
+	public boolean parameterSet;
 	
 	public NewEiqFileWizardSecondPage() {
 		super(false, "eiq");
 		setTitle("EMF-IncQuery query definition Wizard");
+		parameterSet = false;
 	}
 	
 	private void createImportsControl(Composite parent, int nColumns) {
@@ -53,7 +56,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	
 	private void createObjectSelectionControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Modify", "Remove"};
-		objectsListAdapter = new ObjectsListAdapter(importList);
+		objectsListAdapter = new ObjectsListAdapter(this, importList);
 		objectsListLabelProvider = new ObjectsListLabelProvider();
 		
 		objectsList = new ListDialogField<ObjectParameter>(objectsListAdapter, buttonLiterals, objectsListLabelProvider);
@@ -98,7 +101,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 		patternText.setLayoutData(gd_1);
 		patternText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				dialogChanged();
+				validatePage();
 			}
 		});
 		
@@ -111,23 +114,29 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 		createObjectSelectionControl(composite, nColumns);
 		
 		setControl(composite);
-		dialogChanged();
+		validatePage();
 	}
 	
 	@Override
 	protected void handleFieldChanged(String fieldName) {
 		super.handleFieldChanged(fieldName);
-		dialogChanged();
+		validatePage();
 	}
 	
-	private void dialogChanged() {
+	public void validatePage() {
 		
 		StatusInfo si = new StatusInfo(StatusInfo.OK, "");
 
 		if (patternText != null) {
 			String patternName = patternText.getText();
 			if (patternName == null || patternName.length() == 0) {
-				si.setError(PATTERN_NAME_MUST_BE_SPECIFIED);
+				if (parameterSet) {
+					si.setError(PATTERN_NAME_MUST_BE_SPECIFIED);
+				}
+				else {
+					si.setWarning(PATTERN_NAME_SHOULD_BE_SPECIFIED);
+				}
+				
 			}
 		}
 		

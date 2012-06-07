@@ -5,14 +5,17 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardSecondPage;
 
 @SuppressWarnings("restriction")
 public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 
 	private ListDialogField<Resource> importList;
+	private NewEiqFileWizardSecondPage page;
 	
-	public ObjectsListAdapter(ListDialogField<Resource> importList) {
+	public ObjectsListAdapter(NewEiqFileWizardSecondPage page, ListDialogField<Resource> importList) {
 		this.importList = importList;
+		this.page = page;
 	}
 	
 	@Override
@@ -44,10 +47,14 @@ public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 	public void selectionChanged(ListDialogField<ObjectParameter> field) {
 		if (field.getElements().size() > 0) {
 			field.enableButton(1, true);
+			page.parameterSet = true;
 		}
 		else {
 			field.enableButton(1, false);
+			page.parameterSet = false;
 		}
+		
+		page.validatePage();
 	}
 
 	@Override

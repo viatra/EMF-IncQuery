@@ -13,12 +13,13 @@ public class ObjectsListLabelProvider extends LabelProvider implements ITableLab
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		if (element instanceof ObjectParameter) {
+		if (element != null && element instanceof ObjectParameter) {
+			ObjectParameter parameter = (ObjectParameter) element;
 			if (columnIndex == 0) {
-				return ((ObjectParameter) element).getParameterName();
+				return parameter.getParameterName();
 			}
 			else {
-				return ((ObjectParameter) element).getObject().eClass().toString();
+				return parameter.getObject() != null ? parameter.getObject().eClass().toString() : "";
 			}
 		}
 		return null;
