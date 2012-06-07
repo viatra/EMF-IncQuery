@@ -1,13 +1,13 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -16,16 +16,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListLabelProvider;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportsListAdapter;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
 
 @SuppressWarnings("restriction")
 public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 
 	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified!";
 	private Text patternText;
-	private ListDialogField<String> importList;
-	private ImportListLabelProvider labelProvider;
-	private EPackageListAdapter adapter;
-	private static final String EPACKAGE= "EPackage"; 
+	private ListDialogField<Resource> importList;
+	private ListDialogField<ObjectParameter> objectsList;
+	private ImportListLabelProvider importListLabelProvider;
+	private ObjectsListLabelProvider objectsListLabelProvider;
+	private ImportsListAdapter importsListAdapter;
+	private ObjectsListAdapter objectsListAdapter;
 	
 	public NewEiqFileWizardSecondPage() {
 		super(false, "eiq");
@@ -34,21 +41,28 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	
 	private void createImportsControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Remove"};
-		adapter = new EPackageListAdapter();
-		labelProvider = new ImportListLabelProvider();
+		importsListAdapter = new ImportsListAdapter();
+		importListLabelProvider = new ImportListLabelProvider();
 		
-		importList = new ListDialogField<String>(adapter, buttonLiterals, labelProvider);
+		importList = new ListDialogField<Resource>(importsListAdapter, buttonLiterals, importListLabelProvider);
 		importList.setLabelText("&Imported packages:");
-		importList.setTableColumns(new ListDialogField.ColumnsDescription(1, false));
+		importList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"EPackage"}, true));
 		importList.setRemoveButtonIndex(1);
 		importList.doFillIntoGrid(parent, nColumns);
-		final TableViewer tableViewer= importList.getTableViewer();
-		tableViewer.setColumnProperties(new String[] {EPACKAGE});
-
-		GridData gd= (GridData) importList.getListControl(null).getLayoutData();
-		gd.heightHint= convertHeightInCharsToPixels(3);
-		gd.grabExcessVerticalSpace= false;
-		gd.widthHint= getMaxFieldWidth();
+	}
+	
+	private void createObjectSelectionControl(Composite parent, int nColumns) {
+		String[] buttonLiterals= new String[] {"Add", "Modify", "Remove"};
+		objectsListAdapter = new ObjectsListAdapter(importList);
+		objectsListLabelProvider = new ObjectsListLabelProvider();
+		
+		objectsList = new ListDialogField<ObjectParameter>(objectsListAdapter, buttonLiterals, objectsListLabelProvider);
+		objectsList.setLabelText("&Pattern parameters:");
+		objectsList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"Name", "Type"}, true));
+		//disable modify button for an empty list
+		objectsList.enableButton(1, false);
+		objectsList.setRemoveButtonIndex(2);
+		objectsList.doFillIntoGrid(parent, nColumns);
 	}
 	
 	public void init(IStructuredSelection selection) {
@@ -65,7 +79,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	
 	@Override
 	public void createControl(Composite parent) {
-		int nColumns= 4;
+		int nColumns= 5;
 		
 		initializeDialogUnits(parent);
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -94,6 +108,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 		label.setLayoutData(gd_2);
 		
 		createImportsControl(composite, nColumns);
+		createObjectSelectionControl(composite, nColumns);
 		
 		setControl(composite);
 		dialogChanged();
