@@ -332,4 +332,12 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	public Object[] matchToArray(Match partialMatch) {
 		return partialMatch.toArray();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newEmptyMatch()
+	 */
+	@Override
+	public Match newEmptyMatch() {
+		return arrayToMatch(new Object[parameterNames.length]);
+	}
 }

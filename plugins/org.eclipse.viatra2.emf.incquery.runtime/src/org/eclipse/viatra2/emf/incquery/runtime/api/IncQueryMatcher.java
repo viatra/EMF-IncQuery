@@ -229,4 +229,11 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @return the delta monitor.
 	 */
 	public abstract DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters);
+	/**
+	 * Returns an empty Match for the matcher. This can be used to call the matcher with a partial match even
+	 *  if the specific class of the matcher or the match is unknown. 
+	 *   
+	 * @return the empty match
+	 */
+	public abstract Match newEmptyMatch();
 }
