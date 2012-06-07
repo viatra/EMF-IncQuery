@@ -1,0 +1,22 @@
+grammar org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel with org.eclipse.xtext.common.Terminals
+
+import "http://www.eclipse.org/emf/2002/GenModel" as genmodel
+
+generate generatorModel "http://www.eclipse.org/viatra2/emf/incquery/tooling/generator/IQGenModel"
+
+IncQueryGeneratorModel:
+	(genmodels += GeneratorModelReference)*
+	(configuration += Configuration)*
+;
+
+GeneratorModelReference:
+	'metamodel' ePackage=[genmodel::GenPackage|STRING]
+;
+
+
+Configuration:
+	name = ID
+	('{'
+	   (configuration += Configuration)+
+	'}')?
+;
