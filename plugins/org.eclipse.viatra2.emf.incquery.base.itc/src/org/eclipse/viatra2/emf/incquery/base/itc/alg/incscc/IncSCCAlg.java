@@ -69,7 +69,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}
 
 		for (V source : gds.getAllNodes()) {
-			for (V target : gds.getTargetNodes(source)) {
+			final List<V> targetNodes = gds.getTargetNodes(source);
+			if (targetNodes != null) for (V target : targetNodes) {
 				V sourceRoot = sccs.find(source);
 				V targetRoot = sccs.find(target);
 				
