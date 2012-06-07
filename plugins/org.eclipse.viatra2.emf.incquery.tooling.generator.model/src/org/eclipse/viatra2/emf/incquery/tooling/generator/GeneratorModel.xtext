@@ -10,13 +10,18 @@ IncQueryGeneratorModel:
 ;
 
 GeneratorModelReference:
-	'metamodel' ePackage=[genmodel::GenPackage|STRING]
+	'metamodel' genmodel = [genmodel::GenModel|STRING]
 ;
 
 
 Configuration:
 	name = ID
 	('{'
-	   (configuration += Configuration)+
+	   (property += Property)+
 	'}')?
 ;
+
+Property:
+	key = ID '=' value = STRING
+;
+

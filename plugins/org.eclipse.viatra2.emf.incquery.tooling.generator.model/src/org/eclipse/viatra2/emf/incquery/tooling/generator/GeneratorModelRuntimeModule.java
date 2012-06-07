@@ -3,9 +3,16 @@
  */
 package org.eclipse.viatra2.emf.incquery.tooling.generator;
 
+import org.eclipse.viatra2.emf.incquery.tooling.generator.scoping.GeneratorModelLinkingService;
+import org.eclipse.xtext.linking.ILinkingService;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-public class GeneratorModelRuntimeModule extends org.eclipse.viatra2.emf.incquery.tooling.generator.AbstractGeneratorModelRuntimeModule {
+public class GeneratorModelRuntimeModule extends AbstractGeneratorModelRuntimeModule {
 
+	@Override
+	public Class<? extends ILinkingService> bindILinkingService() {
+		return GeneratorModelLinkingService.class;
+	}
 }
