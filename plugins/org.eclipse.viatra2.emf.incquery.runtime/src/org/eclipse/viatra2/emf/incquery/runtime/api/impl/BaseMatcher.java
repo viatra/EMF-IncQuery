@@ -13,8 +13,10 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -338,6 +340,44 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	 */
 	@Override
 	public Match newEmptyMatch() {
-		return arrayToMatch(new Object[parameterNames.length]);
+		return arrayToMatch(new Object[getParameterNames().length]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllValues(java.lang.String)
+	 */
+	@Override
+	public Set<Object> getAllValues(final String parameterName) {
+		return rawGetAllValues(parameterName, emptyArray());
+	}
+	
+	public Set<Object> getAllValues(final String parameterName, Match partialMatch) {
+		return rawGetAllValues(parameterName, partialMatch.toArray());
+	};
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllValues(java.lang.String, java.lang.Object[])
+	 */
+	@Override
+	public Set<Object> rawGetAllValues(final String parameterName, Object[] parameters) {
+		if(parameterName == null || parameterName.equals("")) {
+			return null;
+		}
+		for (String pName : getParameterNames()) {
+			if(pName.equals(parameterName)) {
+				final Set<Object> results = new HashSet<Object>();
+				rawForEachMatch(parameters, new IMatchProcessor<Match>() {
+					/* (non-Javadoc)
+					 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+					 */
+					@Override
+					public void process(Match match) {
+						results.add(match.get(parameterName));
+					}
+				});
+				return results;
+			}
+		}
+		return null;
 	}
 }

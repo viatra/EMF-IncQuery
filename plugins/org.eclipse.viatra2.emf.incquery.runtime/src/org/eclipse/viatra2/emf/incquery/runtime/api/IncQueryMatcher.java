@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -236,4 +237,25 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @return the empty match
 	 */
 	public abstract Match newEmptyMatch();
+	/**
+	 * Retrieve the set of values that occur in matches for the given parameterName.
+	 * 
+	 * @param parameterName name of the parameter for which values are returned
+	 * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+	 */
+	public abstract Set<Object> getAllValues(final String parameterName);
+	/**
+	 * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed values of some parameters.
+	 * @param parameterName name of the parameter for which values are returned
+	 * @param partialMatch a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value.
+	 * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+	 */
+	public abstract Set<Object> getAllValues(final String parameterName, Match partialMatch);
+	/**
+	 * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed values of some parameters.
+	 * @param parameterName name of the parameter for which values are returned
+	 * @param partialMatch a partial match of the pattern where each non-null field binds the corresponding pattern parameter to a fixed value.
+	 * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+	 */
+	public abstract Set<Object> rawGetAllValues(final String parameterName, Object[] parameters);
 }
