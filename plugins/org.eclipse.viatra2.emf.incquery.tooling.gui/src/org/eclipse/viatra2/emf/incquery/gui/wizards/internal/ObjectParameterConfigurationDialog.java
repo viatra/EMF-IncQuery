@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -32,13 +32,13 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 	private static final String TITLE = "&Pattern parameter configuration";
 	private Text parameterName;
 	private Text parameterType;
-	private List<Resource> currentResources;
+	private List<EPackage> currentPackages;
 	private ObjectParameter result;
 	
-	protected ObjectParameterConfigurationDialog(Shell shell, List<Resource> currentPackages, ObjectParameter result) {
+	protected ObjectParameterConfigurationDialog(Shell shell, List<EPackage> currentPackages, ObjectParameter result) {
 		super(shell);
 		shell.setText(TITLE);
-		this.currentResources = currentPackages;
+		this.currentPackages = currentPackages;
 		this.result = result;
 	}
 
@@ -121,8 +121,8 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 	
 	private Object[] getElements() {
 		List<EObject> result = new ArrayList<EObject>();
-		for (Resource resource : currentResources) {
-			TreeIterator<EObject> iterator = resource.getAllContents();
+		for (EPackage _package : currentPackages) {
+			TreeIterator<EObject> iterator = _package.eAllContents();
 			
 			while (iterator.hasNext()) {
 				result.add(iterator.next());

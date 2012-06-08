@@ -1,7 +1,9 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
@@ -28,7 +30,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
 	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least parameter is set!";
 	private Text patternText;
-	private ListDialogField<Resource> importList;
+	private ListDialogField<EPackage> importList;
 	private ListDialogField<ObjectParameter> objectsList;
 	private ImportListLabelProvider importListLabelProvider;
 	private ObjectsListLabelProvider objectsListLabelProvider;
@@ -47,7 +49,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 		importsListAdapter = new ImportsListAdapter();
 		importListLabelProvider = new ImportListLabelProvider();
 		
-		importList = new ListDialogField<Resource>(importsListAdapter, buttonLiterals, importListLabelProvider);
+		importList = new ListDialogField<EPackage>(importsListAdapter, buttonLiterals, importListLabelProvider);
 		importList.setLabelText("&Imported packages:");
 		importList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"EPackage"}, true));
 		importList.setRemoveButtonIndex(1);
@@ -153,5 +155,13 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 
 	public String getPatternName() {
 		return patternText.getText();
+	}
+	
+	public List<EPackage> getImports() {
+		return importList.getElements();
+	}
+	
+	public List<ObjectParameter> getParameters() {
+		return objectsList.getElements();
 	}
 }

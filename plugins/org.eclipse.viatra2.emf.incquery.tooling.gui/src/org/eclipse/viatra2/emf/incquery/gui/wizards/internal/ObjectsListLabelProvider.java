@@ -19,7 +19,7 @@ public class ObjectsListLabelProvider extends LabelProvider implements ITableLab
 				return parameter.getParameterName();
 			}
 			else {
-				return parameter.getObject() != null ? parameter.getObject().eClass().toString() : "";
+				return parameter.getObject() != null ? parameter.getObject().toString() : "";
 			}
 		}
 		return null;

@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -36,8 +36,8 @@ public class ImportListLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof Resource) {
-			return ((Resource) element).getURI().toString();
+		if (element instanceof EPackage) {
+			return ((EPackage) element).getNsURI();
 		}
 		return null;
 	}

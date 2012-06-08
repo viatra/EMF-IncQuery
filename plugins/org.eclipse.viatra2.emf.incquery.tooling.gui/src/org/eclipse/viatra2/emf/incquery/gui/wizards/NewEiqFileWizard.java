@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -12,6 +13,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -25,11 +27,15 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
@@ -64,20 +70,17 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-		//page 1 is completed and finished button is pressed
-		if (page1.isPageComplete()) {
-			
-		}
 		final String containerName = page1.getContainerName();
 		final String fileName = page1.getFileName();
-		final String patternName = "";
-				//page1.getPatternName();
 		final String packageName = page1.getPackageName().replaceAll("\\.", "/");
+		final String patternName = page2.getPatternName();
+		final List<EPackage> imports = page2.getImports();
+		final List<ObjectParameter> parameters = page2.getParameters();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, packageName, fileName, patternName, monitor);
+					doFinish(containerName, fileName, packageName, patternName, imports, parameters, monitor);
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -108,9 +111,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		return true;
 	}
 	
-	private void doFinish(String containerPath, String packageName, String fileName, String patternName, IProgressMonitor monitor) {
+	private void doFinish(String containerName, String fileName, String packageName, String patternName, List<EPackage> imports, List<ObjectParameter> parameters, IProgressMonitor monitor) {
 		monitor.beginTask("Creating " + fileName, 1);
-		createEiqFile(containerPath, packageName, fileName, patternName);
+		createEiqFile(containerName, fileName, packageName, patternName, imports, parameters);
 		monitor.worked(1);
 	}
 
@@ -120,9 +123,8 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		this.workbench = workbench;
 	}
 	
-	private void createEiqFile(String containerPath, String packageName, String fileName,	String patternName) {
-
-		IResource containerResource = root.findMember(new Path(containerPath));
+	private void createEiqFile(String containerName, String fileName, String packageName, String patternName, List<EPackage> imports, List<ObjectParameter> parameters) {	
+		IResource containerResource = root.findMember(new Path(containerName));
 		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
 
 		filePath = containerResource.getFullPath().append(packageName+"/"+fileName);
@@ -132,15 +134,36 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		Resource resource = resourceSet.createResource(fileURI);
 
 		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
-		if (page1.getPackageName() != null && !page1.getPackageName().isEmpty()) {
-			pm.setPackageName(page1.getPackageName());
+
+		//Setting package name
+		if (packageName != null && !packageName.isEmpty()) {
+			pm.setPackageName(packageName);
 		}
+		
+		//Setting imports
+		for (EPackage _package : imports) {
+			PackageImport _import = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
+			_import.setEPackage(_package);
+			pm.getImportPackages().add(_import);
+		}
+		
+		//Creating pattern
 		if (patternName != null && patternName.length() > 0) {
 			Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
 			pattern.setName(patternName);
-			PatternBody body = PatternLanguageFactory.eINSTANCE
-					.createPatternBody();
+			PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
 			pattern.getBodies().add(body);
+			
+			//Setting pattern parameters
+			for (ObjectParameter parameter : parameters) {
+				Variable var = PatternLanguageFactory.eINSTANCE.createVariable();
+				var.setName(parameter.getParameterName());
+				Type type = PatternLanguageFactory.eINSTANCE.createType();
+				type.setTypename(parameter.getObject().toString());
+				var.setType(type);
+				pattern.getParameters().add(var);
+			}
+			
 			pm.getPatterns().add(pattern);
 		}
 		resource.getContents().add(pm);

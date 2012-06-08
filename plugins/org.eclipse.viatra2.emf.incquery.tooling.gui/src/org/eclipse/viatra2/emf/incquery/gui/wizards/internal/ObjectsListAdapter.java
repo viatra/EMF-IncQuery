@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.dialogs.Dialog;
@@ -10,10 +10,10 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardSecondPage;
 @SuppressWarnings("restriction")
 public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 
-	private ListDialogField<Resource> importList;
+	private ListDialogField<EPackage> importList;
 	private NewEiqFileWizardSecondPage page;
 	
-	public ObjectsListAdapter(NewEiqFileWizardSecondPage page, ListDialogField<Resource> importList) {
+	public ObjectsListAdapter(NewEiqFileWizardSecondPage page, ListDialogField<EPackage> importList) {
 		this.importList = importList;
 		this.page = page;
 	}
