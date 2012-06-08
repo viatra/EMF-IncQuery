@@ -174,10 +174,15 @@ class PatternMatcherClassInferrer {
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
+   		val newEmptyMatchMethod = pattern.toMethod("newEmptyMatch", cloneWithProxies(matchClassRef)) [
+   			it.annotations += pattern.toAnnotation(typeof (Override))
+   		]
    		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it, isPluginLogging)])
    		arrayToMatchMethod.setBody([it | pattern.inferArrayToMatchMethodBody(it, isPluginLogging)])
+   		newEmptyMatchMethod.setBody([it | pattern.inferNewEmptyMatchMethodBody(it, isPluginLogging)])
    		matcherClass.members += tupleToMatchMethod
    		matcherClass.members += arrayToMatchMethod
+   		matcherClass.members += newEmptyMatchMethod
    	}
   	
   	/**
@@ -213,6 +218,15 @@ class PatternMatcherClassInferrer {
    				return null;
    		''')
   	}
+  	
+  	/**
+   	 * Infers the newEmptyMatch method body
+   	 */
+	def inferNewEmptyMatchMethodBody(Pattern pattern, ITreeAppendable appendable, boolean isPluginLogging) {
+		appendable.append('''
+   			return arrayToMatch(new Object[getParameterNames().length]);''')
+	}
+  	
 	  	
   	/**
   	 * Infers the appropriate logging based on the parameters.
