@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -24,4 +25,12 @@ public interface IGenerationFragmentProvider {
 	 * @return a non-null collection of code generation fragments.
 	 */
 	public Iterable<IGenerationFragment> getAllFragments();
+	
+	/**
+	 * Returns the fragment project for the {@link IGenerationFragment} based on the modelProject.
+	 * @param modelProject
+	 * @param fragment
+	 * @return
+	 */
+	public IProject getFragmentProject(IProject modelProject, IGenerationFragment fragment);
 }
