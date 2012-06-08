@@ -28,25 +28,20 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.xmi.XmiModelSupport;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XmiModelBuilder;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.builder.BuilderParticipant;
 import org.eclipse.xtext.builder.EclipseOutputConfigurationProvider;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.OutputConfiguration;
-import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
-import org.eclipse.xtext.resource.IResourceDescriptions;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -82,16 +77,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private EclipseOutputConfigurationProvider outputConfigurationProvider;
 	
 	@Inject
-	private XmiModelBuilder xmiModelBuilder;
-	
-	@Inject
-	private ResourceDescriptionsProvider resourceDescriptionsProvider;
-	
-	@Inject
-	private IContainer.Manager containerManager;
-	
-	@Inject
-	private IResourceServiceProvider resourceServiceProvider;
+	private XmiModelSupport xmiModelSupport;
 	
 	private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
 	private Multimap<IProject, IPluginExtension> extensionMap = ArrayListMultimap.create();
@@ -159,14 +145,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		}
 		super.build(context, monitor);
 		// Normal CleanUp and codegen done on every delta, do XMI Model build
-		IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
-		try {
-			buildXmiModel(context, xmiBuildMonitor);
-		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during XMI Model Building Phase", e);
-		} finally {
-			xmiBuildMonitor.done();
-		}
+		xmiModelSupport.build(deltas.get(0), context, monitor);
 		// normal code generation done, extensions, packages ready to add to the plug-ins
 		IProgressMonitor ensureMonitor = new SubProgressMonitor(monitor, 1);
 		try {
@@ -413,33 +392,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		if (file != null && file.exists()) {
 			file.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
 		}
-	}
-
-	/**
-	 * Builds a global XMI model with a {@link XmiModelBuilder} builder. Before
-	 * the actual build, finds all relevant eiq resources, so the XMI build is
-	 * performed on all currently available {@link PatternModel}.
-	 * 
-	 * @param context
-	 */
-	private void buildXmiModel(IBuildContext context, IProgressMonitor monitor) {
-		monitor.beginTask("Building XMI model", 1);
-		Delta delta = getRelevantDeltas(context).get(0);
-		Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
-		// create a resourcedescription for the input, 
-		// this way we can find all relevant EIQ file in the context of this input.
-		IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
-		IResourceDescription resDesc = index.getResourceDescription(deltaResource.getURI());
-		List<IContainer> visibleContainers = containerManager.getVisibleContainers(resDesc, index);
-		// load all visible resource to the resourceset of the input resource
-		for (IContainer container : visibleContainers) {
-			for (IResourceDescription rd : container.getResourceDescriptions()) {
-				if (resourceServiceProvider.canHandle(rd.getURI())) {
-					context.getResourceSet().getResource(rd.getURI(), true);
-				}
-			}
-		}
-		xmiModelBuilder.build(context.getResourceSet(), context.getBuiltProject());
 	}
 
 	@Override

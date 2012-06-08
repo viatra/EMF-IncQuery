@@ -1,15 +1,13 @@
-package org.eclipse.viatra2.emf.incquery.tooling.generator.util
+package org.eclipse.viatra2.emf.incquery.tooling.generator.builder.xmi
 
 import java.util.ArrayList
 import java.util.HashSet
 import org.apache.log4j.Logger
-import org.eclipse.core.resources.IProject
-import org.eclipse.core.resources.IResource
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.xmi.XMLResource
-import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternURIHandler
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
@@ -18,6 +16,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguage
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.xbase.XFeatureCall
+
 /**
  * @author Mark Czotter
  */
@@ -28,19 +27,11 @@ class XmiModelBuilder {
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
 	 */
-	def build(ResourceSet resourceSet, IProject project) {
+	def build(ResourceSet resourceSet, String fileFullPath) {
 		try {
-			val folder = project.getFolder(XmiModelUtil::XMI_OUTPUT_FOLDER)
-			val file = folder.getFile(XmiModelUtil::GLOBAL_EIQ_FILENAME)
-			if (!folder.exists) {
-				folder.create(IResource::DEPTH_INFINITE, false, null)
-			}
-			if (file.exists) {
-				file.delete(true, null)
-			}
 			// create the model in memory
 			val xmiModelRoot = EMFPatternLanguageFactory::eINSTANCE.createPatternModel()
-			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(file.fullPath.toOSString, true))
+			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(fileFullPath, true))
 			// add import declarations 
 			val HashSet<EPackage> importDeclarations = newHashSet()
 			/*
@@ -141,9 +132,6 @@ class XmiModelBuilder {
 					call.setPatternRef(p as Pattern)
 				}
 			}
-			
-			
-			
 			// save the xmi file 
 			xmiResource.contents.add(xmiModelRoot)
 			val options = newHashMap(XMLResource::OPTION_URI_HANDLER -> new EMFPatternURIHandler(importDeclarations))
