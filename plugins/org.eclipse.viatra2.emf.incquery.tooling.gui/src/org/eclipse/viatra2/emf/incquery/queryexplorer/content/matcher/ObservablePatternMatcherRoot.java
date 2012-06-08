@@ -44,8 +44,7 @@ public class ObservablePatternMatcherRoot {
 	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
 		//This cast could not be avoided because later the filtered delta monitor will need the base IPatternMatch
 		@SuppressWarnings("unchecked")
-		IncQueryMatcher<IPatternMatch> _matcher = (matcher == null) ? null : (IncQueryMatcher<IPatternMatch>) matcher;
-		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, _matcher, patternFqn, generated);
+		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
