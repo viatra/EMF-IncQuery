@@ -14,14 +14,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra2.patternlanguage.ResolutionException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
@@ -41,6 +38,8 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 	
 	@Inject
 	private IValueConverterService valueConverterService;
+	@Inject
+	private IMetamodelProvider metamodelProvider;
 	
 	@Override
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) {
@@ -53,33 +52,36 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 				.getEnumValue_Literal()
 				&& context instanceof EnumValue
 				&& node instanceof ILeafNode) {
-			try {
-				EnumValue value = (EnumValue) context;
-				EEnum type = null;
-				if (value.getEnumeration() != null) {
-					type = value.getEnumeration();
-				} else if (value.eContainer() instanceof PathExpressionHead) {
-					type = EMFPatternLanguageScopeHelper
-						.calculateEnumerationType(getExpressionHead(context
-								.eContainer()));
-				} else {
-					return Collections.emptyList();
-				}
-				String typename = ((ILeafNode)node).getText();
-				EEnumLiteral literal = type.getEEnumLiteralByLiteral(typename);
-				if (literal == null) {
-					literal = type.getEEnumLiteral(typename);
-				}
-				if (literal != null) {
-					return Collections.<EObject>singletonList(literal);
-				} else {
-					return Collections.emptyList();
-				}
-			} catch (ResolutionException e) {
-				return Collections.emptyList();
-			}
+			return getEnumLiteral((EnumValue)context, node);
 		}
 		return super.getLinkedObjects(context, ref, node);
+	}
+
+	private List<EObject> getEnumLiteral(EnumValue value, INode node) {
+		try {
+			EEnum type = null;
+			if (value.getEnumeration() != null) {
+				type = value.getEnumeration();
+			} else if (value.eContainer() instanceof PathExpressionHead) {
+				type = EMFPatternLanguageScopeHelper
+					.calculateEnumerationType(getExpressionHead(value
+							.eContainer()));
+			} else {
+				return Collections.emptyList();
+			}
+			String typename = ((ILeafNode)node).getText();
+			EEnumLiteral literal = type.getEEnumLiteralByLiteral(typename);
+			if (literal == null) {
+				literal = type.getEEnumLiteral(typename);
+			}
+			if (literal != null) {
+				return Collections.<EObject>singletonList(literal);
+			} else {
+				return Collections.emptyList();
+			}
+		} catch (ResolutionException e) {
+			return Collections.emptyList();
+		}
 	}
 	
 	private PathExpressionHead getExpressionHead(EObject obj) {
@@ -97,7 +99,7 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 		if (nsUri == null) {
 			return Collections.emptyList();
 		}
-		EPackage pack = loadEPackage(nsUri, context.eResource().getResourceSet());
+		EPackage pack = metamodelProvider.loadEPackage(nsUri, context.eResource().getResourceSet());
 		if (pack != null) {
 			return Collections.<EObject>singletonList(pack);
 		}
@@ -110,28 +112,6 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 					.getGrammarElement()), text);
 		} catch (ValueConverterException e) {
 			LOG.debug("Exception on leaf '" + text.getText() + "'", e);
-			return null;
-		}
-	}
-	
-	private EPackage loadEPackage(String resourceOrNsURI, ResourceSet resourceSet) {
-		if (EPackage.Registry.INSTANCE.containsKey(resourceOrNsURI)) {
-			return EPackage.Registry.INSTANCE.getEPackage(resourceOrNsURI);
-		}
-		URI uri = URI.createURI(resourceOrNsURI);
-		try {
-			if (uri.fragment() == null) {
-				Resource resource = resourceSet.getResource(uri, true);
-				return (EPackage) resource.getContents().get(0);
-			}
-			return (EPackage) resourceSet.getEObject(uri, true);
-		} catch(RuntimeException ex) {
-			if (uri.isPlatformResource()) {
-				String platformString = uri.toPlatformString(true);
-				URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
-				return loadEPackage(platformPluginURI.toString(), resourceSet);
-			}
-			LOG.trace("Cannot load package with URI '" + resourceOrNsURI + "'", ex);
 			return null;
 		}
 	}

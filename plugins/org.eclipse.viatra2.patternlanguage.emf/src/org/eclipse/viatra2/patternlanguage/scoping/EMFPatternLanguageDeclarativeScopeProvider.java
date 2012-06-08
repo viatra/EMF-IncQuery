@@ -68,9 +68,10 @@ import com.google.inject.Inject;
  */
 public class EMFPatternLanguageDeclarativeScopeProvider extends
 		PatternLanguageDeclarativeScopeProvider {
-	
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
+	@Inject
+	private IMetamodelProvider metamodelProvider;
 	
 	/**
 	 * {@inheritDoc}
@@ -95,20 +96,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	}
 	
 	public IScope scope_EPackage(PackageImport ctx, EReference ref) {
-		Set<String> packageURIs = new HashSet<String>(EPackage.Registry.INSTANCE.keySet());
-		IScope current = new SimpleScope(IScope.NULLSCOPE, Iterables.transform(packageURIs,
-				new Function<String, IEObjectDescription>() {
-					public IEObjectDescription apply(String from) {
-						EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(from);
-						// InternalEObject proxyPackage = (InternalEObject)
-						// EcoreFactory.eINSTANCE.createEPackage();
-						// proxyPackage.eSetProxyURI(URI.createURI(from));
-						QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
-						// return EObjectDescription.create(qualifiedName, proxyPackage,
-						// Collections.singletonMap("nsURI", "true"));
-						return EObjectDescription.create(qualifiedName, ePackage, Collections.singletonMap("nsURI", "true"));
-					}
-				}));
+		IScope current = new SimpleScope(IScope.NULLSCOPE, metamodelProvider.getAllMetamodelObjects());
 		return current;
 	}
 	
