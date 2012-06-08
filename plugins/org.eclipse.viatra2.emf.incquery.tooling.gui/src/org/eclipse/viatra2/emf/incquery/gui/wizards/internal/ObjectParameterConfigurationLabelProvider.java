@@ -1,19 +1,11 @@
-package org.eclipse.viatra2.emf.incquery.gui.wizards;
+package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
-public class ImportListLabelProvider implements ILabelProvider {
+public class ObjectParameterConfigurationLabelProvider implements ILabelProvider {
 
-	private ImageRegistry imageRegistry;
-	
-	public ImportListLabelProvider() {
-		imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
-	}
-	
 	@Override
 	public void addListener(ILabelProviderListener listener) {}
 
@@ -30,12 +22,17 @@ public class ImportListLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
+		return null;
 	}
 
 	@Override
 	public String getText(Object element) {
-		return element.toString();
+		if (element != null) {
+			return element.toString();
+		}
+		else {
+			return null;
+		}
 	}
 
 }

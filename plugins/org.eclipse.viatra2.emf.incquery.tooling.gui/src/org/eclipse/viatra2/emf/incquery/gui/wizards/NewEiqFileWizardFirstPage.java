@@ -83,22 +83,22 @@ public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
 		fileText.setLayoutData(gd_1);
 		fileText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				dialogChanged();
+				validatePage();
 			}
 		});
 		
 		setControl(composite);
 		
-		dialogChanged();
+		validatePage();
 	}
 	
 	@Override
 	protected void handleFieldChanged(String fieldName) {
 		super.handleFieldChanged(fieldName);
-		dialogChanged();
+		validatePage();
 	}
 	
-	private void dialogChanged() {
+	private void validatePage() {
 		IStatus packageStatus = validatePackageName(getPackageText());
 		
 		StatusInfo si = new StatusInfo(packageStatus.getSeverity(), packageStatus.getMessage());
