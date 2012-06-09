@@ -72,6 +72,8 @@ public class CleanSupport {
 			internalFullClean(context, monitor);
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during Full Clean!", e);
+		} finally {
+			monitor.worked(1);
 		}
 	}
 	
@@ -169,6 +171,8 @@ public class CleanSupport {
 			internalNormalClean(context, relevantDeltas, monitor);
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during Normal Clean!", e);
+		} finally {
+			monitor.worked(1);
 		}
 	}
 	

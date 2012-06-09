@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
@@ -72,13 +71,12 @@ public class EnsurePluginSupport {
 	 */
 	public void ensure(IProject modelProject, IProgressMonitor monitor) {
 		// normal code generation done, extensions, packages ready to add to the plug-ins
-		IProgressMonitor ensureMonitor = new SubProgressMonitor(monitor, 1);
 		try {
-			internalEnsure(modelProject, ensureMonitor);
+			internalEnsure(modelProject, monitor);
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during Extension/Package ensure Phase", e);
 		} finally {
-			ensureMonitor.done();
+			monitor.worked(1);
 		}
 	}
 	

@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
@@ -57,18 +56,17 @@ public class XmiModelSupport {
 	 */
 	public void build(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) {
 		// Normal CleanUp and codegen done on every delta, do XMI Model build
-		IProgressMonitor xmiBuildMonitor = new SubProgressMonitor(monitor, 1);
 		try {
-			internalBuild(baseDelta, context, xmiBuildMonitor);
+			monitor.beginTask("Building XMI model", 1);
+			internalBuild(baseDelta, context, monitor);
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during XMI Model Building Phase", e);
 		} finally {
-			xmiBuildMonitor.done();
+			monitor.worked(1);
 		}
 	}
 	
 	private void internalBuild(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("Building XMI model", 1);
 		Resource deltaResource = context.getResourceSet().getResource(baseDelta.getUri(), true);
 		// create a resourcedescription for the input, 
 		// this way we can find all relevant EIQ file in the context of this input.

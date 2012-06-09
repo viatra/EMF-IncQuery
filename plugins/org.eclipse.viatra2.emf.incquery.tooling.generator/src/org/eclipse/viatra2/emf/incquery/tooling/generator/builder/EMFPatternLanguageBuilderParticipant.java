@@ -6,8 +6,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -78,24 +78,27 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
+		SubMonitor progress = SubMonitor.convert(monitor, 5);
 		final IProject modelProject = context.getBuiltProject();
-		modelProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		modelProject.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
 		if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
-			cleanSupport.fullClean(context, monitor);
+			cleanSupport.fullClean(context, progress.newChild(1));
 			// invoke clean build on main project src-gen
-			super.build(context, monitor);
+			super.build(context, progress.newChild(1));
 			if (context.getBuildType() == BuildType.CLEAN) {
+				// work 2 unit if clean build is performed (xmi build, and ensure)
+				progress.worked(2);
 				return;
 			}
 		} else {
 			ensureSupport.clean();
-			cleanSupport.normalClean(context, relevantDeltas, monitor);
+			cleanSupport.normalClean(context, relevantDeltas, progress.newChild(1));
 		}
-		super.build(context, monitor);
+		super.build(context, progress.newChild(1));
 		// normal cleanUp and codegen done on every delta, do XMI Model build
-		xmiModelSupport.build(relevantDeltas.get(0), context, monitor);
+		xmiModelSupport.build(relevantDeltas.get(0), context, progress.newChild(1));
 		// normal code generation done, extensions, packages ready to add to the plug-ins
-		ensureSupport.ensure(modelProject, monitor);
+		ensureSupport.ensure(modelProject, progress.newChild(1));
 	}
 	
 	@Override
