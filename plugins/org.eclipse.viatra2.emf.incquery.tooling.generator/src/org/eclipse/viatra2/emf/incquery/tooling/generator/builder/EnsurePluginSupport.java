@@ -19,7 +19,15 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+/**
+ * Ensure support for BuilderParticipant.
+ * 
+ * @author Mark Czotter
+ * 
+ */
+@Singleton
 public class EnsurePluginSupport {
 	
 	@Inject
@@ -55,7 +63,13 @@ public class EnsurePluginSupport {
 		appendableExtensionMap.clear();
 		removableExtensionMap.clear();
 	}
-	
+
+	/**
+	 * The ensure phase performs changes to the plugin.xml and MANIFEST.MF descriptors.
+	 * @param modelProject 
+	 * @param monitor
+	 * @throws CoreException 
+	 */
 	public void ensure(IProject modelProject, IProgressMonitor monitor) {
 		// normal code generation done, extensions, packages ready to add to the plug-ins
 		IProgressMonitor ensureMonitor = new SubProgressMonitor(monitor, 1);
@@ -68,12 +82,6 @@ public class EnsurePluginSupport {
 		}
 	}
 	
-	/**
-	 * The ensure phase performs changes to plugin.xml and MANIFEST.MF descriptors.
-	 * @param modelProject 
-	 * @param ensureMonitor
-	 * @throws CoreException 
-	 */
 	private void internalEnsure(IProject modelProject, IProgressMonitor monitor) throws CoreException {
 		// ensure exported package and extensions
 		ensurePackages(monitor);
