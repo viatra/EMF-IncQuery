@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui
 Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.6.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.viatra2.emf.incquery.tooling.generator.model;visibility:=reexport,
@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.viatra2.emf.incquery.tooling.generator.model;visibil
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.emf.incquery.tooling.generator.ui.contentassist,
  org.eclipse.viatra2.emf.incquery.tooling.generator.ui.contentassist.antlr,
  org.eclipse.viatra2.emf.incquery.tooling.generator.ui.internal
