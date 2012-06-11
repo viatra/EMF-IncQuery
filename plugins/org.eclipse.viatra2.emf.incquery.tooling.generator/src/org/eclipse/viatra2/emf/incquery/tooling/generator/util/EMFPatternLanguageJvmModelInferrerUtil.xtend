@@ -105,6 +105,10 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		"p"+variable.name.toFirstUpper
    	}
    	
+   	def positionConstant(Variable variable) {
+   		"POSITION_"+variable.name.toUpperCase;
+   	}
+   	
    	/**
    	 * Returns correct getter method name for variable.
    	 * For variable with name 'class' returns getValueOfClass, otherwise returns <code>get#variable.name.toFirstUpper#</code>.

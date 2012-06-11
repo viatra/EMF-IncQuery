@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 
 class JavadocInferrer {
 	
@@ -142,5 +143,10 @@ class JavadocInferrer {
 		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 	 @return the delta monitor.
+	'''
+	
+	def javadocGetAllValuesOfMethod(Variable parameter) '''
+		Retrieve the set of values that occur in matches for «parameter.name».
+		@return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
 	'''
 }

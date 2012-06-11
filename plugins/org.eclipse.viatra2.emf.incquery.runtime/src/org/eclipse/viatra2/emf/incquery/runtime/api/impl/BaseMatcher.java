@@ -57,7 +57,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	protected abstract Match tupleToMatch(Tuple t);
 
 	private static Object[] fEmptyArray;
-	private Object[] emptyArray() {
+	protected Object[] emptyArray() {
 		if (fEmptyArray == null) fEmptyArray = new Object[getPattern().getParameters().size()];
 		return fEmptyArray;
 	}
@@ -348,36 +348,57 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	 */
 	@Override
 	public Set<Object> getAllValues(final String parameterName) {
-		return rawGetAllValues(parameterName, emptyArray());
+		return rawGetAllValues(getPositionOfParameter(parameterName), emptyArray());
 	}
 	
 	public Set<Object> getAllValues(final String parameterName, Match partialMatch) {
-		return rawGetAllValues(parameterName, partialMatch.toArray());
+		return rawGetAllValues(getPositionOfParameter(parameterName), partialMatch.toArray());
 	};
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllValues(java.lang.String, java.lang.Object[])
 	 */
 	@Override
-	public Set<Object> rawGetAllValues(final String parameterName, Object[] parameters) {
-		if(parameterName == null || parameterName.equals("")) {
-			return null;
-		}
-		for (String pName : getParameterNames()) {
-			if(pName.equals(parameterName)) {
-				final Set<Object> results = new HashSet<Object>();
-				rawForEachMatch(parameters, new IMatchProcessor<Match>() {
-					/* (non-Javadoc)
-					 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-					 */
-					@Override
-					public void process(Match match) {
-						results.add(match.get(parameterName));
-					}
-				});
-				return results;
+	public Set<Object> rawGetAllValues(final int position, Object[] parameters) {
+		if(position >= 0 && position < getParameterNames().length) {
+			if(parameters.length == getParameterNames().length) {
+				if(parameters[position] == null) {
+					final Set<Object> results = new HashSet<Object>();
+					rawAccumulateAllValues(position, parameters, results);
+					return results;
+				}
 			}
 		}
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllValues(java.lang.String, java.lang.Object[], java.util.Set)
+	 */
+	//@Override
+	/**
+	 * Uses an existing set to accumulate all values of the parameter with the given name.
+	 * Since it is a protected method, no error checking or input validation is performed!
+	 * 
+	 * @param position position of the parameter for which values are returned
+	 * @param parameters a parameter array corresponding to a partial match of the
+	 *  pattern where each non-null field binds the corresponding pattern parameter to a fixed value.
+	 * @param accumulator the existing set to fill with the values
+	 */
+	protected <T> void rawAccumulateAllValues(final int position, Object[] parameters, final Set<T> accumulator) {
+		rawForEachMatch(parameters, new IMatchProcessor<Match>() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process
+			 * (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+			 */
+			@SuppressWarnings("unchecked")
+			@Override
+			public void process(Match match) {
+				accumulator.add((T) match.get(position));
+			}
+		});
 	}
 }
