@@ -19,6 +19,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -705,4 +708,43 @@ public abstract class ProjectGenerationHelper {
 		return plugin.getBundleDescription().getSymbolicName();
 	}
 	
+	/**
+	 * Returns the IncQuery generator model for the selected project. If no generator model exists,
+	 * an empty model is returned.
+	 * @param project
+	 * @return 
+	 */
+	public static @NonNull IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		if (file.exists()) {
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			Resource resource = set.getResource(uri, true);
+			return (IncQueryGeneratorModel) resource.getContents().get(0);
+		} else {
+			return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+		}
+	}
+	
+	public static boolean isGeneratorModelDefined(IProject project) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		return file.exists();
+	}
+	
+	/**
+	 * Initializes and returns the IncQuery generator model for the selected project. If the model is already initialized, it returns the original model.
+	 * @param project
+	 * @return
+	 */
+	public static @NonNull IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		if (file.exists()) {
+			return getGeneratorModel(project, set);
+		} else {
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			Resource resource = set.createResource(uri);
+			IncQueryGeneratorModel model = GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+			resource.getContents().add(model);
+			return model;
+		}
+	}
 }
