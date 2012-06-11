@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.eclipse.viatra2.emf.incquery.core.project.IncQueryProjectSupport;
+import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 
 /**
  * A wizard class for initializing an EMF IncQuery project.
@@ -26,6 +26,24 @@ import org.eclipse.viatra2.emf.incquery.core.project.IncQueryProjectSupport;
  * 
  */
 public class NewProjectWizard extends Wizard implements INewWizard {
+
+	private final static class CreateProjectOperation extends
+			WorkspaceModifyOperation {
+		private final IProject projectHandle;
+		private final IProjectDescription description;
+
+		private CreateProjectOperation(IProject projectHandle,
+				IProjectDescription description) {
+			this.projectHandle = projectHandle;
+			this.description = description;
+		}
+
+		protected void execute(IProgressMonitor monitor)
+				throws CoreException {
+			ProjectGenerationHelper.createProject(description,
+					projectHandle, monitor);
+		}
+	}
 
 	private WizardNewProjectCreationPage projectCreationPage;
 	private IProject project;
@@ -68,13 +86,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		 * Just like the ExampleWizard, but this time with an operation object
 		 * that modifies workspaces.
 		 */
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor)
-					throws CoreException {
-				IncQueryProjectSupport.createProject(description,
-						projectHandle, monitor);
-			}
-		};
+		WorkspaceModifyOperation op = new CreateProjectOperation(projectHandle, description);
 
 		/*
 		 * This isn't as robust as the code in the BasicNewProjectResourceWizard
