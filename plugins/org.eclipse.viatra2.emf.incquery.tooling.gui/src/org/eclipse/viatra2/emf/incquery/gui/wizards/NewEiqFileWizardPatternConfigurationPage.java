@@ -36,10 +36,10 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
 
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
+public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage {
 
 	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
-	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least parameter is set!";
+	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
 	private Text patternText;
 	private ListDialogField<EPackage> importList;
 	private ListDialogField<ObjectParameter> objectsList;
@@ -49,7 +49,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	private ObjectsListAdapter objectsListAdapter;
 	public boolean parameterSet;
 	
-	public NewEiqFileWizardSecondPage() {
+	public NewEiqFileWizardPatternConfigurationPage() {
 		super(false, "eiq");
 		setTitle("EMF-IncQuery query definition Wizard");
 		parameterSet = false;

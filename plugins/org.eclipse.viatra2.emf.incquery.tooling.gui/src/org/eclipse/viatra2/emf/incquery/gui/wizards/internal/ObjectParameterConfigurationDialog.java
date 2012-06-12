@@ -145,7 +145,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 	private void setParameterType(EObject object) {
 		this.result.setObject(object);
 		if (object != null) {
-			parameterType.setText(object.eClass().toString());
+			parameterType.setText(object.toString());
 		}
 	}
 }

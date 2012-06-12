@@ -52,8 +52,8 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import com.google.inject.Inject;
 
 public class NewEiqFileWizard extends Wizard implements INewWizard {
-	private NewEiqFileWizardFirstPage page1;
-	private NewEiqFileWizardSecondPage page2;
+	private NewEiqFileWizardContainerConfigurationPage page1;
+	private NewEiqFileWizardPatternConfigurationPage page2;
 	private ISelection selection;
 	private IWorkbench workbench;
 	
@@ -70,9 +70,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 	
 	@Override
 	public void addPages() {
-		page1 = new NewEiqFileWizardFirstPage();
+		page1 = new NewEiqFileWizardContainerConfigurationPage();
 		page1.init((IStructuredSelection) selection);
-		page2 = new NewEiqFileWizardSecondPage();
+		page2 = new NewEiqFileWizardPatternConfigurationPage();
 		page2.init((IStructuredSelection) selection);
 		addPage(page1);
 		addPage(page2);
@@ -170,7 +170,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 				Variable var = PatternLanguageFactory.eINSTANCE.createVariable();
 				var.setName(parameter.getParameterName());
 				Type type = PatternLanguageFactory.eINSTANCE.createType();
-				type.setTypename(parameter.getObject().toString());
+				type.setTypename(parameter.getObject().getClass().toString());
 				var.setType(type);
 				pattern.getParameters().add(var);
 			}

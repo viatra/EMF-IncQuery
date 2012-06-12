@@ -16,15 +16,15 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardSecondPage;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardPatternConfigurationPage;
 
 @SuppressWarnings("restriction")
 public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 
 	private ListDialogField<EPackage> importList;
-	private NewEiqFileWizardSecondPage page;
+	private NewEiqFileWizardPatternConfigurationPage page;
 	
-	public ObjectsListAdapter(NewEiqFileWizardSecondPage page, ListDialogField<EPackage> importList) {
+	public ObjectsListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
 		this.importList = importList;
 		this.page = page;
 	}

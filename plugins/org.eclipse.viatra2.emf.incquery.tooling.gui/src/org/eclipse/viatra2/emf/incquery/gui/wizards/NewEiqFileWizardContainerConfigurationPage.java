@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
+public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPage {
 
 	private Text fileText;
 		
@@ -52,7 +52,7 @@ public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
 	private static final String DEFAULT_PACKAGE_WARNING = "The use of default package is discouraged.";
 	private static final String PACKAGE_NAME_WARNING = "Only lower case package names supported.";
 	
-	public NewEiqFileWizardFirstPage() {
+	public NewEiqFileWizardContainerConfigurationPage() {
 		super(false, "eiq");
 		setTitle("EMF-IncQuery query definition Wizard");
 	}
