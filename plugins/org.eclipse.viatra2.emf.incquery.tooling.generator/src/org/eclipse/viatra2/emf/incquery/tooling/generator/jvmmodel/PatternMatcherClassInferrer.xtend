@@ -2,9 +2,8 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Collection
-import org.eclipse.core.runtime.ILog
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.core.runtime.Status
+import java.util.HashSet
+import java.util.Set
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
@@ -12,15 +11,16 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -44,10 +44,24 @@ class PatternMatcherClassInferrer {
    			it.superTypes += pattern.newTypeRef(typeof(BaseGeneratedMatcher), cloneWithProxies(matchClassRef))
    			it.superTypes += pattern.newTypeRef(typeof(IncQueryMatcher), cloneWithProxies(matchClassRef))
    		]
+   		matcherClass.inferMatchClassFields(pattern)
    		matcherClass.inferMatcherClassConstructors(pattern)
    		matcherClass.inferMatcherClassMethods(pattern, matchClassRef)
    		matcherClass.inferMatcherClassToMatchMethods(pattern, matchClassRef)
    		return matcherClass
+   	}
+   	
+   	/**
+   	 * Infers fields for Match class based on the input 'pattern'.
+   	 */
+   	def inferMatchClassFields(JvmDeclaredType matchClass, Pattern pattern) {
+   		for (Variable variable : pattern.parameters) {
+   			matchClass.members += pattern.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
+	 			it.setStatic(true)
+	 			it.setFinal(true)
+   				it.setInitializer([append('''«pattern.parameters.indexOf(variable)»''')])
+   			]
+   		}
    	}
    	
 	/**
@@ -150,6 +164,45 @@ class PatternMatcherClassInferrer {
    					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
    				''')]
    			]
+   			for (Variable variable : pattern.parameters){
+   				matcherClass.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
+	   				it.parameters += pattern.toParameter("parameters", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
+	   				it.body = [append('''
+	   					«pattern.newTypeRef(typeof(Set), variable.calculateType).qualifiedName» results = new «pattern.newTypeRef(typeof(HashSet), variable.calculateType).qualifiedName»();
+	   					rawAccumulateAllValues(«variable.positionConstant», parameters, results);
+	   					return results;
+	   				''')]
+	   			]
+	   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
+	   				it.body = [append('''
+	   					return rawAccumulateAllValuesOf«variable.name»(emptyArray());
+	   				''')
+	   				]
+	   			]
+	   			if(pattern.parameters.size > 1){
+		   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+		   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
+		   				it.parameters += pattern.toParameter("partialMatch", cloneWithProxies(matchClassRef))
+		   				it.body = [append('''
+		   					return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());
+		   				''')]
+		   			]
+		   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+		   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
+		   				for (parameter : pattern.parameters){
+		   					if(parameter != variable){
+								it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
+			   				}
+		   				}
+		   				it.body = [append('''
+		   					«variable.calculateType.qualifiedName» «variable.parameterName» = null;
+		   					return rawAccumulateAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
+		   				''')]
+		   			]
+	   			}
+   			}
 		} else {
 			matcherClass.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethodNoParameter.toString
@@ -164,8 +217,6 @@ class PatternMatcherClassInferrer {
    	 * Infers tupleToMatch, arrayToMatch methods for Matcher class based on the input 'pattern'.
    	 */   	
    	def inferMatcherClassToMatchMethods(JvmDeclaredType matcherClass, Pattern pattern, JvmTypeReference matchClassRef) {
-   		// TODO get setting from the generator model
-  		val isPluginLogging = false;
 	   	val tupleToMatchMethod = pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
@@ -174,22 +225,26 @@ class PatternMatcherClassInferrer {
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
-   		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it, isPluginLogging)])
-   		arrayToMatchMethod.setBody([it | pattern.inferArrayToMatchMethodBody(it, isPluginLogging)])
+   		val newEmptyMatchMethod = pattern.toMethod("newEmptyMatch", cloneWithProxies(matchClassRef)) [
+   			it.annotations += pattern.toAnnotation(typeof (Override))
+   		]
+   		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it)])
+   		arrayToMatchMethod.setBody([it | pattern.inferArrayToMatchMethodBody(it)])
+   		newEmptyMatchMethod.setBody([it | pattern.inferNewEmptyMatchMethodBody(it)])
    		matcherClass.members += tupleToMatchMethod
    		matcherClass.members += arrayToMatchMethod
+   		matcherClass.members += newEmptyMatchMethod
    	}
   	
   	/**
   	 * Infers the arrayToMatch method body.
   	 */
-  	def inferTupleToMatchMethodBody(Pattern pattern, ITreeAppendable appendable, boolean isPluginLogging) {
-  		val activatorClass = pattern.findActivatorClass;
+  	def inferTupleToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
    		appendable.append('''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«pattern.parameters.indexOf(p)»)«ENDFOR»);	
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);	
    			} catch(ClassCastException e) {''')
-   		pattern.inferLogging(isPluginLogging, activatorClass, "tupleToMatch", appendable)
+   		inferErrorLogging("Element(s) in tuple not properly typed!", "e", appendable)
    		appendable.append('''
    				//throw new IncQueryRuntimeException(e.getMessage());
    				return null;
@@ -200,29 +255,43 @@ class PatternMatcherClassInferrer {
   	/**
   	 * Infers the arrayToMatch method body.
   	 */
-  	def inferArrayToMatchMethodBody(Pattern pattern, ITreeAppendable appendable, boolean isPluginLogging) {
-  		val activatorClass = pattern.findActivatorClass;
+  	def inferArrayToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
   		appendable.append('''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«pattern.parameters.indexOf(p)»]«ENDFOR»);
+   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {''')
-   		pattern.inferLogging(isPluginLogging, activatorClass, "arrayToMatch", appendable)
+   		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)
    		appendable.append('''
-   		}
    				//throw new IncQueryRuntimeException(e.getMessage());
    				return null;
+   			}
    		''')
   	}
+  	
+  	/**
+   	 * Infers the newEmptyMatch method body
+   	 */
+	def inferNewEmptyMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
+		appendable.append('''
+   			return arrayToMatch(new Object[getParameterNames().length]);''')
+	}
+  	
 	  	
   	/**
   	 * Infers the appropriate logging based on the parameters.
+  	 * 
   	 */
-  	def inferLogging(Pattern pattern, boolean pluginLogging, JvmTypeReference activator, String methodName, ITreeAppendable appendable) {
-  		if (pluginLogging && activator != null) {
+  	def inferErrorLogging(String message, String exceptionName,  ITreeAppendable appendable) {
+  		if(exceptionName == null){
+	  		appendable.append('''engine.getLogger().logError("«message»");''')
+  		} else {
+  			appendable.append('''engine.getLogger().logError("«message»",«exceptionName»);''')
+  		}
+  		/*if (pluginLogging && activator != null) {
   			return pattern.pluginLogging(activator, appendable)
   		} else {
   			return pattern.consoleLogging(methodName, appendable)
-  		}
+  		}*/
 	}
 	
 	/**
@@ -236,15 +305,15 @@ class PatternMatcherClassInferrer {
 	/**
 	 * Default logging to System error.
 	 */
-	def consoleLogging(Pattern pattern, String methodName, ITreeAppendable appendable) {appendable.append('''
+	/*def consoleLogging(Pattern pattern, String methodName, ITreeAppendable appendable) {appendable.append('''
 		System.err.println("Error when executing «methodName» in «pattern.matcherClassName»:" + e.getMessage());
 	''')
-	}
+	}*/
 	
 	/**
 	 * Default logging with Activator's ILog.
 	 */
-	def pluginLogging(Pattern pattern, JvmTypeReference activator, ITreeAppendable appendable) { 
+	/*def pluginLogging(Pattern pattern, JvmTypeReference activator, ITreeAppendable appendable) { 
 		appendable.referClass(pattern, typeof(ILog))
 		appendable.append(''' log = Activator.getDefault().getLog();''')
 		appendable.referClass(pattern, typeof(IStatus))
@@ -253,6 +322,6 @@ class PatternMatcherClassInferrer {
 		appendable.append('''(IStatus.ERROR, log.getBundle().getSymbolicName(), e.getMessage());
 		log.log(status);
 	''')
-	}
+	}*/
 	
 }

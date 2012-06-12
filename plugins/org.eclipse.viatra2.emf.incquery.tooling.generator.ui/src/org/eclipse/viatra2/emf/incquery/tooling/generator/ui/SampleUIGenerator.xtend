@@ -20,6 +20,9 @@ class SampleUIGenerator implements IGenerationFragment {
 	private static String ECLIPSE_UI_COMMANDS_EXTENSION_POINT = "org.eclipse.ui.commands"
 	private static String ECLIPSE_UI_HANDLERS_EXTENSION_POINT = "org.eclipse.ui.handlers"
 	private static String ECLIPSE_UI_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
+	public static String UI_COMMANDS_PREFIX = "generated.incquery.command."
+	public static String UI_HANDLERS_PREFIX = "generated.incquery.handler."
+	public static String UI_MENUS_PREFIX = "generated.incquery.menu."
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.generateFile(pattern.handlerClassJavaFile, pattern.patternHandler)
@@ -38,7 +41,11 @@ class SampleUIGenerator implements IGenerationFragment {
 	}
 	
 	override getRemovableExtensions() {
-		newArrayList(ECLIPSE_UI_COMMANDS_EXTENSION_POINT, ECLIPSE_UI_HANDLERS_EXTENSION_POINT, ECLIPSE_UI_MENUS_EXTENSION_POINT)
+		newArrayList(
+			Pair::of(UI_COMMANDS_PREFIX, ECLIPSE_UI_COMMANDS_EXTENSION_POINT),
+			Pair::of(UI_HANDLERS_PREFIX, ECLIPSE_UI_HANDLERS_EXTENSION_POINT), 
+			Pair::of(UI_MENUS_PREFIX, ECLIPSE_UI_MENUS_EXTENSION_POINT)
+		)
 	}
 	
 	override getProjectDependencies() {
@@ -133,13 +140,13 @@ class SampleUIGenerator implements IGenerationFragment {
 	}
 	
 	def handlerExtensionId(Pattern pattern) {
-		pattern.getFullyQualifiedName + "Handler"
+		UI_HANDLERS_PREFIX + pattern.getFullyQualifiedName + "Handler"
 	}
 	def commandExtensionId(Pattern pattern) {
-		pattern.getFullyQualifiedName + "Command"
+		UI_COMMANDS_PREFIX + pattern.getFullyQualifiedName + "Command"
 	}
 	def menuExtensionId(Pattern pattern) {
-		pattern.getFullyQualifiedName + "MenuContribution"
+		UI_MENUS_PREFIX + pattern.getFullyQualifiedName + "MenuContribution"
 	}
 	def commandId(Pattern pattern) {
 		pattern.getFullyQualifiedName + "CommandId"

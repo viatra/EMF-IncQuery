@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Abel Hegedus, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Abel Hegedus, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.tooling.generator.validation
 
 import com.google.inject.Inject
@@ -18,6 +29,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
+	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
@@ -41,7 +53,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		val extensionList = newArrayList(p)
 		val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
 		if (!editorId.nullOrEmpty) {
-			extensionList.add(Pair::of(menuContributionId(editorId), "org.eclipse.ui.menus"))
+			extensionList.add(Pair::of(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT))
 		}
 		return extensionList
 	}
@@ -50,7 +62,10 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		if (!contributedEditorIds.empty) {
 			contributedEditorIds.clear
 		}
-		newArrayList(VALIDATION_EXTENSION_POINT, ECLIPSE_MENUS_EXTENSION_POINT)
+		newArrayList(
+			Pair::of(VALIDATIONEXTENSION_PREFIX, VALIDATION_EXTENSION_POINT), 
+			Pair::of(UI_VALIDATION_MENUS_PREFIX, ECLIPSE_MENUS_EXTENSION_POINT)
+		)
 	}
 	
 	override getProjectDependencies() {
@@ -120,7 +135,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	def menuContributionId(String editorId) {
-		return String::format("validation.menucontribution.%s", editorId)
+		return String::format("%s%s", UI_VALIDATION_MENUS_PREFIX, editorId)
 	}
 		
 	def getElementOfConstraintAnnotation(Pattern pattern, String elementName) {

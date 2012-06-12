@@ -190,35 +190,41 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	@SuppressWarnings("unchecked")
 	private void refreshDerivedFeature() {
 		//System.err.println("[Notify: " + derivedFeature.getName() + "] Derived refresh.");
-		if (source.eNotificationRequired()) {
-			if(type == null) {
-				type = derivedFeature.getEType();
-			}
-			if (derivedFeature.isMany()) {
-				if(currentValue != null) {
-					oldValue = new HashSet<EObject>((Collection<EObject>) currentValue);
-				} else {
-					oldValue = new HashSet<EObject>();
+		try {
+			if (source.eNotificationRequired()) {
+				if(type == null) {
+					type = derivedFeature.getEType();
 				}
-				//if(currentValue == null) {
-				currentValue = new HashSet<EObject>();
-				//} else {
-				//	((Collection<EObject>) currentValue).clear();
-				//}
-				Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
-				for (Object target : targets) {
-					EMFModelComprehension.visitFeature(visitor, source, derivedFeature, target);	
-				}
-				if(currentValue instanceof Collection<?> && oldValue instanceof Collection<?>) {
-					((Collection<?>)oldValue).removeAll((Collection<?>) currentValue);
-					if(((Collection<?>) oldValue).size() > 0) {
-						sendRemoveManyNotification(source, derivedFeature, oldValue);
+				if (derivedFeature.isMany()) {
+					if(currentValue != null) {
+						oldValue = new HashSet<EObject>((Collection<EObject>) currentValue);
+					} else {
+						oldValue = new HashSet<EObject>();
 					}
+					//if(currentValue == null) {
+					currentValue = new HashSet<EObject>();
+					//} else {
+					//	((Collection<EObject>) currentValue).clear();
+					//}
+					Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
+					for (Object target : targets) {
+						EMFModelComprehension.visitFeature(visitor, source, derivedFeature, target);	
+					}
+					if(currentValue instanceof Collection<?> && oldValue instanceof Collection<?>) {
+						((Collection<?>)oldValue).removeAll((Collection<?>) currentValue);
+						if(((Collection<?>) oldValue).size() > 0) {
+							sendRemoveManyNotification(source, derivedFeature, oldValue);
+						}
+					}
+				} else {
+					Object target = source.eGet(derivedFeature);
+					EMFModelComprehension.visitFeature(visitor, source, derivedFeature, target);
 				}
-			} else {
-				Object target = source.eGet(derivedFeature);
-				EMFModelComprehension.visitFeature(visitor, source, derivedFeature, target);
 			}
+		} catch (Exception ex) {
+			IncQueryEngine.getDefaultLogger().logError("The derived feature adapter encountered an error in processing the EMF model. " +
+					"This happened while maintaining the derived feature " +  
+					derivedFeature.getName() + " of object " + source, ex);
 		}
 	}
 	

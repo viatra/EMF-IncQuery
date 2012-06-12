@@ -11,10 +11,14 @@
 package org.eclipse.viatra2.patternlanguage.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
-import org.eclipse.viatra2.patternlanguage.ui.builder.EMFPatternLanguageBuilderParticipant;
+import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
+import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 
 import com.google.inject.Binder;
@@ -47,6 +51,16 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	@Override
 	public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
 		return EMFPatternLanguageBuilderParticipant.class;
+	}
+	
+	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+		return EMFPatternLanguageHighlightingCalculator.class;
+	}
+
+	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+		return EMFPatternLanguageHighlightingConfiguration.class;
 	}
 	
 }

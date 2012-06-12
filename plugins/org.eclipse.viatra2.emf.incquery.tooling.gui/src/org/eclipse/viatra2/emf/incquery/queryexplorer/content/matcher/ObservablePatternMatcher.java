@@ -8,10 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation.
@@ -32,6 +39,8 @@ public class ObservablePatternMatcher {
 	private String patternFqn;
 	private IPatternMatch filter;
 	private Object[] parameterFilter;
+	private String orderParameter;
+	private boolean descendingOrder;
 	
 	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
@@ -39,8 +48,27 @@ public class ObservablePatternMatcher {
 		this.matches = new ArrayList<ObservablePatternMatch>();
 		this.matcher = matcher;
 		this.generated = generated;
+		this.orderParameter = null;
 		
 		if (matcher != null) {
+			Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
+			if (annotation != null) {
+				for (AnnotationParameter ap : annotation.getParameters()) {
+					if (ap.getName().matches("key")) {
+						orderParameter = ((StringValueImpl) ap.getValue()).getValue(); 
+					}
+					if (ap.getName().matches("direction")) {
+						String direction = ((StringValueImpl) ap.getValue()).getValue(); 
+						if (direction.matches("desc")) {
+							descendingOrder = true;
+						}
+						else {
+							descendingOrder = false;
+						}
+					}
+				}
+			}
+
 			initFilter();
 			this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
 			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
@@ -71,6 +99,47 @@ public class ObservablePatternMatcher {
 		}
 	}
 	
+	/**
+	 * Returns the index of the new match in the list based on the ordering set on the matcher.
+	 * 
+	 * @param match the match that will be inserted
+	 * @return -1 if the match should be inserted at the end of the list, else the actual index
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private int placeOfMatch(IPatternMatch match) {
+		if (orderParameter != null) {
+			String[] tokens = orderParameter.split("\\.");
+			String orderParameterClass = tokens[0];
+			String orderParameterAttribute = tokens[1];
+			
+			EObject obj = (EObject) match.get(orderParameterClass);
+			EStructuralFeature feature = DatabindingAdapterUtil.getFeature(obj, orderParameterAttribute);
+			Object value = obj.eGet(feature);
+			if (value instanceof Comparable) {
+				
+				for (int i = 0;i<matches.size();i++) {
+					IPatternMatch compMatch = matches.get(i).getPatternMatch();
+					EObject compObj = (EObject) compMatch.get(orderParameterClass);
+					EStructuralFeature compFeature = DatabindingAdapterUtil.getFeature(compObj, orderParameterAttribute);
+					Comparable compValue = (Comparable) compObj.eGet(compFeature);
+					//descending order, the place is when the new match is greater than the actual element
+					if (descendingOrder) {
+						if (compValue.compareTo(value) <= 0) {
+							return i;
+						}
+					}
+					//ascending order, the place is when the new match is smaller than the actual element
+					else {
+						if (compValue.compareTo(value) >= 0) {
+							return i;
+						}
+					}
+				}
+			}	
+		}
+		return -1;
+	}
+	
 	private void processNewMatches(Collection<IPatternMatch> matches) {
 		for (IPatternMatch s : matches) {
 			addMatch(s);
@@ -86,15 +155,28 @@ public class ObservablePatternMatcher {
 	private void addMatch(IPatternMatch match) {
 		ObservablePatternMatch pm = new ObservablePatternMatch(this, match);
 		this.sigMap.put(match, pm);
-		this.matches.add(pm);
+		int index = placeOfMatch(match);
+		
+		if (index == -1) {
+			this.matches.add(pm);
+		}
+		else {
+			this.matches.add(index, pm);
+		}
+		
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 	
 	private void removeMatch(IPatternMatch match) {
+		//null checks - eclipse closing - issue 162
 		ObservablePatternMatch observableMatch = this.sigMap.remove(match);
-		this.matches.remove(observableMatch);
-		observableMatch.dispose();
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (observableMatch != null) {
+			this.matches.remove(observableMatch);
+			observableMatch.dispose();
+		}
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 
 	public ObservablePatternMatcherRoot getParent() {

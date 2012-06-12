@@ -31,11 +31,15 @@ class DatabindingGenerator implements IGenerationFragment {
 	}
 	
 	override removeExtension(Pattern pattern) {
-		newArrayList(Pair::of(DATABINDINGEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT))
+		newArrayList(
+			Pair::of(pattern.databindingContributionId, DATABINDINGEXTENSION_POINT)
+		)
 	}
 	
 	override getRemovableExtensions() {
-		newArrayList(DATABINDINGEXTENSION_POINT)
+		newArrayList(
+			Pair::of(DATABINDINGEXTENSION_PREFIX, DATABINDINGEXTENSION_POINT)
+		)
 	}
 	
 	override getProjectDependencies() {
@@ -47,6 +51,10 @@ class DatabindingGenerator implements IGenerationFragment {
 	
 	override getProjectPostfix() {
 		"databinding"
+	}
+	
+	def databindingContributionId(Pattern pattern) {
+		DATABINDINGEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern)
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
@@ -66,7 +74,7 @@ class DatabindingGenerator implements IGenerationFragment {
 			val message = tmp;
 			
 			newArrayList(
-			exGen.contribExtension(DATABINDINGEXTENSION_PREFIX + CorePatternLanguageHelper::getFullyQualifiedName(pattern), DATABINDINGEXTENSION_POINT) [
+			exGen.contribExtension(pattern.databindingContributionId, DATABINDINGEXTENSION_POINT) [
 				exGen.contribElement(it, "databinding") [
 					exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+"DatabindingAdapter")
 					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)

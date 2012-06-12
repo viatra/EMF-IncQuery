@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.patternlanguage.ui.builder;
+package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -123,7 +123,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				// clean all fragments
 				cleanAllFragment(project);
 				// clean current model project
-				ProjectGenerationHelper.removeAllExtension(project, Lists.newArrayList(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+				ProjectGenerationHelper.removeAllExtension(project, GenerateMatcherFactoryExtension.getRemovableExtensionIdentifiers());
 				removeExportedPackages(project);
 				removeXmiModel(project);
 				// invoke clean build on main project src-gen
@@ -171,6 +171,15 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		IProgressMonitor ensureMonitor = new SubProgressMonitor(monitor, 1);
 		try {
 			ensurePhase(ensureMonitor);
+			// ensure classpath entries on the projects
+			ProjectGenerationHelper.ensureSourceFolders(project, monitor);
+			for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {
+				String fragmentProjectName = getFragmentProjectName(project, fragment);
+				IProject fragmentProject = workspaceRoot.getProject(fragmentProjectName);
+				if (fragmentProject.exists()) {
+					ProjectGenerationHelper.ensureSourceFolders(fragmentProject, monitor);
+				}
+			}
 		} catch (Exception e) {
 			IncQueryEngine.getDefaultLogger().logError("Exception during Extension/Package ensure Phase", e);
 		} finally {
@@ -188,8 +197,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			try {
 				String fragmentProjectName = getFragmentProjectName(project, fragment);
 				IProject fragmentProject = workspaceRoot.getProject(fragmentProjectName);
-				fragmentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 				if (fragmentProject.exists()) {
+					fragmentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 					// full clean on output directories
 					EclipseResourceFileSystemAccess2 fsa = createProjectFileSystemAccess(fragmentProject);
 					for (OutputConfiguration config : fsa.getOutputConfigurations().values()) {
@@ -526,7 +535,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private IProject createOrGetTargetProject(IProject modelProject,
 			IGenerationFragment fragment) throws CoreException {
 		String postfix = fragment.getProjectPostfix();
-		List<String> dependencies = Lists.asList(modelProject.getName(), fragment.getProjectDependencies());
+		String modelProjectName = ProjectGenerationHelper.getBundleSymbolicName(modelProject);;
+		List<String> dependencies = Lists.asList(modelProjectName, fragment.getProjectDependencies());
 		if (postfix == null || postfix.isEmpty()) {
 			ProjectGenerationHelper.ensureBundleDependencies(modelProject,
 					dependencies);
@@ -550,7 +560,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	 * @return
 	 */
 	private String getFragmentProjectName(IProject base, IGenerationFragment fragment) {
-		return String.format("%s.%s", base.getName(), fragment.getProjectPostfix());
+		return String.format("%s.%s",
+				ProjectGenerationHelper.getBundleSymbolicName(base),
+				fragment.getProjectPostfix());
 	}
 	
 	/**

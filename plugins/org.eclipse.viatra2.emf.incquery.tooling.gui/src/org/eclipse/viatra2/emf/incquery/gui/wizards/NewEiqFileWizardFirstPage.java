@@ -29,22 +29,29 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardPage extends NewTypeWizardPage {
+public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
 
 	private Text fileText;
-	private Text patternText;
+		
+	private static final String defaultEiqFileName = "default.eiq";
+	private static final String SOURCE_FOLDER_ERROR = "You must specify a valid source folder!";
+	private static final String FILE_NAME_ERROR = "File name must be specified!";
+	private static final String FILE_NAME_NOT_VALID = "File name must be valid!";
+	private static final String FILE_EXTENSION_ERROR = "File extension must be \"eiq\"!";
+	private static final String DEFAULT_PACKAGE_WARNING = "The use of default package is discouraged.";
+	private static final String PACKAGE_NAME_WARNING = "Only lower case package names supported.";
 	
-	public NewEiqFileWizardPage() {
+	public NewEiqFileWizardFirstPage() {
 		super(false, "eiq");
 		setTitle("EMF-IncQuery query definition Wizard");
 	}
 	
 	public void init(IStructuredSelection selection) {
-		IJavaElement jelem= getInitialJavaElement(selection);
-		initContainerPage(jelem);
+		IJavaElement jElement= getInitialJavaElement(selection);
+		initContainerPage(jElement);
 		
-		if (jelem != null) {
-			IPackageFragment pack = (IPackageFragment) jelem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+		if (jElement != null) {
+			IPackageFragment pack = (IPackageFragment) jElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
 			setPackageFragment(pack, true);
 		}
 		
@@ -70,46 +77,28 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 		Label label = new Label(composite, SWT.NULL);
 		label.setText("&File name:");
 		fileText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		fileText.setText("default.eiq");
+		fileText.setText(defaultEiqFileName);
 		GridData gd_1 = new GridData(GridData.FILL_HORIZONTAL);
 		gd_1.horizontalSpan = 3;
 		fileText.setLayoutData(gd_1);
 		fileText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
-		
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gd_3 = new GridData(GridData.FILL_HORIZONTAL);
-		gd_3.horizontalSpan = 4;
-		label.setLayoutData(gd_3);
-
-		label = new Label(composite, SWT.NULL);
-		label.setText("&Pattern name:");
-		patternText = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		GridData gd_2 = new GridData(GridData.FILL_HORIZONTAL);
-		gd_2.horizontalSpan = 3;
-		patternText.setLayoutData(gd_2);
-		patternText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
+				validatePage();
 			}
 		});
 		
 		setControl(composite);
 		
-		dialogChanged();
+		validatePage();
 	}
 	
 	@Override
 	protected void handleFieldChanged(String fieldName) {
 		super.handleFieldChanged(fieldName);
-		dialogChanged();
+		validatePage();
 	}
 	
-	private void dialogChanged() {
-		
+	private void validatePage() {
 		IStatus packageStatus = validatePackageName(getPackageText());
 		
 		StatusInfo si = new StatusInfo(packageStatus.getSeverity(), packageStatus.getMessage());
@@ -120,21 +109,20 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource containerResource = root.findMember(new Path(containerPath));
 		
-		if (containerResource == null) {
-			si.setError("The given source folder does not exist");
+		if (containerPath.matches("") || containerResource == null) {
+			si.setError(SOURCE_FOLDER_ERROR);
 		}
 
-		if (fileText != null && patternText != null) {
+		if (fileText != null) {
 		
 			String fileName = fileText.getText();
-			String patternName = patternText.getText();
 	
 			if (fileName.length() == 0) {
-				si.setError("File name must be specified");
+				si.setError(FILE_NAME_ERROR);
 			}
 			
 			if (fileName.replace('\\', '/').indexOf('/', 1) > 0) {
-				si.setError("File name must be valid");
+				si.setError(FILE_NAME_NOT_VALID);
 			}
 			
 			boolean wrongExtension = false;
@@ -148,11 +136,7 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 			}
 			
 			if (wrongExtension) {
-				si.setError("File extension must be \"eiq\"");
-			}
-	
-			if (patternName == null || patternName.length() == 0) {
-				si.setWarning("Pattern name should be specified");
+				si.setError(FILE_EXTENSION_ERROR);
 			}
 		}
 		
@@ -169,7 +153,7 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 	
 	private IStatus validatePackageName(String text) {
 		if (text == null || text.isEmpty()) {
-			return new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, "The use of default package is discouraged.");
+			return new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, DEFAULT_PACKAGE_WARNING);
 		}
 		IJavaProject project= getJavaProject();
 		if (project == null || !project.exists()) {
@@ -177,17 +161,13 @@ public class NewEiqFileWizardPage extends NewTypeWizardPage {
 		}
 		IStatus status = JavaConventionsUtil.validatePackageName(text, project);
 		if (status.getSeverity() != ERROR && !text.toLowerCase().equals(text)) {
-			return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Only lower case package names supported.");
+			return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, PACKAGE_NAME_WARNING);
 		}
 		return status;
 	}
 
 	public String getFileName() {
 		return fileText.getText();
-	}
-
-	public String getPatternName() {
-		return patternText.getText();
 	}
 	
 	public String getContainerName() {

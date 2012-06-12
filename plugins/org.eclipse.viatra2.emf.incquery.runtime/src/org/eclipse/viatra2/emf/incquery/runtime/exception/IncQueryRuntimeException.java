@@ -23,13 +23,16 @@ public class IncQueryRuntimeException extends RuntimeException{
 	public static final String PATTERN_MATCHER_PROBLEM = "The following error occurred during the preparation of the generated pattern matcher";
 	public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 	public static final String INVALID_EMFROOT = "Incremental query engine can only be attached on the contents of an EMF EObject, Resource, or ResourceSet.";
-    
+//    public static final String EMF_MODEL_PROCESSING_ERROR = "Error while processing the EMF model";
 	
 	public IncQueryRuntimeException(String s) {
 		super(s);
 	}
 	public IncQueryRuntimeException(RetePatternBuildException e) {
 		super(PATTERN_MATCHER_PROBLEM+": " + e.getMessage(), e);
+	}
+	public IncQueryRuntimeException(String s, Exception e) {
+		super(s+": " + e.getMessage(), e);
 	}
 
 }

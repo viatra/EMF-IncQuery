@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
@@ -35,6 +36,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Directi
 public class EMFContentTreeViralListener extends EContentAdapter implements ExtensibleEMFManipulationListener {	
 	protected Set<Notifier> rootNotifiers;
 	CoreEMFManipulationListener coreListener;
+	private EMFIncQueryRuntimeLogger logger;
 	
 	/**
 	 * Prerequisite: engine has its network, framework and boundary fields
@@ -42,8 +44,8 @@ public class EMFContentTreeViralListener extends EContentAdapter implements Exte
 	 * 
 	 * @param engine
 	 */
-	public EMFContentTreeViralListener(ReteEngine<?> engine, Notifier rootNotifier, EMFPatternMatcherRuntimeContext<?> context) {
-		this(engine, Collections.singletonList(rootNotifier), context);
+	public EMFContentTreeViralListener(ReteEngine<?> engine, Notifier rootNotifier, EMFPatternMatcherRuntimeContext<?> context, EMFIncQueryRuntimeLogger logger) {
+		this(engine, Collections.singletonList(rootNotifier), context, logger);
 	}
 	/**
 	 * Prerequisite: engine has its network, framework and boundary fields
@@ -51,11 +53,12 @@ public class EMFContentTreeViralListener extends EContentAdapter implements Exte
 	 * 
 	 * @param engine
 	 */
-	public EMFContentTreeViralListener(ReteEngine<?> engine, Collection<Notifier> rootNotifiers, EMFPatternMatcherRuntimeContext<?> context) {
+	public EMFContentTreeViralListener(ReteEngine<?> engine, Collection<Notifier> rootNotifiers, EMFPatternMatcherRuntimeContext<?> context, EMFIncQueryRuntimeLogger logger) {
 		super();
 		
+		this.logger = logger;
 		this.rootNotifiers = new HashSet<Notifier>(rootNotifiers);
-		this.coreListener = new CoreEMFManipulationListener(engine, context); //, rootNotifier instanceof ResourceSet);
+		this.coreListener = new CoreEMFManipulationListener(engine, context, logger); //, rootNotifier instanceof ResourceSet);
 		for (Notifier notifier : rootNotifiers) {
 			notifier.eAdapters().add(this);
 		}
@@ -121,7 +124,7 @@ public class EMFContentTreeViralListener extends EContentAdapter implements Exte
 	public void notifyChanged(Notification notification) {
 		coreListener.handleEMFNotification(notification);
 		super.notifyChanged(notification);
-		coreListener.engine.runAfterUpdateCallbacks();
+		coreListener.reteEngine.runAfterUpdateCallbacks();
 	}
 
 }

@@ -9,9 +9,9 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 public class PatternLeaf implements PatternComponent {
 
 	private String patternNameFragment;
-	private PatternComponent parent;
+	private PatternComposite parent;
 	
-	public PatternLeaf(String patternNameFragment, PatternComponent parent) {
+	public PatternLeaf(String patternNameFragment, PatternComposite parent) {
 		this.patternNameFragment = patternNameFragment;
 		this.parent = parent;
 	}
@@ -31,7 +31,7 @@ public class PatternLeaf implements PatternComponent {
 	}
 
 	@Override
-	public PatternComponent getParent() {
+	public PatternComposite getParent() {
 		return parent;
 	}
 }

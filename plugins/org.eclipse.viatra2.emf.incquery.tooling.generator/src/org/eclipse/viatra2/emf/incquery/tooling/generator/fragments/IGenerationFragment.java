@@ -77,12 +77,12 @@ public interface IGenerationFragment {
 	public Iterable<Pair<String, String>> removeExtension(Pattern pattern);
 	
 	/**
-	 * Returns extension point ids. All extension with one of these ids will be
+	 * Returns pairs of extension id prefix and point id. All extension with one of these ids and prefixes will be
 	 * removed from the fragments project's plugin.xml. This method only invoked
 	 * during Clean Build.
 	 * 
 	 * @return
 	 */
-	public Collection<String> getRemovableExtensions();
+	public Collection<Pair<String, String>> getRemovableExtensions();
 	
 }

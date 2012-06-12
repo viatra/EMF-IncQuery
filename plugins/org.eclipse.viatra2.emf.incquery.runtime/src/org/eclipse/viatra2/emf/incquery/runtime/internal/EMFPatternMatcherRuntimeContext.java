@@ -49,13 +49,25 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 	protected ExtensibleEMFManipulationListener listener;
 
 	
+	protected void traverse(EMFVisitor visitor) {
+		try {
+			newTraversal().accept(visitor);
+		} catch (Exception ex) {
+			iqEngine.getLogger().logError(
+					"EMF-IncQuery encountered an error in processing the EMF model. " +
+					"This happened while traversing the model for the initialization of pattern match caches.", ex);
+		}
+	}	
+	
 	/**
 	 * @param visitor
 	 */
 	protected void doVisit(CustomizedEMFVisitor visitor) {
 		if (traversalCoalescing) waitingVisitors.add(visitor);
-		else newTraversal().accept(visitor);
+		else traverse(visitor);
 	}
+
+
 	
 	class CustomizedEMFVisitor extends EMFVisitor {
 		@Override
@@ -97,7 +109,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		}
 		@Override
 		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-			ExtensibleEMFManipulationListener emfContentTreeViralListener = new EMFContentTreeViralListener(engine, root, this);
+			ExtensibleEMFManipulationListener emfContentTreeViralListener = new EMFContentTreeViralListener(engine, root, this, iqEngine.getLogger());
 			for (Resource resource : additionalResources) {
 				emfContentTreeViralListener.addRoot(resource);
 			}
@@ -124,7 +136,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		}	
 		@Override
 		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-			return new EMFContentTreeViralListener(engine, root, this);
+			return new EMFContentTreeViralListener(engine, root, this, iqEngine.getLogger());
 		}	
 		@Override
 		public void considerForExpansion(EObject obj) {}
@@ -141,7 +153,7 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		}	
 		@Override
 		protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-			return new EMFContentTreeViralListener(engine, root, this);
+			return new EMFContentTreeViralListener(engine, root, this, iqEngine.getLogger());
 		}	
 		@Override
 		public void considerForExpansion(EObject obj) {}

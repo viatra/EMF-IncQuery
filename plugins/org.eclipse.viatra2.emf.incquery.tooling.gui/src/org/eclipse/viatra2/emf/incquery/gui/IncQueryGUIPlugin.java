@@ -28,6 +28,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 	public static final String ICON_PIN = "pin";
 	public static final String ICON_ARROW_TOP = "arrow_top";
 	public static final String ICON_ARROW_BOTTOM = "arrow_bottom";
+	public static final String ICON_EPACKAGE = "epackage";
 
 	// The shared instance
 	private static IncQueryGUIPlugin plugin;
@@ -75,6 +76,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 		reg.put(ICON_ARROW_LEFT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_left.gif"));
 		reg.put(ICON_ARROW_TOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_top.gif"));
 		reg.put(ICON_ARROW_BOTTOM, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_bottom.gif"));
+		reg.put(ICON_EPACKAGE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/epackage.gif"));
 	}
 
 	public void logException(String message, Throwable exception) {

@@ -14,7 +14,9 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
 
 	public EMFPatternURIHandler(Collection<EPackage> packages) {
 		for (EPackage e : packages) {
-			uriToEPackageMap.put(e.eResource().getURI(), e);
+			if (e.eResource() != null) {
+				uriToEPackageMap.put(e.eResource().getURI(), e);
+			}
 		}
 	}
 	

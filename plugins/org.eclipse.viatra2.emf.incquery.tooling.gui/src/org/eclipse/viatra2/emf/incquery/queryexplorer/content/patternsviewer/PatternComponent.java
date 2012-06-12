@@ -28,6 +28,6 @@ public interface PatternComponent {
 	 * 
 	 * @return the parent of the component
 	 */
-	public PatternComponent getParent();
+	public PatternComposite getParent();
 	
 }

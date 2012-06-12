@@ -31,7 +31,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatter
  */
 public class EMFPatternMatcherContext<PatternDescription> implements IPatternMatcherContext<PatternDescription> {
 		
-	private IncQueryEngine iqEngine;
+	protected IncQueryEngine iqEngine;
 	
 	/**
 	 * @param iqEngine

@@ -42,8 +42,8 @@ public class ObservablePatternMatcherRoot {
 	}
 	
 	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
-		@SuppressWarnings("unchecked")
 		//This cast could not be avoided because later the filtered delta monitor will need the base IPatternMatch
+		@SuppressWarnings("unchecked")
 		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
