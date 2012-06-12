@@ -168,10 +168,15 @@ public class ObservablePatternMatcher {
 	}
 	
 	private void removeMatch(IPatternMatch match) {
+		//null checks - eclipse closing - issue 162
 		ObservablePatternMatch observableMatch = this.sigMap.remove(match);
-		this.matches.remove(observableMatch);
-		observableMatch.dispose();
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (observableMatch != null) {
+			this.matches.remove(observableMatch);
+			observableMatch.dispose();
+		}
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 
 	public ObservablePatternMatcherRoot getParent() {
