@@ -37,8 +37,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 @SuppressWarnings("rawtypes")
 public class MatcherFactoryRegistry {
 	private static final Map<String, IMatcherFactory> contributedMatcherFactories = new HashMap<String, IMatcherFactory>();
-	private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
-	private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
+	// NOTE pattern group management is relegated to PatternGroup classes
+	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
+	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
 
 	/**
 	 * Called by Activator.
@@ -99,7 +100,8 @@ public class MatcherFactoryRegistry {
 		String qualifiedName = factory.getPatternFullyQualifiedName();
 		if(!contributedMatcherFactories.containsKey(qualifiedName)) {
 			contributedMatcherFactories.put(qualifiedName, factory);
-			if(matcherFactoryGroups != null) {
+		  // NOTE pattern group management is relegated to PatternGroup classes
+			/*/if(matcherFactoryGroups != null) {
 				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactoryGroups.entrySet()) {
 					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, false);
 				}
@@ -108,7 +110,7 @@ public class MatcherFactoryRegistry {
 				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactorySubTrees.entrySet()) {
 					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, true);
 				}
-			}
+			}*/
 		}
 	}
 
@@ -188,11 +190,12 @@ public class MatcherFactoryRegistry {
 	 */
 	private static Set<IMatcherFactory> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
 		Map<String, Set<IMatcherFactory>> map = null;
-		if(includeSubPackages) {
+	  // NOTE pattern group management is relegated to PatternGroup classes
+		/*if(includeSubPackages) {
 			map = matcherFactorySubTrees;
 		} else {
 			map = matcherFactoryGroups;
-		}
+		}*/
 		if(map == null) {
 			map = new HashMap<String, Set<IMatcherFactory>>();
 		}
