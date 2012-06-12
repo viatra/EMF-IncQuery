@@ -25,7 +25,7 @@ public class PatternRegistry {
 
 	private static PatternRegistry instance;
 	private Map<IFile, PatternModel> registeredPatterModels;
-	private Set<Pattern> activePatterns;
+	private List<Pattern> activePatterns;
 	private Map<String, Pattern> patternNameMap;
 	
 	public static PatternRegistry getInstance() {
@@ -38,7 +38,7 @@ public class PatternRegistry {
 	protected PatternRegistry() {
 		registeredPatterModels = new HashMap<IFile, PatternModel>();
 		patternNameMap = new HashMap<String, Pattern>();
-		activePatterns = new HashSet<Pattern>();
+		activePatterns = new ArrayList<Pattern>();
 	}
 	
 	/**
@@ -89,6 +89,10 @@ public class PatternRegistry {
 		activePatterns.add(p);
 	}
 	
+	public PatternModel getPatternModelForFile(IFile file) {
+		return registeredPatterModels.get(file);
+	}
+	
 	/**
 	 * Unregisters the patterns within the given eiq file.
 	 * 
@@ -131,8 +135,13 @@ public class PatternRegistry {
 		return patternNameMap.get(patternFqn);
 	}
 	
-	public Set<Pattern> getActivePatterns() {
-		return activePatterns;
+	/**
+	 * Returns the list of active patterns.
+	 * 
+	 * @return the list of active patterns
+	 */
+	public List<Pattern> getActivePatterns() {
+		return new ArrayList<Pattern>(activePatterns);
 	}
 	
 	/**

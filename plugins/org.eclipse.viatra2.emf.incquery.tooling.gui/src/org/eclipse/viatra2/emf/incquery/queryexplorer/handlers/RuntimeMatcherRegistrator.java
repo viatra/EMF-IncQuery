@@ -9,8 +9,10 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
@@ -42,25 +44,41 @@ public class RuntimeMatcherRegistrator implements Runnable {
 	public void run() {
 		if (QueryExplorer.getInstance() != null) {	
 			MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-			PatternModel parsedEPM = dbUtil.parseEPM(file);
+			PatternComposite viewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
+			PatternModel oldParsedModel = PatternRegistry.getInstance().getPatternModelForFile(file);
+			PatternModel newParsedModel = dbUtil.parseEPM(file);
 				
-			//unregistering patterns
-			Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
-			for (Pattern pattern : removedPatterns) {
-				for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+			//UNREGISTERING PATTERNS
+			
+			List<Pattern> allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
+			//deactivate patterns within the given file
+			PatternRegistry.getInstance().unregisterPatternModel(file);
+			
+			//unregister all active patterns from the roots and dispose the appropriate iq engine
+			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+				for (Pattern pattern : allActivePatterns) {
 					root.unregisterPattern(pattern);
 				}
+				EngineManager.getInstance().getIncQueryEngine(root.getNotifier()).dispose();
 			}
 			
-			for (Pattern pattern : parsedEPM.getPatterns()) {
-				QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+			//remove labels from pattern registry for the corresponding pattern model
+			if (oldParsedModel != null) {
+				for (Pattern pattern : oldParsedModel.getPatterns()) {
+					viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+				}
 			}
 			
 			QueryExplorer.getInstance().getPatternsViewer().refresh();
 	
-			//registering patterns
-			Set<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, parsedEPM);
-			for (Pattern pattern : newPatterns) {
+			//REGISTERING PATTERNS
+			
+			//registering patterns from file
+			Set<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
+			allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
+			
+			//now the active patterns also contain of the new patterns
+			for (Pattern pattern : allActivePatterns) {
 				for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 					root.registerPattern(pattern);
 				}
@@ -69,7 +87,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			//setting check states
 			List<PatternComponent> components = new ArrayList<PatternComponent>();
 			for (Pattern pattern : newPatterns) {
-				PatternComponent component = QueryExplorer.getInstance().getPatternsViewerInput().addComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+				PatternComponent component = viewerInput.addComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 				components.add(component);
 			}
 			//note that after insertion a refresh is necessary otherwise setting check state will not work
