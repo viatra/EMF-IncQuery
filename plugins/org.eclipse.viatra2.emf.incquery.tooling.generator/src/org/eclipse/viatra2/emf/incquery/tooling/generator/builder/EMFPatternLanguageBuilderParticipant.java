@@ -545,7 +545,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			String projectName = getFragmentProjectName(modelProject, fragment);
 			IProject targetProject = workspaceRoot.getProject(projectName);
 			if (!targetProject.exists()) {
-				ProjectGenerationHelper.initializePluginProject(targetProject, dependencies);
+				ProjectGenerationHelper.initializePluginProject(targetProject, dependencies, fragment.getAdditionalBinIncludes());
 			} else {
 				ProjectGenerationHelper.ensureBundleDependencies(targetProject, dependencies);
 			}
