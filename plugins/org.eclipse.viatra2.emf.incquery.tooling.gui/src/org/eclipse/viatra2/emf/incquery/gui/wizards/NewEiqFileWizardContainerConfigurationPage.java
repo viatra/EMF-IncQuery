@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 import org.eclipse.core.resources.IResource;
@@ -29,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
+public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPage {
 
 	private Text fileText;
 		
@@ -41,7 +52,7 @@ public class NewEiqFileWizardFirstPage extends NewTypeWizardPage {
 	private static final String DEFAULT_PACKAGE_WARNING = "The use of default package is discouraged.";
 	private static final String PACKAGE_NAME_WARNING = "Only lower case package names supported.";
 	
-	public NewEiqFileWizardFirstPage() {
+	public NewEiqFileWizardContainerConfigurationPage() {
 		super(false, "eiq");
 		setTitle("EMF-IncQuery query definition Wizard");
 	}
