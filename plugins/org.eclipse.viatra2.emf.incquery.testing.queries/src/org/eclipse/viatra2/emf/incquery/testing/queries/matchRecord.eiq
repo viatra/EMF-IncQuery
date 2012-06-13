@@ -1,0 +1,97 @@
+package org.eclipse.viatra2.emf.incquery.testing.queries
+
+import "http://www.eclipse.org/viatra2/emf/incquery/snapshot"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern MatchRecordWithSubstitution(
+	Record : MatchRecord,
+	ParameterName : EString,
+	Substitution : MatchSubstitutionRecord
+) = {
+	MatchRecord.substitutions(Record,Substitution);
+	MatchSubstitutionRecord.parameterName(Substitution, ParameterName);
+}
+	
+pattern CorrectRecordSubstitutionValue(
+	Record : MatchRecord,
+	ParameterName : EString,
+	Value
+) = {
+	find MatchRecordWithSubstitution(Record, ParameterName, Substitution);
+	MatchSubstitutionRecord.derivedValue(Substitution, Value);
+}
+
+pattern IncorrectSubstitution(
+	Record : MatchRecord,
+	CorrespondingRecord : MatchRecord
+) = {
+	MatchRecord.substitutions.parameterName(Record,Name);
+	MatchRecord.substitutions.parameterName(CorrespondingRecord,Name);
+	MatchRecord.substitutions.derivedValue(Record,Value1);
+	MatchRecord.substitutions.derivedValue(Record,Value2);
+	Value1 != Value2;
+}
+
+pattern CorrespondingRecords(
+	Record : MatchRecord,
+	CorrespondingRecord : MatchRecord
+) = {
+	neg find IncorrectSubstitution(Record, CorrespondingRecord);
+}
+
+pattern CorrespondingRecordInMatchSetRecord(
+	Record : MatchRecord,
+	CorrespodingRecord : MatchRecord,
+	ExpectedSet : MatchSetRecord
+) = {
+	MatchSetRecord.matches(ExpectedSet,CorrespodingRecord);
+	find CorrespondingRecords(Record, CorrespodingRecord);
+}
+
+pattern UnexpectedMatchRecord(
+	ActualSet : MatchSetRecord,
+	ExpectedSet : MatchSetRecord,
+	Record : MatchRecord
+) = {
+	MatchSetRecord.matches(ActualSet, Record);
+	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ExpectedSet);
+}
+
+pattern NotFoundMatchRecord(
+	ActualSet : MatchSetRecord,
+	ExpectedSet : MatchSetRecord,
+	Record : MatchRecord
+) = {
+	MatchSetRecord.matches(ExpectedSet, Record);
+	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ActualSet);
+}
+
+pattern SubstitutionValue(
+	Substitution : MatchSubstitutionRecord,
+	Value
+) = {
+	MiscellaneousSubstitution.value(Substitution,Value);
+} or {
+	EMFSubstitution.value(Substitution,Value);
+} or {
+	IntSubstitution.value(Substitution,Value);
+} or {
+	LongSubstitution.value(Substitution,Value);
+} or {
+	DoubleSubstitution.value(Substitution,Value);
+} or {
+	FloatSubstitution.value(Substitution,Value);
+} or {
+	BooleanSubstitution.value(Substitution,Value);
+} or {
+	StringSubstitution.value(Substitution,Value);
+} or {
+	DateSubstitution.value(Substitution,Value);
+} or {
+	EnumSubstitution.valueLiteral(Substitution,Value);
+}
+	//EStructuralFeature(ValueFeature);
+	//EStructuralFeature.name(ValueFeature,"value");
+	//EClass.eStructuralFeatures(SubstitutionClass,ValueFeature);
+	//check(Substitution.eClass.equals(SubstitutionClass));
+	//check(Substitution.eGet(ValueFeature).equals(Value));
