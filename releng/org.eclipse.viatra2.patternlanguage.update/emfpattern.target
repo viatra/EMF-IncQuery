@@ -18,8 +18,8 @@
 <repository location="http://download.itemis.com/updates/releases"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtend.sdk.feature.group" version="2.3.0.v201206120633"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.3.0.v201206120633"/>
+<unit id="org.eclipse.xtend.sdk.feature.group" version="2.3.0.v201206051055"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.3.0.v201206051055"/>
 <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
 </location>
 </locations>
