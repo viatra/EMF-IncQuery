@@ -62,16 +62,5 @@ class ExampleIncQueryFunctionalTest {
 		patternModel.assertMatchResults(snapshot)
 		return
 	}
-	/*
-	 * val patterns = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-
-			pattern resolutionTest(Name) = {
-				Pattern(Name);
-			}
-		') as PatternModel
-	 * val expected = loadFromUri("uri/to/test/expected")
-	 * assertMatchResults(patterns,expected)
-	 */
 	
 }
