@@ -4,7 +4,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.xtext.common.types.access.ClasspathTypeProviderFactory;
@@ -29,11 +28,19 @@ public class XmiModelUtil {
 	 * @see {@link ResourceSet#getResource(URI, boolean)}.
 	 */
 	public static Resource getGlobalXmiResource(String bundleName) {
+		ResourceSet set = prepareXtextResource();
+		return set.getResource(getGlobalXmiResourceURI(bundleName), true);
+	}
+
+	/**
+	 * @return
+	 */
+	public static ResourceSet prepareXtextResource() {
 		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
 		ResourceSet set = injector.getInstance(ResourceSet.class);
 		ClasspathTypeProviderFactory cptf = injector.getInstance(ClasspathTypeProviderFactory.class);
 		cptf.createTypeProvider(set);
-		return set.getResource(getGlobalXmiResourceURI(bundleName), true);
+		return set;
 	}
 	
 	/**
