@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 import java.util.List;
@@ -25,10 +36,10 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
 
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
+public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage {
 
 	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
-	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least parameter is set!";
+	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
 	private Text patternText;
 	private ListDialogField<EPackage> importList;
 	private ListDialogField<ObjectParameter> objectsList;
@@ -38,7 +49,7 @@ public class NewEiqFileWizardSecondPage extends NewTypeWizardPage {
 	private ObjectsListAdapter objectsListAdapter;
 	public boolean parameterSet;
 	
-	public NewEiqFileWizardSecondPage() {
+	public NewEiqFileWizardPatternConfigurationPage() {
 		super(false, "eiq");
 		setTitle("EMF-IncQuery query definition Wizard");
 		parameterSet = false;

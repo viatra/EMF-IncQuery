@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
 import org.eclipse.emf.ecore.EPackage;
@@ -5,15 +16,15 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardSecondPage;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardPatternConfigurationPage;
 
 @SuppressWarnings("restriction")
 public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 
 	private ListDialogField<EPackage> importList;
-	private NewEiqFileWizardSecondPage page;
+	private NewEiqFileWizardPatternConfigurationPage page;
 	
-	public ObjectsListAdapter(NewEiqFileWizardSecondPage page, ListDialogField<EPackage> importList) {
+	public ObjectsListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
 		this.importList = importList;
 		this.page = page;
 	}
