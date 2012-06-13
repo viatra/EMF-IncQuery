@@ -23,6 +23,7 @@ import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatt
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
+import org.eclipse.core.runtime.Path
 
 class DatabindingGenerator implements IGenerationFragment {
 	
@@ -163,5 +164,9 @@ class DatabindingGenerator implements IGenerationFragment {
 			}
 		}
 	'''
+	
+	override getAdditionalBinIncludes() {
+		return newArrayList(new Path("plugin.xml"))
+	}
 	
 }

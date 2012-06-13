@@ -3,8 +3,10 @@ package org.eclipse.viatra2.emf.incquery.core.project;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
@@ -50,7 +52,8 @@ public class IncQueryProjectSupport {
 			ref = context.getServiceReference(IBundleProjectService.class);
 			final IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service.getDescription(proj);
-			ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc);
+			IPath[] additionalBinIncludes = new IPath[] {new Path("plugin.xml"), new Path("queries/")};
+			ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc, additionalBinIncludes);
 			bundleDesc.apply(monitor);
 			// Adding IncQuery-specific natures
 			ProjectGenerationHelper.addNatures(proj, new String[] {
