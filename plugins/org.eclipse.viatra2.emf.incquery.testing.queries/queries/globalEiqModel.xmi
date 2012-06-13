@@ -318,54 +318,6 @@
       </constraints>
     </bodies>
   </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.NotFoundMatchRecord" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <parameters name="ActualSet">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
-      </type>
-    </parameters>
-    <parameters name="ExpectedSet">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
-      </type>
-    </parameters>
-    <parameters name="Record">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/matches"/>
-            </type>
-          </tail>
-          <src var="ExpectedSet"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Record"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.4">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Record"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="CorrespodingRecord"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="ActualSet"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
     <parameters name="Substitution">
       <type xsi:type="eMFPatternLanguage:ClassType">
@@ -555,9 +507,9 @@
     </bodies>
   </patterns>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   </importPackages>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
   </importPackages>
 </eMFPatternLanguage:PatternModel>

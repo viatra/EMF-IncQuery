@@ -1,13 +1,13 @@
 package org.eclipse.viatra2.emf.incquery.testing.core
 
 import java.util.Date
-import java.util.HashSet
 import java.util.Set
 import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.URIConverter
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
@@ -16,9 +16,9 @@ import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegi
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord
-import org.eclipse.viatra2.emf.incquery.testing.queries.notfoundmatchrecord.NotFoundMatchRecordMatcher
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 
@@ -97,7 +97,12 @@ class TestExecutor {
 	 * Load a pattern model from the given platform URI into a new resource set
 	 */
 	def loadPatternModelFromUri(String platformUri){
-		XmiModelUtil::prepareXtextResource.loadAdditionalResourceFromUri(platformUri)		
+		val resource = XmiModelUtil::prepareXtextResource.loadAdditionalResourceFromUri(platformUri)
+		if(resource.contents.size > 0){
+			if(resource.contents.get(0) instanceof PatternModel){
+				resource.contents.get(0) as PatternModel
+			}
+		}	
 	}
 	
 	/**
@@ -133,19 +138,36 @@ class TestExecutor {
 		if(resource != null){
 			if(resource.contents.size > 0){
 				if(resource.contents.get(0) instanceof IncQuerySnapshot){
-					resource.contents.get(0)
+					resource.contents.get(0) as IncQuerySnapshot
 				}
 			}	
 		}
 	}
 	
 	/**
-	 * Into new resource set
+	 * Load the recorded match set into a new resource set form the given file
 	 */
-	def loadExpectedResultsFromUri(String platformUri){
-		
+	def loadExpectedResultsFromFile(IFile file){
+		file.locationURI.path.loadExpectedResultsFromUri
 	}
 	
+	/**
+	 * Load the recorded match set into a new resource set form the given platform URI
+	 */
+	def loadExpectedResultsFromUri(String platformUri){
+		val resource = loadModelFromUri(platformUri);
+		if(resource != null){
+			if(resource.contents.size > 0){
+				if(resource.contents.get(0) instanceof IncQuerySnapshot){
+					resource.contents.get(0) as IncQuerySnapshot
+				}
+			}	
+		}
+	}
+	
+	/**
+	 * 
+	 */
 	def loadExpectedResultsForPatternFromFile(ResourceSet resourceSet, IFile file, String patternFQN){
 		resourceSet.loadExpectedResultsForPatternFromUri(file.locationURI.path,patternFQN)
 	}
@@ -158,7 +180,10 @@ class TestExecutor {
 		}
 	}
 	
-	// TODO maybe create a match set record from the matcher and use queries to evaluate their equality (e.g. neg find MatchRecordWithCorrespondingRecord(){all substitutions are equal} 
+	/**
+	 * Compares the match set of a given matcher with the given match record using EMF-IncQuery as a compare tool.
+	 * Therefore the comparison depends on correct EMF-IncQuery query evaluation (for a given limited pattern language feature set).
+	 */
 	def compareResultSetsAsRecords(IncQueryMatcher matcher, MatchSetRecord expected){
 		val diff = newHashSet
 		
@@ -167,36 +192,74 @@ class TestExecutor {
 		if(!correctResults){
 			return diff
 		}
+		
 		if(!(expected.eContainer instanceof IncQuerySnapshot)){
 			diff.add(MATCHSETRECORD_NOT_IN_SNAPSHOT)
 			return diff
 		}
-		val unexpectedMatcher = UnexpectedMatchRecordMatcher::FACTORY.getMatcher(expected.eContainer)
-		val notFoundMatcher = NotFoundMatchRecordMatcher::FACTORY.getMatcher(expected.eContainer)
+		val snapshot = expected.eContainer as IncQuerySnapshot
 		
-		matcher.saveMatchesToSnapshot(expected.eContainer as IncQuerySnapshot)
+		val unexpectedMatcher = UnexpectedMatchRecordMatcher::FACTORY.getMatcher(snapshot.EMFRootForSnapshot)
+		//val notFoundMatcher = NotFoundMatchRecordMatcher::FACTORY.getMatcher(snapshot.EMFRootForSnapshot)
+		
+		val actual = matcher.saveMatchesToSnapshot(snapshot)
 		
 		// 5. run matchers
-		if(unexpectedMatcher.countMatches == 0 && notFoundMatcher.countMatches == 0){
-			diff.add(CORRECTRESULTS)
-		}
+		//if(unexpectedMatcher.countMatches == 0 && notFoundMatcher.countMatches == 0){
+		//	diff.add(CORRECTRESULTS)
+		//}
 		
-		unexpectedMatcher.forEachMatch() [
+		unexpectedMatcher.forEachMatch(actual, expected, null) [
 			diff.add(UNEXPECTED_MATCH + " ("+it+")")
 		]
-		notFoundMatcher.forEachMatch() [
+		unexpectedMatcher.forEachMatch(expected, actual, null) [
 			diff.add(EXPECTED_NOT_FOUND + " ("+it+")")
 		]
 		
 		
 	}
 
+	/**
+	 * Returns the EMF root that was used by the matchers recorded into the given snapshot, based on the input specification and the model roots.
+	 */
+	def getEMFRootForSnapshot(IncQuerySnapshot snapshot){
+		if(snapshot.inputSpecification == InputSpecification::EOBJECT){
+			if(snapshot.modelRoots.size > 0){				
+				snapshot.modelRoots.get(0)
+			}
+		} else if(snapshot.inputSpecification == InputSpecification::RESOURCE){
+			snapshot.eResource
+		} else if(snapshot.inputSpecification == InputSpecification::RESOURCE_SET){
+			snapshot.eResource.resourceSet
+		}
+	}
+
+	/**
+	 * Saves the matches of the given matcher into the given snapshot. 
+	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
+	 */
 	def saveMatchesToSnapshot(IncQueryMatcher matcher, IncQuerySnapshot snapshot){
 		val patternFQN = matcher.patternName
 		val actualRecord = EIQSnapshotFactory::eINSTANCE.createMatchSetRecord
 		actualRecord.patternQualifiedName = patternFQN
 		// 2. put actual match set record in the same model with the expected
 		snapshot.matchSetRecords.add(actualRecord)
+		if(snapshot.inputSpecification == null){
+			// 3. store model roots
+			val root = matcher.engine.emfRoot
+			if(root instanceof EObject){
+				snapshot.modelRoots.add(root as EObject)
+				snapshot.inputSpecification = InputSpecification::EOBJECT
+			} else if(root instanceof Resource){
+				snapshot.modelRoots.addAll((root as Resource).contents)
+				snapshot.inputSpecification = InputSpecification::RESOURCE
+			} else if(root instanceof ResourceSet){
+				(root as ResourceSet).resources.forEach()[
+					snapshot.modelRoots.addAll(contents)
+				]
+				snapshot.inputSpecification = InputSpecification::RESOURCE_SET
+			}
+		}
 		// 4. create matchset records
 		matcher.forEachMatch()[match | 
 			val matchRecord = EIQSnapshotFactory::eINSTANCE.createMatchRecord
@@ -256,9 +319,9 @@ class TestExecutor {
 		]
 		
 		// 4. return results
-		if(correctResults && notFoundMatches.empty){
-			diff.add(CORRECTRESULTS)
-		}
+		//if(correctResults && notFoundMatches.empty){
+		//	diff.add(CORRECTRESULTS)
+		//}
 		return diff
 		/*for(IPatternMatch match : matcher.allMatches as Iterable<IPatternMatch>){
 			if(!foundMatches.contains(match)){
@@ -290,21 +353,41 @@ class TestExecutor {
 		}*/
 	}
 	
+	/**
+	 * Compares match set of each matcher initialized from the given pattern model based on the input specification of the snapshot
+	 * If any of the matchers return incorrect results, the assert fails
+	 */
 	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
 		val diff = newHashSet
 		
 		snapshot.matchSetRecords.forEach() [matchSet |
-			val input = matchSet.modelRoot
+			val input = snapshot.EMFRootForSnapshot
 			val matcher = patternModel.initializeMatcherFromModel(input,matchSet.patternQualifiedName)
 			val result = matcher.compareResultSets(matchSet)
-			if(!newHashSet(CORRECTRESULTS).equals(result)){
+			if(!(newHashSet(CORRECTRESULTS).equals(result) || newHashSet(CORRECT_EMPTY).equals(result) || newHashSet(CORRECT_SINGLE).equals(result))){
 				diff.addAll(result)
 			}
 		]
 		
-		if(diff.size == 0){
-			diff.add(CORRECTRESULTS)
-		}
+		assertArrayEquals(newHashSet,diff)
+	}
+	
+	/**
+	 * Compares match set of each matcher initialized from the given pattern model based on the input specification of the snapshot (specified as a platform URI)
+	 * If any of the matchers return incorrect results, the assert fails
+	 */
+	def assertMatchResults(PatternModel patternModel, String snapshotUri){
+		val snapshot = snapshotUri.loadExpectedResultsFromUri
+		patternModel.assertMatchResults(snapshot)
+	}
+	
+	/**
+	 * Compares match set of each matcher initialized from the given pattern model (specified as a platform URI) based on the input specification of the snapshot (specified as a platform URI)
+	 * If any of the matchers return incorrect results, the assert fails
+	 */
+	def assertMatchResults(String patternUri, String snapshotUri){
+		val patternModel = patternUri.loadPatternModelFromUri
+		patternModel.assertMatchResults(snapshotUri)
 	}
 	
 	/**

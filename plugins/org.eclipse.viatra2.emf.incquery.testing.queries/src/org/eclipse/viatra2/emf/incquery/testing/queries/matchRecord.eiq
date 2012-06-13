@@ -57,14 +57,14 @@ pattern UnexpectedMatchRecord(
 	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ExpectedSet);
 }
 
-pattern NotFoundMatchRecord(
+/*pattern NotFoundMatchRecord(
 	ActualSet : MatchSetRecord,
 	ExpectedSet : MatchSetRecord,
 	Record : MatchRecord
 ) = {
 	MatchSetRecord.matches(ExpectedSet, Record);
 	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ActualSet);
-}
+}*/
 
 pattern SubstitutionValue(
 	Substitution : MatchSubstitutionRecord,

@@ -50,14 +50,6 @@
       </matcher>
    </extension>
    <extension
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.NotFoundMatchRecord"
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            factory="org.eclipse.viatra2.emf.incquery.testing.queries.notfoundmatchrecord.NotFoundMatchRecordMatcherFactory"
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.NotFoundMatchRecord">
-      </matcher>
-   </extension>
-   <extension
          id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
