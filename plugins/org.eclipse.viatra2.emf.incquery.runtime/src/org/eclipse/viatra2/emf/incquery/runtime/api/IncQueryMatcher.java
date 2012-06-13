@@ -265,4 +265,10 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 *  empty set if there are no matches
 	 */
 	public abstract Set<Object> rawGetAllValues(final int position, Object[] parameters);
+	/**
+	 * Returns the engine that the matcher uses.
+	 * 
+	 * @return the engine
+	 */
+	public abstract IncQueryEngine getEngine();
 }

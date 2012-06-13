@@ -401,4 +401,12 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 			}
 		});
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getEngine()
+	 */
+	@Override
+	public IncQueryEngine getEngine() {
+		return engine;
+	}
 }
