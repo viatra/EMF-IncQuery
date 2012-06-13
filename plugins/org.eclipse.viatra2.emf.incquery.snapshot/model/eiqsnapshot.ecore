@@ -7,6 +7,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="patternQualifiedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="matches" ordered="false"
         upperBound="-1" eType="#//MatchRecord" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MatchRecord">
     <eStructuralFeatures xsi:type="ecore:EReference" name="substitutions" upperBound="-1"
@@ -14,6 +15,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MatchSubstitutionRecord" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="derivedValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        changeable="false" volatile="true" transient="true" derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EMFSubstitution" eSuperTypes="#//MatchSubstitutionRecord">
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
@@ -45,5 +48,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MiscellaneousSubstitution" eSuperTypes="#//MatchSubstitutionRecord">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IncQuerySnapshot">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="matchSetRecords" upperBound="-1"
+        eType="#//MatchSetRecord" containment="true"/>
   </eClassifiers>
 </ecore:EPackage>
