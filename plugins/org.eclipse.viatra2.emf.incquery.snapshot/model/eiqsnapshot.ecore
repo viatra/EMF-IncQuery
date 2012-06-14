@@ -7,6 +7,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="patternQualifiedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="matches" ordered="false"
         upperBound="-1" eType="#//MatchRecord" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="partialMatch" eType="#//MatchRecord"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MatchRecord">
     <eStructuralFeatures xsi:type="ecore:EReference" name="substitutions" upperBound="-1"
@@ -53,9 +55,11 @@
         eType="#//MatchSetRecord" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoots" upperBound="-1"
         eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EObject"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputSpecification" eType="#//InputSpecification"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputSpecification" eType="#//InputSpecification"
+        defaultValueLiteral=""/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="InputSpecification">
+    <eLiterals name="Unset" value="-1" literal="Unset"/>
     <eLiterals name="ResourceSet"/>
     <eLiterals name="Resource" value="1"/>
     <eLiterals name="EObject" value="2"/>
