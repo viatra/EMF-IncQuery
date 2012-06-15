@@ -23,6 +23,8 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.util.EcoreUtil
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -125,7 +127,14 @@ class SnapshotHelper {
 	def createMatchForMachRecord(IncQueryMatcher matcher, MatchRecord matchRecord){
 		val match = matcher.newEmptyMatch
 		matchRecord.substitutions.forEach()[
-			match.set(parameterName,derivedValue)				
+			var target = derivedValue
+			/*if(target instanceof EObject){
+				var etarget = target as EObject
+				if(etarget.eIsProxy){
+					target = EcoreUtil::resolve(etarget, matchRecord)
+				}
+			}*/
+			match.set(parameterName,target)
 		]
 		return match
 	}

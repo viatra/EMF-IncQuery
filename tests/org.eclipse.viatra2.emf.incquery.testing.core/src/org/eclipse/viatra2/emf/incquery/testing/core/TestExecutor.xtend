@@ -22,6 +22,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 
 import static org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor.*
 import static org.junit.Assert.*
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -141,13 +142,14 @@ class TestExecutor {
 		}
 		
 		// 2/b. check for unexpected matches
-		val notFoundMatches = newArrayList()
-		matcher.forEachMatch() [
+		//val notFoundMatches = newArrayList()
+		matcher.forEachMatch(matcher.createMatchForMachRecord(expected.filter)) [
 			if(!foundMatches.contains(it)){
-				notFoundMatches.add(it)
+				//notFoundMatches.add(it)
 				diff.add(UNEXPECTED_MATCH + " ("+it+")")
 			}
 		]
+		return diff
 		
 	}
 	
@@ -162,16 +164,18 @@ class TestExecutor {
 		snapshot.matchSetRecords.forEach() [matchSet |
 			val input = snapshot.EMFRootForSnapshot
 			val matcher = patternModel.initializeMatcherFromModel(input,matchSet.patternQualifiedName)
-			val result = matcher.compareResultSets(matchSet)
-			if(!(result == null
-				|| newHashSet(CORRECT_EMPTY).equals(result)
-				|| newHashSet(CORRECT_SINGLE).equals(result)
-			)){
-				diff.addAll(result)
+			if(matcher != null){
+				val result = matcher.compareResultSets(matchSet)
+				if(!(result == null
+					|| newHashSet(CORRECT_EMPTY).equals(result)
+					|| newHashSet(CORRECT_SINGLE).equals(result)
+				)){
+					diff.addAll(result)
+				}
 			}
 		]
 		
-		assertArrayEquals(newHashSet,diff)
+		assertArrayEquals(diff.logDifference,newHashSet,diff)
 	}
 	
 	/**
@@ -194,4 +198,12 @@ class TestExecutor {
 		patternModel.assertMatchResults(snapshotUri)
 	}
 	
+	def logDifference(Set<Object> diff){
+		val stringBuilder = new StringBuilder("\n")
+		diff.forEach()[
+			stringBuilder.append(it + "\n")
+			IncQueryEngine::defaultLogger.logError(it.toString)
+		]
+		return stringBuilder.toString
+	}
 }

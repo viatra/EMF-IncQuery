@@ -97,7 +97,7 @@ class ModelLoadHelper {
 	 * Initialize a matcher for the pattern with the given name from the pattern model on the selected EMF root.
 	 */
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
-		val patterns = model.patterns.filter[name.equals(patternName)]
+		val patterns = model.patterns.filter[(model.packageName+'.'+name).equals(patternName)]
 		if(patterns.size == 1){
 			MatcherFactoryRegistry::getOrCreateMatcherFactory(patterns.iterator.next).getMatcher(emfRoot)
 		}
