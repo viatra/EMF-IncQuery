@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra2.emf.incquery.snapshot/src-gen"
-    editDirectory="/org.eclipse.viatra2.emf.incquery.snapshot.edit/src-gen" editorDirectory="/org.eclipse.viatra2.emf.incquery.snapshot.editor/src-gen"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra2.emf.incquery.snapshot/src"
+    editDirectory="/org.eclipse.viatra2.emf.incquery.snapshot.edit/src" editorDirectory="/org.eclipse.viatra2.emf.incquery.snapshot.editor/src"
     modelPluginID="org.eclipse.viatra2.emf.incquery.snapshot" modelName="Eiqsnapshot"
     testsDirectory="/org.eclipse.viatra2.emf.incquery.snapshot.tests/src-gen" importerID="org.eclipse.emf.importer.ecore"
     complianceLevel="6.0" copyrightFields="false" usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
   <foreignModel>eiqsnapshot.ecore</foreignModel>
   <genPackages prefix="EIQSnapshot" basePackage="org.eclipse.viatra2.emf.incquery.snapshot"
       disposableProviderFactory="true" ecorePackage="eiqsnapshot.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="eiqsnapshot.ecore#//InputSpecification">
+      <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//InputSpecification/Unset"/>
+      <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//InputSpecification/ResourceSet"/>
+      <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//InputSpecification/Resource"/>
+      <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//InputSpecification/EObject"/>
+    </genEnums>
     <genClasses ecoreClass="eiqsnapshot.ecore#//MatchSetRecord">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MatchSetRecord/patternQualifiedName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchSetRecord/matches"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchSetRecord/partialMatch"/>
     </genClasses>
     <genClasses ecoreClass="eiqsnapshot.ecore#//MatchRecord">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchRecord/substitutions"/>
     </genClasses>
     <genClasses image="false" ecoreClass="eiqsnapshot.ecore#//MatchSubstitutionRecord">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MatchSubstitutionRecord/parameterName"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MatchSubstitutionRecord/derivedValue"/>
     </genClasses>
     <genClasses ecoreClass="eiqsnapshot.ecore#//EMFSubstitution">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//EMFSubstitution/value"/>
@@ -49,6 +57,11 @@
     </genClasses>
     <genClasses ecoreClass="eiqsnapshot.ecore#//MiscellaneousSubstitution">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MiscellaneousSubstitution/value"/>
+    </genClasses>
+    <genClasses ecoreClass="eiqsnapshot.ecore#//IncQuerySnapshot">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//IncQuerySnapshot/matchSetRecords"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//IncQuerySnapshot/modelRoots"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//IncQuerySnapshot/inputSpecification"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

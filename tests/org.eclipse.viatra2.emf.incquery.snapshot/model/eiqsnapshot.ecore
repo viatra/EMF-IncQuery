@@ -7,12 +7,14 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="patternQualifiedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="matches" ordered="false"
         upperBound="-1" eType="#//MatchRecord" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="partialMatch" eType="#//MatchRecord"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="filter" eType="#//MatchRecord"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MatchRecord">
     <eStructuralFeatures xsi:type="ecore:EReference" name="substitutions" upperBound="-1"
         eType="#//MatchSubstitutionRecord" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="role" eType="#//RecordRole"
+        changeable="false" volatile="true" transient="true" derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MatchSubstitutionRecord" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -63,5 +65,9 @@
     <eLiterals name="ResourceSet"/>
     <eLiterals name="Resource" value="1"/>
     <eLiterals name="EObject" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="RecordRole">
+    <eLiterals name="Match"/>
+    <eLiterals name="Filter" value="1" literal="Filter"/>
   </eClassifiers>
 </ecore:EPackage>
