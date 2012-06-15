@@ -318,6 +318,68 @@
       </constraints>
     </bodies>
   </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <parameters name="Record">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <parameters name="Role"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/filter"/>
+            </type>
+          </tail>
+          <src var="MS"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="eMFPatternLanguage:EnumValue">
+          <enumeration href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole"/>
+          <literal href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole/Filter"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Role"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/matches"/>
+            </type>
+          </tail>
+          <src var="MS"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="eMFPatternLanguage:EnumValue">
+          <enumeration href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole"/>
+          <literal href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole/Match"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Role"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+  </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
     <parameters name="Substitution">
       <type xsi:type="eMFPatternLanguage:ClassType">

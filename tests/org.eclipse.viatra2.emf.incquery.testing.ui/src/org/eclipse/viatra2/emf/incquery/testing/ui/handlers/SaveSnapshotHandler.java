@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.testing.ui.handlers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,14 +122,14 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			}
 		} 
 		for (ObservablePatternMatcher matcher : matchers) {
-			IPatternMatch partialMatch = matcher.getMatcher().arrayToMatch(matcher.getFilter());
-			helper.saveMatchesToSnapshot(matcher.getMatcher(), partialMatch, snapshot);
+			IPatternMatch filter = matcher.getMatcher().arrayToMatch(matcher.getFilter());
+			helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
 		}
-		/*try {
+		try {
 			snapshot.eResource().save(null);
 		} catch(IOException e) {
 			engine.getLogger().logError("Error during saving snapshot into file!",e);
-		}*/
+		}
 	}
 
 

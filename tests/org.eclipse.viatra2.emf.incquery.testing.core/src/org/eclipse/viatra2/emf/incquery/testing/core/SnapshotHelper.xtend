@@ -95,7 +95,7 @@ class SnapshotHelper {
 			snapshot.modelRoots.addAll(matcher.modelRootsForMatcher)
 			snapshot.inputSpecification = matcher.inputspecificationForMatcher
 		}
-		actualRecord.partialMatch = partialMatch.createMatchRecordForMatch
+		actualRecord.filter = partialMatch.createMatchRecordForMatch
 		
 		// 3. create match set records
 		matcher.forEachMatch(partialMatch)[match | 

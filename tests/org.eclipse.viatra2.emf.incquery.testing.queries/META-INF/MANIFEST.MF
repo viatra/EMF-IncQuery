@@ -9,6 +9,7 @@ Export-Package: org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsu
  org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecords,
  org.eclipse.viatra2.emf.incquery.testing.queries.incorrectsubstitution,
  org.eclipse.viatra2.emf.incquery.testing.queries.matchrecordwithsubstitution,
+ org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue,
  org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue,
  org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord
 Require-Bundle: org.eclipse.pde.core,
