@@ -57,5 +57,13 @@
             id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue">
       </matcher>
    </extension>
+   <extension
+         point="org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="MatchSubstitutionRecord"
+            feature-name="derivedValue"
+            package-nsUri="http://www.eclipse.org/viatra2/emf/incquery/snapshot">
+      </wellbehaving-derived-feature>
+   </extension>
 
 </plugin>

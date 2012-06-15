@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.testing.ui.handlers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,82 +87,102 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			engine.getLogger().logError("Cannot save snapshot, models not in ResourceSet!");
 			return;
 		}
-		// where to save?
-		IFile[] files = WorkspaceResourceDialog.openFileSelection(HandlerUtil.getActiveShell(event), "Save snapshot", "Select EMF-IncQuery snapshot target file", false, null, null);
-		
-		if(files.length != 1) {
-			engine.getLogger().logError("Select one file with .eiqsnapshot extension!");
-			return;
-		}
-		
-		if(files[0] != null && files[0].getFileExtension().equals("eiqsnapshot")) {
-			IncQuerySnapshot snapshot = null;
+		IFile snapshotFile = null;
+		IFile[] files = WorkspaceResourceDialog.openFileSelection(HandlerUtil.getActiveShell(event), "Existing snapshot", "Select existing EMF-IncQuery snapshot file (Cancel for new file)", false, null, null);
+		IncQuerySnapshot snapshot = null;
 			
-			if(files[0].exists()) {
-				snapshot = loader.loadExpectedResultsFromFile(resourceSet,files[0]);
-			}
-			if(snapshot != null) {
-				if(snapshot.getInputSpecification() != null) {
-					Notifier root = helper.getEMFRootForSnapshot(snapshot);
-					Notifier matcherRoot = engine.getEmfRoot();
-					if(matcherRoot != root) {
-						engine.getLogger().logError("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
-					}
-					/*switch(snapshot.getInputSpecification()) {
-						case EOBJECT:
-							if(matcherRoot instanceof EObject && root instanceof EObject) {
-								if(matcherRoot != root) {
-									engine.getLogger().logError("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
-								}
-							}
-							break;
-						case RESOURCE:
-							if(matcherRoot instanceof Resource && root instanceof Resource) {
-								Resource res = (Resource) matcherRoot;
-								for (EObject eobj : res.getContents()) {
-									if(!snapshot.getModelRoots().contains(eobj)) {
-										engine.getLogger().logError("Existing snapshot model root not equal to selected input! Missing model root: " + eobj);
-									}
-								}
-								for(EObject eobj : snapshot.getModelRoots()) {
-									if(!res.getContents().contains(eobj)) {
-										engine.getLogger().logError("Existing snapshot model root not equal to selected input! Missing snapshot root: " + eobj);
-									}
-								}
-							}
-							break;
-						case RESOURCE_SET:
-							if(matcherRoot instanceof ResourceSet && root instanceof ResourceSet) {
-								ResourceSet set = (ResourceSet) matcherRoot;
-								for (Resource res : set.getResources()) {
-									for (EObject eobj : res.getContents()) {
-										if(!snapshot.getModelRoots().contains(eobj)) {
-											engine.getLogger().logError("Existing snapshot model root not equal to selected input!");
-										}
-									}
-								}
-							}
-							break;
-					}*/
-				}
-			} else {
+		if(files.length == 0) {
+			snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select EMF-IncQuery snapshot target file (.eiqsnapshot extension)", null, null);
+			if(snapshotFile != null && !snapshotFile.exists()) {
 				snapshot = EIQSnapshotFactory.eINSTANCE.createIncQuerySnapshot();
-				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(files[0].getFullPath().toString(),true));
+				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
 				res.getContents().add(snapshot);
-			}
-			for (ObservablePatternMatcher matcher : matchers) {
-				IPatternMatch partialMatch = matcher.getMatcher().arrayToMatch(matcher.getFilter());
-				helper.saveMatchesToSnapshot(matcher.getMatcher(), partialMatch, snapshot);
-			}
-			try {
-				snapshot.eResource().save(null);
-			} catch(IOException e) {
-				engine.getLogger().logError("Error during saving snapshot into file!",e);
+			} else {
+				engine.getLogger().logError("Selected file name must use .eiqsnapshot extension!");
+				return;
 			}
 		} else {
-			engine.getLogger().logError("Selected file not .eiqsnapshot!");
+			snapshotFile = files[0];
+			if(snapshotFile != null && snapshotFile.getFileExtension().equals("eiqsnapshot")) {
+			
+				snapshot = loader.loadExpectedResultsFromFile(resourceSet,snapshotFile);
+				
+				if(snapshot != null) {
+					if(!validateInputSpecification(engine, snapshot)) {
+						return;
+					}
+				} else {
+					engine.getLogger().logError("Selected file does not contain snapshot!");
+					return;
+				}
+			} else {
+				engine.getLogger().logError("Selected file not .eiqsnapshot!");
+				return;
+			}
+		} 
+		for (ObservablePatternMatcher matcher : matchers) {
+			IPatternMatch partialMatch = matcher.getMatcher().arrayToMatch(matcher.getFilter());
+			helper.saveMatchesToSnapshot(matcher.getMatcher(), partialMatch, snapshot);
 		}
-		
+		/*try {
+			snapshot.eResource().save(null);
+		} catch(IOException e) {
+			engine.getLogger().logError("Error during saving snapshot into file!",e);
+		}*/
+	}
+
+
+	/**
+	 * @param engine
+	 * @param snapshot
+	 */
+	private boolean validateInputSpecification(IncQueryEngine engine, IncQuerySnapshot snapshot) {
+		if(snapshot.getInputSpecification() != null) {
+			Notifier root = helper.getEMFRootForSnapshot(snapshot);
+			Notifier matcherRoot = engine.getEmfRoot();
+			if(matcherRoot != root) {
+				engine.getLogger().logError("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
+				return false;
+			}
+			return true;
+			/*switch(snapshot.getInputSpecification()) {
+				case EOBJECT:
+					if(matcherRoot instanceof EObject && root instanceof EObject) {
+						if(matcherRoot != root) {
+							engine.getLogger().logError("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
+						}
+					}
+					break;
+				case RESOURCE:
+					if(matcherRoot instanceof Resource && root instanceof Resource) {
+						Resource res = (Resource) matcherRoot;
+						for (EObject eobj : res.getContents()) {
+							if(!snapshot.getModelRoots().contains(eobj)) {
+								engine.getLogger().logError("Existing snapshot model root not equal to selected input! Missing model root: " + eobj);
+							}
+						}
+						for(EObject eobj : snapshot.getModelRoots()) {
+							if(!res.getContents().contains(eobj)) {
+								engine.getLogger().logError("Existing snapshot model root not equal to selected input! Missing snapshot root: " + eobj);
+							}
+						}
+					}
+					break;
+				case RESOURCE_SET:
+					if(matcherRoot instanceof ResourceSet && root instanceof ResourceSet) {
+						ResourceSet set = (ResourceSet) matcherRoot;
+						for (Resource res : set.getResources()) {
+							for (EObject eobj : res.getContents()) {
+								if(!snapshot.getModelRoots().contains(eobj)) {
+									engine.getLogger().logError("Existing snapshot model root not equal to selected input!");
+								}
+							}
+						}
+					}
+					break;
+			}*/
+		}
+		return true;
 	}
 	
 	private ResourceSet getResourceSetForNotifier(Notifier notifier) {
