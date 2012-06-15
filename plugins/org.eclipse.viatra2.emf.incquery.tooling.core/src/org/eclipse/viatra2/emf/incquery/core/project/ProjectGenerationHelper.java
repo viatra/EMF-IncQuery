@@ -596,7 +596,7 @@ public abstract class ProjectGenerationHelper {
 	 */
 	private static String getExtensionId(IPluginExtension extension, IProject project) {
 		String id = extension.getId();
-		if (id.startsWith(project.getName())) {
+		if (id != null && id.startsWith(project.getName())) {
 			int beginIndex = project.getName().length() + 1;
 			if (beginIndex >= 0) {
 				id = id.substring(beginIndex);				
