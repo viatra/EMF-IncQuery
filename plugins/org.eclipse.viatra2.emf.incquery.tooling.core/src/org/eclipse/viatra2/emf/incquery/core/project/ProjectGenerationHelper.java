@@ -79,11 +79,6 @@ public abstract class ProjectGenerationHelper {
 	public static final String[] SINGLESOURCEFOLDER = { "src" };
 	
 	/**
-	 * Entries that are required to be included in the build for proper deployability 
-	 */
-	public static final IPath[] BININCLUDES = {new Path("queries/"), new Path("plugin.xml")};
-
-	/**
 	 * Adds a collection of natures to the project
 	 * 
 	 * @param proj
@@ -144,13 +139,13 @@ public abstract class ProjectGenerationHelper {
 	}
 
 	public static void initializePluginProject(IProject project,
-			final List<String> dependencies) throws CoreException {
-		initializePluginProject(project, dependencies,
+			final List<String> dependencies, final IPath[] additionalBinIncludes) throws CoreException {
+		initializePluginProject(project, dependencies, additionalBinIncludes,
 				new NullProgressMonitor());
 	}
 
 	public static void initializePluginProject(IProject project,
-			final List<String> dependencies, IProgressMonitor monitor)
+			final List<String> dependencies, final IPath[] additionalBinIncludes, IProgressMonitor monitor)
 			throws CoreException {
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
@@ -160,7 +155,7 @@ public abstract class ProjectGenerationHelper {
 			final IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service
 					.getDescription(project);
-			fillProjectMetadata(project, dependencies, service, bundleDesc);
+			fillProjectMetadata(project, dependencies, service, bundleDesc, additionalBinIncludes);
 			bundleDesc.apply(monitor);
 		} finally {
 			if (context != null && ref != null) {
@@ -183,14 +178,15 @@ public abstract class ProjectGenerationHelper {
 	public static void fillProjectMetadata(IProject project,
 			final List<String> dependencies,
 			final IBundleProjectService service,
-			IBundleProjectDescription bundleDesc) {
+			IBundleProjectDescription bundleDesc,
+			final IPath[] additionalBinIncludes) {
 		bundleDesc.setBundleName(project.getName());
 		bundleDesc.setBundleVersion(new Version(0, 0, 1, "qualifier"));
 		bundleDesc.setSingleton(true);
 		bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
 		bundleDesc.setSymbolicName(project.getName());
 		bundleDesc.setExtensionRegistry(true);
-		bundleDesc.setBinIncludes(BININCLUDES);
+		bundleDesc.setBinIncludes(additionalBinIncludes);
 		
 		bundleDesc.setBundleClasspath(getBundleClasspathEntries(service));
 		bundleDesc

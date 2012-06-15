@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
 import java.util.ArrayList;
@@ -44,8 +55,7 @@ public class ObservablePatternMatcherRoot {
 	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
 		//This cast could not be avoided because later the filtered delta monitor will need the base IPatternMatch
 		@SuppressWarnings("unchecked")
-		IncQueryMatcher<IPatternMatch> _matcher = (matcher == null) ? null : (IncQueryMatcher<IPatternMatch>) matcher;
-		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, _matcher, patternFqn, generated);
+		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}

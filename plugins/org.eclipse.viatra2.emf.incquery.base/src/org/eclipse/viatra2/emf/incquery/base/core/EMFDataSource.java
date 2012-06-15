@@ -1,11 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Szabo, Gabor Bergmann - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -20,32 +33,54 @@ public abstract class EMFDataSource {
 	public static ArrayList<IGraphObserver<EObject>> observers;
 	public static Set<EReference> refToObserv;
 	
-	public static class ForEObject implements IGraphDataSource<EObject> {
+	private static abstract class ForNotifier implements IGraphDataSource<EObject> {
+		
+		private static final long serialVersionUID = -1156614160439765303L;
+		protected Notifier root;
+		
+		public ForNotifier(Notifier root, Set<EReference> _refToObserv) {
+			this.root = root;
+			observers = new ArrayList<IGraphObserver<EObject>>();
+			refToObserv = _refToObserv;
+		}
+		
+		@Override
+		public void attachObserver(IGraphObserver<EObject> go) {
+			observers.add(go);
+		}
+
+		@Override
+		public void detachObserver(IGraphObserver<EObject> go) {
+			observers.remove(go);
+		}
+		
+		@Override
+		public ArrayList<EObject> getTargetNodes(EObject source) {
+			ArrayList<EObject> targetNodes = new ArrayList<EObject>();
+			
+			for (EReference ref : source.eClass().getEAllReferences()) {
+				if (refToObserv.contains(ref)) {
+					collectContents(source.eGet(ref), targetNodes);
+				}
+			}
+			return targetNodes;
+		}
+	}
+	
+	public static class ForEObject extends ForNotifier {
 
 		private static final long serialVersionUID = 5213298003205081695L;
-		private EObject root;
 		
 		public ForEObject(EObject root, Set<EReference> _refToObserv) {
-			this.root = root;
-			observers = new ArrayList<IGraphObserver<EObject>>();
-			refToObserv = _refToObserv;
+			super(root, _refToObserv);
 		}
 		
 		@Override
-		public void attachObserver(IGraphObserver<EObject> go) {
-			observers.add(go);
-		}
-
-		@Override
-		public void detachObserver(IGraphObserver<EObject> go) {
-			observers.remove(go);
-		}
-
-		@Override
 		public Set<EObject> getAllNodes() {
+			EObject rootObj = (EObject) root;
 			HashSet<EObject> set = new HashSet<EObject>();
-			set.add(root);
-			TreeIterator<EObject> iterator = root.eAllContents();
+			set.add(rootObj);
+			TreeIterator<EObject> iterator = rootObj.eAllContents();
 			
 			while (iterator.hasNext()) {
 				set.add(iterator.next());
@@ -53,134 +88,42 @@ public abstract class EMFDataSource {
 			
 			return set;
 		}
-
-		@Override
-		public ArrayList<EObject> getTargetNodes(EObject source) {
-			ArrayList<EObject> a = new ArrayList<EObject>();
-			
-			for (EReference ref : source.eClass().getEAllReferences()) {
-				if (refToObserv.contains(ref)) {
-					Object o = source.eGet(ref);
-					
-					if (o instanceof EObjectEList<?>) {
-						@SuppressWarnings("unchecked")
-						EObjectEList<EObject> list = (EObjectEList<EObject>) o;
-						Iterator<EObject> it = list.iterator();
-						
-						while (it.hasNext()) {
-							a.add(it.next());
-						}
-					}
-//					else if (o instanceof EObjectResolvingEList<?>) {
-//						@SuppressWarnings("unchecked")
-//						EObjectResolvingEList<EObject> list = (EObjectResolvingEList<EObject>) o;
-//						Iterator<EObject> it = list.iterator();
-//						
-//						while (it.hasNext()) {
-//							a.add(it.next());
-//						}
-//					}
-//					else if (o instanceof EObjectWithInverseResolvingEList<?>) {
-//						@SuppressWarnings("unchecked")
-//						EObjectWithInverseResolvingEList<EObject> list = (EObjectWithInverseResolvingEList<EObject>) o;
-//						Iterator<EObject> it = list.iterator();
-//						
-//						while (it.hasNext()) {
-//							a.add(it.next());
-//						}
-//					}
-					else if (o instanceof EObject)
-						a.add((EObject) o);
-				}
-			}
-			return a;
-		}
 	}
 	
-	public static class ForResource implements IGraphDataSource<EObject> {
+	public static class ForResource extends ForNotifier {
 
 		private static final long serialVersionUID = 7372972311144593543L;
-		private Resource root;
 		
 		public ForResource(Resource root, Set<EReference> _refToObserv) {
-			this.root = root;
-			observers = new ArrayList<IGraphObserver<EObject>>();
-			refToObserv = _refToObserv;
-		}
-		
-		@Override
-		public void attachObserver(IGraphObserver<EObject> go) {
-			observers.add(go);
-		}
-
-		@Override
-		public void detachObserver(IGraphObserver<EObject> go) {
-			observers.remove(go);
+			super(root, _refToObserv);
 		}
 
 		@Override
 		public Set<EObject> getAllNodes() {
+			Resource rootResource = (Resource) root;
 			HashSet<EObject> set = new HashSet<EObject>();
-
-			TreeIterator<EObject> iterator = root.getAllContents();
-			
+			TreeIterator<EObject> iterator = rootResource.getAllContents();
 			while (iterator.hasNext()) {
 				set.add(iterator.next());
 			}
-			
 			return set;
-		}
-
-		@Override
-		public ArrayList<EObject> getTargetNodes(EObject source) {
-			ArrayList<EObject> a = new ArrayList<EObject>();
-			
-			for (EReference ref : source.eClass().getEAllReferences()) {
-				if (refToObserv.contains(ref)) {
-					Object o = source.eGet(ref);
-					
-					if (o instanceof EObjectEList<?>) {
-						@SuppressWarnings("unchecked")
-						EObjectEList<EObject> list = (EObjectEList<EObject>) o;
-						Iterator<EObject> it = list.iterator();
-						
-						while (it.hasNext()) {
-							a.add(it.next());
-						}
-					} else if (o instanceof EObject)
-						a.add((EObject) o);
-				}
-			}
-			return a;	
 		}
 	}
 	
-	public static class ForResourceSet implements IGraphDataSource<EObject> {
+	public static class ForResourceSet extends ForNotifier {
 
 		private static final long serialVersionUID = 4619478637173366088L;
-		private ResourceSet root;
 		
 		public ForResourceSet(ResourceSet root, Set<EReference> _refToObserv) {
-			this.root = root;
-			observers = new ArrayList<IGraphObserver<EObject>>();
-			refToObserv = _refToObserv;
-		}
-		
-		@Override
-		public void attachObserver(IGraphObserver<EObject> go) {
-			observers.add(go);
-		}
-
-		@Override
-		public void detachObserver(IGraphObserver<EObject> go) {
-			observers.remove(go);
+			super(root, _refToObserv);
 		}
 
 		@Override
 		public Set<EObject> getAllNodes() {
+			ResourceSet rootResourceSet = (ResourceSet) root;
 			HashSet<EObject> set = new HashSet<EObject>();
 			
-			for (Resource res : root.getResources()) {
+			for (Resource res : rootResourceSet.getResources()) {
 				TreeIterator<EObject> iterator = res.getAllContents();				
 				while (iterator.hasNext()) {
 					set.add(iterator.next());
@@ -188,30 +131,21 @@ public abstract class EMFDataSource {
 			}
 			
 			return set;
-		}
-
-		@Override
-		public ArrayList<EObject> getTargetNodes(EObject source) {
-			ArrayList<EObject> a = new ArrayList<EObject>();
+		}	
+	}
+	
+	private static void collectContents(Object obj, List<EObject> contents) {
+		if (obj instanceof EObjectEList<?>) {
+			@SuppressWarnings("unchecked")
+			EObjectEList<EObject> list = (EObjectEList<EObject>) obj;
+			Iterator<EObject> it = list.iterator();
 			
-			for (EReference ref : source.eClass().getEAllReferences()) {
-				if (refToObserv.contains(ref)) {
-					Object o = source.eGet(ref);
-					
-					if (o instanceof EObjectEList<?>) {
-						@SuppressWarnings("unchecked")
-						EObjectEList<EObject> list = (EObjectEList<EObject>) o;
-						Iterator<EObject> it = list.iterator();
-						
-						while (it.hasNext()) {
-							a.add(it.next());
-						}
-					} else if (o instanceof EObject)
-						a.add((EObject) o);
-				}
+			while (it.hasNext()) {
+				contents.add(it.next());
 			}
-			return a;
+		} 
+		else if (obj instanceof EObject) {
+			contents.add((EObject) obj);
 		}
-		
 	}
 }

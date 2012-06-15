@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
 import java.util.ArrayList;
@@ -50,25 +61,25 @@ public class ObservablePatternMatcher {
 		this.generated = generated;
 		this.orderParameter = null;
 		
-		Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
-		if (annotation != null) {
-			for (AnnotationParameter ap : annotation.getParameters()) {
-				if (ap.getName().matches("key")) {
-					orderParameter = ((StringValueImpl) ap.getValue()).getValue(); 
-				}
-				if (ap.getName().matches("direction")) {
-					String direction = ((StringValueImpl) ap.getValue()).getValue(); 
-					if (direction.matches("desc")) {
-						descendingOrder = true;
+		if (matcher != null) {
+			Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
+			if (annotation != null) {
+				for (AnnotationParameter ap : annotation.getParameters()) {
+					if (ap.getName().matches("key")) {
+						orderParameter = ((StringValueImpl) ap.getValue()).getValue(); 
 					}
-					else {
-						descendingOrder = false;
+					if (ap.getName().matches("direction")) {
+						String direction = ((StringValueImpl) ap.getValue()).getValue(); 
+						if (direction.matches("desc")) {
+							descendingOrder = true;
+						}
+						else {
+							descendingOrder = false;
+						}
 					}
 				}
 			}
-		}
-		
-		if (matcher != null) {
+
 			initFilter();
 			this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
 			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
@@ -168,10 +179,15 @@ public class ObservablePatternMatcher {
 	}
 	
 	private void removeMatch(IPatternMatch match) {
+		//null checks - eclipse closing - issue 162
 		ObservablePatternMatch observableMatch = this.sigMap.remove(match);
-		this.matches.remove(observableMatch);
-		observableMatch.dispose();
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (observableMatch != null) {
+			this.matches.remove(observableMatch);
+			observableMatch.dispose();
+		}
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 
 	public ObservablePatternMatcherRoot getParent() {

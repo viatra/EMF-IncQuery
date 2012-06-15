@@ -13,6 +13,7 @@ import org.eclipse.xtext.xbase.lib.Pair
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.ui.SampleUIGenerator.*
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import org.eclipse.core.runtime.Path
 
 class SampleUIGenerator implements IGenerationFragment {
 	
@@ -227,5 +228,9 @@ class SampleUIGenerator implements IGenerationFragment {
 			}
 		}	
 	'''
+	
+	override getAdditionalBinIncludes() {
+		return newArrayList(new Path("plugin.xml"))
+	}
 	
 }

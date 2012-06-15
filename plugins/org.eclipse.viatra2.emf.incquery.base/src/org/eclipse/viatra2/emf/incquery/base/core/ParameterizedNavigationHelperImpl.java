@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Szabo, Gabor Bergmann - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 
@@ -22,8 +33,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
 			observedFeatures.addAll(features);
-			
-			visitModel(notifier, features, null);
+			visitor.visitModel(notifier, features, null);
 		}
 	}
 
@@ -34,13 +44,13 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 
 			for (EStructuralFeature f : features) {
 				if (f instanceof EAttribute) {
-					for (Object key : attrMap.keySet()) {
-						attrMap.get(key).remove(f);
+					for (Object key : contentAdapter.getAttrMap().keySet()) {
+						contentAdapter.getAttrMap().get(key).remove(f);
 					}
 				}
 				if (f instanceof EReference) {
-					for (EObject key : refMap.keySet()) {
-						refMap.get(key).remove(f);
+					for (EObject key : contentAdapter.getRefMap().keySet()) {
+						contentAdapter.getRefMap().get(key).remove(f);
 					}
 				}
 			}
@@ -51,8 +61,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	public void registerEClasses(Set<EClass> classes) {
 		if (classes != null) {
 			observedClasses.addAll(classes);
-			
-			visitModel(notifier, null, classes);
+			visitor.visitModel(notifier, null, classes);
 		}
 	}
 
@@ -61,8 +70,9 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 		if (classes != null) {
 			observedClasses.removeAll(classes);
 		 
-			for (EClass c : classes)
-				instanceMap.remove(c);
+			for (EClass c : classes) {
+				contentAdapter.getInstanceMap().remove(c);
+			}
 		}
 	}
 }

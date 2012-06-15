@@ -206,7 +206,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		} else {
 			IProject targetProject = fragmentProvider.getFragmentProject(modelProject, fragment);
 			if (!targetProject.exists()) {
-				ProjectGenerationHelper.initializePluginProject(targetProject, dependencies);
+				ProjectGenerationHelper.initializePluginProject(targetProject, dependencies, fragment.getAdditionalBinIncludes());
 			} else {
 				ProjectGenerationHelper.ensureBundleDependencies(targetProject, dependencies);
 			}

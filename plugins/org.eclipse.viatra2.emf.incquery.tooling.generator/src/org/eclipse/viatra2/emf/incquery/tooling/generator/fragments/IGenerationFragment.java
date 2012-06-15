@@ -5,6 +5,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -84,5 +85,7 @@ public interface IGenerationFragment {
 	 * @return
 	 */
 	public Collection<Pair<String, String>> getRemovableExtensions();
+	
+	public IPath[] getAdditionalBinIncludes();
 	
 }
