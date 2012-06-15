@@ -81,6 +81,12 @@ public class IncqueryFeatureHandler {
 		this.matcher = matcher;
 		this.sourceParamName = sourceParamName;
 		this.targetParamName = targetParamName;
+		if(matcher.getPositionOfParameter(sourceParamName) == null) {
+			IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Source parameter " + sourceParamName + " not found!");
+		}
+		if(matcher.getPositionOfParameter(targetParamName) == null) {
+			IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
+		}
 		IPatternMatch partialMatch = matcher.newEmptyMatch();
 		partialMatch.set(sourceParamName, source);
 		this.dm = matcher.newFilteredDeltaMonitor(true, partialMatch);
