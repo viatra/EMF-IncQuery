@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.WellbehavingDerivedFeatureRegistry;
@@ -80,6 +81,10 @@ public class EMFModelComprehension {
 		} else if (feature instanceof EReference) {
 			EReference reference = (EReference)feature;
 			EObject targetObject = (EObject)target;
+			if(targetObject != null && targetObject.eIsProxy()) {
+				targetObject = EcoreUtil.resolve(targetObject,source);
+				//source.eGet(feature, true);
+			}
 			if (reference.isContainment()) {
 				visitor.visitInternalContainment(source, reference, targetObject);
 				visitObject(visitor, targetObject);
