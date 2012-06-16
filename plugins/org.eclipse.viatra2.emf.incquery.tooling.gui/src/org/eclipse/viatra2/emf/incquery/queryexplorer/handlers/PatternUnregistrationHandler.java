@@ -75,5 +75,4 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 		//the pattern is not active anymore
 		PatternRegistry.getInstance().removeActivePattern(pattern);
 	}
-
 }
