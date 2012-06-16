@@ -206,6 +206,10 @@
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PatternUnregistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern">
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.urlclassloader.URLClassLoaderTestHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.urlclassloader">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -217,6 +221,16 @@
                label="EMF-IncQuery">
             <command
                   commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.runtimematcherreg"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eclipse.viatra2.patternlanguage.emf.file">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.urlclassloader"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -336,6 +350,11 @@
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern"
             name="Unregister pattern">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.urlclassloader"
+            name="Test URLClassLoader">
       </command>
    </extension>
    <extension
