@@ -153,7 +153,7 @@ class JavadocInferrer {
 		«FOR p : pattern.parameters»
 		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
-	 @return the delta monitor.
+		@return the delta monitor.
 	'''
 	
 	def javadocGetAllValuesOfMethod(Variable parameter) '''
