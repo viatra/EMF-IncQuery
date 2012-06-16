@@ -115,8 +115,8 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
    				it.body = [append('''
-   					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
-   				''')]
+   					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+   				]
    			]
    			matcherClass.members += pattern.toMethod("getOneArbitraryMatch", cloneWithProxies(matchClassRef)) [
    				it.documentation = pattern.javadocGetOneArbitraryMatchMethod.toString
@@ -124,8 +124,8 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
    				it.body = [append('''
-   					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
-   				''')]
+   					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+   				]
    			]
    			matcherClass.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethod.toString
@@ -133,8 +133,8 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
    				it.body = [append('''
-   					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
-   				''')]
+   					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+   				]
    			]
    			matcherClass.members += pattern.toMethod("countMatches", pattern.newTypeRef(typeof(int))) [
    				it.documentation = pattern.javadocCountMatchesMethod.toString
@@ -142,8 +142,8 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
    				it.body = [append('''
-   					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
-   				''')]
+   					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+   				]
    			]
    			matcherClass.members += pattern.toMethod("forEachMatch", null) [
    				it.documentation = pattern.javadocForEachMatchMethod.toString
@@ -152,8 +152,8 @@ class PatternMatcherClassInferrer {
    				}
 				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
    				it.body = [append('''
-   					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
-   				''')]
+   					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);''')
+   				]
    			]
    			matcherClass.members += pattern.toMethod("forOneArbitraryMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocForOneArbitraryMatchMethod.toString
@@ -162,8 +162,8 @@ class PatternMatcherClassInferrer {
    				}
    				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassRef).wildCardSuper))
    				it.body = [append('''
-   					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);
-   				''')]
+   					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);''')
+   				]
    			]
    			matcherClass.members += pattern.toMethod("newFilteredDeltaMonitor", pattern.newTypeRef(typeof(DeltaMonitor), cloneWithProxies(matchClassRef))) [
    				it.documentation = pattern.javadocNewFilteredDeltaMonitorMethod.toString
@@ -172,45 +172,50 @@ class PatternMatcherClassInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
    				it.body = [append('''
-   					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
-   				''')]
+   					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+   				]
    			]
    			for (Variable variable : pattern.parameters){
-   				matcherClass.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+   				val typeOfVariable = variable.calculateType
+   				matcherClass.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 	   				it.parameters += pattern.toParameter("parameters", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
-	   				it.body = [append('''
-	   					«pattern.newTypeRef(typeof(Set), variable.calculateType).qualifiedName» results = new «pattern.newTypeRef(typeof(HashSet), variable.calculateType).qualifiedName»();
+	   				it.body = [
+						referClass(pattern, typeof(Set), typeOfVariable)
+						append(''' results = new ''')
+	   					referClass(pattern, typeof(HashSet), typeOfVariable)
+	   					append('''
+	   					();
 	   					rawAccumulateAllValues(«variable.positionConstant», parameters, results);
-	   					return results;
-	   				''')]
+	   					return results;''')
+					]
 	   			]
-	   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+	   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 	   				it.body = [append('''
-	   					return rawAccumulateAllValuesOf«variable.name»(emptyArray());
-	   				''')
+	   					return rawAccumulateAllValuesOf«variable.name»(emptyArray());''')
 	   				]
 	   			]
 	   			if(pattern.parameters.size > 1){
-		   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+		   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 		   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 		   				it.parameters += pattern.toParameter("partialMatch", cloneWithProxies(matchClassRef))
 		   				it.body = [append('''
-		   					return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());
-		   				''')]
+		   					return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());''')]
 		   			]
-		   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), variable.calculateType)) [
+		   			matcherClass.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 		   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 		   				for (parameter : pattern.parameters){
 		   					if(parameter != variable){
 								it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
 			   				}
 		   				}
-		   				it.body = [append('''
-		   					«variable.calculateType.qualifiedName» «variable.parameterName» = null;
-		   					return rawAccumulateAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});
-		   				''')]
+		   				it.body = [
+		   					serialize(typeOfVariable, pattern)
+		   					append(''' «variable.parameterName» = null;
+		   					''')
+		   					append('''return rawAccumulateAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+		   				]
 		   			]
 	   			}
    			}
@@ -218,8 +223,8 @@ class PatternMatcherClassInferrer {
 			matcherClass.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethodNoParameter.toString
    				it.body = [append('''
-   					return rawHasMatch(new Object[]{});
-   				''')]
+   					return rawHasMatch(new Object[]{});''')
+   				]
    			]
 		}
    	}

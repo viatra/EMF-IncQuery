@@ -24,6 +24,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -37,6 +38,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 	@Inject	IWorkspaceRoot workspaceRoot
 	@Inject ITypeProvider typeProvider
+	@Inject TypeReferenceSerializer typeReferenceSerializer
 	
 	def bundleName(Pattern pattern) {
 		val project = workspaceRoot.getFile(
@@ -234,9 +236,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		pattern.packageName.replace(".","/")
 	}
 	
-	def referClass(ITreeAppendable appendable, EObject ctx, Class<?> clazz) {
-		val type = ctx.newTypeRef(clazz).type
-		appendable.append(type)
+	def referClass(ITreeAppendable appendable, EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
+//		val type = ctx.newTypeRef(clazz, typeArgs).type
+//		appendable.append(type)
 		//'''«type.simpleName»'''
+		appendable.serialize(ctx.newTypeRef(clazz, typeArgs), ctx)
+	}
+	
+	def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
+		typeReferenceSerializer.serialize(ref, ctx, appendable)		
 	}
 }
