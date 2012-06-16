@@ -30,12 +30,14 @@ public class PatternComposite implements PatternComponent {
 	private List<PatternComponent> children;
 	private PatternComposite parent;
 	private Map<String, PatternComposite> fragmentMap;
+	private boolean isHierarchical;
 	
-	public PatternComposite(String patternNameFragment, PatternComposite parent) {
+	public PatternComposite(String patternNameFragment, PatternComposite parent, boolean hierarchical) {
 		this.patternNameFragment = patternNameFragment;
 		this.children = new ArrayList<PatternComponent>();
 		this.fragmentMap = new HashMap<String, PatternComposite>();
 		this.parent = parent;
+		this.isHierarchical = hierarchical;
 	}
 	
 	/**
@@ -52,16 +54,24 @@ public class PatternComposite implements PatternComponent {
 			return leaf;
 		}
 		else {
-			String fragment = tokens[0];
+			String prefix = null, suffix = null;
+			if (isHierarchical) {
+				prefix = tokens[0];
+				suffix = patternFragment.substring(prefix.length()+1);
+			}
+			else {
+				suffix = tokens[tokens.length - 1];
+				prefix = patternFragment.substring(0, patternFragment.length() - suffix.length() - 1);
+			}
 			
-			PatternComposite composite = fragmentMap.get(fragment);
+			PatternComposite composite = fragmentMap.get(prefix);
 			
 			if (composite == null) {
-				composite = new PatternComposite(fragment, this);
-				fragmentMap.put(fragment, composite);
+				composite = new PatternComposite(prefix, this, isHierarchical);
+				fragmentMap.put(prefix, composite);
 				children.add(composite);
 			}
-			return composite.addComponent(patternFragment.substring(fragment.length()+1));
+			return composite.addComponent(suffix);
 		}
 	}
 	
@@ -171,11 +181,20 @@ public class PatternComposite implements PatternComponent {
 			}
 		}
 		else {
-			String fragment = tokens[0];
-			PatternComposite composite = fragmentMap.get(fragment);
+			String prefix = null, suffix = null;
+			if (isHierarchical) {
+				prefix = tokens[0];
+				suffix = patternFragment.substring(prefix.length()+1);
+			}
+			else {
+				suffix = tokens[tokens.length - 1];
+				prefix = patternFragment.substring(0, patternFragment.length() - suffix.length() - 1);
+			}
+			
+			PatternComposite composite = fragmentMap.get(prefix);
 			
 			if (composite != null) {
-				composite.removeComponent(patternFragment.substring(fragment.length()+1));
+				composite.removeComponent(suffix);
 			}
 		}
 	}

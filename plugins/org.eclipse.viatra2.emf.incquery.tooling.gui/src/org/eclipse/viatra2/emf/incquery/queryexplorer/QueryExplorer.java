@@ -92,7 +92,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
 		perspectiveAdapter = new QueryExplorerPerspectiveAdapter();
-		patternsViewerInput = new PatternComposite("", null);
+		patternsViewerInput = new PatternComposite("", null, false);
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
