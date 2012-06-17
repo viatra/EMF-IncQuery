@@ -206,6 +206,14 @@
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PatternUnregistrationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern">
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackageRepresentationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.flat">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackageRepresentationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -304,6 +312,25 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer">
+         <menu
+               label="Patterns viewer presentation">
+            <command
+                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical"
+                  icon="icons/hierarchicalLayout.gif"
+                  label="Hierarchical"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.flat"
+                  icon="icons/flatLayout.gif"
+                  label="Flat"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -336,6 +363,14 @@
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern"
             name="Unregister pattern">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.flat"
+            name="Flat">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical"
+            name="Hierarchical">
       </command>
    </extension>
    <extension
