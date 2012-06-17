@@ -86,7 +86,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			//remove labels from pattern registry for the corresponding pattern model
 			if (oldParsedModel != null) {
 				for (Pattern pattern : oldParsedModel.getPatterns()) {
-					viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+					viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
 				}
 			}
 			
