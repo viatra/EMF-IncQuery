@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Mark Czotter, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Mark Czotter - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.core.project;
 
 import java.io.InputStream;
@@ -38,7 +49,6 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelPackage;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -87,11 +97,6 @@ public abstract class ProjectGenerationHelper {
 	public static final String[] SINGLESOURCEFOLDER = { "src" };
 	
 	/**
-	 * Entries that are required to be included in the build for proper deployability 
-	 */
-	public static final IPath[] BININCLUDES = {new Path("queries/"), new Path("plugin.xml")};
-
-	/**
 	 * Creates a new IncQuery project: a plug-in project with src and src-gen
 	 * folders and specific dependencies.
 	 * 
@@ -119,7 +124,10 @@ public abstract class ProjectGenerationHelper {
 			ref = context.getServiceReference(IBundleProjectService.class);
 			final IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service.getDescription(proj);
-			ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc);
+			IPath[] additionalBinIncludes = new IPath[] {
+					new Path("plugin.xml"), new Path("queries/") };
+			ProjectGenerationHelper.fillProjectMetadata(proj, dependencies,
+					service, bundleDesc, additionalBinIncludes);
 			bundleDesc.apply(monitor);
 			// Adding IncQuery-specific natures
 			ProjectGenerationHelper.addNatures(proj, new String[] {
@@ -194,13 +202,13 @@ public abstract class ProjectGenerationHelper {
 	}
 
 	public static void initializePluginProject(IProject project,
-			final List<String> dependencies) throws CoreException {
-		initializePluginProject(project, dependencies,
+			final List<String> dependencies, final IPath[] additionalBinIncludes) throws CoreException {
+		initializePluginProject(project, dependencies, additionalBinIncludes,
 				new NullProgressMonitor());
 	}
 
 	public static void initializePluginProject(IProject project,
-			final List<String> dependencies, IProgressMonitor monitor)
+			final List<String> dependencies, final IPath[] additionalBinIncludes, IProgressMonitor monitor)
 			throws CoreException {
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
@@ -210,7 +218,7 @@ public abstract class ProjectGenerationHelper {
 			final IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service
 					.getDescription(project);
-			fillProjectMetadata(project, dependencies, service, bundleDesc);
+			fillProjectMetadata(project, dependencies, service, bundleDesc, additionalBinIncludes);
 			bundleDesc.apply(monitor);
 		} finally {
 			if (context != null && ref != null) {
@@ -233,14 +241,15 @@ public abstract class ProjectGenerationHelper {
 	public static void fillProjectMetadata(IProject project,
 			final List<String> dependencies,
 			final IBundleProjectService service,
-			IBundleProjectDescription bundleDesc) {
+			IBundleProjectDescription bundleDesc,
+			final IPath[] additionalBinIncludes) {
 		bundleDesc.setBundleName(project.getName());
 		bundleDesc.setBundleVersion(new Version(0, 0, 1, "qualifier"));
 		bundleDesc.setSingleton(true);
 		bundleDesc.setTargetVersion(IBundleProjectDescription.VERSION_3_6);
 		bundleDesc.setSymbolicName(project.getName());
 		bundleDesc.setExtensionRegistry(true);
-		bundleDesc.setBinIncludes(BININCLUDES);
+		bundleDesc.setBinIncludes(additionalBinIncludes);
 		
 		bundleDesc.setBundleClasspath(getBundleClasspathEntries(service));
 		bundleDesc

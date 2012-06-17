@@ -11,7 +11,10 @@
 package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -33,7 +36,10 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  */
 @SuppressWarnings("rawtypes")
 public class MatcherFactoryRegistry {
-	private static Map<String, IMatcherFactory> contributedMatcherFactories = new HashMap<String, IMatcherFactory>();
+	private static final Map<String, IMatcherFactory> contributedMatcherFactories = new HashMap<String, IMatcherFactory>();
+	// NOTE pattern group management is relegated to PatternGroup classes
+	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
+	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
 
 	/**
 	 * Called by Activator.
@@ -72,10 +78,10 @@ public class MatcherFactoryRegistry {
 						}
 						catch (Exception e)
 						{
-							IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Exception during matcher factory registry initialization " + e.getMessage(),e);
+							IncQueryEngine.getDefaultLogger().logError("[MatcherFactoryRegistry] Exception during matcher factory registry initialization " + e.getMessage(),e);
 						}
 					} else {
-						IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Unknown configuration element " + el.getName() + " in plugin.xml of "
+						IncQueryEngine.getDefaultLogger().logError("[MatcherFactoryRegistry] Unknown configuration element " + el.getName() + " in plugin.xml of "
 								+ el.getDeclaringExtension().getUniqueIdentifier());
 					}
 				}
@@ -91,16 +97,28 @@ public class MatcherFactoryRegistry {
 	 */
 	public static void registerMatcherFactory(IMatcherFactory factory) {
 	
-		if(!contributedMatcherFactories.containsKey(factory.getPatternFullyQualifiedName())) {
-			contributedMatcherFactories.put(factory.getPatternFullyQualifiedName(), factory);
+		String qualifiedName = factory.getPatternFullyQualifiedName();
+		if(!contributedMatcherFactories.containsKey(qualifiedName)) {
+			contributedMatcherFactories.put(qualifiedName, factory);
+		  // NOTE pattern group management is relegated to PatternGroup classes
+			/*/if(matcherFactoryGroups != null) {
+				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactoryGroups.entrySet()) {
+					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, false);
+				}
+			}
+			if(matcherFactorySubTrees != null) {
+				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactorySubTrees.entrySet()) {
+					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, true);
+				}
+			}*/
 		}
 	}
 
 	/**
-	 * @return the contributedMatcherFactories
+	 * @return a copy of the set of contributed matcher factories
 	 */
-	public static Map<String, IMatcherFactory> getContributedMatcherFactories() {
-		return contributedMatcherFactories;
+	public static Set<IMatcherFactory> getContributedMatcherFactories() {
+		return new HashSet<IMatcherFactory>(contributedMatcherFactories.values());
 	}
 	
 	/**
@@ -142,4 +160,81 @@ public class MatcherFactoryRegistry {
 		return new GenericMatcherFactory(pattern);
 	}
 	
+	/**
+	 * Returns the set of matcher factories in a given package. Only matcher factories with the exact package fully qualified name are returned. 
+	 * 
+	 * @param packageFQN the fully qualified name of the package
+	 * @return the set of matcher factories inside the given package, empty set otherwise.
+	 */
+	public static Set<IMatcherFactory> getPatternGroup(String packageFQN) {
+		return getPatternGroupOrSubTree(packageFQN, false);
+	}
+	
+	/**
+	 * Returns the set of matcher factories in a given package. Matcher factories with package names starting with the given package are returned. 
+	 * 
+	 * @param packageFQN the fully qualified name of the package
+	 * @return the set of matcher factories in the given package subtree, empty set otherwise.
+	 */
+	public static Set<IMatcherFactory> getPatternSubTree(String packageFQN) {
+		return getPatternGroupOrSubTree(packageFQN, true);
+	}
+
+	/**
+	 * Returns a pattern group for the given package
+	 * 
+	 * @param packageFQN the fully qualified name of the package
+	 * @param includeSubPackages if true, the pattern is added if it is in the package hierarchy,
+	 *  if false, the pattern is added only if it is in the given package
+	 * @return the matcher factories in the group
+	 */
+	private static Set<IMatcherFactory> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
+		Map<String, Set<IMatcherFactory>> map = null;
+	  // NOTE pattern group management is relegated to PatternGroup classes
+		/*if(includeSubPackages) {
+			map = matcherFactorySubTrees;
+		} else {
+			map = matcherFactoryGroups;
+		}*/
+		if(map == null) {
+			map = new HashMap<String, Set<IMatcherFactory>>();
+		}
+		if(map.containsKey(packageFQN)) {
+			return map.get(packageFQN);
+		} else {
+			Set<IMatcherFactory> group = new HashSet<IMatcherFactory>();
+			for (Entry<String, IMatcherFactory> entry : contributedMatcherFactories.entrySet()) {
+				addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
+			}
+			if(group.size() > 0) {
+				map.put(packageFQN, group);
+			}
+			return group;
+		}
+	}
+
+	/**
+	 * Adds the factory to an existing group if the package of the factory's pattern matches the given package name.
+	 * 
+	 * @param packageFQN the fully qualified name of the package
+	 * @param group the group to add the factory to
+	 * @param patternFQN the fully qualified name of the pattern
+	 * @param factory the matcher factory of the pattern
+	 * @param includeSubPackages if true, the pattern is added if it is in the package hierarchy,
+	 *  if false, the pattern is added only if it is in the given package
+	 */
+	private static void addPatternToGroup(String packageFQN, Set<IMatcherFactory> group, String patternFQN, IMatcherFactory factory, boolean includeSubPackages) {
+		if(packageFQN.length() + 1 < patternFQN.length()) {
+			if(includeSubPackages) {
+				if(patternFQN.startsWith(packageFQN+'.')) {
+					group.add(factory);
+				}
+			} else {
+				String name = patternFQN.substring(patternFQN.lastIndexOf('.')+1,patternFQN.length());
+				if(patternFQN.equals(packageFQN+'.'+name)) {
+					group.add(factory);
+				}
+			}
+		}
+	}
 }

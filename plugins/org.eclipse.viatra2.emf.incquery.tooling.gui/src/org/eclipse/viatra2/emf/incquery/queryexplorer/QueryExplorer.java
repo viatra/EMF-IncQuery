@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.queryexplorer;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -69,6 +80,9 @@ public class QueryExplorer extends ViewPart {
 		
 	private QueryExplorerPerspectiveAdapter perspectiveAdapter;
 	
+	private FlyoutControlComposite patternsViewerFlyout;
+	private FlyoutControlComposite detailsViewFlyout;
+	
 	@Inject
 	Injector injector;
 	
@@ -81,7 +95,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
 		perspectiveAdapter = new QueryExplorerPerspectiveAdapter();
-		patternsViewerInput = new PatternComposite("", null);
+		patternsViewerInput = new PatternComposite("", null, false);
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
@@ -110,18 +124,18 @@ public class QueryExplorer extends ViewPart {
 	public void createPartControl(Composite parent) {
 		getViewSite().getWorkbenchWindow().addPerspectiveListener(perspectiveAdapter);
 		
-		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_COLLAPSED, 300);
-		FlyoutControlComposite rightFlyoutControlComposite = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
-		rightFlyoutControlComposite.setTitleText("Details / Filters");
-		rightFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
+		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_OPEN, 300);
+		detailsViewFlyout = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
+		detailsViewFlyout.setTitleText("Details / Filters");
+		detailsViewFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
 		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
-		FlyoutControlComposite leftFlyoutControlComposite = new FlyoutControlComposite(rightFlyoutControlComposite.getClientParent(), SWT.NONE, leftFlyoutPreferences);
-		leftFlyoutControlComposite.setTitleText("Pattern registry");
-		leftFlyoutControlComposite.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
-		
-		matcherTreeViewer = new TreeViewer(leftFlyoutControlComposite.getClientParent());
-		tableViewer = new TableViewer(rightFlyoutControlComposite.getFlyoutParent(), SWT.FULL_SELECTION);
+		patternsViewerFlyout = new FlyoutControlComposite(detailsViewFlyout.getClientParent(), SWT.NONE, leftFlyoutPreferences);
+		patternsViewerFlyout.setTitleText("Pattern registry");
+		patternsViewerFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
+				
+		matcherTreeViewer = new TreeViewer(patternsViewerFlyout.getClientParent());
+		tableViewer = new TableViewer(detailsViewFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
 		
 		//matcherTreeViewer configuration
 		matcherTreeViewer.setContentProvider(matcherContentProvider);
@@ -133,7 +147,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
 		
 		//patternsViewer configuration		
-		patternsViewer = new CheckboxTreeViewer(leftFlyoutControlComposite.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
+		patternsViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		patternsViewer.addCheckStateListener(new CheckStateListener());
 		patternsViewer.setContentProvider(new PatternsViewerContentProvider());
 		patternsViewer.setLabelProvider(new PatternsViewerLabelProvider());
@@ -228,5 +242,9 @@ public class QueryExplorer extends ViewPart {
 	
 	public CheckboxTreeViewer getPatternsViewer() {
 		return patternsViewer;
+	}
+	
+	public FlyoutControlComposite getPatternsViewerFlyout() {
+		return patternsViewerFlyout;
 	}
 }

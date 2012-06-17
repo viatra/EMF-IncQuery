@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
 import java.util.ArrayList;
@@ -19,12 +30,14 @@ public class PatternComposite implements PatternComponent {
 	private List<PatternComponent> children;
 	private PatternComposite parent;
 	private Map<String, PatternComposite> fragmentMap;
+	private boolean isHierarchical;
 	
-	public PatternComposite(String patternNameFragment, PatternComposite parent) {
+	public PatternComposite(String patternNameFragment, PatternComposite parent, boolean hierarchical) {
 		this.patternNameFragment = patternNameFragment;
 		this.children = new ArrayList<PatternComponent>();
 		this.fragmentMap = new HashMap<String, PatternComposite>();
 		this.parent = parent;
+		this.isHierarchical = hierarchical;
 	}
 	
 	/**
@@ -41,16 +54,24 @@ public class PatternComposite implements PatternComponent {
 			return leaf;
 		}
 		else {
-			String fragment = tokens[0];
+			String prefix = null, suffix = null;
+			if (isHierarchical) {
+				prefix = tokens[0];
+				suffix = patternFragment.substring(prefix.length()+1);
+			}
+			else {
+				suffix = tokens[tokens.length - 1];
+				prefix = patternFragment.substring(0, patternFragment.length() - suffix.length() - 1);
+			}
 			
-			PatternComposite composite = fragmentMap.get(fragment);
+			PatternComposite composite = fragmentMap.get(prefix);
 			
 			if (composite == null) {
-				composite = new PatternComposite(fragment, this);
-				fragmentMap.put(fragment, composite);
+				composite = new PatternComposite(prefix, this, isHierarchical);
+				fragmentMap.put(prefix, composite);
 				children.add(composite);
 			}
-			return composite.addComponent(patternFragment.substring(fragment.length()+1));
+			return composite.addComponent(suffix);
 		}
 	}
 	
@@ -84,7 +105,8 @@ public class PatternComposite implements PatternComponent {
 			if (component instanceof PatternComposite) {
 				PatternComposite composite = (PatternComposite) component;
 				if (composite.getLeaves().size() == 0) {
-					QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(composite.getFullPatternNamePrefix());
+					QueryExplorer.getInstance().getPatternsViewerInput().
+						removeComponent(composite.getFullPatternNamePrefix(), true);
 				}
 				else {
 					composite.purge();
@@ -143,11 +165,12 @@ public class PatternComposite implements PatternComponent {
 	 * This method removes the component matching the given pattern name fragment.
 	 * 
 	 * @param patternFragment the pattern name fragment
+	 * @param handleInWhole tells whether to handle the whole pattern fragment 
+	 * (this is used when flat presentation is on and the user wants to unregister a non-leaf element) 
 	 */
-	public void removeComponent(String patternFragment) {
+	public void removeComponent(String patternFragment, boolean handleInWhole) {
 		String[] tokens = patternFragment.split("\\.");
-		
-		if (tokens.length == 1) {
+		if (handleInWhole || tokens.length == 1) {
 			PatternComponent component = null;
 			for (PatternComponent c : children) {
 				if (c.getPatternNameFragment().matches(patternFragment)) {
@@ -160,11 +183,20 @@ public class PatternComposite implements PatternComponent {
 			}
 		}
 		else {
-			String fragment = tokens[0];
-			PatternComposite composite = fragmentMap.get(fragment);
-			
+			String prefix = null, suffix = null;
+			if (isHierarchical) {
+				prefix = tokens[0];
+				suffix = patternFragment.substring(prefix.length()+1);
+			}
+			else {
+				suffix = tokens[tokens.length - 1];
+				prefix = patternFragment.substring(0, patternFragment.length() - suffix.length() - 1);
+			}
+
+			PatternComposite composite = fragmentMap.get(prefix);
+
 			if (composite != null) {
-				composite.removeComponent(patternFragment.substring(fragment.length()+1));
+				composite.removeComponent(suffix, false);
 			}
 		}
 	}

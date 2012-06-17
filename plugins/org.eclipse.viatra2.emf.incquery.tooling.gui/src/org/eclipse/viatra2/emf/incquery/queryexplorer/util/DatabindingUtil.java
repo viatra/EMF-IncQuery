@@ -1,9 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -16,8 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
@@ -51,11 +67,44 @@ public class DatabindingUtil {
 	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
+	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
 	
 	public static final String OFF_ANNOTATION = "Off";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
 	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
+	
+	public static void addOrderByPatternWarning(String patternFqn, String message) {
+		if (orderByPatternMarkers.get(patternFqn) == null) {
+			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+			URI uri = pattern.eResource().getURI();
+			String platformString = uri.toPlatformString(true);
+			IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+			try {
+				IMarker marker = markerLoc.createMarker(EValidator.MARKER);
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+				marker.setAttribute(IMarker.TRANSIENT, true);
+				marker.setAttribute(IMarker.LOCATION, pattern.getName());
+				marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(pattern).toString());
+				marker.setAttribute(IMarker.MESSAGE, message);
+				orderByPatternMarkers.put(patternFqn, marker);
+			} catch (CoreException e) {
+				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "Marker could not be created for pattern: " + patternFqn, e));
+			}
+		}
+	}
+	
+	public static void removeOrderByPatternWarning(String patternFqn) {
+		IMarker marker = orderByPatternMarkers.remove(patternFqn);
+		if (marker != null) {
+			try {
+				marker.delete();
+			} 
+			catch (CoreException e) {
+				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "Marker could not be deleted: " + marker.toString(), e));
+			}
+		}
+	}
 	
 	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {

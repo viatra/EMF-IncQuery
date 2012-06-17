@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Mark Czotter, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Mark Czotter - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui
 
 import com.google.inject.Inject
@@ -13,6 +24,7 @@ import org.eclipse.xtext.xbase.lib.Pair
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.ui.SampleUIGenerator.*
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import org.eclipse.core.runtime.Path
 
 class SampleUIGenerator implements IGenerationFragment {
 	
@@ -227,5 +239,9 @@ class SampleUIGenerator implements IGenerationFragment {
 			}
 		}	
 	'''
+	
+	override getAdditionalBinIncludes() {
+		return newArrayList(new Path("plugin.xml"))
+	}
 	
 }

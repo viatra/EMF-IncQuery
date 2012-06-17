@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
 import java.util.ArrayList;
@@ -16,6 +27,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
@@ -29,6 +41,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValue
  */
 public class ObservablePatternMatcher {
 	
+	private static final String KEY_ATTRIBUTE_COMPARABLE_INTERFACE = "The key attribute does not implement the Comparable interface!";
+	private static final String KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION = "The key attribute of OrderBy annotation must look like \"ClassName.AttributeName\"!";
 	private List<ObservablePatternMatch> matches;
 	private IncQueryMatcher<IPatternMatch> matcher;
 	private DeltaMonitor<IPatternMatch> deltaMonitor;
@@ -49,6 +63,8 @@ public class ObservablePatternMatcher {
 		this.matcher = matcher;
 		this.generated = generated;
 		this.orderParameter = null;
+		
+		DatabindingUtil.removeOrderByPatternWarning(CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()));
 		
 		if (matcher != null) {
 			Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
@@ -109,33 +125,46 @@ public class ObservablePatternMatcher {
 	private int placeOfMatch(IPatternMatch match) {
 		if (orderParameter != null) {
 			String[] tokens = orderParameter.split("\\.");
-			String orderParameterClass = tokens[0];
-			String orderParameterAttribute = tokens[1];
 			
-			EObject obj = (EObject) match.get(orderParameterClass);
-			EStructuralFeature feature = DatabindingAdapterUtil.getFeature(obj, orderParameterAttribute);
-			Object value = obj.eGet(feature);
-			if (value instanceof Comparable) {
+			if (tokens.length == 2) {
+				String orderParameterClass = tokens[0];
+				String orderParameterAttribute = tokens[1];
 				
-				for (int i = 0;i<matches.size();i++) {
-					IPatternMatch compMatch = matches.get(i).getPatternMatch();
-					EObject compObj = (EObject) compMatch.get(orderParameterClass);
-					EStructuralFeature compFeature = DatabindingAdapterUtil.getFeature(compObj, orderParameterAttribute);
-					Comparable compValue = (Comparable) compObj.eGet(compFeature);
-					//descending order, the place is when the new match is greater than the actual element
-					if (descendingOrder) {
-						if (compValue.compareTo(value) <= 0) {
-							return i;
+				EObject obj = (EObject) match.get(orderParameterClass);
+				EStructuralFeature feature = DatabindingAdapterUtil.getFeature(obj, orderParameterAttribute);
+				Object value = obj.eGet(feature);
+				if (value instanceof Comparable) {
+					
+					for (int i = 0;i<matches.size();i++) {
+						IPatternMatch compMatch = matches.get(i).getPatternMatch();
+						EObject compObj = (EObject) compMatch.get(orderParameterClass);
+						EStructuralFeature compFeature = DatabindingAdapterUtil.getFeature(compObj, orderParameterAttribute);
+						Comparable compValue = (Comparable) compObj.eGet(compFeature);
+						//descending order, the place is when the new match is greater than the actual element
+						if (descendingOrder) {
+							if (compValue.compareTo(value) <= 0) {
+								return i;
+							}
 						}
-					}
-					//ascending order, the place is when the new match is smaller than the actual element
-					else {
-						if (compValue.compareTo(value) >= 0) {
-							return i;
+						//ascending order, the place is when the new match is smaller than the actual element
+						else {
+							if (compValue.compareTo(value) >= 0) {
+								return i;
+							}
 						}
 					}
 				}
-			}	
+				else {
+					DatabindingUtil.addOrderByPatternWarning(
+							CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()), 
+							KEY_ATTRIBUTE_COMPARABLE_INTERFACE);
+				}
+			}
+			else {
+				DatabindingUtil.addOrderByPatternWarning(
+						CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()), 
+						KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
+			}
 		}
 		return -1;
 	}
@@ -168,10 +197,15 @@ public class ObservablePatternMatcher {
 	}
 	
 	private void removeMatch(IPatternMatch match) {
+		//null checks - eclipse closing - issue 162
 		ObservablePatternMatch observableMatch = this.sigMap.remove(match);
-		this.matches.remove(observableMatch);
-		observableMatch.dispose();
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (observableMatch != null) {
+			this.matches.remove(observableMatch);
+			observableMatch.dispose();
+		}
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 
 	public ObservablePatternMatcherRoot getParent() {
