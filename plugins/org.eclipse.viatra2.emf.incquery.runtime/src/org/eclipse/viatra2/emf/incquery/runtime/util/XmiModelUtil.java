@@ -33,10 +33,21 @@ public class XmiModelUtil {
 	}
 
 	/**
-	 * @return
+	 * Prepares an Xtext resource set with the registered injector of the EMF-IncQuery plugin
+	 * 
+	 * @return the Xtext injected resource set
 	 */
 	public static ResourceSet prepareXtextResource() {
 		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		return prepareXtextResource(injector);
+	}
+	
+	/**
+	 * Prepares an Xtext resource set with the given injector
+	 * 
+	 * @return the injected resource set
+	 */
+	public static ResourceSet prepareXtextResource(Injector injector) {
 		ResourceSet set = injector.getInstance(ResourceSet.class);
 		ClasspathTypeProviderFactory cptf = injector.getInstance(ClasspathTypeProviderFactory.class);
 		cptf.createTypeProvider(set);
@@ -52,18 +63,31 @@ public class XmiModelUtil {
 	 * @throws IncQueryRuntimeException - when the global XMI model is not found in bundle/project.
 	 */
 	public static URI getGlobalXmiResourceURI(String bundleName) {
-		URI resourceURI = URI.createPlatformResourceURI(String.format("%s/%s/%s",
-				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
-		if (URIConverter.INSTANCE.exists(resourceURI, null)) {
-			return resourceURI;
-		}
-		resourceURI = URI.createPlatformPluginURI(String.format("%s/%s/%s",
-				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME), true);
-		if (URIConverter.INSTANCE.exists(resourceURI, null)) {
+		URI resourceURI = resolvePlatformURI(String.format("%s/%s/%s",
+				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME));
+		if (resourceURI != null) {
 			return resourceURI;
 		}
 		throw new IncQueryRuntimeException("Global XMI resource not found in bundle/project: " + bundleName);
 	}
 	
+	/**
+	 * Returns the EMF URI for the given platform URI.
+	 * First tries to resolve the path with platformResource (in workspace), 
+	 * if not found, uses the platformPluginURI (in bundles).
+	 * @param platformURI - the URI to resolve.
+	 * @return
+	 */
+	public static URI resolvePlatformURI(String platformURI) {
+		URI resourceURI = URI.createPlatformResourceURI(platformURI, true);
+		if (URIConverter.INSTANCE.exists(resourceURI, null)) {
+			return resourceURI;
+		}
+		resourceURI = URI.createPlatformPluginURI(platformURI, true);
+		if (URIConverter.INSTANCE.exists(resourceURI, null)) {
+			return resourceURI;
+		}
+		return null;
+	}
 }
 
