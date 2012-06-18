@@ -30,7 +30,7 @@ public class IncQueryNature implements IProjectNature {
 	public static final String SRCGEN_DIR = "src-gen"; //$NON-NLS-1$
 	public static final String SRC_DIR = "src"; //$NON-NLS-1$
 	public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; //$NON_NLS-1$
-	public static final String IQGENMODEL = "generator.iqgen";
+	public static final String IQGENMODEL = "generator.eiqgen";
 	
 	IProject project;
 

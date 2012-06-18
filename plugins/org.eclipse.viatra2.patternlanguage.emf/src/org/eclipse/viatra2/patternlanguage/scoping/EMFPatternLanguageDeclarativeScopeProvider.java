@@ -96,8 +96,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 	}
 	
 	public IScope scope_EPackage(PackageImport ctx, EReference ref) {
-		IScope current = new SimpleScope(IScope.NULLSCOPE, metamodelProvider.getAllMetamodelObjects());
-		return current;
+		return metamodelProvider.getAllMetamodelObjects(ctx);
 	}
 	
 	public IScope scope_EClassifier(PatternBody ctx, EReference ref) {

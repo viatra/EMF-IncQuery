@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -13,6 +14,8 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -32,10 +35,10 @@ public class MetamodelProviderService implements IMetamodelProvider {
 	 * getAllMetamodelObjects()
 	 */
 	@Override
-	public Iterable<IEObjectDescription> getAllMetamodelObjects() {
+	public IScope getAllMetamodelObjects(EObject context) {
 		Set<String> packageURIs = new HashSet<String>(
 				EPackage.Registry.INSTANCE.keySet());
-		return Iterables.transform(packageURIs,
+		Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
 				new Function<String, IEObjectDescription>() {
 					public IEObjectDescription apply(String from) {
 						EPackage ePackage = EPackage.Registry.INSTANCE
@@ -53,6 +56,7 @@ public class MetamodelProviderService implements IMetamodelProvider {
 								Collections.singletonMap("nsURI", "true"));
 					}
 				});
+		return new SimpleScope(IScope.NULLSCOPE, metamodels);
 	}
 
 	/*

@@ -1,8 +1,10 @@
 package org.eclipse.viatra2.patternlanguage.scoping;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
 
 public interface IMetamodelProvider {
 
@@ -12,7 +14,7 @@ public interface IMetamodelProvider {
 	 * 
 	 * @return
 	 */
-	Iterable<IEObjectDescription> getAllMetamodelObjects();
+	IScope getAllMetamodelObjects(EObject context);
 
 	/**
 	 * Loads an EMF package from the nsURI or resource URI of the model, and
