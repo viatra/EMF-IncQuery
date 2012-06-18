@@ -2,7 +2,7 @@
 <plugin>
 
    <extension
-         name=""
+         id="org.eclipse.viatra2.emf.incquery.testing.queries.wellbehaving"
          point="org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features">
       <wellbehaving-derived-feature
             classifier-name="MatchSubstitutionRecord"

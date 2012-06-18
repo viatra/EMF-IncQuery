@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.testing.core
 
+import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.Date
 import org.eclipse.emf.ecore.EEnumLiteral
@@ -19,19 +20,14 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry
-import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcher
-import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcher
-import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.xtext.junit4.util.ParseHelper
 
 /**
  * Helper methods for dealing with snapshots and match set records.
