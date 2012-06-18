@@ -55,7 +55,7 @@ Parameter returns Variable:
 	(':' type=Type)?;
 
 VariableReference:
-	var=ID;
+	var = ID;
 
 	//These types are not meant to be written directly, just in the desc languages
 Type returns Type:
