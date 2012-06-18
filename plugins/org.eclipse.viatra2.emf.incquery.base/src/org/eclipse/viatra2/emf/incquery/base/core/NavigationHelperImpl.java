@@ -12,7 +12,9 @@
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -24,6 +26,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
+import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 
@@ -36,12 +40,16 @@ public class NavigationHelperImpl implements NavigationHelper {
 	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
+	private Map<InstanceListener, Set<EClass>> instanceListeners;
+	private Map<FeatureListener, Set<EStructuralFeature>> featureListeners;
+	
 	public NavigationHelperImpl(Notifier emfRoot, NavigationHelperType type) throws IncQueryBaseException {
 
 		if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
 			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
 		}
 
+		this.instanceListeners = new HashMap<InstanceListener, Set<EClass>>();
 		this.observedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
@@ -183,9 +191,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public Set<EObject> getInverseReferences(EObject target,
 			EReference reference) {
-		if (contentAdapter.getRefMap().get(target) == null)
+		if (contentAdapter.getRefMap().get(target) == null) {
 			return null;
-		return contentAdapter.getRefMap().get(target).get(reference);
+		}
+		else {
+			return contentAdapter.getRefMap().get(target).get(reference);
+		}
 	}
 
 	@Override
@@ -198,12 +209,43 @@ public class NavigationHelperImpl implements NavigationHelper {
 		HashSet<EObject> retSet = new HashSet<EObject>();
 
 		for (EClass c : contentAdapter.getInstanceMap().keySet()) {
-			if (type.isSuperTypeOf(c))
+			if (type.isSuperTypeOf(c)) {
 				retSet.addAll(contentAdapter.getInstanceMap().get(c));
+			}
 		}
 
-		if (retSet.isEmpty())
+		if (retSet.isEmpty()) {
 			return null;
+		}
+		
 		return retSet;
+	}
+
+	@Override
+	public void registerInstanceListener(Set<EClass> classes, InstanceListener listener) {
+		this.instanceListeners.put(listener, classes);		
+	}
+
+	@Override
+	public void unregisterInstanceListener(InstanceListener listener) {
+		this.instanceListeners.remove(listener);		
+	}
+	
+	@Override
+	public void registerFeatureListener(Set<EStructuralFeature> features, FeatureListener listener) {
+		this.featureListeners.put(listener, features);
+	}
+
+	@Override
+	public void unregisterFeatureListener(FeatureListener listener) {
+		this.featureListeners.remove(listener);
+	}
+	
+	public Map<InstanceListener, Set<EClass>> getInstanceListeners() {
+		return instanceListeners;
+	}
+	
+	public Map<FeatureListener, Set<EStructuralFeature>> getFeatureListeners() {
+		return featureListeners;
 	}
 }

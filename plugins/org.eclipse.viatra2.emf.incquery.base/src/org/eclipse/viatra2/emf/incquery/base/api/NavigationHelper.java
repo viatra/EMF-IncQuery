@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 
 /**
@@ -129,4 +130,13 @@ public interface NavigationHelper {
 	 * The NavigationHelper instance will unregister itself from the list of EContentAdapters of the given Notifier instance.
 	 */
 	public void dispose();
+	
+	
+	public void registerInstanceListener(Set<EClass> classes, InstanceListener listener);
+	
+	public void unregisterInstanceListener(InstanceListener listener);
+	
+	public void registerFeatureListener(Set<EStructuralFeature> features, FeatureListener listener);
+	
+	public void unregisterFeatureListener(FeatureListener listener);
 }
