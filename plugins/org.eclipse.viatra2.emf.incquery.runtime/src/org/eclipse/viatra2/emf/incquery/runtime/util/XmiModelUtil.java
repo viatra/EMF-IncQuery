@@ -70,6 +70,14 @@ public class XmiModelUtil {
 		}
 		throw new IncQueryRuntimeException("Global XMI resource not found in bundle/project: " + bundleName);
 	}
+
+	/**
+	 * Returns the globalXmiModel path.
+	 * @return
+	 */
+	public static String getGlobalXmiFilePath() {
+		return String.format("%s/%s", XmiModelUtil.XMI_OUTPUT_FOLDER, XmiModelUtil.GLOBAL_EIQ_FILENAME);
+	}
 	
 	/**
 	 * Returns the EMF URI for the given platform URI.
