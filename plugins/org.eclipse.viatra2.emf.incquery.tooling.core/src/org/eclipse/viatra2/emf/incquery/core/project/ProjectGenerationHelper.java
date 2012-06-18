@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -723,7 +722,7 @@ public abstract class ProjectGenerationHelper {
 	 * @param project
 	 * @return 
 	 */
-	public static @NonNull IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
+	public static IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
 		if (file.exists()) {
 			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
@@ -744,7 +743,7 @@ public abstract class ProjectGenerationHelper {
 	 * @param project
 	 * @return
 	 */
-	public static @NonNull IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
+	public static IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
 		if (file.exists()) {
 			return getGeneratorModel(project, set);
