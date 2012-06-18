@@ -131,12 +131,35 @@ public interface NavigationHelper {
 	 */
 	public void dispose();
 	
-	
+	/**
+	 * Registers an instance listener for the navigation helper. 
+	 * The listener will be notified about only the instances of the given set of classes.  
+	 * 
+	 * @param classes the set of classes associated to the listener 
+	 * @param listener the listener instance
+	 */
 	public void registerInstanceListener(Set<EClass> classes, InstanceListener listener);
 	
+	/**
+	 * Unregisters an instance listener.
+	 * 
+	 * @param listener the listener instance
+	 */
 	public void unregisterInstanceListener(InstanceListener listener);
 	
+	/**
+	 * Registers a feature listener for the navigation helper. 
+	 * The listener will be notified about only the settings associated to the given set of features. 
+	 * 
+	 * @param features the set of features associated to the listener
+	 * @param listener the listener instance
+	 */
 	public void registerFeatureListener(Set<EStructuralFeature> features, FeatureListener listener);
 	
+	/**
+	 * Unregisters a feature listener.
+	 * 
+	 * @param listener the listener instance
+	 */
 	public void unregisterFeatureListener(FeatureListener listener);
 }
