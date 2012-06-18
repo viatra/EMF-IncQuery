@@ -12,7 +12,9 @@ package org.eclipse.viatra2.patternlanguage.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLanguageBuilderParticipant;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
@@ -63,4 +65,7 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 		return EMFPatternLanguageHighlightingConfiguration.class;
 	}
 	
+	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
+		return GenModelMetamodelProviderService.class;
+	}
 }

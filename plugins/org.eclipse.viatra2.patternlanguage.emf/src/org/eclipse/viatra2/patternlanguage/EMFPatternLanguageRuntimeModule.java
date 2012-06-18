@@ -17,6 +17,8 @@ import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFPatternJvmModelAssociator
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageScopeProvider;
+import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
+import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -64,5 +66,9 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	
 	public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
 		return EMFPatternJvmModelAssociator.class;
+	}
+	
+	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
+		return MetamodelProviderService.class;
 	}
 }

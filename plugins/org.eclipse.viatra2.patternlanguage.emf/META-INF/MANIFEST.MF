@@ -26,14 +26,15 @@ Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.patternlanguage,
- org.eclipse.viatra2.patternlanguage.services,
- org.eclipse.viatra2.patternlanguage.serializer,
- org.eclipse.viatra2.patternlanguage.parser.antlr,
- org.eclipse.viatra2.patternlanguage.parser.antlr.internal,
- org.eclipse.viatra2.patternlanguage.validation,
- org.eclipse.viatra2.patternlanguage.formatting,
- org.eclipse.viatra2.patternlanguage.jvmmodel,
  org.eclipse.viatra2.patternlanguage.eMFPatternLanguage,
  org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.impl,
- org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.util
+ org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.util,
+ org.eclipse.viatra2.patternlanguage.formatting,
+ org.eclipse.viatra2.patternlanguage.jvmmodel,
+ org.eclipse.viatra2.patternlanguage.parser.antlr,
+ org.eclipse.viatra2.patternlanguage.parser.antlr.internal,
+ org.eclipse.viatra2.patternlanguage.scoping,
+ org.eclipse.viatra2.patternlanguage.serializer,
+ org.eclipse.viatra2.patternlanguage.services,
+ org.eclipse.viatra2.patternlanguage.validation
 

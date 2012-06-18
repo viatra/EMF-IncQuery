@@ -27,8 +27,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -43,6 +48,8 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -88,6 +95,51 @@ public abstract class ProjectGenerationHelper {
 	 * A single source folder named src
 	 */
 	public static final String[] SINGLESOURCEFOLDER = { "src" };
+	
+	/**
+	 * Creates a new IncQuery project: a plug-in project with src and src-gen
+	 * folders and specific dependencies.
+	 * 
+	 * @param description
+	 * @param proj
+	 * @param monitor
+	 * @throws CoreException
+	 * @throws OperationCanceledException
+	 */
+	public static void createProject(IProjectDescription description,
+			IProject proj, IProgressMonitor monitor) throws CoreException {
+		ImmutableList<String> dependencies = ImmutableList.of(
+				"org.eclipse.pde.core", "org.eclipse.emf.ecore",
+				"org.eclipse.emf.transaction",
+				"org.eclipse.viatra2.emf.incquery.runtime",
+				"org.eclipse.xtext.xbase.lib");
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+
+		try {
+
+			monitor.beginTask("", 2000);
+			/* Creating plug-in information */
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service.getDescription(proj);
+			IPath[] additionalBinIncludes = new IPath[] {
+					new Path("plugin.xml"), new Path("queries/") };
+			ProjectGenerationHelper.fillProjectMetadata(proj, dependencies,
+					service, bundleDesc, additionalBinIncludes);
+			bundleDesc.apply(monitor);
+			// Adding IncQuery-specific natures
+			ProjectGenerationHelper.addNatures(proj, new String[] {
+					IncQueryNature.NATURE_ID,
+					"org.eclipse.xtext.ui.shared.xtextNature" }, monitor);
+		} finally {
+			monitor.done();
+			if (context != null && ref != null) {
+				context.ungetService(ref);
+			}
+		}
+	}
 	
 	/**
 	 * Adds a collection of natures to the project
@@ -663,5 +715,45 @@ public abstract class ProjectGenerationHelper {
 		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
 				.getModelManager().findModel(project);
 		return plugin.getBundleDescription().getSymbolicName();
+	}
+	
+	/**
+	 * Returns the IncQuery generator model for the selected project. If no generator model exists,
+	 * an empty model is returned.
+	 * @param project
+	 * @return 
+	 */
+	public static @NonNull IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		if (file.exists()) {
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			Resource resource = set.getResource(uri, true);
+			return (IncQueryGeneratorModel) resource.getContents().get(0);
+		} else {
+			return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+		}
+	}
+	
+	public static boolean isGeneratorModelDefined(IProject project) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		return file.exists();
+	}
+	
+	/**
+	 * Initializes and returns the IncQuery generator model for the selected project. If the model is already initialized, it returns the original model.
+	 * @param project
+	 * @return
+	 */
+	public static @NonNull IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		if (file.exists()) {
+			return getGeneratorModel(project, set);
+		} else {
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			Resource resource = set.createResource(uri);
+			IncQueryGeneratorModel model = GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+			resource.getContents().add(model);
+			return model;
+		}
 	}
 }
