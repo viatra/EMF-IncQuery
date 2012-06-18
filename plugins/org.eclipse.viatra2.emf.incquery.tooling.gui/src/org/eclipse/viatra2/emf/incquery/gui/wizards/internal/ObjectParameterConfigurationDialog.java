@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.dialogs.Dialog;
@@ -136,7 +138,10 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 			TreeIterator<EObject> iterator = _package.eAllContents();
 			
 			while (iterator.hasNext()) {
-				result.add(iterator.next());
+				EObject nextObject = iterator.next();
+				if (nextObject instanceof EClassifier || nextObject instanceof EDataType) {
+					result.add(nextObject);
+				}
 			}
 		}
 		return result.toArray();
