@@ -42,8 +42,8 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
@@ -169,9 +169,11 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 			for (ObjectParameter parameter : parameters) {
 				Variable var = PatternLanguageFactory.eINSTANCE.createVariable();
 				var.setName(parameter.getParameterName());
-				Type type = PatternLanguageFactory.eINSTANCE.createType();
-				type.setTypename(parameter.getObject().getClass().toString());
-				var.setType(type);
+				
+				ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
+				classType.setClassname(parameter.getObject().eClass());
+				classType.setTypename(parameter.getObject().eClass().getName());
+				var.setType(classType);
 				pattern.getParameters().add(var);
 			}
 			
