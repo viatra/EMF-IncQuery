@@ -44,7 +44,7 @@ class ModelLoadHelper {
 	/**
 	 * Try to resolve a given platform URI first as a resource than as a plugin URI.
 	 */
-	def private resolvePlatformUri(String platformUri){
+	/*def private resolvePlatformUri(String platformUri){
 		val resourceURI = URI::createPlatformResourceURI(platformUri, true)
 		if (URIConverter::INSTANCE.exists(resourceURI, null)) {
 			return resourceURI
@@ -53,7 +53,7 @@ class ModelLoadHelper {
 		if (URIConverter::INSTANCE.exists(pluginURI, null)) {
 			return pluginURI
 		}
-	}
+	}*/
 	
 	/**
 	 * Load an additional resource into the resource set from a given file.
@@ -68,7 +68,7 @@ class ModelLoadHelper {
 	 * Works for both pattern and target model resource sets.
 	 */
 	def loadAdditionalResourceFromUri(ResourceSet resourceSet, String platformUri){
-		val modelURI = platformUri.resolvePlatformUri
+		val modelURI = XmiModelUtil::resolvePlatformURI(platformUri)
 		if(modelURI != null){
 			resourceSet.getResource(modelURI, true)
 		}
@@ -97,7 +97,13 @@ class ModelLoadHelper {
 	 * Initialize a matcher for the pattern with the given name from the pattern model on the selected EMF root.
 	 */
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
-		val patterns = model.patterns.filter[(model.packageName+'.'+name).equals(patternName)]
+		val patterns = model.patterns.filter[
+			if(model.packageName == null){
+				name.equals(patternName)
+			} else {
+				(model.packageName+'.'+name).equals(patternName)
+			}
+		]
 		if(patterns.size == 1){
 			MatcherFactoryRegistry::getOrCreateMatcherFactory(patterns.iterator.next).getMatcher(emfRoot)
 		}

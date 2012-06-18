@@ -16,7 +16,6 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory
 import org.eclipse.viatra2.emf.incquery.testing.core.ModelLoadHelper
 import org.eclipse.viatra2.emf.incquery.testing.core.SnapshotHelper
 import org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -25,6 +24,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.eclipse.viatra2.emf.incquery.testing.core.injector.EMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -50,6 +50,7 @@ class ExampleIncQueryFunctionalTest {
 	def prepareSelfTest(PatternModel patternModel){
 		/* Preparation not really part of a real test case */
 		// NOTE in actual tests: val snapshot = loadModelFromUri("uri/to/test/expected")
+		prepareSnapshotMatcherFactories
 		val matcher = patternModel.initializeMatcherFromModel(patternModel, "resolutionTest");
 		val snapshot = EIQSnapshotFactory::eINSTANCE.createIncQuerySnapshot
 		matcher.saveMatchesToSnapshot(snapshot)
@@ -60,11 +61,12 @@ class ExampleIncQueryFunctionalTest {
 	@Test
 	def basicTest(){
 		val model = testInput
+		prepareSnapshotMatcherFactories
 		val matcher = model.initializeMatcherFromModel(model, "resolutionTest");
 		val snapshot = EIQSnapshotFactory::eINSTANCE.createIncQuerySnapshot
 		val expected = matcher.saveMatchesToSnapshot(snapshot)
 		val results = matcher.compareResultSets(expected)
-		assertNull(results)
+		assertArrayEquals(newHashSet,results)
 		
 	}
 	

@@ -25,11 +25,20 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry
+import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcher
+import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcher
+import com.google.inject.Inject
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 
 /**
  * Helper methods for dealing with snapshots and match set records.
  */
 class SnapshotHelper {
+	
+	@Inject
+	ParseHelper parseHelper
 	/**
 	 * Returns the EMF root that was used by the matchers recorded into the given snapshot,
 	 *  based on the input specification and the model roots.
@@ -204,5 +213,58 @@ class SnapshotHelper {
 			sub.setParameterName(parameterName)
 			return sub
 		}
+	}
+	
+	/**
+	 * Registers the matcher factories used by the derived features of snapshot models into the EMF-IncQuery 
+	 * matcher factory registry. This is useful when running tests without extension registry.
+	 */
+	def prepareSnapshotMatcherFactories() {
+		val patternModel = parseHelper.parse('
+			package org.eclipse.viatra2.emf.incquery.testing.queries
+
+			import "http://www.eclipse.org/viatra2/emf/incquery/snapshot"
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern RecordRoleValue(
+				Record : MatchRecord,
+				Role
+			) = {
+				MatchSetRecord.filter(MS,Record);
+				RecordRole::Filter == Role;
+			} or {
+				MatchSetRecord.matches(MS,Record);
+				RecordRole::Match == Role;
+			}
+			
+			pattern SubstitutionValue(
+				Substitution : MatchSubstitutionRecord,
+				Value
+			) = {
+				MiscellaneousSubstitution.value(Substitution,Value);
+			} or {
+				EMFSubstitution.value(Substitution,Value);
+			} or {
+				IntSubstitution.value(Substitution,Value);
+			} or {
+				LongSubstitution.value(Substitution,Value);
+			} or {
+				DoubleSubstitution.value(Substitution,Value);
+			} or {
+				FloatSubstitution.value(Substitution,Value);
+			} or {
+				BooleanSubstitution.value(Substitution,Value);
+			} or {
+				StringSubstitution.value(Substitution,Value);
+			} or {
+				DateSubstitution.value(Substitution,Value);
+			} or {
+				EnumSubstitution.valueLiteral(Substitution,Value);
+			}
+		') as PatternModel
+		patternModel.patterns.forEach()[
+			val factory = MatcherFactoryRegistry::getOrCreateMatcherFactory(it)
+			MatcherFactoryRegistry::registerMatcherFactory(factory);
+		]
 	}
 }
