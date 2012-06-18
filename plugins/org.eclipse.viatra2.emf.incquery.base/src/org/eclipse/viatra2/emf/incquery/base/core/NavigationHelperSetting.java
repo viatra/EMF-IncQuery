@@ -31,8 +31,7 @@ public class NavigationHelperSetting implements Setting {
 		super();
 	}
 	
-	public NavigationHelperSetting(EStructuralFeature feature, EObject holder,
-			Object value) {
+	public NavigationHelperSetting(EStructuralFeature feature, EObject holder, Object value) {
 		super();
 		this.feature = feature;
 		this.holder = holder;

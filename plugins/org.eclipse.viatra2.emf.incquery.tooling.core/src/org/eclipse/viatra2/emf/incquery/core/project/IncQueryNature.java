@@ -30,16 +30,8 @@ public class IncQueryNature implements IProjectNature {
 	public static final String SRCGEN_DIR = "src-gen"; //$NON-NLS-1$
 	public static final String SRC_DIR = "src"; //$NON-NLS-1$
 	public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; //$NON_NLS-1$
-	public static final String GENERATED_BUILDERS_DIR = "src-gen/patternbuilders"; //$NON-NLS-1$
-	public static final String GENERATED_BUILDERS_PACKAGEROOT = "patternbuilders"; //$NON-NLS-1$
-	public static final String GENERATED_MATCHERS_DIR = "src-gen/patternmatchers"; //$NON-NLS-1$
-	public static final String GENERATED_MATCHERS_PACKAGEROOT = "patternmatchers"; //$NON-NLS-1$
-	public static final String GENERATED_DTO_DIR = "src-gen/signatures"; //$NON-NLS-1$
-	public static final String GENERATED_DTO_PACKAGEROOT = "signatures"; //$NON-NLS-1$
-	public static final String GENERATED_HANDLER_DIR = "src-gen/handlers"; //$NON-NLS-1$
-	public static final String GENERATED_HANDLER_PACKAGEROOT = "handlers"; //$NON-NLS-1$
-	public static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
-	public static final String SOURCE_BUILD_PROPERTIES = "templates/build.properties"; //$NON-NLS-1$
+	public static final String IQGENMODEL = "generator.eiqgen";
+	
 	IProject project;
 
 	/*

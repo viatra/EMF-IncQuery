@@ -9,8 +9,11 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
+import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
@@ -80,7 +83,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			EObject newValue = (EObject) notification.getNewValue();
 			
 			if (oldValue != null) {
-				removeRefTuple(ref, oldValue, notifier);
+				removeReferenceTuple(ref, oldValue, notifier);
 				removeInstanceTuple(oldValue.eClass(), oldValue);
 
 				if (ref.isContainment())
@@ -93,7 +96,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 
 	public void handleRefAdd(EReference ref, EObject newValue, EObject notifier) {
-		insertRefTuple(ref, newValue, notifier);
+		insertReferenceTuple(ref, newValue, notifier);
 		insertInstanceTuple(newValue.eClass(), newValue);
 		if (ref.isContainment()) {
 			navigationHelper.getVisitor().visitObjectForEAttributeInsert(newValue, navigationHelper.getObservedFeatures());
@@ -102,7 +105,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	public void handleRefRemove(EReference ref, EObject oldValue,
 			EObject newValue, EObject notifier) {
-		removeRefTuple(ref, oldValue, notifier);
+		removeReferenceTuple(ref, oldValue, notifier);
 		removeInstanceTuple(oldValue.eClass(), oldValue);
 
 		if (ref.isContainment()) {
@@ -121,15 +124,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 		if (notification.getEventType() == Notification.SET) {
 			if (oldValue != null) {
-				removeAttrTuple(feature, oldValue, notifier);
+				removeAttributeTuple(feature, oldValue, notifier);
 			}
 			if (newValue != null) {
-				insertAttrTuple(feature, newValue, notifier);
+				insertAttributeTuple(feature, newValue, notifier);
 			}
 		}
 	}
 
-	public void insertAttrTuple(EAttribute attr, Object value, EObject holder) {
+	public void insertAttributeTuple(EAttribute attr, Object value, EObject holder) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(attr)) {
 			if (attrMap.containsKey(value)) {
 				if (attrMap.get(value).containsKey(attr)) {
@@ -146,10 +149,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				map.put(attr, set);
 				attrMap.put(value, map);
 			}
+			
+			notifyFeatureListeners(new NavigationHelperSetting(attr, holder, value), true);
 		}
 	}
 
-	public void removeAttrTuple(EAttribute attr, Object value, EObject holder) {
+	public void removeAttributeTuple(EAttribute attr, Object value, EObject holder) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(attr)) {
 			if (attrMap.containsKey(value)
 					&& attrMap.get(value).containsKey(attr)) {
@@ -163,11 +168,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 					attrMap.remove(value);
 				}
 			}
+			
+			notifyFeatureListeners(new NavigationHelperSetting(attr, holder, value), false);
 		}
-
 	}
 
-	public void insertRefTuple(EReference ref, EObject target, EObject source) {
+	public void insertReferenceTuple(EReference ref, EObject target, EObject source) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(ref)) {
 			if (refMap.containsKey(target)) {
 				if (refMap.get(target).containsKey(ref)) {
@@ -184,21 +190,26 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				map.put(ref, set);
 				refMap.put(target, map);
 			}
+			
+			notifyFeatureListeners(new NavigationHelperSetting(ref, source, target), true);
 		}
 	}
 
-	public void removeRefTuple(EReference ref, EObject target, EObject source) {
+	public void removeReferenceTuple(EReference ref, EObject target, EObject source) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(ref)) {
-			if (refMap.containsKey(target)
-					&& refMap.get(target).containsKey(ref)) {
+			if (refMap.containsKey(target) && refMap.get(target).containsKey(ref)) {
 				refMap.get(target).get(ref).remove(source);
 
-				if (refMap.get(target).get(ref).size() == 0)
+				if (refMap.get(target).get(ref).size() == 0) {
 					refMap.get(target).remove(ref);
+				}
 
-				if (refMap.get(target).size() == 0)
+				if (refMap.get(target).size() == 0) {
 					refMap.remove(target);
+				}
 			}
+			
+			notifyFeatureListeners(new NavigationHelperSetting(ref, source, target), false);
 		}
 	}
 
@@ -211,6 +222,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				set.add(value);
 				instanceMap.put(key, set);
 			}
+			
+			notifyInstanceListeners(key, value, true);
 		}
 	}
 
@@ -220,6 +233,32 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				instanceMap.get(key).remove(value);
 				if (instanceMap.get(key).size() == 0) {
 					instanceMap.remove(key);
+				}
+			}
+			
+			notifyInstanceListeners(key, value, false);
+		}
+	}
+	
+	private void notifyFeatureListeners(Setting setting, boolean isInsertion) {
+		for (FeatureListener listener : navigationHelper.getFeatureListeners().keySet()) {
+			if (isInsertion) {
+				listener.featureInserted(setting);
+			}
+			else {
+				listener.featureDeleted(setting);
+			}
+		}
+	}
+	
+	private void notifyInstanceListeners(EClass clazz, EObject instance, boolean isInsertion) {
+		for (InstanceListener listener : navigationHelper.getInstanceListeners().keySet()) {
+			if (navigationHelper.getInstanceListeners().get(listener).contains(clazz)) {
+				if (isInsertion) {
+					listener.instanceInserted(clazz, instance);
+				}
+				else {
+					listener.instanceInserted(clazz, instance);
 				}
 			}
 		}

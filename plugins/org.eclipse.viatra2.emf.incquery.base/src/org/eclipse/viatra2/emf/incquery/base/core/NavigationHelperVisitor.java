@@ -75,10 +75,10 @@ public class NavigationHelperVisitor {
 								EObjectEList<EObject> list = (EObjectEList<EObject>) o;
 								Iterator<EObject> it = list.iterator();
 								while (it.hasNext()) {
-									navigationHelper.getContentAdapter().insertRefTuple(ref, it.next(), obj);
+									navigationHelper.getContentAdapter().insertReferenceTuple(ref, it.next(), obj);
 								}
 							} else {
-								navigationHelper.getContentAdapter().insertRefTuple(ref, (EObject) o, obj);
+								navigationHelper.getContentAdapter().insertReferenceTuple(ref, (EObject) o, obj);
 							}
 						}
 					}
@@ -97,7 +97,7 @@ public class NavigationHelperVisitor {
 				if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(attr)) {
 					Object o = obj.eGet(attr);
 					if (o != null) {
-						navigationHelper.getContentAdapter().insertAttrTuple(attr, o, obj);
+						navigationHelper.getContentAdapter().insertAttributeTuple(attr, o, obj);
 					}
 				}
 			}
@@ -112,7 +112,7 @@ public class NavigationHelperVisitor {
 				if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(attr)) {
 					Object o = obj.eGet(attr);
 					if (o != null) {
-						navigationHelper.getContentAdapter().removeAttrTuple(attr, o, obj);
+						navigationHelper.getContentAdapter().removeAttributeTuple(attr, o, obj);
 					}
 				}
 			}
