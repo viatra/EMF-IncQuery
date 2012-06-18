@@ -19,7 +19,7 @@
 				<version>3.3.0</version>
 				<configuration>
 					<workflowEngine>mwe2</workflowEngine>
-					<workflowDescriptor>src/org/eclipse/viatra2/patternlanguage/GenerateEMFPatternLanguage.mwe2</workflowDescriptor>
+					<workflowDescriptor>src/org/eclipse/viatra2/emf/incquery/tooling/generator/GenerateGeneratorModel.mwe2</workflowDescriptor>
 				</configuration>
 				<executions>
 					<execution>
