@@ -31,6 +31,7 @@ import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRo
 import com.google.inject.Inject
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -155,6 +156,28 @@ class SnapshotHelper {
 	def saveMatchesToSnapshot(IncQueryMatcher matcher, IncQuerySnapshot snapshot){
 		matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
 	}
+	
+	/**
+	 * Returns the match set record for the given pattern FQN from the snapshot,
+	 *  if there is only one such record.
+	 */
+	def getMatchSetRecordForPattern(IncQuerySnapshot snapshot, String patternFQN){
+		val matchsetrecord = snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)]
+		if(matchsetrecord.size == 1){
+			return matchsetrecord.iterator.next
+		}
+	}
+
+	/**
+	 * Returns the match set records for the given pattern FQN from the snapshot.
+	 */
+	def getMatchSetRecordsForPattern(IncQuerySnapshot snapshot, String patternFQN){
+		val matchSetRecords = new ArrayList<MatchSetRecord>
+		matchSetRecords.addAll(snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)])
+		return matchSetRecords
+	}
+	
+	
 	
 	/**
 	 * Creates a substitution for the given parameter name using the given value.

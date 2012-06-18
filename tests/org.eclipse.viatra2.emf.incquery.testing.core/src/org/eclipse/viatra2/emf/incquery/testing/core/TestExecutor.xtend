@@ -96,7 +96,8 @@ class TestExecutor {
 		val unexpectedMatcher = UnexpectedMatchRecordMatcher::FACTORY.getMatcher(snapshot.EMFRootForSnapshot)
 		
 		// 3. Save match results into snapshot
-		val actual = matcher.saveMatchesToSnapshot(snapshot)
+		val partialMatch = matcher.createMatchForMachRecord(expected.filter)
+		val actual = matcher.saveMatchesToSnapshot(partialMatch,snapshot)
 		
 		// 4. run matchers
 		unexpectedMatcher.forEachMatch(actual, expected, null) [
@@ -105,6 +106,7 @@ class TestExecutor {
 		unexpectedMatcher.forEachMatch(expected, actual, null) [
 			diff.add(EXPECTED_NOT_FOUND + " ("+it+")")
 		]
+		return diff
 	}
 
 	

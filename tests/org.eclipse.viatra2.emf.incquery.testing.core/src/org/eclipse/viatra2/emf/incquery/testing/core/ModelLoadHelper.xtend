@@ -21,6 +21,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegi
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -105,7 +107,8 @@ class ModelLoadHelper {
 			}
 		]
 		if(patterns.size == 1){
-			MatcherFactoryRegistry::getOrCreateMatcherFactory(patterns.iterator.next).getMatcher(emfRoot)
+			val factory = new GenericMatcherFactory(patterns.iterator.next)
+			factory.getMatcher(emfRoot)
 		}
 	}
 	
