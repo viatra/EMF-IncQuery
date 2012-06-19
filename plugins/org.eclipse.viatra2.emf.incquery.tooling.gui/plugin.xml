@@ -198,7 +198,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqFileHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqPatternHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
          <activeWhen>
             <reference
@@ -227,19 +227,19 @@
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresourceset">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadResourceHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadResourceHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqmodel">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqFileHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqPatternHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern">
       </handler>
    </extension>

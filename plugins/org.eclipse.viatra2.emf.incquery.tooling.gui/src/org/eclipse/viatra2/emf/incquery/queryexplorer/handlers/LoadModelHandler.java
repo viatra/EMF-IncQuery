@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
@@ -26,18 +27,22 @@ public class LoadModelHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-
+		
 		if (editorPart instanceof IEditingDomainProvider) {
 			IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
 
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
+			
 			if (resourceSet.getResources().size() > 0) {
-				HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(
-								QueryExplorer.getInstance().getModelPartListener());
-				QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(editorPart, resourceSet);
+				loadModel(event, editorPart, resourceSet);
 			}
 		}
 
 		return null;
+	}
+	
+	protected void loadModel(ExecutionEvent event, IEditorPart editorPart, Notifier notifier) {
+		HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(QueryExplorer.getInstance().getModelPartListener());
+		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(editorPart, notifier);
 	}
 }

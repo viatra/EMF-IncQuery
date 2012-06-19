@@ -11,14 +11,30 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
-public class LoadEiqModelHandler extends AbstractHandler {
+import com.google.inject.Inject;
 
+public class LoadEiqModelHandler extends LoadModelHandler {
+	
+	@Inject
+	DatabindingUtil dbUtil;
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		try {
+			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
+			if (file != null) {
+				loadModel(event, HandlerUtil.getActiveEditor(event), dbUtil.parseEPM(file));
+			}
+		} catch (Exception e) {
+			throw new ExecutionException("Cannot load pattern model", e);
+		}
+		
 		return null;
 	}
 }

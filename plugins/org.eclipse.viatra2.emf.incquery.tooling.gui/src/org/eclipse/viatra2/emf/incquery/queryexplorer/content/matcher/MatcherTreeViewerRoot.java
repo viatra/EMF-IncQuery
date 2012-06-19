@@ -30,8 +30,8 @@ private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 		roots = new HashMap<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot>();
 	}
 	
-	public void addPatternMatcherRoot(IEditorPart editorPart, ResourceSet res) {
-		MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, res);
+	public void addPatternMatcherRoot(IEditorPart editorPart, Notifier notifier) {
+		MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, notifier);
 		if (!roots.containsKey(key)) {
 			ObservablePatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);	
 			this.roots.put(key, root);
