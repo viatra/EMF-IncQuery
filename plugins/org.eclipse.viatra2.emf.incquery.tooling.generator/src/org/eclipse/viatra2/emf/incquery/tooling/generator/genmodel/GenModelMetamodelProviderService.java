@@ -4,15 +4,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
@@ -115,7 +119,14 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public IncQueryGeneratorModel getGeneratorModel(IProject project,
 			ResourceSet set) {
-		return ProjectGenerationHelper.getGeneratorModel(project, set);
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		if (file.exists()) {
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			Resource resource = set.getResource(uri, true);
+			return (IncQueryGeneratorModel) resource.getContents().get(0);
+		} else {
+			return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+		}
 	}
 
 	@Override
@@ -146,5 +157,27 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		// TODO Auto-generated method stub
 		return Maps.newHashMap();
 	}
-
+	
+	public boolean isGeneratorModelDefined(IProject project) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		return file.exists();
+	}
+	
+	/**
+	 * Initializes and returns the IncQuery generator model for the selected project. If the model is already initialized, it returns the original model.
+	 * @param project
+	 * @return
+	 */
+	public IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		if (file.exists()) {
+			return getGeneratorModel(project, set);
+		} else {
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+			Resource resource = set.createResource(uri);
+			IncQueryGeneratorModel model = GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+			resource.getContents().add(model);
+			return model;
+		}
+	}
 }

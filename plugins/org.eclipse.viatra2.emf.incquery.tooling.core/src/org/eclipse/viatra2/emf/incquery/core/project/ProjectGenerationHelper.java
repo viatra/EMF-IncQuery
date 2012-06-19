@@ -47,8 +47,8 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
+//import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
+//import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -260,6 +260,35 @@ public abstract class ProjectGenerationHelper {
 		bundleDesc.setRequiredBundles(reqBundles);
 	}
 
+	/**
+	 * Checks whether the project depends on a selected bundle ID
+	 * @param project the project to check
+	 * @param dependency bundle identifier
+	 * @return true, if the project depends on the given bundle
+	 * @throws CoreException
+	 */
+	public static boolean checkBundleDependency(IProject project, String dependency) throws CoreException {
+		BundleContext context = null;
+		ServiceReference<IBundleProjectService> ref = null;
+		try {
+			context = IncQueryPlugin.plugin.context;
+			ref = context.getServiceReference(IBundleProjectService.class);
+			final IBundleProjectService service = context.getService(ref);
+			IBundleProjectDescription bundleDesc = service
+					.getDescription(project);
+			for (IRequiredBundleDescription require : bundleDesc.getRequiredBundles()) {
+				if (dependency.equals(require.getName())) {
+					return true;
+				}
+			}
+			return false;
+		} finally {
+			if (context != null && ref != null) {
+				context.ungetService(ref);
+			}
+		}
+	}
+	
 	/**
 	 * Updates project manifest to ensure the selected bundle dependencies are
 	 * set. Does not change existing dependencies.
@@ -716,43 +745,4 @@ public abstract class ProjectGenerationHelper {
 		return plugin.getBundleDescription().getSymbolicName();
 	}
 	
-	/**
-	 * Returns the IncQuery generator model for the selected project. If no generator model exists,
-	 * an empty model is returned.
-	 * @param project
-	 * @return 
-	 */
-	public static IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
-		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
-		if (file.exists()) {
-			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-			Resource resource = set.getResource(uri, true);
-			return (IncQueryGeneratorModel) resource.getContents().get(0);
-		} else {
-			return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
-		}
-	}
-	
-	public static boolean isGeneratorModelDefined(IProject project) {
-		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
-		return file.exists();
-	}
-	
-	/**
-	 * Initializes and returns the IncQuery generator model for the selected project. If the model is already initialized, it returns the original model.
-	 * @param project
-	 * @return
-	 */
-	public static IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
-		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
-		if (file.exists()) {
-			return getGeneratorModel(project, set);
-		} else {
-			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-			Resource resource = set.createResource(uri);
-			IncQueryGeneratorModel model = GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
-			resource.getContents().add(model);
-			return model;
-		}
-	}
 }
