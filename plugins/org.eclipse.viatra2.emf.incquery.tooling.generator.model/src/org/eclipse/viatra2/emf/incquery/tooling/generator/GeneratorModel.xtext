@@ -10,7 +10,7 @@ IncQueryGeneratorModel:
 ;
 
 GeneratorModelReference:
-	'metamodel' genmodel = [genmodel::GenModel|STRING]
+	'genmodel' genmodel = [genmodel::GenModel|STRING]
 ;
 
 
