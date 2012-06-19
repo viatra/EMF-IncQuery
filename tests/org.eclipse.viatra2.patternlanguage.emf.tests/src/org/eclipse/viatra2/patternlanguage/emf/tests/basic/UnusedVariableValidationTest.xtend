@@ -164,10 +164,21 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				neg Pattern.name(p, "");
 			}'
 		)
+		tester.validate(model).assertWarning(EMFIssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE)
+	}
+	@Test
+	def testLocalVariableOneSingleUseNegativeReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				neg Pattern.name(_p, "");
+			}'
+		)
 		tester.validate(model).assertOK
 	}
 	
-	@Test@Ignore
+	@Test
 	def testLocalVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -181,7 +192,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				h == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_QUANTIFYING_REFERENCE)
+		tester.validate(model).assertWarning(EMFIssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE)
 	}
 	
 	@Test
@@ -245,7 +256,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
-	@Test@Ignore
+	@Test
 	def testLocalVariableOneNegativeOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -263,7 +274,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
-	@Test@Ignore
+	@Test
 	def testLocalVariableMultipleReadOnlyReferences() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -279,6 +290,6 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				i == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_QUANTIFYING_REFERENCE)
+		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 }

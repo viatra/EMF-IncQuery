@@ -79,7 +79,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 
 			pattern transitive(p : Pattern) = {
 				Pattern(p);
-				neg find patternDependency+(p,p2);
+				neg find patternDependency+(p,_p2);
 			}'
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE));
