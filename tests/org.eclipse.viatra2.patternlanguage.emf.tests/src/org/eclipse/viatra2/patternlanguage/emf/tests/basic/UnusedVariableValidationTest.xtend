@@ -60,6 +60,21 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
+	def testParametersEqualityError() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern(p, p2) = {
+				p == p2;
+			}'
+		)
+		tester.validate(model).assertAll(
+			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
+			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
+		)
+	}
+	
+	@Test
 	def testSymbolicVariableOneNegativeReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -71,7 +86,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
-	@Test @Ignore
+	@Test
 	def testSymbolicVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -88,7 +103,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
-	@Test@Ignore
+	@Test
 	def testSymbolicVariableNoPositiveReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
@@ -98,11 +113,10 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			}
 
 			pattern testPattern(p) = {
-				neg Pattern.name(p, "");
 				neg find helper(p);
 				check(p == 0);
 				Pattern(h);
-				h == p;
+				h != p;
 			}'
 		)
 		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
