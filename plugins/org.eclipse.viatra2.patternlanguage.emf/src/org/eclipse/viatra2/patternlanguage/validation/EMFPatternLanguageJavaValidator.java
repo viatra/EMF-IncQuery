@@ -339,7 +339,7 @@ public class EMFPatternLanguageJavaValidator extends
 						&& !classifiedVariableReferences.isNamedSingleUse()
 						&& !classifiedVariableReferences.isUnnamedSingleUse()) {
 					warning(String.format(
-							"Local variable '%s' is referenced only once.",
+							"Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
 							referredVariable
 									.getName()), referredVariable.getReferences().get(0),
 							null, EMFIssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
@@ -358,23 +358,34 @@ public class EMFPatternLanguageJavaValidator extends
 						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
 					if (classifiedVariableReferences
 							.getReferenceCount(VariableReferenceClass.NegativeExistential) == 0
-							&& classifiedVariableReferences
-									.getReferenceCountSum() != 0
 							&& !equalsVariableHasPositiveExistential(
 									classifiedVariableReferencesMap,
 									classifiedVariableReferences
 											.getEqualsVariables())) {
 						error(String.format(
-								"Local variable '%s' has no quantifying reference.",
+								"Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
 								referredVariable.getName()),
 								referredVariable.getReferences()
 										.get(0),
 								null,
-								EMFIssueCodes.LOCAL_VARIABLE_NO_QUANTIFYING_REFERENCE);
+								EMFIssueCodes.LOCAL_VARIABLE_READONLY);
+					} else if (classifiedVariableReferences
+							.getReferenceCount(VariableReferenceClass.NegativeExistential) == 1
+							&& classifiedVariableReferences
+							.getReferenceCountSum() == 1
+							&& !classifiedVariableReferences.isNamedSingleUse()
+							&& !classifiedVariableReferences.isUnnamedSingleUse()) {
+						warning(String.format(
+								"Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
+								referredVariable.getName()),
+								referredVariable.getReferences()
+										.get(0),
+								null,
+								EMFIssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
 					} else if (classifiedVariableReferences
 							.getReferenceCountSum() > 1) {
 						error(String.format(
-								"Local variable '%s' has no positive reference.",
+								"Local variable '%s' has no positive reference, thus its value cannot be determined.",
 								referredVariable.getName()),
 								referredVariable.getReferences()
 										.get(0),
