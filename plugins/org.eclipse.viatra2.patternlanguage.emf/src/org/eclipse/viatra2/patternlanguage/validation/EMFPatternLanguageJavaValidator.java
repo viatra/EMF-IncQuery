@@ -263,6 +263,7 @@ public class EMFPatternLanguageJavaValidator extends
 	@Check
 	public void checkUnusedVariables(PatternBody patternBody) {
 		Collection<ClassifiedVariableReferences> classifiedVariableReferencesCollection = processVariableReferences(patternBody);
+		Pattern pattern = (Pattern) patternBody.eContainer();
 
 		for (ClassifiedVariableReferences classifiedVariableReferences : classifiedVariableReferencesCollection) {
 			Variable referredVariable = classifiedVariableReferences.getReferredVariable();
@@ -315,7 +316,7 @@ public class EMFPatternLanguageJavaValidator extends
 			} else { // Symbolic variable:
 				if (classifiedVariableReferences.getReferenceCountSum() == 0) {
 					error(String
-							.format("Symbolic variable '%s' is never referenced in body '%s'.",
+							.format("Parameter '%s' is never referenced in body '%s'.",
 									referredVariable.getName(),
 									getPatternBodyName(patternBody)),
 							referredVariable,
@@ -324,7 +325,7 @@ public class EMFPatternLanguageJavaValidator extends
 				} else if (classifiedVariableReferences
 						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
 					error(String
-							.format("Symbolic variable '%s' has no positive reference in body '%s'.",
+							.format("Parameter '%s' has no positive reference in body '%s'.",
 									referredVariable.getName(),
 									getPatternBodyName(patternBody)),
 							referredVariable,
