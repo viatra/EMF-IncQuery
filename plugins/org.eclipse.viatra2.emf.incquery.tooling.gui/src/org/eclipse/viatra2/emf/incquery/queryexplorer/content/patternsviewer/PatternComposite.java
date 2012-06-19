@@ -24,15 +24,14 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
  * @author Tamas Szabo
  *
  */
-public class PatternComposite implements PatternComponent {
+public class PatternComposite extends PatternComponent {
 
-	private String patternNameFragment;
 	private List<PatternComponent> children;
-	private PatternComposite parent;
 	private Map<String, PatternComposite> fragmentMap;
 	private boolean isHierarchical;
 	
 	public PatternComposite(String patternNameFragment, PatternComposite parent, boolean hierarchical) {
+		super();
 		this.patternNameFragment = patternNameFragment;
 		this.children = new ArrayList<PatternComponent>();
 		this.fragmentMap = new HashMap<String, PatternComposite>();
@@ -50,6 +49,7 @@ public class PatternComposite implements PatternComponent {
 		
 		if (tokens.length == 1) {
 			PatternLeaf leaf = new PatternLeaf(patternFragment, this);
+			leaf.setSelected(true);
 			children.add(leaf);
 			return leaf;
 		}
@@ -105,7 +105,7 @@ public class PatternComposite implements PatternComponent {
 			if (component instanceof PatternComposite) {
 				PatternComposite composite = (PatternComposite) component;
 				if (composite.getLeaves().size() == 0) {
-					QueryExplorer.getInstance().getPatternsViewerInput().
+					QueryExplorer.getInstance().getPatternsViewerModel().
 						removeComponent(composite.getFullPatternNamePrefix(), true);
 				}
 				else {
@@ -137,6 +137,7 @@ public class PatternComposite implements PatternComponent {
 	 */
 	public void propagateDeSelectionToTop() {
 		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, false);
+		this.setSelected(false);
 		if (this.parent != null) {
 			this.parent.propagateDeSelectionToTop();
 		}
@@ -155,6 +156,7 @@ public class PatternComposite implements PatternComponent {
 		
 		if (allSelected) {
 			QueryExplorer.getInstance().getPatternsViewer().setChecked(this, true);
+			this.setSelected(true);
 			if (this.parent != null) {
 				this.parent.propagateSelectionToTop(this);
 			}
@@ -211,11 +213,6 @@ public class PatternComposite implements PatternComponent {
 	}
 	
 	@Override
-	public String getPatternNameFragment() {
-		return patternNameFragment;
-	}
-	
-	@Override
 	public String getFullPatternNamePrefix() {
 		StringBuilder sb = new StringBuilder(patternNameFragment);
 		if (parent != null) {
@@ -225,10 +222,5 @@ public class PatternComposite implements PatternComponent {
 			sb.insert(0, parent.getFullPatternNamePrefix());
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public PatternComposite getParent() {
-		return parent;
 	}
 }

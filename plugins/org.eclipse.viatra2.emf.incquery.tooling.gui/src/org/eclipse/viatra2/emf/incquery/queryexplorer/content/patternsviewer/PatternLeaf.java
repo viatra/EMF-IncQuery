@@ -17,19 +17,12 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
  * @author Tamas Szabo
  *
  */
-public class PatternLeaf implements PatternComponent {
-
-	private String patternNameFragment;
-	private PatternComposite parent;
+public class PatternLeaf extends PatternComponent {
 	
 	public PatternLeaf(String patternNameFragment, PatternComposite parent) {
+		super();
 		this.patternNameFragment = patternNameFragment;
 		this.parent = parent;
-	}
-	
-	@Override
-	public String getPatternNameFragment() {
-		return patternNameFragment;
 	}
 	
 	@Override
@@ -39,10 +32,5 @@ public class PatternLeaf implements PatternComponent {
 			sb.insert(0, parent.getFullPatternNamePrefix()+".");
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public PatternComposite getParent() {
-		return parent;
 	}
 }

@@ -17,21 +17,15 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
  * @author Tamas Szabo
  *
  */
-public interface PatternComponent {
+public abstract class PatternComponent {
 
-	/**
-	 * Returns the prefix of the fully qualified pattern name for the given component. 
-	 * 
-	 * @return the prefix of the pattern fqn
-	 */
-	public String getFullPatternNamePrefix();
+	protected String patternNameFragment;
+	protected boolean selected;
+	protected PatternComposite parent;
 	
-	/**
-	 * Returns the fragment inside the fully qualified pattern name for the given component. 
-	 * 
-	 * @return the pattern fqn fragment
-	 */
-	public String getPatternNameFragment();
+	public PatternComponent() {
+		selected = false;
+	}
 	
 	/**
 	 * Returns the parent element of the component. 
@@ -39,6 +33,32 @@ public interface PatternComponent {
 	 * 
 	 * @return the parent of the component
 	 */
-	public PatternComposite getParent();
+	public PatternComposite getParent() {
+		return this.parent;
+	}
+	
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
+	
+	/**
+	 * Returns the prefix of the fully qualified pattern name for the given component. 
+	 * 
+	 * @return the prefix of the pattern fqn
+	 */
+	public abstract String getFullPatternNamePrefix();
+	
+	/**
+	 * Returns the fragment inside the fully qualified pattern name for the given component. 
+	 * 
+	 * @return the pattern fqn fragment
+	 */
+	public String getPatternNameFragment() {
+		return patternNameFragment;
+	}
 	
 }

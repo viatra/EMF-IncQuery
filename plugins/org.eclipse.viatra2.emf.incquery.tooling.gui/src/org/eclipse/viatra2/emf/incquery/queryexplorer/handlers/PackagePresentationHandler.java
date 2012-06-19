@@ -14,12 +14,20 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
-public class PackageRepresentationHandler extends AbstractHandler {
+public class PackagePresentationHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		System.out.println(event.getCommand().getId());
+		String commandId = event.getCommand().getId();
+		
+		if (commandId.contains("flat")) {
+			QueryExplorer.getInstance().getPatternsViewerModel().setFlat();
+		}
+		else {
+			QueryExplorer.getInstance().getPatternsViewerModel().setHierarchical();
+		}
 		
 		return null;
 	}

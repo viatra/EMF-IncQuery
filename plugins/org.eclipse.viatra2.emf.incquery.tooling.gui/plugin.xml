@@ -219,11 +219,11 @@
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unregisterpattern">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackageRepresentationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackagePresentationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.flat">
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackageRepresentationHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackagePresentationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical">
       </handler>
       <handler

@@ -38,8 +38,7 @@ public class CheckStateListener implements ICheckStateListener {
 			component.getParent().propagateSelectionToTop(component);
 		}
 		else {
-			PatternComposite composite = 
-					(element instanceof PatternLeaf) ? ((PatternLeaf) element).getParent() : (PatternComposite) element;
+			PatternComposite composite = (element instanceof PatternLeaf) ? ((PatternLeaf) element).getParent() : (PatternComposite) element;
 			composite.propagateDeSelectionToTop();
 		}
 	}
@@ -50,11 +49,13 @@ public class CheckStateListener implements ICheckStateListener {
 		}
 		
 		if (event.getChecked()) {
+			composite.setSelected(true);
 			for (PatternComponent component : composite.getAllChildren()) {
 				QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
 			}
 		}
 		else {
+			composite.setSelected(false);
 			for (PatternComponent component : composite.getAllChildren()) {
 				QueryExplorer.getInstance().getPatternsViewer().setChecked(component, false);
 			}
@@ -64,12 +65,15 @@ public class CheckStateListener implements ICheckStateListener {
 	private void processLeaf(PatternLeaf leaf, CheckStateChangedEvent event) {
 		String patternFqn = leaf.getFullPatternNamePrefix();
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+		
 		if (event.getChecked()) {
+			leaf.setSelected(true);
 			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
 				root.registerPattern(pattern);
 			}
 			PatternRegistry.getInstance().addActivePattern(pattern);
 		} else {
+			leaf.setSelected(false);
 			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
 				root.unregisterPattern(pattern);
 			}
