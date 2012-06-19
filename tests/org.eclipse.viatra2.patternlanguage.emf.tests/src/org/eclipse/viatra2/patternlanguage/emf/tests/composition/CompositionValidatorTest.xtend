@@ -127,8 +127,9 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertOK;
 	}
-	@Test @Ignore
-	def void testSymbolicParameterUnsafe() {
+	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 
+						   p: Pattern is a positive reference.")
+	def void testNegativeCallCircle() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
@@ -138,6 +139,6 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				neg find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
+		tester.validate(model).assertError("");
 	}
 }

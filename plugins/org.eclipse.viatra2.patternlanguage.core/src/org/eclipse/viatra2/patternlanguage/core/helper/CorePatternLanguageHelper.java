@@ -98,13 +98,20 @@ public class CorePatternLanguageHelper {
 				.getParameters();
 		Multimap<String, VariableReference> varRefs = HashMultimap.create();
 		HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
+		int unnamedCounter = 0;
 		for (Constraint constraint : body.getConstraints()){
 			Iterator<EObject> it = constraint.eAllContents();			
 			while (it.hasNext()) {
 				EObject obj = it.next();
 				if (obj instanceof VariableReference) {
-					String varName = ((VariableReference) obj).getVar();
-					varRefs.put(varName, (VariableReference) obj);
+					VariableReference variable = (VariableReference) obj;
+					String varName = variable.getVar();
+					if ("_".equals(varName)) {
+						varRefs.put(String.format("_<%d>", unnamedCounter), variable);
+						unnamedCounter++;
+					} else {
+						varRefs.put(varName, variable);
+					}
 				}
 			}
 		}

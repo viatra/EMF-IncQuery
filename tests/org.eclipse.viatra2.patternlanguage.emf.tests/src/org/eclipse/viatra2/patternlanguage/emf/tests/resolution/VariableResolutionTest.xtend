@@ -13,6 +13,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -36,6 +40,43 @@ class VariableResolutionTest {
 		val parameter = pattern.parameters.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		assertEquals(parameter.name, constraint.getVar().getVar())
+	}
+	
+	@Test
+	def singleUseResolution() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern resolutionTest(Name) = {
+				Pattern.parameters(Name,_parameter);
+			}
+		') as PatternModel
+		
+		model.assertNoErrors
+		val pattern = model.patterns.get(0)
+		val parameter = pattern.parameters.get(0)
+		val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
+		assertEquals(parameter.name, constraint.head.src.variable.name)
+	}
+	@Test
+	def anonymVariablesResolution() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern helper(A,B,C) = {
+				Pattern(A);
+				Pattern(B);
+				Pattern(C);
+			}
+			pattern resolutionTest(A) = {
+				find helper(A, _, _);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		val pattern = model.patterns.get(1)
+		val constraint = pattern.bodies.get(0).constraints.get(0) as PatternCompositionConstraint
+		assertNotSame((constraint.call.parameters.get(1) as VariableValue).value.variable.name,
+			(constraint.call.parameters.get(2) as VariableValue).value.variable.name
+		)
 	}
 	
 	@Test

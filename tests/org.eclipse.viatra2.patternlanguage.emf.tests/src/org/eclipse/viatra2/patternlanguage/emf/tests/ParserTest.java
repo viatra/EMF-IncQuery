@@ -235,6 +235,14 @@ public class ParserTest {
 		testParserRule("neg find a(Name)", PATTERN_COMPOSITION_RULE);
 	}
 	@Test
+	public void negPatternCallWithNamedSingleUseParameter() {
+		testParserRule("neg find a(_Name)", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
+	public void negPatternCallWithUnnamedSingleUseParameter() {
+		testParserRule("neg find a(_)", PATTERN_COMPOSITION_RULE);
+	}
+	@Test
 	public void negPatternCallStringConstantParameter() {
 		testParserRule("neg find a(Name, \"in\")", PATTERN_COMPOSITION_RULE);
 	}
