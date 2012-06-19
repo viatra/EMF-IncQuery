@@ -8,10 +8,6 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-
-/**
- * 
- */
 package org.eclipse.viatra2.emf.incquery.tooling.generator.fragments;
 
 import java.util.Collection;

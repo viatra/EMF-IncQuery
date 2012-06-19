@@ -17,6 +17,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLang
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.ExtensionBasedGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
@@ -48,6 +49,9 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 	}
 	
 	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
+		return GenModelMetamodelProviderService.class;
+	}
+	public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
 		return GenModelMetamodelProviderService.class;
 	}
 }
