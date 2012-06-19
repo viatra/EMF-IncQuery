@@ -1,34 +1,45 @@
 /*******************************************************************************
- * Copyright (c) 2011 Zoltan Ujhelyi and Daniel Varro
+ * Copyright (c) 2010-2012, Ujhelyi Zoltan, Mark Czotter, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Zoltan Ujhelyi - initial API and implementation
+ *   Ujhelyi Zoltan, Mark Czotter - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.viatra2.patternlanguage.types;
+
+import static com.google.common.base.Objects.equal;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.EntityType;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.TypeReferences;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.eclipse.xtext.xbase.typing.XbaseTypeProvider;
 
 import com.google.inject.Inject;
@@ -102,7 +113,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 					return typeRef;
 				}
 			}
-		}	
+		}
 		if (eObject instanceof PatternBody) {
 			return resolveClassType((PatternBody) eObject, variable);
 		}
@@ -126,8 +137,38 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 					return typeRef;
 				}
 			}
+			if (constraint instanceof PathExpressionConstraint) {
+				PathExpressionHead head = ((PathExpressionConstraint) constraint).getHead();
+				// src is the first parameter (example: EClass.name(E, N)), src is E
+				final VariableReference varRef = head.getSrc();
+				final ValueReference valueRef = head.getDst();
+				// test if the current variable is referenced by the varRef
+				if (equalVariable(variable, varRef)) {
+					return referenceFromType(head.getType(), variable);
+				}
+				// first variable is not the right one, so next target is the second
+				if (valueRef instanceof VariableValue) {
+					final VariableReference secondVarRef = ((VariableValue) valueRef).getValue();
+					if (equalVariable(variable, secondVarRef)) {
+						return referenceFromType(computeTypeFromTail(head.getTail()), variable);
+					}
+				}
+			}
 		}		
 		return null;
+	}
+
+	/**
+	 * Computes the type from linked tails. The last tail's type is returned. 
+	 * @param tail
+	 * @return
+	 */
+	private Type computeTypeFromTail(PathExpressionTail tail) {
+		if (tail == null) return null;
+		if (tail.getTail() != null) {
+			return computeTypeFromTail(tail.getTail());
+		}
+		return tail.getType();
 	}
 
 	/**
@@ -135,35 +176,43 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 */
 	private JvmTypeReference getTypeRef(EClassifierConstraint constraint,
 			Variable variable) {
-		if (variable == null) return null;
-		EntityType entityType = constraint.getType();
-		VariableReference variableRef = constraint.getVar();
-		if (variableRef != null) {
-			Variable variableRefVariable = variableRef.getVariable();
-			if (variable.equals(variableRefVariable)) {
-				return referenceFromEntityType(entityType, variable);
-			} if (!StringExtensions.isNullOrEmpty(variableRef.getVar()) && variableRef
-					.getVar().equals(variable.getName())) { 
-				return referenceFromEntityType(entityType, variable);
-			} else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("VariableRef not referring to parameter Variable!");
-				}
+		if (equalVariable(variable, constraint.getVar())) {
+			return referenceFromType(constraint.getType(), variable);
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("VariableRef not referring to parameter Variable!");
 			}
 		}
 		return null;
 	}
 
-	private JvmTypeReference referenceFromEntityType(EntityType entityType, Variable variable) {
-		if (entityType instanceof ClassType) {
-			Class<?> clazz = ((ClassType) entityType).getClassname()
-					.getInstanceClass();
-			if (clazz != null) {
-				return typeReferenceFromClazz(clazz, variable);
-			} else {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Clazz not found for " + entityType);
-				}
+	private JvmTypeReference referenceFromType(Type type, Variable variable) {
+		Class<?> clazz = computeClazzFromType(type);
+		if (clazz != null) {
+			return typeReferenceFromClazz(clazz, variable);
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Clazz not found for " + type);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param type
+	 * @return
+	 */
+	private Class<?> computeClazzFromType(Type type) {
+		if (type instanceof ClassType) {
+			return ((ClassType) type).getClassname().getInstanceClass();			
+		}
+		if (type instanceof ReferenceType) {
+			EStructuralFeature feature = ((ReferenceType) type).getRefname();
+			if (feature instanceof EAttribute) {
+				return ((EAttribute) feature).getEAttributeType().getInstanceClass();
+			}
+			if (feature instanceof EReference) {
+				return ((EReference) feature).getEReferenceType().getInstanceClass();
 			}
 		}
 		return null;
@@ -213,4 +262,23 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		wrapperClasses.put(short.class.getCanonicalName(), Short.class);
 		return wrapperClasses;
 	}
+	
+	/**
+	 * Returns true if the variable references by the variableReference.
+	 * @param variable
+	 * @param variableReference
+	 * @return
+	 */
+	public static boolean equalVariable(Variable variable, VariableReference variableReference) {
+		if (variable == null || variableReference == null) {
+			return false;
+		}
+		final Variable variableReferenceVariable = variableReference.getVariable();
+		final String variableName = variableReference.getVar();
+		if (equal(variable, variableReferenceVariable) || equal(variableName, variable.getName())) {
+			return true;
+		}
+		return false;
+	}
+	
 }
