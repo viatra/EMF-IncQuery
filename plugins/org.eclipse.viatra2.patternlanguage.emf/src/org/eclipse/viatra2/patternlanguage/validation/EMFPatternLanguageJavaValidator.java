@@ -32,6 +32,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHe
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
@@ -250,6 +251,15 @@ public class EMFPatternLanguageJavaValidator extends
 						.indexOf(patternBody) + 1);
 	}
 
+	@Check
+	public void checkParametersNamed(Pattern pattern) {
+		for (Variable var : pattern.getParameters()) {
+			if (var.getName().startsWith("_")) {
+				error("Parameter name must not start with _", var, PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.SINGLEUSE_PARAMETER);
+			}
+		}
+	}
+	
 	@Check
 	public void checkUnusedVariables(PatternBody patternBody) {
 		Collection<ClassifiedVariableReferences> classifiedVariableReferencesCollection = processVariableReferences(patternBody);
