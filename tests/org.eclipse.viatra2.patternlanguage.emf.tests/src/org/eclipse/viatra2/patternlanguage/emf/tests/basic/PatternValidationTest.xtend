@@ -15,6 +15,7 @@ import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes
 import com.google.inject.Injector
 import org.junit.Before
 import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -49,4 +50,15 @@ class PatternValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertWarning(IssueCodes::UNUSED_PRIVATE_PATTERN, "The pattern 'unusedPrivatePattern'")
 	}
 	
+	@Test
+	def singleUseParameterValidation() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern unusedPrivatePattern(_Pattern) = {
+				Pattern(_Pattern);
+			}
+		')
+		tester.validate(model).assertError(EMFIssueCodes::SINGLEUSE_PARAMETER)
+	}
+
 }

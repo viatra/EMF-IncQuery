@@ -238,6 +238,30 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertOK
 	}
+	@Test
+	def testMultipleUseOfSingleUseVariables() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				Pattern(_p);
+				Pattern(_p);
+			}'
+		)
+		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE), getErrorCode(EMFIssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE))
+	}
+	@Test
+	def testReadOnlyReference() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+
+			pattern testPattern() = {
+				Pattern(P);
+				P != Q;
+			}'
+		)
+		tester.validate(model).assertError(EMFIssueCodes::LOCAL_VARIABLE_READONLY)
+	}
 	
 	@Test
 	def testLocalVariableMultipleNegativeReferences() {

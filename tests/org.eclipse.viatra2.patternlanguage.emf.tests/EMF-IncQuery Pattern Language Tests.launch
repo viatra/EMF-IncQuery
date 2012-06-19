@@ -14,13 +14,8 @@
 <listEntry value="=org.eclipse.viatra2.patternlanguage.emf/src-gen"/>
 <listEntry value="=org.eclipse.viatra2.patternlanguage.core/src-gen"/>
 <listEntry value="=org.eclipse.viatra2.patternlanguage.emf/src"/>
-<listEntry value="=org.eclipse.zest.layouts/src"/>
-<listEntry value="=org.eclipse.zest.examples/src"/>
-<listEntry value="=org.eclipse.zest.examples.cloudio/src\/main\/java"/>
 <listEntry value="=org.eclipse.viatra2.patternlanguage.core/src"/>
 <listEntry value="=org.eclipse.viatra2.patternlanguage.emf/xtend-gen"/>
-<listEntry value="=org.eclipse.zest.jface/src"/>
-<listEntry value="=org.eclipse.zest.tests/src"/>
 <listEntry value="=org.eclipse.viatra2.patternlanguage.core/xtend-gen"/>
 </listAttribute>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
