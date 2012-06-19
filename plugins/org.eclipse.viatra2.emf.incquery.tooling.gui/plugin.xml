@@ -163,6 +163,24 @@
             </count>
          </with>
       </definition>
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.activedomaineditor">
+         <with
+               variable="activeEditor">
+            <instanceof
+                  value="org.eclipse.emf.edit.domain.IEditingDomainProvider">
+            </instanceof>
+         </with>
+      </definition>
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.activepatterneditor">
+         <with
+               variable="activeEditorId">
+            <equals
+                  value="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage">
+            </equals>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -174,24 +192,18 @@
             class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
          <activeWhen>
-            <with
-                  variable="activeEditor">
-               <instanceof
-                     value="org.eclipse.emf.edit.domain.IEditingDomainProvider">
-               </instanceof>
-            </with>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activedomaineditor">
+            </reference>
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.RegisterPatternFileHandler"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqFileHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
          <activeWhen>
-            <with
-                  variable="activeEditorId">
-               <equals
-                     value="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage">
-               </equals>
-            </with>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activepatterneditor">
+            </reference>
          </activeWhen>
       </handler>
       <handler
@@ -213,6 +225,22 @@
       <handler
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PackageRepresentationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresourceset">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadResourceHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqmodel">
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadEiqFileHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern">
       </handler>
    </extension>
    <extension
@@ -245,9 +273,14 @@
          <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel"
                icon="icons/load.gif"
+               id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodelmenu"
                label="Load model"
-               style="push">
+               style="pulldown">
          </command>
+         <separator
+               name="org.eclipse.viatra2.emf.incquery.tooling.gui.separator1"
+               visible="true">
+         </separator>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -331,6 +364,50 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodelmenu">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activedomaineditor">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresourceset"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activedomaineditor">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqmodel"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activepatterneditor">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activepatterneditor">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -371,6 +448,22 @@
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.pattern.hierarchical"
             name="Hierarchical">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource"
+            name="Load Resource">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresourceset"
+            name="Load ResourceSet">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqmodel"
+            name="Load as model">
+      </command>
+      <command
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern"
+            name="Load as pattern">
       </command>
    </extension>
    <extension

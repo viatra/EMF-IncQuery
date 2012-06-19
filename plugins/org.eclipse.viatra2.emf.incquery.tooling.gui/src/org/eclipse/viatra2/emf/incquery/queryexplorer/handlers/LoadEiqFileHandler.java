@@ -21,7 +21,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class RegisterPatternFileHandler extends AbstractHandler {
+public class LoadEiqFileHandler extends AbstractHandler {
 
 	@Inject
 	Injector injector;
