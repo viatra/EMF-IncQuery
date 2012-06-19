@@ -32,7 +32,8 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 					error(String.format(
 							"To refer elements from the Generator Model %s the bundle %s must be added as dependency",
 							ref.getGenmodel().eResource().getURI().toString(),
-							modelPluginID), ref, null, GENMODEL_DEPENDENCY);
+							modelPluginID), ref, null, GENMODEL_DEPENDENCY,
+							modelPluginID);
 				}
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
