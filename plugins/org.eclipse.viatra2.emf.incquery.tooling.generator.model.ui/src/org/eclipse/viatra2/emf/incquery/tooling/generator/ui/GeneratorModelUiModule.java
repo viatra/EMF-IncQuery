@@ -4,6 +4,8 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.validation.GeneratorModelJavaValidator;
+import org.eclipse.xtext.service.SingletonBinding;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -11,5 +13,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class GeneratorModelUiModule extends org.eclipse.viatra2.emf.incquery.tooling.generator.ui.AbstractGeneratorModelUiModule {
 	public GeneratorModelUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+
+	@SingletonBinding(eager = true)
+	public Class<? extends GeneratorModelJavaValidator> bindGeneratorModelJavaValidator() {
+		return GenmodelProjectBasedValidation.class;
 	}
 }

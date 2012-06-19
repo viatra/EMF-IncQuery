@@ -14,7 +14,10 @@ Require-Bundle: org.eclipse.viatra2.emf.incquery.tooling.generator.model;visibil
  org.antlr.runtime,
  org.eclipse.xtext.common.types.ui,
  org.eclipse.xtext.ui.codetemplates.ui,
- org.eclipse.compare
+ org.eclipse.compare,
+ org.eclipse.jdt.core,
+ org.eclipse.emf.codegen.ecore,
+ org.eclipse.viatra2.emf.incquery.tooling.core;bundle-version="0.6.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.emf.incquery.tooling.generator.ui.contentassist,

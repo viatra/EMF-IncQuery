@@ -1,4 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.validation;
+
  
 
 public class GeneratorModelJavaValidator extends AbstractGeneratorModelJavaValidator {
