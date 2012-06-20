@@ -15,18 +15,33 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatContentProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatLabelProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 
 public class PackagePresentationHandler extends AbstractHandler {
 
+	private PatternsViewerFlatContentProvider flatCP = new PatternsViewerFlatContentProvider();
+	private PatternsViewerFlatLabelProvider flatLP = new PatternsViewerFlatLabelProvider();
+	private PatternsViewerHierarchicalContentProvider hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
+	private PatternsViewerHierarchicalLabelProvider hierarchicalLP = new PatternsViewerHierarchicalLabelProvider();
+	
+	public PackagePresentationHandler() {
+		
+	}
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String commandId = event.getCommand().getId();
 		
 		if (commandId.contains("flat")) {
-			QueryExplorer.getInstance().getPatternsViewerModel().setFlat();
+			QueryExplorer.getInstance().getPatternsViewer().setContentProvider(flatCP);
+			QueryExplorer.getInstance().getPatternsViewer().setLabelProvider(flatLP);
 		}
 		else {
-			QueryExplorer.getInstance().getPatternsViewerModel().setHierarchical();
+			QueryExplorer.getInstance().getPatternsViewer().setContentProvider(hierarchicalCP);
+			QueryExplorer.getInstance().getPatternsViewer().setLabelProvider(hierarchicalLP);
 		}
 		
 		return null;

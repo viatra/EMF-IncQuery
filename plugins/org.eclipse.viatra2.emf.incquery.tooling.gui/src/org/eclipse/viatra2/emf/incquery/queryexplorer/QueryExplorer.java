@@ -44,12 +44,12 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLab
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerContentProvider;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerLabelProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternsViewerModel;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.QueryExplorerPerspectiveAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 
@@ -76,7 +76,7 @@ public class QueryExplorer extends ViewPart {
 	
 	//observable view
 	private ModelEditorPartListener modelPartListener;
-	private PatternsViewerModel patternsViewerInput;
+	private PatternComposite patternsViewerInput;
 		
 	private QueryExplorerPerspectiveAdapter perspectiveAdapter;
 	
@@ -95,7 +95,7 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
 		perspectiveAdapter = new QueryExplorerPerspectiveAdapter();
-		patternsViewerInput = new PatternsViewerModel(true);
+		patternsViewerInput = new PatternComposite("", null);
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
@@ -149,9 +149,9 @@ public class QueryExplorer extends ViewPart {
 		//patternsViewer configuration		
 		patternsViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		patternsViewer.addCheckStateListener(new CheckStateListener());
-		patternsViewer.setContentProvider(new PatternsViewerContentProvider());
-		patternsViewer.setLabelProvider(new PatternsViewerLabelProvider());
-		patternsViewer.setInput(patternsViewerInput.getActiveRoot());
+		patternsViewer.setContentProvider(new PatternsViewerHierarchicalContentProvider());
+		patternsViewer.setLabelProvider(new PatternsViewerHierarchicalLabelProvider());
+		patternsViewer.setInput(patternsViewerInput);
 		
 		// Create menu manager.
         MenuManager matcherTreeViewerMenuManager = new MenuManager();
@@ -236,7 +236,7 @@ public class QueryExplorer extends ViewPart {
 		return modelPartListener;
 	}
 	
-	public PatternsViewerModel getPatternsViewerModel() {
+	public PatternComposite getPatternsViewerInput() {
 		return patternsViewerInput;
 	}
 	

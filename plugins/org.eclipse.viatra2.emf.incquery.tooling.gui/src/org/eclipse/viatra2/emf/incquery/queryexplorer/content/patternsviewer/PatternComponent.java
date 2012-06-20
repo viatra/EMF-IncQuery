@@ -41,9 +41,7 @@ public abstract class PatternComponent {
 		this.selected = selected;
 	}
 	
-	public boolean isSelected() {
-		return selected;
-	}
+	public abstract boolean isSelected();
 	
 	/**
 	 * Returns the prefix of the fully qualified pattern name for the given component. 

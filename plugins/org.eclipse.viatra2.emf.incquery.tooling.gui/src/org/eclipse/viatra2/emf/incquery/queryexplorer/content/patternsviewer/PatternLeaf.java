@@ -33,4 +33,9 @@ public class PatternLeaf extends PatternComponent {
 		}
 		return sb.toString();
 	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selected;
+	}
 }

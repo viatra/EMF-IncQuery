@@ -44,7 +44,7 @@ public class CheckStateListener implements ICheckStateListener {
 	}
 	
 	private void processComposite(PatternComposite composite, CheckStateChangedEvent event) {
-		for (PatternLeaf leaf : composite.getLeaves()) {
+		for (PatternLeaf leaf : composite.getAllLeaves()) {
 			processLeaf(leaf, event);
 		}
 		

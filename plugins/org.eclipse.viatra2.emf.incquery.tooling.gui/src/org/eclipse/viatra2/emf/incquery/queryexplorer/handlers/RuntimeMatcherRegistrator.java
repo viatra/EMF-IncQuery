@@ -22,9 +22,9 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.IFlyoutPref
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternsViewerModel;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -57,7 +57,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 	public void run() {
 		if (QueryExplorer.getInstance() != null) {	
 			MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-			PatternsViewerModel viewerInput = QueryExplorer.getInstance().getPatternsViewerModel();
+			PatternComposite viewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
 			PatternModel oldParsedModel = PatternRegistry.getInstance().getPatternModelForFile(file);
 			PatternModel newParsedModel = dbUtil.parseEPM(file);
 			
@@ -86,7 +86,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			//remove labels from pattern registry for the corresponding pattern model
 			if (oldParsedModel != null) {
 				for (Pattern pattern : oldParsedModel.getPatterns()) {
-					viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
+					viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 				}
 			}
 			
