@@ -220,14 +220,16 @@ public class PatternComposite extends PatternComponent {
 	}
 
 	@Override
-	public boolean isSelected() {
+	public boolean updateSelection() {
 		boolean allSelected = true;
 		
-		for (PatternComponent pc : getDirectChildren()) {
-			if (!pc.isSelected()) {
+		for (PatternComponent pc : this.children) {
+			if (!pc.updateSelection()) {
 				allSelected = false;
 			}
 		}
+
+		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, allSelected);
 		
 		return allSelected;
 	}

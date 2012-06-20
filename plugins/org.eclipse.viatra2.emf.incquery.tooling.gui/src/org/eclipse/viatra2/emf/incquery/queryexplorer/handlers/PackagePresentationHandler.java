@@ -14,7 +14,9 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
@@ -35,14 +37,19 @@ public class PackagePresentationHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String commandId = event.getCommand().getId();
 		
+		CheckboxTreeViewer patternsViewer = QueryExplorer.getInstance().getPatternsViewer();
+		PatternComposite patternsViewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
+		
 		if (commandId.contains("flat")) {
-			QueryExplorer.getInstance().getPatternsViewer().setContentProvider(flatCP);
-			QueryExplorer.getInstance().getPatternsViewer().setLabelProvider(flatLP);
+			patternsViewer.setContentProvider(flatCP);
+			patternsViewer.setLabelProvider(flatLP);
 		}
 		else {
-			QueryExplorer.getInstance().getPatternsViewer().setContentProvider(hierarchicalCP);
-			QueryExplorer.getInstance().getPatternsViewer().setLabelProvider(hierarchicalLP);
+			patternsViewer.setContentProvider(hierarchicalCP);
+			patternsViewer.setLabelProvider(hierarchicalLP);
 		}
+		
+		patternsViewerInput.updateSelection();
 		
 		return null;
 	}

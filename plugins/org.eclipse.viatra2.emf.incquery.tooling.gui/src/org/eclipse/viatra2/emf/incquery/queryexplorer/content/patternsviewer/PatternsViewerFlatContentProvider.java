@@ -83,6 +83,6 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
 				}
 			}
 		}
-		return null;
+		return components;
 	}
 }

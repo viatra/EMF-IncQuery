@@ -55,15 +55,16 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
 	@Override
 	public void run() {
-		if (QueryExplorer.getInstance() != null) {	
-			MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-			PatternComposite viewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
+		QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
+		if (queryExplorerInstance != null) {	
+			MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
+			PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput();
 			PatternModel oldParsedModel = PatternRegistry.getInstance().getPatternModelForFile(file);
 			PatternModel newParsedModel = dbUtil.parseEPM(file);
 			
 			//if no patterns were registered before, open the patterns viewer
 			if (PatternRegistry.getInstance().getPatterns().isEmpty()) {
-				FlyoutControlComposite flyout = QueryExplorer.getInstance().getPatternsViewerFlyout();
+				FlyoutControlComposite flyout = queryExplorerInstance.getPatternsViewerFlyout();
 				flyout.getPreferences().setState(IFlyoutPreferences.STATE_OPEN);
 				//redraw();
 				flyout.layout();
@@ -90,7 +91,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
 				}
 			}
 			
-			QueryExplorer.getInstance().getPatternsViewer().refresh();
+			queryExplorerInstance.getPatternsViewerInput().purge();
+			queryExplorerInstance.getPatternsViewer().refresh();
 	
 			//REGISTERING PATTERNS
 			
@@ -112,10 +114,10 @@ public class RuntimeMatcherRegistrator implements Runnable {
 				components.add(component);
 			}
 			//note that after insertion a refresh is necessary otherwise setting check state will not work
-			QueryExplorer.getInstance().getPatternsViewer().refresh();
+			queryExplorerInstance.getPatternsViewer().refresh();
 			
 			for (PatternComponent component : components) {
-				QueryExplorer.getInstance().getPatternsViewer().setChecked(component, true);
+				queryExplorerInstance.getPatternsViewer().setChecked(component, true);
 			}
 			
 			//it is enough to just call selection propagation for one pattern

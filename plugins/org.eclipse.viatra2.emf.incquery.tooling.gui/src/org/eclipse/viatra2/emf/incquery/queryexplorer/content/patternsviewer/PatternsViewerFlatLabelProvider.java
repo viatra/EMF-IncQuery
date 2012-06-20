@@ -44,8 +44,11 @@ public class PatternsViewerFlatLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof PatternComponent) {
-			return ((PatternComponent) element).getPatternNameFragment();
+		if (element instanceof PatternComposite) {
+			return ((PatternComponent) element).getFullPatternNamePrefix();
+		}
+		else if (element instanceof PatternLeaf) {
+			return ((PatternLeaf) element).getPatternNameFragment();
 		}
 		
 		return null;

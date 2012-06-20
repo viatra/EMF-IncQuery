@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+
 /**
  * This class represents a leaf element inside a pattern hierarchy.
  * 
@@ -35,7 +37,8 @@ public class PatternLeaf extends PatternComponent {
 	}
 
 	@Override
-	public boolean isSelected() {
+	public boolean updateSelection() {
+		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, selected);
 		return this.selected;
 	}
 }
