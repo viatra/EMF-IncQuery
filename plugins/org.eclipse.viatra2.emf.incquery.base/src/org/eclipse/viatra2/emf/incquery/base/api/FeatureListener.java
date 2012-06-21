@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.base.api;
 
-import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
- * Interface for observing {@link org.eclipse.emf.ecore.EStructuralFeature.Setting} insertion and deletion.
+ * Interface for observing insertion and deletion of structural feature values ("settings").
+ * (Works both for single-valued and many-valued features.)
  * 
  * @author Tamas Szabo
  *
@@ -21,16 +23,16 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 public interface FeatureListener {
 
 	/**
-	 * Called when the given setting appeared under the given Notifier instance.
+	 * Called when the given value is inserted into the given feature of the given host EObject. 
 	 *  
 	 * @param setting the setting instance
 	 */
-	public void featureInserted(Setting setting);
+	public void featureInserted(EObject host, EStructuralFeature feature, Object value);
 
 	/**
-	 * Called when the given setting disappeared under the given Notifier instance.
+	 * Called when the given value is removed from the given feature of the given host EObject. 
 	 *  
 	 * @param setting the setting instance
 	 */
-	public void featureDeleted(Setting setting);
+	public void featureDeleted(EObject host, EStructuralFeature feature, Object value);
 }

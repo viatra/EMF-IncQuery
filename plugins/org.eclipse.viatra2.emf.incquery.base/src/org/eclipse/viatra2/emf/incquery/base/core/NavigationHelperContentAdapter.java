@@ -9,7 +9,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
@@ -150,7 +150,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				attrMap.put(value, map);
 			}
 			
-			notifyFeatureListeners(new NavigationHelperSetting(attr, holder, value), true);
+			notifyFeatureListeners(holder, attr, value, true);
 		}
 	}
 
@@ -169,7 +169,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				}
 			}
 			
-			notifyFeatureListeners(new NavigationHelperSetting(attr, holder, value), false);
+			notifyFeatureListeners(holder, attr, value, false);
 		}
 	}
 
@@ -191,7 +191,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				refMap.put(target, map);
 			}
 			
-			notifyFeatureListeners(new NavigationHelperSetting(ref, source, target), true);
+			notifyFeatureListeners(source, ref, target, true);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				}
 			}
 			
-			notifyFeatureListeners(new NavigationHelperSetting(ref, source, target), false);
+			notifyFeatureListeners(source, ref, target, false);
 		}
 	}
 
@@ -240,13 +240,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 	}
 	
-	private void notifyFeatureListeners(Setting setting, boolean isInsertion) {
+	private void notifyFeatureListeners(EObject host, EStructuralFeature feature, Object value, boolean isInsertion) {
 		for (FeatureListener listener : navigationHelper.getFeatureListeners().keySet()) {
 			if (isInsertion) {
-				listener.featureInserted(setting);
+				listener.featureInserted(host, feature, value);
 			}
 			else {
-				listener.featureDeleted(setting);
+				listener.featureDeleted(host, feature, value);
 			}
 		}
 	}
