@@ -24,7 +24,14 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
- * Admitted patterns go through sanitization checks (validation + name uniqueness).
+ * Stateful sanitizer that maintains a set of admitted patterns. 
+ * Patterns go through sanitization checks (validation + name uniqueness) before they can be admitted.
+ * 
+ * <p>INVARIANTS: <ul>
+ * <li>the set of admitted patterns is closed with respect to references.
+ * <li>the set of admitted patterns are free of errors.
+ * <li>admitted patterns have unique qualified names.
+ * </ul>
  * 
  * @author Bergmann Gábor
  *
@@ -32,52 +39,19 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public class PatternSanitizer {
 	Set<Pattern> admittedPatterns = new HashSet<Pattern>();
 	Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
-	
-//	PatternValidatorService validator;
-	
+		
 	EMFIncQueryRuntimeLogger logger;
-	EMFIncQueryRuntimeLogger errorOnlyLogger;
 	
 
 	/**
-	 * Creates an instance of the sanitizer. 
-	 * (Qualified) name conflicts will be detected within the lifecycle of the instance.  
+	 * Creates an instance of the stateful sanitizer. 
 	 * 
-	 * @param logger where detected probems will be logged
+	 * @param logger where detected problems will be logged
 	 */
 	public PatternSanitizer(final EMFIncQueryRuntimeLogger logger) {
 		super();
 
-		this.logger = logger;
-		this.errorOnlyLogger = new EMFIncQueryRuntimeLogger() {
-			
-			@Override
-			public void logError(String message, Throwable cause) {
-				logger.logError(message, cause);
-			}
-			
-			@Override
-			public void logError(String message) {
-				logger.logError(message);
-			}
-			
-			@Override
-			public void logWarning(String message, Throwable cause) {}
-			
-			@Override
-			public void logWarning(String message) {}
-			
-			@Override
-			public void logDebug(String message) {}
-		};
-		
-//		try {
-//			this.validator = XtextInjectorProvider.INSTANCE.getInjector().getInstance(PatternValidatorService.class);	
-//		} catch (ProvisionException ex) {
-//			logger.logError("Can not properly sanitize patterns as validation service is unavailable.", ex);
-//		} catch (ConfigurationException ex) {
-//			logger.logError("Can not properly sanitize patterns as validation service is unavailable.", ex);			
-//		}
+		this.logger = logger;	
 	}
 	
 
@@ -86,6 +60,7 @@ public class PatternSanitizer {
 	/**
 	 * Admits a new pattern, checking if it passes validation and name uniqueness checks. 
 	 * Referenced patterns likewise go through the checks.
+	 * Transactional semantics: will only admit any patterns if none of them have any errors.
 	 * 
 	 * @param pattern a pattern that should be validated.
 	 * @return false if the pattern was not possible to admit, true if it passed all validation checks (or was already admitted before)
@@ -97,44 +72,27 @@ public class PatternSanitizer {
 	/**
 	 * Admits new patterns, checking whether they all pass validation and name uniqueness checks.  
 	 * Referenced patterns likewise go through the checks. 
-	 * Will only admit any patterns if none of them have any errors.
+	 * Transactional semantics: will only admit any patterns if none of them have any errors.
 	 * 
 	 * @param patterns the collection of patterns that should be validated together.
 	 * @return false if the patterns were not possible to admit, true if they passed all validation checks (or were already admitted before)
 	 */
 	public boolean admit(Collection<Pattern> patterns) {		
-		Set<Pattern> toBeValidated = new HashSet<Pattern>();
-
-		LinkedList<Pattern> unexplored = new LinkedList<Pattern>();	
-		
-		for (Pattern pattern : patterns) {
-			if (!admittedPatterns.contains(pattern)) unexplored.add(pattern);
-		} 
-		
-		while (!unexplored.isEmpty()) {
-			Pattern current = unexplored.pollFirst();
-			toBeValidated.add(current);
-			final Set<Pattern> referencedPatterns = CorePatternLanguageHelper.getReferencedPatterns(current);
-			for (Pattern referenced : referencedPatterns) {
-				if (!admittedPatterns.contains(referenced) && !toBeValidated.contains(referenced))
-					unexplored.add(referenced);
-			}
-		}
+		Set<Pattern> newPatterns = getAllReferencedUnvalidatedPatterns(patterns);
 		
 		
 		// TODO validate(toBeValidated) as a group
 		Set<Pattern> inadmissible = new HashSet<Pattern>();
-		Map<String, Pattern> localsByName = new HashMap<String, Pattern>();
-//		Set<Pattern> locallyAdmissible = new HashSet<Pattern>();	
-		for (Pattern current : toBeValidated) {
+		Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
+		for (Pattern current : newPatterns) {
 			
 			final String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(current);
-			final boolean duplicate = patternsByName.containsKey(fullyQualifiedName) || localsByName.containsKey(fullyQualifiedName);
+			final boolean duplicate = patternsByName.containsKey(fullyQualifiedName) || newPatternsByName.containsKey(fullyQualifiedName);
 			if (duplicate) {
 				inadmissible.add(current);
 				logger.logError("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
 			} else {
-				localsByName.put(fullyQualifiedName, current);
+				newPatternsByName.put(fullyQualifiedName, current);
 			}
 
 			// TODO actual validation
@@ -143,20 +101,58 @@ public class PatternSanitizer {
 				inadmissible.add(current);
 			}	
 			
-//			if (validationPassed && !duplicate) { 
-//				locallyAdmissible.add(current);
-//			}
-//			
-//			
 		}
 		
 		boolean ok = inadmissible.isEmpty();
 		if (ok) {
-			admittedPatterns.addAll(toBeValidated);
-			patternsByName.putAll(localsByName);
+			admittedPatterns.addAll(newPatterns);
+			patternsByName.putAll(newPatternsByName);
 		}
 		return ok;
 	}
+
+
+
+
+	/**
+	 * Gathers all patterns that are not admitted yet, but are transitively referenced from the given patterns.
+	 */
+	protected Set<Pattern> getAllReferencedUnvalidatedPatterns(Collection<Pattern> patterns) {
+		Set<Pattern> toBeValidated = new HashSet<Pattern>();
+
+		LinkedList<Pattern> unexplored = new LinkedList<Pattern>();	
+		
+		for (Pattern pattern : patterns) {
+			if (!admittedPatterns.contains(pattern)) {
+				toBeValidated.add(pattern);
+				unexplored.add(pattern);
+			}
+		} 
+		
+		while (!unexplored.isEmpty()) {
+			Pattern current = unexplored.pollFirst();			
+			final Set<Pattern> referencedPatterns = CorePatternLanguageHelper.getReferencedPatterns(current);
+			for (Pattern referenced : referencedPatterns) {
+				if (!admittedPatterns.contains(referenced) && !toBeValidated.contains(referenced)) {
+					toBeValidated.add(referenced);
+					unexplored.add(referenced);
+				}
+			}
+		}
+		return toBeValidated;
+	}
+
+
+
+
+	/**
+	 * Returns the set of patterns that have been admitted so far.
+	 * @return the admitted patterns
+	 */
+	public Set<Pattern> getAdmittedPatterns() {
+		return Collections.unmodifiableSet(admittedPatterns);
+	}
+	
 	
 	
 }
