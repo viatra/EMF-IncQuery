@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -59,4 +60,13 @@ public interface ParameterizedNavigationHelper extends NavigationHelper {
 	 * @param classes the set of classes whose notification will be ignored
 	 */
 	public void unregisterEClasses(Set<EClass> classes);
+	
+	/**
+	 * The given runnable will be executed, and all model traversals and feature registrations will be delayed until the execution is done.
+	 * If there are any outstanding feature or class registrations, a single coalesced model traversal will initialize the caches and deliver the notifications.
+	 * 
+	 * @param runnable
+	 */
+	public void coalesceTraversals(Runnable runnable) throws InvocationTargetException;
+	
 }
