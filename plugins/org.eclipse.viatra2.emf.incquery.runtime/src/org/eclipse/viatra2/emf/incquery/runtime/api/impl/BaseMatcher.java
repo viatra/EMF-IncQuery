@@ -44,11 +44,18 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	protected RetePatternMatcher patternMatcher;
 	protected ReteEngine<Pattern> reteEngine;
 
-	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher) throws IncQueryRuntimeException {
+	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher, Pattern pattern) throws IncQueryRuntimeException {
 		super();
 		this.engine = engine;
 		this.patternMatcher = patternMatcher;
 		this.reteEngine = engine.getReteEngine();
+		
+		final boolean admissible = engine.getSanitizer().admit(pattern);
+		if (!admissible) 
+			throw new IncQueryRuntimeException(
+				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
+						CorePatternLanguageHelper.getFullyQualifiedName(pattern)));
+
 	}
 
 
@@ -372,10 +379,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllValues(java.lang.String, java.lang.Object[], java.util.Set)
-	 */
-	//@Override
 	/**
 	 * Uses an existing set to accumulate all values of the parameter with the given name.
 	 * Since it is a protected method, no error checking or input validation is performed!
