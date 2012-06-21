@@ -37,6 +37,7 @@ public class PatternRegistry {
 	private static PatternRegistry instance;
 	private Map<IFile, PatternModel> registeredPatterModels;
 	private List<Pattern> activePatterns;
+	private List<Pattern> generatedPatterns;
 	private Map<String, Pattern> patternNameMap;
 	
 	public static PatternRegistry getInstance() {
@@ -50,6 +51,16 @@ public class PatternRegistry {
 		registeredPatterModels = new HashMap<IFile, PatternModel>();
 		patternNameMap = new HashMap<String, Pattern>();
 		activePatterns = new ArrayList<Pattern>();
+		generatedPatterns = new ArrayList<Pattern>();
+	}
+	
+	public void addGeneratedPattern(Pattern pattern, String patternFqn) {
+		this.generatedPatterns.add(pattern);
+		this.patternNameMap.put(patternFqn, pattern);
+	}
+	
+	public boolean isGenerated(Pattern pattern) {
+		return this.generatedPatterns.contains(pattern);
 	}
 	
 	/**
@@ -152,7 +163,10 @@ public class PatternRegistry {
 	 * @return the list of active patterns
 	 */
 	public List<Pattern> getActivePatterns() {
-		return new ArrayList<Pattern>(activePatterns);
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		patterns.addAll(this.activePatterns);
+		patterns.addAll(this.generatedPatterns);
+		return patterns;
 	}
 	
 	/**

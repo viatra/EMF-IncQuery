@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
 /**
  * This class represents a leaf element inside a pattern hierarchy.
@@ -37,8 +37,8 @@ public class PatternLeaf extends PatternComponent {
 	}
 
 	@Override
-	public boolean updateSelection() {
-		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, selected);
+	public boolean updateSelection(CheckboxTreeViewer treeViewer) {
+		treeViewer.setChecked(this, selected);
 		return this.selected;
 	}
 }

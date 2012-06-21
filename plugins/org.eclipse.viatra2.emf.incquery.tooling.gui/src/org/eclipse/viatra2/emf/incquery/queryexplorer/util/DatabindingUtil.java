@@ -11,7 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -68,12 +70,22 @@ public class DatabindingUtil {
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
+	private static List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories = collectGeneratedMatcherFactories();
+	//the initialization of the generated patterns must be after the initialization of the matcher factories
+	public static List<Pattern> generatedPatterns = collectGeneratedPatterns();
 	
 	public static final String OFF_ANNOTATION = "Off";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
 	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
 	
+	/**
+	 * Creates a marker with a warning for the given pattern. 
+	 * The marker's message will be set to the given message parameter.
+	 * 
+	 * @param patternFqn the fully qualified name of the pattern
+	 * @param message the warning message for the marker
+	 */
 	public static void addOrderByPatternWarning(String patternFqn, String message) {
 		if (orderByPatternMarkers.get(patternFqn) == null) {
 			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
@@ -94,6 +106,19 @@ public class DatabindingUtil {
 		}
 	}
 	
+	private static List<Pattern> collectGeneratedPatterns() {
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : generatedMatcherFactories) {
+			patterns.add(factory.getPattern());
+		}
+		return patterns;
+	}
+
+	/**
+	 * Removes the marker for the given pattern if it is present. 
+	 * 
+	 * @param patternFqn the fully qualified name of the pattern
+	 */
 	public static void removeOrderByPatternWarning(String patternFqn) {
 		IMarker marker = orderByPatternMarkers.remove(patternFqn);
 		if (marker != null) {
@@ -106,6 +131,12 @@ public class DatabindingUtil {
 		}
 	}
 	
+	/**
+	 * Returns the {@link AdapterFactoryLabelProvider} instance for the given uri.
+	 * 
+	 * @param uri the uri
+	 * @return the {@link AdapterFactoryLabelProvider} instance
+	 */
 	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
 			uriConfElementMap = collectItemProviders();
@@ -342,31 +373,17 @@ public class DatabindingUtil {
 	/**
 	 * Create a PatternMatcher root for the given key element.
 	 * 
-	 * @param key the key element (editorpart + resource set)
+	 * @param key the key element (editorpart + notifier)
 	 * @return the PatternMatcherRoot element
 	 */
-	@SuppressWarnings({ "unchecked" })
 	public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
 
 		//generated matchers
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
-		for (IExtension e : ep.getExtensions()) {
-			for (IConfigurationElement ce : e.getConfigurationElements()) {
-				try {
-					Object obj = ce.createExecutableExtension("matcherFactoryClass");
-
-					if (obj instanceof IMatcherFactory<?, ?>) {
-						IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>) obj;
-						IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
-						String patternFqn = factory.getPatternFullyQualifiedName();
-						root.addMatcher(matcher, patternFqn, true);
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : generatedMatcherFactories) {
+			IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
+			String patternFqn = factory.getPatternFullyQualifiedName();
+			root.addMatcher(matcher, patternFqn, true);
 		}
 		
 		//runtime matchers
@@ -377,6 +394,37 @@ public class DatabindingUtil {
 		return root;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private static List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> collectGeneratedMatcherFactories() {
+		List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = 
+				new ArrayList<IMatcherFactory<IPatternMatch,IncQueryMatcher<IPatternMatch>>>();
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
+		for (IExtension e : ep.getExtensions()) {
+			for (IConfigurationElement ce : e.getConfigurationElements()) {
+				try {
+					Object obj = ce.createExecutableExtension("matcherFactoryClass");
+
+					if (obj instanceof IMatcherFactory<?, ?>) {
+						IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>) obj;
+						factories.add(factory);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		
+		return factories;
+	}
+	
+	/**
+	 * Returns the annotation of the given pattern, whose name is the given literal parameter. 
+	 *  
+	 * @param pattern the pattern instance
+	 * @param literal the name of the annotation
+	 * @return the annotation instance
+	 */
 	public static Annotation getAnnotation(Pattern pattern, String literal) {
 		for (Annotation a : pattern.getAnnotations()) {
 			if (a.getName().equalsIgnoreCase(literal)) {
@@ -389,6 +437,12 @@ public class DatabindingUtil {
 	@Inject
 	IResourceSetProvider resSetProvider;
 	
+	/**
+	 * Parses the given .eiq file into a {@link PatternModel}.
+	 * 
+	 * @param file the .eiq file instance
+	 * @return the parsed pattern model
+	 */
 	public PatternModel parseEPM(IFile file) {
 		if (file == null) {
 			return null;

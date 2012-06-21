@@ -49,7 +49,7 @@ public class PackagePresentationHandler extends AbstractHandler {
 			patternsViewer.setLabelProvider(hierarchicalLP);
 		}
 		
-		patternsViewerInput.updateSelection();
+		patternsViewerInput.updateSelection(patternsViewer);
 		
 		return null;
 	}

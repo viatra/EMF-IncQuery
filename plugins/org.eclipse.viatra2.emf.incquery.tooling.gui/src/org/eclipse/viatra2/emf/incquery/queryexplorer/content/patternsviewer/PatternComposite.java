@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 /**
@@ -220,16 +221,16 @@ public class PatternComposite extends PatternComponent {
 	}
 
 	@Override
-	public boolean updateSelection() {
+	public boolean updateSelection(CheckboxTreeViewer treeViewer) {
 		boolean allSelected = true;
 		
 		for (PatternComponent pc : this.children) {
-			if (!pc.updateSelection()) {
+			if (!pc.updateSelection(treeViewer)) {
 				allSelected = false;
 			}
 		}
 
-		QueryExplorer.getInstance().getPatternsViewer().setChecked(this, allSelected);
+		treeViewer.setChecked(this, allSelected);
 		
 		return allSelected;
 	}

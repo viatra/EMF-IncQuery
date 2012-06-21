@@ -48,10 +48,14 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.QueryExplorerPerspectiveAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -195,6 +199,7 @@ public class QueryExplorer extends ViewPart {
 		getSite().setSelectionProvider(matcherTreeViewer);
 		
 		initFileListener();
+		initPatternsViewerWithGeneratedPatterns();
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {
@@ -224,7 +229,17 @@ public class QueryExplorer extends ViewPart {
 				clearTableViewer();
 			}
 		}
+	}
+	
+	private void initPatternsViewerWithGeneratedPatterns() {
+		for (Pattern pattern : DatabindingUtil.generatedPatterns) {
+			String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+			PatternRegistry.getInstance().addGeneratedPattern(pattern, patternFqn);
+			patternsViewerInput.addComponent(patternFqn);
+		}
 		
+		patternsViewer.refresh();
+		patternsViewerInput.updateSelection(patternsViewer);
 	}
 	
 	private void initFileListener() {
