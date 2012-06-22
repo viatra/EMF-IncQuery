@@ -187,6 +187,11 @@ public class IncQueryEngine {
 	void killInternal() {
 		if (reteEngine != null) {
 			reteEngine.killEngine();
+			reteEngine = null;
+		}
+		sanitizer = null;
+		if (baseIndex != null) {
+			baseIndex.dispose();
 		}
 	}
 
