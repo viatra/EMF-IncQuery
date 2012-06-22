@@ -14,7 +14,6 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index;
 import java.util.Collection;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
@@ -46,11 +45,11 @@ public interface Indexer extends Node {
 	public Collection<Tuple> get(Tuple signature);
 	
 	/**
-	 * This indexer will be updated whenever a Rete update is sent to the active node. 
+	 * This indexer will be updated whenever a Rete update is sent to the active node (or an equivalent time slot allotted to it). 
 	 * The active node is typically the indexer itself, but it can be a different node such as its parent.
 	 * @return the active node that operates this indexer
 	 */
-	public Receiver getActiveNode();
+	public Node getActiveNode();
 
 	public void attachListener(IndexerListener listener);
 	public void detachListener(IndexerListener listener);

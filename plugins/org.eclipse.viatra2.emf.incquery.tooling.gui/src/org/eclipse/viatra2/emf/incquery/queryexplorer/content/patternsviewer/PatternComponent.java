@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+
 /**
  * A component inside the pattern hierarchy.
  * 
@@ -41,9 +43,7 @@ public abstract class PatternComponent {
 		this.selected = selected;
 	}
 	
-	public boolean isSelected() {
-		return selected;
-	}
+	public abstract boolean updateSelection(CheckboxTreeViewer treeViewer);
 	
 	/**
 	 * Returns the prefix of the fully qualified pattern name for the given component. 
@@ -60,5 +60,4 @@ public abstract class PatternComponent {
 	public String getPatternNameFragment() {
 		return patternNameFragment;
 	}
-	
 }

@@ -14,9 +14,9 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class PatternsViewerContentProvider implements ITreeContentProvider {
+public class PatternsViewerHierarchicalContentProvider implements ITreeContentProvider {
 	
-	public PatternsViewerContentProvider() {
+	public PatternsViewerHierarchicalContentProvider() {
 		
 	}
 	
@@ -29,7 +29,7 @@ public class PatternsViewerContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement != null && inputElement instanceof PatternComposite) {
-			return ((PatternComposite) inputElement).getChildren().toArray();
+			return ((PatternComposite) inputElement).getDirectChildren().toArray();
 		}
 		return null;
 	}
@@ -37,7 +37,7 @@ public class PatternsViewerContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement != null && parentElement instanceof PatternComposite) {
-			return ((PatternComposite) parentElement).getChildren().toArray();
+			return ((PatternComposite) parentElement).getDirectChildren().toArray();
 		}
 		return null;
 	}
@@ -53,7 +53,7 @@ public class PatternsViewerContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element != null && element instanceof PatternComposite) {
-			return ((PatternComposite) element).getChildren().size() > 0;
+			return ((PatternComposite) element).getDirectChildren().size() > 0;
 		}
 		return false;
 	}

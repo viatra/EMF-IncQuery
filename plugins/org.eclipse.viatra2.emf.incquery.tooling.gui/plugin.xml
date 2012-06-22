@@ -368,16 +368,6 @@
             allPopups="false"
             locationURI="menu:org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodelmenu">
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activedomaineditor">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresourceset"
                style="push">
             <visibleWhen
@@ -388,7 +378,17 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqmodel"
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.gui.activedomaineditor">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -398,7 +398,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern"
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqmodel"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -463,7 +463,7 @@
       </command>
       <command
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.loadeiqpattern"
-            name="Load as pattern">
+            name="Load pattern(s)">
       </command>
    </extension>
    <extension

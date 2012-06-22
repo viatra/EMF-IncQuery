@@ -66,7 +66,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) 
 			throws IncQueryRuntimeException 
 	{
-		super(engine, accessMatcher(pattern, engine));
+		super(engine, accessMatcher(pattern, engine), pattern);
 		this.pattern = pattern;		
 	}
 	

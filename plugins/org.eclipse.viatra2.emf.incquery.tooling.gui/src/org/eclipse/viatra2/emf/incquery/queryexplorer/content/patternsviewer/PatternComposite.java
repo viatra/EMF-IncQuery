@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 /**
@@ -28,15 +29,13 @@ public class PatternComposite extends PatternComponent {
 
 	private List<PatternComponent> children;
 	private Map<String, PatternComposite> fragmentMap;
-	private boolean isHierarchical;
 	
-	public PatternComposite(String patternNameFragment, PatternComposite parent, boolean hierarchical) {
+	public PatternComposite(String patternNameFragment, PatternComposite parent) {
 		super();
 		this.patternNameFragment = patternNameFragment;
 		this.children = new ArrayList<PatternComponent>();
 		this.fragmentMap = new HashMap<String, PatternComposite>();
 		this.parent = parent;
-		this.isHierarchical = hierarchical;
 	}
 	
 	/**
@@ -54,20 +53,13 @@ public class PatternComposite extends PatternComponent {
 			return leaf;
 		}
 		else {
-			String prefix = null, suffix = null;
-			if (isHierarchical) {
-				prefix = tokens[0];
-				suffix = patternFragment.substring(prefix.length()+1);
-			}
-			else {
-				suffix = tokens[tokens.length - 1];
-				prefix = patternFragment.substring(0, patternFragment.length() - suffix.length() - 1);
-			}
-			
+			String prefix = tokens[0];
+			String suffix = patternFragment.substring(prefix.length()+1);
+
 			PatternComposite composite = fragmentMap.get(prefix);
 			
 			if (composite == null) {
-				composite = new PatternComposite(prefix, this, isHierarchical);
+				composite = new PatternComposite(prefix, this);
 				fragmentMap.put(prefix, composite);
 				children.add(composite);
 			}
@@ -80,7 +72,7 @@ public class PatternComposite extends PatternComponent {
 	 * 
 	 * @return the list of leaves
 	 */
-	public List<PatternLeaf> getLeaves() {
+	public List<PatternLeaf> getAllLeaves() {
 		List<PatternLeaf> leaves = new ArrayList<PatternLeaf>();
 		
 		for (PatternComponent component : children) {
@@ -88,7 +80,19 @@ public class PatternComposite extends PatternComponent {
 				leaves.add((PatternLeaf) component);
 			}
 			else {
-				leaves.addAll(((PatternComposite) component).getLeaves()); 
+				leaves.addAll(((PatternComposite) component).getAllLeaves()); 
+			}
+		}
+		
+		return leaves;
+	}
+	
+	public List<PatternLeaf> getDirectLeaves() {
+		List<PatternLeaf> leaves = new ArrayList<PatternLeaf>();
+		
+		for (PatternComponent component : children) {
+			if (component instanceof PatternLeaf) {
+				leaves.add((PatternLeaf) component);
 			}
 		}
 		
@@ -104,9 +108,8 @@ public class PatternComposite extends PatternComponent {
 		for (PatternComponent component : copyOfChildren) {
 			if (component instanceof PatternComposite) {
 				PatternComposite composite = (PatternComposite) component;
-				if (composite.getLeaves().size() == 0) {
-					QueryExplorer.getInstance().getPatternsViewerModel().
-						removeComponent(composite.getFullPatternNamePrefix(), true);
+				if (composite.getAllLeaves().size() == 0) {
+					QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(composite.getFullPatternNamePrefix());
 				}
 				else {
 					composite.purge();
@@ -170,9 +173,9 @@ public class PatternComposite extends PatternComponent {
 	 * @param handleInWhole tells whether to handle the whole pattern fragment 
 	 * (this is used when flat presentation is on and the user wants to unregister a non-leaf element) 
 	 */
-	public void removeComponent(String patternFragment, boolean handleInWhole) {
+	public void removeComponent(String patternFragment) {
 		String[] tokens = patternFragment.split("\\.");
-		if (handleInWhole || tokens.length == 1) {
+		if (tokens.length == 1) {
 			PatternComponent component = null;
 			for (PatternComponent c : children) {
 				if (c.getPatternNameFragment().matches(patternFragment)) {
@@ -185,30 +188,23 @@ public class PatternComposite extends PatternComponent {
 			}
 		}
 		else {
-			String prefix = null, suffix = null;
-			if (isHierarchical) {
-				prefix = tokens[0];
-				suffix = patternFragment.substring(prefix.length()+1);
-			}
-			else {
-				suffix = tokens[tokens.length - 1];
-				prefix = patternFragment.substring(0, patternFragment.length() - suffix.length() - 1);
-			}
+			String prefix = tokens[0];
+			String suffix = patternFragment.substring(prefix.length()+1);
 
 			PatternComposite composite = fragmentMap.get(prefix);
 
 			if (composite != null) {
-				composite.removeComponent(suffix, false);
+				composite.removeComponent(suffix);
 			}
 		}
 	}
 	
 	/**
-	 * Returns the list of direct children element under the composite.
+	 * Returns the list of direct children elements under the composite.
 	 * 
 	 * @return the list of children elements
 	 */
-	public List<PatternComponent> getChildren() {
+	public List<PatternComponent> getDirectChildren() {
 		return children;
 	}
 	
@@ -222,5 +218,20 @@ public class PatternComposite extends PatternComponent {
 			sb.insert(0, parent.getFullPatternNamePrefix());
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public boolean updateSelection(CheckboxTreeViewer treeViewer) {
+		boolean allSelected = true;
+		
+		for (PatternComponent pc : this.children) {
+			if (!pc.updateSelection(treeViewer)) {
+				allSelected = false;
+			}
+		}
+
+		treeViewer.setChecked(this, allSelected);
+		
+		return allSelected;
 	}
 }

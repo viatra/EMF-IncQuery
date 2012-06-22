@@ -34,7 +34,7 @@ public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> exte
 			IMatcherFactory<Signature, ? extends BaseGeneratedMatcher<Signature>> factory) 
 			throws IncQueryRuntimeException 
 	{
-		super(engine, accessMatcher(engine, factory.getPattern()));
+		super(engine, accessMatcher(engine, factory.getPattern()), factory.getPattern());
 		this.factory = factory;
 	}
 	

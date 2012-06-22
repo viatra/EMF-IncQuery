@@ -12,28 +12,46 @@
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 
 public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl implements ParameterizedNavigationHelper {
-
+	
 	public ParameterizedNavigationHelperImpl(Notifier notifier) throws IncQueryBaseException {
 		super(notifier, NavigationHelperType.REGISTER);
 	}
 	
+	/**
+	 * Feature registration and model traversal is delayed while true
+	 */
+	protected boolean delayTraversals = false;
+	/**
+	 * Classes to be registered once the coalescing period is over
+	 */
+	protected Set<EClass> delayedClasses;
+	/**
+	 * EStructuralFeatures to be registered once the coalescing period is over
+	 */
+	protected Set<EStructuralFeature> delayedFeatures;
+	
+	
+	
 	@Override
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
-			observedFeatures.addAll(features);
-			visitor.visitModel(notifier, features, null);
+			if (delayTraversals) {
+				delayedFeatures.addAll(features);
+			} else {
+				observedFeatures.addAll(features);
+				visitor.visitModel(notifier, features, null);
+			}
 		}
 	}
 
@@ -41,17 +59,10 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
 			observedFeatures.removeAll(features);
-
+			delayedFeatures.removeAll(features);
 			for (EStructuralFeature f : features) {
-				if (f instanceof EAttribute) {
-					for (Object key : contentAdapter.getAttrMap().keySet()) {
-						contentAdapter.getAttrMap().get(key).remove(f);
-					}
-				}
-				if (f instanceof EReference) {
-					for (EObject key : contentAdapter.getRefMap().keySet()) {
-						contentAdapter.getRefMap().get(key).remove(f);
-					}
+				for (Object key : contentAdapter.getFeatureMap().keySet()) {
+					contentAdapter.getFeatureMap().get(key).remove(f);
 				}
 			}
 		}
@@ -60,8 +71,12 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	@Override
 	public void registerEClasses(Set<EClass> classes) {
 		if (classes != null) {
-			observedClasses.addAll(classes);
-			visitor.visitModel(notifier, null, classes);
+			if (delayTraversals) {
+				delayedClasses.addAll(classes);
+			} else {
+				observedClasses.addAll(classes);
+				visitor.visitModel(notifier, null, classes);
+			}
 		}
 	}
 
@@ -69,10 +84,32 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	public void unregisterEClasses(Set<EClass> classes) {
 		if (classes != null) {
 			observedClasses.removeAll(classes);
-		 
+			delayedClasses.removeAll(classes);
 			for (EClass c : classes) {
 				contentAdapter.getInstanceMap().remove(c);
 			}
+		}
+	}
+	
+	@Override
+	public void coalesceTraversals(Runnable runnable) throws InvocationTargetException {
+		delayedClasses = new HashSet<EClass>();
+		delayedFeatures = new HashSet<EStructuralFeature>();
+		
+		try {
+			try {
+				delayTraversals = true;
+				runnable.run();
+			} finally {
+				delayTraversals = false;
+				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty()) {
+					observedClasses.addAll(delayedClasses);
+					observedFeatures.addAll(delayedFeatures);
+					visitor.visitModel(notifier, delayedFeatures, delayedClasses);			
+				}
+			}
+		} catch (Exception e) {
+			throw new InvocationTargetException(e);
 		}
 	}
 }

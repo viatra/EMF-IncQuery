@@ -27,7 +27,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask
  * @author Bergmann Gábor
  *
  */
-public class GenericProjectionIndexer extends MemoryIndexer implements ProjectionIndexer {
+public class GenericProjectionIndexer extends IndexerWithMemory implements ProjectionIndexer {
 
 	/**
 	 * @param side

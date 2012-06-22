@@ -64,8 +64,8 @@ public class ObservablePatternMatcher {
 		this.generated = generated;
 		this.orderParameter = null;
 		
-		DatabindingUtil.removeOrderByPatternWarning(CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()));
-		
+		DatabindingUtil.removeOrderByPatternWarning(patternFqn);
+
 		if (matcher != null) {
 			Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
 			if (annotation != null) {

@@ -17,10 +17,15 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
+import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
@@ -34,10 +39,11 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
  * The engine hosts pattern matchers, and will listen on EMF update notifications stemming from the given model in order to maintain live results. 
  * 
- * Pattern matchers within this engine may be instantiated in the following ways:
- *  - Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
- *  - Use the matcher factory associated with the generated matcher class to achieve the same.
- *  - Use GenericMatcherFactory instead of the various generated factories.
+ * Pattern matchers within this engine may be instantiated in the following ways: <ul>
+ *  <li> Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
+ *  <li> Use the matcher factory associated with the generated matcher class to achieve the same.
+ *  <li> Use GenericMatcherFactory instead of the various generated factories.
+ *  </ul>
  * 
  * The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
  * 
@@ -53,11 +59,19 @@ public class IncQueryEngine {
 	/**
 	 * The model to which the engine is attached.
 	 */
-	private Notifier emfRoot;
+	private Notifier emfRoot;	
+	/**
+	 * The base index keeping track of basic EMF contents of the model.
+	 */
+	private ParameterizedNavigationHelper baseIndex;
 	/**
 	 * The RETE pattern matcher component of the EMF-IncQuery engine.
 	 */	
 	private ReteEngine<Pattern> reteEngine = null;
+	/**
+	 * A sanitizer to catch faulty patterns.
+	 */	
+	private PatternSanitizer sanitizer = null;
 	/**
 	 * EXPERIMENTAL
 	 */
@@ -83,6 +97,29 @@ public class IncQueryEngine {
 	public Notifier getEmfRoot() {
 		return emfRoot;
 	}
+	
+	/**
+	 * Internal accessor for the base index.
+	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryBaseException if the base index could not be constructed
+	 */
+	protected ParameterizedNavigationHelper getBaseIndexInternal() throws IncQueryBaseException {
+		if (baseIndex == null) {
+			baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+		}
+		return baseIndex;
+	}
+	
+	/**
+	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
+	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryBaseException if the base index could not be constructed
+	 */
+	public NavigationHelper getBaseIndex() throws IncQueryBaseException {
+		return getBaseIndexInternal();
+	}	
+	
+	
 	
 	/**
 	 * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
@@ -150,6 +187,11 @@ public class IncQueryEngine {
 	void killInternal() {
 		if (reteEngine != null) {
 			reteEngine.killEngine();
+			reteEngine = null;
+		}
+		sanitizer = null;
+		if (baseIndex != null) {
+			baseIndex.dispose();
 		}
 	}
 
@@ -253,6 +295,16 @@ public class IncQueryEngine {
 		return defaultLogger;
 	}
 
+	
+	/**
+	 * @return the sanitizer
+	 */
+	public PatternSanitizer getSanitizer() {
+		if (sanitizer == null) {
+			sanitizer = new PatternSanitizer(getLogger());
+		}
+		return sanitizer;
+	}
 	
 //	/**
 //	 * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.

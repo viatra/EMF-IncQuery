@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.MaskedTupleMemory;
@@ -22,7 +23,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask
  * @author Bergmann Gábor
  *
  */
-public abstract class MemoryIndexer extends StandardIndexer {
+public abstract class IndexerWithMemory extends StandardIndexer implements Receiver {
 
 	protected MaskedTupleMemory memory;
 
@@ -30,7 +31,7 @@ public abstract class MemoryIndexer extends StandardIndexer {
 	 * @param reteContainer
 	 * @param mask
 	 */
-	public MemoryIndexer(ReteContainer reteContainer, TupleMask mask) {
+	public IndexerWithMemory(ReteContainer reteContainer, TupleMask mask) {
 		super(reteContainer, mask);
 		this.memory = new MaskedTupleMemory(mask);
 		reteContainer.registerClearable(memory);		

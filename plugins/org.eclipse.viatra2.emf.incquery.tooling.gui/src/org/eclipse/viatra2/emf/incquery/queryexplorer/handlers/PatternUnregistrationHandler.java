@@ -45,12 +45,12 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 			}
 			else {
 				PatternComposite composite = (PatternComposite) element;
-				List<PatternLeaf> leaves = composite.getLeaves();
+				List<PatternLeaf> leaves = composite.getAllLeaves();
 				for (PatternLeaf leaf : leaves) {
 					unregisterPattern(((PatternLeaf) leaf).getFullPatternNamePrefix());
 				}
 				
-				QueryExplorer.getInstance().getPatternsViewerModel().purge();
+				QueryExplorer.getInstance().getPatternsViewerInput().purge();
 				QueryExplorer.getInstance().getPatternsViewer().refresh();
 			}
 		}
@@ -64,15 +64,17 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 	 */
 	private void unregisterPattern(String patternFqn) {
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-		PatternRegistry.getInstance().unregisterPattern(patternFqn);
-		QueryExplorer.getInstance().getPatternsViewerModel().removeComponent(patternFqn, false);
-		
-		//unregister patterns from observable roots
-		for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
-			root.unregisterPattern(pattern);
+		if (!PatternRegistry.getInstance().isGenerated(pattern)) {
+			PatternRegistry.getInstance().unregisterPattern(patternFqn);
+			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(patternFqn);
+			
+			//unregister patterns from observable roots
+			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+				root.unregisterPattern(pattern);
+			}
+			
+			//the pattern is not active anymore
+			PatternRegistry.getInstance().removeActivePattern(pattern);
 		}
-		
-		//the pattern is not active anymore
-		PatternRegistry.getInstance().removeActivePattern(pattern);
 	}
 }
