@@ -17,6 +17,10 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
+import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
@@ -55,7 +59,11 @@ public class IncQueryEngine {
 	/**
 	 * The model to which the engine is attached.
 	 */
-	private Notifier emfRoot;
+	private Notifier emfRoot;	
+	/**
+	 * The base index keeping track of basic EMF contents of the model.
+	 */
+	private ParameterizedNavigationHelper baseIndex;
 	/**
 	 * The RETE pattern matcher component of the EMF-IncQuery engine.
 	 */	
@@ -89,6 +97,29 @@ public class IncQueryEngine {
 	public Notifier getEmfRoot() {
 		return emfRoot;
 	}
+	
+	/**
+	 * Internal accessor for the base index.
+	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryBaseException if the base index could not be constructed
+	 */
+	protected ParameterizedNavigationHelper getBaseIndexInternal() throws IncQueryBaseException {
+		if (baseIndex == null) {
+			baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+		}
+		return baseIndex;
+	}
+	
+	/**
+	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
+	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryBaseException if the base index could not be constructed
+	 */
+	public NavigationHelper getBaseIndex() throws IncQueryBaseException {
+		return getBaseIndexInternal();
+	}	
+	
+	
 	
 	/**
 	 * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
