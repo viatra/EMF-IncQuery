@@ -202,6 +202,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			notifyInstanceListeners(key, value, true);
 		}
 	}
+	
+	/**
+	 * Returns true if sup is a supertype of sub or sub is equal to sup.
+	 * 
+	 * @param sub subtype
+	 * @param sup supertype
+	 * @return
+	 */
+	private boolean isSubTypeOf(EClass sub, EClass sup) {
+		Set<EClass> set = subTypeMap.get(sup); 
+		if (set != null) {
+			return set.contains(sub) || sub.equals(sup);
+		}
+		else {
+			return false;
+		}
+	}
 
 	private void removeInstanceTuple(EClass key, EObject value) {
 		if (navigationHelper.getType() == NavigationHelperType.ALL || navigationHelper.getObservedClasses().contains(key)) {
@@ -231,12 +248,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	
 	private void notifyInstanceListeners(EClass clazz, EObject instance, boolean isInsertion) {
 		for (InstanceListener listener : navigationHelper.getInstanceListeners().keySet()) {
-			if (navigationHelper.getInstanceListeners().get(listener).contains(clazz)) {
-				if (isInsertion) {
-					listener.instanceInserted(clazz, instance);
-				}
-				else {
-					listener.instanceInserted(clazz, instance);
+			for (EClass sup : navigationHelper.getInstanceListeners().get(listener)) {
+				if (isSubTypeOf(clazz, sup)) {
+					if (isInsertion) {
+						listener.instanceInserted(clazz, instance);
+					}
+					else {
+						listener.instanceInserted(clazz, instance);
+					}
 				}
 			}
 		}
