@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.CountNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ExistenceNode;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.GenericProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IterableIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.JoinNode;
@@ -179,11 +178,9 @@ public class Library {
 		Tuple params = new FlatTuple(paramsArray);
 		ProjectionIndexer result = projectionIndexers.get(params);
 		if (result == null) {
-			result = new GenericProjectionIndexer(reteContainer, mask);
+			result = supplier.constructIndex(mask);
 			if (Options.nodeSharingOption != Options.NodeSharingOption.NEVER)
 				projectionIndexers.put(params, result);
-			
-			reteContainer.connectAndSynchronize(supplier, result);
 		}
 		return result;
 	}
@@ -440,43 +437,25 @@ public class Library {
 		return reteContainer.makeAddress(result);
 	}
 
-	public synchronized void registerSpecializedProjectionIndexer(Node node, ProjectionIndexer indexer) {
-		if (Options.nodeSharingOption != Options.NodeSharingOption.NEVER) {
-			Object[] paramsArray = { node.getNodeId(), indexer.getMask() };
-			Tuple params = new FlatTuple(paramsArray);
-			projectionIndexers.put(params, indexer);
-		}
-	}
+//	public synchronized void registerSpecializedProjectionIndexer(Node node, ProjectionIndexer indexer) {
+//		if (Options.nodeSharingOption != Options.NodeSharingOption.NEVER) {
+//			Object[] paramsArray = { node.getNodeId(), indexer.getMask() };
+//			Tuple params = new FlatTuple(paramsArray);
+//			projectionIndexers.put(params, indexer);
+//		}
+//	}
 	
 	public synchronized Address<UniquenessEnforcerNode> newUniquenessEnforcerNode(int tupleWidth, Object tag) {
 		UniquenessEnforcerNode node = new UniquenessEnforcerNode(reteContainer, tupleWidth);
 		node.setTag(tag);
-		Address<UniquenessEnforcerNode> address = reteContainer.makeAddress(node);
-		
-		if (Options.employTrivialIndexers) {
-			ProjectionIndexer nullIndexer = node.getNullIndexer();
-			registerSpecializedProjectionIndexer(node, nullIndexer);
-
-			ProjectionIndexer identityIndexer = node.getIdentityIndexer();
-			registerSpecializedProjectionIndexer(node, identityIndexer);
-		}
-		
+		Address<UniquenessEnforcerNode> address = reteContainer.makeAddress(node);		
 		return address;
 	}
 
 	public synchronized Address<? extends Production> newProductionNode(HashMap<Object, Integer> posMapping, Object tag) {
 		DefaultProductionNode node = new DefaultProductionNode(reteContainer, posMapping);
 		node.setTag(tag);
-		Address<? extends Production> address = reteContainer.makeAddress(node);
-		
-		if (Options.employTrivialIndexers) {
-			ProjectionIndexer nullIndexer = node.getNullIndexer();
-			registerSpecializedProjectionIndexer(node, nullIndexer);
-
-			ProjectionIndexer identityIndexer = node.getIdentityIndexer();
-			registerSpecializedProjectionIndexer(node, identityIndexer);
-		}
-		
+		Address<? extends Production> address = reteContainer.makeAddress(node);		
 		return address;
 	}
 	

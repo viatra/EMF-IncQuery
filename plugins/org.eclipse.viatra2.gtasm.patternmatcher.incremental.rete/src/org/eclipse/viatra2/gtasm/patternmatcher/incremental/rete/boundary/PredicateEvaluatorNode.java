@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IdentityIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.NullIndexer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
@@ -27,6 +28,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteCon
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.SingleInputNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMemory;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
 
@@ -64,6 +66,10 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 	protected Address<ASMFunctionTraceNotifierNode> asmFunctionTraceNotifier;
 	protected Address<ElementChangeNotifierNode> elementChangeNotifier;
 	protected AbstractEvaluator evaluator;
+
+	private final int tupleWidth;
+	private final TupleMask nullMask;
+	private final TupleMask identityMask;
 	
 	/**
 	 * @param rhsIndex
@@ -81,6 +87,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		this.boundary = engine.getBoundary();
 		this.rhsIndex = rhsIndex;
 		this.affectedIndices = affectedIndices;
+		this.tupleWidth = tupleWidth;
 		this.evaluator = evaluator;
 		
 		this.elementOccurences = new HashMap<Object, Collection<Tuple>>();
@@ -93,14 +100,29 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		this.elementChangeNotifier = Address.of(new ElementChangeNotifierNode(
 				reteContainer));
 
-		if (Options.employTrivialIndexers) {
-			nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this, this);
-			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
-			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
-			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
-		}
+		nullMask = TupleMask.linear(0, tupleWidth);
+		identityMask = TupleMask.identity(tupleWidth);
+//		if (Options.employTrivialIndexers) {
+//			nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this, this);
+//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
+//			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
+//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
+//		}
 
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode#constructIndex(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask)
+	 */
+	@Override
+	public ProjectionIndexer constructIndex(TupleMask mask) {
+		if (Options.employTrivialIndexers) {
+			if (nullMask.equals(mask)) return getNullIndexer();
+			if (identityMask.equals(mask)) return getIdentityIndexer();
+		}
+		return super.constructIndex(mask);
+	}
+	
 	
 	public void pullInto(Collection<Tuple> collector) {
 		for (Tuple ps : outgoing)
@@ -258,8 +280,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 	@Override
 	protected void propagateUpdate(Direction direction, Tuple updateElement) {
 		super.propagateUpdate(direction, updateElement);
-		if (Options.employTrivialIndexers) {
-			identityIndexer.propagate(direction, updateElement);
+		if (identityIndexer != null) identityIndexer.propagate(direction, updateElement);
+		if (nullIndexer != null) {
 			boolean radical = (direction==Direction.REVOKE && outgoing.isEmpty()) 
 				|| (direction==Direction.INSERT && outgoing.size()==1);
 			nullIndexer.propagate(direction, updateElement, radical);
@@ -285,6 +307,16 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 	 */
 	public ReteEngine<?> getEngine() {
 		return engine;
+	}
+	
+	public NullIndexer getNullIndexer() {
+		if (nullIndexer == null) nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this, this);
+		return nullIndexer;
+	}
+
+	public IdentityIndexer getIdentityIndexer() {
+		if (identityIndexer == null) identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
+		return identityIndexer;
 	}
 	
 	class ASMFunctionTraceNotifierNode extends SingleInputNode {

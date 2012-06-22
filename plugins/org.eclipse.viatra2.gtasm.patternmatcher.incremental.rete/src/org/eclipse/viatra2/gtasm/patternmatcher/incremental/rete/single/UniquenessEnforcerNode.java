@@ -16,10 +16,14 @@ import java.util.Collection;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IdentityIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.NullIndexer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Tunnel;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMemory;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
 
@@ -30,13 +34,16 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
  * 
  * @author Gabor Bergmann
  */
-public class UniquenessEnforcerNode extends SingleInputNode {
+public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 
 	protected Collection<Supplier> parents;
 	protected TupleMemory memory;
 	protected NullIndexer nullIndexer;
 	protected IdentityIndexer identityIndexer;
-	protected int tupleWidth;
+	protected final int tupleWidth;
+	
+	private final TupleMask nullMask;
+	private final TupleMask identityMask;
 	
 	public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth) {
 		super(reteContainer);
@@ -45,12 +52,14 @@ public class UniquenessEnforcerNode extends SingleInputNode {
 		this.tupleWidth = tupleWidth;
 		reteContainer.registerClearable(memory);
 		
-		if (Options.employTrivialIndexers) {
-			nullIndexer = new NullIndexer(reteContainer, tupleWidth, memory, this, this);
-			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
-			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, memory, this, this);
-			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
-		}
+		nullMask = TupleMask.linear(0, tupleWidth);
+		identityMask = TupleMask.identity(tupleWidth);
+//		if (Options.employTrivialIndexers) {
+//			nullIndexer = new NullIndexer(reteContainer, tupleWidth, memory, this, this);
+//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
+//			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, memory, this, this);
+//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
+//		}
 	}
 
 	/*
@@ -77,13 +86,25 @@ public class UniquenessEnforcerNode extends SingleInputNode {
 			propagateUpdate(direction, updateElement);
 			
 			// trivial projectionIndexers
-			if (Options.employTrivialIndexers) {
-				identityIndexer.propagate(direction, updateElement);
+			if (identityIndexer != null) identityIndexer.propagate(direction, updateElement);
+			if (nullIndexer != null) {
 				boolean radical = (direction==Direction.REVOKE && memory.isEmpty()) || (direction==Direction.INSERT && memory.size()==1);
 				nullIndexer.propagate(direction, updateElement, radical);
 			}
 
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode#constructIndex(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask)
+	 */
+	@Override
+	public ProjectionIndexer constructIndex(TupleMask mask) {
+		if (Options.employTrivialIndexers) {
+			if (nullMask.equals(mask)) return getNullIndexer();
+			if (identityMask.equals(mask)) return getIdentityIndexer();
+		}
+		return super.constructIndex(mask);
 	}
 
 	/*
@@ -96,10 +117,12 @@ public class UniquenessEnforcerNode extends SingleInputNode {
 	}
 
 	public NullIndexer getNullIndexer() {
+		if (nullIndexer == null) nullIndexer = new NullIndexer(reteContainer, tupleWidth, memory, this, this);
 		return nullIndexer;
 	}
 
 	public IdentityIndexer getIdentityIndexer() {
+		if (identityIndexer == null) identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, memory, this, this);
 		return identityIndexer;
 	}
 	
@@ -117,7 +140,8 @@ public class UniquenessEnforcerNode extends SingleInputNode {
 	@Override
 	public void removeParent(Supplier supplier) {
 		parents.remove(supplier);
-	}
+	}	
+	
 	
 	//
 	// public void tearOff() {

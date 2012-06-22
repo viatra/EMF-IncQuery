@@ -13,7 +13,9 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
 
 import java.util.Collection;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 
 
 /**
@@ -40,5 +42,12 @@ public interface Supplier extends Node {
 	 * removes a receiver
 	 */
 	void removeChild(Receiver receiver);
+	
+	/**
+	 * Instantiates (or reuses, depending on implementation) an index according to the given mask. 
+	 * Intended for internal use; clients should invoke through Library.accesProjectionIndexer() instead to enable reusing.
+	 */
+	ProjectionIndexer constructIndex(TupleMask mask);
+
 
 }

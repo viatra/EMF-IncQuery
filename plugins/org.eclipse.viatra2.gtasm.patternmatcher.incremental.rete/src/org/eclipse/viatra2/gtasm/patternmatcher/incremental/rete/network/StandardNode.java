@@ -14,7 +14,10 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.GenericProjectionIndexer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 
 
 /**
@@ -46,6 +49,16 @@ public abstract class StandardNode implements Supplier {
 		children.remove(receiver);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#constructIndex(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask)
+	 */
+	@Override
+	public ProjectionIndexer constructIndex(TupleMask mask) {
+		final ProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);
+		reteContainer.connectAndSynchronize(this, indexer);
+		return indexer;
+	}
+	
 	@Override
 	public String toString() {
 		if (tag != null)
