@@ -17,10 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
@@ -64,15 +61,8 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			observedFeatures.removeAll(features);
 			delayedFeatures.removeAll(features);
 			for (EStructuralFeature f : features) {
-				if (f instanceof EAttribute) {
-					for (Object key : contentAdapter.getAttrMap().keySet()) {
-						contentAdapter.getAttrMap().get(key).remove(f);
-					}
-				}
-				if (f instanceof EReference) {
-					for (EObject key : contentAdapter.getRefMap().keySet()) {
-						contentAdapter.getRefMap().get(key).remove(f);
-					}
+				for (Object key : contentAdapter.getFeatureMap().keySet()) {
+					contentAdapter.getFeatureMap().get(key).remove(f);
 				}
 			}
 		}

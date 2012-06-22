@@ -93,9 +93,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public Collection<Setting> findByAttributeValue(Object value) {
 		HashSet<Setting> retSet = new HashSet<Setting>();
 
-		if (contentAdapter.getAttrMap().get(value) != null) {
-			for (EAttribute attr : contentAdapter.getAttrMap().get(value).keySet()) {
-				for (EObject holder : contentAdapter.getAttrMap().get(value).get(attr)) {
+		if (contentAdapter.getFeatureMap().get(value) != null) {
+			for (EStructuralFeature attr : contentAdapter.getFeatureMap().get(value).keySet()) {
+				for (EObject holder : contentAdapter.getFeatureMap().get(value).get(attr)) {
 					retSet.add(new NavigationHelperSetting(attr, holder, value));
 				}
 			}
@@ -112,9 +112,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		HashSet<Setting> retSet = new HashSet<Setting>();
 
 		for (EAttribute attr : attributes) {
-			if (contentAdapter.getAttrMap().get(value) != null
-					&& contentAdapter.getAttrMap().get(value).get(attr) != null) {
-				for (EObject holder : contentAdapter.getAttrMap().get(value).get(attr)) {
+			if (contentAdapter.getFeatureMap().get(value) != null
+					&& contentAdapter.getFeatureMap().get(value).get(attr) != null) {
+				for (EObject holder : contentAdapter.getFeatureMap().get(value).get(attr)) {
 					retSet.add(new NavigationHelperSetting(attr, holder, value));
 				}
 			}
@@ -127,19 +127,19 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-		if (contentAdapter.getAttrMap().get(value) == null)
+		if (contentAdapter.getFeatureMap().get(value) == null)
 			return null;
-		return contentAdapter.getAttrMap().get(value).get(attribute);
+		return contentAdapter.getFeatureMap().get(value).get(attribute);
 	}
 
 	@Override
 	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
 		HashSet<Setting> retSet = new HashSet<Setting>();
 
-		for (Object value : contentAdapter.getAttrMap().keySet()) {
+		for (Object value : contentAdapter.getFeatureMap().keySet()) {
 			if (value.getClass().equals(clazz)) {
-				for (EAttribute attr : contentAdapter.getAttrMap().get(value).keySet()) {
-					for (EObject holder : contentAdapter.getAttrMap().get(value).get(attr)) {
+				for (EStructuralFeature attr : contentAdapter.getFeatureMap().get(value).keySet()) {
+					for (EObject holder : contentAdapter.getFeatureMap().get(value).get(attr)) {
 						retSet.add(new NavigationHelperSetting(attr, holder,
 								value));
 					}
@@ -156,9 +156,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public Collection<Setting> getInverseReferences(EObject target) {
 		HashSet<Setting> retSet = new HashSet<Setting>();
 
-		if (contentAdapter.getRefMap().get(target) != null) {
-			for (EReference ref : contentAdapter.getRefMap().get(target).keySet()) {
-				for (EObject source : contentAdapter.getRefMap().get(target).get(ref)) {
+		if (contentAdapter.getFeatureMap().get(target) != null) {
+			for (EStructuralFeature ref : contentAdapter.getFeatureMap().get(target).keySet()) {
+				for (EObject source : contentAdapter.getFeatureMap().get(target).get(ref)) {
 					retSet.add(new NavigationHelperSetting(ref, target, source));
 				}
 			}
@@ -175,9 +175,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		HashSet<Setting> retSet = new HashSet<Setting>();
 
 		for (EReference ref : references) {
-			if (contentAdapter.getRefMap().get(target) != null
-					&& contentAdapter.getRefMap().get(target).get(ref) != null) {
-				for (EObject source : contentAdapter.getRefMap().get(target).get(ref)) {
+			if (contentAdapter.getFeatureMap().get(target) != null
+					&& contentAdapter.getFeatureMap().get(target).get(ref) != null) {
+				for (EObject source : contentAdapter.getFeatureMap().get(target).get(ref)) {
 					retSet.add(new NavigationHelperSetting(ref, target, source));
 				}
 			}
@@ -191,11 +191,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public Set<EObject> getInverseReferences(EObject target,
 			EReference reference) {
-		if (contentAdapter.getRefMap().get(target) == null) {
+		if (contentAdapter.getFeatureMap().get(target) == null) {
 			return null;
 		}
 		else {
-			return contentAdapter.getRefMap().get(target).get(reference);
+			return contentAdapter.getFeatureMap().get(target).get(reference);
 		}
 	}
 
@@ -237,8 +237,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public void unregisterFeatureListener(FeatureListener listener) {
-		this.featureListeners.remove(listener);
+	public void unregisterFeatureListener(Set<EStructuralFeature> features, FeatureListener listener) {
+		Set<EStructuralFeature> restriction = this.featureListeners.get(listener);
+		restriction.removeAll(features);
+		if (restriction.size() == 0) {
+			this.featureListeners.remove(listener);
+		}
 	}
 	
 	public Map<InstanceListener, Set<EClass>> getInstanceListeners() {
