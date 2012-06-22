@@ -27,7 +27,7 @@ import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 /**
  * Factory class for the utils in the library:
  * - NavigationHelper (automatic and manual)
- * - TransitiveCosureUtil
+ * - TransitiveClosureUtil
  * 
  * @author Tamas Szabo
  *
