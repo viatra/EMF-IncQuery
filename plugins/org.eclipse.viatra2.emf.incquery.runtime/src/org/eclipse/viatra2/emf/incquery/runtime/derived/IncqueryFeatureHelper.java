@@ -66,7 +66,7 @@ public class IncqueryFeatureHelper {
 		//	sourceMap.put(source, featureMap);
 		//}
 		//createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, featureMap, kind);
-		return createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind);
+		return createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind, true);
 		//return featureMap.get(feature);
 	}
 
@@ -82,7 +82,7 @@ public class IncqueryFeatureHelper {
 	private static IncqueryFeatureHandler createFeatureHandler(EObject source, EStructuralFeature feature,
 			IMatcherFactory matcherFactory, String sourceParamName,
 			String targetParamName,
-			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind) {
+			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind, boolean keepCache) {
 		try {
 			if(matcherFactory == null) {
 				throw new IncQueryRuntimeException("Matcher factory not set!");
@@ -105,7 +105,7 @@ public class IncqueryFeatureHelper {
 				throw new IncQueryRuntimeException("Matcher cannot be initiated!");
 			}
 			IncqueryFeatureHandler handler = new IncqueryFeatureHandler(
-					(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind);
+					(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind, keepCache);
 			handler.startMonitoring();
 			//featureMap.put(feature, handler);
 			return handler;
@@ -137,9 +137,14 @@ public class IncqueryFeatureHelper {
 	 */
 	public static IncqueryFeatureHandler createHandler(EObject source, EStructuralFeature feature, String patternFQN,
 			String sourceParamName, String targetParamName, FeatureKind kind) {
+		return createHandler(source, feature, patternFQN, sourceParamName, targetParamName, kind, true);
+	}
+	
+	public static IncqueryFeatureHandler createHandler(EObject source, EStructuralFeature feature, String patternFQN,
+			String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache) {
 		IMatcherFactory matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
 		if(matcherFactory != null) {
-			return createHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind);
+			return createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind, keepCache);
 		}
 		return null;
 	}
