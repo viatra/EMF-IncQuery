@@ -193,7 +193,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 					Set<EClass> set = subTypeMap.get(superType);
 					if (set == null) {
 						set = new HashSet<EClass>();
-						subTypeMap.put(key, set);
+						subTypeMap.put(superType, set);
 					}
 					set.add(key);
 				}

@@ -50,6 +50,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 
 		this.instanceListeners = new HashMap<InstanceListener, Set<EClass>>();
+		this.featureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
 		this.observedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
@@ -203,8 +204,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public Set<EObject> getAllInstances(EClass type) {
 		HashSet<EObject> retSet = new HashSet<EObject>();
 		
-		for (EClass c : contentAdapter.getSubTypeMap().get(type)) {
-			retSet.addAll(contentAdapter.getInstanceMap().get(c));
+		Set<EClass> setVal = contentAdapter.getSubTypeMap().get(type);
+		if (setVal != null) {
+			for (EClass c : setVal) {
+				retSet.addAll(contentAdapter.getInstanceMap().get(c));
+			}
 		}
 		retSet.addAll(contentAdapter.getInstanceMap().get(type));
 		
