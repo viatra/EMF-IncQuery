@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
+      <fragment
+            annotation="DerivedFeature"
+            fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator">
+      </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+      <annotation
+            name="DerivedFeature">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="feature"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="source"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="target"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="kind"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="keepCache"
+               type="boolean">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="disabled"
+               type="boolean">
+         </annotationparameter>
+      </annotation>
+   </extension>
+
+</plugin>
