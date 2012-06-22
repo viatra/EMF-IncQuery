@@ -19,15 +19,20 @@ import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
-	// value -> feature (attr or ref) -> holders
+	// value -> feature (attr or ref) -> holder(s)
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
+	// eclass -> instance(s)
 	protected Map<EClass, Set<EObject>> instanceMap;
 	private NavigationHelperImpl navigationHelper;
+	private Map<EClass, Set<EClass>> subTypeMap;
+	private Set<EClass> visitedClasses;
 	
 	public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
 		this.navigationHelper = navigationHelper;
 		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
 		this.instanceMap = new HashMap<EClass, Set<EObject>>();
+		this.subTypeMap = new HashMap<EClass, Set<EClass>>();
+		this.visitedClasses = new HashSet<EClass>();
 	}
 
 	public Map<EClass, Set<EObject>> getInstanceMap() {
@@ -36,6 +41,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	
 	public Map<Object, Map<EStructuralFeature, Set<EObject>>> getFeatureMap() {
 		return featureMap;
+	}
+	
+	public Map<EClass, Set<EClass>> getSubTypeMap() {
+		return subTypeMap;
 	}
 	
 	@Override
@@ -174,6 +183,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				HashSet<EObject> set = new HashSet<EObject>();
 				set.add(value);
 				instanceMap.put(key, set);
+			}
+			
+			//put subtype information into cache
+			if (!visitedClasses.contains(key)) {
+				visitedClasses.add(key);
+				
+				for (EClass superType : key.getEAllSuperTypes()) {
+					Set<EClass> set = subTypeMap.get(superType);
+					if (set == null) {
+						set = new HashSet<EClass>();
+						subTypeMap.put(key, set);
+					}
+					set.add(key);
+				}
 			}
 			
 			notifyInstanceListeners(key, value, true);

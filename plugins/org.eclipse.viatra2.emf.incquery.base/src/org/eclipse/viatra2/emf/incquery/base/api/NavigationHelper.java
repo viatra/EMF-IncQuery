@@ -40,7 +40,7 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 public interface NavigationHelper {
 	
 	/**
-	 * Find all the EAttributes and their owners for a given <code>value</code> of the attribute.
+	 * Find all {@link EAttribute} and their owners for a given <code>value</code> of the attribute.
 	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}.
 	 * 
 	 * @param value the value of the attribute
