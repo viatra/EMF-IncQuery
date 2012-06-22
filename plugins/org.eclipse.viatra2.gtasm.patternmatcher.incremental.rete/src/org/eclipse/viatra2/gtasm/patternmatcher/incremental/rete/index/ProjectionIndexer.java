@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 
 /**
  * An iterable indexer that receives updates from a node, and groups received tuples intact, i.e. it does not reduce tuple groups.
@@ -19,6 +18,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receive
  * @author Bergmann Gábor
  *
  */
-public interface ProjectionIndexer extends Receiver, IterableIndexer {
+public interface ProjectionIndexer extends IterableIndexer {
 
 }

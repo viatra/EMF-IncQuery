@@ -54,7 +54,7 @@ public abstract class StandardNode implements Supplier {
 	 */
 	@Override
 	public ProjectionIndexer constructIndex(TupleMask mask) {
-		final ProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);
+		final GenericProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);
 		reteContainer.connectAndSynchronize(this, indexer);
 		return indexer;
 	}

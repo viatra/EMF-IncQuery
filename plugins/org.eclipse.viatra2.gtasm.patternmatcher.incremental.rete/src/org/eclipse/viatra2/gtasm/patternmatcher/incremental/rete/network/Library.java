@@ -205,7 +205,7 @@ public class Library {
 			return accessProjectionIndexer(supplier, mask);
 
 		reteContainer.flushUpdates();
-		ProjectionIndexer result = new OnetimeIndexer(reteContainer, mask);
+		OnetimeIndexer result = new OnetimeIndexer(reteContainer, mask);
 		reteContainer.sendConstructionUpdates(result, Direction.INSERT,
 				reteContainer.pullContents(supplier));
 		reteContainer.flushUpdates();

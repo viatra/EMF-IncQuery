@@ -18,8 +18,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IdentityIndexer;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.NullIndexer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.MemoryIdentityIndexer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
@@ -58,8 +58,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 	protected Integer rhsIndex;
 	protected int[] affectedIndices;
 	protected Set<Tuple> outgoing;
-	protected NullIndexer nullIndexer;
-	protected IdentityIndexer identityIndexer;
+	protected MemoryNullIndexer memoryNullIndexer;
+	protected MemoryIdentityIndexer memoryIdentityIndexer;
 	protected Map<Object, Collection<Tuple>> elementOccurences;
 	protected Map<Tuple, Set<Tuple>> invoker2traces;
 	protected Map<Tuple, Set<Tuple>> trace2invokers;
@@ -103,10 +103,10 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		nullMask = TupleMask.linear(0, tupleWidth);
 		identityMask = TupleMask.identity(tupleWidth);
 //		if (Options.employTrivialIndexers) {
-//			nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this, this);
-//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, nullIndexer);
-//			identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
-//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, identityIndexer);
+//			memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, outgoing, this, this);
+//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, memoryNullIndexer);
+//			memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
+//			reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, memoryIdentityIndexer);
 //		}
 
 	}
@@ -280,12 +280,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 	@Override
 	protected void propagateUpdate(Direction direction, Tuple updateElement) {
 		super.propagateUpdate(direction, updateElement);
-		if (identityIndexer != null) identityIndexer.propagate(direction, updateElement);
-		if (nullIndexer != null) {
-			boolean radical = (direction==Direction.REVOKE && outgoing.isEmpty()) 
-				|| (direction==Direction.INSERT && outgoing.size()==1);
-			nullIndexer.propagate(direction, updateElement, radical);
-		}
+		if (memoryIdentityIndexer != null) memoryIdentityIndexer.propagate(direction, updateElement);
+		if (memoryNullIndexer != null) memoryNullIndexer.propagate(direction, updateElement);
 	}
 
 	/**
@@ -309,14 +305,14 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		return engine;
 	}
 	
-	public NullIndexer getNullIndexer() {
-		if (nullIndexer == null) nullIndexer = new NullIndexer(reteContainer, tupleWidth, outgoing, this, this);
-		return nullIndexer;
+	public MemoryNullIndexer getNullIndexer() {
+		if (memoryNullIndexer == null) memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, outgoing, this, this);
+		return memoryNullIndexer;
 	}
 
-	public IdentityIndexer getIdentityIndexer() {
-		if (identityIndexer == null) identityIndexer = new IdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
-		return identityIndexer;
+	public MemoryIdentityIndexer getIdentityIndexer() {
+		if (memoryIdentityIndexer == null) memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, outgoing, this, this);
+		return memoryIdentityIndexer;
 	}
 	
 	class ASMFunctionTraceNotifierNode extends SingleInputNode {

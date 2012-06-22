@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.LeftInheritanceTuple;
@@ -192,7 +192,7 @@ public abstract class AggregatorNode extends StandardNode {
 //		}
 
 		@Override
-		public Receiver getActiveNode() {
+		public Node getActiveNode() {
 			return projection.getActiveNode();
 		}
 
@@ -263,7 +263,7 @@ public abstract class AggregatorNode extends StandardNode {
 //		}
 		
 		@Override
-		public Receiver getActiveNode() {
+		public Node getActiveNode() {
 			return projection.getActiveNode();
 		}		
 	}
