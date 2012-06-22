@@ -31,8 +31,8 @@ public interface IGenerationFragment {
 	/**
 	 * Returns the postfix used to define the destination project. The generated
 	 * contents are put into the <code>model.project.name.postfix</code>
-	 * project, or left in the <code>model.project.name</code> project if an
-	 * empty postfix is returned.
+	 * project, or left in the <code>model.project.name</code> project if a
+	 * null postfix is returned.
 	 * 
 	 * @return A project postfix, or null
 	 */

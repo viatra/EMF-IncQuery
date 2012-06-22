@@ -30,9 +30,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -47,8 +44,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
-//import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
-//import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -687,7 +682,7 @@ public abstract class ProjectGenerationHelper {
 	 */
 	private static String getExtensionId(IPluginExtension extension, IProject project) {
 		String id = extension.getId();
-		if (id.startsWith(project.getName())) {
+		if (id != null && id.startsWith(project.getName())) {
 			int beginIndex = project.getName().length() + 1;
 			if (beginIndex >= 0) {
 				id = id.substring(beginIndex);				

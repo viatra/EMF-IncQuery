@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
-import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
@@ -134,7 +133,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
 		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
 		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
-			Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
+			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
 		}
 		GenPackage genPackage = Iterables.find(genPackageIterable, new Predicate<GenPackage>() {
 			public boolean apply(GenPackage genPackage) {
