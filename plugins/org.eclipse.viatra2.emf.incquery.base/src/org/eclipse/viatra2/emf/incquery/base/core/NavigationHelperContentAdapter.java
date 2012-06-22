@@ -3,6 +3,8 @@ package org.eclipse.viatra2.emf.incquery.base.core;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EAttribute;
@@ -17,31 +19,23 @@ import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
-	// target -> ref -> source
-	protected HashMap<EObject, HashMap<EReference, HashSet<EObject>>> refMap;
-
-	// class -> value -> attribute -> holder
-	protected HashMap<Object, HashMap<EAttribute, HashSet<EObject>>> attrMap;
-	protected HashMap<EClass, HashSet<EObject>> instanceMap;
+	// value -> feature (attr or ref) -> holders
+	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
+	protected Map<EClass, Set<EObject>> instanceMap;
 	private NavigationHelperImpl navigationHelper;
 	
 	public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
 		this.navigationHelper = navigationHelper;
-		this.refMap = new HashMap<EObject, HashMap<EReference, HashSet<EObject>>>();
-		this.attrMap = new HashMap<Object, HashMap<EAttribute, HashSet<EObject>>>();
-		this.instanceMap = new HashMap<EClass, HashSet<EObject>>();
+		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
+		this.instanceMap = new HashMap<EClass, Set<EObject>>();
 	}
-	
-	public HashMap<Object, HashMap<EAttribute, HashSet<EObject>>> getAttrMap() {
-		return attrMap;
-	}
-	
-	public HashMap<EClass, HashSet<EObject>> getInstanceMap() {
+
+	public Map<EClass, Set<EObject>> getInstanceMap() {
 		return instanceMap;
 	}
 	
-	public HashMap<EObject, HashMap<EReference, HashSet<EObject>>> getRefMap() {
-		return refMap;
+	public Map<Object, Map<EStructuralFeature, Set<EObject>>> getFeatureMap() {
+		return featureMap;
 	}
 	
 	@Override
@@ -83,11 +77,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			EObject newValue = (EObject) notification.getNewValue();
 			
 			if (oldValue != null) {
-				removeReferenceTuple(ref, oldValue, notifier);
+				removeFeatureTuple(ref, oldValue, notifier);
 				removeInstanceTuple(oldValue.eClass(), oldValue);
 
 				if (ref.isContainment())
-					navigationHelper.getVisitor().visitObjectForEAttributeDelete(oldValue, navigationHelper.getObservedFeatures());
+					navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), false);
 			}
 			if (newValue != null) {
 				handleRefAdd(ref, newValue, notifier);
@@ -96,20 +90,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 
 	public void handleRefAdd(EReference ref, EObject newValue, EObject notifier) {
-		insertReferenceTuple(ref, newValue, notifier);
+		insertFeatureTuple(ref, newValue, notifier);
 		insertInstanceTuple(newValue.eClass(), newValue);
 		if (ref.isContainment()) {
-			navigationHelper.getVisitor().visitObjectForEAttributeInsert(newValue, navigationHelper.getObservedFeatures());
+			navigationHelper.getVisitor().visitObjectForEAttribute(newValue, navigationHelper.getObservedFeatures(), true);
 		}
 	}
 
 	public void handleRefRemove(EReference ref, EObject oldValue,
 			EObject newValue, EObject notifier) {
-		removeReferenceTuple(ref, oldValue, notifier);
+		removeFeatureTuple(ref, oldValue, notifier);
 		removeInstanceTuple(oldValue.eClass(), oldValue);
 
 		if (ref.isContainment()) {
-			navigationHelper.getVisitor().visitObjectForEAttributeDelete(oldValue, navigationHelper.getObservedFeatures());
+			navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), false);
 		}
 
 		if (newValue != null) {
@@ -124,92 +118,51 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 		if (notification.getEventType() == Notification.SET) {
 			if (oldValue != null) {
-				removeAttributeTuple(feature, oldValue, notifier);
+				removeFeatureTuple(feature, oldValue, notifier);
 			}
 			if (newValue != null) {
-				insertAttributeTuple(feature, newValue, notifier);
+				insertFeatureTuple(feature, newValue, notifier);
 			}
 		}
 	}
 
-	public void insertAttributeTuple(EAttribute attr, Object value, EObject holder) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(attr)) {
-			if (attrMap.containsKey(value)) {
-				if (attrMap.get(value).containsKey(attr)) {
-					attrMap.get(value).get(attr).add(holder);
+	public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
+		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
+			if (featureMap.containsKey(value)) {
+				if (featureMap.get(value).containsKey(feature)) {
+					featureMap.get(value).get(feature).add(holder);
 				} else {
 					HashSet<EObject> set = new HashSet<EObject>();
 					set.add(holder);
-					attrMap.get(value).put(attr, set);
+					featureMap.get(value).put(feature, set);
 				}
 			} else {
-				HashMap<EAttribute, HashSet<EObject>> map = new HashMap<EAttribute, HashSet<EObject>>();
-				HashSet<EObject> set = new HashSet<EObject>();
+				Map<EStructuralFeature, Set<EObject>> map = new HashMap<EStructuralFeature, Set<EObject>>();
+				Set<EObject> set = new HashSet<EObject>();
 				set.add(holder);
-				map.put(attr, set);
-				attrMap.put(value, map);
+				map.put(feature, set);
+				featureMap.put(value, map);
 			}
 			
-			notifyFeatureListeners(holder, attr, value, true);
+			notifyFeatureListeners(holder, feature, value, true);
 		}
 	}
 
-	public void removeAttributeTuple(EAttribute attr, Object value, EObject holder) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(attr)) {
-			if (attrMap.containsKey(value)
-					&& attrMap.get(value).containsKey(attr)) {
-				attrMap.get(value).get(attr).remove(holder);
+	public void removeFeatureTuple(EStructuralFeature feature, Object target, EObject source) {
+		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
+			if (featureMap.containsKey(target) && featureMap.get(target).containsKey(feature)) {
+				featureMap.get(target).get(feature).remove(source);
 
-				if (attrMap.get(value).get(attr).size() == 0) {
-					attrMap.get(value).remove(attr);
+				if (featureMap.get(target).get(feature).size() == 0) {
+					featureMap.get(target).remove(feature);
 				}
 
-				if (attrMap.get(value).size() == 0) {
-					attrMap.remove(value);
-				}
-			}
-			
-			notifyFeatureListeners(holder, attr, value, false);
-		}
-	}
-
-	public void insertReferenceTuple(EReference ref, EObject target, EObject source) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(ref)) {
-			if (refMap.containsKey(target)) {
-				if (refMap.get(target).containsKey(ref)) {
-					refMap.get(target).get(ref).add(source);
-				} else {
-					HashSet<EObject> set = new HashSet<EObject>();
-					set.add(source);
-					refMap.get(target).put(ref, set);
-				}
-			} else {
-				HashMap<EReference, HashSet<EObject>> map = new HashMap<EReference, HashSet<EObject>>();
-				HashSet<EObject> set = new HashSet<EObject>();
-				set.add(source);
-				map.put(ref, set);
-				refMap.put(target, map);
-			}
-			
-			notifyFeatureListeners(source, ref, target, true);
-		}
-	}
-
-	public void removeReferenceTuple(EReference ref, EObject target, EObject source) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(ref)) {
-			if (refMap.containsKey(target) && refMap.get(target).containsKey(ref)) {
-				refMap.get(target).get(ref).remove(source);
-
-				if (refMap.get(target).get(ref).size() == 0) {
-					refMap.get(target).remove(ref);
-				}
-
-				if (refMap.get(target).size() == 0) {
-					refMap.remove(target);
+				if (featureMap.get(target).size() == 0) {
+					featureMap.remove(target);
 				}
 			}
 			
-			notifyFeatureListeners(source, ref, target, false);
+			notifyFeatureListeners(source, feature, target, false);
 		}
 	}
 
@@ -242,11 +195,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	
 	private void notifyFeatureListeners(EObject host, EStructuralFeature feature, Object value, boolean isInsertion) {
 		for (FeatureListener listener : navigationHelper.getFeatureListeners().keySet()) {
-			if (isInsertion) {
-				listener.featureInserted(host, feature, value);
-			}
-			else {
-				listener.featureDeleted(host, feature, value);
+			if (navigationHelper.getFeatureListeners().get(listener).contains(feature)) {
+				if (isInsertion) {
+					listener.featureInserted(host, feature, value);
+				}
+				else {
+					listener.featureDeleted(host, feature, value);
+				}
 			}
 		}
 	}

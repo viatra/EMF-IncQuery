@@ -75,48 +75,37 @@ public class NavigationHelperVisitor {
 								EObjectEList<EObject> list = (EObjectEList<EObject>) o;
 								Iterator<EObject> it = list.iterator();
 								while (it.hasNext()) {
-									navigationHelper.getContentAdapter().insertReferenceTuple(ref, it.next(), obj);
+									navigationHelper.getContentAdapter().insertFeatureTuple(ref, it.next(), obj);
 								}
 							} else {
-								navigationHelper.getContentAdapter().insertReferenceTuple(ref, (EObject) o, obj);
+								navigationHelper.getContentAdapter().insertFeatureTuple(ref, (EObject) o, obj);
 							}
 						}
 					}
 				}
 
-				visitObjectForEAttributeInsert(obj, features);
+				visitObjectForEAttribute(obj, features, true);
 			}
 		}
 	}
 
 	// visit all the attributes of the given EObject and insert them to the
 	// cache
-	public void visitObjectForEAttributeInsert(EObject obj, Set<EStructuralFeature> features) {
+	public void visitObjectForEAttribute(EObject obj, Set<EStructuralFeature> features, boolean isInsertion) {
 		if (obj != null) {
 			for (EAttribute attr : obj.eClass().getEAllAttributes()) {
 				if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(attr)) {
 					Object o = obj.eGet(attr);
 					if (o != null) {
-						navigationHelper.getContentAdapter().insertAttributeTuple(attr, o, obj);
+						if (isInsertion) {
+							navigationHelper.getContentAdapter().insertFeatureTuple(attr, o, obj);
+						}
+						else {
+							navigationHelper.getContentAdapter().removeFeatureTuple(attr, o, obj);
+						}
 					}
 				}
 			}
 		}
 	}
-
-	// visit all the attributes of the given EObject and delete them from the
-	// cache
-	public void visitObjectForEAttributeDelete(EObject obj, Set<EStructuralFeature> features) {
-		if (obj != null) {
-			for (EAttribute attr : obj.eClass().getEAllAttributes()) {
-				if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(attr)) {
-					Object o = obj.eGet(attr);
-					if (o != null) {
-						navigationHelper.getContentAdapter().removeAttributeTuple(attr, o, obj);
-					}
-				}
-			}
-		}
-	}
-	
 }

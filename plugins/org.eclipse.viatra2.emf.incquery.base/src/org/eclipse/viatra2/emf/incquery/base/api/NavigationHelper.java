@@ -157,9 +157,10 @@ public interface NavigationHelper {
 	public void registerFeatureListener(Set<EStructuralFeature> features, FeatureListener listener);
 	
 	/**
-	 * Unregisters a feature listener.
+	 * Unregisters a feature listener for the given set of features. 
 	 * 
 	 * @param listener the listener instance
+	 * @param features the set of features
 	 */
-	public void unregisterFeatureListener(FeatureListener listener);
+	public void unregisterFeatureListener(Set<EStructuralFeature> features, FeatureListener listener);
 }
