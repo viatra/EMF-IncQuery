@@ -235,6 +235,13 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			val handlerField = ast.newFieldDeclaration(handlerFragment)
 			handlerField.setType(ast.newSimpleType(ast.newSimpleName(HANDLER_NAME)))
 			handlerField.modifiers.add(ast.newModifier(Modifier$ModifierKeyword::PRIVATE_KEYWORD))
+			val handlerTag = ast.newTagElement
+			val tagText = ast.newTextElement
+			tagText.text = "EMF-IncQuery handler for derived feature "+featureName 
+			handlerTag.fragments.add(tagText)
+			val javaDoc = ast.newJavadoc
+			javaDoc.tags.add(handlerTag)
+			handlerField.javadoc = javaDoc
 			bodyDeclListRewrite.insertLast(handlerField, null)		
 		}
 	}
@@ -292,6 +299,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					]
 					//oldTag.tagName = "@derived"
 					rewrite.set(oldTag,TagElement::TAG_NAME_PROPERTY,"@derived",null)
+					val tagsRewrite = rewrite.getListRewrite(oldTag,TagElement::FRAGMENTS_PROPERTY)
+					val tagText = ast.newTextElement
+					tagText.text = "getter created by EMF-InccQuery for derived feature "+genFeature.name 
+					tagsRewrite.insertLast(tagText, null)
 					bodyDeclListRewrite.insertLast(method, null)	
 					if(getGenMethod == null){
 						rewrite.replace(getMethod.name,ast.newSimpleName(getMethod.name.identifier+"Gen"),null)
@@ -304,7 +315,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			
 			if(!generatedBody){
 				// generated tag dirty or javadoc null
-				replaceMethodBody(ast, rewrite, getMethod.body, dummyMethod.body, javadoc, document, true, "@derived", null)
+				replaceMethodBody(ast, rewrite, getMethod.body, dummyMethod.body,
+					javadoc, document, true, "@derived",
+					"getter created by EMF-InccQuery for derived feature "+genFeature.name, null
+				)
 			}
 			
 		}
@@ -369,7 +383,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 						return
 					}
 				}		
-				ast.replaceMethodBody(rewrite, getMethod.body, dummyMethod.body, javadoc, document, false, "@generated", "@derived")
+				ast.replaceMethodBody(rewrite, getMethod.body, dummyMethod.body, javadoc,
+					document, false, "@generated","", "@derived"
+				)
 			}
 		}
 	}
@@ -406,7 +422,11 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		dummyCU.processDummyComputationUnit
 	}
 	
-	def private replaceMethodBody(AST ast, ASTRewrite rewrite, Block oldBody, Block newBody, Javadoc javadoc, Document document, boolean keepOld, String newTagName, String removeTagName){
+	def private replaceMethodBody(
+		AST ast, ASTRewrite rewrite, Block oldBody, Block newBody,
+		Javadoc javadoc, Document document, boolean keepOld,
+		String newTagName, String newTagText, String removeTagName
+	){
 		// generated tag dirty or javadoc null
 		// copy method body into block comment with @original fragment
 		val tags = javadoc.tags as List<TagElement>
@@ -438,6 +458,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		if(newTag == null){
 			val newTagToInsert = ast.newTagElement
 			newTagToInsert.tagName = newTagName
+			val tagText = ast.newTextElement
+			tagText.text = newTagText 
+			newTagToInsert.fragments.add(tagText)
 			tagsRewrite.insertLast(newTagToInsert,null)
 		}
 		if(removeTag != null){
