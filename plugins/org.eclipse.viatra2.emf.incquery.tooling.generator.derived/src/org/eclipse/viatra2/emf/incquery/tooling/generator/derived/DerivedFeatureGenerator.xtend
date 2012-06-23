@@ -359,7 +359,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 						return
 					}
 					if(derivedTag != null && originalTag != null){
-						if((derivedTag.fragments.size == 0) && (originalTag.fragments.size != 0)){
+						if(originalTag.fragments.size != 0){
 							// original tag found
 							
 							//rewrite.set(derivedTag,TagElement::TAG_NAME_PROPERTY,"@generated",null)
@@ -437,9 +437,14 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		val newTag = tags.findFirst[
 			(it as TagElement).tagName == newTagName
 		]
-		val removeTag = tags.findFirst[
-			(it as TagElement).tagName == removeTagName
-		]
+		if(removeTagName != null){
+			val removeTag = tags.findFirst[
+					(it as TagElement).tagName == removeTagName
+			]
+			if(removeTag != null){
+				tagsRewrite.remove(removeTag, null)
+			}
+		}
 		if(originalTag == null){
 			if(keepOld){
 				val tag = ast.newTagElement
@@ -462,9 +467,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			tagText.text = newTagText 
 			newTagToInsert.fragments.add(tagText)
 			tagsRewrite.insertLast(newTagToInsert,null)
-		}
-		if(removeTag != null){
-			tagsRewrite.remove(removeTag, null)
 		}
 		// overwrite method body
 		rewrite.replace(oldBody, newBody, null)
