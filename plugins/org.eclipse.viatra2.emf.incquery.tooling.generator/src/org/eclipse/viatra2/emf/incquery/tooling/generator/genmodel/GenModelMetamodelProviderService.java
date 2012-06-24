@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +43,11 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Inject
 	IQualifiedNameConverter qualifiedNameConverter;
 
+	private URI getGenmodelURI(IProject project) {
+		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+		return URI.createPlatformResourceURI(file.getFullPath().toString(), false);
+	}
+	
 	@Override
 	public IScope getAllMetamodelObjects(EObject ctx) {
 		Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
@@ -129,6 +135,21 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	}
 
 	@Override
+	public void saveGeneratorModel(IProject project, IncQueryGeneratorModel generatorModel) throws IOException {
+		Resource eResource = generatorModel.eResource();
+		if (eResource != null) {
+			eResource.save(Maps.newHashMap());
+		} else {
+			URI uri = getGenmodelURI(project);
+			ResourceSet set = new ResourceSetImpl();
+			Resource resource = set.createResource(uri);
+			resource.getContents().add(generatorModel);
+			resource.save(Maps.newHashMap());
+		}
+		
+	}
+
+	@Override
 	public GenPackage findGenPackage(EObject ctx, final EPackage ePackage) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
 		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
@@ -163,7 +184,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	}
 	
 	/**
-	 * Initializes and returns the IncQuery generator model for the selected project. If the model is already initialized, it returns the original model.
+	 * Initializes and returns the IncQuery generator model for the selected project. If the model is already initialized, it returns the existing model.
 	 * @param project
 	 * @return
 	 */

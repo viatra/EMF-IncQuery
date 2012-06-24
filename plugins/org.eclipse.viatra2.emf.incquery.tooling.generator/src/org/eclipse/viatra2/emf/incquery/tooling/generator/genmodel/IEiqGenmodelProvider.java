@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -53,6 +54,16 @@ public interface IEiqGenmodelProvider {
 	 * @return the loaded generator model
 	 */
 	IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set);
+	
+	/**
+	 * Saves the changes to the generator model instance in the selected
+	 * project. The provider assumes that the genmodel was instantiated by using
+	 * the {@link #getGeneratorModel(EObject)} or the
+	 * {@link #getGeneratorModel(IProject, ResourceSet)} methods.
+	 * 
+	 * @throws IOException 
+	 */
+	void saveGeneratorModel(IProject project, IncQueryGeneratorModel generatorModel) throws IOException;
 
 	/**
 	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
