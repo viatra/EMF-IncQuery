@@ -39,6 +39,40 @@ public class PatternComposite extends PatternComponent {
 	}
 	
 	/**
+	 * Returns the list of pattern components downwards the tree for the given fully qualified pattern name.
+	 * If the leaf associated to the given name cannot be found then null is returned. 
+	 * 
+	 * @param patternFragment the fully qualified name of the pattern
+	 * @return the list of components
+	 */
+	public List<PatternComponent> find(String patternFragment) {
+		List<PatternComponent> components = new ArrayList<PatternComponent>();
+		find(patternFragment, components);
+		return components;
+	}
+	
+	private void find(String patternFragment, List<PatternComponent> components) {
+		String[] tokens = patternFragment.split("\\.");
+		
+		if (tokens.length == 1) {
+			for (PatternComponent pc : children) {
+				if (pc.getPatternNameFragment().matches(patternFragment)) {
+					components.add(pc);
+				}
+			}
+		}
+		else {
+			String prefix = tokens[0];
+			String suffix = patternFragment.substring(prefix.length()+1);
+			PatternComposite composite = fragmentMap.get(prefix);
+			if (composite != null) {
+				components.add(composite);
+				composite.find(suffix, components);
+			}
+		}
+	}
+	
+	/**
 	 * Add a new component under the composite element based on the given pattern name fragment.
 	 *  
 	 * @param patternFragment the pattern name fragment

@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -24,8 +26,12 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -44,6 +50,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLab
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
@@ -52,7 +59,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.QueryExplorerPerspectiveAdapter;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.QueryExplorerFocusListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -66,7 +73,7 @@ import com.google.inject.Injector;
  * @author Tamas Szabo
  *
  */
-public class QueryExplorer extends ViewPart {
+public class QueryExplorer extends ViewPart implements FocusListener {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	private TableViewer tableViewer;
@@ -81,11 +88,11 @@ public class QueryExplorer extends ViewPart {
 	//observable view
 	private ModelEditorPartListener modelPartListener;
 	private PatternComposite patternsViewerInput;
-		
-	private QueryExplorerPerspectiveAdapter perspectiveAdapter;
 	
 	private FlyoutControlComposite patternsViewerFlyout;
 	private FlyoutControlComposite detailsViewFlyout;
+	
+	private QueryExplorerFocusListener focusListener;
 	
 	@Inject
 	Injector injector;
@@ -98,8 +105,8 @@ public class QueryExplorer extends ViewPart {
 		matcherLabelProvider = new MatcherLabelProvider();
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
-		perspectiveAdapter = new QueryExplorerPerspectiveAdapter();
 		patternsViewerInput = new PatternComposite("", null);
+		focusListener = new QueryExplorerFocusListener();
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
@@ -126,18 +133,21 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
-		getViewSite().getWorkbenchWindow().addPerspectiveListener(perspectiveAdapter);
-		
+		parent.addFocusListener(focusListener);
 		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_OPEN, 300);
 		detailsViewFlyout = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
 		detailsViewFlyout.setTitleText("Details / Filters");
 		detailsViewFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
+		detailsViewFlyout.addFocusListener(focusListener);
+		
 		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
 		patternsViewerFlyout = new FlyoutControlComposite(detailsViewFlyout.getClientParent(), SWT.NONE, leftFlyoutPreferences);
 		patternsViewerFlyout.setTitleText("Pattern registry");
 		patternsViewerFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
-				
+		
+		patternsViewerFlyout.addFocusListener(focusListener);
+		
 		matcherTreeViewer = new TreeViewer(patternsViewerFlyout.getClientParent());
 		tableViewer = new TableViewer(detailsViewFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
 		
@@ -196,8 +206,9 @@ public class QueryExplorer extends ViewPart {
 		gridData.horizontalAlignment = GridData.FILL;
 		tableViewer.getControl().setLayoutData(gridData);
 		
+		//Focus listening and selection providing
 		getSite().setSelectionProvider(matcherTreeViewer);
-		
+
 		initFileListener();
 		initPatternsViewerWithGeneratedPatterns();
 	}
@@ -219,6 +230,11 @@ public class QueryExplorer extends ViewPart {
 			if (value instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
 				tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
+				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher().getPattern());
+				List<PatternComponent> components = patternsViewerInput.find(patternFqn);
+				if (components != null) {
+					patternsViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
+				}
 			}
 			else if (value instanceof ObservablePatternMatch) {
 				ObservablePatternMatch match = (ObservablePatternMatch) value;
@@ -261,5 +277,15 @@ public class QueryExplorer extends ViewPart {
 	
 	public FlyoutControlComposite getPatternsViewerFlyout() {
 		return patternsViewerFlyout;
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		System.out.println(e);
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		System.out.println(e);
 	}
 }
