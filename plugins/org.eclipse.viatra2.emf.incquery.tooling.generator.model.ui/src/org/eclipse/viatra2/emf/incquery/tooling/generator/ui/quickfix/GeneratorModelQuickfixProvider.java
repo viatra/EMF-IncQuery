@@ -12,7 +12,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GenmodelProjectBasedValidation;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModification;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
@@ -20,8 +19,6 @@ import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
-
-import com.google.inject.Inject;
 
 public class GeneratorModelQuickfixProvider extends DefaultQuickfixProvider {
 
@@ -35,9 +32,6 @@ public class GeneratorModelQuickfixProvider extends DefaultQuickfixProvider {
 //			}
 //		});
 //	}
-
-	@Inject
-	XtextEditor editor;
 
 	@Fix(GenmodelProjectBasedValidation.GENMODEL_DEPENDENCY)
 	public void addDependency(final Issue issue,
