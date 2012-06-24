@@ -19,7 +19,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -28,7 +29,14 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CompositeWorkspaceModifyOperation;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CreateGenmodelOperation;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CreateProjectOperation;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * A wizard class for initializing an EMF IncQuery project.
@@ -38,28 +46,16 @@ import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
  */
 public class NewProjectWizard extends Wizard implements INewWizard {
 
-	private final static class CreateProjectOperation extends
-			WorkspaceModifyOperation {
-		private final IProject projectHandle;
-		private final IProjectDescription description;
-
-		private CreateProjectOperation(IProject projectHandle,
-				IProjectDescription description) {
-			this.projectHandle = projectHandle;
-			this.description = description;
-		}
-
-		protected void execute(IProgressMonitor monitor)
-				throws CoreException {
-			ProjectGenerationHelper.createProject(description,
-					projectHandle, monitor);
-		}
-	}
-
 	private WizardNewProjectCreationPage projectCreationPage;
+	private NewEiqGenmodelPage genmodelPage;
 	private IProject project;
 	private IWorkbench workbench;
+	private IWorkspace workspace;
 
+	@Inject
+	IEiqGenmodelProvider genmodelProvider;
+	@Inject
+	IResourceSetProvider resourceSetProvider;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -73,10 +69,13 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		projectCreationPage
 				.setDescription("Create a new EMF IncQuery project.");
 		addPage(projectCreationPage);
+		genmodelPage = new NewEiqGenmodelPage();
+		addPage(genmodelPage);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
+		workspace = (IWorkspace) workbench.getService(IWorkspace.class);
 		// this.selection = selection;
 	}
 
@@ -86,29 +85,43 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 			return true;
 		}
 		final IProject projectHandle = projectCreationPage.getProjectHandle();
+		if (projectHandle.exists()) {
+			return false;
+		}
 		URI projectURI = (!projectCreationPage.useDefaults()) ? projectCreationPage
 				.getLocationURI() : null;
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProjectDescription description = workspace
 				.newProjectDescription(projectHandle.getName());
 		description.setLocationURI(projectURI);
 
-		/*
-		 * Just like the ExampleWizard, but this time with an operation object
-		 * that modifies workspaces.
-		 */
-		WorkspaceModifyOperation op = new CreateProjectOperation(projectHandle, description);
+		WorkspaceModifyOperation projectOp = new CreateProjectOperation(projectHandle, description);
+		WorkspaceModifyOperation op = projectOp;  
+		if (genmodelPage.isCreateGenmodelChecked()) {
+			WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(
+					projectHandle, genmodelPage.getSelectedGenmodels(),
+					genmodelProvider, resourceSetProvider);
+			op = new CompositeWorkspaceModifyOperation(
+					new WorkspaceModifyOperation[] { projectOp, genmodelOp },
+					"Creating project");
+		}
 
-		/*
-		 * This isn't as robust as the code in the BasicNewProjectResourceWizard
-		 * class. Consider beefing this up to improve error handling.
-		 */
 		try {
 			getContainer().run(true, true, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
+			//Removing project if it is partially created
+			if (projectHandle.exists()) {
+				try {
+					projectHandle.delete(true, new NullProgressMonitor());
+				} catch (CoreException e1) {
+					//TODO real error logging
+					e1.printStackTrace();
+				}
+			}
+			//TODO real error logging!
 			Throwable realException = e.getTargetException();
+			realException.printStackTrace();
 			MessageDialog.openError(getShell(), "Error",
 					realException.getMessage());
 			return false;

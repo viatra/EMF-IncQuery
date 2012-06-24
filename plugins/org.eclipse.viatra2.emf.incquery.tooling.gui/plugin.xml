@@ -9,7 +9,7 @@
       </category>
       <wizard
             category="org.eclipse.viatra2.emf.incquery.gui.category"
-            class="org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
+            class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.gui.wizards.NewProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra2.emf.incquery.gui.newproject"

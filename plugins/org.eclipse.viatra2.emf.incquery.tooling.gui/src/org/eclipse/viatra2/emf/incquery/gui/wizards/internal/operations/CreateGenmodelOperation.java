@@ -1,0 +1,57 @@
+package org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+
+public class CreateGenmodelOperation extends
+		WorkspaceModifyOperation {
+	private final IProject project;
+	private List<GenModel> genmodels;
+	private IEiqGenmodelProvider genmodelProvider;
+	private IResourceSetProvider resourceSetProvider;
+
+	public CreateGenmodelOperation(IProject project,
+			List<GenModel> genmodels, IEiqGenmodelProvider genmodelProvider, IResourceSetProvider resourceSetProvider) {
+		this.project = project;
+		this.genmodels = genmodels;
+		this.genmodelProvider = genmodelProvider;
+		this.resourceSetProvider = resourceSetProvider;
+	}
+
+	protected void execute(IProgressMonitor monitor)
+			throws CoreException {
+		try {
+			IncQueryGeneratorModel generatorModel = genmodelProvider
+					.getGeneratorModel(project,
+							resourceSetProvider.get(project));
+			EList<GeneratorModelReference> genmodelRefs = generatorModel
+					.getGenmodels();
+			for (GenModel ecoreGenmodel : genmodels) {
+				GeneratorModelReference ref = GeneratorModelFactory.eINSTANCE
+						.createGeneratorModelReference();
+				ref.setGenmodel(ecoreGenmodel);
+				genmodelRefs.add(ref);
+			}
+			genmodelProvider.saveGeneratorModel(project, generatorModel);
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					IncQueryGUIPlugin.PLUGIN_ID,
+					"Cannot create generator model: " + e.getMessage(), e));
+		}
+	}
+}
