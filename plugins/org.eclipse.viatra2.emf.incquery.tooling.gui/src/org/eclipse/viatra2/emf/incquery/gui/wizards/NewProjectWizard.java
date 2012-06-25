@@ -79,7 +79,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
-		workspace = (IWorkspace) workbench.getService(IWorkspace.class);
+		workspace = ResourcesPlugin.getWorkspace();
 		// this.selection = selection;
 	}
 
