@@ -48,6 +48,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
+	// TODO replace with new logger
 	private Logger logger = Logger.getLogger(getClass());
 	private static Map<String, Class<?>> WRAPPERCLASSES = getWrapperClasses();
 	
@@ -100,13 +101,13 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * Resolves the variable from an eObject as context 
 	 * (Possible context: {@link Pattern}, {@link PatternBody}).
 	 * Returns a {@link JvmTypeReference} if the type successfully resolved, otherwise returns null.
-	 * @param eObject
+	 * @param context
 	 * @param variable
 	 * @return
 	 */
-	private JvmTypeReference resolveClassType(EObject eObject, Variable variable) {
-		if (eObject instanceof Pattern) {
-			Pattern pattern = (Pattern) eObject;
+	private JvmTypeReference resolveClassType(EObject context, Variable variable) {
+		if (context instanceof Pattern) {
+			Pattern pattern = (Pattern) context;
 			for (PatternBody body : pattern.getBodies()) {
 				JvmTypeReference typeRef = resolveClassType(body, variable);
 				if (typeRef != null) {
@@ -114,8 +115,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 				}
 			}
 		}
-		if (eObject instanceof PatternBody) {
-			return resolveClassType((PatternBody) eObject, variable);
+		if (context instanceof PatternBody) {
+			return resolveClassType((PatternBody) context, variable);
 		}
 		return null;
 	}
@@ -131,10 +132,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	private JvmTypeReference resolveClassType(PatternBody body, Variable variable) {
 		for (Constraint constraint : body.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
-				JvmTypeReference typeRef = getTypeRef(
-						(EClassifierConstraint) constraint, variable);
-				if (typeRef != null) {
-					return typeRef;
+				if (equalVariable(variable, ((EClassifierConstraint) constraint).getVar())) {
+					return referenceFromType(((EClassifierConstraint) constraint).getType(), variable);
 				}
 			}
 			if (constraint instanceof PathExpressionConstraint) {
@@ -171,21 +170,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		return tail.getType();
 	}
 
-	/**
-	 * Returns the JvmTypeReference for variable if it used in EClassConstraint.
-	 */
-	private JvmTypeReference getTypeRef(EClassifierConstraint constraint,
-			Variable variable) {
-		if (equalVariable(variable, constraint.getVar())) {
-			return referenceFromType(constraint.getType(), variable);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("VariableRef not referring to parameter Variable!");
-			}
-		}
-		return null;
-	}
-
 	private JvmTypeReference referenceFromType(Type type, Variable variable) {
 		Class<?> clazz = computeClazzFromType(type);
 		if (clazz != null) {
@@ -209,10 +193,14 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		if (type instanceof ReferenceType) {
 			EStructuralFeature feature = ((ReferenceType) type).getRefname();
 			if (feature instanceof EAttribute) {
-				return ((EAttribute) feature).getEAttributeType().getInstanceClass();
+				if (((EAttribute) feature).getEAttributeType() != null) {
+					return ((EAttribute) feature).getEAttributeType().getInstanceClass();
+				}
 			}
 			if (feature instanceof EReference) {
-				return ((EReference) feature).getEReferenceType().getInstanceClass();
+				if (((EReference) feature).getEReferenceType() != null) {
+					return ((EReference) feature).getEReferenceType().getInstanceClass();
+				}
 			}
 		}
 		return null;
@@ -264,7 +252,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	}
 	
 	/**
-	 * Returns true if the variable references by the variableReference.
+	 * Returns true if the variable referenced by the variableReference.
 	 * @param variable
 	 * @param variableReference
 	 * @return
