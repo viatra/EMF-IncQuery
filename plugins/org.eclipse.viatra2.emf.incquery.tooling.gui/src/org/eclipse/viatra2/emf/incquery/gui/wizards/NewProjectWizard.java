@@ -73,7 +73,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		projectCreationPage
 				.setDescription("Create a new EMF IncQuery project.");
 		addPage(projectCreationPage);
-		genmodelPage = new NewEiqGenmodelPage();
+		genmodelPage = new NewEiqGenmodelPage(true);
 		addPage(genmodelPage);
 	}
 
