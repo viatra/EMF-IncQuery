@@ -133,20 +133,15 @@ public class QueryExplorer extends ViewPart implements FocusListener {
 	}
 	
 	public void createPartControl(Composite parent) {
-		parent.addFocusListener(focusListener);
 		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_OPEN, 300);
 		detailsViewFlyout = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
 		detailsViewFlyout.setTitleText("Details / Filters");
 		detailsViewFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
-		detailsViewFlyout.addFocusListener(focusListener);
-		
 		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
 		patternsViewerFlyout = new FlyoutControlComposite(detailsViewFlyout.getClientParent(), SWT.NONE, leftFlyoutPreferences);
 		patternsViewerFlyout.setTitleText("Pattern registry");
 		patternsViewerFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
-		
-		patternsViewerFlyout.addFocusListener(focusListener);
 		
 		matcherTreeViewer = new TreeViewer(patternsViewerFlyout.getClientParent());
 		tableViewer = new TableViewer(detailsViewFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
