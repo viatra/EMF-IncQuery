@@ -13,6 +13,8 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -21,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -35,6 +38,7 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CreatePr
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -94,15 +98,25 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 				.newProjectDescription(projectHandle.getName());
 		description.setLocationURI(projectURI);
 
-		WorkspaceModifyOperation projectOp = new CreateProjectOperation(projectHandle, description);
-		WorkspaceModifyOperation op = projectOp;  
+		WorkspaceModifyOperation op = null;  
 		if (genmodelPage.isCreateGenmodelChecked()) {
+			List<String> genmodelDependencies = new ArrayList<String>();
+			for (GenModel model : genmodelPage.getSelectedGenmodels()) {
+				String modelPluginID = model.getModelPluginID();
+				if (!genmodelDependencies.contains(modelPluginID)) {
+					genmodelDependencies.add(modelPluginID);
+				}
+			}
+			WorkspaceModifyOperation projectOp = new CreateProjectOperation(
+					projectHandle, description, genmodelDependencies);
 			WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(
 					projectHandle, genmodelPage.getSelectedGenmodels(),
 					genmodelProvider, resourceSetProvider);
 			op = new CompositeWorkspaceModifyOperation(
 					new WorkspaceModifyOperation[] { projectOp, genmodelOp },
 					"Creating project");
+		} else {
+			op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String>of());
 		}
 
 		try {

@@ -101,12 +101,14 @@ public abstract class ProjectGenerationHelper {
 	 * @throws OperationCanceledException
 	 */
 	public static void createProject(IProjectDescription description,
-			IProject proj, IProgressMonitor monitor) throws CoreException {
-		ImmutableList<String> dependencies = ImmutableList.of(
-				"org.eclipse.pde.core", "org.eclipse.emf.ecore",
+			IProject proj, List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
+		List<String> dependencies = Lists.newArrayList("org.eclipse.pde.core", "org.eclipse.emf.ecore",
 				"org.eclipse.emf.transaction",
 				"org.eclipse.viatra2.emf.incquery.runtime",
-				"org.eclipse.xtext.xbase.lib");
+				"org.eclipse.xtext.xbase.lib"); 
+		if (additionalDependencies != null) {
+			dependencies.addAll(additionalDependencies);
+		}
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 
