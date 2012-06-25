@@ -23,6 +23,7 @@ import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.parsetree.reconstr.ITokenSerializer.ICrossReferenceSerializer;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
@@ -42,6 +43,8 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	IJavaProjectProvider projectProvider;
 	@Inject
 	IQualifiedNameConverter qualifiedNameConverter;
+	@Inject
+	ICrossReferenceSerializer refSerializer;
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
