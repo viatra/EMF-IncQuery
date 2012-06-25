@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -84,6 +85,9 @@ public class ExtensionBasedGenerationFragmentProvider implements
 	@Override
 	public IProject getFragmentProject(IProject modelProject,
 			IGenerationFragment fragment) {
+		if (StringExtensions.isNullOrEmpty(fragment.getProjectPostfix())) {
+			return modelProject;
+		}
 		String projectName = getFragmentProjectName(modelProject, fragment);
 		return workspaceRoot.getProject(projectName);
 	}
