@@ -82,6 +82,12 @@
                relationship="right"
                relative="org.eclipse.ui.views.TaskList">
          </view>
+         <newWizardShortcut
+               id="org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile">
+         </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.pde.ui.PDEPerspective">
@@ -91,6 +97,12 @@
                relationship="right"
                relative="org.eclipse.ui.views.TaskList">
          </view>
+         <newWizardShortcut
+               id="org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.viatra2.emf.incquery.gui.neweiqfile">
+         </newWizardShortcut>
       </perspectiveExtension>
    </extension>
    <extension
