@@ -18,24 +18,30 @@ import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageDeclarative
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageScopeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
+import org.eclipse.viatra2.patternlanguage.scoping.LinkingTrigger;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
+import org.eclipse.xtext.resource.IDerivedStateComputer;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
+import org.eclipse.xtext.xbase.resource.XbaseResource;
 import org.eclipse.xtext.xbase.scoping.XbaseImportedNamespaceScopeProvider;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
+import org.eclipse.xtext.xtext.GrammarResource;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
 
 /**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the
+ * Equinox extension registry.
  */
-public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageRuntimeModule {
+public class EMFPatternLanguageRuntimeModule extends
+		AbstractEMFPatternLanguageRuntimeModule {
 
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {
@@ -45,30 +51,40 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
 	@Override
 	public void configureIScopeProviderDelegate(Binder binder) {
-		binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(EMFPatternLanguageDeclarativeScopeProvider.class);
-		binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(XbaseImportedNamespaceScopeProvider.class);
+		binder.bind(IScopeProvider.class)
+				.annotatedWith(
+						Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE))
+				.to(EMFPatternLanguageDeclarativeScopeProvider.class);
+		binder.bind(IScopeProvider.class)
+				.annotatedWith(
+						Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE))
+				.to(XbaseImportedNamespaceScopeProvider.class);
 	}
-	
+
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
 		return PatternLanguageResourceDescriptionStrategy.class;
 	}
-	
+
 	@Override
 	public Class<? extends IScopeProvider> bindIScopeProvider() {
 		return EMFPatternLanguageScopeProvider.class;
 	}
-	
+
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
 	@Override
 	public Class<? extends ITypeProvider> bindITypeProvider() {
 		return EMFPatternTypeProvider.class;
 	}
-	
+
 	public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
 		return EMFPatternJvmModelAssociator.class;
 	}
-	
+
 	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
 		return MetamodelProviderService.class;
+	}
+
+	public Class<? extends IDerivedStateComputer> bindIDerivedStateComputer() {
+		return LinkingTrigger.class;
 	}
 }
