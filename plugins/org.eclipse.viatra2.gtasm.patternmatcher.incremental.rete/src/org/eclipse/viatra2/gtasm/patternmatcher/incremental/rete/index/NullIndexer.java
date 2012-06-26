@@ -28,9 +28,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask
  * Can only exist in connection with a stateful store, and must be operated by another node (the active node). Do not attach parents directly!
  * @author Bergmann Gábor
  */
-public abstract class NullIndexer extends StandardIndexer implements ProjectionIndexer {
-
-	protected Node activeNode;
+public abstract class NullIndexer extends SpecializedProjectionIndexer {
 
 	protected abstract Collection<Tuple> getTuples();
 
@@ -40,9 +38,7 @@ public abstract class NullIndexer extends StandardIndexer implements ProjectionI
 	static Collection<Tuple> emptySet = Collections.emptySet();
 
 	public NullIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, Node activeNode) {
-		super(reteContainer, TupleMask.linear(0, tupleWidth));
-		this.parent = parent;
-		this.activeNode = activeNode;
+		super(reteContainer, TupleMask.linear(0, tupleWidth), parent, activeNode);
 	}
 
 	public Collection<Tuple> get(Tuple signature) {
@@ -66,11 +62,6 @@ public abstract class NullIndexer extends StandardIndexer implements ProjectionI
 
 	public Iterator<Tuple> iterator() {
 		return getTuples().iterator();
-	}
-
-	@Override
-	public Node getActiveNode() {
-		return activeNode;
 	}
 
 	public void propagate(Direction direction, Tuple updateElement) {

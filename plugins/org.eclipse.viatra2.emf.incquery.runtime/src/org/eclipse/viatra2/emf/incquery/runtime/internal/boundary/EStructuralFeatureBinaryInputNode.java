@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.boundary;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -28,6 +29,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBo
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IdentityIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.NullIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.ProjectionIndexer;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.SpecializedProjectionIndexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
@@ -60,6 +62,8 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	
 	private NullIndexer nullIndexer;
 	private IdentityIndexer identityIndexer;
+	private ProjectionIndexer sourceIndexer;
+	private ProjectionIndexer targetIndexer;
 	// TODO more indexers
 	
 	private FeatureListener listener = new FeatureListener() {
@@ -121,6 +125,9 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	protected Tuple makeTuple(EObject source, Object target) {
 		return new FlatTuple(boundary.wrapElement(source), boundary.wrapElement(target));
 	}
+	protected Tuple makeTupleSingle(Object element) {
+		return new FlatTuple(boundary.wrapElement(element));
+	}
 	
 	protected void propagate(Direction direction, final Tuple tuple) {
 		propagateUpdate(direction, tuple);
@@ -130,7 +137,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 
 	protected Collection<Tuple> tuples() {
 		final Collection<Tuple> result = new HashSet<Tuple>();
-		final Set<Setting> settings = baseIndex.getAllValuesOfFeature(feature);
+		final Set<Setting> settings = baseIndex.getOccurrencesOfFeature(feature);
 		if (settings != null) for (Setting setting : settings) {
 			result.add(makeTuple(setting.getEObject(), setting.get(true)));
 		}
@@ -145,6 +152,8 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		if (Options.employTrivialIndexers) {
 			if (nullMask.equals(mask)) return getNullIndexer();
 			if (identityMask.equals(mask)) return getIdentityIndexer();
+			if (sourceKnown.equals(mask)) return getSourceIndexer();
+			if (targetKnown.equals(mask)) return getTargetIndexer();
 		}
 		return super.constructIndex(mask);
 	}
@@ -165,8 +174,8 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 				 */
 				@Override
 				protected boolean isEmpty() {
-					final Set<Setting> settings = baseIndex.getAllValuesOfFeature(feature);
-					return settings == null || settings.isEmpty();
+					final Set<? extends Object> values = baseIndex.getValuesOfFeature(feature);
+					return values == null || values.isEmpty();
 				}
 				
 				/* (non-Javadoc)
@@ -174,7 +183,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 				 */
 				@Override
 				protected boolean isSingleElement() {
-					final Set<Setting> settings = baseIndex.getAllValuesOfFeature(feature);
+					final Set<Setting> settings = baseIndex.getOccurrencesOfFeature(feature);
 					return settings != null && settings.size()==1;
 				}
 			};
@@ -201,4 +210,109 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		return identityIndexer;
 	}
 
+	/**
+	 * @return the sourceIndexer
+	 */
+	public ProjectionIndexer getSourceIndexer() {
+		if (sourceIndexer == null) {
+			sourceIndexer = new SpecializedProjectionIndexer(reteContainer, sourceKnown, this, this) {
+				
+				@Override
+				public Iterator<Tuple> iterator() {
+					return tuples().iterator();
+				}
+				
+				@Override
+				public Collection<Tuple> get(Tuple signature) {
+					if (signature.getSize() == 1) {
+						final Object object = signature.get(0);
+						if (object instanceof EObject) {
+							try {
+								final EObject source = (EObject) object;
+								if (feature.isMany()) {
+									final Collection<? extends Object> values = (Collection<?>) source.eGet(feature);
+									if (!values.isEmpty()) {
+										Collection<Tuple> result = new HashSet<Tuple>();
+										for (Object value : values) {
+											result.add(makeTuple(source, value));
+										}
+									}
+								} else {
+									final Object value = source.eGet(feature);
+									if (value!=null) 
+										return Collections.singleton(makeTuple(source, value));
+								}
+							} catch (Exception ex) {
+								engine.getLogger().logError(					
+										"EMF-IncQuery encountered an error in processing the EMF model. ",
+									ex); 
+								return null;
+							}
+							
+						}
+					}
+					return null;
+				}
+				
+				@Override
+				public Collection<Tuple> getSignatures() {
+					final Collection<EObject> holders = baseIndex.getHoldersOfFeature(feature);
+					if (holders == null || holders.size() == 0) return null;
+					Collection<Tuple> result = new HashSet<Tuple>();
+					for (EObject holder : holders) {
+						result.add(makeTupleSingle(holder));
+					}
+					return result;
+				}
+			};
+		}
+		return sourceIndexer;
+	}
+
+	/**
+	 * @return the targetIndexer
+	 */
+	public ProjectionIndexer getTargetIndexer() {
+		if (targetIndexer == null) {
+			targetIndexer = new SpecializedProjectionIndexer(reteContainer, targetKnown, this, this) {
+				
+				@Override
+				public Iterator<Tuple> iterator() {
+					return tuples().iterator();
+				}
+				
+				@Override
+				public Collection<Tuple> get(Tuple signature) {
+					if (signature.getSize() == 1) {
+						final Object value = signature.get(0);
+						
+						Collection<EObject> holders = baseIndex.findByFeatureValue(value, feature);
+						if (holders == null || holders.size() == 0) return null;
+						
+						Collection<Tuple> result = new HashSet<Tuple>();				
+						for (EObject source : holders) {
+							result.add(makeTuple(source, value));
+						}
+						return result;
+
+					}
+					return null;
+				}
+				
+				@Override
+				public Collection<Tuple> getSignatures() {
+					final Collection<? extends Object> values = baseIndex.getValuesOfFeature(feature);
+					if (values == null || values.size() == 0) return null;
+					Collection<Tuple> result = new HashSet<Tuple>();
+					for (Object value : values) {
+						result.add(makeTupleSingle(value));
+					}
+					return result;
+				}
+			};
+		}
+		return targetIndexer;
+	}
+
+	
 }
