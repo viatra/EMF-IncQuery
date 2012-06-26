@@ -44,6 +44,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
@@ -70,8 +71,6 @@ public class DatabindingUtil {
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
-	private static List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories = collectGeneratedMatcherFactories();
-	//the initialization of the generated patterns must be after the initialization of the matcher factories
 	public static List<Pattern> generatedPatterns = collectGeneratedPatterns();
 	
 	public static final String OFF_ANNOTATION = "Off";
@@ -108,7 +107,7 @@ public class DatabindingUtil {
 	
 	private static List<Pattern> collectGeneratedPatterns() {
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : generatedMatcherFactories) {
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			patterns.add(factory.getPattern());
 		}
 		return patterns;
@@ -380,7 +379,7 @@ public class DatabindingUtil {
 		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
 
 		//generated matchers
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : generatedMatcherFactories) {
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
 			String patternFqn = factory.getPatternFullyQualifiedName();
 			root.addMatcher(matcher, patternFqn, true);
@@ -392,30 +391,6 @@ public class DatabindingUtil {
 		}
 
 		return root;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private static List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> collectGeneratedMatcherFactories() {
-		List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = 
-				new ArrayList<IMatcherFactory<IPatternMatch,IncQueryMatcher<IPatternMatch>>>();
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
-		for (IExtension e : ep.getExtensions()) {
-			for (IConfigurationElement ce : e.getConfigurationElements()) {
-				try {
-					Object obj = ce.createExecutableExtension("matcherFactoryClass");
-
-					if (obj instanceof IMatcherFactory<?, ?>) {
-						IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>) obj;
-						factories.add(factory);
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-		
-		return factories;
 	}
 	
 	/**

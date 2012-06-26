@@ -73,13 +73,13 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		projectCreationPage
 				.setDescription("Create a new EMF IncQuery project.");
 		addPage(projectCreationPage);
-		genmodelPage = new NewEiqGenmodelPage();
+		genmodelPage = new NewEiqGenmodelPage(true);
 		addPage(genmodelPage);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
-		workspace = (IWorkspace) workbench.getService(IWorkspace.class);
+		workspace = ResourcesPlugin.getWorkspace();
 		// this.selection = selection;
 	}
 
