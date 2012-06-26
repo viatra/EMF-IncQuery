@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.patternlanguage.EcoreGenmodelRegistry;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
@@ -27,6 +28,8 @@ public class MetamodelProviderService implements IMetamodelProvider {
 	
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
+	
+	protected EcoreGenmodelRegistry genmodelRegistry = new EcoreGenmodelRegistry();
 
 	/*
 	 * (non-Javadoc)
@@ -91,6 +94,6 @@ public class MetamodelProviderService implements IMetamodelProvider {
 
 	@Override
 	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-		return false;
+		return genmodelRegistry.findGenPackage(ePackage.getNsURI(), set) != null;
 	}
 }

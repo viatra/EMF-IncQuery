@@ -79,8 +79,11 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
+			pattern helper(p) = {
+				Pattern(p);
+			}
 			pattern testPattern(p) = {
-				neg Pattern.name(p, "");
+				neg find helper(p);
 			}'
 		)
 		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
@@ -160,8 +163,11 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
+			pattern helper(P) = {
+				Pattern(P);
+			}
 			pattern testPattern() = {
-				neg Pattern.name(p, "");
+				neg find helper(p);
 			}'
 		)
 		tester.validate(model).assertWarning(EMFIssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE)
@@ -213,9 +219,12 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
+			pattern helper(p) = {
+				Pattern(p);
+			}
 			pattern testPattern() = {
 				Pattern(p);
-				neg Pattern.name(p, "");
+				neg find helper(p);
 			}'
 		)
 		tester.validate(model).assertOK
@@ -272,8 +281,12 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}
 
+			pattern helper2(p) = {
+				Pattern(p);
+			}
+
 			pattern testPattern() = {
-				neg Pattern.name(p, "");
+				neg find helper2(p);
 				neg find helper(p);
 			}'
 		)
@@ -290,7 +303,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			}
 
 			pattern testPattern() = {
-				neg Pattern.name(p, "");
+				neg find helper(p);
 				Pattern(h);
 				h == count find helper(p);
 			}'

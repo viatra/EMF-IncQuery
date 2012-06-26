@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
+package org.eclipse.viatra2.patternlanguage;
 
 import java.util.Map;
 
@@ -9,10 +9,8 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import com.google.common.collect.Maps;
 

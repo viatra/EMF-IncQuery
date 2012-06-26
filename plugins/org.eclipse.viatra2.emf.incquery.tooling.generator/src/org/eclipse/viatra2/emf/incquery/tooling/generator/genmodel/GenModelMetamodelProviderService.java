@@ -18,6 +18,7 @@ import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
+import org.eclipse.viatra2.patternlanguage.EcoreGenmodelRegistry;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -44,8 +45,6 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	IQualifiedNameConverter qualifiedNameConverter;
 	@Inject
 	ICrossReferenceSerializer refSerializer;
-	
-	private EcoreGenmodelRegistry genmodelRegistry = new EcoreGenmodelRegistry();
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
