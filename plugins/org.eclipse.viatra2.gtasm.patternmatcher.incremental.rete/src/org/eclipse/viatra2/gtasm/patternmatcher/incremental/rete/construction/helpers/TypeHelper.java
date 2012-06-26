@@ -58,7 +58,9 @@ public class TypeHelper {
 				if (context.isUnaryType(deltaType)) newTypes.add(ITypeInfoProviderConstraint.TypeInfoSpecials.ANY_UNARY);
 				if (context.isTernaryEdgeType(deltaType)) newTypes.add(ITypeInfoProviderConstraint.TypeInfoSpecials.ANY_TERNARY);
 				Collection<? extends Object> directSupertypes = context.enumerateDirectSupertypes(deltaType);
-				newTypes.addAll(directSupertypes);
+				if (directSupertypes!=null) {
+					newTypes.addAll(directSupertypes);
+				}
 			}
 			newTypes.removeAll(closure);
 			delta = newTypes;
