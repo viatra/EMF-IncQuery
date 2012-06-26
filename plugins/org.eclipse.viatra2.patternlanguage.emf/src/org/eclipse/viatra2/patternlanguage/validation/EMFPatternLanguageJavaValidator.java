@@ -229,13 +229,13 @@ public class EMFPatternLanguageJavaValidator extends
 						"Unrecognised compare feature.");
 			}
 		} else if (container instanceof PathExpressionConstraint) {
-			if (((PathExpressionConstraint) container).isNegative()) {
-				classifiedReferences
-						.incrementCounter(VariableReferenceClass.NegativeExistential);
-			} else {
-				classifiedReferences
-						.incrementCounter(VariableReferenceClass.PositiveExistential);
-			}
+//			if (((PathExpressionConstraint) container).isNegative()) {
+//				classifiedReferences
+//						.incrementCounter(VariableReferenceClass.NegativeExistential);
+//			} else {
+			classifiedReferences
+					.incrementCounter(VariableReferenceClass.PositiveExistential);
+//			}
 		} else if (container instanceof PatternCompositionConstraint) {
 			if (((PatternCompositionConstraint) container).isNegative()) {
 				classifiedReferences
