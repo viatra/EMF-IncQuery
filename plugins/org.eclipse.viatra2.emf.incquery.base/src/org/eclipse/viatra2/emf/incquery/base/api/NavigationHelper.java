@@ -32,7 +32,8 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
  * - Getting all the (direct) instances of a given EClass 
  * <br><br>
  * Note that the helper will maintain these information incrementally 
- * on a given node's subgraph in the model ({@link EObject}, {@link Resource} or {@link ResourceSet}).
+ * on a given node's subgraph in the model ({@link EObject}, {@link Resource} or {@link ResourceSet}). <br>
+ * Note that none of the defined methods return null upon empty result sets.
  * 
  * @author Tamas Szabo
  *

@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -125,11 +126,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-		if (contentAdapter.getFeatureMap().get(value) == null) {
-			return null;
+		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(value);
+		if (mapVal == null || mapVal.get(attribute) == null) {
+			return Collections.emptySet();
 		}
 		else {
-			return contentAdapter.getFeatureMap().get(value).get(attribute);
+			return mapVal.get(attribute);
 		}
 	}
 
@@ -180,25 +182,29 @@ public class NavigationHelperImpl implements NavigationHelper {
 			}
 		}
 
-		if (retSet.isEmpty())
-			return null;
 		return retSet;
 	}
 
 	@Override
-	public Set<EObject> getInverseReferences(EObject target,
-			EReference reference) {
-		if (contentAdapter.getFeatureMap().get(target) == null) {
-			return null;
+	public Set<EObject> getInverseReferences(EObject target, EReference reference) {
+		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(target);
+		if (mapVal == null || mapVal.get(reference) == null) {
+			return Collections.emptySet();
 		}
 		else {
-			return contentAdapter.getFeatureMap().get(target).get(reference);
+			return mapVal.get(reference);
 		}
 	}
 
 	@Override
 	public Set<EObject> getDirectInstances(EClass type) {
-		return contentAdapter.getInstanceMap().get(type);
+		Set<EObject> setVal = contentAdapter.getInstanceMap().get(type);
+		if (setVal == null) {
+			return Collections.emptySet();
+		}
+		else {
+			return setVal;
+		}
 	}
 
 	@Override
