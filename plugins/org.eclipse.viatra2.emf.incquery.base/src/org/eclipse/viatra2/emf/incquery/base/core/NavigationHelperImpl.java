@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -96,9 +97,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
 		
 		if (valMap != null) {
-			for (EStructuralFeature attr : valMap.keySet()) {
-				for (EObject holder : valMap.get(attr)) {
-					retSet.add(new NavigationHelperSetting(attr, holder, value));
+			for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
+				for (EObject holder : entry.getValue()) {
+					retSet.add(new NavigationHelperSetting(entry.getKey(), holder, value));
 				}
 			}
 		}
@@ -156,9 +157,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(target);
 		
 		if (mapVal != null) {
-			for (EStructuralFeature ref : mapVal.keySet()) {
-				for (EObject source : mapVal.get(ref)) {
-					retSet.add(new NavigationHelperSetting(ref, target, source));
+			for (Entry<EStructuralFeature, Set<EObject>> entry : mapVal.entrySet()) {
+				for (EObject source : entry.getValue()) {
+					retSet.add(new NavigationHelperSetting(entry.getKey(), target, source));
 				}
 			}
 		}
