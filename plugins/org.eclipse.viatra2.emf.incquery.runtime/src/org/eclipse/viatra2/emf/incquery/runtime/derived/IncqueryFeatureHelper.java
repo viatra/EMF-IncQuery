@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -28,12 +33,22 @@ import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegi
 
 /**
  * @author Abel Hegedus
- * TODO remove sourceMap (memory leak) 
  */
 public class IncqueryFeatureHelper {
 
 	//private static final Map<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>> sourceMap = new HashMap<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>>();
+	// temporal registry for features being built
+	private static final Map<EObject, List<EStructuralFeature>> sourceMap = new HashMap<EObject, List<EStructuralFeature>>();
+	//private static final Map<EObject, Map<EStructuralFeature,IncQueryMatcher<IPatternMatch>>> sourceMap = new HashMap<EObject, Map<EStructuralFeature,IncQueryMatcher<IPatternMatch>>>();
+	private static final Map<EObject, Map<EStructuralFeature,Integer>> handlerRequestCounter = new HashMap<EObject, Map<EStructuralFeature,Integer>>();
 
+	/**
+	 * 
+	 */
+	private IncqueryFeatureHelper() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	/*public static IncqueryFeatureHandler getHandler(
 			EObject source, EStructuralFeature feature) {
 
@@ -84,31 +99,80 @@ public class IncqueryFeatureHelper {
 			String targetParamName,
 			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind, boolean keepCache) {
 		try {
-			if(matcherFactory == null) {
-				throw new IncQueryRuntimeException("Matcher factory not set!");
+			List<EStructuralFeature> featureList = null;
+			//Map<EStructuralFeature, IncQueryMatcher<IPatternMatch>> featureList = null;
+			Map<EStructuralFeature,Integer> counter = null;
+			if(sourceMap.containsKey(source)) {
+				featureList = sourceMap.get(source);
+			} else {
+				featureList = new ArrayList<EStructuralFeature>();
+				//featureList = new HashMap<EStructuralFeature,IncQueryMatcher<IPatternMatch>>();
+				sourceMap.put(source, featureList);
+			}
+			if(handlerRequestCounter.containsKey(source)) {
+				counter = handlerRequestCounter.get(source);
+			} else {
+				counter = new HashMap<EStructuralFeature,Integer>();
+				handlerRequestCounter.put(source, counter);
+			}
+			if(counter.containsKey(feature)) {
+				Integer count = counter.get(feature);
+				counter.put(feature, count+1);
+			} else {
+				counter.put(feature, 1);
 			}
 			IncQueryMatcher<IPatternMatch> matcher = null;
-			Resource eResource = source.eResource();
-			if(eResource != null) {
-				ResourceSet resourceSet = eResource.getResourceSet();
-				if(resourceSet != null) {
-					matcher = matcherFactory.getMatcher(resourceSet);
-				} else {
-					matcher = matcherFactory.getMatcher(eResource);
-					IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
+			if (!featureList.contains(feature)){
+			//if (!featureList.containsKey(feature)){
+				featureList.add(feature);
+				//featureList.put(feature,handler);
+				
+				if(matcherFactory == null) {
+					throw new IncQueryRuntimeException("Matcher factory not set!");
 				}
+				Resource eResource = source.eResource();
+				if(eResource != null) {
+					ResourceSet resourceSet = eResource.getResourceSet();
+					if(resourceSet != null) {
+						matcher = matcherFactory.getMatcher(resourceSet);
+					} else {
+						matcher = matcherFactory.getMatcher(eResource);
+						IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
+					}
+				} else {
+					matcher = matcherFactory.getMatcher(source);
+					IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
+				}
+				if(matcher == null) {
+					throw new IncQueryRuntimeException("Matcher cannot be initiated!");
+				}/* else {
+					if(!featureList.containsKey(feature)) {
+						featureList.put(feature, matcher);
+					}
+				}*/
+			}
+			//matcher = featureList.get(feature);
+			IncqueryFeatureHandler handler = null;
+			if(matcher != null) {
+				featureList.remove(feature);
+				handler = new IncqueryFeatureHandler(
+						(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind, keepCache);
+			}
+			//featureList.put(feature, handler);
+			//featureList.remove(feature);
+			if(featureList.isEmpty()) {
+				sourceMap.remove(source);
+			}
+			if(counter.get(feature) == 1) {
+				IncQueryEngine.getDefaultLogger().logWarning("Starting handler for feature " + feature);
+				handler.startMonitoring();
+				counter.remove(feature);
+				return handler;
 			} else {
-				matcher = matcherFactory.getMatcher(source);
-				IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
+				counter.put(feature, counter.get(feature)-1);
+				//return null;
 			}
-			if(matcher == null) {
-				throw new IncQueryRuntimeException("Matcher cannot be initiated!");
-			}
-			IncqueryFeatureHandler handler = new IncqueryFeatureHandler(
-					(InternalEObject) source, feature, matcher, sourceParamName, targetParamName, kind, keepCache);
-			handler.startMonitoring();
-			//featureMap.put(feature, handler);
-			return handler;
+			//}
 		} catch (IncQueryRuntimeException e) {
 			IncQueryEngine.getDefaultLogger().logError("Handler initialization failed", e);
 		}

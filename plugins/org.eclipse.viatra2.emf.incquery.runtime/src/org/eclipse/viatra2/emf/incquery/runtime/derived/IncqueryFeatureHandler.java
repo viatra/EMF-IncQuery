@@ -84,7 +84,7 @@ public class IncqueryFeatureHandler {
 		if(matcher.getPositionOfParameter(sourceParamName) == null) {
 			IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Source parameter " + sourceParamName + " not found!");
 		}
-		if(matcher.getPositionOfParameter(targetParamName) == null) {
+		if(targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
 			IncQueryEngine.getDefaultLogger().logError("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
 		}
 		IPatternMatch partialMatch = matcher.newEmptyMatch();
@@ -111,7 +111,9 @@ public class IncqueryFeatureHandler {
 	
 	private void sendNextNotfication() {
 		while(!notifications.isEmpty()) {
-			source.eNotify(notifications.remove(0));
+			ENotificationImpl remove = notifications.remove(0);
+			IncQueryEngine.getDefaultLogger().logError(this + " : " +remove.toString());
+			source.eNotify(remove);
 		}
 	}
 	
