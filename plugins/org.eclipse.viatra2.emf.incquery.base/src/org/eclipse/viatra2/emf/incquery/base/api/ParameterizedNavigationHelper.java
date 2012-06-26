@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.base.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -67,6 +68,6 @@ public interface ParameterizedNavigationHelper extends NavigationHelper {
 	 * 
 	 * @param runnable
 	 */
-	public void coalesceTraversals(Runnable runnable) throws InvocationTargetException;
+	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 	
 }

@@ -11,6 +11,9 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
 
@@ -59,8 +62,13 @@ public interface IPatternMatcherRuntimeContext<PatternDescription> extends
 	void modelReadLock();
 	void modelReadUnLock();
 
-	public abstract void finishCoalescing();
-	public abstract void startCoalescing();
+	/**
+	 * The given runnable will be executed, and all model traversals will be delayed until the execution is done.
+	 * If there are any outstanding information to be read from the model, a single coalesced model traversal will initialize the caches and deliver the notifications.
+	 * 
+	 * @param callable
+	 */
+	public abstract <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 
 	interface ModelElementCrawler {
 		public void crawl(Object modelElement);

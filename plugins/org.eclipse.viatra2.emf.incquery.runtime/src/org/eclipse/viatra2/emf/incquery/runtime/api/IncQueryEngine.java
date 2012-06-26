@@ -89,6 +89,9 @@ public class IncQueryEngine {
 		super();
 		this.manager = manager;
 		this.emfRoot = emfRoot;
+		
+		if (! (emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet)) 
+			throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 	}	
 	
 	/**
@@ -103,9 +106,13 @@ public class IncQueryEngine {
 	 * @return the baseIndex the NavigationHelper maintaining the base index
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected ParameterizedNavigationHelper getBaseIndexInternal() throws IncQueryBaseException {
+	protected ParameterizedNavigationHelper getBaseIndexInternal() {
 		if (baseIndex == null) {
-			baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+			try {
+				baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+			} catch (IncQueryBaseException e) {
+				throw new IncQueryRuntimeException("Could not initialize EMF-IncQuery base index", e);
+			}
 		}
 		return baseIndex;
 	}
@@ -115,7 +122,7 @@ public class IncQueryEngine {
 	 * @return the baseIndex the NavigationHelper maintaining the base index
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	public NavigationHelper getBaseIndex() throws IncQueryBaseException {
+	public NavigationHelper getBaseIndex() {
 		return getBaseIndexInternal();
 	}	
 	
@@ -127,14 +134,14 @@ public class IncQueryEngine {
 	 */
 	public ReteEngine<Pattern> getReteEngine() throws IncQueryRuntimeException {
 		if (reteEngine == null) {
-			EMFPatternMatcherRuntimeContext<Pattern> context;
-			if (emfRoot instanceof EObject) 
-				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
-			else if (emfRoot instanceof Resource) 
-				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot, this);
-			else if (emfRoot instanceof ResourceSet) 
-				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
-			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
+			EMFPatternMatcherRuntimeContext<Pattern> context = new EMFPatternMatcherRuntimeContext<Pattern>(this, getBaseIndexInternal());
+//			if (emfRoot instanceof EObject) 
+//				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
+//			else if (emfRoot instanceof Resource) 
+//				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot, this);
+//			else if (emfRoot instanceof ResourceSet) 
+//				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
+//			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 			
 			reteEngine = buildReteEngineInternal(context);
 			//if (reteEngine != null) engines.put(emfRoot, new WeakReference<ReteEngine<String>>(engine));

@@ -15,6 +15,7 @@ package org.eclipse.viatra2.emf.incquery.base.core;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
@@ -92,14 +93,18 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	}
 	
 	@Override
-	public void coalesceTraversals(Runnable runnable) throws InvocationTargetException {
+	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
+		if(delayTraversals) 
+			throw new UnsupportedOperationException("Coalescing EMF model traversals in EMF-IncQuery base is not reentrant.");
+		
 		delayedClasses = new HashSet<EClass>();
 		delayedFeatures = new HashSet<EStructuralFeature>();
 		
+		V result = null;
 		try {
 			try {
 				delayTraversals = true;
-				runnable.run();
+				result = callable.call();
 			} finally {
 				delayTraversals = false;
 				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty()) {
@@ -119,5 +124,6 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 		} catch (Exception e) {
 			throw new InvocationTargetException(e);
 		}
+		return result;
 	}
 }
