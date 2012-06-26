@@ -112,7 +112,7 @@ public class IncqueryFeatureHandler {
 	private void sendNextNotfication() {
 		while(!notifications.isEmpty()) {
 			ENotificationImpl remove = notifications.remove(0);
-			IncQueryEngine.getDefaultLogger().logError(this + " : " +remove.toString());
+			//IncQueryEngine.getDefaultLogger().logError(this + " : " +remove.toString());
 			source.eNotify(remove);
 		}
 	}

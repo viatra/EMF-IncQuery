@@ -164,7 +164,7 @@ public class IncqueryFeatureHelper {
 				SOURCEMAP.remove(source);
 			}
 			if(counter.get(feature) == 1) {
-				IncQueryEngine.getDefaultLogger().logWarning("Starting handler for feature " + feature);
+				//IncQueryEngine.getDefaultLogger().logWarning("Starting handler for feature " + feature);
 				handler.startMonitoring();
 				counter.remove(feature);
 				return handler;
