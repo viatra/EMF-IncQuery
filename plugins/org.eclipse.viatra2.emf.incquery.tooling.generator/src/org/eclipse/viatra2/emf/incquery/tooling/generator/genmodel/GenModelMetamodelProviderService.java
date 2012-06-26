@@ -106,6 +106,12 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		}
 		return super.loadEPackage(packageUri, set);
 	}
+	
+	@Override
+	public boolean isGeneratedCodeAvailable(EPackage ePackage) {
+		// TODO Auto-generated method stub
+		return super.isGeneratedCodeAvailable(ePackage);
+	}
 
 	@Override
 	public IncQueryGeneratorModel getGeneratorModel(EObject pattern)
