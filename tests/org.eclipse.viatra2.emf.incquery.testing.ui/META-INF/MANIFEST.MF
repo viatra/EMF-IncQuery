@@ -15,5 +15,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.viatra2.emf.incquery.snapshot;bundle-version="0.6.0",
  org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.emf.incquery.testing.ui.handlers
