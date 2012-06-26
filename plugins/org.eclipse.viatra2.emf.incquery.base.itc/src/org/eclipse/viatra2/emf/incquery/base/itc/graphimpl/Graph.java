@@ -155,19 +155,20 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 	
 	@Override
 	public String toString() {
-		String s = "nodes = ";
+		StringBuilder sb = new StringBuilder();
+		sb.append("nodes = ");
 		for (V n : this.edgeList.keySet()) {
-			s += n.toString()+" ";
+			sb.append(n.toString()+" ");
 		}
-		s += " edges = ";
+		sb.append(" edges = ");
 		for (V source : this.edgeList.keySet()) {
 			if (edgeList.get(source) != null) {
 				for (V target : this.edgeList.get(source)) {
-					s += "("+source+","+target+") ";
+					sb.append("("+source+","+target+") ");
 				}
 			}
 		}
-		return s;
+		return sb.toString();
 	}
 
 	public Integer[] deleteRandomEdge() {
