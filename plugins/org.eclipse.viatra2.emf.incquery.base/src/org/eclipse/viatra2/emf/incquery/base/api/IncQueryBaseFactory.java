@@ -41,7 +41,7 @@ public class IncQueryBaseFactory {
 	 * 
 	 * @return the singleton instance
 	 */
-	public static IncQueryBaseFactory getInstance() {
+	public synchronized static IncQueryBaseFactory getInstance() {
 		if (instance == null) {
 			instance = new IncQueryBaseFactory();
 		}

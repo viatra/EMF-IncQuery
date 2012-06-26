@@ -82,11 +82,11 @@ public class CountList {
 
 	@Override
 	public String toString() {
-		String s = "";
+		StringBuilder sb = new StringBuilder();
 		for (Integer i : levelCountMap.keySet()) {
-			s += "|"+i+"-"+levelCountMap.get(i);
+			sb.append("|"+i+"-"+levelCountMap.get(i));
 		}
-		
-		return s+"|";
+		sb.append("|");
+		return sb.toString();
 	}
 }

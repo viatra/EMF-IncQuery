@@ -40,7 +40,7 @@ public class PatternRegistry {
 	private List<Pattern> generatedPatterns;
 	private Map<String, Pattern> patternNameMap;
 	
-	public static PatternRegistry getInstance() {
+	public synchronized static PatternRegistry getInstance() {
 		if (instance == null) {
 			instance = new PatternRegistry();
 		}

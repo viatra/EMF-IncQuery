@@ -30,7 +30,7 @@ import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 
 public abstract class EMFDataSource {
 
-	public static ArrayList<IGraphObserver<EObject>> observers;
+	public static ArrayList<IGraphObserver<EObject>> observers = new ArrayList<IGraphObserver<EObject>>();;
 	public static Set<EReference> refToObserv;
 	
 	private static abstract class ForNotifier implements IGraphDataSource<EObject> {
@@ -40,7 +40,6 @@ public abstract class EMFDataSource {
 		
 		public ForNotifier(Notifier root, Set<EReference> _refToObserv) {
 			this.root = root;
-			observers = new ArrayList<IGraphObserver<EObject>>();
 			refToObserv = _refToObserv;
 		}
 		

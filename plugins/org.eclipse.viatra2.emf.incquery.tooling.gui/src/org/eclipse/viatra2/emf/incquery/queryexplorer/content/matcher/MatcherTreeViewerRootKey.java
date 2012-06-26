@@ -68,7 +68,8 @@ public class MatcherTreeViewerRootKey {
 
 	@Override
 	public String toString() {
-		String uris = " (";
+		StringBuilder sb = new StringBuilder();
+		sb.append(" (");
 		
 		int i = 0;
 		
@@ -76,22 +77,22 @@ public class MatcherTreeViewerRootKey {
 			ResourceSet rs = (ResourceSet) notifier;
 			
 			for (Resource r : rs.getResources()) {
-				uris += r.getURI().toString();
+				sb.append(r.getURI().toString());
 				if (i != rs.getResources().size()-1) {
-					uris += " ,";
+					sb.append(" ,");
 				}
 			}
 		}
 		else if (notifier instanceof Resource) {
-			uris += ((Resource) notifier).getURI().toString();
+			sb.append(((Resource) notifier).getURI().toString());
 		}
 		else {
-			uris += notifier.toString();
+			sb.append(notifier.toString());
 		}
 		
-		uris += ")";
+		sb.append(")");
 		
-		return editor.getEditorSite().getId() + uris;
+		return editor.getEditorSite().getId() + sb.toString();
 	}
 
 }

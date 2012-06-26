@@ -254,7 +254,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 						listener.instanceInserted(clazz, instance);
 					}
 					else {
-						listener.instanceInserted(clazz, instance);
+						listener.instanceDeleted(clazz, instance);
 					}
 				}
 			}

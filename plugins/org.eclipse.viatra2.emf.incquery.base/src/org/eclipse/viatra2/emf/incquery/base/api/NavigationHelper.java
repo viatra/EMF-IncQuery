@@ -32,7 +32,8 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
  * - Getting all the (direct) instances of a given EClass 
  * <br><br>
  * Note that the helper will maintain these information incrementally 
- * on a given node's subgraph in the model ({@link EObject}, {@link Resource} or {@link ResourceSet}).
+ * on a given node's subgraph in the model ({@link EObject}, {@link Resource} or {@link ResourceSet}). <br>
+ * Note that none of the defined methods return null upon empty result sets.
  * 
  * @author Tamas Szabo
  *
@@ -141,11 +142,11 @@ public interface NavigationHelper {
 	public void registerInstanceListener(Set<EClass> classes, InstanceListener listener);
 	
 	/**
-	 * Unregisters an instance listener.
+	 * Unregisters an instance listener for the given set of classes.
 	 * 
 	 * @param listener the listener instance
 	 */
-	public void unregisterInstanceListener(InstanceListener listener);
+	public void unregisterInstanceListener(Set<EClass> classes, InstanceListener listener);
 	
 	/**
 	 * Registers a feature listener for the navigation helper. 

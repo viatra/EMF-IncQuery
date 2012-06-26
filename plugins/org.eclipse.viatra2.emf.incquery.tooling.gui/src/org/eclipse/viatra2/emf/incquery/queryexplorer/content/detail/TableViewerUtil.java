@@ -167,28 +167,28 @@ public class TableViewerUtil {
 				return null;
 			}
 			else if (Boolean.class.getName().toLowerCase().matches(classFqn)) {
-				return new Boolean(strValue.toLowerCase());
+				return Boolean.valueOf(strValue.toLowerCase());
 			}
 			else if (Character.class.getName().toLowerCase().matches(classFqn)) {
-				return new Character(strValue.charAt(0));
+				return Character.valueOf(strValue.charAt(0));
 			}
 			else if (Byte.class.getName().toLowerCase().matches(classFqn)) {
-				return new Byte(strValue);
+				return Byte.valueOf(strValue);
 			}
 			else if (Short.class.getName().toLowerCase().matches(classFqn)) {
-				return new Short(strValue);
+				return Short.valueOf(strValue);
 			}
 			else if (Integer.class.getName().toLowerCase().matches(classFqn)) {
-				return new Integer(strValue);
+				return Integer.valueOf(strValue);
 			}
 			else if (Long.class.getName().toLowerCase().matches(classFqn)) {
-				return new Long(strValue);
+				return Long.valueOf(strValue);
 			}
 			else if (Float.class.getName().toLowerCase().matches(classFqn)) {
-				return new Float(strValue);
+				return Float.valueOf(strValue);
 			}
 			else if (Double.class.getName().toLowerCase().matches(classFqn)) {
-				return new Double(strValue);
+				return Double.valueOf(strValue);
 			}
 			else if (String.class.getName().toLowerCase().matches(classFqn)) {
 				return value;

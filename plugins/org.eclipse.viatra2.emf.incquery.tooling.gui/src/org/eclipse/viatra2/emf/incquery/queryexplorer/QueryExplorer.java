@@ -30,8 +30,6 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -59,7 +57,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.QueryExplorerFocusListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -68,12 +65,12 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
- * MatchSetViewer is used to display the match sets for those matchers which are annotated with PatternUI. 
+ * Query Explorer view implementation. 
  * 
  * @author Tamas Szabo
  *
  */
-public class QueryExplorer extends ViewPart implements FocusListener {
+public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	private TableViewer tableViewer;
@@ -92,8 +89,6 @@ public class QueryExplorer extends ViewPart implements FocusListener {
 	private FlyoutControlComposite patternsViewerFlyout;
 	private FlyoutControlComposite detailsViewFlyout;
 	
-	private QueryExplorerFocusListener focusListener;
-	
 	@Inject
 	Injector injector;
 	
@@ -106,7 +101,6 @@ public class QueryExplorer extends ViewPart implements FocusListener {
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
 		patternsViewerInput = new PatternComposite("", null);
-		focusListener = new QueryExplorerFocusListener();
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
@@ -272,15 +266,5 @@ public class QueryExplorer extends ViewPart implements FocusListener {
 	
 	public FlyoutControlComposite getPatternsViewerFlyout() {
 		return patternsViewerFlyout;
-	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		System.out.println(e);
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		System.out.println(e);
 	}
 }

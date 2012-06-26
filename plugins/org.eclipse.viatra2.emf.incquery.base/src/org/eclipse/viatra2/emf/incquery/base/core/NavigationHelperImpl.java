@@ -12,9 +12,11 @@
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -96,9 +98,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
 		
 		if (valMap != null) {
-			for (EStructuralFeature attr : valMap.keySet()) {
-				for (EObject holder : valMap.get(attr)) {
-					retSet.add(new NavigationHelperSetting(attr, holder, value));
+			for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
+				for (EObject holder : entry.getValue()) {
+					retSet.add(new NavigationHelperSetting(entry.getKey(), holder, value));
 				}
 			}
 		}
@@ -124,11 +126,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-		if (contentAdapter.getFeatureMap().get(value) == null) {
-			return null;
+		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(value);
+		if (mapVal == null || mapVal.get(attribute) == null) {
+			return Collections.emptySet();
 		}
 		else {
-			return contentAdapter.getFeatureMap().get(value).get(attribute);
+			return mapVal.get(attribute);
 		}
 	}
 
@@ -156,9 +159,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(target);
 		
 		if (mapVal != null) {
-			for (EStructuralFeature ref : mapVal.keySet()) {
-				for (EObject source : mapVal.get(ref)) {
-					retSet.add(new NavigationHelperSetting(ref, target, source));
+			for (Entry<EStructuralFeature, Set<EObject>> entry : mapVal.entrySet()) {
+				for (EObject source : entry.getValue()) {
+					retSet.add(new NavigationHelperSetting(entry.getKey(), target, source));
 				}
 			}
 		}
@@ -179,25 +182,29 @@ public class NavigationHelperImpl implements NavigationHelper {
 			}
 		}
 
-		if (retSet.isEmpty())
-			return null;
 		return retSet;
 	}
 
 	@Override
-	public Set<EObject> getInverseReferences(EObject target,
-			EReference reference) {
-		if (contentAdapter.getFeatureMap().get(target) == null) {
-			return null;
+	public Set<EObject> getInverseReferences(EObject target, EReference reference) {
+		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(target);
+		if (mapVal == null || mapVal.get(reference) == null) {
+			return Collections.emptySet();
 		}
 		else {
-			return contentAdapter.getFeatureMap().get(target).get(reference);
+			return mapVal.get(reference);
 		}
 	}
 
 	@Override
 	public Set<EObject> getDirectInstances(EClass type) {
-		return contentAdapter.getInstanceMap().get(type);
+		Set<EObject> setVal = contentAdapter.getInstanceMap().get(type);
+		if (setVal == null) {
+			return Collections.emptySet();
+		}
+		else {
+			return setVal;
+		}
 	}
 
 	@Override
@@ -221,8 +228,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public void unregisterInstanceListener(InstanceListener listener) {
-		this.instanceListeners.remove(listener);		
+	public void unregisterInstanceListener(Set<EClass> classes, InstanceListener listener) {
+		Set<EClass> restriction = this.instanceListeners.get(listener);
+		restriction.removeAll(classes);
+		if (restriction.size() == 0) {
+			this.instanceListeners.remove(listener);
+		}		
 	}
 	
 	@Override
