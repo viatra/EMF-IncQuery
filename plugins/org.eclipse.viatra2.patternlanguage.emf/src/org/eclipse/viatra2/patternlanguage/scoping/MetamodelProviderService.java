@@ -90,7 +90,7 @@ public class MetamodelProviderService implements IMetamodelProvider {
 	}
 
 	@Override
-	public boolean isGeneratedCodeAvailable(EPackage ePackage) {
+	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
 		return false;
 	}
 }

@@ -3,7 +3,6 @@ package org.eclipse.viatra2.patternlanguage.scoping;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 
 public interface IMetamodelProvider {
@@ -26,5 +25,5 @@ public interface IMetamodelProvider {
 	 */
 	EPackage loadEPackage(String uri, ResourceSet resourceSet);
 
-	boolean isGeneratedCodeAvailable(EPackage ePackage);
+	boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set);
 }

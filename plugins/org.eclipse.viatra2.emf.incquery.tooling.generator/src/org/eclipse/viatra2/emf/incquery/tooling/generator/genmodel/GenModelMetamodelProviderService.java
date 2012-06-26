@@ -83,6 +83,11 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public EPackage loadEPackage(final String packageUri, ResourceSet set) {
+		EPackage loadedPackage = findGenmodel(packageUri, set);
+		return (loadedPackage != null) ? loadedPackage : super.loadEPackage(packageUri, set);
+	}
+
+	private EPackage findGenmodel(final String packageUri, ResourceSet set) {
 		if (set != null && projectProvider != null) {
 			IJavaProject javaProject = projectProvider.getJavaProject(set);
 			IncQueryGeneratorModel generatorModel = getGeneratorModel(
@@ -104,13 +109,12 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 				}
 			}
 		}
-		return super.loadEPackage(packageUri, set);
+		return null;
 	}
-	
+
 	@Override
-	public boolean isGeneratedCodeAvailable(EPackage ePackage) {
-		// TODO Auto-generated method stub
-		return super.isGeneratedCodeAvailable(ePackage);
+	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
+		return (findGenmodel(ePackage.getNsURI(), set) != null) || super.isGeneratedCodeAvailable(ePackage, set);
 	}
 
 	@Override
