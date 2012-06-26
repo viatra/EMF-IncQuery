@@ -134,7 +134,7 @@ public class PatternComposite extends PatternComponent {
 	}
 	
 	/**
-	 * Remove all composite elements which do not have a leaf component under it.
+	 * Removes all composite elements which do not have a leaf component under it.
 	 */
 	public void purge() {
 		List<PatternComponent> copyOfChildren = new ArrayList<PatternComponent>(children);
@@ -142,13 +142,12 @@ public class PatternComposite extends PatternComponent {
 		for (PatternComponent component : copyOfChildren) {
 			if (component instanceof PatternComposite) {
 				PatternComposite composite = (PatternComposite) component;
-				if (composite.getAllLeaves().size() == 0) {
-					QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(composite.getFullPatternNamePrefix());
-				}
-				else {
-					composite.purge();
-				}
+				composite.purge();
 			}
+		}
+		
+		if (this.getAllLeaves().size() == 0) {
+			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(getFullPatternNamePrefix());
 		}
 	}
 	

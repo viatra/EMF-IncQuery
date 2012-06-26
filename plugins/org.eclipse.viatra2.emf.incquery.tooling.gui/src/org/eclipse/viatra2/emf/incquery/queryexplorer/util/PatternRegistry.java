@@ -80,11 +80,11 @@ public class PatternRegistry {
 	 * 
 	 * @param file the eiq file instance
 	 * @param pm the parsed pattern model
-	 * @return the set of patterns registered
+	 * @return the list of patterns registered
 	 */
-	public Set<Pattern> registerPatternModel(IFile file, PatternModel pm) {
+	public List<Pattern> registerPatternModel(IFile file, PatternModel pm) {
 		this.registeredPatterModels.put(file, pm);
-		Set<Pattern> newPatterns = new HashSet<Pattern>();
+		List<Pattern> newPatterns = new ArrayList<Pattern>();
 		
 		if (pm != null) {
 			for (Pattern p : pm.getPatterns()) {
@@ -113,6 +113,15 @@ public class PatternRegistry {
 	
 	public PatternModel getPatternModelForFile(IFile file) {
 		return registeredPatterModels.get(file);
+	}
+	
+	/**
+	 * Returns true if there are no (generic) patterns registered, false otherwise.
+	 *   
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return !registeredPatterModels.isEmpty();
 	}
 	
 	/**

@@ -39,9 +39,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 		for (Object element : selection.toArray()) {	
 			if (element instanceof PatternLeaf) {
 				PatternLeaf leaf = (PatternLeaf) element;
-				PatternComposite composite = (PatternComposite) leaf.getParent();
 				unregisterPattern(leaf.getFullPatternNamePrefix());
-				QueryExplorer.getInstance().getPatternsViewer().refresh(composite);
 			}
 			else {
 				PatternComposite composite = (PatternComposite) element;
@@ -49,11 +47,11 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 				for (PatternLeaf leaf : leaves) {
 					unregisterPattern(((PatternLeaf) leaf).getFullPatternNamePrefix());
 				}
-				
-				QueryExplorer.getInstance().getPatternsViewerInput().purge();
-				QueryExplorer.getInstance().getPatternsViewer().refresh();
 			}
 		}
+		
+		QueryExplorer.getInstance().getPatternsViewerInput().purge();
+		QueryExplorer.getInstance().getPatternsViewer().refresh();
 		return null;
 	}
 	

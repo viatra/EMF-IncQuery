@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
@@ -63,7 +62,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			PatternModel newParsedModel = dbUtil.parseEPM(file);
 			
 			//if no patterns were registered before, open the patterns viewer
-			if (PatternRegistry.getInstance().getPatterns().isEmpty()) {
+			if (PatternRegistry.getInstance().isEmpty()) {
 				FlyoutControlComposite flyout = queryExplorerInstance.getPatternsViewerFlyout();
 				flyout.getPreferences().setState(IFlyoutPreferences.STATE_OPEN);
 				//redraw();
@@ -97,7 +96,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			//REGISTERING PATTERNS
 			
 			//registering patterns from file
-			Set<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
+			List<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
 			allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
 			
 			//now the active patterns also contain of the new patterns

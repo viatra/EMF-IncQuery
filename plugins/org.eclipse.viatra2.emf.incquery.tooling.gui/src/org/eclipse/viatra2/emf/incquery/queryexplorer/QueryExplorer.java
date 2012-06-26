@@ -76,16 +76,15 @@ import com.google.inject.Injector;
 public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
-	private TableViewer tableViewer;
-	private CheckboxTreeViewer patternsViewer;
 	
-	//matcher tree viewer
+	private TableViewer detailsTableViewer;
+	private CheckboxTreeViewer patternsTreeViewer;
 	private TreeViewer matcherTreeViewer;
+	
 	private MatcherContentProvider matcherContentProvider;
 	private MatcherLabelProvider matcherLabelProvider;
 	private MatcherTreeViewerRoot matcherTreeViewerRoot;
 	
-	//observable view
 	private ModelEditorPartListener modelPartListener;
 	private PatternComposite patternsViewerInput;
 	
@@ -144,8 +143,8 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void clearTableViewer() {
-		if (tableViewer.getContentProvider() != null) {
-			tableViewer.setInput(null);
+		if (detailsTableViewer.getContentProvider() != null) {
+			detailsTableViewer.setInput(null);
 		}
 	}
 	
@@ -159,23 +158,23 @@ public class QueryExplorer extends ViewPart {
 		patternsViewerFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
 		
 		matcherTreeViewer = new TreeViewer(patternsViewerFlyout.getClientParent());
-		tableViewer = new TableViewer(detailsViewerFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
+		detailsTableViewer = new TableViewer(detailsViewerFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
 		
 		//matcherTreeViewer configuration
 		matcherTreeViewer.setContentProvider(matcherContentProvider);
 		matcherTreeViewer.setLabelProvider(matcherLabelProvider);
 		matcherTreeViewer.setInput(matcherTreeViewerRoot);
-		
+		matcherTreeViewer.setComparator(null);
 		IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
 		selection.addValueChangeListener(new MatcherTreeViewerSelectionChangeListener());
 		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
 		
 		//patternsViewer configuration		
-		patternsViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
-		patternsViewer.addCheckStateListener(new CheckStateListener());
-		patternsViewer.setContentProvider(new PatternsViewerHierarchicalContentProvider());
-		patternsViewer.setLabelProvider(new PatternsViewerHierarchicalLabelProvider());
-		patternsViewer.setInput(patternsViewerInput);
+		patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
+		patternsTreeViewer.addCheckStateListener(new CheckStateListener());
+		patternsTreeViewer.setContentProvider(new PatternsViewerHierarchicalContentProvider());
+		patternsTreeViewer.setLabelProvider(new PatternsViewerHierarchicalLabelProvider());
+		patternsTreeViewer.setInput(patternsViewerInput);
 		
 		// Create menu manager.
         MenuManager matcherTreeViewerMenuManager = new MenuManager();
@@ -198,12 +197,12 @@ public class QueryExplorer extends ViewPart {
             }
         });
 		// Create menu for patterns viewer
-		Menu patternsViewerMenu = patternsViewerMenuManager.createContextMenu(patternsViewer.getControl());
-		patternsViewer.getControl().setMenu(patternsViewerMenu);
-		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu", patternsViewerMenuManager, patternsViewer);
+		Menu patternsViewerMenu = patternsViewerMenuManager.createContextMenu(patternsTreeViewer.getControl());
+		patternsTreeViewer.getControl().setMenu(patternsViewerMenu);
+		getSite().registerContextMenu("org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.patternsViewerMenu", patternsViewerMenuManager, patternsTreeViewer);
 		
 		//tableView configuration
-		Table table = tableViewer.getTable();
+		Table table = detailsTableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
@@ -214,7 +213,7 @@ public class QueryExplorer extends ViewPart {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
-		tableViewer.getControl().setLayoutData(gridData);
+		detailsTableViewer.getControl().setLayoutData(gridData);
 		
 		//Focus listening and selection providing
 		getSite().setSelectionProvider(matcherTreeViewer);
@@ -239,19 +238,19 @@ public class QueryExplorer extends ViewPart {
 			
 			if (value instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
-				tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, tableViewer);
+				tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
 				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher().getPattern());
 				List<PatternComponent> components = patternsViewerInput.find(patternFqn);
 				if (components != null) {
-					patternsViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
+					patternsTreeViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
 				}
 			}
 			else if (value instanceof ObservablePatternMatch) {
 				ObservablePatternMatch match = (ObservablePatternMatch) value;
-				tableViewerUtil.prepareTableViewerForObservableInput(match, tableViewer);
+				tableViewerUtil.prepareTableViewerForObservableInput(match, detailsTableViewer);
 			}
 			else {
-				tableViewerUtil.clearTableViewerColumns(tableViewer);
+				tableViewerUtil.clearTableViewerColumns(detailsTableViewer);
 				clearTableViewer();
 			}
 		}
@@ -264,8 +263,8 @@ public class QueryExplorer extends ViewPart {
 			patternsViewerInput.addComponent(patternFqn);
 		}
 		
-		patternsViewer.refresh();
-		patternsViewerInput.updateSelection(patternsViewer);
+		patternsTreeViewer.refresh();
+		patternsViewerInput.updateSelection(patternsTreeViewer);
 	}
 	
 	private void initFileListener() {
@@ -282,7 +281,7 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public CheckboxTreeViewer getPatternsViewer() {
-		return patternsViewer;
+		return patternsTreeViewer;
 	}
 	
 	public FlyoutControlComposite getPatternsViewerFlyout() {

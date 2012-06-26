@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +43,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public class ObservablePatternMatcherRoot {
 
 	private Map<String, ObservablePatternMatcher> matchers;
+	private List<ObservablePatternMatcher> sortedMatchers;
 	private MatcherTreeViewerRootKey key;
 	
 	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
 	public ObservablePatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		matchers = new HashMap<String, ObservablePatternMatcher>();
+		sortedMatchers = new LinkedList<ObservablePatternMatcher>();
 		this.key = key;
 	}
 	
@@ -57,6 +59,7 @@ public class ObservablePatternMatcherRoot {
 		@SuppressWarnings("unchecked")
 		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
+		this.sortedMatchers.add(pm);
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 	
@@ -64,8 +67,9 @@ public class ObservablePatternMatcherRoot {
 		//if the pattern is first deactivated then removed, than the matcher corresponding matcher is disposed
 		ObservablePatternMatcher matcher = this.matchers.get(patternFqn);
 		if (matcher != null) {
-			this.matchers.get(patternFqn).dispose();
-			this.matchers.remove(patternFqn);		
+			this.sortedMatchers.remove(matcher);
+			matcher.dispose();
+			this.matchers.remove(patternFqn);
 			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 		}
 	}
@@ -73,7 +77,7 @@ public class ObservablePatternMatcherRoot {
 	public static final String MATCHERS_ID = "matchers";
 	
 	public List<ObservablePatternMatcher> getMatchers() {
-		return new ArrayList<ObservablePatternMatcher>(matchers.values());
+		return sortedMatchers;
 	}
 	
 	public String getText() {
