@@ -34,9 +34,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail.TableViewerUtil;
@@ -87,7 +90,10 @@ public class QueryExplorer extends ViewPart {
 	private PatternComposite patternsViewerInput;
 	
 	private FlyoutControlComposite patternsViewerFlyout;
-	private FlyoutControlComposite detailsViewFlyout;
+	private FlyoutControlComposite detailsViewerFlyout;
+	
+	private IFlyoutPreferences detailsViewerFlyoutPreferences;
+	private IFlyoutPreferences patternsViewerFlyoutPreferences;
 	
 	@Inject
 	Injector injector;
@@ -120,6 +126,23 @@ public class QueryExplorer extends ViewPart {
 		return matcherTreeViewer;
 	}
 	
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		int detailsState = IFlyoutPreferences.STATE_OPEN;
+		int patternsState = IFlyoutPreferences.STATE_COLLAPSED;
+		if (memento != null) {
+			if (memento.getInteger("detailsViewFlyoutState") != null) {
+				detailsState = memento.getInteger("detailsViewFlyoutState");
+			}
+			if (memento.getInteger("patternsViewerFlyoutState") != null) {
+				patternsState = memento.getInteger("detailsViewFlyoutState");
+			}
+		}
+		detailsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, detailsState, 300);
+		patternsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, patternsState, 100);
+	}
+	
 	public void clearTableViewer() {
 		if (tableViewer.getContentProvider() != null) {
 			tableViewer.setInput(null);
@@ -127,18 +150,16 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public void createPartControl(Composite parent) {
-		IFlyoutPreferences rightFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, IFlyoutPreferences.STATE_OPEN, 300);
-		detailsViewFlyout = new FlyoutControlComposite(parent, SWT.NONE, rightFlyoutPreferences);
-		detailsViewFlyout.setTitleText("Details / Filters");
-		detailsViewFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
+		detailsViewerFlyout = new FlyoutControlComposite(parent, SWT.NONE, detailsViewerFlyoutPreferences);
+		detailsViewerFlyout.setTitleText("Details / Filters");
+		detailsViewerFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_EAST);
 		
-		IFlyoutPreferences leftFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, IFlyoutPreferences.STATE_COLLAPSED, 100);
-		patternsViewerFlyout = new FlyoutControlComposite(detailsViewFlyout.getClientParent(), SWT.NONE, leftFlyoutPreferences);
+		patternsViewerFlyout = new FlyoutControlComposite(detailsViewerFlyout.getClientParent(), SWT.NONE, patternsViewerFlyoutPreferences);
 		patternsViewerFlyout.setTitleText("Pattern registry");
 		patternsViewerFlyout.setValidDockLocations(IFlyoutPreferences.DOCK_WEST);
 		
 		matcherTreeViewer = new TreeViewer(patternsViewerFlyout.getClientParent());
-		tableViewer = new TableViewer(detailsViewFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(detailsViewerFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
 		
 		//matcherTreeViewer configuration
 		matcherTreeViewer.setContentProvider(matcherContentProvider);
@@ -266,5 +287,12 @@ public class QueryExplorer extends ViewPart {
 	
 	public FlyoutControlComposite getPatternsViewerFlyout() {
 		return patternsViewerFlyout;
+	}
+	
+	@Override
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		memento.putInteger("detailsViewFlyoutState", detailsViewerFlyout.getPreferences().getState());
+		memento.putInteger("patternsViewerFlyoutState", patternsViewerFlyout.getPreferences().getState());
 	}
 }
