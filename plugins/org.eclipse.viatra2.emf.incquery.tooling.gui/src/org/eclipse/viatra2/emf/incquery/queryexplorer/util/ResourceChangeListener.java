@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 import com.google.inject.Injector;
 
@@ -29,7 +30,7 @@ public class ResourceChangeListener implements IResourceChangeListener {
 			try {
 				event.getDelta().accept(new DeltaVisitor(injector));
 			} catch (CoreException e) {
-				e.printStackTrace();
+				IncQueryGUIPlugin.getDefault().logException("Visitor failed on delta", e);
 			}
 		}
 	}

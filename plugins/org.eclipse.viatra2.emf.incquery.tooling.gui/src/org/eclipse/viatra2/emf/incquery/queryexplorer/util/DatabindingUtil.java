@@ -100,7 +100,7 @@ public class DatabindingUtil {
 				marker.setAttribute(IMarker.MESSAGE, message);
 				orderByPatternMarkers.put(patternFqn, marker);
 			} catch (CoreException e) {
-				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "Marker could not be created for pattern: " + patternFqn, e));
+				logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Marker could not be created for pattern: " + patternFqn, e));
 			}
 		}
 	}
@@ -125,7 +125,7 @@ public class DatabindingUtil {
 				marker.delete();
 			} 
 			catch (CoreException e) {
-				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "Marker could not be deleted: " + marker.toString(), e));
+				logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Marker could not be deleted: " + marker.toString(), e));
 			}
 		}
 	}
@@ -154,7 +154,7 @@ public class DatabindingUtil {
 					return lp;
 				}
 			} catch (CoreException e) {
-				logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "AdapterFactory could not be created for uri: " + uri.toString(), e));
+				logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "AdapterFactory could not be created for uri: " + uri.toString(), e));
 			}
 			return null;
 		}
@@ -174,7 +174,7 @@ public class DatabindingUtil {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Collecting item providers failed.", e));
 		}
 		return result;
 	}
@@ -213,7 +213,7 @@ public class DatabindingUtil {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Message could not be retrieved for generated matcher.", e));
 		}
 		
 		return null;
@@ -241,18 +241,6 @@ public class DatabindingUtil {
 				}
 			}
 		}
-		
-		
-//		Object tmp = match.get(0);
-//		if (tmp instanceof EObject) {
-//			EObject eObj = (EObject) tmp;
-//			URI uri = URI.createURI(eObj.eClass().getEPackage().getNsURI());
-//			AdapterFactory af = registeredItemProviders.get(uri);
-//			if (af != null) {
-//				AdapterFactoryLabelProvider aflp = new AdapterFactoryLabelProvider(af);
-//				System.out.println(aflp.getText(eObj));
-//			}
-//		}
 		
 		//PatternUI annotation was not found
 		if (pattern != null) {
@@ -312,7 +300,7 @@ public class DatabindingUtil {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Could not find DatabindableMatcher for pattern named: "+patternName);
+			logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not find DatabindableMatcher for pattern named: "+patternName, e));
 		}
 		
 		return null;

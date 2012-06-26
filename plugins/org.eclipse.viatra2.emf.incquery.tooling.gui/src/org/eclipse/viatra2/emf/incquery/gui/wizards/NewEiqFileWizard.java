@@ -56,8 +56,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 	private NewEiqFileWizardPatternConfigurationPage page2;
 	private ISelection selection;
 	private IWorkbench workbench;
-	
-	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	private IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	private IPath filePath;
 	
 	@Inject
@@ -185,7 +184,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 			resource.save(Collections.EMPTY_MAP);
 		} 
 		catch (IOException e) {
-			e.printStackTrace();
+			IncQueryGUIPlugin.getDefault().logException("Resource could not be saved", e);
 		}
 	}
 }
