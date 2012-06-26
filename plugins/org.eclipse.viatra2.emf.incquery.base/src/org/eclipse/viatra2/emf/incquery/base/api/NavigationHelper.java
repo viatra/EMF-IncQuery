@@ -127,6 +127,15 @@ public interface NavigationHelper {
 	public Set<EObject> getAllInstances(EClass clazz);
 	
 	/**
+	 * Returns the set of EObject instances which have a feature with the given value.
+	 * 
+	 * @param value the value of the feature
+	 * @param feature the feature instance
+	 * @return the set of EObject instances
+	 */
+	public Set<EObject> findByFeatureValue(Object value, EStructuralFeature feature);
+	
+	/**
 	 * Call this method to dispose the NavigationHelper instance.
 	 * The NavigationHelper instance will unregister itself from the list of EContentAdapters of the given Notifier instance.
 	 */
@@ -164,4 +173,6 @@ public interface NavigationHelper {
 	 * @param features the set of features
 	 */
 	public void unregisterFeatureListener(Set<EStructuralFeature> features, FeatureListener listener);
+	
+
 }

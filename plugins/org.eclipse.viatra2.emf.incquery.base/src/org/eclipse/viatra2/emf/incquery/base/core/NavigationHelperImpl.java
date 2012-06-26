@@ -111,12 +111,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public Collection<Setting> findByAttributeValue(Object value, Set<EAttribute> attributes) {
 		HashSet<Setting> retSet = new HashSet<Setting>();
-
-		for (EAttribute attr : attributes) {
-			if (contentAdapter.getFeatureMap().get(value) != null
-					&& contentAdapter.getFeatureMap().get(value).get(attr) != null) {
-				for (EObject holder : contentAdapter.getFeatureMap().get(value).get(attr)) {
-					retSet.add(new NavigationHelperSetting(attr, holder, value));
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+		
+		if (valMap != null) {
+			for (EAttribute attr : attributes) {
+				if (valMap.get(attr) != null) {
+					for (EObject holder : valMap.get(attr)) {
+						retSet.add(new NavigationHelperSetting(attr, holder, value));
+					}
 				}
 			}
 		}
@@ -126,12 +128,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(value);
-		if (mapVal == null || mapVal.get(attribute) == null) {
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+		if (valMap == null || valMap.get(attribute) == null) {
 			return Collections.emptySet();
 		}
 		else {
-			return mapVal.get(attribute);
+			return valMap.get(attribute);
 		}
 	}
 
@@ -156,10 +158,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public Collection<Setting> getInverseReferences(EObject target) {
 		HashSet<Setting> retSet = new HashSet<Setting>();
-		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(target);
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(target);
 		
-		if (mapVal != null) {
-			for (Entry<EStructuralFeature, Set<EObject>> entry : mapVal.entrySet()) {
+		if (valMap != null) {
+			for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
 				for (EObject source : entry.getValue()) {
 					retSet.add(new NavigationHelperSetting(entry.getKey(), target, source));
 				}
@@ -172,12 +174,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public Collection<Setting> getInverseReferences(EObject target, Set<EReference> references) {
 		HashSet<Setting> retSet = new HashSet<Setting>();
-
-		for (EReference ref : references) {
-			if (contentAdapter.getFeatureMap().get(target) != null
-					&& contentAdapter.getFeatureMap().get(target).get(ref) != null) {
-				for (EObject source : contentAdapter.getFeatureMap().get(target).get(ref)) {
-					retSet.add(new NavigationHelperSetting(ref, target, source));
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(target);
+		
+		if (valMap != null) {
+			for (EReference ref : references) {
+				if (valMap.get(ref) != null) {
+					for (EObject source : valMap.get(ref)) {
+						retSet.add(new NavigationHelperSetting(ref, target, source));
+					}
 				}
 			}
 		}
@@ -187,23 +191,23 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public Set<EObject> getInverseReferences(EObject target, EReference reference) {
-		Map<EStructuralFeature, Set<EObject>> mapVal = contentAdapter.getFeatureMap().get(target);
-		if (mapVal == null || mapVal.get(reference) == null) {
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(target);
+		if (valMap == null || valMap.get(reference) == null) {
 			return Collections.emptySet();
 		}
 		else {
-			return mapVal.get(reference);
+			return valMap.get(reference);
 		}
 	}
 
 	@Override
 	public Set<EObject> getDirectInstances(EClass type) {
-		Set<EObject> setVal = contentAdapter.getInstanceMap().get(type);
-		if (setVal == null) {
+		Set<EObject> valSet = contentAdapter.getInstanceMap().get(type);
+		if (valSet == null) {
 			return Collections.emptySet();
 		}
 		else {
-			return setVal;
+			return valSet;
 		}
 	}
 
@@ -211,14 +215,24 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public Set<EObject> getAllInstances(EClass type) {
 		HashSet<EObject> retSet = new HashSet<EObject>();
 		
-		Set<EClass> setVal = contentAdapter.getSubTypeMap().get(type);
-		if (setVal != null) {
-			for (EClass c : setVal) {
+		Set<EClass> valSet = contentAdapter.getSubTypeMap().get(type);
+		if (valSet != null) {
+			for (EClass c : valSet) {
 				retSet.addAll(contentAdapter.getInstanceMap().get(c));
 			}
 		}
 		retSet.addAll(contentAdapter.getInstanceMap().get(type));
 		
+		return retSet;
+	}
+	
+	@Override
+	public Set<EObject> findByFeatureValue(Object value, EStructuralFeature feature) {
+		Set<EObject> retSet = new HashSet<EObject>();
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+		if (valMap != null && valMap.get(feature) != null) {
+			retSet.addAll(valMap.get(feature));
+		}
 		return retSet;
 	}
 
