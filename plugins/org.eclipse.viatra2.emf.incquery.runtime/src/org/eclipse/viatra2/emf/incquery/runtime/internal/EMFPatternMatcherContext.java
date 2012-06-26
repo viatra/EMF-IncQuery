@@ -55,6 +55,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 
 	@Override
 	public Collection<? extends Object> enumerateDirectSupertypes(Object typeObject) {
+		if (typeObject==null) return null;
 		if (typeObject instanceof EClass || typeObject instanceof EDataType) return enumerateDirectUnarySupertypes(typeObject);
 		if (typeObject instanceof EStructuralFeature) return enumerateDirectBinaryEdgeSupertypes(typeObject);
 		else throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
@@ -62,6 +63,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	
 	@Override
 	public Collection<? extends Object> enumerateDirectSubtypes(Object typeObject) {
+		if (typeObject==null) return null;
 		if (typeObject instanceof EClass || typeObject instanceof EDataType) return enumerateDirectUnarySubtypes(typeObject);
 		if (typeObject instanceof EStructuralFeature) return enumerateDirectBinaryEdgeSubtypes(typeObject);
 		else throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());

@@ -3,5 +3,5 @@
 */target
 plugin.xml_gen
 .DS_Store
-*/src-gen/**/*
-!*/src-gen/keep.txt
+#*/src-gen/**/*
+#!*/src-gen/keep.txt
