@@ -197,8 +197,9 @@ public abstract class EMFPatternMatcherRuntimeContext<PatternDescription>
 		assert(traversalCoalescing);
 		traversalCoalescing = false;
 		if (! waitingVisitors.isEmpty()){
-			newTraversal().accept(new MultiplexerVisitor(waitingVisitors));
+			ArrayList<EMFVisitor> visitors = new ArrayList<EMFVisitor>(waitingVisitors);
 			waitingVisitors.clear();
+			newTraversal().accept(new MultiplexerVisitor(visitors));
 		}
 	}
 
