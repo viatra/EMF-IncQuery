@@ -38,15 +38,15 @@ public class IncqueryFeatureHelper {
 
 	//private static final Map<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>> sourceMap = new HashMap<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>>();
 	// temporal registry for features being built
-	private static final Map<EObject, List<EStructuralFeature>> sourceMap = new HashMap<EObject, List<EStructuralFeature>>();
+	private static final Map<EObject, List<EStructuralFeature>> SOURCEMAP = new HashMap<EObject, List<EStructuralFeature>>();
 	//private static final Map<EObject, Map<EStructuralFeature,IncQueryMatcher<IPatternMatch>>> sourceMap = new HashMap<EObject, Map<EStructuralFeature,IncQueryMatcher<IPatternMatch>>>();
-	private static final Map<EObject, Map<EStructuralFeature,Integer>> handlerRequestCounter = new HashMap<EObject, Map<EStructuralFeature,Integer>>();
+	private static final Map<EObject, Map<EStructuralFeature,Integer>> HANDLER_REQUEST_COUNTER = new HashMap<EObject, Map<EStructuralFeature,Integer>>();
+	//private static boolean matcherInitialization = false;
 
 	/**
 	 * 
 	 */
 	private IncqueryFeatureHelper() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	/*public static IncqueryFeatureHandler getHandler(
@@ -102,18 +102,18 @@ public class IncqueryFeatureHelper {
 			List<EStructuralFeature> featureList = null;
 			//Map<EStructuralFeature, IncQueryMatcher<IPatternMatch>> featureList = null;
 			Map<EStructuralFeature,Integer> counter = null;
-			if(sourceMap.containsKey(source)) {
-				featureList = sourceMap.get(source);
+			if(SOURCEMAP.containsKey(source)) {
+				featureList = SOURCEMAP.get(source);
 			} else {
 				featureList = new ArrayList<EStructuralFeature>();
 				//featureList = new HashMap<EStructuralFeature,IncQueryMatcher<IPatternMatch>>();
-				sourceMap.put(source, featureList);
+				SOURCEMAP.put(source, featureList);
 			}
-			if(handlerRequestCounter.containsKey(source)) {
-				counter = handlerRequestCounter.get(source);
+			if(HANDLER_REQUEST_COUNTER.containsKey(source)) {
+				counter = HANDLER_REQUEST_COUNTER.get(source);
 			} else {
 				counter = new HashMap<EStructuralFeature,Integer>();
-				handlerRequestCounter.put(source, counter);
+				HANDLER_REQUEST_COUNTER.put(source, counter);
 			}
 			if(counter.containsKey(feature)) {
 				Integer count = counter.get(feature);
@@ -161,7 +161,7 @@ public class IncqueryFeatureHelper {
 			//featureList.put(feature, handler);
 			//featureList.remove(feature);
 			if(featureList.isEmpty()) {
-				sourceMap.remove(source);
+				SOURCEMAP.remove(source);
 			}
 			if(counter.get(feature) == 1) {
 				IncQueryEngine.getDefaultLogger().logWarning("Starting handler for feature " + feature);
