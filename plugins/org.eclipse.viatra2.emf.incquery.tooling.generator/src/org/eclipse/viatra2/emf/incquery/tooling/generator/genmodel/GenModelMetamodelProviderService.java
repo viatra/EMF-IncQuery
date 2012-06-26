@@ -45,6 +45,8 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	IQualifiedNameConverter qualifiedNameConverter;
 	@Inject
 	ICrossReferenceSerializer refSerializer;
+	
+	private EcoreGenmodelRegistry genmodelRegistry = new EcoreGenmodelRegistry();
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
@@ -83,11 +85,15 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public EPackage loadEPackage(final String packageUri, ResourceSet set) {
-		EPackage loadedPackage = findGenmodel(packageUri, set);
-		return (loadedPackage != null) ? loadedPackage : super.loadEPackage(packageUri, set);
+		GenPackage loadedPackage = findGenmodel(packageUri, set);
+		if (loadedPackage != null) {
+			return loadedPackage.getEcorePackage();
+		}
+		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
+		return (loadedPackage != null) ? loadedPackage.getEcorePackage() : super.loadEPackage(packageUri, set);
 	}
 
-	private EPackage findGenmodel(final String packageUri, ResourceSet set) {
+	private GenPackage findGenmodel(final String packageUri, ResourceSet set) {
 		if (set != null && projectProvider != null) {
 			IJavaProject javaProject = projectProvider.getJavaProject(set);
 			IncQueryGeneratorModel generatorModel = getGeneratorModel(
@@ -104,8 +110,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 						});
 				Iterator<GenPackage> iterator = genPackages.iterator();
 				if (iterator.hasNext()) {
-					GenPackage genPackage = iterator.next();
-					return genPackage.getEcorePackage();
+					return iterator.next();
 				}
 			}
 		}
@@ -114,7 +119,9 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-		return (findGenmodel(ePackage.getNsURI(), set) != null) || super.isGeneratedCodeAvailable(ePackage, set);
+		return (findGenmodel(ePackage.getNsURI(), set) != null)
+				|| (genmodelRegistry.findGenPackage(ePackage.getNsURI(), set) != null)
+				|| super.isGeneratedCodeAvailable(ePackage, set);
 	}
 
 	@Override
