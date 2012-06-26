@@ -228,8 +228,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public void unregisterInstanceListener(InstanceListener listener) {
-		this.instanceListeners.remove(listener);		
+	public void unregisterInstanceListener(Set<EClass> classes, InstanceListener listener) {
+		Set<EClass> restriction = this.instanceListeners.get(listener);
+		restriction.removeAll(classes);
+		if (restriction.size() == 0) {
+			this.instanceListeners.remove(listener);
+		}		
 	}
 	
 	@Override

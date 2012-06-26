@@ -142,11 +142,11 @@ public interface NavigationHelper {
 	public void registerInstanceListener(Set<EClass> classes, InstanceListener listener);
 	
 	/**
-	 * Unregisters an instance listener.
+	 * Unregisters an instance listener for the given set of classes.
 	 * 
 	 * @param listener the listener instance
 	 */
-	public void unregisterInstanceListener(InstanceListener listener);
+	public void unregisterInstanceListener(Set<EClass> classes, InstanceListener listener);
 	
 	/**
 	 * Registers a feature listener for the navigation helper. 
