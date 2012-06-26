@@ -1,7 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.runtime.util;
 
-import java.util.Map;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -47,7 +45,9 @@ public class XmiModelUtil {
 	 */
 	public static Resource getGlobalXmiResource(String bundleName, IResourceSetPreparer preparer) {
 		ResourceSet set = prepareXtextResource();
-		preparer.prepareResourceSet(set);
+		if(preparer != null) {
+			preparer.prepareResourceSet(set);
+		}
 		return set.getResource(getGlobalXmiResourceURI(bundleName), true);
 	}
 
