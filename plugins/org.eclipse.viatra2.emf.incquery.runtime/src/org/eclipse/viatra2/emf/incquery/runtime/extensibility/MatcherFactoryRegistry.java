@@ -36,17 +36,23 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  */
 @SuppressWarnings("rawtypes")
 public class MatcherFactoryRegistry {
-	private static final Map<String, IMatcherFactory> contributedMatcherFactories = new HashMap<String, IMatcherFactory>();
+	private static final Map<String, IMatcherFactory> MATCHER_FACTORIES = new HashMap<String, IMatcherFactory>();
 	// NOTE pattern group management is relegated to PatternGroup classes
 	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
 	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
 
 	/**
+	 * 
+	 */
+	private MatcherFactoryRegistry() {
+	}
+	
+	/**
 	 * Called by Activator.
 	 */
 	public static void initRegistry()
 	{
-		contributedMatcherFactories.clear();
+		MATCHER_FACTORIES.clear();
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
 		IExtensionPoint poi;
@@ -69,7 +75,7 @@ public class MatcherFactoryRegistry {
 							IMatcherFactory matcherFactory = (IMatcherFactory)el.createExecutableExtension("factory");
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
-							  contributedMatcherFactories.put(fullyQualifiedName, matcherFactory);
+							  MATCHER_FACTORIES.put(fullyQualifiedName, matcherFactory);
 							} else {
 								throw new UnsupportedOperationException(
 										"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
@@ -98,8 +104,8 @@ public class MatcherFactoryRegistry {
 	public static void registerMatcherFactory(IMatcherFactory factory) {
 	
 		String qualifiedName = factory.getPatternFullyQualifiedName();
-		if(!contributedMatcherFactories.containsKey(qualifiedName)) {
-			contributedMatcherFactories.put(qualifiedName, factory);
+		if(!MATCHER_FACTORIES.containsKey(qualifiedName)) {
+			MATCHER_FACTORIES.put(qualifiedName, factory);
 		  // NOTE pattern group management is relegated to PatternGroup classes
 			/*/if(matcherFactoryGroups != null) {
 				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactoryGroups.entrySet()) {
@@ -118,7 +124,7 @@ public class MatcherFactoryRegistry {
 	 * @return a copy of the set of contributed matcher factories
 	 */
 	public static Set<IMatcherFactory> getContributedMatcherFactories() {
-		return new HashSet<IMatcherFactory>(contributedMatcherFactories.values());
+		return new HashSet<IMatcherFactory>(MATCHER_FACTORIES.values());
 	}
 	
 	/**
@@ -127,8 +133,8 @@ public class MatcherFactoryRegistry {
 	 * @return
 	 */
 	public static IMatcherFactory getMatcherFactory(String patternFqn) {
-		if(contributedMatcherFactories.containsKey(patternFqn)) {
-			return contributedMatcherFactories.get(patternFqn);
+		if(MATCHER_FACTORIES.containsKey(patternFqn)) {
+			return MATCHER_FACTORIES.get(patternFqn);
 		}
 		return null;
 	}
@@ -141,8 +147,8 @@ public class MatcherFactoryRegistry {
 	 */
 	public static IMatcherFactory getMatcherFactory(Pattern pattern) {
 		String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-		if(contributedMatcherFactories.containsKey(fullyQualifiedName)) {
-			return contributedMatcherFactories.get(fullyQualifiedName);
+		if(MATCHER_FACTORIES.containsKey(fullyQualifiedName)) {
+			return MATCHER_FACTORIES.get(fullyQualifiedName);
 		}
 		return null;
 	}
@@ -154,8 +160,8 @@ public class MatcherFactoryRegistry {
 	 */
 	public static IMatcherFactory getOrCreateMatcherFactory(Pattern pattern) {
 		String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-		if(contributedMatcherFactories.containsKey(fullyQualifiedName)) {
-			return contributedMatcherFactories.get(fullyQualifiedName);
+		if(MATCHER_FACTORIES.containsKey(fullyQualifiedName)) {
+			return MATCHER_FACTORIES.get(fullyQualifiedName);
 		} 
 		return new GenericMatcherFactory(pattern);
 	}
@@ -189,21 +195,12 @@ public class MatcherFactoryRegistry {
 	 * @return the matcher factories in the group
 	 */
 	private static Set<IMatcherFactory> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
-		Map<String, Set<IMatcherFactory>> map = null;
-	  // NOTE pattern group management is relegated to PatternGroup classes
-		/*if(includeSubPackages) {
-			map = matcherFactorySubTrees;
-		} else {
-			map = matcherFactoryGroups;
-		}*/
-		if(map == null) {
-			map = new HashMap<String, Set<IMatcherFactory>>();
-		}
+		Map<String, Set<IMatcherFactory>> map = new HashMap<String, Set<IMatcherFactory>>();
 		if(map.containsKey(packageFQN)) {
 			return map.get(packageFQN);
 		} else {
 			Set<IMatcherFactory> group = new HashSet<IMatcherFactory>();
-			for (Entry<String, IMatcherFactory> entry : contributedMatcherFactories.entrySet()) {
+			for (Entry<String, IMatcherFactory> entry : MATCHER_FACTORIES.entrySet()) {
 				addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
 			}
 			if(group.size() > 0) {

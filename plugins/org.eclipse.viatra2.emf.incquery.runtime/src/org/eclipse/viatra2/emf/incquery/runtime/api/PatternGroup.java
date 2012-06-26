@@ -39,7 +39,7 @@ public class PatternGroup {
 	public PatternGroup(String packageName, boolean includeSubpackages) {
 		this.includeSubpackages = includeSubpackages;
 		this.packageName = packageName;
-		refreshMatcherFactories();
+		refreshInternal();
 	}
 
 	/**
@@ -63,7 +63,17 @@ public class PatternGroup {
 		return includeSubpackages;
 	}
 
+	/**
+	 * Refreshes the pattern group from the matcher registry based on the parameters used during the initialization
+	 */
 	public void refreshMatcherFactories() {
+		refreshInternal();
+	}
+
+	/**
+	 * 
+	 */
+	private void refreshInternal() {
 		if(includeSubpackages) {
 			matcherFactories.addAll(MatcherFactoryRegistry.getPatternSubTree(packageName));
 		} else {

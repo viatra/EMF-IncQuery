@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 /**
  * @author Abel Hegedus
@@ -33,6 +34,10 @@ public class WellbehavingDerivedFeatureRegistry {
 	private static Collection<EClass> contributedWellbehavingDerivedClasses = new ArrayList<EClass>();;
 	private static Collection<EPackage> contributedWellbehavingDerivedPackages = new ArrayList<EPackage>();;
 
+	/**
+	 * 
+	 */
+	private WellbehavingDerivedFeatureRegistry() {	}
 	/**
 	 * Called by Activator.
 	 */
@@ -53,40 +58,46 @@ public class WellbehavingDerivedFeatureRegistry {
 				IConfigurationElement[] els = ext.getConfigurationElements();
 				for (IConfigurationElement el : els) {
 					if (el.getName().equals("wellbehaving-derived-feature")) {
-						try {
-							String packageUri = el.getAttribute("package-nsUri");
-							String classifierName = el.getAttribute("classifier-name");
-							String featureName = el.getAttribute("feature-name");
-							if (packageUri != null) {
-								EPackage pckg = EPackage.Registry.INSTANCE.getEPackage(packageUri);
-								if (pckg != null) {
-									if (classifierName != null) {
-										EClassifier clsr = pckg.getEClassifier(classifierName);
-										if (clsr instanceof EClass) {
-											if (featureName != null) {
-												EClass cls = (EClass) clsr;
-												EStructuralFeature feature = cls.getEStructuralFeature(featureName);
-												if (feature != null) {
-													contributedWellbehavingDerivedFeatures.add(feature);
-												}
-											} else {
-												contributedWellbehavingDerivedClasses.add((EClass) clsr);
-											}
-										}
-									} else {
-										contributedWellbehavingDerivedPackages.add(pckg);
-									}
-								}
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						processWellbehavingExtension(el);
 					} else {
 						throw new UnsupportedOperationException("Unknown configuration element " + el.getName()
 								+ " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
 					}
 				}
 			}
+		}
+	}
+	/**
+	 * @param el
+	 */
+	private static void processWellbehavingExtension(IConfigurationElement el) {
+		try {
+			String packageUri = el.getAttribute("package-nsUri");
+			String classifierName = el.getAttribute("classifier-name");
+			String featureName = el.getAttribute("feature-name");
+			if (packageUri != null) {
+				EPackage pckg = EPackage.Registry.INSTANCE.getEPackage(packageUri);
+				if (pckg != null) {
+					if (classifierName != null) {
+						EClassifier clsr = pckg.getEClassifier(classifierName);
+						if (clsr instanceof EClass) {
+							if (featureName != null) {
+								EClass cls = (EClass) clsr;
+								EStructuralFeature feature = cls.getEStructuralFeature(featureName);
+								if (feature != null) {
+									contributedWellbehavingDerivedFeatures.add(feature);
+								}
+							} else {
+								contributedWellbehavingDerivedClasses.add((EClass) clsr);
+							}
+						}
+					} else {
+						contributedWellbehavingDerivedPackages.add(pckg);
+					}
+				}
+			}
+		} catch (Exception e) {
+			IncQueryEngine.getDefaultLogger().logError("Well-behaving feature registration failed", e);
 		}
 	}
 
