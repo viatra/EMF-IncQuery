@@ -1,5 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.runtime.util;
 
+import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -17,6 +19,10 @@ import com.google.inject.Injector;
  */
 public class XmiModelUtil {
 
+	public interface IResourceSetPreparer {
+		void prepareResourceSet(ResourceSet set);
+	}
+	
 	public static final String XMI_OUTPUT_FOLDER = "queries";
 	public static final String GLOBAL_EIQ_FILENAME = "globalEiqModel.xmi";
 	
@@ -28,7 +34,20 @@ public class XmiModelUtil {
 	 * @see {@link ResourceSet#getResource(URI, boolean)}.
 	 */
 	public static Resource getGlobalXmiResource(String bundleName) {
+		return getGlobalXmiResource(bundleName, null);
+	}
+
+	/**
+	 * Returns the global EIQ resource (XMI), that is hosted in the given bundle.
+	 * If something happened during model load, an exception is thrown.
+	 * @param bundleName
+	 * @param loadParameters parameters for the resource loading
+	 * @return the global xmi resource
+	 * @see {@link ResourceSet#getResource(URI, boolean)}.
+	 */
+	public static Resource getGlobalXmiResource(String bundleName, IResourceSetPreparer preparer) {
 		ResourceSet set = prepareXtextResource();
+		preparer.prepareResourceSet(set);
 		return set.getResource(getGlobalXmiResourceURI(bundleName), true);
 	}
 

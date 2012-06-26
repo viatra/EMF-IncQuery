@@ -26,4 +26,5 @@ public interface IMetamodelProvider {
 	 */
 	EPackage loadEPackage(String uri, ResourceSet resourceSet);
 
+	boolean isGeneratedCodeAvailable(EPackage ePackage);
 }

@@ -577,21 +577,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		}
 		var source = (sourceType as ClassType).classname as EClass
 		
-		//val eiqgenModel = provider.getGeneratorModel(pattern)
-		if(source != null && source.eIsProxy()) {
-			//println(source)
-			//for(GeneratorModelReference gmr : eiqgenModel.genmodels){
-				//if(!source.eIsProxy){
-					//source = EcoreUtil::resolve(source,gmr.genmodel.ecoreGenPackage) as EClass
-					source = EcoreUtil::resolve(source,pattern.eResource.resourceSet) as EClass
-				//}
-			//}
-			//source.eGet(feature, true);
-		}
-		if(source.eIsProxy){
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source " + sourceTmp +" cannot be resolved!")
-		}
-		
 		parameters.put("sourceVar", sourceTmp)
 		parameters.put("source", source)
 		parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)

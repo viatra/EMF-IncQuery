@@ -88,4 +88,9 @@ public class MetamodelProviderService implements IMetamodelProvider {
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isGeneratedCodeAvailable(EPackage ePackage) {
+		return false;
+	}
 }

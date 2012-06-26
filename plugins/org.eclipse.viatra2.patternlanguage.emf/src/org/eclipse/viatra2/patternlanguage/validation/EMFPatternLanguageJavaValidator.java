@@ -41,8 +41,12 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.xtext.validation.Check;
+
+import com.google.inject.Inject;
 
 /**
  * Validators for EMFPattern Language.
@@ -61,9 +65,12 @@ public class EMFPatternLanguageJavaValidator extends
 		AbstractEMFPatternLanguageJavaValidator {
 
 	public static final String DUPLICATE_IMPORT = "Duplicate import of ";
+	
+	@Inject
+	IMetamodelProvider metamodelProvider;
 
 	@Check
-	public void checkPatternModelPackageImports(PatternModel patternModel) {
+	public void checkDuplicatePackageImports(PatternModel patternModel) {
 		for (int i = 0; i < patternModel.getImportPackages().size(); ++i) {
 			EPackage leftPackage = patternModel.getImportPackages().get(i)
 					.getEPackage();
@@ -82,6 +89,11 @@ public class EMFPatternLanguageJavaValidator extends
 		}
 	}
 
+	@Check
+	public void checkPackageImportGeneratedCode(PackageImport packageImport) {
+		
+	}
+	
 	private enum VariableReferenceClass {
 		PositiveExistential, NegativeExistential, ReadOnly
 	}

@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -26,6 +27,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
@@ -34,6 +38,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactory
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XMIResourceURIHandler;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
@@ -41,10 +46,12 @@ import org.eclipse.xtext.builder.IXtextBuilderParticipant.IBuildContext;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -56,6 +63,28 @@ import com.google.inject.Injector;
  */
 public class CleanSupport {
 	
+	private final class PrepareResourceSetWithLoader implements
+			XmiModelUtil.IResourceSetPreparer {
+		
+		IProject project;
+		
+		public PrepareResourceSetWithLoader(IProject project) {
+			this.project = project;
+		}
+		
+		@Override
+		public void prepareResourceSet(ResourceSet set) {
+			Map<String, Object> options = Maps.newHashMap();
+			XMIResourceURIHandler xmiResourceURIHandler = new XMIResourceURIHandler(set);
+			injector.injectMembers(xmiResourceURIHandler);
+			options.put(XMLResource.OPTION_URI_HANDLER, xmiResourceURIHandler);
+			set.getLoadOptions().putAll(options);
+			if (set instanceof XtextResourceSet) {
+				((XtextResourceSet) set).setClasspathURIContext(JavaCore.create(project));
+			}
+		}
+	}
+
 	@Inject
 	private Injector injector;
 	
@@ -145,7 +174,7 @@ public class CleanSupport {
 	private void removeExportedPackages(IProject project) throws CoreException {
 		if (getGlobalXmiFile(project).exists()) {
 			ArrayList<String> packageNames = new ArrayList<String>();
-			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName());
+			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName(), new PrepareResourceSetWithLoader(project));
 			Iterator<EObject> iter = globalXmiModel.getAllContents();
 			while(iter.hasNext()) {
 				EObject obj = iter.next();
@@ -190,7 +219,7 @@ public class CleanSupport {
 	private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor) throws CoreException {
 		IProject modelProject = context.getBuiltProject();
 		if (getGlobalXmiFile(modelProject).exists()) {
-			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(modelProject.getName());
+			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(modelProject.getName(), new PrepareResourceSetWithLoader(modelProject));
 			for (Delta delta : relevantDeltas) {
 				Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
 				if (delta.getNew() != null /*&& shouldGenerate(deltaResource, context)*/) {
