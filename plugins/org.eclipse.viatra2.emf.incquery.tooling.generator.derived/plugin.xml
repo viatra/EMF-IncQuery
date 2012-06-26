@@ -42,12 +42,6 @@
                name="keepCache"
                type="boolean">
          </annotationparameter>
-         <annotationparameter
-               mandatory="false"
-               multiple="false"
-               name="disabled"
-               type="boolean">
-         </annotationparameter>
       </annotation>
    </extension>
 

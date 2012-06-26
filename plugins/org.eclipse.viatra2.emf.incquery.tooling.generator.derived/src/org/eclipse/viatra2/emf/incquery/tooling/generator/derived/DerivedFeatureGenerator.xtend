@@ -22,6 +22,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.jdt.core.ICompilationUnit
 import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.jdt.core.dom.AST
@@ -35,6 +36,7 @@ import org.eclipse.jdt.core.dom.Javadoc
 import org.eclipse.jdt.core.dom.MethodDeclaration
 import org.eclipse.jdt.core.dom.Modifier$ModifierKeyword
 import org.eclipse.jdt.core.dom.TagElement
+import org.eclipse.jdt.core.dom.TextElement
 import org.eclipse.jdt.core.dom.TypeDeclaration
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
@@ -47,8 +49,10 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
@@ -56,14 +60,8 @@ import org.eclipse.xtext.xbase.lib.Pair
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator.*
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
-import org.eclipse.jdt.core.dom.TextElement
-import org.eclipse.jdt.core.ICompilationUnit
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.BoolValueImpl
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.VariableValueImpl
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
-import org.eclipse.jdt.core.dom.IDocElement
-import org.eclipse.jdt.core.dom.TextElement
+import org.eclipse.emf.ecore.util.EcoreUtil
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
@@ -137,7 +135,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val bodyDeclListRewrite = rewrite.getListRewrite(type, TypeDeclaration::BODY_DECLARATIONS_PROPERTY)
 				
 				// FIXME remove disabled if cleanup is called when annotation is removed
-				if(generate && !(parameters.get("disabled") as Boolean)){
+				if(generate){
 					ast.ensureImports(rewrite, astNode, type)
 					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature.name)
 					ast.ensureGetterMethod(document, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature, pattern, parameters)
@@ -151,6 +149,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val newSource = document.get
 				compunit.buffer.setContents(newSource)
 				// save!
+				compunit.buffer.save(new NullProgressMonitor, false)
 				
 			} catch(IllegalArgumentException e){
 				IncQueryEngine::defaultLogger.logError(e.message);
@@ -277,13 +276,14 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			val javadoc = getMethod.javadoc
 			var generatedBody = false
 			if(javadoc != null){
-				// FIXME user-doc gets deleted
-				/**	<!-- begin-user-doc --> <!-- end-user-doc --> */
 				val tags = javadoc.tags as List<TagElement>
 				val generatedTag = tags.findFirst[
 					(it as TagElement).tagName == "@generated"
 				]
-				if(generatedTag != null && (generatedTag.fragments.size == 0)){
+				val derivedTag = tags.findFirst[
+					(it as TagElement).tagName == "@derived"
+				]
+				if(derivedTag == null && generatedTag != null && (generatedTag.fragments.size == 0)){
 					// generated tag intact
 					generatedBody = true
 					// rename method to name+"Gen"
@@ -309,6 +309,11 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					} else {
 						rewrite.replace(getMethod.name,ast.newSimpleName("_"+getMethod.name.identifier),null)
 					}
+				}
+				if(derivedTag != null){
+					generatedBody = true
+					replaceMethodBody(ast, rewrite, getMethod.body, dummyMethod.body,
+						javadoc, document, false, null,	null, null)
 				}
 			}
 			
@@ -527,12 +532,11 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	def private processDerivedFeatureAnnotation(Pattern pattern){
 		val parameters = new HashMap<String,Object>
-		var sourceTmp = ""
+		var String sourceTmp = ""
 		var targetTmp = ""
 		var featureTmp = ""
 		var kindTmp = ""
 		var keepCacheTmp = true
-		var disabledTmp = false
 		
 		if(pattern.parameters.size < 2){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+" has less than 2 parameters!")
@@ -542,18 +546,16 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			if (a.name.matches(annotationLiteral)) {
 				for (ap : a.parameters) {
 					if (ap.name.matches("source")) {
-						sourceTmp = (ap.value as VariableValueImpl).value.getVar
+						sourceTmp = (ap.value as VariableValue).value.getVar
 					} else if (ap.name.matches("target")) {
-						targetTmp = (ap.value as VariableValueImpl).value.getVar
+						targetTmp = (ap.value as VariableValue).value.getVar
 					} else if (ap.name.matches("feature")) {
-						featureTmp = (ap.value as StringValueImpl).value
+						featureTmp = (ap.value as StringValue).value
 					} else if (ap.name.matches("kind")) {
-						kindTmp = (ap.value as StringValueImpl).value
+						kindTmp = (ap.value as StringValue).value
 					} else if (ap.name.matches("keepCache")) {
-						keepCacheTmp = (ap.value as BoolValueImpl).value
-					} else if (ap.name.matches("disabled")) {
-						disabledTmp = (ap.value as BoolValueImpl).value
-					} 
+						keepCacheTmp = (ap.value as BoolValue).value
+					}
 				}
 			}	
 		}
@@ -573,10 +575,27 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		if(!(sourceType instanceof ClassType) || !((sourceType as ClassType).classname instanceof EClass)){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source " + sourceTmp +" is not EClass!")
 		}
-		val source = (sourceType as ClassType).classname as EClass
+		var source = (sourceType as ClassType).classname as EClass
+		
+		val eiqgenModel = provider.getGeneratorModel(pattern)
+		if(source != null && source.eIsProxy()) {
+			println(source)
+			for(GeneratorModelReference gmr : eiqgenModel.genmodels){
+				if(!source.eIsProxy){
+					source = EcoreUtil::resolve(source,gmr.genmodel.ecoreGenPackage) as EClass
+				}
+			}
+			//source.eGet(feature, true);
+		}
 		parameters.put("sourceVar", sourceTmp)
 		parameters.put("source", source)
 		parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
+		
+		val pckg = provider.findGenPackage(pattern, source.EPackage)
+		if(pckg == null){
+			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
+		}
+		parameters.put("package", pckg)
 		
 		val featureString = featureTmp
 		val features = source.EAllStructuralFeatures.filter[it.name == featureString]
@@ -637,11 +656,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		//val keepCache = new Boolean(keepCacheTmp)
 		parameters.put("keepCache", keepCacheTmp)
 		
-		val pckg = provider.findGenPackage(pattern, source.EPackage)
-		if(pckg == null){
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
-		}
-		
 		/*if(disabledTmp == ""){
 			disabledTmp = "false"
 		}
@@ -649,9 +663,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": disabled value must be true or false!")
 		}*/
 		//val disabled = new Boolean(disabledTmp)
-		parameters.put("disabled", disabledTmp)
+		//parameters.put("disabled", disabledTmp)
 		
-		parameters.put("package", pckg)
 		return parameters
 	}
 

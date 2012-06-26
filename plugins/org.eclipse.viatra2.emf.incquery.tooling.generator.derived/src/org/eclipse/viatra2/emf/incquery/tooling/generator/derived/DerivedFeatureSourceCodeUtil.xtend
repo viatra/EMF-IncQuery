@@ -96,17 +96,17 @@ class DerivedFeatureSourceCodeUtil {
 		public class DummyClass {
 			public void DummyMethod() {
 				if («feature.name»Handler != null) {
-					return («feature.ecoreFeature.EType.name») «feature.name»Handler.getIntValue();
+					return «feature.name»Handler.getIntValue();
 				} else {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 							«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 							 "«pattern.fullyQualifiedName»", "«sourceParamName»", null,
 							FeatureKind.COUNTER);
 					if («feature.name»Handler != null) {
-						return («feature.ecoreFeature.EType.name») «feature.name»Handler.getIntValue();
+						return «feature.name»Handler.getIntValue();
 					}
 				}
-				return -1;
+				return 0;
 			}
 		}
 	'''
@@ -122,17 +122,17 @@ class DerivedFeatureSourceCodeUtil {
 		public class DummyClass {
 			public void DummyMethod() {
 				if («feature.name»Handler != null) {
-					return («feature.ecoreFeature.EType.name») «feature.name»Handler.getIntValue();
+					return «feature.name»Handler.getIntValue();
 				} else {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 							«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 							 "«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
 							FeatureKind.SUM);
 					if («feature.name»Handler != null) {
-						return («feature.ecoreFeature.EType.name») «feature.name»Handler.getIntValue();
+						return «feature.name»Handler.getIntValue();
 					}
 				}
-				return -1;
+				return 0;
 			}
 		}
 	'''
