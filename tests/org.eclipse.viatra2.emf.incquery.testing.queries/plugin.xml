@@ -3,6 +3,7 @@
 
    <extension
          id="org.eclipse.viatra2.emf.incquery.testing.queries.wellbehaving"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features">
       <wellbehaving-derived-feature
             classifier-name="MatchSubstitutionRecord"
