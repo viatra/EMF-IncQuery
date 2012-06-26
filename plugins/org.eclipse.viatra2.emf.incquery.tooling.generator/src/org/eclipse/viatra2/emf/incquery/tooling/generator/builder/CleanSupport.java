@@ -39,6 +39,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationF
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.XMIResourceURIHandler;
+import org.eclipse.viatra2.patternlanguage.IResourceSetPreparer;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
@@ -64,7 +65,7 @@ import com.google.inject.Injector;
 public class CleanSupport {
 	
 	private final class PrepareResourceSetWithLoader implements
-			XmiModelUtil.IResourceSetPreparer {
+			IResourceSetPreparer {
 		
 		IProject project;
 		

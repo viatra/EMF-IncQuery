@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
+import org.eclipse.viatra2.patternlanguage.IResourceSetPreparer;
 import org.eclipse.xtext.common.types.access.ClasspathTypeProviderFactory;
 
 import com.google.inject.Injector;
@@ -17,10 +18,6 @@ import com.google.inject.Injector;
  */
 public class XmiModelUtil {
 
-	public interface IResourceSetPreparer {
-		void prepareResourceSet(ResourceSet set);
-	}
-	
 	public static final String XMI_OUTPUT_FOLDER = "queries";
 	public static final String GLOBAL_EIQ_FILENAME = "globalEiqModel.xmi";
 	
