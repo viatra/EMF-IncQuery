@@ -23,6 +23,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import static org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor.*
 import static org.junit.Assert.*
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
+import static org.hamcrest.CoreMatchers.*
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -177,7 +178,9 @@ class TestExecutor {
 			}
 		]
 		
-		assertArrayEquals(diff.logDifference,newHashSet,diff)
+		//assertArrayEquals(diff.logDifference,newHashSet,diff)
+		//assertSame(CORRECTRESULTS,if(diff.empty){CORRECTRESULTS}else{diff.logDifference})
+		assertTrue(diff.logDifference,diff.empty)
 	}
 	
 	/**
@@ -201,9 +204,9 @@ class TestExecutor {
 	}
 	
 	def logDifference(Set<Object> diff){
-		val stringBuilder = new StringBuilder("\n")
+		val stringBuilder = new StringBuilder()
 		diff.forEach()[
-			stringBuilder.append(it + "\n")
+			stringBuilder.append("\n" + it)
 			IncQueryEngine::defaultLogger.logError(it.toString)
 		]
 		return stringBuilder.toString
