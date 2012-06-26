@@ -105,7 +105,15 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty()) {
 					observedClasses.addAll(delayedClasses);
 					observedFeatures.addAll(delayedFeatures);
-					visitor.visitModel(notifier, delayedFeatures, delayedClasses);			
+					
+					// make copies and clean original accumulators, for the rare case that a coalesced 
+					// 	traversal is invoked during visitation, e.g. by a derived feature implementation
+					final HashSet<EClass> toGatherClasses = new HashSet<EClass>(delayedClasses);
+					final HashSet<EStructuralFeature> toGatherFeatures = new HashSet<EStructuralFeature>(delayedFeatures);
+					delayedFeatures.clear();
+					delayedClasses.clear();
+					
+					visitor.visitModel(notifier, toGatherFeatures, toGatherClasses);			
 				}
 			}
 		} catch (Exception e) {
