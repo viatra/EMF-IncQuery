@@ -74,28 +74,36 @@ public interface IEiqGenmodelProvider {
 	 *         {@link EPackage}
 	 */
 	GenPackage findGenPackage(EObject context, EPackage ePackage);
-
+	
 	/**
-	 * Finds a single property from a selected EIQ genmodel.
+	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
+	 * The resource set is expected to be the one Xtext assigns for a Java
+	 * project.
 	 * 
-	 * @param model
-	 * @param categoryID
-	 * @param propertyID
-	 * @return the value of the property, or empty string if the property is not
-	 *         defined
+	 * @param packageNsUri
+	 * @return the corresponding {@link GenPackage} for the selected
+	 *         {@link EPackage}
 	 */
-	String getProperty(IncQueryGeneratorModel model, String categoryID,
-			String propertyID);
-
+	GenPackage findGenPackage(ResourceSet set, final String packageNsUri);
 	/**
-	 * Returns all properties in a specific category from a selected EIQ
-	 * genmodel.
+	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
+	 * The resource set is expected to be the one Xtext assigns for a Java
+	 * project.
 	 * 
-	 * @param model
-	 * @param categoryID
-	 * @return a map of all properties stored in the category, or an empty map
-	 *         is the category is not specified or empty
+	 * @param packageNsUri
+	 * @return the corresponding {@link GenPackage} for the selected
+	 *         {@link EPackage}
 	 */
-	Map<String, String> getAllPropertiesOfCategory(
-			IncQueryGeneratorModel model, String categoryID);
+	GenPackage findGenPackage(ResourceSet set, final EPackage ePackage);
+	
+	/**
+	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
+	 * The context object is used for determining the actual project.
+	 * 
+	 * @param packageNsUri
+	 * @return the corresponding {@link GenPackage} for the selected
+	 *         {@link EPackage}
+	 */
+	GenPackage findGenPackage(EObject ctx, final String packageNsUri);
+
 }

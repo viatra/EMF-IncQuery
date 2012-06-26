@@ -2,8 +2,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -85,7 +84,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public EPackage loadEPackage(final String packageUri, ResourceSet set) {
-		GenPackage loadedPackage = findGenmodel(packageUri, set);
+		GenPackage loadedPackage = findGenPackage(set, packageUri);
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
@@ -93,34 +92,9 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		return (loadedPackage != null) ? loadedPackage.getEcorePackage() : super.loadEPackage(packageUri, set);
 	}
 
-	private GenPackage findGenmodel(final String packageUri, ResourceSet set) {
-		if (set != null && projectProvider != null) {
-			IJavaProject javaProject = projectProvider.getJavaProject(set);
-			IncQueryGeneratorModel generatorModel = getGeneratorModel(
-					javaProject.getProject(), set);
-			for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
-
-				Iterable<GenPackage> genPackages = Iterables.filter(ref
-						.getGenmodel().getGenPackages(),
-						new Predicate<GenPackage>() {
-							public boolean apply(GenPackage genPackage) {
-								return packageUri.equals(genPackage
-										.getEcorePackage().getNsURI());
-							}
-						});
-				Iterator<GenPackage> iterator = genPackages.iterator();
-				if (iterator.hasNext()) {
-					return iterator.next();
-				}
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-		return (findGenmodel(ePackage.getNsURI(), set) != null)
-				|| (genmodelRegistry.findGenPackage(ePackage.getNsURI(), set) != null)
+		return (findGenPackage(set, ePackage) != null)
 				|| super.isGeneratedCodeAvailable(ePackage, set);
 	}
 
@@ -139,6 +113,14 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	public IncQueryGeneratorModel getGeneratorModel(IProject project) {
 		return getGeneratorModel(project, new ResourceSetImpl());
+	}
+	
+	public IncQueryGeneratorModel getGeneratorModel(ResourceSet set) {
+		if (projectProvider != null) {
+			IJavaProject javaProject = projectProvider.getJavaProject(set);
+			return getGeneratorModel(javaProject.getProject(), set);
+		}
+		return null;
 	}
 
 	@Override
@@ -171,31 +153,50 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public GenPackage findGenPackage(EObject ctx, final EPackage ePackage) {
+		return findGenPackage(ctx, ePackage.getNsURI());
+	}
+	
+	@Override
+	public GenPackage findGenPackage(EObject ctx, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
+		ResourceSet set = ctx.eResource().getResourceSet();
+		return findGenPackage(eiqGenModel, set, packageNsUri);
+	}
+	
+	@Override
+	public GenPackage findGenPackage(ResourceSet set, final EPackage ePackage) {
+		return findGenPackage(set, ePackage.getNsURI());
+	}
+	
+	@Override
+	public GenPackage findGenPackage(ResourceSet set, final String packageNsUri) {
+		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
+		return findGenPackage(eiqGenModel, set, packageNsUri);		
+	}
+	
+	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri) {
 		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
 		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
 			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
 		}
-		GenPackage genPackage = Iterables.find(genPackageIterable, new Predicate<GenPackage>() {
-			public boolean apply(GenPackage genPackage) {
-				return ePackage.equals(genPackage.getEcorePackage());
-			}
-		});
-		return genPackage;
-	}
-
-	@Override
-	public String getProperty(IncQueryGeneratorModel model, String categoryID,
-			String propertyID) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	@Override
-	public Map<String, String> getAllPropertiesOfCategory(
-			IncQueryGeneratorModel model, String categoryID) {
-		// TODO Auto-generated method stub
-		return Maps.newHashMap();
+		GenPackage genPackage = null;
+		try {
+			genPackage = Iterables.find(genPackageIterable,
+					new Predicate<GenPackage>() {
+						public boolean apply(GenPackage genPackage) {
+							return packageNsUri.equals(genPackage
+									.getEcorePackage().getNsURI());
+						}
+					});
+		} catch (NoSuchElementException e) {
+			// Ignoring the exception here - no found genpackage is handled
+			// right after
+		}
+		if (genPackage != null) {
+			return genPackage;
+		} else {
+			return genmodelRegistry.findGenPackage(packageNsUri, set);
+		}
 	}
 	
 	public boolean isGeneratorModelDefined(IProject project) {
