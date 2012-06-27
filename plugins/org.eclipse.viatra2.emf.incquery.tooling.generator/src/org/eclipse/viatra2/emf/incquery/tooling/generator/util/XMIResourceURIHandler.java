@@ -38,9 +38,11 @@ public class XMIResourceURIHandler extends URIHandlerImpl {
 		if (uri.isRelative()) {
 			return super.resolve(uri);
 		}
-		EPackage epackage = metamodelProvider.loadEPackage(uri.trimFragment().toString(), set);
-		if (epackage != null) {
-			return epackage.eResource().getURI().appendFragment(uri.fragment());
+		if(!uri.isPlatform()) {
+			EPackage epackage = metamodelProvider.loadEPackage(uri.trimFragment().toString(), set);
+			if (epackage != null) {
+				return epackage.eResource().getURI().appendFragment(uri.fragment());
+			}
 		}
 		return super.resolve(uri);
 	}
