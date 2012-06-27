@@ -101,6 +101,7 @@ class SnapshotHelper {
 		// 2. store model roots
 		if(snapshot.inputSpecification == InputSpecification::UNSET){
 			snapshot.modelRoots.addAll(matcher.modelRootsForMatcher)
+			snapshot.modelRoots.remove(snapshot)
 			snapshot.inputSpecification = matcher.inputspecificationForMatcher
 		}
 		actualRecord.filter = partialMatch.createMatchRecordForMatch

@@ -24,6 +24,9 @@ import static org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor.*
 import static org.junit.Assert.*
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import static org.hamcrest.CoreMatchers.*
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger
+import junit.framework.TestListener
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -163,10 +166,11 @@ class TestExecutor {
 	 */
 	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
 		val diff = newHashSet
-		
+		val input = snapshot.EMFRootForSnapshot
+		val engine = EngineManager::getInstance().getIncQueryEngine(input);
+		engine.registerLogger
 		snapshot.matchSetRecords.forEach() [matchSet |
-			val input = snapshot.EMFRootForSnapshot
-			val matcher = patternModel.initializeMatcherFromModel(input,matchSet.patternQualifiedName)
+			val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)
 			if(matcher != null){
 				val result = matcher.compareResultSets(matchSet)
 				if(!(result == null
@@ -180,7 +184,7 @@ class TestExecutor {
 		
 		//assertArrayEquals(diff.logDifference,newHashSet,diff)
 		//assertSame(CORRECTRESULTS,if(diff.empty){CORRECTRESULTS}else{diff.logDifference})
-		assertTrue(diff.logDifference,diff.empty)
+		assertTrue(diff.logDifference(engine),diff.empty)
 	}
 	
 	/**
@@ -203,12 +207,35 @@ class TestExecutor {
 		patternModel.assertMatchResults(snapshotUri)
 	}
 	
+	def registerLogger(IncQueryEngine engine){
+		engine.setLogger(new TestingLogger)
+	}
+	
+	def retrieveLoggerOutput(IncQueryEngine engine){
+		val logger = engine.getLogger
+		if(logger instanceof TestingLogger){
+			(logger as TestingLogger).output.toString
+		} else {
+			"Logger output not recorded"
+		}
+	}
+	
 	def logDifference(Set<Object> diff){
 		val stringBuilder = new StringBuilder()
+		diff.logDifference(stringBuilder)
+		stringBuilder.toString
+	}
+	
+	def logDifference(Set<Object> diff, IncQueryEngine engine){
+		val stringBuilder = new StringBuilder()
+		diff.logDifference(stringBuilder)
+		stringBuilder.append(engine.retrieveLoggerOutput)
+		stringBuilder.toString
+	}
+	
+	def private logDifference(Set<Object> diff, StringBuilder stringBuilder){
 		diff.forEach()[
 			stringBuilder.append("\n" + it)
-			IncQueryEngine::defaultLogger.logError(it.toString)
 		]
-		return stringBuilder.toString
 	}
 }

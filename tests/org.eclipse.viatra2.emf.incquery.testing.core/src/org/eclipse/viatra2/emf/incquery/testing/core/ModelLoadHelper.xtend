@@ -23,6 +23,8 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -98,7 +100,7 @@ class ModelLoadHelper {
 	/**
 	 * Initialize a matcher for the pattern with the given name from the pattern model on the selected EMF root.
 	 */
-	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
+	def initializeMatcherFromModel(PatternModel model, IncQueryEngine engine, String patternName){
 		val patterns = model.patterns.filter[
 			if(model.packageName == null){
 				name.equals(patternName)
@@ -108,10 +110,14 @@ class ModelLoadHelper {
 		]
 		if(patterns.size == 1){
 			val factory = new GenericMatcherFactory(patterns.iterator.next)
-			factory.getMatcher(emfRoot)
+			factory.getMatcher(engine)
 		}
 	}
 	
+	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
+		val engine = EngineManager::getInstance().getIncQueryEngine(emfRoot);
+		model.initializeMatcherFromModel(engine,patternName)
+	}
 	/**
 	 * Initialize a registered matcher for the pattern FQN on the selected EMF root.
 	 */
