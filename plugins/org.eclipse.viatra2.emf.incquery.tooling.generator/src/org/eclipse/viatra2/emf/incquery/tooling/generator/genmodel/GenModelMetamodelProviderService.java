@@ -18,7 +18,6 @@ import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
-import org.eclipse.viatra2.patternlanguage.EcoreGenmodelRegistry;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -87,7 +86,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
-		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
+//		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
 		return (loadedPackage != null) ? loadedPackage.getEcorePackage() : super.loadEPackage(packageUri, set);
 	}
 
@@ -194,7 +193,9 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (genPackage != null) {
 			return genPackage;
 		} else {
-			return genmodelRegistry.findGenPackage(packageNsUri, set);
+			// TODO genmodels should not be loaded if ecore is already loaded #192
+			//return genmodelRegistry.findGenPackage(packageNsUri, set);
+			return null;
 		}
 	}
 	
