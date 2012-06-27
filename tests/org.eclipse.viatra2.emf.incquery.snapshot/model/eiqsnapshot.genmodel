@@ -15,13 +15,18 @@
       <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//InputSpecification/Resource"/>
       <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//InputSpecification/EObject"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="eiqsnapshot.ecore#//RecordRole">
+      <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//RecordRole/Match"/>
+      <genEnumLiterals ecoreEnumLiteral="eiqsnapshot.ecore#//RecordRole/Filter"/>
+    </genEnums>
     <genClasses ecoreClass="eiqsnapshot.ecore#//MatchSetRecord">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MatchSetRecord/patternQualifiedName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchSetRecord/matches"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchSetRecord/partialMatch"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchSetRecord/filter"/>
     </genClasses>
     <genClasses ecoreClass="eiqsnapshot.ecore#//MatchRecord">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference eiqsnapshot.ecore#//MatchRecord/substitutions"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MatchRecord/role"/>
     </genClasses>
     <genClasses image="false" ecoreClass="eiqsnapshot.ecore#//MatchSubstitutionRecord">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute eiqsnapshot.ecore#//MatchSubstitutionRecord/parameterName"/>

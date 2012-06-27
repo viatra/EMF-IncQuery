@@ -21,11 +21,11 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 
 /**
  * <!-- begin-user-doc -->
@@ -112,24 +112,15 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 			eNotify(new ENotificationImpl(this, Notification.SET, EIQSnapshotPackage.MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME, oldParameterName, parameterName));
 	}
 
-	private IncqueryFeatureHandler valueHandler;
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
-	public Object getDerivedValue() {
-		if (valueHandler != null) {
-		  return valueHandler.getSingleReferenceValue();
-		 } else {
-		  valueHandler = IncqueryFeatureHelper.createHandler(this,
-		   EIQSnapshotPackage.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE,
-		   "org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue",
-		   "Substitution", "Value", FeatureKind.SINGLE_REFERENCE);
-		  if(valueHandler != null) {
-		   return valueHandler.getSingleReferenceValue();
-		  }
-		 }
-		 return null;
+	public Object getDerivedValueGen() {
+		// TODO: implement this method to return the 'Derived Value' attribute
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -208,6 +199,35 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 		result.append(parameterName);
 		result.append(')');
 		return result.toString();
+	}
+
+	/**
+	 * EMF-IncQuery handler for derived feature derivedValue
+	 */
+	private IncqueryFeatureHandler derivedValueHandler;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * @derived getter created by EMF-InccQuery for derived feature derivedValue
+	 */
+	public Object getDerivedValue() {
+		if (derivedValueHandler != null) {
+			return (java.lang.Object) derivedValueHandler
+					.getSingleReferenceValue();
+		} else {
+			derivedValueHandler = IncqueryFeatureHelper
+					.createHandler(
+							this,
+							EIQSnapshotPackageImpl.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE,
+							"org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue",
+							"Substitution", "Value",
+							FeatureKind.SINGLE_REFERENCE, true);
+			if (derivedValueHandler != null) {
+				return (java.lang.Object) derivedValueHandler
+						.getSingleReferenceValue();
+			}
+		}
+		return null;
 	}
 
 } //MatchSubstitutionRecordImpl

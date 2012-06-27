@@ -3,7 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.incorrectsubstitution;
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -20,13 +19,13 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * 
  */
 public final class IncorrectSubstitutionMatch extends BasePatternMatch implements IPatternMatch {
-  private MatchRecord fRecord;
+  private Object fRecord;
   
-  private MatchRecord fCorrespondingRecord;
+  private Object fCorrespondingRecord;
   
   private static String[] parameterNames = {"Record", "CorrespondingRecord"};
   
-  public IncorrectSubstitutionMatch(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord) {
+  public IncorrectSubstitutionMatch(final Object pRecord, final Object pCorrespondingRecord) {
     this.fRecord = pRecord;
     this.fCorrespondingRecord = pCorrespondingRecord;
     
@@ -40,36 +39,36 @@ public final class IncorrectSubstitutionMatch extends BasePatternMatch implement
     
   }
   
-  public MatchRecord getRecord() {
+  public Object getRecord() {
     return this.fRecord;
     
   }
   
-  public MatchRecord getCorrespondingRecord() {
+  public Object getCorrespondingRecord() {
     return this.fCorrespondingRecord;
     
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("Record".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) {
-    	this.fRecord = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
+    if ("Record".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fRecord = (java.lang.Object) newValue;
     	return true;
     }
-    if ("CorrespondingRecord".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) {
-    	this.fCorrespondingRecord = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
+    if ("CorrespondingRecord".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fCorrespondingRecord = (java.lang.Object) newValue;
     	return true;
     }
     return false;
     
   }
   
-  public void setRecord(final MatchRecord pRecord) {
+  public void setRecord(final Object pRecord) {
     this.fRecord = pRecord;
     
   }
   
-  public void setCorrespondingRecord(final MatchRecord pCorrespondingRecord) {
+  public void setCorrespondingRecord(final Object pCorrespondingRecord) {
     this.fCorrespondingRecord = pCorrespondingRecord;
     
   }

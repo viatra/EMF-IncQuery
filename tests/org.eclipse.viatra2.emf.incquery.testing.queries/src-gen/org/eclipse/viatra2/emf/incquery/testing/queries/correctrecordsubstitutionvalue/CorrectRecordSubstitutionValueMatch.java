@@ -3,7 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsubstituti
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -20,7 +19,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * 
  */
 public final class CorrectRecordSubstitutionValueMatch extends BasePatternMatch implements IPatternMatch {
-  private MatchRecord fRecord;
+  private Object fRecord;
   
   private String fParameterName;
   
@@ -28,7 +27,7 @@ public final class CorrectRecordSubstitutionValueMatch extends BasePatternMatch 
   
   private static String[] parameterNames = {"Record", "ParameterName", "Value"};
   
-  public CorrectRecordSubstitutionValueMatch(final MatchRecord pRecord, final String pParameterName, final Object pValue) {
+  public CorrectRecordSubstitutionValueMatch(final Object pRecord, final String pParameterName, final Object pValue) {
     this.fRecord = pRecord;
     this.fParameterName = pParameterName;
     this.fValue = pValue;
@@ -44,7 +43,7 @@ public final class CorrectRecordSubstitutionValueMatch extends BasePatternMatch 
     
   }
   
-  public MatchRecord getRecord() {
+  public Object getRecord() {
     return this.fRecord;
     
   }
@@ -61,8 +60,8 @@ public final class CorrectRecordSubstitutionValueMatch extends BasePatternMatch 
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("Record".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) {
-    	this.fRecord = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
+    if ("Record".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fRecord = (java.lang.Object) newValue;
     	return true;
     }
     if ("ParameterName".equals(parameterName) && newValue instanceof java.lang.String) {
@@ -77,7 +76,7 @@ public final class CorrectRecordSubstitutionValueMatch extends BasePatternMatch 
     
   }
   
-  public void setRecord(final MatchRecord pRecord) {
+  public void setRecord(final Object pRecord) {
     this.fRecord = pRecord;
     
   }

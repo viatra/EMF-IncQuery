@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.testing.queries
 import "http://www.eclipse.org/viatra2/emf/incquery/snapshot"
 import "http://www.eclipse.org/emf/2002/Ecore"
 
+@Off
 pattern MatchRecordWithSubstitution(
 	Record : MatchRecord,
 	ParameterName : EString,
@@ -23,6 +24,7 @@ pattern MatchRecordWithSubstitution(
 	MatchSubstitutionRecord.parameterName(Substitution, ParameterName);
 }
 	
+@Off
 pattern CorrectRecordSubstitutionValue(
 	Record : MatchRecord,
 	ParameterName : EString,
@@ -32,6 +34,7 @@ pattern CorrectRecordSubstitutionValue(
 	MatchSubstitutionRecord.derivedValue(Substitution, Value);
 }
 
+@Off
 pattern IncorrectSubstitution(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord
@@ -45,6 +48,7 @@ pattern IncorrectSubstitution(
 	Value1 != Value2;
 }
 
+@Off
 pattern CorrespondingRecords(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord
@@ -53,6 +57,7 @@ pattern CorrespondingRecords(
 	neg find IncorrectSubstitution(Record, CorrespondingRecord);
 }
 
+@Off
 pattern CorrespondingRecordInMatchSetRecord(
 	Record : MatchRecord,
 	CorrespodingRecord : MatchRecord,
@@ -63,6 +68,7 @@ pattern CorrespondingRecordInMatchSetRecord(
 	find CorrespondingRecords(Record, CorrespodingRecord);
 }
 
+@Off
 pattern UnexpectedMatchRecord(
 	ActualSet : MatchSetRecord,
 	ExpectedSet : MatchSetRecord,
@@ -72,7 +78,7 @@ pattern UnexpectedMatchRecord(
 	MatchSetRecord.patternQualifiedName(ActualSet,PatternName);
 	MatchSetRecord.patternQualifiedName(ExpectedSet,PatternName);	
 	ActualSet != ExpectedSet;
-	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ExpectedSet);
+	neg find CorrespondingRecordInMatchSetRecord(Record, _CorrespodingRecord, ExpectedSet);
 }
 
 /*pattern NotFoundMatchRecord(
@@ -84,17 +90,21 @@ pattern UnexpectedMatchRecord(
 	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ActualSet);
 }*/
 
+@Off
+@DerivedFeature(feature = "role")
 pattern RecordRoleValue(
 	Record : MatchRecord,
 	Role
 ) = {
-	MatchSetRecord.filter(MS,Record);
+	MatchSetRecord.filter(_MS,Record);
 	RecordRole::Filter == Role;
 } or {
-	MatchSetRecord.matches(MS,Record);
+	MatchSetRecord.matches(_MS,Record);
 	RecordRole::Match == Role;
 }
 
+@Off
+@DerivedFeature(feature = "derivedValue")
 pattern SubstitutionValue(
 	Substitution : MatchSubstitutionRecord,
 	Value

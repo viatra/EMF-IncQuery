@@ -1,7 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecords;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecords.CorrespondingRecordsMatch;
 
 /**
@@ -17,7 +16,7 @@ public abstract class CorrespondingRecordsProcessor implements IMatchProcessor<C
    * @param pCorrespondingRecord the value of pattern parameter CorrespondingRecord in the currently processed match 
    * 
    */
-  public abstract void process(final MatchRecord Record, final MatchRecord CorrespondingRecord);
+  public abstract void process(final Object Record, final Object CorrespondingRecord);
   
   @Override
   public void process(final CorrespondingRecordsMatch match) {

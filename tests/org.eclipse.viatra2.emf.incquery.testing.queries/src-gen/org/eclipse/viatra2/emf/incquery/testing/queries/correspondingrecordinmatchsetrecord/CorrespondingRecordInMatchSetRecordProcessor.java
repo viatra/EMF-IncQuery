@@ -1,8 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecordinmatchsetrecord;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecordinmatchsetrecord.CorrespondingRecordInMatchSetRecordMatch;
 
 /**
@@ -19,7 +17,7 @@ public abstract class CorrespondingRecordInMatchSetRecordProcessor implements IM
    * @param pExpectedSet the value of pattern parameter ExpectedSet in the currently processed match 
    * 
    */
-  public abstract void process(final MatchRecord Record, final MatchRecord CorrespodingRecord, final MatchSetRecord ExpectedSet);
+  public abstract void process(final Object Record, final Object CorrespodingRecord, final Object ExpectedSet);
   
   @Override
   public void process(final CorrespondingRecordInMatchSetRecordMatch match) {

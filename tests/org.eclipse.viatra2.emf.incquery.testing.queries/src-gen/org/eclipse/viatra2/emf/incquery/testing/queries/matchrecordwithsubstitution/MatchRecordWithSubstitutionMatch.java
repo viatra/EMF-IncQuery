@@ -3,8 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.matchrecordwithsubstitu
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -21,15 +19,15 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * 
  */
 public final class MatchRecordWithSubstitutionMatch extends BasePatternMatch implements IPatternMatch {
-  private MatchRecord fRecord;
+  private Object fRecord;
   
   private String fParameterName;
   
-  private MatchSubstitutionRecord fSubstitution;
+  private Object fSubstitution;
   
   private static String[] parameterNames = {"Record", "ParameterName", "Substitution"};
   
-  public MatchRecordWithSubstitutionMatch(final MatchRecord pRecord, final String pParameterName, final MatchSubstitutionRecord pSubstitution) {
+  public MatchRecordWithSubstitutionMatch(final Object pRecord, final String pParameterName, final Object pSubstitution) {
     this.fRecord = pRecord;
     this.fParameterName = pParameterName;
     this.fSubstitution = pSubstitution;
@@ -45,7 +43,7 @@ public final class MatchRecordWithSubstitutionMatch extends BasePatternMatch imp
     
   }
   
-  public MatchRecord getRecord() {
+  public Object getRecord() {
     return this.fRecord;
     
   }
@@ -55,30 +53,30 @@ public final class MatchRecordWithSubstitutionMatch extends BasePatternMatch imp
     
   }
   
-  public MatchSubstitutionRecord getSubstitution() {
+  public Object getSubstitution() {
     return this.fSubstitution;
     
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("Record".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) {
-    	this.fRecord = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
+    if ("Record".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fRecord = (java.lang.Object) newValue;
     	return true;
     }
     if ("ParameterName".equals(parameterName) && newValue instanceof java.lang.String) {
     	this.fParameterName = (java.lang.String) newValue;
     	return true;
     }
-    if ("Substitution".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) {
-    	this.fSubstitution = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) newValue;
+    if ("Substitution".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fSubstitution = (java.lang.Object) newValue;
     	return true;
     }
     return false;
     
   }
   
-  public void setRecord(final MatchRecord pRecord) {
+  public void setRecord(final Object pRecord) {
     this.fRecord = pRecord;
     
   }
@@ -88,7 +86,7 @@ public final class MatchRecordWithSubstitutionMatch extends BasePatternMatch imp
     
   }
   
-  public void setSubstitution(final MatchSubstitutionRecord pSubstitution) {
+  public void setSubstitution(final Object pSubstitution) {
     this.fSubstitution = pSubstitution;
     
   }

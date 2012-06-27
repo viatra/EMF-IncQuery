@@ -11,7 +11,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.incorrectsubstitution.IncorrectSubstitutionMatch;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -22,6 +21,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  * 
  * 
+ * @Off
  * pattern IncorrectSubstitution(
  * 	Record : MatchRecord,
  * 	CorrespondingRecord : MatchRecord
@@ -77,7 +77,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return matches represented as a IncorrectSubstitutionMatch object.
    * 
    */
-  public Collection<IncorrectSubstitutionMatch> getAllMatches(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord) {
+  public Collection<IncorrectSubstitutionMatch> getAllMatches(final Object pRecord, final Object pCorrespondingRecord) {
     return rawGetAllMatches(new Object[]{pRecord, pCorrespondingRecord});
   }
   
@@ -89,7 +89,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return a match represented as a IncorrectSubstitutionMatch object, or null if no match is found.
    * 
    */
-  public IncorrectSubstitutionMatch getOneArbitraryMatch(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord) {
+  public IncorrectSubstitutionMatch getOneArbitraryMatch(final Object pRecord, final Object pCorrespondingRecord) {
     return rawGetOneArbitraryMatch(new Object[]{pRecord, pCorrespondingRecord});
   }
   
@@ -101,7 +101,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord) {
+  public boolean hasMatch(final Object pRecord, final Object pCorrespondingRecord) {
     return rawHasMatch(new Object[]{pRecord, pCorrespondingRecord});
   }
   
@@ -112,7 +112,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord) {
+  public int countMatches(final Object pRecord, final Object pCorrespondingRecord) {
     return rawCountMatches(new Object[]{pRecord, pCorrespondingRecord});
   }
   
@@ -123,7 +123,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord, final IMatchProcessor<? super IncorrectSubstitutionMatch> processor) {
+  public void forEachMatch(final Object pRecord, final Object pCorrespondingRecord, final IMatchProcessor<? super IncorrectSubstitutionMatch> processor) {
     rawForEachMatch(new Object[]{pRecord, pCorrespondingRecord}, processor);
   }
   
@@ -136,7 +136,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord, final IMatchProcessor<? super IncorrectSubstitutionMatch> processor) {
+  public boolean forOneArbitraryMatch(final Object pRecord, final Object pCorrespondingRecord, final IMatchProcessor<? super IncorrectSubstitutionMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pRecord, pCorrespondingRecord}, processor);
   }
   
@@ -152,7 +152,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the delta monitor.
    * 
    */
-  public DeltaMonitor<IncorrectSubstitutionMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchRecord pRecord, final MatchRecord pCorrespondingRecord) {
+  public DeltaMonitor<IncorrectSubstitutionMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Object pRecord, final Object pCorrespondingRecord) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pRecord, pCorrespondingRecord});
   }
   
@@ -161,8 +161,8 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
-    Set<MatchRecord> results = new HashSet<MatchRecord>();
+  public Set<Object> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+    Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
   }
@@ -172,7 +172,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord() {
+  public Set<Object> getAllValuesOfRecord() {
     return rawAccumulateAllValuesOfRecord(emptyArray());
   }
   
@@ -181,7 +181,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord(final IncorrectSubstitutionMatch partialMatch) {
+  public Set<Object> getAllValuesOfRecord(final IncorrectSubstitutionMatch partialMatch) {
     return rawAccumulateAllValuesOfRecord(partialMatch.toArray());
   }
   
@@ -190,8 +190,8 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord(final MatchRecord pCorrespondingRecord) {
-    MatchRecord pRecord = null;
+  public Set<Object> getAllValuesOfRecord(final Object pCorrespondingRecord) {
+    Object pRecord = null;
     return rawAccumulateAllValuesOfRecord(new Object[]{pRecord, pCorrespondingRecord});
   }
   
@@ -200,8 +200,8 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfCorrespondingRecord(final Object[] parameters) {
-    Set<MatchRecord> results = new HashSet<MatchRecord>();
+  public Set<Object> rawAccumulateAllValuesOfCorrespondingRecord(final Object[] parameters) {
+    Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_CORRESPONDINGRECORD, parameters, results);
     return results;
   }
@@ -211,7 +211,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfCorrespondingRecord() {
+  public Set<Object> getAllValuesOfCorrespondingRecord() {
     return rawAccumulateAllValuesOfCorrespondingRecord(emptyArray());
   }
   
@@ -220,7 +220,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfCorrespondingRecord(final IncorrectSubstitutionMatch partialMatch) {
+  public Set<Object> getAllValuesOfCorrespondingRecord(final IncorrectSubstitutionMatch partialMatch) {
     return rawAccumulateAllValuesOfCorrespondingRecord(partialMatch.toArray());
   }
   
@@ -229,15 +229,15 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfCorrespondingRecord(final MatchRecord pRecord) {
-    MatchRecord pCorrespondingRecord = null;
+  public Set<Object> getAllValuesOfCorrespondingRecord(final Object pRecord) {
+    Object pCorrespondingRecord = null;
     return rawAccumulateAllValuesOfCorrespondingRecord(new Object[]{pRecord, pCorrespondingRecord});
   }
   
   @Override
   public IncorrectSubstitutionMatch tupleToMatch(final Tuple t) {
     try {
-    	return new IncorrectSubstitutionMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_CORRESPONDINGRECORD));	
+    	return new IncorrectSubstitutionMatch((java.lang.Object) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_CORRESPONDINGRECORD));	
     } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -247,7 +247,7 @@ public class IncorrectSubstitutionMatcher extends BaseGeneratedMatcher<Incorrect
   @Override
   public IncorrectSubstitutionMatch arrayToMatch(final Object[] match) {
     try {
-    	return new IncorrectSubstitutionMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPONDINGRECORD]);
+    	return new IncorrectSubstitutionMatch((java.lang.Object) match[POSITION_RECORD], (java.lang.Object) match[POSITION_CORRESPONDINGRECORD]);
     } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

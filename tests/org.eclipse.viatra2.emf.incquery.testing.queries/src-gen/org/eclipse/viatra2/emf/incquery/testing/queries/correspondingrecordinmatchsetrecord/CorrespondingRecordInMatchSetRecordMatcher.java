@@ -11,8 +11,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecordinmatchsetrecord.CorrespondingRecordInMatchSetRecordMatch;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -23,6 +21,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  * 
  * 
+ * @Off
  * pattern CorrespondingRecordInMatchSetRecord(
  * 	Record : MatchRecord,
  * 	CorrespodingRecord : MatchRecord,
@@ -78,7 +77,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return matches represented as a CorrespondingRecordInMatchSetRecordMatch object.
    * 
    */
-  public Collection<CorrespondingRecordInMatchSetRecordMatch> getAllMatches(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet) {
+  public Collection<CorrespondingRecordInMatchSetRecordMatch> getAllMatches(final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet) {
     return rawGetAllMatches(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -91,7 +90,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return a match represented as a CorrespondingRecordInMatchSetRecordMatch object, or null if no match is found.
    * 
    */
-  public CorrespondingRecordInMatchSetRecordMatch getOneArbitraryMatch(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet) {
+  public CorrespondingRecordInMatchSetRecordMatch getOneArbitraryMatch(final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet) {
     return rawGetOneArbitraryMatch(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -104,7 +103,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet) {
+  public boolean hasMatch(final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet) {
     return rawHasMatch(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -116,7 +115,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet) {
+  public int countMatches(final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet) {
     return rawCountMatches(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -128,7 +127,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet, final IMatchProcessor<? super CorrespondingRecordInMatchSetRecordMatch> processor) {
+  public void forEachMatch(final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet, final IMatchProcessor<? super CorrespondingRecordInMatchSetRecordMatch> processor) {
     rawForEachMatch(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet}, processor);
   }
   
@@ -142,7 +141,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet, final IMatchProcessor<? super CorrespondingRecordInMatchSetRecordMatch> processor) {
+  public boolean forOneArbitraryMatch(final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet, final IMatchProcessor<? super CorrespondingRecordInMatchSetRecordMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet}, processor);
   }
   
@@ -159,7 +158,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the delta monitor.
    * 
    */
-  public DeltaMonitor<CorrespondingRecordInMatchSetRecordMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet) {
+  public DeltaMonitor<CorrespondingRecordInMatchSetRecordMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Object pRecord, final Object pCorrespodingRecord, final Object pExpectedSet) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -168,8 +167,8 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
-    Set<MatchRecord> results = new HashSet<MatchRecord>();
+  public Set<Object> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+    Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
   }
@@ -179,7 +178,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord() {
+  public Set<Object> getAllValuesOfRecord() {
     return rawAccumulateAllValuesOfRecord(emptyArray());
   }
   
@@ -188,7 +187,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord(final CorrespondingRecordInMatchSetRecordMatch partialMatch) {
+  public Set<Object> getAllValuesOfRecord(final CorrespondingRecordInMatchSetRecordMatch partialMatch) {
     return rawAccumulateAllValuesOfRecord(partialMatch.toArray());
   }
   
@@ -197,8 +196,8 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord(final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet) {
-    MatchRecord pRecord = null;
+  public Set<Object> getAllValuesOfRecord(final Object pCorrespodingRecord, final Object pExpectedSet) {
+    Object pRecord = null;
     return rawAccumulateAllValuesOfRecord(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -207,8 +206,8 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfCorrespodingRecord(final Object[] parameters) {
-    Set<MatchRecord> results = new HashSet<MatchRecord>();
+  public Set<Object> rawAccumulateAllValuesOfCorrespodingRecord(final Object[] parameters) {
+    Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_CORRESPODINGRECORD, parameters, results);
     return results;
   }
@@ -218,7 +217,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfCorrespodingRecord() {
+  public Set<Object> getAllValuesOfCorrespodingRecord() {
     return rawAccumulateAllValuesOfCorrespodingRecord(emptyArray());
   }
   
@@ -227,7 +226,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfCorrespodingRecord(final CorrespondingRecordInMatchSetRecordMatch partialMatch) {
+  public Set<Object> getAllValuesOfCorrespodingRecord(final CorrespondingRecordInMatchSetRecordMatch partialMatch) {
     return rawAccumulateAllValuesOfCorrespodingRecord(partialMatch.toArray());
   }
   
@@ -236,8 +235,8 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfCorrespodingRecord(final MatchRecord pRecord, final MatchSetRecord pExpectedSet) {
-    MatchRecord pCorrespodingRecord = null;
+  public Set<Object> getAllValuesOfCorrespodingRecord(final Object pRecord, final Object pExpectedSet) {
+    Object pCorrespodingRecord = null;
     return rawAccumulateAllValuesOfCorrespodingRecord(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
@@ -246,8 +245,8 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSetRecord> rawAccumulateAllValuesOfExpectedSet(final Object[] parameters) {
-    Set<MatchSetRecord> results = new HashSet<MatchSetRecord>();
+  public Set<Object> rawAccumulateAllValuesOfExpectedSet(final Object[] parameters) {
+    Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_EXPECTEDSET, parameters, results);
     return results;
   }
@@ -257,7 +256,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSetRecord> getAllValuesOfExpectedSet() {
+  public Set<Object> getAllValuesOfExpectedSet() {
     return rawAccumulateAllValuesOfExpectedSet(emptyArray());
   }
   
@@ -266,7 +265,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSetRecord> getAllValuesOfExpectedSet(final CorrespondingRecordInMatchSetRecordMatch partialMatch) {
+  public Set<Object> getAllValuesOfExpectedSet(final CorrespondingRecordInMatchSetRecordMatch partialMatch) {
     return rawAccumulateAllValuesOfExpectedSet(partialMatch.toArray());
   }
   
@@ -275,15 +274,15 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSetRecord> getAllValuesOfExpectedSet(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord) {
-    MatchSetRecord pExpectedSet = null;
+  public Set<Object> getAllValuesOfExpectedSet(final Object pRecord, final Object pCorrespodingRecord) {
+    Object pExpectedSet = null;
     return rawAccumulateAllValuesOfExpectedSet(new Object[]{pRecord, pCorrespodingRecord, pExpectedSet});
   }
   
   @Override
   public CorrespondingRecordInMatchSetRecordMatch tupleToMatch(final Tuple t) {
     try {
-    	return new CorrespondingRecordInMatchSetRecordMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_CORRESPODINGRECORD), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET));	
+    	return new CorrespondingRecordInMatchSetRecordMatch((java.lang.Object) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_CORRESPODINGRECORD), (java.lang.Object) t.get(POSITION_EXPECTEDSET));	
     } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -293,7 +292,7 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseGeneratedMat
   @Override
   public CorrespondingRecordInMatchSetRecordMatch arrayToMatch(final Object[] match) {
     try {
-    	return new CorrespondingRecordInMatchSetRecordMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPODINGRECORD], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET]);
+    	return new CorrespondingRecordInMatchSetRecordMatch((java.lang.Object) match[POSITION_RECORD], (java.lang.Object) match[POSITION_CORRESPODINGRECORD], (java.lang.Object) match[POSITION_EXPECTEDSET]);
     } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

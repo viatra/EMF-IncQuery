@@ -11,7 +11,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsubstitutionvalue.CorrectRecordSubstitutionValueMatch;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -22,6 +21,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  * 
  * 	
+ * @Off
  * pattern CorrectRecordSubstitutionValue(
  * 	Record : MatchRecord,
  * 	ParameterName : EString,
@@ -76,7 +76,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return matches represented as a CorrectRecordSubstitutionValueMatch object.
    * 
    */
-  public Collection<CorrectRecordSubstitutionValueMatch> getAllMatches(final MatchRecord pRecord, final String pParameterName, final Object pValue) {
+  public Collection<CorrectRecordSubstitutionValueMatch> getAllMatches(final Object pRecord, final String pParameterName, final Object pValue) {
     return rawGetAllMatches(new Object[]{pRecord, pParameterName, pValue});
   }
   
@@ -89,7 +89,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return a match represented as a CorrectRecordSubstitutionValueMatch object, or null if no match is found.
    * 
    */
-  public CorrectRecordSubstitutionValueMatch getOneArbitraryMatch(final MatchRecord pRecord, final String pParameterName, final Object pValue) {
+  public CorrectRecordSubstitutionValueMatch getOneArbitraryMatch(final Object pRecord, final String pParameterName, final Object pValue) {
     return rawGetOneArbitraryMatch(new Object[]{pRecord, pParameterName, pValue});
   }
   
@@ -102,7 +102,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final MatchRecord pRecord, final String pParameterName, final Object pValue) {
+  public boolean hasMatch(final Object pRecord, final String pParameterName, final Object pValue) {
     return rawHasMatch(new Object[]{pRecord, pParameterName, pValue});
   }
   
@@ -114,7 +114,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final MatchRecord pRecord, final String pParameterName, final Object pValue) {
+  public int countMatches(final Object pRecord, final String pParameterName, final Object pValue) {
     return rawCountMatches(new Object[]{pRecord, pParameterName, pValue});
   }
   
@@ -126,7 +126,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final MatchRecord pRecord, final String pParameterName, final Object pValue, final IMatchProcessor<? super CorrectRecordSubstitutionValueMatch> processor) {
+  public void forEachMatch(final Object pRecord, final String pParameterName, final Object pValue, final IMatchProcessor<? super CorrectRecordSubstitutionValueMatch> processor) {
     rawForEachMatch(new Object[]{pRecord, pParameterName, pValue}, processor);
   }
   
@@ -140,7 +140,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final MatchRecord pRecord, final String pParameterName, final Object pValue, final IMatchProcessor<? super CorrectRecordSubstitutionValueMatch> processor) {
+  public boolean forOneArbitraryMatch(final Object pRecord, final String pParameterName, final Object pValue, final IMatchProcessor<? super CorrectRecordSubstitutionValueMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pRecord, pParameterName, pValue}, processor);
   }
   
@@ -157,7 +157,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the delta monitor.
    * 
    */
-  public DeltaMonitor<CorrectRecordSubstitutionValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchRecord pRecord, final String pParameterName, final Object pValue) {
+  public DeltaMonitor<CorrectRecordSubstitutionValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Object pRecord, final String pParameterName, final Object pValue) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pRecord, pParameterName, pValue});
   }
   
@@ -166,8 +166,8 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
-    Set<MatchRecord> results = new HashSet<MatchRecord>();
+  public Set<Object> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+    Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
   }
@@ -177,7 +177,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord() {
+  public Set<Object> getAllValuesOfRecord() {
     return rawAccumulateAllValuesOfRecord(emptyArray());
   }
   
@@ -186,7 +186,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord(final CorrectRecordSubstitutionValueMatch partialMatch) {
+  public Set<Object> getAllValuesOfRecord(final CorrectRecordSubstitutionValueMatch partialMatch) {
     return rawAccumulateAllValuesOfRecord(partialMatch.toArray());
   }
   
@@ -195,8 +195,8 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> getAllValuesOfRecord(final String pParameterName, final Object pValue) {
-    MatchRecord pRecord = null;
+  public Set<Object> getAllValuesOfRecord(final String pParameterName, final Object pValue) {
+    Object pRecord = null;
     return rawAccumulateAllValuesOfRecord(new Object[]{pRecord, pParameterName, pValue});
   }
   
@@ -234,7 +234,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<String> getAllValuesOfParameterName(final MatchRecord pRecord, final Object pValue) {
+  public Set<String> getAllValuesOfParameterName(final Object pRecord, final Object pValue) {
     String pParameterName = null;
     return rawAccumulateAllValuesOfParameterName(new Object[]{pRecord, pParameterName, pValue});
   }
@@ -273,7 +273,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfValue(final MatchRecord pRecord, final String pParameterName) {
+  public Set<Object> getAllValuesOfValue(final Object pRecord, final String pParameterName) {
     Object pValue = null;
     return rawAccumulateAllValuesOfValue(new Object[]{pRecord, pParameterName, pValue});
   }
@@ -281,7 +281,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
   @Override
   public CorrectRecordSubstitutionValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new CorrectRecordSubstitutionValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (java.lang.String) t.get(POSITION_PARAMETERNAME), (java.lang.Object) t.get(POSITION_VALUE));	
+    	return new CorrectRecordSubstitutionValueMatch((java.lang.Object) t.get(POSITION_RECORD), (java.lang.String) t.get(POSITION_PARAMETERNAME), (java.lang.Object) t.get(POSITION_VALUE));	
     } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -291,7 +291,7 @@ public class CorrectRecordSubstitutionValueMatcher extends BaseGeneratedMatcher<
   @Override
   public CorrectRecordSubstitutionValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new CorrectRecordSubstitutionValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (java.lang.String) match[POSITION_PARAMETERNAME], (java.lang.Object) match[POSITION_VALUE]);
+    	return new CorrectRecordSubstitutionValueMatch((java.lang.Object) match[POSITION_RECORD], (java.lang.String) match[POSITION_PARAMETERNAME], (java.lang.Object) match[POSITION_VALUE]);
     } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

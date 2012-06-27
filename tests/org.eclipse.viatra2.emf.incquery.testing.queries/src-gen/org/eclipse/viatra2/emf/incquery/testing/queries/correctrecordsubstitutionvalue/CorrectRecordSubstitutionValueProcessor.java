@@ -1,7 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsubstitutionvalue;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsubstitutionvalue.CorrectRecordSubstitutionValueMatch;
 
 /**
@@ -18,7 +17,7 @@ public abstract class CorrectRecordSubstitutionValueProcessor implements IMatchP
    * @param pValue the value of pattern parameter Value in the currently processed match 
    * 
    */
-  public abstract void process(final MatchRecord Record, final String ParameterName, final Object Value);
+  public abstract void process(final Object Record, final String ParameterName, final Object Value);
   
   @Override
   public void process(final CorrectRecordSubstitutionValueMatch match) {

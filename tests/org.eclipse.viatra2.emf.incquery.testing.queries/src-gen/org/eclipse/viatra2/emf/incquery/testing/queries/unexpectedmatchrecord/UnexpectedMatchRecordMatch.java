@@ -3,8 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord;
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -21,15 +19,15 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * 
  */
 public final class UnexpectedMatchRecordMatch extends BasePatternMatch implements IPatternMatch {
-  private MatchSetRecord fActualSet;
+  private Object fActualSet;
   
-  private MatchSetRecord fExpectedSet;
+  private Object fExpectedSet;
   
-  private MatchRecord fRecord;
+  private Object fRecord;
   
   private static String[] parameterNames = {"ActualSet", "ExpectedSet", "Record"};
   
-  public UnexpectedMatchRecordMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+  public UnexpectedMatchRecordMatch(final Object pActualSet, final Object pExpectedSet, final Object pRecord) {
     this.fActualSet = pActualSet;
     this.fExpectedSet = pExpectedSet;
     this.fRecord = pRecord;
@@ -45,50 +43,50 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch implement
     
   }
   
-  public MatchSetRecord getActualSet() {
+  public Object getActualSet() {
     return this.fActualSet;
     
   }
   
-  public MatchSetRecord getExpectedSet() {
+  public Object getExpectedSet() {
     return this.fExpectedSet;
     
   }
   
-  public MatchRecord getRecord() {
+  public Object getRecord() {
     return this.fRecord;
     
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("ActualSet".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) {
-    	this.fActualSet = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) newValue;
+    if ("ActualSet".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fActualSet = (java.lang.Object) newValue;
     	return true;
     }
-    if ("ExpectedSet".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) {
-    	this.fExpectedSet = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) newValue;
+    if ("ExpectedSet".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fExpectedSet = (java.lang.Object) newValue;
     	return true;
     }
-    if ("Record".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) {
-    	this.fRecord = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
+    if ("Record".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fRecord = (java.lang.Object) newValue;
     	return true;
     }
     return false;
     
   }
   
-  public void setActualSet(final MatchSetRecord pActualSet) {
+  public void setActualSet(final Object pActualSet) {
     this.fActualSet = pActualSet;
     
   }
   
-  public void setExpectedSet(final MatchSetRecord pExpectedSet) {
+  public void setExpectedSet(final Object pExpectedSet) {
     this.fExpectedSet = pExpectedSet;
     
   }
   
-  public void setRecord(final MatchRecord pRecord) {
+  public void setRecord(final Object pRecord) {
     this.fRecord = pRecord;
     
   }
