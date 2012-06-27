@@ -36,6 +36,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	   var EClass pathExpressionElement
 	   var EClass pathExpressionHead
 	   var EClass pathExpressionTail
+	   var EClass type
 		for (c : p.EClassifiers.filter(typeof(EClass))) {
            switch c.name {
            	 case "Pattern": patternClass = c
@@ -46,6 +47,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
            	 case "PathExpressionElement": pathExpressionElement = c
            	 case "PathExpressionHead": pathExpressionHead = c
            	 case "PathExpressionTail": pathExpressionTail = c
+           	 case "Type": type = c
            }
        }
        bodyClass.generateEReference(varClass)
@@ -58,6 +60,8 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        pathExpressionElement.changeTailType(pathExpressionTail)
        
        varClass.addJvmIdentifiableOperations
+       
+       type.updateTypeClass
 	}
 	
 	def addJvmIdentifiableOperations(EClass varClass) {
@@ -190,5 +194,10 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	 */
 	def changeTailType(EClass element, EClass tail) {
 		element.EStructuralFeatures.findFirst(e | e.name == "tail").EType = tail
+	}
+	
+	def updateTypeClass(EClass type) {
+		val nameFeature = type.EStructuralFeatures.findFirst(e | e.name == "typename")
+		nameFeature.transient = true
 	}
 }
