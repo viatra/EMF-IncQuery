@@ -90,7 +90,9 @@ public class EMFPatternLanguageJavaValidator extends
 
 	@Check
 	public void checkPackageImportGeneratedCode(PackageImport packageImport) {
-		if (!metamodelProvider.isGeneratedCodeAvailable(packageImport
+		if (packageImport.getEPackage() != null
+				&& packageImport.getEPackage().getNsURI() != null
+				&& !metamodelProvider.isGeneratedCodeAvailable(packageImport
 				.getEPackage(), packageImport.eResource().getResourceSet())) {
 			warning(String
 					.format("The generated code of the Ecore model cannot be found. Consider setting up a generator model for the generated code to work.",

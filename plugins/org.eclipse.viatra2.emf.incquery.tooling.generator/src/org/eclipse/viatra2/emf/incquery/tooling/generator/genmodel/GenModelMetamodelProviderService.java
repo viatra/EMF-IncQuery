@@ -128,10 +128,11 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (file.exists()) {
 			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
 			Resource resource = set.getResource(uri, true);
-			return (IncQueryGeneratorModel) resource.getContents().get(0);
-		} else {
-			return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
-		}
+			if (!resource.getContents().isEmpty()) {
+				return (IncQueryGeneratorModel) resource.getContents().get(0);
+			}
+		} 
+		return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
 	}
 
 	@Override
