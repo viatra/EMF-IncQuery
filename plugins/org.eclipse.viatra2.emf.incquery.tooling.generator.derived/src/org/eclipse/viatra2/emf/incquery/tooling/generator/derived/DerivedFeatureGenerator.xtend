@@ -56,18 +56,18 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
+import org.eclipse.emf.ecore.util.EcoreUtil
+import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference
 
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator.*
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	@Inject IEiqGenmodelProvider provider
 	@Inject extension DerivedFeatureSourceCodeUtil
-	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	/* usage: @DerivedFeature(
 	 * 			feature="featureName",
@@ -78,16 +78,16 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 * 			disabled="true/false" (default: false)
 	 * 		  )
 	 */
-	private static String annotationLiteral = "DerivedFeature"
-	private static String DERIVED_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features"
-	private static String HANDLER_IMPORT = "org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler"
-	private static String FEATUREKIND_IMPORT = "org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind"
-	private static String HELPER_IMPORT = "org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper"
-	private static String HANDLER_NAME = "IncqueryFeatureHandler"
-	private static String HANDLER_FIELD_SUFFIX = "Handler"
+	private static String annotationLiteral 		= "DerivedFeature"
+	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features"
+	private static String IMPORT_QUALIFIER 			= "org.eclipse.viatra2.emf.incquery.runtime.derived"
+	private static String FEATUREKIND_IMPORT		= "FeatureKind"
+	private static String HELPER_IMPORT 			= "IncqueryFeatureHelper"
+	private static String HANDLER_NAME 				= "IncqueryFeatureHandler"
+	private static String HANDLER_FIELD_SUFFIX 		= "Handler"
 	
-		
-	private static String DERIVED_EXTENSION_PREFIX = "extension.derived."
+	
+	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
 	private static Map kinds = newHashMap(
 		Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
@@ -152,7 +152,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				compunit.buffer.save(new NullProgressMonitor, false)
 				
 			} catch(IllegalArgumentException e){
-				IncQueryEngine::defaultLogger.logError(e.message);
+				IncQueryEngine::defaultLogger.logError(e.message,e);
 			}
 			
 		}
@@ -167,7 +167,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 	
 	def private findGenFeatureForFeature(GenClass genSourceClass, EStructuralFeature feature, Pattern pattern){
-		val genFeature = genSourceClass.EGetGenFeatures.findFirst[it.ecoreFeature == feature]
+		val genFeature = genSourceClass.genFeatures.findFirst[it.ecoreFeature == feature]
 		if(genFeature == null){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + feature.name + " not found in GenClass " + genSourceClass.name + "!")
 		}
@@ -183,9 +183,29 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 	
 	def private findJavaFile(GenPackage pckg, GenClass genSourceClass, IJavaProject javaProject){
-		val prefix = pckg.prefix
+		val prefix = pckg.ecorePackage.name
 		val suffix = pckg.classPackageSuffix
-		val implPackage = javaProject.packageFragments.findFirst[it.elementName == prefix.toFirstLower+"."+suffix]			
+		val base = pckg.basePackage
+		var packageNameTmp = ""
+		if(base != null && base != ""){
+			packageNameTmp = base
+		}
+		if(prefix != null && prefix != ""){
+			if(packageNameTmp != ""){
+				packageNameTmp = packageNameTmp + "." + prefix
+			} else {
+				packageNameTmp = prefix
+			}
+		}
+		if(suffix != null && suffix != ""){
+			if(packageNameTmp != ""){
+				packageNameTmp = packageNameTmp + "." + suffix
+			} else {
+				packageNameTmp = suffix
+			}
+		}
+		val packageName = packageNameTmp
+		val implPackage = javaProject.packageFragments.findFirst[it.elementName == packageName]			
 		implPackage.compilationUnits.findFirst[it.elementName == genSourceClass.className+".java"]
 	}
 	
@@ -194,27 +214,27 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		// check import
 		val imports = astNode.imports as List<ImportDeclaration>
 		val handlerImport = imports.findFirst[
-			it.name.fullyQualifiedName == HANDLER_IMPORT
+			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "." + HANDLER_NAME
 		]
 		if(handlerImport == null){
 			val handlerImportNew = ast.newImportDeclaration
-			handlerImportNew.setName(ast.newSimpleName(HANDLER_IMPORT))
+			handlerImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER), ast.newSimpleName(HANDLER_NAME)))
 			importListRewrite.insertLast(handlerImportNew, null)
 		}
 		val kindImport = imports.findFirst[
-			it.name.fullyQualifiedName == FEATUREKIND_IMPORT
+			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "." + HANDLER_NAME + "."+ FEATUREKIND_IMPORT
 		]
 		if(kindImport == null){
 			val kindImportNew = ast.newImportDeclaration
-			kindImportNew.setName(ast.newSimpleName(FEATUREKIND_IMPORT))
+			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER + "." + HANDLER_NAME),ast.newSimpleName(FEATUREKIND_IMPORT)))
 			importListRewrite.insertLast(kindImportNew, null)
 		}
 		val helperImport = imports.findFirst[
-			it.name.fullyQualifiedName == HELPER_IMPORT
+			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "." + HELPER_IMPORT
 		]
 		if(helperImport == null){
 			val helperImportNew = ast.newImportDeclaration
-			helperImportNew.setName(ast.newSimpleName(HELPER_IMPORT))
+			helperImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER), ast.newSimpleName(HELPER_IMPORT)))
 			importListRewrite.insertLast(helperImportNew, null)
 		}
 	}
@@ -579,7 +599,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		
 		parameters.put("sourceVar", sourceTmp)
 		parameters.put("source", source)
-		parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
+		//parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
 		
 		val pckg = provider.findGenPackage(pattern, source.EPackage)
 		if(pckg == null){
@@ -618,17 +638,17 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Target " + targetTmp +" not set or no such parameter!")
 			}
 		}
-		val targetType = pattern.parameters.get(pattern.parameterPositionsByName.get(targetTmp)).type
+		/*val targetType = pattern.parameters.get(pattern.parameterPositionsByName.get(targetTmp)).type
 		if(!(targetType instanceof ClassType)){
 			//if(targetType instanceof )
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Target " + targetTmp +" is not EClassifier!")
 		}
-		val target = (targetType as ClassType).classname
+		val target = (targetType as ClassType).classname*/
 		parameters.put("targetVar", targetTmp)
-		parameters.put("target", target)
-		parameters.put("targetJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(targetTmp)).calculateType)
+		//parameters.put("target", target)
+		//parameters.put("targetJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(targetTmp)).calculateType)
 				
-		val featureTarget = feature.EGenericType
+		/*val featureTarget = feature.EGenericType
 		target.ETypeParameters.forEach[
 			it.EBounds.forEach[
 				println(it)
@@ -636,7 +656,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					println("equal")
 				}
 			]
-		]
+		]*/
 		
 		/*if(keepCacheTmp == ""){
 			keepCacheTmp = "true"

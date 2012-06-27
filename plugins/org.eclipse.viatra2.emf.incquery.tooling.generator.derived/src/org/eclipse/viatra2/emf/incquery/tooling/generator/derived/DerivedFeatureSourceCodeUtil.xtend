@@ -48,14 +48,14 @@ class DerivedFeatureSourceCodeUtil {
 		public class DummyClass {
 			public void DummyMethod() {
 				if («feature.name»Handler != null) {
-					return («feature.ecoreFeature.EType.name») «feature.name»Handler.getSingleReferenceValue();
+					return («feature.getType(source)») «feature.name»Handler.getSingleReferenceValue();
 				} else {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 							«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 							 "«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
 							FeatureKind.SINGLE_REFERENCE,«keepCache»);
 					if («feature.name»Handler != null) {
-						return («feature.ecoreFeature.EType.name») «feature.name»Handler.getSingleReferenceValue();
+						return («feature.getType(source)») «feature.name»Handler.getSingleReferenceValue();
 					}
 				}
 				return null;
@@ -148,14 +148,14 @@ class DerivedFeatureSourceCodeUtil {
 		public class DummyClass {
 			public void DummyMethod() {
 				if («feature.name»Handler != null) {
-					return («feature.ecoreFeature.EType.name») «feature.name»Handler.getValueIteration();
+					return («feature.getType(source)») «feature.name»Handler.getValueIteration();
 				} else {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 							«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 							 "«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
 							FeatureKind.ITERATION);
 					if («feature.name»Handler != null) {
-						return («feature.ecoreFeature.EType.name») «feature.name»Handler.getValueIteration();
+						return («feature.getType(source)») «feature.name»Handler.getValueIteration();
 					}
 				}
 				return null;
