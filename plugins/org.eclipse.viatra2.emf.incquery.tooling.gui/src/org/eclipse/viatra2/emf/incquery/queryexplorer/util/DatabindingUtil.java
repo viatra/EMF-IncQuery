@@ -105,9 +105,21 @@ public class DatabindingUtil {
 		}
 	}
 	
+	private static List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> collectGeneratedMatcherFactories() {
+		List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new ArrayList<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
+			Pattern pattern = factory.getPattern();
+			Annotation annotation = DatabindingUtil.getAnnotation(pattern, DatabindingUtil.OFF_ANNOTATION);
+			if (annotation == null) {
+				factories.add(factory);
+			}
+		}
+		return factories;
+	}
+	
 	private static List<Pattern> collectGeneratedPatterns() {
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : collectGeneratedMatcherFactories()) {
 			patterns.add(factory.getPattern());
 		}
 		return patterns;
@@ -367,7 +379,7 @@ public class DatabindingUtil {
 		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
 
 		//generated matchers
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : collectGeneratedMatcherFactories()) {
 			IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
 			String patternFqn = factory.getPatternFullyQualifiedName();
 			root.addMatcher(matcher, patternFqn, true);
