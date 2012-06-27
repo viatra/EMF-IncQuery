@@ -2,6 +2,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IFile;
@@ -13,12 +14,12 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
-import org.eclipse.viatra2.patternlanguage.EcoreGenmodelRegistry;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -87,7 +88,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
-		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
+//		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
 		return (loadedPackage != null) ? loadedPackage.getEcorePackage() : super.loadEPackage(packageUri, set);
 	}
 
@@ -128,7 +129,18 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
 		if (file.exists()) {
 			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-			Resource resource = set.getResource(uri, true);
+			Resource resource = set.getResource(uri, false);
+			if (resource == null) {
+				try {
+					resource = set.createResource(uri);
+					Map<Object, Object> props = Maps.newHashMap(set.getLoadOptions());
+					props.put(XMLResource.OPTION_URI_HANDLER, null);
+					resource.load(props);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			return (IncQueryGeneratorModel) resource.getContents().get(0);
 		} else {
 			return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
@@ -174,6 +186,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	}
 	
 	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri) {
+		boolean ignoreEPackageExtensions = true;
 		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
 		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
 			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
@@ -184,7 +197,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 					new Predicate<GenPackage>() {
 						public boolean apply(GenPackage genPackage) {
 							return packageNsUri.equals(genPackage
-									.getEcorePackage().getNsURI());
+									.getNSURI());
 						}
 					});
 		} catch (NoSuchElementException e) {
@@ -193,9 +206,10 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		}
 		if (genPackage != null) {
 			return genPackage;
-		} else {
+		} else if (!ignoreEPackageExtensions){
 			return genmodelRegistry.findGenPackage(packageNsUri, set);
 		}
+		return null;
 	}
 	
 	public boolean isGeneratorModelDefined(IProject project) {
