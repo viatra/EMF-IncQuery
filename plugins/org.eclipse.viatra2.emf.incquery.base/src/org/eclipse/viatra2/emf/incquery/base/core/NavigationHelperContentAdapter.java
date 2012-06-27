@@ -4,16 +4,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 
@@ -23,8 +26,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
 	// eclass -> instance(s)
 	protected Map<EClass, Set<EObject>> instanceMap;
+	
+	protected Map<EDataType, Map<Object, Integer>> dataTypeMap;
+	
 	private NavigationHelperImpl navigationHelper;
-	private Map<EClass, Set<EClass>> subTypeMap;
+	protected Map<EClass, Set<EClass>> subTypeMap;
 	private Set<EClass> visitedClasses;
 	
 	public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
@@ -32,19 +38,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
 		this.instanceMap = new HashMap<EClass, Set<EObject>>();
 		this.subTypeMap = new HashMap<EClass, Set<EClass>>();
+		this.dataTypeMap = new HashMap<EDataType, Map<Object,Integer>>();
 		this.visitedClasses = new HashSet<EClass>();
-	}
-
-	public Map<EClass, Set<EObject>> getInstanceMap() {
-		return instanceMap;
-	}
-	
-	public Map<Object, Map<EStructuralFeature, Set<EObject>>> getFeatureMap() {
-		return featureMap;
-	}
-	
-	public Map<EClass, Set<EClass>> getSubTypeMap() {
-		return subTypeMap;
 	}
 	
 	@Override
@@ -54,32 +49,32 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		Object feature = notification.getFeature();
 
 		if (feature instanceof EReference) {
-			handleRefChange(notification, (EReferenceImpl) feature);
+			handleReferenceChange(notification, (EReferenceImpl) feature);
 		}
 		if (feature instanceof EAttribute) {
-			handleAttrChange(notification, (EAttribute) feature);
+			handleAttributeChange(notification, (EAttribute) feature);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void handleRefChange(Notification notification, EReference ref) {
+	public void handleReferenceChange(Notification notification, EReference ref) {
 		EObject notifier = (EObject) notification.getNotifier();
 		
 		if (notification.getEventType() == Notification.REMOVE_MANY) {
 			for (EObject oldValue: (Collection<? extends EObject>) notification.getOldValue()) {
-				handleRefRemove(ref, oldValue, null, notifier);
+				handleReferenceRemove(ref, oldValue, null, notifier);
 			}
 		}
 		else if (notification.getEventType() == Notification.ADD_MANY) {
 			for (EObject newValue: (Collection<? extends EObject>) notification.getNewValue()) {
-				handleRefAdd(ref, newValue, notifier);
+				handleReferenceAdd(ref, newValue, notifier);
 			}
 		}
 		else if (notification.getEventType() == Notification.ADD) {
-			handleRefAdd(ref, (EObject) notification.getNewValue(), notifier);
+			handleReferenceAdd(ref, (EObject) notification.getNewValue(), notifier);
 		}
 		else if (notification.getEventType() == Notification.REMOVE) {
-			handleRefRemove(ref, (EObject) notification.getOldValue(), (EObject) notification.getNewValue(), notifier);
+			handleReferenceRemove(ref, (EObject) notification.getOldValue(), (EObject) notification.getNewValue(), notifier);
 		}
 		else if (notification.getEventType() == Notification.SET) {
 			EObject oldValue = (EObject) notification.getOldValue();
@@ -93,12 +88,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 					navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), false);
 			}
 			if (newValue != null) {
-				handleRefAdd(ref, newValue, notifier);
+				handleReferenceAdd(ref, newValue, notifier);
 			}
 		}
 	}
 
-	public void handleRefAdd(EReference ref, EObject newValue, EObject notifier) {
+	public void handleReferenceAdd(EReference ref, EObject newValue, EObject notifier) {
 		insertFeatureTuple(ref, newValue, notifier);
 		insertInstanceTuple(newValue.eClass(), newValue);
 		if (ref.isContainment()) {
@@ -106,7 +101,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 	}
 
-	public void handleRefRemove(EReference ref, EObject oldValue,
+	public void handleReferenceRemove(EReference ref, EObject oldValue,
 			EObject newValue, EObject notifier) {
 		removeFeatureTuple(ref, oldValue, notifier);
 		removeInstanceTuple(oldValue.eClass(), oldValue);
@@ -116,21 +111,21 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 
 		if (newValue != null) {
-			handleRefAdd(ref, newValue, notifier);
+			handleReferenceAdd(ref, newValue, notifier);
 		}
 	}
 
-	public void handleAttrChange(Notification notification, EAttribute feature) {
+	public void handleAttributeChange(Notification notification, EAttribute attribute) {
 		Object oldValue = notification.getOldValue();
 		Object newValue = notification.getNewValue();
 		EObject notifier = (EObject) notification.getNotifier();
-
+		
 		if (notification.getEventType() == Notification.SET) {
 			if (oldValue != null) {
-				removeFeatureTuple(feature, oldValue, notifier);
+				removeFeatureTuple(attribute, oldValue, notifier);
 			}
 			if (newValue != null) {
-				insertFeatureTuple(feature, newValue, notifier);
+				insertFeatureTuple(attribute, newValue, notifier);
 			}
 		}
 	}
@@ -153,25 +148,61 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				featureMap.put(value, map);
 			}
 			
+			//data type cache
+			if (feature instanceof EAttribute) {
+				EDataType type = ((EAttribute) feature).getEAttributeType();
+				Map<Object, Integer> valMap = dataTypeMap.get(type);
+				if (valMap == null) {
+					valMap = new HashMap<Object, Integer>();
+					dataTypeMap.put(type, valMap);
+				}
+				if (valMap.get(value) == null) {
+					valMap.put(value, Integer.valueOf(1));	
+				}
+				else {
+					Integer count = valMap.get(value);
+					count++;
+				}
+				notifyDataTypeListeners(type, value, true);
+			}
+			
 			notifyFeatureListeners(holder, feature, value, true);
 		}
 	}
 
-	public void removeFeatureTuple(EStructuralFeature feature, Object target, EObject source) {
+	public void removeFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
-			if (featureMap.containsKey(target) && featureMap.get(target).containsKey(feature)) {
-				featureMap.get(target).get(feature).remove(source);
+			if (featureMap.containsKey(value) && featureMap.get(value).containsKey(feature)) {
+				featureMap.get(value).get(feature).remove(holder);
 
-				if (featureMap.get(target).get(feature).size() == 0) {
-					featureMap.get(target).remove(feature);
+				if (featureMap.get(value).get(feature).size() == 0) {
+					featureMap.get(value).remove(feature);
 				}
 
-				if (featureMap.get(target).size() == 0) {
-					featureMap.remove(target);
+				if (featureMap.get(value).size() == 0) {
+					featureMap.remove(value);
 				}
 			}
 			
-			notifyFeatureListeners(source, feature, target, false);
+			//data type cache
+			if (feature instanceof EAttribute) {
+				EDataType type = ((EAttribute) feature).getEAttributeType();
+				Map<Object, Integer> valMap = dataTypeMap.get(type);
+				if (valMap != null) {
+					if (valMap.get(value) != null) {
+						Integer count = valMap.get(value);
+						if (--count == 0) {
+							valMap.remove(value);
+						}
+					}
+					if (valMap.size() == 0) {
+						dataTypeMap.remove(type);
+					}
+				}
+				notifyDataTypeListeners(type, value, false);
+			}
+			
+			notifyFeatureListeners(holder, feature, value, false);
 		}
 	}
 
@@ -233,28 +264,41 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 	}
 	
-	private void notifyFeatureListeners(EObject host, EStructuralFeature feature, Object value, boolean isInsertion) {
-		for (FeatureListener listener : navigationHelper.getFeatureListeners().keySet()) {
-			if (navigationHelper.getFeatureListeners().get(listener).contains(feature)) {
+	private void notifyDataTypeListeners(EDataType type, Object value, boolean isInsertion) {
+		for (Entry<DataTypeListener, Collection<EDataType>> entry : navigationHelper.getDataTypeListeners().entrySet()) {
+			if (entry.getValue().contains(type)) {
 				if (isInsertion) {
-					listener.featureInserted(host, feature, value);
+					entry.getKey().dataTypeInstanceInserted(type, value);
 				}
 				else {
-					listener.featureDeleted(host, feature, value);
+					entry.getKey().dataTypeInstanceDeleted(type, value);
+				}
+			}
+		}
+	}
+	
+	private void notifyFeatureListeners(EObject host, EStructuralFeature feature, Object value, boolean isInsertion) {
+		for (Entry<FeatureListener, Collection<EStructuralFeature>> entry : navigationHelper.getFeatureListeners().entrySet()) {
+			if (entry.getValue().contains(feature)) {
+				if (isInsertion) {
+					entry.getKey().featureInserted(host, feature, value);
+				}
+				else {
+					entry.getKey().featureDeleted(host, feature, value);
 				}
 			}
 		}
 	}
 	
 	private void notifyInstanceListeners(EClass clazz, EObject instance, boolean isInsertion) {
-		for (InstanceListener listener : navigationHelper.getInstanceListeners().keySet()) {
-			for (EClass sup : navigationHelper.getInstanceListeners().get(listener)) {
+		for (Entry<InstanceListener, Collection<EClass>> entry : navigationHelper.getInstanceListeners().entrySet()) {
+			for (EClass sup : entry.getValue()) {
 				if (isSubTypeOf(clazz, sup)) {
 					if (isInsertion) {
-						listener.instanceInserted(clazz, instance);
+						entry.getKey().instanceInserted(clazz, instance);
 					}
 					else {
-						listener.instanceDeleted(clazz, instance);
+						entry.getKey().instanceDeleted(clazz, instance);
 					}
 				}
 			}
