@@ -22,12 +22,14 @@ import java.util.Set;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
@@ -42,17 +44,19 @@ public class NavigationHelperImpl implements NavigationHelper {
 	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
-	private Map<InstanceListener, Set<EClass>> instanceListeners;
-	private Map<FeatureListener, Set<EStructuralFeature>> featureListeners;
+	private Map<InstanceListener, Collection<EClass>> instanceListeners;
+	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
+	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
 	
 	public NavigationHelperImpl(Notifier emfRoot, NavigationHelperType type) throws IncQueryBaseException {
 
 		if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
 			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
 		}
-
-		this.instanceListeners = new HashMap<InstanceListener, Set<EClass>>();
-		this.featureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
+		
+		this.instanceListeners = new HashMap<InstanceListener, Collection<EClass>>();
+		this.featureListeners = new HashMap<FeatureListener, Collection<EStructuralFeature>>();
+		this.dataTypeListeners = new HashMap<DataTypeListener, Collection<EDataType>>();
 		this.observedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
@@ -91,11 +95,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public void dispose() {
 		notifier.eAdapters().remove(contentAdapter);
 	}
+	
+	@Override
+	public Collection<Object> getDataTypeInstances(EDataType type) {
+		Map<Object, Integer> valMap = contentAdapter.dataTypeMap.get(type);
+		if (valMap != null) {
+			return Collections.unmodifiableSet(valMap.keySet());
+		}
+		else {
+			return Collections.emptySet();
+		}
+	}
 
 	@Override
 	public Collection<Setting> findByAttributeValue(Object value) {
-		HashSet<Setting> retSet = new HashSet<Setting>();
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+		Set<Setting> retSet = new HashSet<Setting>();
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
 		
 		if (valMap != null) {
 			for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
@@ -109,9 +124,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public Collection<Setting> findByAttributeValue(Object value, Set<EAttribute> attributes) {
-		HashSet<Setting> retSet = new HashSet<Setting>();
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+	public Collection<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes) {
+		Set<Setting> retSet = new HashSet<Setting>();
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
 		
 		if (valMap != null) {
 			for (EAttribute attr : attributes) {
@@ -127,26 +142,25 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+	public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute) {
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
 		if (valMap == null || valMap.get(attribute) == null) {
 			return Collections.emptySet();
 		}
 		else {
-			return valMap.get(attribute);
+			return Collections.unmodifiableSet(valMap.get(attribute));
 		}
 	}
 
 	@Override
 	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
-		HashSet<Setting> retSet = new HashSet<Setting>();
+		Set<Setting> retSet = new HashSet<Setting>();
 
-		for (Object value : contentAdapter.getFeatureMap().keySet()) {
+		for (Object value : contentAdapter.featureMap.keySet()) {
 			if (value.getClass().equals(clazz)) {
-				for (EStructuralFeature attr : contentAdapter.getFeatureMap().get(value).keySet()) {
-					for (EObject holder : contentAdapter.getFeatureMap().get(value).get(attr)) {
-						retSet.add(new NavigationHelperSetting(attr, holder,
-								value));
+				for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
+					for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
+						retSet.add(new NavigationHelperSetting(attr, holder, value));
 					}
 				}
 			}
@@ -157,8 +171,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public Collection<Setting> getInverseReferences(EObject target) {
-		HashSet<Setting> retSet = new HashSet<Setting>();
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(target);
+		Set<Setting> retSet = new HashSet<Setting>();
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(target);
 		
 		if (valMap != null) {
 			for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
@@ -172,9 +186,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public Collection<Setting> getInverseReferences(EObject target, Set<EReference> references) {
-		HashSet<Setting> retSet = new HashSet<Setting>();
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(target);
+	public Collection<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
+		Set<Setting> retSet = new HashSet<Setting>();
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(target);
 		
 		if (valMap != null) {
 			for (EReference ref : references) {
@@ -190,46 +204,46 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public Set<EObject> getInverseReferences(EObject target, EReference reference) {
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(target);
+	public Collection<EObject> getInverseReferences(EObject target, EReference reference) {
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(target);
 		if (valMap == null || valMap.get(reference) == null) {
 			return Collections.emptySet();
 		}
 		else {
-			return valMap.get(reference);
+			return Collections.unmodifiableSet(valMap.get(reference));
 		}
 	}
 
 	@Override
-	public Set<EObject> getDirectInstances(EClass type) {
-		Set<EObject> valSet = contentAdapter.getInstanceMap().get(type);
+	public Collection<EObject> getDirectInstances(EClass type) {
+		Set<EObject> valSet = contentAdapter.instanceMap.get(type);
 		if (valSet == null) {
 			return Collections.emptySet();
 		}
 		else {
-			return valSet;
+			return Collections.unmodifiableSet(valSet);
 		}
 	}
 
 	@Override
-	public Set<EObject> getAllInstances(EClass type) {
-		HashSet<EObject> retSet = new HashSet<EObject>();
+	public Collection<EObject> getAllInstances(EClass type) {
+		Set<EObject> retSet = new HashSet<EObject>();
 		
-		Set<EClass> valSet = contentAdapter.getSubTypeMap().get(type);
+		Set<EClass> valSet = contentAdapter.subTypeMap.get(type);
 		if (valSet != null) {
 			for (EClass c : valSet) {
-				retSet.addAll(contentAdapter.getInstanceMap().get(c));
+				retSet.addAll(contentAdapter.instanceMap.get(c));
 			}
 		}
-		retSet.addAll(contentAdapter.getInstanceMap().get(type));
+		retSet.addAll(contentAdapter.instanceMap.get(type));
 		
 		return retSet;
 	}
 	
 	@Override
-	public Set<EObject> findByFeatureValue(Object value, EStructuralFeature feature) {
+	public Collection<EObject> findByFeatureValue(Object value, EStructuralFeature feature) {
 		Set<EObject> retSet = new HashSet<EObject>();
-		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getFeatureMap().get(value);
+		Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
 		if (valMap != null && valMap.get(feature) != null) {
 			retSet.addAll(valMap.get(feature));
 		}
@@ -237,13 +251,13 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-	public void registerInstanceListener(Set<EClass> classes, InstanceListener listener) {
+	public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener) {
 		this.instanceListeners.put(listener, classes);		
 	}
 
 	@Override
-	public void unregisterInstanceListener(Set<EClass> classes, InstanceListener listener) {
-		Set<EClass> restriction = this.instanceListeners.get(listener);
+	public void unregisterInstanceListener(Collection<EClass> classes, InstanceListener listener) {
+		Collection<EClass> restriction = this.instanceListeners.get(listener);
 		restriction.removeAll(classes);
 		if (restriction.size() == 0) {
 			this.instanceListeners.remove(listener);
@@ -251,24 +265,42 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 	
 	@Override
-	public void registerFeatureListener(Set<EStructuralFeature> features, FeatureListener listener) {
+	public void registerFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
 		this.featureListeners.put(listener, features);
 	}
 
 	@Override
-	public void unregisterFeatureListener(Set<EStructuralFeature> features, FeatureListener listener) {
-		Set<EStructuralFeature> restriction = this.featureListeners.get(listener);
+	public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+		Collection<EStructuralFeature> restriction = this.featureListeners.get(listener);
 		restriction.removeAll(features);
 		if (restriction.size() == 0) {
 			this.featureListeners.remove(listener);
 		}
 	}
 	
-	public Map<InstanceListener, Set<EClass>> getInstanceListeners() {
+	@Override
+	public void registerDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
+		this.dataTypeListeners.put(listener, types);
+	}
+	
+	@Override
+	public void unregisterDataTypeListener(Collection<EDataType> types,	DataTypeListener listener) {
+		Collection<EDataType> restriction = this.dataTypeListeners.get(listener);
+		restriction.removeAll(types);
+		if (restriction.size() == 0) {
+			this.dataTypeListeners.remove(listener);
+		}
+	}
+	
+	public Map<InstanceListener, Collection<EClass>> getInstanceListeners() {
 		return instanceListeners;
 	}
 	
-	public Map<FeatureListener, Set<EStructuralFeature>> getFeatureListeners() {
+	public Map<FeatureListener, Collection<EStructuralFeature>> getFeatureListeners() {
 		return featureListeners;
+	}
+	
+	public Map<DataTypeListener, Collection<EDataType>> getDataTypeListeners() {
+		return dataTypeListeners;
 	}
 }

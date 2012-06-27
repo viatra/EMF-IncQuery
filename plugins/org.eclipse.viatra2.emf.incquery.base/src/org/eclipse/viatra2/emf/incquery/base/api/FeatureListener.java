@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.base.api;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
@@ -25,14 +27,18 @@ public interface FeatureListener {
 	/**
 	 * Called when the given value is inserted into the given feature of the given host EObject. 
 	 *  
-	 * @param setting the setting instance
+	 * @param host the host (holder) of the feature
+	 * @param feature the {@link EAttribute} or {@link EReference} instance
+	 * @param value the target of the feature
 	 */
 	public void featureInserted(EObject host, EStructuralFeature feature, Object value);
 
 	/**
 	 * Called when the given value is removed from the given feature of the given host EObject. 
 	 *  
-	 * @param setting the setting instance
+	 * @param host the host (holder) of the feature
+	 * @param feature the {@link EAttribute} or {@link EReference} instance
+	 * @param value the target of the feature
 	 */
 	public void featureDeleted(EObject host, EStructuralFeature feature, Object value);
 }

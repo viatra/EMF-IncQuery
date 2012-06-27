@@ -61,8 +61,8 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			observedFeatures.removeAll(features);
 			delayedFeatures.removeAll(features);
 			for (EStructuralFeature f : features) {
-				for (Object key : contentAdapter.getFeatureMap().keySet()) {
-					contentAdapter.getFeatureMap().get(key).remove(f);
+				for (Object key : contentAdapter.featureMap.keySet()) {
+					contentAdapter.featureMap.get(key).remove(f);
 				}
 			}
 		}
@@ -86,7 +86,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			observedClasses.removeAll(classes);
 			delayedClasses.removeAll(classes);
 			for (EClass c : classes) {
-				contentAdapter.getInstanceMap().remove(c);
+				contentAdapter.instanceMap.remove(c);
 			}
 		}
 	}
