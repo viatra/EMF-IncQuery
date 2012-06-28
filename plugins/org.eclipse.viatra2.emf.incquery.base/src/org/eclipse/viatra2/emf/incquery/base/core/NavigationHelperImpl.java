@@ -249,6 +249,16 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 		return retSet;
 	}
+	
+	@Override
+	public Collection<EObject> getHoldersOfFeature(EStructuralFeature feature) {
+		if (contentAdapter.getReversedFeatureMap().get(feature) == null) {
+			return Collections.emptySet();
+		}
+		else {
+			return Collections.unmodifiableSet(contentAdapter.getReversedFeatureMap().get(feature));
+		}
+	}
 
 	@Override
 	public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener) {

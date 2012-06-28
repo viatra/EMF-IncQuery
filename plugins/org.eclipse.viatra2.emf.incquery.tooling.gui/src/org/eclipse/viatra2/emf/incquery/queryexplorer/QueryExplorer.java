@@ -238,11 +238,16 @@ public class QueryExplorer extends ViewPart {
 			
 			if (value instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
-				tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
-				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher().getPattern());
-				List<PatternComponent> components = patternsViewerInput.find(patternFqn);
-				if (components != null) {
-					patternsTreeViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
+				if (observableMatcher.getMatcher() != null) {
+					tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
+					String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher().getPattern());
+					List<PatternComponent> components = patternsViewerInput.find(patternFqn);
+					if (components != null) {
+						patternsTreeViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
+					}
+				}
+				else {
+					clearTableViewer();
 				}
 			}
 			else if (value instanceof ObservablePatternMatch) {
