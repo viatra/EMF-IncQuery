@@ -19,6 +19,7 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
@@ -41,7 +42,11 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	 * EStructuralFeatures to be registered once the coalescing period is over
 	 */
 	protected Set<EStructuralFeature> delayedFeatures;
-	
+	/**
+	 * EDataTypes to be registered once the coalescing period is over
+	 */
+	protected Set<EDataType> delayedDataTypes;
+
 	
 	
 	@Override
@@ -51,7 +56,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedFeatures.addAll(features);
 			} else {
 				observedFeatures.addAll(features);
-				visitor.visitModel(notifier, features, null);
+				visitor.visitModel(notifier, features, null, null);
 			}
 		}
 	}
@@ -76,7 +81,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedClasses.addAll(classes);
 			} else {
 				observedClasses.addAll(classes);
-				visitor.visitModel(notifier, null, classes);
+				visitor.visitModel(notifier, null, classes, null);
 			}
 		}
 	}
@@ -91,6 +96,29 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			}
 		}
 	}
+
+	@Override
+	public void registerEDataTypes(Set<EDataType> dataTypes) {
+		if (dataTypes != null) {
+			if (delayTraversals) {
+				delayedDataTypes.addAll(dataTypes);
+			} else {
+				dataTypes.addAll(dataTypes);
+				visitor.visitModel(notifier, null, null, dataTypes);
+			}
+		}
+	}
+
+	@Override
+	public void unregisterEDataTypes(Set<EDataType> dataTypes) {
+		if (dataTypes != null) {
+			observedDataTypes.removeAll(dataTypes);
+			delayedDataTypes.removeAll(dataTypes);
+			for (EDataType dt : dataTypes) {
+				contentAdapter.dataTypeMap.remove(dt);
+			}
+		}
+	}
 	
 	@Override
 	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
@@ -99,6 +127,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 		
 		delayedClasses = new HashSet<EClass>();
 		delayedFeatures = new HashSet<EStructuralFeature>();
+		delayedDataTypes = new HashSet<EDataType>(); 
 		
 		V result = null;
 		try {
@@ -107,18 +136,21 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				result = callable.call();
 			} finally {
 				delayTraversals = false;
-				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty()) {
+				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
 					observedClasses.addAll(delayedClasses);
 					observedFeatures.addAll(delayedFeatures);
+					observedDataTypes.addAll(delayedDataTypes);
 					
 					// make copies and clean original accumulators, for the rare case that a coalesced 
 					// 	traversal is invoked during visitation, e.g. by a derived feature implementation
 					final HashSet<EClass> toGatherClasses = new HashSet<EClass>(delayedClasses);
 					final HashSet<EStructuralFeature> toGatherFeatures = new HashSet<EStructuralFeature>(delayedFeatures);
+					final HashSet<EDataType> toGatherDataTypes = new HashSet<EDataType>(delayedDataTypes);
 					delayedFeatures.clear();
 					delayedClasses.clear();
+					delayedDataTypes.clear();
 					
-					visitor.visitModel(notifier, toGatherFeatures, toGatherClasses);			
+					visitor.visitModel(notifier, toGatherFeatures, toGatherClasses, toGatherDataTypes);			
 				}
 			}
 		} catch (Exception e) {

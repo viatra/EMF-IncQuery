@@ -88,7 +88,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		else if (notification.getEventType() == Notification.REMOVE) {
 			handleReferenceRemove(ref, (EObject) notification.getOldValue(), (EObject) notification.getNewValue(), notifier);
 		}
-		else if (notification.getEventType() == Notification.SET) {
+		if (notification.getEventType() == Notification.SET || notification.getEventType() == Notification.UNSET) {
 			EObject oldValue = (EObject) notification.getOldValue();
 			EObject newValue = (EObject) notification.getNewValue();
 			
@@ -97,7 +97,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				removeInstanceTuple(oldValue.eClass(), oldValue);
 
 				if (ref.isContainment())
-					navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), false);
+					navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), navigationHelper.getObservedDataTypes(), false);
 			}
 			if (newValue != null) {
 				handleReferenceAdd(ref, newValue, notifier);
@@ -109,7 +109,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		insertFeatureTuple(ref, newValue, notifier);
 		insertInstanceTuple(newValue.eClass(), newValue);
 		if (ref.isContainment()) {
-			navigationHelper.getVisitor().visitObjectForEAttribute(newValue, navigationHelper.getObservedFeatures(), true);
+			navigationHelper.getVisitor().visitObjectForEAttribute(newValue, navigationHelper.getObservedFeatures(), navigationHelper.getObservedDataTypes(), true);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		removeInstanceTuple(oldValue.eClass(), oldValue);
 
 		if (ref.isContainment()) {
-			navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), false);
+			navigationHelper.getVisitor().visitObjectForEAttribute(oldValue, navigationHelper.getObservedFeatures(), navigationHelper.getObservedDataTypes(), false);
 		}
 
 		if (newValue != null) {
@@ -131,13 +131,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		Object oldValue = notification.getOldValue();
 		Object newValue = notification.getNewValue();
 		EObject notifier = (EObject) notification.getNotifier();
+		final EDataType eAttributeType = attribute.getEAttributeType();
 		
-		if (notification.getEventType() == Notification.SET) {
+		if (notification.getEventType() == Notification.SET || notification.getEventType() == Notification.UNSET) {
 			if (oldValue != null) {
 				removeFeatureTuple(attribute, oldValue, notifier);
+				dataTypeInstanceUpdate(eAttributeType, oldValue, false);
 			}
 			if (newValue != null) {
 				insertFeatureTuple(attribute, newValue, notifier);
+				dataTypeInstanceUpdate(eAttributeType, newValue, true);
 			}
 		}
 	}
@@ -231,13 +234,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				addToReversedFeatureMap(feature, holder);
 			}
 			
-			//data type cache
-			if (feature instanceof EAttribute) {
-				EDataType type = ((EAttribute) feature).getEAttributeType();
-				addToDataTypeMap(type, value);
-				notifyDataTypeListeners(type, value, true);
-			}
-			
 			notifyFeatureListeners(holder, feature, value, true);
 		}
 	}
@@ -250,14 +246,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				removeFromReversedFeatureMap(feature, holder);
 			}
 			
-			//data type cache
-			if (feature instanceof EAttribute) {
-				EDataType type = ((EAttribute) feature).getEAttributeType();
-				removeFromDataTypeMmap(type, value);
-				notifyDataTypeListeners(type, value, false);
-			}
-			
 			notifyFeatureListeners(holder, feature, value, false);
+		}
+	}
+	
+	public void dataTypeInstanceUpdate(EDataType type, Object value, boolean isInsertion) {
+		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedDataTypes().contains(type)) {
+			if (isInsertion) {
+				addToDataTypeMap(type, value); 
+			} else {
+				removeFromDataTypeMmap(type, value);
+			}
+			notifyDataTypeListeners(type, value, isInsertion);
 		}
 	}
 

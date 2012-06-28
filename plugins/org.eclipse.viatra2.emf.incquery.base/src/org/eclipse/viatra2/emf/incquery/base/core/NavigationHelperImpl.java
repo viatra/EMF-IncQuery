@@ -38,7 +38,9 @@ import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 public class NavigationHelperImpl implements NavigationHelper {
 
 	protected HashSet<EClass> observedClasses;
+	protected HashSet<EDataType> observedDataTypes;
 	protected HashSet<EStructuralFeature> observedFeatures;
+	
 	protected Notifier notifier;
 	protected NavigationHelperType navigationHelperType;
 	protected NavigationHelperVisitor visitor;
@@ -66,7 +68,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.navigationHelperType = type;
 
 		if (this.navigationHelperType == NavigationHelperType.ALL) {
-			visitor.visitModel(notifier, observedFeatures, observedClasses);
+			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
 		}
 		this.notifier.eAdapters().add(contentAdapter);
 	}
@@ -312,5 +314,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	public Map<DataTypeListener, Collection<EDataType>> getDataTypeListeners() {
 		return dataTypeListeners;
+	}
+
+	/**
+	 * @return the observedDataTypes
+	 */
+	public HashSet<EDataType> getObservedDataTypes() {
+		return observedDataTypes;
 	}
 }

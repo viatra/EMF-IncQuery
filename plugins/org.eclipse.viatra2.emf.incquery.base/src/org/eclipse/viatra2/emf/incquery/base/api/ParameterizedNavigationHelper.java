@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
@@ -32,7 +33,7 @@ public interface ParameterizedNavigationHelper extends NavigationHelper {
 	 * The notifications of the given features will be processed by the helper together with the others previously registered.
 	 * Note that registering new features requires to visit the whole attached model.
 	 * 
-	 * @param features the set of features to observ
+	 * @param features the set of features to observe
 	 */
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features);
 	
@@ -49,7 +50,7 @@ public interface ParameterizedNavigationHelper extends NavigationHelper {
 	 * The notifications of the given classes will be processed by the helper together with others previously registered.
 	 * Note that registering new classes requires to visit the whole attached model.
 	 * 
-	 * @param classes the set of classes to observ
+	 * @param classes the set of classes to observe
 	 */
 	public void registerEClasses(Set<EClass> classes);
 	
@@ -61,6 +62,23 @@ public interface ParameterizedNavigationHelper extends NavigationHelper {
 	 * @param classes the set of classes whose notification will be ignored
 	 */
 	public void unregisterEClasses(Set<EClass> classes);
+	
+	/**
+	 * The notifications of the given data types will be processed by the helper together with others previously registered.
+	 * Note that registering new data types requires to visit the whole attached model.
+	 * 
+	 * @param classes the set of classes to observe
+	 */
+	public void registerEDataTypes(Set<EDataType> dataTypes);
+	
+	/**
+	 * The notifications of the given data types will be ignored; however
+	 * the ones belonging to the previously registered data types are still processed.
+	 * Note that when re-registering data types that were previously observed the whole attached model needs to be visited again.
+	 * 
+	 * @param classes the set of classes whose notification will be ignored
+	 */
+	public void unregisterEDataTypes(Set<EDataType> dataTypes);
 	
 	/**
 	 * The given runnable will be executed, and all model traversals and feature registrations will be delayed until the execution is done.
