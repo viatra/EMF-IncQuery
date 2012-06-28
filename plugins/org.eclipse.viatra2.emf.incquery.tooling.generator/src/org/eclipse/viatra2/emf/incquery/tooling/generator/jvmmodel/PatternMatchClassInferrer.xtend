@@ -15,15 +15,14 @@ import com.google.inject.Inject
 import java.util.Arrays
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint
 
 /**
  * {@link IPatternMatch} implementation inferer.
