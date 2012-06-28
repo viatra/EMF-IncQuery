@@ -16,9 +16,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
@@ -32,12 +33,13 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Directi
  * @author Bergmann Gábor
  *
  */
-public class BaseIndexListener implements FeatureListener, InstanceListener, IManipulationListener {
+public class BaseIndexListener implements FeatureListener, InstanceListener, DataTypeListener, IManipulationListener {
 	private ReteBoundary<?> boundary;
 	private ParameterizedNavigationHelper baseIndex;
 	
 	
-	private Set<EClassifier> types = new HashSet<EClassifier>();
+	private Set<EClass> classes = new HashSet<EClass>();
+	private Set<EDataType> dataTypes = new HashSet<EDataType>();
 	private Set<EStructuralFeature> features = new HashSet<EStructuralFeature>();
 	
 	/**
@@ -49,13 +51,18 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, IMa
 		this.baseIndex = baseIndex;
 	}
 	
-	public void ensure(EClassifier classifier) {
-		if (types.add(classifier)) {
-			if (classifier instanceof EClass) {
-				final Set<EClass> newClasses = Collections.singleton((EClass)classifier);
-				baseIndex.registerEClasses(newClasses);
-				baseIndex.registerInstanceListener(newClasses, this);
-			} else throw new UnsupportedOperationException("EDatatypes not supproted yet");
+	public void ensure(EClass eClass) {
+		if (classes.add(eClass)) {
+			final Set<EClass> newClasses = Collections.singleton(eClass);
+			baseIndex.registerEClasses(newClasses);
+			baseIndex.registerInstanceListener(newClasses, this);
+		}
+	}
+	public void ensure(EDataType eDataType) {
+		if (dataTypes.add(eDataType)) {
+			final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
+			baseIndex.registerEDataTypes(newDataTypes);
+			baseIndex.registerDataTypeListener(newDataTypes, this);
 		}
 	}
 	public void ensure(EStructuralFeature feature) {
@@ -82,7 +89,24 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, IMa
 	public void instanceDeleted(EClass clazz, EObject instance) {
 		boundary.updateInstantiation(Direction.REVOKE, clazz, instance);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener#dataTypeInstanceInserted(org.eclipse.emf.ecore.EDataType, java.lang.Object)
+	 */
+	@Override
+	public void dataTypeInstanceInserted(EDataType type, Object instance) {
+		boundary.updateInstantiation(Direction.INSERT, type, instance);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener#dataTypeInstanceDeleted(org.eclipse.emf.ecore.EDataType, java.lang.Object)
+	 */
+	@Override
+	public void dataTypeInstanceDeleted(EDataType type, Object instance) {
+		boundary.updateInstantiation(Direction.REVOKE, type, instance);
 
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.base.api.FeatureListener#featureInserted(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.Object)
 	 */
@@ -98,6 +122,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, IMa
 	public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
 		boundary.updateBinaryEdge(Direction.REVOKE, host, value, feature);
 	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener#registerSensitiveTerm(java.lang.Object, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode)
@@ -121,8 +146,9 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, IMa
 	@Override
 	public void disconnect() {
 		baseIndex.unregisterFeatureListener(features, this); features.clear();
-		Set<EClass> classes = new HashSet<EClass>(); for (EClassifier eClassifier : types) if (eClassifier instanceof EClass) classes.add((EClass) eClassifier);
-		baseIndex.unregisterInstanceListener(classes, this); types.clear();
+		baseIndex.unregisterInstanceListener(classes, this); classes.clear();
+		baseIndex.unregisterDataTypeListener(dataTypes, this); dataTypes.clear();
 	}
+	
 	
 }

@@ -13,14 +13,12 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
@@ -307,13 +305,18 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 	public void enumerateDirectBinaryEdgeInstances(Object typeObject, final ModelElementPairCrawler crawler) {
 		final EStructuralFeature structural = (EStructuralFeature) typeObject;
 		listener.ensure(structural);
-		Collection<Setting> occurrences = baseIndex.getOccurrencesOfFeature(structural);
-		
-		for (Setting setting : occurrences) {
-			crawler.crawl(setting.getEObject(), setting.get(true));
+		final Collection<EObject> holders = baseIndex.getHoldersOfFeature(structural);
+		for (EObject holder : holders) {
+			if (structural.isMany()) {
+				final Collection<?> values = (Collection<?>) holder.eGet(structural);
+				for (Object value : values) {
+					crawler.crawl(holder, value);
+				}
+			} else {
+				final Object value = holder.eGet(structural);
+				if (value != null) crawler.crawl(holder, value);
+			}
 		}
-		
-		
 //		CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
 //			@Override
 //			public void visitAttribute(EObject source, EAttribute feature, Object target) {
@@ -347,7 +350,7 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 		if (typeObject instanceof EClass) {
 			final EClass eClass = (EClass) typeObject;
 			listener.ensure(eClass);
-			final Set<EObject> allInstances = baseIndex.getDirectInstances(eClass);
+			final Collection<EObject> allInstances = baseIndex.getDirectInstances(eClass);
 			for (EObject eObject : allInstances) {
 				crawler.crawl(eObject);
 			}
@@ -362,7 +365,7 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 		} else if (typeObject instanceof EDataType) {
 			final EDataType eDataType = (EDataType) typeObject;
 			listener.ensure(eDataType);
-			final Set<Object> allInstances = baseIndex.getDataTypeInstances(eDataType);
+			final Collection<Object> allInstances = baseIndex.getDataTypeInstances(eDataType);
 			for (Object value : allInstances) {
 				crawler.crawl(value);
 			}
@@ -382,7 +385,7 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 		if (typeObject instanceof EClass) {
 			final EClass eClass = (EClass) typeObject;
 			listener.ensure(eClass);
-			final Set<EObject> allInstances = baseIndex.getAllInstances(eClass);
+			final Collection<EObject> allInstances = baseIndex.getAllInstances(eClass);
 			for (EObject eObject : allInstances) {
 				crawler.crawl(eObject);
 			}	
@@ -397,7 +400,7 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 		} else if (typeObject instanceof EDataType) {
 			final EDataType eDataType = (EDataType) typeObject;
 			listener.ensure(eDataType);
-			final Set<Object> allInstances = baseIndex.getDataTypeInstances(eDataType);
+			final Collection<Object> allInstances = baseIndex.getDataTypeInstances(eDataType);
 			for (Object value : allInstances) {
 				crawler.crawl(value);
 			}		
