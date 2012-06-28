@@ -71,15 +71,15 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
 			if (!genmodelDependencies.contains(modelPluginID)) {
 				genmodelDependencies.add(modelPluginID);
 			}
-			WorkspaceModifyOperation projectOp = new EnsureProjectDependencies(
-					project, genmodelDependencies);
-			WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(
-					project, genmodelPage.getSelectedGenmodels(),
-					genmodelProvider, resourceSetProvider);
-			op = new CompositeWorkspaceModifyOperation(
-					new WorkspaceModifyOperation[] { projectOp, genmodelOp },
-					"Creating generator model");
 		}
+		WorkspaceModifyOperation projectOp = new EnsureProjectDependencies(
+				project, genmodelDependencies);
+		WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(
+				project, genmodelPage.getSelectedGenmodels(), genmodelProvider,
+				resourceSetProvider);
+		op = new CompositeWorkspaceModifyOperation(
+				new WorkspaceModifyOperation[] { projectOp, genmodelOp },
+				"Creating generator model");
 
 		try {
 			getContainer().run(true, true, op);
