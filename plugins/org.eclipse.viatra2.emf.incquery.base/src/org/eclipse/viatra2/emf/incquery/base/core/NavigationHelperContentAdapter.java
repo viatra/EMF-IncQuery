@@ -350,10 +350,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			for (EClass sup : entry.getValue()) {
 				if (isSubTypeOf(clazz, sup) || clazz.equals(sup)) {
 					if (isInsertion) {
-						entry.getKey().instanceInserted(clazz, instance);
+						entry.getKey().instanceInserted(sup, instance);
 					}
 					else {
-						entry.getKey().instanceDeleted(clazz, instance);
+						entry.getKey().instanceDeleted(sup, instance);
 					}
 				}
 			}
