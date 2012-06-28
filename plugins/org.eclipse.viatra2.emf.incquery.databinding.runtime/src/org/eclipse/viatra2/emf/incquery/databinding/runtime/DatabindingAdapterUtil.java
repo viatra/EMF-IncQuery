@@ -127,11 +127,11 @@ public class DatabindingAdapterUtil {
 	
 	public static String getMessage(IPatternMatch match, String message) {
 		String[] tokens = message.split("\\$");
-		String newText = "";
+		StringBuilder newText = new StringBuilder();
 		
 		for (int i = 0;i<tokens.length;i++) {
 			if (i % 2 == 0) {
-				newText += tokens[i];
+				newText.append(tokens[i]);
 			}
 			else {
 				String[] objectTokens = tokens[i].split("\\.");
@@ -151,22 +151,22 @@ public class DatabindingAdapterUtil {
 					if (o != null && feature != null) {
 						Object value = ((EObject) o).eGet(feature);
 						if (value != null) {
-							newText += value.toString();
+							newText.append(value.toString());
 						}
 						else {
-							newText += "null";
+							newText.append("null");
 						}
 					}
 					else if (o != null) {
-						newText += o.toString();
+						newText.append(o.toString());
 					}
 				}	
 				else {
-					newText += "[no such parameter]";
+					newText.append("[no such parameter]");
 				}
 			}
 		}
 		
-		return newText;
+		return newText.toString();
 	}
 }
