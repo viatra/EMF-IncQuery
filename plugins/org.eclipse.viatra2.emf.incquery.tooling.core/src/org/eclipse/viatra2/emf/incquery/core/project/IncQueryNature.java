@@ -32,7 +32,7 @@ public class IncQueryNature implements IProjectNature {
 	public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; //$NON_NLS-1$
 	public static final String IQGENMODEL = "generator.eiqgen";
 	
-	IProject project;
+	private IProject project;
 
 	/*
 	 * (non-Javadoc)
