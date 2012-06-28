@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 public class PatternNameProvider extends XbaseQualifiedNameProvider {
 
 	@Inject
-	IQualifiedNameConverter nameConverter;
+	private IQualifiedNameConverter nameConverter;
 	
 	@Override
 	public QualifiedName getFullyQualifiedName(EObject obj) {

@@ -27,7 +27,7 @@ import com.google.common.collect.Iterables;
 public class ExtensionBasedPatternAnnotationValidator implements
 		IPatternAnnotationValidator {
 
-	Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
+	private Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
 
 	public ExtensionBasedPatternAnnotationValidator(String name,
 			String languageID,

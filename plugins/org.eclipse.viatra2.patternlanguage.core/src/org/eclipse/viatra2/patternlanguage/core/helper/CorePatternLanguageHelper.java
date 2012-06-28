@@ -24,7 +24,7 @@ import org.eclipse.xtext.xbase.XExpression;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-public class CorePatternLanguageHelper {
+public final class CorePatternLanguageHelper {
 	
 	private CorePatternLanguageHelper(){}
 	/**
@@ -149,7 +149,9 @@ public class CorePatternLanguageHelper {
 			if (element instanceof PatternCall) {
 				PatternCall call = (PatternCall)element;
 				final Pattern patternRef = call.getPatternRef();
-				if (patternRef != null) result.add(patternRef);
+				if (patternRef != null) {
+					result.add(patternRef);
+				}
 			}
 		}
 		return result;

@@ -3,7 +3,7 @@ package org.eclipse.viatra2.patternlanguage.core.validation;
 /**
  * @author Mark Czotter
  */
-public class IssueCodes {
+public final class IssueCodes {
 	
 	private IssueCodes() {}
 

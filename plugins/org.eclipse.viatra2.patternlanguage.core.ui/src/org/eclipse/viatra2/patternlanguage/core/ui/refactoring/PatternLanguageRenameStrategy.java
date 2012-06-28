@@ -11,13 +11,13 @@
 package org.eclipse.viatra2.patternlanguage.core.ui.refactoring;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.xbase.ui.jvmmodel.refactoring.AbstractJvmModelRenameStrategy;
+import org.eclipse.xtext.xbase.ui.jvmmodel.refactoring.DefaultJvmModelRenameStrategy;
 
 /**
  * Encapsulates the model changes of a rename refactoring.  
  */
 @SuppressWarnings("restriction")
-public class PatternLanguageRenameStrategy extends AbstractJvmModelRenameStrategy {
+public class PatternLanguageRenameStrategy extends DefaultJvmModelRenameStrategy {
 
 	@Override
 	protected void setInferredJvmElementName(String name, EObject renamedSourceElement) {
