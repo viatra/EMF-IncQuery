@@ -2,46 +2,6 @@
 <plugin>
 
    <extension
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.MatchRecordWithSubstitution"
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            factory="org.eclipse.viatra2.emf.incquery.testing.queries.matchrecordwithsubstitution.MatchRecordWithSubstitutionMatcherFactory"
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.MatchRecordWithSubstitution">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.CorrectRecordSubstitutionValue"
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            factory="org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsubstitutionvalue.CorrectRecordSubstitutionValueMatcherFactory"
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.CorrectRecordSubstitutionValue">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.IncorrectSubstitution"
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            factory="org.eclipse.viatra2.emf.incquery.testing.queries.incorrectsubstitution.IncorrectSubstitutionMatcherFactory"
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.IncorrectSubstitution">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecords"
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            factory="org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecords.CorrespondingRecordsMatcherFactory"
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecords">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecordInMatchSetRecord"
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            factory="org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecordinmatchsetrecord.CorrespondingRecordInMatchSetRecordMatcherFactory"
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecordInMatchSetRecord">
-      </matcher>
-   </extension>
-   <extension
          id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher

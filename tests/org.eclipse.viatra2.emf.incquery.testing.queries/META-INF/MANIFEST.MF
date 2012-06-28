@@ -4,12 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.testing.queries;singleton:=true
 Bundle-Version: 0.6.0.qualifier
 Bundle-Vendor: %providerName
-Export-Package: org.eclipse.viatra2.emf.incquery.testing.queries.correctrecordsubstitutionvalue,
- org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecordinmatchsetrecord,
- org.eclipse.viatra2.emf.incquery.testing.queries.correspondingrecords,
- org.eclipse.viatra2.emf.incquery.testing.queries.incorrectsubstitution,
- org.eclipse.viatra2.emf.incquery.testing.queries.matchrecordwithsubstitution,
- org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue,
+Export-Package: org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue,
  org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue,
  org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord
 Require-Bundle: org.eclipse.pde.core,

@@ -1,104 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage">
-  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.MatchRecordWithSubstitution" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="Off"/>
-    <parameters name="Record">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
-      </type>
-    </parameters>
-    <parameters name="ParameterName">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      </type>
-    </parameters>
-    <parameters name="Substitution">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord/substitutions"/>
-            </type>
-          </tail>
-          <src var="Record"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Substitution"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord/parameterName"/>
-            </type>
-          </tail>
-          <src var="Substitution"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="ParameterName"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.CorrectRecordSubstitutionValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="Off"/>
-    <parameters name="Record">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
-      </type>
-    </parameters>
-    <parameters name="ParameterName">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      </type>
-    </parameters>
-    <parameters name="Value"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.0">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Record"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="ParameterName"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Substitution"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord/derivedValue"/>
-            </type>
-          </tail>
-          <src var="Substitution"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Value"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.IncorrectSubstitution" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="Off"/>
+    <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
@@ -217,7 +120,7 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecords" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="Off"/>
+    <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
@@ -238,7 +141,7 @@
         </rightOperand>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.2">
+        <call patternRef="//@patterns.0">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="Record"/>
           </parameters>
@@ -250,7 +153,7 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecordInMatchSetRecord" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="Off"/>
+    <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
@@ -292,7 +195,7 @@
         </head>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.3">
+        <call patternRef="//@patterns.1">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="Record"/>
           </parameters>
@@ -378,7 +281,7 @@
         </rightOperand>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.4">
+        <call patternRef="//@patterns.2">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="Record"/>
           </parameters>
@@ -655,9 +558,9 @@
     </bodies>
   </patterns>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
   </importPackages>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   </importPackages>
 </eMFPatternLanguage:PatternModel>
