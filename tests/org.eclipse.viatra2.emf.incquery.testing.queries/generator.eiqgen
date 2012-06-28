@@ -1,1 +1,1 @@
-metamodel "platform:/resource/org.eclipse.viatra2.emf.incquery.snapshot/model/eiqsnapshot.genmodel"
+genmodel "platform:/resource/org.eclipse.viatra2.emf.incquery.snapshot/model/eiqsnapshot.genmodel"
