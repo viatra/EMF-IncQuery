@@ -68,11 +68,11 @@ public interface NavigationHelper {
 	public Collection<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes);
 	
 	/**
-	 * Find all EObjects that have an <code>attribute</code> {@link EAttribute} and its value equals to the given <code>value</code>. 
+	 * Find all {@link EObject}s that have an <code>attribute</code> {@link EAttribute} and its value equals to the given <code>value</code>. 
 	 * 
 	 * @param value the value of the attribute
 	 * @param attribute the EAttribute instance
-	 * @return the collection of EObject instances
+	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute);
 	
@@ -94,7 +94,7 @@ public interface NavigationHelper {
 	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
 	
 	/**
-	 * Find all the EObject instances that have an {@link EReference} instance with the given <code>target</code>.
+	 * Find all the {@link EObject} instances that have an {@link EReference} instance with the given <code>target</code>.
 	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}. 
 	 * 
 	 * @param target the endpoint of a reference
@@ -103,7 +103,7 @@ public interface NavigationHelper {
 	public Collection<Setting> getInverseReferences(EObject target);
 	
 	/**
-	 * Find all the EObject instances that have an EReference instance with the given <code>target</code>.
+	 * Find all the {@link EObject} instances that have an EReference instance with the given <code>target</code>.
 	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}.
 	 * Note that a setting will be present in the returned collection only if 
 	 * its reference instance can be found in the given collection of <code>references</code>.
@@ -115,37 +115,45 @@ public interface NavigationHelper {
 	public Collection<Setting> getInverseReferences(EObject target, Collection<EReference> references);
 	
 	/**
-	 * Find all EObjects that have a <code>reference</code> EReference instance with the given <code>target</code>. 
+	 * Find all {@link EObject}s that have a <code>reference</code> EReference instance with the given <code>target</code>. 
 	 * 
 	 * @param target the endpoint of a reference
 	 * @param reference the EReference instance
-	 * @return the collection of EObject instances
+	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> getInverseReferences(EObject target, EReference reference);
 	
 	/**
-	 * Get the direct EObject instances of the given EClass instance.
+	 * Get the direct {@link EObject} instances of the given EClass instance.
 	 * @param clazz the EClass instance
-	 * @return the collection of EObject instances
+	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> getDirectInstances(EClass clazz);
 	
 	/**
-	 * Get the exact and descendant EObject instances of the given EClass instance. 
+	 * Get the exact and descendant {@link EObject} instances of the given EClass instance. 
 	 * 
 	 * @param clazz the EClass instance 
-	 * @return the collection of EObject instances
+	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> getAllInstances(EClass clazz);
 	
 	/**
-	 * Returns the collection of EObject instances which have a feature with the given value.
+	 * Returns the collection of {@link EObject} instances which have a feature with the given value.
 	 * 
 	 * @param value the value of the feature
 	 * @param feature the feature instance
-	 * @return the collection of EObject instances
+	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> findByFeatureValue(Object value, EStructuralFeature feature);
+	
+	/**
+	 * Returns the holder(s) of the given feature.
+	 * 
+	 * @param feature the feature instance
+	 * @return the collection of {@link EObject} instances
+	 */
+	public Collection<EObject> getHoldersOfFeature(EStructuralFeature feature);
 	
 	/**
 	 * Call this method to dispose the NavigationHelper instance.

@@ -24,6 +24,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	// value -> feature (attr or ref) -> holder(s)
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
+	
+	//feature -> holder(s)
+	protected Map<EStructuralFeature, Set<EObject>> reversedFeatureMap;
+	
 	// eclass -> instance(s)
 	protected Map<EClass, Set<EObject>> instanceMap;
 	
@@ -40,6 +44,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.subTypeMap = new HashMap<EClass, Set<EClass>>();
 		this.dataTypeMap = new HashMap<EDataType, Map<Object,Integer>>();
 		this.visitedClasses = new HashSet<EClass>();
+	}
+	
+	public Map<EStructuralFeature, Set<EObject>> getReversedFeatureMap() {
+		if (reversedFeatureMap == null) {
+			reversedFeatureMap = new HashMap<EStructuralFeature, Set<EObject>>();
+			initReversedFeatureMap();
+		}
+		return reversedFeatureMap;
 	}
 	
 	@Override
@@ -129,40 +141,100 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 		}
 	}
+	
+	private void addToFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
+		Map<EStructuralFeature, Set<EObject>> mapVal = featureMap.get(value);
+		Set<EObject> setVal = null;
+		
+		if (mapVal == null) {
+			mapVal = new HashMap<EStructuralFeature, Set<EObject>>();
+		}
+		if ((setVal = mapVal.get(feature)) == null) {
+			setVal = new HashSet<EObject>();
+		}
+		setVal.add(holder);
+		mapVal.put(feature, setVal);
+		featureMap.put(value, mapVal);
+	}
+	
+	private void addToReversedFeatureMap(EStructuralFeature feature, EObject holder) {
+		Set<EObject> setVal = reversedFeatureMap.get(feature);
+		
+		if (setVal == null) {
+			setVal = new HashSet<EObject>();
+		}
+		setVal.add(holder);
+		reversedFeatureMap.put(feature, setVal);
+	}
+	private void removeFromReversedFeatureMap(EStructuralFeature feature, EObject holder) {
+		if (reversedFeatureMap.containsKey(feature)) {
+			reversedFeatureMap.get(feature).remove(holder);
+			
+			if (reversedFeatureMap.get(feature).size() == 0) {
+				reversedFeatureMap.remove(feature);
+			}
+		}
+	}
+	
+	private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
+		if (featureMap.containsKey(value) && featureMap.get(value).containsKey(feature)) {
+			featureMap.get(value).get(feature).remove(holder);
+
+			if (featureMap.get(value).get(feature).size() == 0) {
+				featureMap.get(value).remove(feature);
+			}
+
+			if (featureMap.get(value).size() == 0) {
+				featureMap.remove(value);
+			}
+		}
+	}
+	
+	private void addToDataTypeMap(EDataType type, Object value) {
+		Map<Object, Integer> valMap = dataTypeMap.get(type);
+		if (valMap == null) {
+			valMap = new HashMap<Object, Integer>();
+			dataTypeMap.put(type, valMap);
+		}
+		if (valMap.get(value) == null) {
+			valMap.put(value, Integer.valueOf(1));	
+		}
+		else {
+			Integer count = valMap.get(value);
+			valMap.put(value, ++count);
+		}
+	}
+	
+	private void removeFromDataTypeMmap(EDataType type, Object value) {
+		Map<Object, Integer> valMap = dataTypeMap.get(type);
+		if (valMap != null) {
+			if (valMap.get(value) != null) {
+				Integer count = valMap.get(value);
+				if (--count == 0) {
+					valMap.remove(value);
+				}
+				else {
+					valMap.put(value, count);
+				}
+			}
+			if (valMap.size() == 0) {
+				dataTypeMap.remove(type);
+			}
+		}
+	}
 
 	public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
-			if (featureMap.containsKey(value)) {
-				if (featureMap.get(value).containsKey(feature)) {
-					featureMap.get(value).get(feature).add(holder);
-				} else {
-					HashSet<EObject> set = new HashSet<EObject>();
-					set.add(holder);
-					featureMap.get(value).put(feature, set);
-				}
-			} else {
-				Map<EStructuralFeature, Set<EObject>> map = new HashMap<EStructuralFeature, Set<EObject>>();
-				Set<EObject> set = new HashSet<EObject>();
-				set.add(holder);
-				map.put(feature, set);
-				featureMap.put(value, map);
+			addToFeatureMap(feature, value, holder);
+			
+			if (reversedFeatureMap != null) {
+				addToReversedFeatureMap(feature, holder);
 			}
 			
 			//data type cache
 			if (feature instanceof EAttribute) {
 				EDataType type = ((EAttribute) feature).getEAttributeType();
-				Map<Object, Integer> valMap = dataTypeMap.get(type);
-				if (valMap == null) {
-					valMap = new HashMap<Object, Integer>();
-					dataTypeMap.put(type, valMap);
-				}
-				if (valMap.get(value) == null) {
-					valMap.put(value, Integer.valueOf(1));	
-				}
-				else {
-					Integer count = valMap.get(value);
-					valMap.put(value, ++count);
-				}
+				addToDataTypeMap(type, value);
 				notifyDataTypeListeners(type, value, true);
 			}
 			
@@ -172,36 +244,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	public void removeFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
 		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
-			if (featureMap.containsKey(value) && featureMap.get(value).containsKey(feature)) {
-				featureMap.get(value).get(feature).remove(holder);
-
-				if (featureMap.get(value).get(feature).size() == 0) {
-					featureMap.get(value).remove(feature);
-				}
-
-				if (featureMap.get(value).size() == 0) {
-					featureMap.remove(value);
-				}
+			removeFromFeatureMap(feature, value, holder);
+			
+			if (reversedFeatureMap != null) {
+				removeFromReversedFeatureMap(feature, holder);
 			}
 			
 			//data type cache
 			if (feature instanceof EAttribute) {
 				EDataType type = ((EAttribute) feature).getEAttributeType();
-				Map<Object, Integer> valMap = dataTypeMap.get(type);
-				if (valMap != null) {
-					if (valMap.get(value) != null) {
-						Integer count = valMap.get(value);
-						if (--count == 0) {
-							valMap.remove(value);
-						}
-						else {
-							valMap.put(value, count);
-						}
-					}
-					if (valMap.size() == 0) {
-						dataTypeMap.remove(type);
-					}
-				}
+				removeFromDataTypeMmap(type, value);
 				notifyDataTypeListeners(type, value, false);
 			}
 			
@@ -238,7 +290,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 	
 	/**
-	 * Returns true if sup is a supertype of sub or sub is equal to sup.
+	 * Returns true if sup is a supertype of sub.
 	 * 
 	 * @param sub subtype
 	 * @param sup supertype
@@ -247,7 +299,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	private boolean isSubTypeOf(EClass sub, EClass sup) {
 		Set<EClass> set = subTypeMap.get(sup); 
 		if (set != null) {
-			return set.contains(sub) || sub.equals(sup);
+			return set.contains(sub);
 		}
 		else {
 			return false;
@@ -296,7 +348,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	private void notifyInstanceListeners(EClass clazz, EObject instance, boolean isInsertion) {
 		for (Entry<InstanceListener, Collection<EClass>> entry : navigationHelper.getInstanceListeners().entrySet()) {
 			for (EClass sup : entry.getValue()) {
-				if (isSubTypeOf(clazz, sup)) {
+				if (isSubTypeOf(clazz, sup) || clazz.equals(sup)) {
 					if (isInsertion) {
 						entry.getKey().instanceInserted(clazz, instance);
 					}
@@ -304,6 +356,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 						entry.getKey().instanceDeleted(clazz, instance);
 					}
 				}
+			}
+		}
+	}
+	
+	private void initReversedFeatureMap() {
+		for (Entry<EStructuralFeature, Set<EObject>> entry : reversedFeatureMap.entrySet()) {
+			for (EObject holder : entry.getValue()) {
+				addToReversedFeatureMap(entry.getKey(), holder);
 			}
 		}
 	}
