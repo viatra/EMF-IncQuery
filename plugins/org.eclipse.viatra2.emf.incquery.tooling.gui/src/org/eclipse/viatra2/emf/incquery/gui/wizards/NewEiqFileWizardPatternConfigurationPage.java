@@ -15,12 +15,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,8 +34,9 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
 
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage {
+public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 
+	private static final String TITLE = "EMF-IncQuery query definition Wizard";
 	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
 	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
 	private Text patternText;
@@ -50,8 +49,8 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 	public boolean parameterSet;
 	
 	public NewEiqFileWizardPatternConfigurationPage() {
-		super(false, "eiq");
-		setTitle("EMF-IncQuery query definition Wizard");
+		super(TITLE);
+		setTitle(TITLE);
 		parameterSet = false;
 	}
 	
@@ -79,18 +78,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 		objectsList.enableButton(1, false);
 		objectsList.setRemoveButtonIndex(2);
 		objectsList.doFillIntoGrid(parent, nColumns);
-	}
-	
-	public void init(IStructuredSelection selection) {
-		IJavaElement jelem= getInitialJavaElement(selection);
-		initContainerPage(jelem);
-		
-		if (jelem != null) {
-			IPackageFragment pack = (IPackageFragment) jelem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
-			setPackageFragment(pack, true);
-		}
-		
-		packageChanged();
 	}
 	
 	@Override
@@ -130,12 +117,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 		validatePage();
 	}
 	
-	@Override
-	protected void handleFieldChanged(String fieldName) {
-		super.handleFieldChanged(fieldName);
-		validatePage();
-	}
-	
 	public void validatePage() {
 		
 		StatusInfo si = new StatusInfo(StatusInfo.OK, "");
@@ -162,6 +143,11 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 		if (si.isError()) {
 			setErrorMessage(si.getMessage());
 		}
+	}
+	
+	protected void updateStatus(IStatus status) {
+		setPageComplete(!status.matches(IStatus.ERROR));
+		StatusUtil.applyToStatusLine(this, status);
 	}
 
 	public String getPatternName() {
