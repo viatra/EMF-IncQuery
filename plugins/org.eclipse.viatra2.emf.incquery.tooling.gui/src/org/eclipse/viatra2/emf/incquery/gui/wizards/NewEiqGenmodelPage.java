@@ -268,7 +268,7 @@ public class NewEiqGenmodelPage extends WizardPage {
 						"Select EMF generator model(s) to add to the initialized EMF-IncQuery generator model",
 						true, null, ImmutableList.of(genmodelFileFilter));
 		for (IFile file : files) {
-			URI uri = URI.createPlatformPluginURI(file.getFullPath().toString(), true);
+			URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
 			Resource res = set.getResource(uri, true);
 			for (EObject obj : res.getContents()) {
 				if (obj instanceof GenModel) {
