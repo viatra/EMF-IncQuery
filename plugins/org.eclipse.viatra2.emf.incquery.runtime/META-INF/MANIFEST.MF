@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete;bundle
  org.eclipse.xtext.common.types;bundle-version="2.2.1",
  org.eclipse.xtext.xbase;bundle-version="2.3.0",
  org.eclipse.xtext.xbase.lib;bundle-version="2.3.0",
- org.eclipse.viatra2.emf.incquery.base;bundle-version="0.6.0"
+ org.eclipse.viatra2.emf.incquery.base;bundle-version="0.6.0",
+ org.apache.log4j;bundle-version="1.2.15";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: BUTE-FTSRG
@@ -23,4 +24,3 @@ Export-Package: org.eclipse.viatra2.emf.incquery.runtime,
  org.eclipse.viatra2.emf.incquery.runtime.exception,
  org.eclipse.viatra2.emf.incquery.runtime.extensibility,
  org.eclipse.viatra2.emf.incquery.runtime.util
-Import-Package: org.apache.log4j;version="1.2.15"
