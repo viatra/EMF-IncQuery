@@ -38,7 +38,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -113,9 +113,10 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	public static QueryExplorer getInstance() {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if (page != null) {
-			IViewPart form = page.findView(ID);
+		//In Juno activeWorkbenchWindow will be nnull when Eclipse is closing
+		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
+			IViewPart form = activeWorkbenchWindow.getActivePage().findView(ID);
 	    	return (QueryExplorer) form;
 		}
 		return null;
