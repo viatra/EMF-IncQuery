@@ -44,6 +44,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 
 	private Text fileText;
 		
+	private static final String THE_GIVEN_FILE_ALREADY_EXISTS = "The given file already exists!";
 	private static final String defaultEiqFileName = "default.eiq";
 	private static final String SOURCE_FOLDER_ERROR = "You must specify a valid source folder!";
 	private static final String FILE_NAME_ERROR = "File name must be specified!";
@@ -111,12 +112,8 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 	
 	private void validatePage() {
 		IStatus packageStatus = validatePackageName(getPackageText());
-		
 		StatusInfo si = new StatusInfo(packageStatus.getSeverity(), packageStatus.getMessage());
-		//si.setOK();
-		
 		String containerPath = getPackageFragmentRootText();
-		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource containerResource = root.findMember(new Path(containerPath));
 		
@@ -127,7 +124,12 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		if (fileText != null) {
 		
 			String fileName = fileText.getText();
-	
+			String packageName = getPackageText().replaceAll("\\.", "/");
+			
+			if (root.findMember(new Path(containerPath+"/"+packageName+"/"+fileText.getText())) != null) {
+				si.setError(THE_GIVEN_FILE_ALREADY_EXISTS);
+			}
+			
 			if (fileName.length() == 0) {
 				si.setError(FILE_NAME_ERROR);
 			}
