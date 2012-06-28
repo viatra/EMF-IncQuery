@@ -8,7 +8,7 @@
  * Contributors:
  *    Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.runtime.derived;
+package org.eclipse.viatra2.emf.incquery.base.comprehension;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,8 +22,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.base.IncQueryBasePlugin;
 
 /**
  * @author Abel Hegedus
@@ -39,7 +38,7 @@ public class WellbehavingDerivedFeatureRegistry {
 	 */
 	private WellbehavingDerivedFeatureRegistry() {	}
 	/**
-	 * Called by Activator.
+	 * Called by IncQueryBasePlugin.
 	 */
 	public static void initRegistry() {
 		getContributedWellbehavingDerivedFeatures().clear();
@@ -49,7 +48,7 @@ public class WellbehavingDerivedFeatureRegistry {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint poi;
 
-		poi = reg.getExtensionPoint(IExtensions.WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID);
+		poi = reg.getExtensionPoint(IncQueryBasePlugin.WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID);
 		if (poi != null) {
 			IExtension[] exts = poi.getExtensions();
 
