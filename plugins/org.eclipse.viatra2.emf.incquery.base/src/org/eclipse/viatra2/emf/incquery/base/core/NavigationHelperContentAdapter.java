@@ -161,7 +161,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				}
 				else {
 					Integer count = valMap.get(value);
-					count++;
+					valMap.put(value, ++count);
 				}
 				notifyDataTypeListeners(type, value, true);
 			}
@@ -193,6 +193,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 						Integer count = valMap.get(value);
 						if (--count == 0) {
 							valMap.remove(value);
+						}
+						else {
+							valMap.put(value, count);
 						}
 					}
 					if (valMap.size() == 0) {
