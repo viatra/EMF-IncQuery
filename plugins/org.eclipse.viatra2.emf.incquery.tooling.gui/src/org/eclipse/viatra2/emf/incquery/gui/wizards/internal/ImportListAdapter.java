@@ -23,9 +23,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 @SuppressWarnings("restriction")
-public class ImportsListAdapter implements IListAdapter<EPackage> {
+public class ImportListAdapter implements IListAdapter<EPackage> {
 	
-	public ImportsListAdapter() {
+	public ImportListAdapter() {
 
 	}
 	

@@ -162,12 +162,12 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		if (si.getSeverity() == IStatus.OK) {
 			si.setInfo("");
 		}
-
-		updateStatus(si);
 		
 		if (si.isError()) {
 			setErrorMessage(si.getMessage());
 		}
+
+		updateStatus(si);
 	}
 	
 	private IStatus validatePackageName(String text) {

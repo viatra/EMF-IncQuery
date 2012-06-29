@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.dialogs.Dialog;
@@ -93,7 +92,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		label.setLayoutData(gridData);
 		
 		parameterType = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		parameterType.setText(result.getObject() == null ? "" : result.getObject().eClass().toString());
+		parameterType.setText(result.getObject() == null ? "" : ((EClassifier) result.getObject()).getName());
 		parameterType.setEditable(false);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 1;
@@ -139,7 +138,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 			
 			while (iterator.hasNext()) {
 				EObject nextObject = iterator.next();
-				if (nextObject instanceof EClassifier || nextObject instanceof EDataType) {
+				if (nextObject instanceof EClassifier) {
 					result.add(nextObject);
 				}
 			}
@@ -150,7 +149,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 	private void setParameterType(EObject object) {
 		this.result.setObject(object);
 		if (object != null) {
-			parameterType.setText(object.toString());
+			parameterType.setText(((EClassifier) object).getName());
 		}
 	}
 }

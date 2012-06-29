@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -38,11 +39,11 @@ public class ObjectParameterConfigurationLabelProvider implements ILabelProvider
 
 	@Override
 	public String getText(Object element) {
-		if (element != null) {
-			return element.toString();
+		if (element instanceof EClassifier) {
+			return ((EClassifier) element).getName();
 		}
 		else {
-			return null;
+			return element.toString();
 		}
 	}
 
