@@ -43,7 +43,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	protected Notifier notifier;
 	protected NavigationHelperType navigationHelperType;
-	protected NavigationHelperVisitor visitor;
+//	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
 	private Map<InstanceListener, Collection<EClass>> instanceListeners;
@@ -62,14 +62,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.observedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
-		this.visitor = new NavigationHelperVisitor(this);
+//		this.visitor = new NavigationHelperVisitor(this);
 
 		this.notifier = emfRoot;
 		this.navigationHelperType = type;
 
-		if (this.navigationHelperType == NavigationHelperType.ALL) {
-			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
-		}
+//		if (this.navigationHelperType == NavigationHelperType.ALL) {
+//			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
+//		}
 		this.notifier.eAdapters().add(contentAdapter);
 	}
 	
@@ -89,9 +89,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		return observedFeatures;
 	}
 	
-	public NavigationHelperVisitor getVisitor() {
-		return visitor;
-	}
+//	public NavigationHelperVisitor getVisitor() {
+//		return visitor;
+//	}
 
 	@Override
 	public void dispose() {

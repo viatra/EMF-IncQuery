@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 
 public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl implements ParameterizedNavigationHelper {
@@ -46,8 +47,6 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	 * EDataTypes to be registered once the coalescing period is over
 	 */
 	protected Set<EDataType> delayedDataTypes;
-
-	
 	
 	@Override
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
@@ -56,7 +55,8 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedFeatures.addAll(features);
 			} else {
 				observedFeatures.addAll(features);
-				visitor.visitModel(notifier, features, null, null);
+				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, features, null, null, true);
+				EMFModelComprehension.visitModel(visitor, notifier);
 			}
 		}
 	}
@@ -81,7 +81,8 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedClasses.addAll(classes);
 			} else {
 				observedClasses.addAll(classes);
-				visitor.visitModel(notifier, null, classes, null);
+				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, null, classes, null, true);
+				EMFModelComprehension.visitModel(visitor, notifier);
 			}
 		}
 	}
@@ -104,7 +105,9 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedDataTypes.addAll(dataTypes);
 			} else {
 				dataTypes.addAll(dataTypes);
-				visitor.visitModel(notifier, null, null, dataTypes);
+				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, null, null, dataTypes, true);
+				EMFModelComprehension.visitModel(visitor, notifier);
+
 			}
 		}
 	}
@@ -150,7 +153,9 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 					delayedClasses.clear();
 					delayedDataTypes.clear();
 					
-					visitor.visitModel(notifier, toGatherFeatures, toGatherClasses, toGatherDataTypes);			
+					final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, toGatherFeatures, toGatherClasses, toGatherDataTypes, true);
+					EMFModelComprehension.visitModel(visitor, notifier);
+
 				}
 			}
 		} catch (Exception e) {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Gabor Bergmann - initial API and implementation
+ *  Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.viatra2.emf.incquery.base.comprehension;
@@ -14,9 +14,11 @@ package org.eclipse.viatra2.emf.incquery.base.comprehension;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 
 /**
+ * Use EMFModelComprehension to visit an EMF model.
  * @author Bergmann Gábor
  *
  */
@@ -29,54 +31,59 @@ public class EMFVisitor {
 	 * @param resource
 	 * @param element
 	 */
-	public  void visitTopElementInResource(Resource resource, EObject element) {}
+	public void visitTopElementInResource(Resource resource, EObject element) {}
 
 	/**
 	 * @param resource
 	 */
-	public  void visitResource(Resource resource) {}
+	public void visitResource(Resource resource) {}
 
 	/**
 	 * @param source
 	 */
-	public  void visitElement(EObject source) {}
+	public void visitElement(EObject source) {}
 
 //	/**
 //	 * @param source
 //	 * @param feature
 //	 * @param target
 //	 */
-//	public  void visitExternalReference(EObject source, EReference feature, EObject target) {}
+//	public void visitExternalReference(EObject source, EReference feature, EObject target) {}
 
 	/**
 	 * @param source
 	 * @param feature
 	 * @param target
 	 */
-	public  void visitNonContainmentReference(EObject source, EReference feature, EObject target) {}
+	public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {}
 
 	/**
 	 * @param source
 	 * @param feature
 	 * @param target
 	 */
-	public  void visitInternalContainment(EObject source, EReference feature, EObject target) {}
+	public void visitInternalContainment(EObject source, EReference feature, EObject target) {}
 
 	/**
 	 * @param current
 	 * @param feature
 	 * @param value
 	 */
-	public  void visitAttribute(EObject source, EAttribute feature, Object target) {}
+	public void visitAttribute(EObject source, EAttribute feature, Object target) {}
 	
 	/**
-	 * Returns false if the contents of an object should be pruned (and not explored by the visitor)
-	 * 
-	 * @param source
-	 * @param feature
-	 * @param target
-	 * @return
+	 * Returns true if the given feature should not be traversed (interesting esp. if multi-valued)
 	 */
-	public  boolean pruneSubtrees(EObject source) { return false;}
+	public boolean pruneFeature(EStructuralFeature feature) { return false;}
+
+	/**
+	 * Returns true if the contents of an object should be pruned (and not explored by the visitor)
+	 */
+	public boolean pruneSubtrees(EObject source) { return false;}
+	
+	/**
+	 * Returns true if the contents of a resource should be pruned (and not explored by the visitor)
+	 */
+	public boolean pruneSubtrees(Resource source) { return false;}
 
 }
