@@ -33,6 +33,12 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
 
+/**
+ * Second page of the {@link NewEiqFileWizard} which allows to specify pattern parameters and imported {@link EPackage}s. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 @SuppressWarnings("restriction")
 public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 
@@ -41,11 +47,11 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
 	private Text patternText;
 	private ListDialogField<EPackage> importList;
-	private ListDialogField<ObjectParameter> objectsList;
+	private ListDialogField<ObjectParameter> objectList;
 	private ImportListLabelProvider importListLabelProvider;
-	private ObjectsListLabelProvider objectsListLabelProvider;
-	private ImportsListAdapter importsListAdapter;
-	private ObjectsListAdapter objectsListAdapter;
+	private ObjectsListLabelProvider objectListLabelProvider;
+	private ImportsListAdapter importListAdapter;
+	private ObjectsListAdapter objectListAdapter;
 	public boolean parameterSet;
 	
 	public NewEiqFileWizardPatternConfigurationPage() {
@@ -56,10 +62,10 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	
 	private void createImportsControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Remove"};
-		importsListAdapter = new ImportsListAdapter();
+		importListAdapter = new ImportsListAdapter();
 		importListLabelProvider = new ImportListLabelProvider();
 		
-		importList = new ListDialogField<EPackage>(importsListAdapter, buttonLiterals, importListLabelProvider);
+		importList = new ListDialogField<EPackage>(importListAdapter, buttonLiterals, importListLabelProvider);
 		importList.setLabelText("&Imported packages:");
 		importList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"EPackage"}, true));
 		importList.setRemoveButtonIndex(1);
@@ -68,16 +74,16 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	
 	private void createObjectSelectionControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Modify", "Remove"};
-		objectsListAdapter = new ObjectsListAdapter(this, importList);
-		objectsListLabelProvider = new ObjectsListLabelProvider();
+		objectListAdapter = new ObjectsListAdapter(this, importList);
+		objectListLabelProvider = new ObjectsListLabelProvider();
 		
-		objectsList = new ListDialogField<ObjectParameter>(objectsListAdapter, buttonLiterals, objectsListLabelProvider);
-		objectsList.setLabelText("&Pattern parameters:");
-		objectsList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"Name", "Type"}, true));
+		objectList = new ListDialogField<ObjectParameter>(objectListAdapter, buttonLiterals, objectListLabelProvider);
+		objectList.setLabelText("&Pattern parameters:");
+		objectList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"Name", "Type"}, true));
 		//disable modify button for an empty list
-		objectsList.enableButton(1, false);
-		objectsList.setRemoveButtonIndex(2);
-		objectsList.doFillIntoGrid(parent, nColumns);
+		objectList.enableButton(1, false);
+		objectList.setRemoveButtonIndex(2);
+		objectList.doFillIntoGrid(parent, nColumns);
 	}
 	
 	@Override
@@ -130,7 +136,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 				else {
 					si.setWarning(PATTERN_NAME_SHOULD_BE_SPECIFIED);
 				}
-				
 			}
 		}
 		
@@ -159,6 +164,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	}
 	
 	public List<ObjectParameter> getParameters() {
-		return objectsList.getElements();
+		return objectList.getElements();
 	}
 }
