@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,7 +39,6 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 /**
  * A wizard class for initializing an EMF IncQuery project.
