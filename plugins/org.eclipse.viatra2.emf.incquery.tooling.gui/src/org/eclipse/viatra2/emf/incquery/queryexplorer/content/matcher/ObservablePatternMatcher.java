@@ -55,6 +55,7 @@ public class ObservablePatternMatcher {
 	private Object[] parameterFilter;
 	private String orderParameter;
 	private boolean descendingOrder;
+	private String exceptionMessage;
 	
 	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
@@ -259,14 +260,24 @@ public class ObservablePatternMatcher {
 		return false;
 	}
 	
+	/**
+	 * Returns the current filter used on the corresponding matcher.
+	 * 
+	 * @return the filter as an array of objects
+	 */
 	public Object[] getFilter() {
 		return parameterFilter;
 	}
 
+	/**
+	 * Returns the label for the observable pattern matcher that will be used in the {@link QueryExplorer}.
+	 * 
+	 * @return the label
+	 */
 	public String getText() {
 		String isGeneratedString = isGenerated() ? " (Generated)" : " (Runtime)";
 		if (matcher == null) {
-			return String.format("Matcher could not be created for pattern '%s' %s", patternFqn, isGeneratedString);
+			return String.format("Matcher could not be created for pattern '%s': %s %s", patternFqn, exceptionMessage, isGeneratedString);
 		}
 		else {
 			String matchString;
@@ -289,15 +300,34 @@ public class ObservablePatternMatcher {
 	}
 
 	public static final String MATCHES_ID = "matches";
+	/**
+	 * Returns the list of observable pattern matches under this matcher.
+	 * 
+	 * @return the list of matches
+	 */
 	public List<ObservablePatternMatch> getMatches() {
 		return matches;
 	}
 
+	/**
+	 * Returns true if the matcher is generated, false if it is generic.
+	 * 
+	 * @return true for generated, false for generic matcher
+	 */
 	public boolean isGenerated() {
 		return generated;
 	}
 	
+	/**
+	 * Returns true if the RETE matcher was created for this observable matcher, false otherwise.
+	 * 
+	 * @return true if matcher could be created
+	 */
 	public boolean isCreated() {
 		return matcher != null;
+	}
+	
+	public void setExceptionMessage(String message) {
+		exceptionMessage = message;
 	}
 }
