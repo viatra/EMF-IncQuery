@@ -19,6 +19,7 @@ import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
@@ -105,7 +106,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 //			handleAttributeChange(notification, (EAttribute) feature);
 //		}
 		} catch (Exception ex) {
-			logger.logError(
+			DefaultLoggerProvider.getDefaultLogger().logError(
 					"EMF-IncQuery encountered an error in processing the EMF model. " +
 					"This happened while handling the following update notification: " + 
 					notification, ex);
@@ -127,9 +128,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 			super.addAdapter(notifier);
 		} catch (Exception ex) {
-			logger.logError(
+			DefaultLoggerProvider.getDefaultLogger().logError(
 					"EMF-IncQuery encountered an error in processing the EMF model. " +
-					"This happened while trying to add a notification adapter to: " + 
+					"This happened while trying to add the object: " + 
 					notifier, ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
@@ -143,9 +144,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 			super.removeAdapter(notifier);
 		} catch (Exception ex) {
-			logger.logError(
+			DefaultLoggerProvider.getDefaultLogger().logError(
 					"EMF-IncQuery encountered an error in processing the EMF model. " +
-					"This happened while trying to remove a notification adapter from: " + 
+					"This happened while trying to remove the object: " + 
 					notifier, ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}

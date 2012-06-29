@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 /**
  * @author Abel Hegedus
@@ -136,13 +136,13 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 						tempOldValue.eAdapters().remove(path.getDependantAdapter());
 					}
 					else {
-						IncQueryEngine.getDefaultLogger().logDebug("[DerivedFeatureAdapter] oldValue is not set");
+						DefaultLoggerProvider.getDefaultLogger().logDebug("[DerivedFeatureAdapter] oldValue is not set");
 					}
 					if (newValue != null) {
 						newValue.eAdapters().add(path.getDependantAdapter());
 					}
 					else {
-						IncQueryEngine.getDefaultLogger().logDebug("[DerivedFeatureAdapter] new value is not set");
+						DefaultLoggerProvider.getDefaultLogger().logDebug("[DerivedFeatureAdapter] new value is not set");
 					}
 					break;
 				case Notification.ADD:
@@ -175,7 +175,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 				case Notification.REMOVING_ADAPTER:
 					break;
 				default:
-					IncQueryEngine.getDefaultLogger().logDebug("[DerivedFeatureAdapter] Unhandled notification: " + notification.getEventType());
+					DefaultLoggerProvider.getDefaultLogger().logDebug("[DerivedFeatureAdapter] Unhandled notification: " + notification.getEventType());
 					return; // No notification
 				}
 				refreshDerivedFeature();
@@ -222,7 +222,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 				}
 			}
 		} catch (Exception ex) {
-			IncQueryEngine.getDefaultLogger().logError("The derived feature adapter encountered an error in processing the EMF model. " +
+			DefaultLoggerProvider.getDefaultLogger().logError("The derived feature adapter encountered an error in processing the EMF model. " +
 					"This happened while maintaining the derived feature " +  
 					derivedFeature.getName() + " of object " + source, ex);
 		}

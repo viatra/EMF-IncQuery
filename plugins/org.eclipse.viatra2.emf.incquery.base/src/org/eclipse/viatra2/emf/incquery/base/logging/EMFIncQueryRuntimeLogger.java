@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
+package org.eclipse.viatra2.emf.incquery.base.logging;
 
 /** 
  * Interface for logging errors that happen during run-time execution.

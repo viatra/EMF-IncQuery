@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.IncQueryBasePlugin;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 /**
  * @author Abel Hegedus
@@ -96,7 +97,7 @@ public class WellbehavingDerivedFeatureRegistry {
 				}
 			}
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Well-behaving feature registration failed", e);
+			DefaultLoggerProvider.getDefaultLogger().logError("Well-behaving feature registration failed", e);
 		}
 	}
 
