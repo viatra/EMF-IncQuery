@@ -114,7 +114,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		return super.createDialogArea(parent);
 	}
 	
-	private EObject openDialogBox() {
+	private EClassifier openDialogBox() {
     	ElementListSelectionDialog listDialog = 
     			new ElementListSelectionDialog(
     					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
@@ -126,7 +126,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     	listDialog.open();
     	Object[] result = listDialog.getResult();
     	if (result != null && result.length > 0) {
-    		return (EObject) result[0];
+    		return (EClassifier) result[0];
     	}
         return null;
     }
@@ -146,7 +146,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		return result.toArray();
 	}
 	
-	private void setParameterType(EObject object) {
+	private void setParameterType(EClassifier object) {
 		this.result.setObject(object);
 		if (object != null) {
 			parameterType.setText(((EClassifier) object).getName());

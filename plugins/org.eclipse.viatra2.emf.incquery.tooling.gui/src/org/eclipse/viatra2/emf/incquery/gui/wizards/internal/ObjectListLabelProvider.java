@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -31,7 +30,7 @@ public class ObjectListLabelProvider extends LabelProvider implements ITableLabe
 				return parameter.getParameterName();
 			}
 			else {
-				return parameter.getObject() != null ? ((EClassifier) parameter.getObject()).getName() : "";
+				return parameter.getObject() != null ? parameter.getObject().getName() : "";
 			}
 		}
 		return null;

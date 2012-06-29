@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -169,8 +170,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 				var.setName(parameter.getParameterName());
 				
 				ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
-				classType.setClassname(parameter.getObject().eClass());
-				classType.setTypename(parameter.getObject().eClass().getName());
+				classType.setClassname((EClassifier) parameter.getObject());
 				var.setType(classType);
 				pattern.getParameters().add(var);
 			}
