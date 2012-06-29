@@ -50,7 +50,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
 	// TODO replace with new logger
 	private Logger logger = Logger.getLogger(getClass());
-	private static Map<String, Class<?>> WRAPPERCLASSES = getWrapperClasses();
+	private static final Map<String, Class<?>> WRAPPERCLASSES = getWrapperClasses();
 	
 	@Inject
 	private TypeReferences typeReferences;

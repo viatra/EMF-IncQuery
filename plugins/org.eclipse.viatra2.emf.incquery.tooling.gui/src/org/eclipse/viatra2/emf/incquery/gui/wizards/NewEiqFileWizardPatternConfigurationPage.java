@@ -15,12 +15,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,32 +33,39 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
 
+/**
+ * Second page of the {@link NewEiqFileWizard} which allows to specify pattern parameters and imported {@link EPackage}s. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage {
+public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 
+	private static final String TITLE = "EMF-IncQuery query definition Wizard";
 	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
 	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
 	private Text patternText;
 	private ListDialogField<EPackage> importList;
-	private ListDialogField<ObjectParameter> objectsList;
+	private ListDialogField<ObjectParameter> objectList;
 	private ImportListLabelProvider importListLabelProvider;
-	private ObjectsListLabelProvider objectsListLabelProvider;
-	private ImportsListAdapter importsListAdapter;
-	private ObjectsListAdapter objectsListAdapter;
+	private ObjectsListLabelProvider objectListLabelProvider;
+	private ImportsListAdapter importListAdapter;
+	private ObjectsListAdapter objectListAdapter;
 	public boolean parameterSet;
 	
 	public NewEiqFileWizardPatternConfigurationPage() {
-		super(false, "eiq");
-		setTitle("EMF-IncQuery query definition Wizard");
+		super(TITLE);
+		setTitle(TITLE);
 		parameterSet = false;
 	}
 	
 	private void createImportsControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Remove"};
-		importsListAdapter = new ImportsListAdapter();
+		importListAdapter = new ImportsListAdapter();
 		importListLabelProvider = new ImportListLabelProvider();
 		
-		importList = new ListDialogField<EPackage>(importsListAdapter, buttonLiterals, importListLabelProvider);
+		importList = new ListDialogField<EPackage>(importListAdapter, buttonLiterals, importListLabelProvider);
 		importList.setLabelText("&Imported packages:");
 		importList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"EPackage"}, true));
 		importList.setRemoveButtonIndex(1);
@@ -69,28 +74,16 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 	
 	private void createObjectSelectionControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Modify", "Remove"};
-		objectsListAdapter = new ObjectsListAdapter(this, importList);
-		objectsListLabelProvider = new ObjectsListLabelProvider();
+		objectListAdapter = new ObjectsListAdapter(this, importList);
+		objectListLabelProvider = new ObjectsListLabelProvider();
 		
-		objectsList = new ListDialogField<ObjectParameter>(objectsListAdapter, buttonLiterals, objectsListLabelProvider);
-		objectsList.setLabelText("&Pattern parameters:");
-		objectsList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"Name", "Type"}, true));
+		objectList = new ListDialogField<ObjectParameter>(objectListAdapter, buttonLiterals, objectListLabelProvider);
+		objectList.setLabelText("&Pattern parameters:");
+		objectList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] {"Name", "Type"}, true));
 		//disable modify button for an empty list
-		objectsList.enableButton(1, false);
-		objectsList.setRemoveButtonIndex(2);
-		objectsList.doFillIntoGrid(parent, nColumns);
-	}
-	
-	public void init(IStructuredSelection selection) {
-		IJavaElement jelem= getInitialJavaElement(selection);
-		initContainerPage(jelem);
-		
-		if (jelem != null) {
-			IPackageFragment pack = (IPackageFragment) jelem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
-			setPackageFragment(pack, true);
-		}
-		
-		packageChanged();
+		objectList.enableButton(1, false);
+		objectList.setRemoveButtonIndex(2);
+		objectList.doFillIntoGrid(parent, nColumns);
 	}
 	
 	@Override
@@ -130,12 +123,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 		validatePage();
 	}
 	
-	@Override
-	protected void handleFieldChanged(String fieldName) {
-		super.handleFieldChanged(fieldName);
-		validatePage();
-	}
-	
 	public void validatePage() {
 		
 		StatusInfo si = new StatusInfo(StatusInfo.OK, "");
@@ -149,7 +136,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 				else {
 					si.setWarning(PATTERN_NAME_SHOULD_BE_SPECIFIED);
 				}
-				
 			}
 		}
 		
@@ -163,6 +149,11 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 			setErrorMessage(si.getMessage());
 		}
 	}
+	
+	protected void updateStatus(IStatus status) {
+		setPageComplete(!status.matches(IStatus.ERROR));
+		StatusUtil.applyToStatusLine(this, status);
+	}
 
 	public String getPatternName() {
 		return patternText.getText();
@@ -173,6 +164,6 @@ public class NewEiqFileWizardPatternConfigurationPage extends NewTypeWizardPage 
 	}
 	
 	public List<ObjectParameter> getParameters() {
-		return objectsList.getElements();
+		return objectList.getElements();
 	}
 }

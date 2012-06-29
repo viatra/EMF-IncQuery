@@ -97,8 +97,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	}
 
 	@Override
-	public IncQueryGeneratorModel getGeneratorModel(EObject pattern)
-			throws IllegalArgumentException {
+	public IncQueryGeneratorModel getGeneratorModel(EObject pattern) {
 		Resource res = pattern.eResource();
 		if (res != null && projectProvider != null) {
 			ResourceSet set = res.getResourceSet();
@@ -158,8 +157,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public GenPackage findGenPackage(EObject ctx, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
-		ResourceSet set = ctx.eResource().getResourceSet();
-		return findGenPackage(eiqGenModel, set, packageNsUri);
+		return findGenPackage(eiqGenModel, packageNsUri);
 	}
 	
 	@Override
@@ -170,10 +168,10 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public GenPackage findGenPackage(ResourceSet set, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
-		return findGenPackage(eiqGenModel, set, packageNsUri);		
+		return findGenPackage(eiqGenModel, packageNsUri);		
 	}
 	
-	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri) {
+	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, final String packageNsUri) {
 		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
 		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
 			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());

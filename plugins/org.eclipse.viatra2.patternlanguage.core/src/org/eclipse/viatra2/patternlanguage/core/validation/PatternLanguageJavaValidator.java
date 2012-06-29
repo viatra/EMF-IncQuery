@@ -38,8 +38,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.xbase.util.XbaseUsageCrossReferencer;
-
 import com.google.inject.Inject;
 
 /**
@@ -74,7 +72,7 @@ public class PatternLanguageJavaValidator extends
 	public static final String UNUSED_PRIVATE_PATTERN_MESSAGE = "The pattern '%s' is never used locally.";
 	
 	@Inject
-	PatternAnnotationProvider annotationProvider;
+	private PatternAnnotationProvider annotationProvider;
 	
 	@Check
 	public void checkPatternParameters(Pattern pattern) {
@@ -361,7 +359,7 @@ public class PatternLanguageJavaValidator extends
 	@Check
 	public void checkPackageDeclaration(PatternModel model) {
 		String packageName = model.getPackageName();
-		if (packageName!= null && !packageName.toLowerCase().equals(packageName)) {
+		if (packageName!= null && !packageName.equalsIgnoreCase(packageName)) {
 			error("Only lowercase package names supported",
 					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
 					IssueCodes.LOWERCASE_PATTERN_NAME);

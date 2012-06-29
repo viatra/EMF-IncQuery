@@ -14,28 +14,25 @@ package org.eclipse.viatra2.emf.incquery.testing.queries
 import "http://www.eclipse.org/viatra2/emf/incquery/snapshot"
 import "http://www.eclipse.org/emf/2002/Ecore"
 
-@Off
-pattern MatchRecordWithSubstitution(
+/*private pattern MatchRecordWithSubstitution(
 	Record : MatchRecord,
 	ParameterName : EString,
 	Substitution : MatchSubstitutionRecord
 ) = {
 	MatchRecord.substitutions(Record,Substitution);
 	MatchSubstitutionRecord.parameterName(Substitution, ParameterName);
-}
+}*/
 	
-@Off
-pattern CorrectRecordSubstitutionValue(
+/*private pattern CorrectRecordSubstitutionValue(
 	Record : MatchRecord,
 	ParameterName : EString,
 	Value
 ) = {
 	find MatchRecordWithSubstitution(Record, ParameterName, Substitution);
 	MatchSubstitutionRecord.derivedValue(Substitution, Value);
-}
+}*/
 
-@Off
-pattern IncorrectSubstitution(
+private pattern IncorrectSubstitution(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord
 ) = {
@@ -48,8 +45,7 @@ pattern IncorrectSubstitution(
 	Value1 != Value2;
 }
 
-@Off
-pattern CorrespondingRecords(
+private pattern CorrespondingRecords(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord
 ) = {
@@ -57,8 +53,7 @@ pattern CorrespondingRecords(
 	neg find IncorrectSubstitution(Record, CorrespondingRecord);
 }
 
-@Off
-pattern CorrespondingRecordInMatchSetRecord(
+private pattern CorrespondingRecordInMatchSetRecord(
 	Record : MatchRecord,
 	CorrespodingRecord : MatchRecord,
 	ExpectedSet : MatchSetRecord

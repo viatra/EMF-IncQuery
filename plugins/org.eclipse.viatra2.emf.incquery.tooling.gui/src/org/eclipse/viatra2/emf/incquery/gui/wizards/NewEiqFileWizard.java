@@ -72,7 +72,6 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		page1 = new NewEiqFileWizardContainerConfigurationPage();
 		page1.init((IStructuredSelection) selection);
 		page2 = new NewEiqFileWizardPatternConfigurationPage();
-		page2.init((IStructuredSelection) selection);
 		addPage(page1);
 		addPage(page2);
 		setForcePreviousAndNextButtons(false);

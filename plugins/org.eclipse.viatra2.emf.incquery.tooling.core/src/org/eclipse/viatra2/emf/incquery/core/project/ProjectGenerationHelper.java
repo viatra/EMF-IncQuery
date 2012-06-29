@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -88,7 +87,7 @@ public abstract class ProjectGenerationHelper {
 	/**
 	 * A single source folder named src
 	 */
-	public static final String[] SINGLESOURCEFOLDER = { "src" };
+	public static final List<String> SINGLESOURCEFOLDER = ImmutableList.of( "src" );
 	
 	/**
 	 * Creates a new IncQuery project: a plug-in project with src and src-gen

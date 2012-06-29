@@ -18,6 +18,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog;
 import org.eclipse.emf.common.util.URI;
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
@@ -65,15 +67,18 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	private void saveSnapshot(TreeSelection selection, ExecutionEvent event) {
 		Object obj = selection.getFirstElement();
 		
+		IEditorPart editor = null;
 		List<ObservablePatternMatcher> matchers = new ArrayList<ObservablePatternMatcher>();
 		IncQueryEngine engine = null;
 		if(obj instanceof ObservablePatternMatcher) {
 			ObservablePatternMatcher observablePatternMatcher = (ObservablePatternMatcher) obj;
+			editor = observablePatternMatcher.getParent().getEditorPart();
 			matchers.add(observablePatternMatcher);
 			engine = observablePatternMatcher.getMatcher().getEngine();
 			
 		} else if(obj instanceof ObservablePatternMatcherRoot) {
 			ObservablePatternMatcherRoot matcherRoot = (ObservablePatternMatcherRoot) obj;
+			editor = matcherRoot.getEditorPart();
 			if(matcherRoot.getMatchers().size() > 0) {
 				matchers.addAll(matcherRoot.getMatchers());
 				engine = matcherRoot.getMatchers().get(0).getMatcher().getEngine();
@@ -125,10 +130,15 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			IPatternMatch filter = matcher.getMatcher().arrayToMatch(matcher.getFilter());
 			helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
 		}
-		try {
-			snapshot.eResource().save(null);
-		} catch(IOException e) {
-			engine.getLogger().logError("Error during saving snapshot into file!",e);
+		
+		if(editor != null) {
+			editor.doSave(new NullProgressMonitor());
+		} else {
+			try {
+				snapshot.eResource().save(null);
+			} catch(IOException e) {
+				engine.getLogger().logError("Error during saving snapshot into file!",e);
+			}
 		}
 	}
 

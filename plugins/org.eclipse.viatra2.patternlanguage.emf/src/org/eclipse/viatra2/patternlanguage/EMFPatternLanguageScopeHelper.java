@@ -17,7 +17,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTa
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 
-public class EMFPatternLanguageScopeHelper {
+public final class EMFPatternLanguageScopeHelper {
 
 	public static final String NOT_AN_ENUMERATION_REFERENCE_ERROR = "Not an enumeration reference";
 	

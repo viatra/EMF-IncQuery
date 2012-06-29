@@ -21,9 +21,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
-import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext.Builder;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
-import org.eclipse.xtext.ui.editor.contentassist.AbstractJavaBasedContentProposalProvider.ReferenceProposalCreator;
 
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -34,11 +32,11 @@ import com.google.inject.Inject;
 public class PatternLanguageProposalProvider extends AbstractPatternLanguageProposalProvider {
 
 	@Inject
-	PatternAnnotationProvider annotationProvider;
+	private PatternAnnotationProvider annotationProvider;
 	@Inject
-	IScopeProvider scopeProvider;
+	private IScopeProvider scopeProvider;
 	@Inject
-	ReferenceProposalCreator crossReferenceProposalCreator;
+	private ReferenceProposalCreator crossReferenceProposalCreator;
 	
 	public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		for (String annotationName : annotationProvider.getAllAnnotationNames()) {
@@ -46,7 +44,7 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 			String prefix = context.getPrefix();
 			ContentAssistContext modifiedContext = context;
 			INode lastNode = context.getLastCompleteNode();
-			if (prefix == ""
+			if ("".equals(prefix)
 					&& lastNode.getSemanticElement() instanceof Annotation) {
 				Annotation previousNode = (Annotation) lastNode
 						.getSemanticElement();

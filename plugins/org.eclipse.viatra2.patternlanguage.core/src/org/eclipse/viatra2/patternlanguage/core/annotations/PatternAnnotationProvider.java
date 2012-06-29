@@ -33,7 +33,7 @@ public class PatternAnnotationProvider {
 	}
 
 	static final String EXTENSIONID = "org.eclipse.viatra2.patternlanguage.core.annotation";
-	Map<String, IPatternAnnotationValidator> annotationValidators;
+	private Map<String, IPatternAnnotationValidator> annotationValidators;
 
 	protected void initializeValidators() {
 		annotationValidators = new Hashtable<String, IPatternAnnotationValidator>();

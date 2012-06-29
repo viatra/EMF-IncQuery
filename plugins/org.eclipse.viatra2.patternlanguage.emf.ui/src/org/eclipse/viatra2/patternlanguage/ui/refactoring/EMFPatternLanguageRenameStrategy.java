@@ -14,7 +14,6 @@
 package org.eclipse.viatra2.patternlanguage.ui.refactoring;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.xbase.ui.jvmmodel.refactoring.AbstractJvmModelRenameStrategy;
 import org.eclipse.xtext.xbase.ui.jvmmodel.refactoring.DefaultJvmModelRenameStrategy;
 
 /**

@@ -121,7 +121,7 @@ public class PatternRegistry {
 	 * @return
 	 */
 	public boolean isEmpty() {
-		return !registeredPatterModels.isEmpty();
+		return registeredPatterModels.isEmpty();
 	}
 	
 	/**
