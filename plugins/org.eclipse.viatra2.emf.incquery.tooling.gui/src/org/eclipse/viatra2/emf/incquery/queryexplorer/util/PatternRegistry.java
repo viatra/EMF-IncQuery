@@ -167,16 +167,27 @@ public class PatternRegistry {
 	}
 	
 	/**
-	 * Returns the list of active patterns.
+	 * Returns the list of active and generated patterns.
 	 * 
-	 * @return the list of active patterns
+	 * @return the list of active and generated patterns
 	 */
-	public List<Pattern> getActivePatterns() {
+	public List<Pattern> getActiveAndGeneratedPatterns() {
 		List<Pattern> patterns = new ArrayList<Pattern>();
 		patterns.addAll(this.activePatterns);
 		patterns.addAll(this.generatedPatterns);
 		return patterns;
 	}
+	
+	/**
+   * Returns the list of active patterns.
+   * 
+   * @return the list of active patterns
+   */
+	public List<Pattern> getActivePatterns() {
+	  List<Pattern> patterns = new ArrayList<Pattern>();
+    patterns.addAll(this.activePatterns);
+    return patterns;
+  }
 	
 	/**
 	 * Returns true if the given pattern is currently active, false otherwise.

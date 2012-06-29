@@ -71,7 +71,7 @@ public class DatabindingUtil {
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
-	public static List<Pattern> generatedPatterns = collectGeneratedPatterns();
+	public final static List<Pattern> generatedPatterns = collectGeneratedPatterns();
 	
 	public static final String OFF_ANNOTATION = "Off";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
