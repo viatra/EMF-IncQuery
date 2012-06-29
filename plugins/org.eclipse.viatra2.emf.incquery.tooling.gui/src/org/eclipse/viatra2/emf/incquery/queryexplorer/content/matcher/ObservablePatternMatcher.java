@@ -55,7 +55,6 @@ public class ObservablePatternMatcher {
 	private Object[] parameterFilter;
 	private String orderParameter;
 	private boolean descendingOrder;
-	private String exceptionMessage;
 	
 	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
@@ -277,7 +276,7 @@ public class ObservablePatternMatcher {
 	public String getText() {
 		String isGeneratedString = isGenerated() ? " (Generated)" : " (Runtime)";
 		if (matcher == null) {
-			return String.format("Matcher could not be created for pattern '%s': %s %s", patternFqn, exceptionMessage, isGeneratedString);
+			return String.format("Matcher could not be created for pattern '%s': %s", patternFqn, isGeneratedString);
 		}
 		else {
 			String matchString;
@@ -325,9 +324,5 @@ public class ObservablePatternMatcher {
 	 */
 	public boolean isCreated() {
 		return matcher != null;
-	}
-	
-	public void setExceptionMessage(String message) {
-		exceptionMessage = message;
 	}
 }
