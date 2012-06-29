@@ -61,6 +61,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.dataTypeListeners = new HashMap<DataTypeListener, Collection<EDataType>>();
 		this.observedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
+		this.observedDataTypes = new HashSet<EDataType>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
 //		this.visitor = new NavigationHelperVisitor(this);
 

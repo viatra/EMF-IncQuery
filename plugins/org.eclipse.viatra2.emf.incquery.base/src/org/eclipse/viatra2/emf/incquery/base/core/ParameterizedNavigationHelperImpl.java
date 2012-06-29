@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.base.core;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -48,6 +49,10 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	 */
 	protected Set<EDataType> delayedDataTypes;
 	
+	private Set<EClass> noClass() { return Collections.emptySet(); };
+	private Set<EDataType> noDataType() { return Collections.emptySet(); };
+	private Set<EStructuralFeature> noFeature() { return Collections.emptySet(); };
+	
 	@Override
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
@@ -55,7 +60,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedFeatures.addAll(features);
 			} else {
 				observedFeatures.addAll(features);
-				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, features, null, null, true);
+				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, features, noClass(), noDataType(), true);
 				EMFModelComprehension.visitModel(visitor, notifier);
 			}
 		}
@@ -81,7 +86,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedClasses.addAll(classes);
 			} else {
 				observedClasses.addAll(classes);
-				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, null, classes, null, true);
+				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, noFeature(), classes, noDataType(), true);
 				EMFModelComprehension.visitModel(visitor, notifier);
 			}
 		}
@@ -105,7 +110,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedDataTypes.addAll(dataTypes);
 			} else {
 				dataTypes.addAll(dataTypes);
-				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, null, null, dataTypes, true);
+				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, noFeature(), noClass(), dataTypes, true);
 				EMFModelComprehension.visitModel(visitor, notifier);
 
 			}
