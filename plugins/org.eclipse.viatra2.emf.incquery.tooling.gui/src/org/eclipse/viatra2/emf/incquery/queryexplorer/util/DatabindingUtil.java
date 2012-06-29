@@ -201,7 +201,7 @@ public class DatabindingUtil {
 	public static String getMessage(
 			IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
 			String patternFqn) {
-		return getMessage(matcher, matchesSize, patternFqn, true, false, "");
+		return getMessage(matcher, matchesSize, patternFqn, true, false);
 	}
 	
 	/**
@@ -213,10 +213,10 @@ public class DatabindingUtil {
 	 * @param isFiltered
 	 * @return
 	 */
-	public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
+	public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, boolean isGenerated, boolean isFiltered) {
 		String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
 		if (matcher == null) {
-			return String.format("Matcher could not be created for pattern '%s': %s %s", patternFqn, exceptionMessage, isGeneratedString);
+			return String.format("Matcher could not be created for pattern '%s': %s", patternFqn, isGeneratedString);
 		} else {
 			String matchString;
 			switch (matchesSize){

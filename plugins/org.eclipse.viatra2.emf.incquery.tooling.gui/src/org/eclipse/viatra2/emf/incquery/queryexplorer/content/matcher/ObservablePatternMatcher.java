@@ -55,7 +55,6 @@ public class ObservablePatternMatcher {
 	private Object[] parameterFilter;
 	private String orderParameter;
 	private boolean descendingOrder;
-	private String exceptionMessage;
 	
 	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
 		this.parent = parent;
@@ -275,7 +274,7 @@ public class ObservablePatternMatcher {
 	 * @return the label
 	 */
 	public String getText() {
-		return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(), exceptionMessage);
+		return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered());
 	}
 
 	public static final String MATCHES_ID = "matches";
@@ -304,9 +303,5 @@ public class ObservablePatternMatcher {
 	 */
 	public boolean isCreated() {
 		return matcher != null;
-	}
-	
-	public void setExceptionMessage(String message) {
-		exceptionMessage = message;
 	}
 }
