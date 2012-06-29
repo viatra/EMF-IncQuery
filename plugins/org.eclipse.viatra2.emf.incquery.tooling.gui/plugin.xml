@@ -44,7 +44,7 @@
             project="true">
       </wizard>-->
    </extension>
-   <!-- <extension
+   <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
             id="org.eclipse.viatra2.emf.incquery"
@@ -57,7 +57,7 @@
             id="org.eclipse.viatra2.emf.incquery.gui.cheatsheet"
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
-   </extension> -->
+   </extension>
 <extension
          point="org.eclipse.ui.views">
       <category

@@ -39,6 +39,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
+/**
+ * First page of the {@link NewEiqFileWizard} which allows to specify the details of the container for a pattern. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 @SuppressWarnings("restriction")
 public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPage {
 

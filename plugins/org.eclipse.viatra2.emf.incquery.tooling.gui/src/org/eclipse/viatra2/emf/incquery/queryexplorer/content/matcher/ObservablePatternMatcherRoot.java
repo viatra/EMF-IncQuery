@@ -54,13 +54,14 @@ public class ObservablePatternMatcherRoot {
 		this.key = key;
 	}
 	
-	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
+	public ObservablePatternMatcher addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
 		//This cast could not be avoided because later the filtered delta monitor will need the base IPatternMatch
 		@SuppressWarnings("unchecked")
 		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
 		this.sortedMatchers.add(pm);
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		return pm;
 	}
 	
 	public void removeMatcher(String patternFqn) {
@@ -116,7 +117,7 @@ public class ObservablePatternMatcherRoot {
 			matcher = null;
 		}
 
-		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
+		ObservablePatternMatcher pm = addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
 	}
 	
 	public void unregisterPattern(Pattern pattern) {
