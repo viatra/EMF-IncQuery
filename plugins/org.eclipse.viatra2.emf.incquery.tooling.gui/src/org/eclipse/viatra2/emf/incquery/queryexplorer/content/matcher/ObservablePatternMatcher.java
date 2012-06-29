@@ -275,28 +275,7 @@ public class ObservablePatternMatcher {
 	 * @return the label
 	 */
 	public String getText() {
-		String isGeneratedString = isGenerated() ? " (Generated)" : " (Runtime)";
-		if (matcher == null) {
-			return String.format("Matcher could not be created for pattern '%s': %s %s", patternFqn, exceptionMessage, isGeneratedString);
-		}
-		else {
-			String matchString;
-			switch (matches.size()){
-			case 0: 
-				matchString = "No matches";
-				break;
-			case 1:
-				matchString = "1 match";
-				break;
-			default:
-				matchString = String.format("%d matches", matches.size());
-			}
-			
-			String filtered = isFiltered() ? " - Filtered" : "";
-			
-			//return this.matcher.getPatternName() + (isGeneratedString +" [size of matchset: "+matches.size()+"]");
-			return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, filtered, isGeneratedString);
-		}
+		return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(), exceptionMessage);
 	}
 
 	public static final String MATCHES_ID = "matches";

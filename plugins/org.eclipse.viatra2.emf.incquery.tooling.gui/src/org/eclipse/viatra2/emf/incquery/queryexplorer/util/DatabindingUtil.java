@@ -191,6 +191,51 @@ public class DatabindingUtil {
 		return result;
 	}
 	
+	/**
+	 * Returns a text message for a generated, not filtered matcher about the current match size.
+	 * @param matcher
+	 * @param matchesSize
+	 * @param patternFqn
+	 * @return
+	 */
+	public static String getMessage(
+			IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
+			String patternFqn) {
+		return getMessage(matcher, matchesSize, patternFqn, true, false, "");
+	}
+	
+	/**
+	 * Returns a text message about the matches size for the given matcher.
+	 * @param matcher
+	 * @param matchesSize
+	 * @param patternFqn
+	 * @param isGenerated
+	 * @param isFiltered
+	 * @return
+	 */
+	public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
+		String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
+		if (matcher == null) {
+			return String.format("Matcher could not be created for pattern '%s': %s %s", patternFqn, exceptionMessage, isGeneratedString);
+		} else {
+			String matchString;
+			switch (matchesSize){
+			case 0: 
+				matchString = "No matches";
+				break;
+			case 1:
+				matchString = "1 match";
+				break;
+			default:
+				matchString = String.format("%d matches", matchesSize);
+			}
+			
+			String filtered = isFiltered ? " - Filtered" : "";
+			
+			//return this.matcher.getPatternName() + (isGeneratedString +" [size of matchset: "+matches.size()+"]");
+			return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, filtered, isGeneratedString);
+		}
+	}
 	
 	/**
 	 * Get the value of the PatternUI annotation's message attribute for the pattern which name is patternName. 

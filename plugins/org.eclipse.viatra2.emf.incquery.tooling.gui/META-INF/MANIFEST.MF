@@ -44,7 +44,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0"
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.viatra2.emf.incquery.queryexplorer,
+Export-Package: org.eclipse.viatra2.emf.incquery.gui.dialog,
+ org.eclipse.viatra2.emf.incquery.queryexplorer,
  org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher,
  org.eclipse.viatra2.emf.incquery.queryexplorer.handlers,
  org.eclipse.viatra2.emf.incquery.queryexplorer.util
