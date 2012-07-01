@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.derived
 
 import com.google.inject.Inject
 import java.util.Map
-import org.eclipse.core.resources.ResourcesPlugin
 import java.util.List
 import java.util.HashMap
 import org.eclipse.core.runtime.NullProgressMonitor
@@ -85,13 +84,13 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	private static Map<String,FeatureKind> kinds = new HashMap<String,FeatureKind>()
-	/* Pair::of("single",FeatureKind::SINGLE_REFERENCE),
+	private static Map<String,FeatureKind> kinds = newHashMap(
+	  Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
 		Pair::of("counter",FeatureKind::COUNTER),
 		Pair::of("sum",FeatureKind::SUM),
 		Pair::of("iteration",FeatureKind::ITERATION)
-	)*/
+	)
 
 	
 
@@ -211,7 +210,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	def private findJavaProject(GenPackage pckg){
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
-		val project = ResourcesPlugin::workspace.root.getProject(projectDir)
+		val project = ProjectLocator::locateProject(projectDir)
 		ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
 		JavaCore::create(project)
 	}
