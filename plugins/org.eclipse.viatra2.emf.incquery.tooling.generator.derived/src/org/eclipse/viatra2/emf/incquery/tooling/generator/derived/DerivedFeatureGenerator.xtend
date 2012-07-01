@@ -48,7 +48,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$F
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
@@ -56,8 +55,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference
 
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator.*
 
@@ -88,7 +85,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	private static Map kinds = newHashMap(
+	private static Map<String, FeatureKind> kinds = newHashMap(
 		Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
 		Pair::of("counter",FeatureKind::COUNTER),
@@ -134,7 +131,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				val bodyDeclListRewrite = rewrite.getListRewrite(type, TypeDeclaration::BODY_DECLARATIONS_PROPERTY)
 				
-				// FIXME remove disabled if cleanup is called when annotation is removed
 				if(generate){
 					ast.ensureImports(rewrite, astNode, type)
 					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature.name)
