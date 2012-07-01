@@ -15,12 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
-public class MatcherLabelProvider implements ILabelProvider {
+public class MatcherLabelProvider extends ColumnLabelProvider {
 
 	private List<ILabelProviderListener> listeners;
 	
@@ -88,5 +91,18 @@ public class MatcherLabelProvider implements ILabelProvider {
 		return null;
 	}
 
-	
+	@Override
+	public Color getForeground(Object element) {
+		Display display = Display.getCurrent();
+		if (element instanceof ObservablePatternMatcher) {
+			ObservablePatternMatcher matcher = (ObservablePatternMatcher) element;
+//			if (((ObservablePatternMatcher) element).getMatches().size() == 0) {
+//				return display.getSystemColor(SWT.COLOR_GRAY);
+//			}
+			if (matcher.isGenerated()) {
+				return display.getSystemColor(SWT.COLOR_DARK_GRAY);
+			}
+		}
+		return display.getSystemColor(SWT.COLOR_BLACK);
+	}
 }

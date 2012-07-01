@@ -12,6 +12,8 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +73,8 @@ public class DatabindingUtil {
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
-	public final static List<Pattern> generatedPatterns = collectGeneratedPatterns();
+	private static List<Pattern> generatedPatterns;
+	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories;
 	
 	public static final String OFF_ANNOTATION = "Off";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
@@ -105,21 +108,35 @@ public class DatabindingUtil {
 		}
 	}
 	
-	private static List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> collectGeneratedMatcherFactories() {
-		List<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new ArrayList<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
+	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> collectGeneratedMatcherFactories() {
+		Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new HashMap<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
 		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			Pattern pattern = factory.getPattern();
 			Annotation annotation = DatabindingUtil.getAnnotation(pattern, DatabindingUtil.OFF_ANNOTATION);
 			if (annotation == null) {
-				factories.add(factory);
+				factories.put(pattern, factory);
 			}
 		}
 		return factories;
 	}
 	
+	public static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
+		if (generatedMatcherFactories == null) {
+			generatedMatcherFactories = collectGeneratedMatcherFactories();
+		}
+		return Collections.unmodifiableCollection(generatedMatcherFactories.values());
+	}
+	
+	public static List<Pattern> getGeneratedPatterns() {
+		if (generatedPatterns == null) {
+			generatedPatterns = collectGeneratedPatterns();
+		}
+		return Collections.unmodifiableList(generatedPatterns);
+	}
+	
 	private static List<Pattern> collectGeneratedPatterns() {
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : collectGeneratedMatcherFactories()) {
+		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : getGeneratedMatcherFactories()) {
 			patterns.add(factory.getPattern());
 		}
 		return patterns;
@@ -206,12 +223,13 @@ public class DatabindingUtil {
 	
 	/**
 	 * Returns a text message about the matches size for the given matcher.
-	 * @param matcher
-	 * @param matchesSize
-	 * @param patternFqn
-	 * @param isGenerated
-	 * @param isFiltered
-	 * @return
+	 * 
+	 * @param matcher the {@link IncQueryMatcher} instance
+	 * @param matchesSize the size of the matchset
+	 * @param patternFqn the pattern fqn
+	 * @param isGenerated true, if the matcher is generated, false if generic
+	 * @param isFiltered true, if the matcher is filtered, false otherwise
+	 * @return the label associated to the matcher
 	 */
 	public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, boolean isGenerated, boolean isFiltered) {
 		String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
@@ -413,6 +431,16 @@ public class DatabindingUtil {
 		
 		return adapter;
 	}
+	
+	/**
+	 * Returns the generated matcher factory for the given generated pattern.
+	 * 
+	 * @param pattern the pattern instance
+	 * @return the matcher factory for the given pattern
+	 */
+	public static IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> getMatcherFactoryForGeneratedPattern(Pattern pattern) {
+		return generatedMatcherFactories.get(pattern);
+	}
 
 	/**
 	 * Create a PatternMatcher root for the given key element.
@@ -422,15 +450,8 @@ public class DatabindingUtil {
 	 */
 	public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
-
-		//generated matchers
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : collectGeneratedMatcherFactories()) {
-			IncQueryMatcher<IPatternMatch> matcher = factory.getMatcher(key.getNotifier());
-			String patternFqn = factory.getPatternFullyQualifiedName();
-			root.addMatcher(matcher, patternFqn, true);
-		}
 		
-		//runtime matchers
+		//runtime & generated matchers
 		for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
 			root.registerPattern(pattern);
 		}
