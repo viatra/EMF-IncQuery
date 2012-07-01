@@ -70,7 +70,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	/* usage: @DerivedFeature(
-	 * 			feature="featureName",
+	 * 			feature="featureName", (default: patten name)
 	 * 			source="Src" (default: first parameter),
 	 * 			target="Trg" (default: second parameter),
 	 * 			kind="single/many/counter/sum/iteration" (default: feature.isMany?many:single)
@@ -152,7 +152,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				compunit.buffer.save(new NullProgressMonitor, false)
 				
 			} catch(IllegalArgumentException e){
-				IncQueryEngine::defaultLogger.logError(e.message,e);
+			  if(generate){
+				  IncQueryEngine::defaultLogger.logError(e.message,e);
+				}
 			}
 			
 		}
@@ -581,7 +583,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		}
 		
 		if(featureTmp == ""){
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature not defined!")
+			//throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature not defined!")
+			featureTmp = pattern.name
 		}
 		
 		if(sourceTmp == ""){
