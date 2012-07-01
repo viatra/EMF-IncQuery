@@ -23,7 +23,8 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -59,7 +60,15 @@ public class ObservablePatternMatcherRoot {
 		@SuppressWarnings("unchecked")
 		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
-		this.sortedMatchers.add(pm);
+		
+		//generated matchers are inserted in front of the list
+		if (generated) {
+			this.sortedMatchers.add(0, pm);
+		}
+		//generic matchers are inserted in the list according to the order in the eiq file
+		else {
+			this.sortedMatchers.add(pm);
+		}
 		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 	
@@ -103,10 +112,15 @@ public class ObservablePatternMatcherRoot {
 	}
 	
 	public void registerPattern(Pattern pattern) {
-		IncQueryMatcher<GenericPatternMatch> matcher = null;
-
+		IncQueryMatcher<? extends IPatternMatch> matcher = null;
+		boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
 		try {
-			matcher = new GenericPatternMatcher(pattern, key.getNotifier());
+			if (isGenerated) {
+				matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
+			}
+			else {
+				matcher = new GenericPatternMatcher(pattern, key.getNotifier());
+			}
 		}
 		catch (IncQueryRuntimeException e) {
 			logger.log(new Status(IStatus.ERROR,
@@ -116,7 +130,7 @@ public class ObservablePatternMatcherRoot {
 			matcher = null;
 		}
 
-		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), false);
+		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated);
 	}
 	
 	public void unregisterPattern(Pattern pattern) {

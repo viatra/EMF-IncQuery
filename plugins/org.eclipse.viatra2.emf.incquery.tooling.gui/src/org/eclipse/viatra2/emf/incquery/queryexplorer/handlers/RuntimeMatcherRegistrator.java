@@ -71,7 +71,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			
 			//UNREGISTERING PATTERNS
 			
-			List<Pattern> allActivePatterns = PatternRegistry.getInstance().getActiveAndGeneratedPatterns();
+			List<Pattern> allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
 			//deactivate patterns within the given file
 			PatternRegistry.getInstance().unregisterPatternModel(file);
 			
@@ -97,11 +97,11 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			
 			//registering patterns from file
 			List<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
-			allActivePatterns = PatternRegistry.getInstance().getActiveAndGeneratedPatterns();
+			allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
 			
 			//now the active patterns also contain of the new patterns
-			for (Pattern pattern : allActivePatterns) {
-				for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+				for (Pattern pattern : allActivePatterns) {
 					root.registerPattern(pattern);
 				}
 			}
