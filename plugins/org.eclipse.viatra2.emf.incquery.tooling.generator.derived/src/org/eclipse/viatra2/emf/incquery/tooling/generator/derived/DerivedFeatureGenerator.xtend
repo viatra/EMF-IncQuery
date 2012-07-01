@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.tooling.generator.derived
 
-/*import com.google.inject.Inject
-import java.util.HashMap
+import com.google.inject.Inject
+/*import java.util.HashMap
 import java.util.List
 import java.util.Map
 import org.eclipse.core.resources.ResourcesPlugin
@@ -45,12 +45,12 @@ import org.eclipse.jface.text.Document
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
-import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
 import org.eclipse.xtext.xbase.lib.Pair*/
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
@@ -62,8 +62,8 @@ import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatt
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
-	//@Inject IEiqGenmodelProvider provider
-	//@Inject extension DerivedFeatureSourceCodeUtil
+	@Inject IEiqGenmodelProvider provider
+	@Inject extension DerivedFeatureSourceCodeUtil
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	/* usage: @DerivedFeature(
