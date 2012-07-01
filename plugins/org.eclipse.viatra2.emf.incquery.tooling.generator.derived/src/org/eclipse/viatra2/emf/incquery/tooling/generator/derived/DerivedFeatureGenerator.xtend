@@ -85,13 +85,13 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	private static HashMap<String, FeatureKind> kinds = newHashMap(
+	/*private static HashMap<String, FeatureKind> kinds = newHashMap(
 		Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
 		Pair::of("counter",FeatureKind::COUNTER),
 		Pair::of("sum",FeatureKind::SUM),
 		Pair::of("iteration",FeatureKind::ITERATION)
-	)
+	)*/
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		processJavaFiles(pattern, true)
@@ -624,11 +624,11 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				kindTmp = "single"
 			}
 		}
-		if(!kinds.keySet.contains(kindTmp)){
+		/*if(!kinds.keySet.contains(kindTmp)){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Kind not set, or not in " + kinds.keySet + "!")
 		}
 		val kind = kinds.get(kindTmp)
-		parameters.put("kind", kind)
+		parameters.put("kind", kind)*/
 		
 		if(targetTmp == ""){
 			targetTmp = pattern.parameters.get(1).name
