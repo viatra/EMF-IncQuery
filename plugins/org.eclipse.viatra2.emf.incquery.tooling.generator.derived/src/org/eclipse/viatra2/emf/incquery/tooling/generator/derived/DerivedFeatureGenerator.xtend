@@ -85,7 +85,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	private static Map<String, FeatureKind> kinds = newHashMap(
+	private static HashMap<String, FeatureKind> kinds = newHashMap(
 		Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
 		Pair::of("counter",FeatureKind::COUNTER),
