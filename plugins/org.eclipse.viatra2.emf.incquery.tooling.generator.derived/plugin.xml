@@ -13,7 +13,7 @@
       <annotation
             name="DerivedFeature">
          <annotationparameter
-               mandatory="true"
+               mandatory="false"
                multiple="false"
                name="feature"
                type="string">
