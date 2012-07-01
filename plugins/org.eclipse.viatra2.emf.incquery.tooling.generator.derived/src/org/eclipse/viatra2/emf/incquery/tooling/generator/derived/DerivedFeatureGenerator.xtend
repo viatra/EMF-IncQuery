@@ -62,8 +62,8 @@ import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatt
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
-	//@Inject IEiqGenmodelProvider provider
-	@Inject extension DerivedFeatureSourceCodeUtil
+	@Inject IEiqGenmodelProvider provider
+	//@Inject extension DerivedFeatureSourceCodeUtil
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	/* usage: @DerivedFeature(
@@ -287,8 +287,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		val getMethod = findFeatureMethod(type, genFeature, "")
 		val getGenMethod = findFeatureMethod(type, genFeature, "Gen")
 		
-		var methodSource = methodBody(sourceClass, genFeature, pattern, sourceName, targetName, kind, keepCache)
-		var dummyMethod = processDummyComputationUnit(methodSource.toString)
+		//var methodSource = methodBody(sourceClass, genFeature, pattern, sourceName, targetName, kind, keepCache)
+		//var dummyMethod = processDummyComputationUnit(methodSource.toString)
+		var dummyMethod = processDummyComputationUnit("")
 		
 		if(getMethod != null){
 			val javadoc = getMethod.javadoc
@@ -359,8 +360,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				bodyDeclListRewrite.remove(getMethod, null)
 			}
 		} else {
-			var methodSource = defaultMethod(genFeature.ecoreFeature.many)
-			var dummyMethod = processDummyComputationUnit(methodSource.toString)
+			//var methodSource = defaultMethod(genFeature.ecoreFeature.many)
+			//var dummyMethod = processDummyComputationUnit(methodSource.toString)
+			var dummyMethod = processDummyComputationUnit("")
 			
 			if(getMethod != null){
 				val javadoc = getMethod.javadoc
@@ -600,12 +602,12 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		parameters.put("source", source)
 		//parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
 		
-		/*val pckg = provider.findGenPackage(pattern, source.EPackage)
+		val pckg = provider.findGenPackage(pattern, source.EPackage)
 		if(pckg == null){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
 		}
 		parameters.put("package", pckg)
-		*/
+		
 		val featureString = featureTmp
 		val features = source.EAllStructuralFeatures.filter[it.name == featureString]
 		if(features.size != 1){
