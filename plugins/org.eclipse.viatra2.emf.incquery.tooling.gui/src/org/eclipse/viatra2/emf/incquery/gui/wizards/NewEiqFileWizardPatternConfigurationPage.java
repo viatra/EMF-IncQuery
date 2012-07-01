@@ -155,14 +155,29 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
+	/**
+	 * Returns the name of the pattern specified in the wizard.
+	 * 
+	 * @return the name of the pattern
+	 */
 	public String getPatternName() {
 		return patternText.getText();
 	}
 	
+	/**
+	 * Returns the import list of {@link EPackage}s specified in the wizard.
+	 * 
+	 * @return the list of imports
+	 */
 	public List<EPackage> getImports() {
 		return importList.getElements();
 	}
 	
+	/**
+	 * Returns the list of pattern parameters specified in the wizard.
+	 * 
+	 * @return the list of pattern parameters
+	 */
 	public List<ObjectParameter> getParameters() {
 		return objectList.getElements();
 	}

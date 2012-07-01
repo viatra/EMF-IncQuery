@@ -52,6 +52,12 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
 
+/**
+ * A wizard implementation used to create new eiq files.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class NewEiqFileWizard extends Wizard implements INewWizard {
 	private NewEiqFileWizardContainerConfigurationPage page1;
 	private NewEiqFileWizardPatternConfigurationPage page2;
@@ -82,6 +88,8 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		final String containerName = page1.getContainerName();
 		final String fileName = page1.getFileName();
+		
+		//replace dots with slash in the path
 		final String packageName = page1.getPackageName().replaceAll("\\.", "/");
 		final String patternName = page2.getPatternName();
 		final List<EPackage> imports = page2.getImports();
@@ -170,6 +178,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 				var.setName(parameter.getParameterName());
 				
 				ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
+				//it is enough to set only the class name for the class type
 				classType.setClassname((EClassifier) parameter.getObject());
 				var.setType(classType);
 				pattern.getParameters().add(var);

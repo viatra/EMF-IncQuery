@@ -13,6 +13,13 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
 import org.eclipse.emf.ecore.EClassifier;
 
+/**
+ * Instances of this class represents the specification of a pattern parameter.
+ * It has a parameter name and type specification as an {@link EClassifier} instance.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ObjectParameter {
 
 	private EClassifier object;

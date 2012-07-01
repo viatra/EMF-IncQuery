@@ -15,6 +15,12 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * {@link ITableLabelProvider} implementation for the {@link ObjectListAdapter}.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ObjectListLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	@Override

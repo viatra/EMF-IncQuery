@@ -35,6 +35,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+/**
+ * A {@link Dialog} implementation for configuring one parameter of a pattern.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ObjectParameterConfigurationDialog extends Dialog {
 
 	private static final String SELECT_A_MODEL_ELEMENT = "Select a model element (* = any string, ? = any char):";
@@ -114,6 +120,11 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		return super.createDialogArea(parent);
 	}
 	
+	/**
+	 * Opens an element selection dialog for choosing the type of the parameter as an {@link EClassifier}.
+	 * 
+	 * @return the type of the parameter
+	 */
 	private EClassifier openDialogBox() {
     	ElementListSelectionDialog listDialog = 
     			new ElementListSelectionDialog(
@@ -131,6 +142,11 @@ public class ObjectParameterConfigurationDialog extends Dialog {
         return null;
     }
 	
+	/**
+	 * Returns the array of {@link EClassifier} instances based on the imported {@link EPackage}s.
+	 * 
+	 * @return the array of {@link EClassifier}s
+	 */
 	private Object[] getElements() {
 		List<EObject> result = new ArrayList<EObject>();
 		for (EPackage _package : currentPackages) {

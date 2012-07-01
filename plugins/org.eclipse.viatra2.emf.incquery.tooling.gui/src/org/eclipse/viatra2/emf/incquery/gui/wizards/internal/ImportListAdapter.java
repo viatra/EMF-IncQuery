@@ -22,43 +22,19 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+/**
+ * An {@link IListAdapter} implementation for importing {@link EPackage}s.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 @SuppressWarnings("restriction")
 public class ImportListAdapter implements IListAdapter<EPackage> {
-	
-	public ImportListAdapter() {
-
-	}
-	
+		
 	@Override
 	public void customButtonPressed(ListDialogField<EPackage> field, int index) {
 		//if Add button is pressed
 		if (index == 0) {	
-//			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-//			EcoreActionBarContributor.ExtendedLoadResourceAction.ExtendedLoadResourceDialog loadResourceDialog =
-//					new EcoreActionBarContributor.ExtendedLoadResourceAction.ExtendedLoadResourceDialog(
-//							shell, 
-//							editingDomain
-//					);
-//			
-//			if (loadResourceDialog.open() == Window.OK)
-//			{
-//				for (URI uri : loadResourceDialog.getURIs()) {
-//					boolean contains = false;
-//					
-//					for (EPackage _package : field.getElements()) {
-//						if (uri.equals(_package.getNsURI())) {
-//							contains = true;
-//						}
-//					}
-//					if (!contains) {
-//						EPackage _package = getEPackage(uri);
-//						if (_package != null) {
-//							field.addElement(_package);
-//						}
-//					}
-//				}
-//			}
-			
 			ElementListSelectionDialog listDialog = 
 					new ElementListSelectionDialog(
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
@@ -78,6 +54,12 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 		}
 	}
 	
+	/**
+	 * Returns the available {@link EPackage}s.
+	 * 
+	 * @param field the {@link ListDialogField} instance to avoid duplicate importing
+	 * @return the array of {@link EPackage}s
+	 */
 	private Object[] getElements(ListDialogField<EPackage> field) {
 		List<EPackage> result = new ArrayList<EPackage>();
 		Set<String> keys = new HashSet<String>(EPackage.Registry.INSTANCE.keySet());
