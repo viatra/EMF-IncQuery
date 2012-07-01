@@ -15,7 +15,6 @@ import com.google.inject.Inject
 import java.util.Map
 import java.util.List
 import java.util.HashMap
-import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
@@ -155,7 +154,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val parser = ASTParser::newParser(AST::JLS3)
 				val document = new Document(docSource)
 				parser.setSource(compunit)
-				val astNode = parser.createAST(new NullProgressMonitor) as CompilationUnit
+				val astNode = parser.createAST(null) as CompilationUnit
 				val ast = astNode.AST
 				val rewrite = ASTRewrite::create(ast)
 				val types = astNode.types as List<AbstractTypeDeclaration>
@@ -180,7 +179,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val newSource = document.get
 				compunit.buffer.setContents(newSource)
 				// save!
-				compunit.buffer.save(new NullProgressMonitor, false)
+				compunit.buffer.save(null, false)
 				
 			} catch(IllegalArgumentException e){
 			  if(generate){
@@ -464,7 +463,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		val options = JavaCore::getOptions();
 		JavaCore::setComplianceOptions(JavaCore::VERSION_1_5, options);
 		methodBodyParser.setCompilerOptions(options);
-		val dummyAST = methodBodyParser.createAST(new NullProgressMonitor)
+		val dummyAST = methodBodyParser.createAST(null)
 		val dummyCU = dummyAST as CompilationUnit
 		val dummyType = dummyCU.types.get(0) as TypeDeclaration
 		dummyType.methods.get(0) as MethodDeclaration
