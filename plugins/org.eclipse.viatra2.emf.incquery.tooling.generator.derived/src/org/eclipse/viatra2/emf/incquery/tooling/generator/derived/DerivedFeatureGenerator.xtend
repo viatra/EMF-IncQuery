@@ -12,10 +12,10 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.derived
 
 import com.google.inject.Inject
-/*import java.util.HashMap
-import java.util.List
 import java.util.Map
-import org.eclipse.core.resources.ResourcesPlugin
+/*import org.eclipse.core.resources.ResourcesPlugin
+import java.util.List
+import java.util.HashMap
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
@@ -44,12 +44,12 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
-import org.eclipse.xtext.xbase.lib.Pair*/
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType*/
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
+import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
@@ -85,8 +85,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	/*private static Map kinds = newHashMap(
-		Pair::of("single",FeatureKind::SINGLE_REFERENCE),
+	private static Map kinds = newHashMap()
+	/* Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
 		Pair::of("counter",FeatureKind::COUNTER),
 		Pair::of("sum",FeatureKind::SUM),
