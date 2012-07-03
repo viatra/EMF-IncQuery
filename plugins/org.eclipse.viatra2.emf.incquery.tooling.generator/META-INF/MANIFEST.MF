@@ -26,5 +26,6 @@ Export-Package: org.eclipse.viatra2.emf.incquery.tooling.generator,
  org.eclipse.viatra2.emf.incquery.tooling.generator.fragments,
  org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel,
  org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel,
+ org.eclipse.viatra2.emf.incquery.tooling.generator.types,
  org.eclipse.viatra2.emf.incquery.tooling.generator.util
 Import-Package: org.apache.log4j;version="1.2.15"

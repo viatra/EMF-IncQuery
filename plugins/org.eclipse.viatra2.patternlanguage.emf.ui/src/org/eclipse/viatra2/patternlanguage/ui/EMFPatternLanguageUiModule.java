@@ -15,6 +15,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLang
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
@@ -23,6 +24,7 @@ import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
@@ -69,7 +71,12 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
 		return GenModelMetamodelProviderService.class;
 	}
+	
 	public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
 		return GenModelMetamodelProviderService.class;
+	}
+	
+	public Class<? extends ITypeProvider> bindITypeProvider() {
+		return GenModelBasedTypeProvider.class;
 	}
 }

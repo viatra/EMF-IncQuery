@@ -39,13 +39,20 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.xbase.typing.XbaseTypeProvider;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+/**
+ * 
+ * @author Mark Czotter
+ *
+ */
 @Singleton
+@SuppressWarnings("restriction")
 public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
 	// TODO replace with new logger
@@ -54,6 +61,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	
 	@Inject
 	private TypeReferences typeReferences;
+	@Inject
+	private Primitives primitives;
 
 	@Override
 	protected JvmTypeReference typeForIdentifiable(
@@ -64,96 +73,136 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		return super.typeForIdentifiable(identifiable, rawType);
 	}
 
+	/**
+	 * Returns a type for a variable. If the variable type resolution fails,
+	 * default Object type is returned.
+	 * 
+	 * @param variable
+	 * @param rawType
+	 * @return
+	 */
 	protected JvmTypeReference _typeForIdentifiable(Variable variable,
 			boolean rawType) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Calculating type for: " + variable.getName() + " type: " + variable.getType() + " eContainer: " + variable.eContainer());			
+			logger.debug(String.format("Calculating type for: %s, type: %s, eContainer: %s.", variable.getName(), variable.getType(), variable.eContainer()));			
 		}
-		EcoreUtil2.resolveAll(variable);
-		JvmTypeReference typeRef = resolveClassType(variable);
+		JvmTypeReference typeRef = resolve(variable);
 		if (typeRef == null) {
-			typeRef = resolveClassType(variable.eContainer(), variable);
-			if (typeRef == null) {
-				typeRef = typeReferences.getTypeForName(Object.class, variable);
-			}
+			typeRef = typeReferences.getTypeForName(Object.class, variable);
 		}
 		return typeRef;
 	}
 
 	/**
-	 * If declared, resolves the variable's type from its own type, otherwise returns null.
+	 * Resolves the variable with various methods. If the resolution fails, then
+	 * null is returned.
+	 * 
 	 * @param variable
 	 * @return
 	 */
-	private JvmTypeReference resolveClassType(Variable variable) {
-		// first try to get the type through the variable's type ref
-		if (variable.getType() instanceof ClassType) {
-			EClassifier classifier = ((ClassType) variable.getType())
-					.getClassname();
-			if (classifier != null && classifier.getInstanceClass() != null) {
-				return typeReferenceFromClazz(classifier.getInstanceClass(), variable);
-			}
+	protected JvmTypeReference resolve(Variable variable) {
+		EcoreUtil2.resolveAll(variable);
+		JvmTypeReference typeRef = resolve(variable, variable);
+		if (typeRef == null) {
+			typeRef = resolve(variable.eContainer(), variable);
 		}
-		return null;
+		return typeRef;
 	}
-	
+
 	/**
-	 * Resolves the variable from an eObject as context 
-	 * (Possible context: {@link Pattern}, {@link PatternBody}).
-	 * Returns a {@link JvmTypeReference} if the type successfully resolved, otherwise returns null.
+	 * Resolves the variable from different contexts. (Possible context:
+	 * {@link Variable}, {@link Pattern}, {@link PatternBody}). If the
+	 * resolution fails null is returned.
+	 * 
 	 * @param context
 	 * @param variable
-	 * @return
+	 * @return a {@link JvmTypeReference} if the type successfully resolved,
+	 *         otherwise returns null.
 	 */
-	private JvmTypeReference resolveClassType(EObject context, Variable variable) {
+	protected JvmTypeReference resolve(EObject context, Variable variable) {
+		if (context instanceof Variable && context.equals(variable)) {
+			return resolve(variable.getType(), variable);
+		}
 		if (context instanceof Pattern) {
-			Pattern pattern = (Pattern) context;
+			final Pattern pattern = (Pattern) context;
 			for (PatternBody body : pattern.getBodies()) {
-				JvmTypeReference typeRef = resolveClassType(body, variable);
+				JvmTypeReference typeRef = resolve(body, variable);
 				if (typeRef != null) {
 					return typeRef;
 				}
 			}
 		}
 		if (context instanceof PatternBody) {
-			return resolveClassType((PatternBody) context, variable);
+			return resolve((PatternBody) context, variable);
+		}
+		return null;
+	}
+	
+	/**
+	 * Resolves the variable's type using the information available in the
+	 * classifier.
+	 * 
+	 * @param classifier
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference resolve(EClassifier classifier,
+			Variable variable) {
+		if (classifier.getInstanceClass() != null) {
+			return typeReferenceFromClazz(classifier.getInstanceClass(), variable);
 		}
 		return null;
 	}
 
 	/**
-	 * Resolves the variable's type from the context of a {@link PatternBody}.
-	 * For now this method only searches for {@link EClassifierConstraint}s.
+	 * Resolves the variable using information retrievable only from the body.
+	 * If the type resolution fails, null is returned.
+	 * 
+	 * @param context
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference resolve(PatternBody body, Variable variable) {
+		final Type constraintType = searchForConstraintType(body, variable);
+		if (constraintType != null) {
+			return resolve(constraintType, variable);			
+		}
+		return null;
+	}
+
+	/**
+	 * Searches the {@link PatternBody} and tries to find one of the {@link Constraint}'s {@link Type},
+	 * which is using the variable. If none found, null is returned.
 	 * 
 	 * @param body
 	 * @param variable
 	 * @return
 	 */
-	private JvmTypeReference resolveClassType(PatternBody body, Variable variable) {
+	protected Type searchForConstraintType(PatternBody body, Variable variable) {
 		for (Constraint constraint : body.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
 				if (equalVariable(variable, ((EClassifierConstraint) constraint).getVar())) {
-					return referenceFromType(((EClassifierConstraint) constraint).getType(), variable);
+					return ((EClassifierConstraint) constraint).getType();
 				}
 			}
 			if (constraint instanceof PathExpressionConstraint) {
-				PathExpressionHead head = ((PathExpressionConstraint) constraint).getHead();
+				final PathExpressionHead head = ((PathExpressionConstraint) constraint).getHead();
 				// src is the first parameter (example: EClass.name(E, N)), src is E
 				final VariableReference varRef = head.getSrc();
 				final ValueReference valueRef = head.getDst();
 				// test if the current variable is referenced by the varRef
 				if (equalVariable(variable, varRef)) {
-					return referenceFromType(head.getType(), variable);
+					return head.getType();
 				}
 				// first variable is not the right one, so next target is the second
 				if (valueRef instanceof VariableValue) {
 					final VariableReference secondVarRef = ((VariableValue) valueRef).getValue();
 					if (equalVariable(variable, secondVarRef)) {
-						return referenceFromType(computeTypeFromTail(head.getTail()), variable);
+						return computeTypeFromTail(head.getTail());
 					}
 				}
 			}
-		}		
+		}
 		return null;
 	}
 
@@ -170,59 +219,115 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		return tail.getType();
 	}
 
-	private JvmTypeReference referenceFromType(Type type, Variable variable) {
-		Class<?> clazz = computeClazzFromType(type);
-		if (clazz != null) {
-			return typeReferenceFromClazz(clazz, variable);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Clazz not found for " + type);
-			}
-		}
-		return null;
-	}
-
 	/**
+	 * Resolves the variable's type from a {@link Constraint}'s {@link Type}.
+	 * If the resolution fails, null is returned.
 	 * @param type
+	 * @param variable
 	 * @return
 	 */
-	private Class<?> computeClazzFromType(Type type) {
+	protected JvmTypeReference resolve(Type type, Variable variable) {
 		if (type instanceof ClassType) {
-			return ((ClassType) type).getClassname().getInstanceClass();			
+			return resolve((ClassType)type, variable);
 		}
 		if (type instanceof ReferenceType) {
-			EStructuralFeature feature = ((ReferenceType) type).getRefname();
-			if (feature instanceof EAttribute) {
-				if (((EAttribute) feature).getEAttributeType() != null) {
-					return ((EAttribute) feature).getEAttributeType().getInstanceClass();
-				}
-			}
-			if (feature instanceof EReference) {
-				if (((EReference) feature).getEReferenceType() != null) {
-					return ((EReference) feature).getEReferenceType().getInstanceClass();
-				}
-			}
+			return resolve((ReferenceType) type, variable);				
+		}
+		return null;
+	}
+	
+	/**
+	 * Resolves the variable type from a {@link ClassType}.
+	 * @param type
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference resolve(ClassType type, Variable variable) {
+		final EClassifier classifier = type.getClassname();
+		if (classifier != null) {
+			return resolve(classifier, variable);
 		}
 		return null;
 	}
 
 	/**
-	 * Returns a {@link JvmTypeReference} for the parameter clazz.
-	 * If the clazz is a primitive class, the corresponding wrapper class is returned. 
+	 * Resolves the variable type from a {@link ReferenceType}.
+	 * @param type
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference resolve(ReferenceType type,
+			Variable variable) {
+		final EStructuralFeature feature = type.getRefname();
+		if (feature instanceof EAttribute) {
+			return resolve((EAttribute) feature, variable);
+		}
+		if (feature instanceof EReference) {
+			return resolve((EReference)feature, variable);
+		}
+		return null;
+	}
+
+	/**
+	 * Resolves the variable's type from an {@link EReference}.
+	 * @param feature
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference resolve(EReference feature,
+			Variable variable) {
+		if (feature.getEReferenceType() != null) {
+			return resolve(feature.getEReferenceType(), variable);
+		}
+		return null;
+	}
+
+	/**
+	 * Resolves the variable's type from an {@link EAttribute}.
+	 * @param feature
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference resolve(EAttribute feature,
+			Variable variable) {
+		if (feature.getEAttributeType() != null) {
+			return resolve(feature.getEAttributeType(), variable);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a {@link JvmTypeReference} for the parameter clazz. If the clazz
+	 * is a primitive class, the corresponding wrapper class is returned.
+	 * 
 	 * @param clazz
 	 * @param variable
 	 * @return
 	 */
-	private JvmTypeReference typeReferenceFromClazz(Class<?> clazz,
+	protected JvmTypeReference typeReferenceFromClazz(Class<?> clazz,
 			Variable variable) {
 		if (clazz.isPrimitive()) {
 			clazz = wrapperClazzForPrimitive(clazz);
 		}
 		return typeReferences.getTypeForName(clazz, variable);
 	}
-
+	
 	/**
-	 * Returns the wrapper class for the input class if it is a primitive type class.
+	 * Returns a {@link JvmTypeReference} for the typeName parameter.
+	 * 
+	 * @param typeName
+	 * @param variable
+	 * @return
+	 */
+	protected JvmTypeReference typeReferenceFromTypeName(
+			String typeName, Variable variable) {
+		return typeReferences.getTypeForName(typeName, variable);
+	}
+	
+	/**
+	 * Returns the wrapper class for the input class if it is a primitive type
+	 * class.
+	 * 
 	 * @param clazz
 	 * @return
 	 */
@@ -239,7 +344,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @return
 	 */
 	public static Map<String, Class<?>> getWrapperClasses() {
-		Map<String, Class<?>> wrapperClasses = new HashMap<String, Class<?>>();
+		final Map<String, Class<?>> wrapperClasses = new HashMap<String, Class<?>>();
 		wrapperClasses.put(boolean.class.getCanonicalName(), Boolean.class);
 		wrapperClasses.put(byte.class.getCanonicalName(), Byte.class);
 		wrapperClasses.put(char.class.getCanonicalName(), Character.class);

@@ -33,5 +33,6 @@ Export-Package: org.eclipse.viatra2.patternlanguage,
  org.eclipse.viatra2.patternlanguage.scoping,
  org.eclipse.viatra2.patternlanguage.serializer,
  org.eclipse.viatra2.patternlanguage.services,
+ org.eclipse.viatra2.patternlanguage.types,
  org.eclipse.viatra2.patternlanguage.validation
 

@@ -22,9 +22,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
-import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
