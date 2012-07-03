@@ -85,14 +85,14 @@ public interface NavigationHelper {
 	 */
 	public Collection<Object> getDataTypeInstances(EDataType type);
 	
-	/**
-	 * Find all the EAttributes and their owners which have a value of a class that equals to the given one.
-	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}. 
-	 * 
-	 * @param clazz the class of the value
-	 * @return the collection of settings
-	 */
-	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
+//	/**
+//	 * Find all the EAttributes and their owners which have a value of a class that equals to the given one.
+//	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}. 
+//	 * 
+//	 * @param clazz the class of the value
+//	 * @return the collection of settings
+//	 */
+//	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
 	
 	/**
 	 * Find all the {@link EObject} instances that have an {@link EReference} instance with the given <code>target</code>.

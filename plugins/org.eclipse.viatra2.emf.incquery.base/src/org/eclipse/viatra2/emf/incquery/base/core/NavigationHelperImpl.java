@@ -155,22 +155,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 	}
 
-	@Override
-	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
-		Set<Setting> retSet = new HashSet<Setting>();
-
-		for (Object value : contentAdapter.featureMap.keySet()) {
-			if (value.getClass().equals(clazz)) {
-				for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
-					for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
-						retSet.add(new NavigationHelperSetting(attr, holder, value));
-					}
-				}
-			}
-		}
-
-		return retSet;
-	}
+//	@Override
+//	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
+//		Set<Setting> retSet = new HashSet<Setting>();
+//
+//		for (Object value : contentAdapter.featureMap.keySet()) {
+//			if (value.getClass().equals(clazz)) {
+//				for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
+//					for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
+//						retSet.add(new NavigationHelperSetting(attr, holder, value));
+//					}
+//				}
+//			}
+//		}
+//
+//		return retSet;
+//	}
 
 	@Override
 	public Collection<Setting> getInverseReferences(EObject target) {
@@ -235,10 +235,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 		Set<EClass> valSet = contentAdapter.subTypeMap.get(type);
 		if (valSet != null) {
 			for (EClass c : valSet) {
-				retSet.addAll(contentAdapter.instanceMap.get(c));
+				final Set<EObject> instances = contentAdapter.instanceMap.get(c);
+				if (instances != null) retSet.addAll(instances);
 			}
 		}
-		retSet.addAll(contentAdapter.instanceMap.get(type));
+		final Set<EObject> instances = contentAdapter.instanceMap.get(type);
+		if (instances != null) retSet.addAll(instances);
 		
 		return retSet;
 	}
@@ -265,7 +267,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener) {
-		this.instanceListeners.put(listener, classes);		
+		Collection<EClass> registered = this.instanceListeners.get(listener);
+		if (registered == null) {
+			registered = new HashSet<EClass>();
+			this.instanceListeners.put(listener, registered);	
+		}
+		registered.addAll(classes);
 	}
 
 	@Override
@@ -279,7 +286,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	@Override
 	public void registerFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
-		this.featureListeners.put(listener, features);
+		Collection<EStructuralFeature> registered = this.featureListeners.get(listener);
+		if (registered == null) {
+			registered = new HashSet<EStructuralFeature>();
+			this.featureListeners.put(listener, registered);	
+		}
+		registered.addAll(features);
 	}
 
 	@Override
@@ -293,7 +305,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	@Override
 	public void registerDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
-		this.dataTypeListeners.put(listener, types);
+		Collection<EDataType> registered = this.dataTypeListeners.get(listener);
+		if (registered == null) {
+			registered = new HashSet<EDataType>();
+			this.dataTypeListeners.put(listener, registered);	
+		}
+		registered.addAll(types);
 	}
 	
 	@Override
