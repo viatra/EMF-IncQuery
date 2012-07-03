@@ -63,7 +63,7 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 			EClassifier classifier, Variable variable) {
 		GenClass genClass = findGenClass(genPackage, classifier);
 		if (genClass != null) {
-			return typeReferenceFromTypeName(genClass.getQualifiedInterfaceName(), variable);
+			return typeReference(genClass.getQualifiedInterfaceName(), variable);
 		}
 		return null;
 	}

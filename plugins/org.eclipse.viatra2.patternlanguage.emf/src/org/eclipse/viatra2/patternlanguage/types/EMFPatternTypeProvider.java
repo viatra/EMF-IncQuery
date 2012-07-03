@@ -13,9 +13,6 @@ package org.eclipse.viatra2.patternlanguage.types;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
@@ -57,7 +54,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
 	// TODO replace with new logger
 	private Logger logger = Logger.getLogger(getClass());
-	private static final Map<String, Class<?>> WRAPPERCLASSES = getWrapperClasses();
 	
 	@Inject
 	private TypeReferences typeReferences;
@@ -149,7 +145,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	protected JvmTypeReference resolve(EClassifier classifier,
 			Variable variable) {
 		if (classifier.getInstanceClass() != null) {
-			return typeReferenceFromClazz(classifier.getInstanceClass(), variable);
+			return typeReference(classifier.getInstanceClass(), variable);
 		}
 		return null;
 	}
@@ -304,12 +300,10 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference typeReferenceFromClazz(Class<?> clazz,
+	protected JvmTypeReference typeReference(Class<?> clazz,
 			Variable variable) {
-		if (clazz.isPrimitive()) {
-			clazz = wrapperClazzForPrimitive(clazz);
-		}
-		return typeReferences.getTypeForName(clazz, variable);
+		JvmTypeReference typeRef = typeReferences.getTypeForName(clazz, variable);
+		return primitives.asWrapperTypeIfPrimitive(typeRef);
 	}
 	
 	/**
@@ -319,41 +313,10 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference typeReferenceFromTypeName(
+	protected JvmTypeReference typeReference(
 			String typeName, Variable variable) {
-		return typeReferences.getTypeForName(typeName, variable);
-	}
-	
-	/**
-	 * Returns the wrapper class for the input class if it is a primitive type
-	 * class.
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	private Class<?> wrapperClazzForPrimitive(Class<?> clazz) {
-		if (WRAPPERCLASSES.containsKey(clazz.getCanonicalName())) {
-			return WRAPPERCLASSES.get(clazz.getCanonicalName());
-		}
-		return clazz;
-	}
-	
-	/**
-	 * Returns a map that contains the wrapper classes for primitive types. 
-	 * Keys are the primitive type names.
-	 * @return
-	 */
-	public static Map<String, Class<?>> getWrapperClasses() {
-		final Map<String, Class<?>> wrapperClasses = new HashMap<String, Class<?>>();
-		wrapperClasses.put(boolean.class.getCanonicalName(), Boolean.class);
-		wrapperClasses.put(byte.class.getCanonicalName(), Byte.class);
-		wrapperClasses.put(char.class.getCanonicalName(), Character.class);
-		wrapperClasses.put(double.class.getCanonicalName(), Double.class);
-		wrapperClasses.put(float.class.getCanonicalName(), Float.class);
-		wrapperClasses.put(int.class.getCanonicalName(), Integer.class);
-		wrapperClasses.put(long.class.getCanonicalName(), Long.class);
-		wrapperClasses.put(short.class.getCanonicalName(), Short.class);
-		return wrapperClasses;
+		JvmTypeReference typeRef = typeReferences.getTypeForName(typeName, variable);
+		return primitives.asWrapperTypeIfPrimitive(typeRef);
 	}
 	
 	/**
