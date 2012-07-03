@@ -18,6 +18,12 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
+/**
+ * {@link ILabelProvider} implementation for the {@link ImportListAdapter}.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ImportListLabelProvider implements ILabelProvider {
 
 	private ImageRegistry imageRegistry;

@@ -18,13 +18,19 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardPatternConfigurationPage;
 
+/**
+ * An {@link IListAdapter} implementation for specifying pattern parameters in the wizard.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 @SuppressWarnings("restriction")
-public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
+public class ObjectListAdapter implements IListAdapter<ObjectParameter> {
 
 	private ListDialogField<EPackage> importList;
 	private NewEiqFileWizardPatternConfigurationPage page;
 	
-	public ObjectsListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
+	public ObjectListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
 		this.importList = importList;
 		this.page = page;
 	}
@@ -52,6 +58,8 @@ public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 				firstElement.setParameterName(parameter.getParameterName());
 			}
 		}
+		
+		field.refresh();
 	}
 
 	@Override
@@ -69,8 +77,5 @@ public class ObjectsListAdapter implements IListAdapter<ObjectParameter> {
 	}
 
 	@Override
-	public void doubleClicked(ListDialogField<ObjectParameter> field) {
-		
-	}
-
+	public void doubleClicked(ListDialogField<ObjectParameter> field) {}
 }

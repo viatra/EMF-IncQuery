@@ -64,6 +64,11 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		setTitle("EMF-IncQuery query definition Wizard");
 	}
 	
+	/**
+	 * Initialization based on the current selection.
+	 * 
+	 * @param selection the current selection in the workspace
+	 */
 	public void init(IStructuredSelection selection) {
 		IJavaElement jElement= getInitialJavaElement(selection);
 		initContainerPage(jElement);
@@ -116,6 +121,12 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		validatePage();
 	}
 	
+	/**
+	 * Used to validate the page. 
+	 * 
+	 * Note that because of policy restrictions, a wizard must not come up with an error.
+	 * 
+	 */
 	private void validatePage() {
 		IStatus packageStatus = validatePackageName(getPackageText());
 		StatusInfo si = new StatusInfo(packageStatus.getSeverity(), packageStatus.getMessage());
@@ -162,12 +173,12 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		if (si.getSeverity() == IStatus.OK) {
 			si.setInfo("");
 		}
-
-		updateStatus(si);
 		
 		if (si.isError()) {
 			setErrorMessage(si.getMessage());
 		}
+
+		updateStatus(si);
 	}
 	
 	private IStatus validatePackageName(String text) {
@@ -185,14 +196,29 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		return status;
 	}
 
+	/**
+	 * Returns the name of the new eiq file set in the wizard.
+	 * 
+	 * @return the name of the file
+	 */
 	public String getFileName() {
 		return fileText.getText();
 	}
 	
+	/**
+	 * Returns the name of the container set in the wizard.
+	 * 
+	 * @return the name of the container (folder)
+	 */
 	public String getContainerName() {
 		return getPackageFragmentRootText();
 	}
 	
+	/**
+	 * Returns the name of the package set in the wizard.
+	 * 
+	 * @return the name of the package
+	 */
 	public String getPackageName() {
 		IPackageFragmentRoot root = getPackageFragmentRoot();
 		

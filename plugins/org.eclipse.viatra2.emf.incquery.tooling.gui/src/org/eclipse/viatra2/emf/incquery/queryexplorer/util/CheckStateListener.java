@@ -66,13 +66,13 @@ public class CheckStateListener implements ICheckStateListener {
 		String patternFqn = leaf.getFullPatternNamePrefix();
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
 		
-		if (event.getChecked()) {
+		if (event.getChecked() && !PatternRegistry.getInstance().isActive(patternFqn)) {
 			leaf.setSelected(true);
 			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
 				root.registerPattern(pattern);
 			}
 			PatternRegistry.getInstance().addActivePattern(pattern);
-		} else {
+		} else if (!event.getChecked()) {
 			leaf.setSelected(false);
 			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
 				root.unregisterPattern(pattern);

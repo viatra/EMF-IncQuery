@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet
+      title="Creating EMF-IncQuery queries">
+   <intro>
+      <description>
+         Queries return a set of EMF instance objects, matching a given criteria. These criteria can be formulated in the graph pattern language.
+         To learn more about the graph pattern-based query language, visit:<br/><br/>
+http://viatra.inf.mit.bme.hu/incquery/language<br/><br/>
+
+
+      
+      </description>
+   </intro>
+   
+   <item
+         title="Writing query patterns">
+      <description>
+      <command
+            required="false"
+            serialization="org.eclipse.ui.browser.openBrowser(url=http://viatra.inf.mit.bme.hu/incquery/language)"/>
+To develop queries open the model space models/model.vpml, and create a new <b>VIATRA2 Textual Command Language script</b> under models/vtcl. EMF-IncQuery machines should import nemf.packages, the container of imported Ecore metamodels. IncQuery will transform all VTCL <b>pattern</b>s into EMF queries. 
+<br/><br/>
+For those who follow the library example, we define a pattern that matches pairs of writers and their books. 
+You can determine which parameters are used as input and which are output at run-time when you actually issue the query, therefore the same pattern can be used to: <br/>
+(a) list the books of a writer (with Writer as an input parameter), <br/>
+(b) or to find the author of a book (Book is the input parameter),  <br/>
+(c) or to list all books with their respective authors (both are output parameters), <br/>
+(d) or to simply verify whether a given object is a writer, the other one is a book, and that the author has written the book (both are input parameters). 
+<br/><br/>
+Create the library.vtcl under models/vtcl, and paste the following code:<br/><br/>
+<br/>
+import nemf.packages;<br/>
+<br/>
+machine &apos;myMachine&apos; {<br/>
+<br/>
+  pattern Writes(Writer, Book) = {<br/>
+    library.Writer(Writer);<br/>
+    library.Book(Book);<br/>
+    library.Writer.books(Ref, Writer, Book);<br/>
+  }<br/>
+<br/>
+}<br/>
+<br/>
+<br/>
+Alternatively, you can import "nemf.packages.library", and omit the "library." prefixes that specify the EPackage at the EClass / EReference declarations.  
+<br/><br/>
+Optionally, you can make sure that your .vtcl file is syntactically correct by opening the .vpml model space, and parsing the .vtcl code by pressing Alt+P in the VTCL editor. 
+In the VIATRA2 Model spaces view the machine shows up, but can not be run, because it has no entry point (main rule). As EMF-IncQuery is a query technology, it only uses the query features (i.e. patterns) of the VTCL language, so this is OK. 
+For pattern debugging, rules and other VTCL language features can be used during development, but they are ignored by EMF-IncQuery. Those of you familiar with VIATRA2 can import an instance model into the model space and add an entry point to the machine in order to test the behavior of the patterns under development. 
+      </description>
+   </item>
+</cheatsheet>

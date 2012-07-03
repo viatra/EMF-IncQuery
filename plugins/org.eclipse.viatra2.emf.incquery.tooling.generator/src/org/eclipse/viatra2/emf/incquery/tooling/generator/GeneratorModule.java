@@ -18,11 +18,13 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationF
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.JdtTypeProviderFactory;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 
@@ -48,7 +50,13 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
 		return GenModelMetamodelProviderService.class;
 	}
+	
 	public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
 		return GenModelMetamodelProviderService.class;
+	}
+	
+	@Override
+	public Class<? extends ITypeProvider> bindITypeProvider() {
+		return GenModelBasedTypeProvider.class;
 	}
 }

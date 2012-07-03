@@ -100,8 +100,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
 			
 			//now the active patterns also contain of the new patterns
-			for (Pattern pattern : allActivePatterns) {
-				for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+				for (Pattern pattern : allActivePatterns) {
 					root.registerPattern(pattern);
 				}
 			}

@@ -263,9 +263,10 @@ public class QueryExplorer extends ViewPart {
 	}
 	
 	private void initPatternsViewerWithGeneratedPatterns() {
-		for (Pattern pattern : DatabindingUtil.generatedPatterns) {
+		for (Pattern pattern : DatabindingUtil.getGeneratedPatterns()) {
 			String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 			PatternRegistry.getInstance().addGeneratedPattern(pattern, patternFqn);
+			PatternRegistry.getInstance().addActivePattern(pattern);
 			patternsViewerInput.addComponent(patternFqn);
 		}
 		

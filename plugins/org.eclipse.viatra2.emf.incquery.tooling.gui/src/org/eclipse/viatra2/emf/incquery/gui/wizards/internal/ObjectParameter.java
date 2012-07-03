@@ -11,11 +11,18 @@
 
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EClassifier;
 
+/**
+ * Instances of this class represents the specification of a pattern parameter.
+ * It has a parameter name and type specification as an {@link EClassifier} instance.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ObjectParameter {
 
-	private EObject object;
+	private EClassifier object;
 	private String parameterName;
 
 	public ObjectParameter() {
@@ -24,13 +31,13 @@ public class ObjectParameter {
 		this.parameterName = "";
 	}
 	
-	public ObjectParameter(EObject object, String parameterName) {
+	public ObjectParameter(EClassifier object, String parameterName) {
 		super();
 		this.object = object;
 		this.parameterName = parameterName;
 	}
 
-	public EObject getObject() {
+	public EClassifier getObject() {
 		return object;
 	}
 
@@ -38,7 +45,7 @@ public class ObjectParameter {
 		return parameterName;
 	}
 
-	public void setObject(EObject object) {
+	public void setObject(EClassifier object) {
 		this.object = object;
 	}
 

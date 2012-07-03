@@ -61,8 +61,14 @@ class SampleUIGenerator implements IGenerationFragment {
 	}
 	
 	override getProjectDependencies() {
-		newArrayList("org.eclipse.core.runtime", "org.eclipse.ui",
-		 "org.eclipse.emf.ecore", "org.eclipse.pde.core", "org.eclipse.core.resources", "org.eclipse.viatra2.emf.incquery.runtime")
+		newArrayList(
+			"org.eclipse.core.runtime", 
+			"org.eclipse.ui",
+		 	"org.eclipse.emf.ecore", 
+		 	"org.eclipse.pde.core", 
+		 	"org.eclipse.core.resources", 
+		 	"org.eclipse.viatra2.emf.incquery.runtime",
+		 	"org.eclipse.viatra2.emf.incquery.tooling.gui")
 	}
 	
 	override getProjectPostfix() {
@@ -183,6 +189,7 @@ class SampleUIGenerator implements IGenerationFragment {
 		import org.eclipse.jface.viewers.IStructuredSelection;
 		import org.eclipse.swt.widgets.Display;
 		import org.eclipse.ui.handlers.HandlerUtil;
+		import org.eclipse.viatra2.emf.incquery.gui.dialog.SampleUIDialogCreator;
 
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 		import «pattern.packageName + "." + pattern.matchClassName»;
@@ -203,40 +210,40 @@ class SampleUIGenerator implements IGenerationFragment {
 						.toString(), false);
 				Resource resource = resourceSet.getResource(fileURI, true);
 
-				String matches = getMatches(resource);
-		
-				//prints the match set to a dialog window 
-				MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the \"«pattern.name»\" pattern", 
-						matches);
-		
+				«pattern.matcherClassName» matcher = «pattern.matcherClassName».FACTORY.getMatcher(resource);
+				SampleUIDialogCreator.createDialog(matcher).open();
+«««				String matches = getMatches(resource);
+«««				//prints the match set to a dialog window 
+«««				MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the \"«pattern.name»\" pattern", 
+«««						matches);
 				return null;
 			}
 
-			/**
-			* Returns the match set of the «pattern.name» pattern on the input EMF resource
-			* @param emfRoot the container of the EMF model on which the pattern matching is invoked
-			* @return The serialized form of the match set
-			*/
-			private String getMatches(Notifier emfRoot){
-				//the match set will be serialized into a string builder
-				StringBuilder builder = new StringBuilder();
-		
-				if(emfRoot != null) {	
-					//get all matches of the pattern
-					«pattern.matcherClassName» matcher = «pattern.matcherClassName».FACTORY.getMatcher(emfRoot);
-					Collection<«pattern.matchClassName»> matches = matcher.getAllMatches();
-					//serializes the current match into the string builder
-					if(matches.size() > 0)
-						for(«pattern.matchClassName» match: matches) {
-							builder.append(match.toString());
-					 		builder.append("\n");
-						}
-					else
-						builder.append("The «pattern.name» pattern has an empty match set.");	
-				}
-				//returns the match set in a serialized form
-				return builder.toString();
-			}
+«««			/**
+«««			* Returns the match set of the «pattern.name» pattern on the input EMF resource
+«««			* @param emfRoot the container of the EMF model on which the pattern matching is invoked
+«««			* @return The serialized form of the match set
+«««			*/
+«««			private String getMatches(Notifier emfRoot){
+«««				//the match set will be serialized into a string builder
+«««				StringBuilder builder = new StringBuilder();
+«««		
+«««				if(emfRoot != null) {	
+«««					//get all matches of the pattern
+«««					«pattern.matcherClassName» matcher = «pattern.matcherClassName».FACTORY.getMatcher(emfRoot);
+«««					Collection<«pattern.matchClassName»> matches = matcher.getAllMatches();
+«««					//serializes the current match into the string builder
+«««					if(matches.size() > 0)
+«««						for(«pattern.matchClassName» match: matches) {
+«««							builder.append(match.toString());
+«««					 		builder.append("\n");
+«««						}
+«««					else
+«««						builder.append("The «pattern.name» pattern has an empty match set.");	
+«««				}
+«««				//returns the match set in a serialized form
+«««				return builder.toString();
+«««			}
 		}	
 	'''
 	

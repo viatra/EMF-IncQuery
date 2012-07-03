@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.dialogs.Dialog;
@@ -36,6 +35,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+/**
+ * A {@link Dialog} implementation for configuring one parameter of a pattern.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class ObjectParameterConfigurationDialog extends Dialog {
 
 	private static final String SELECT_A_MODEL_ELEMENT = "Select a model element (* = any string, ? = any char):";
@@ -93,7 +98,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		label.setLayoutData(gridData);
 		
 		parameterType = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		parameterType.setText(result.getObject() == null ? "" : result.getObject().eClass().toString());
+		parameterType.setText(result.getObject() == null ? "" : ((EClassifier) result.getObject()).getName());
 		parameterType.setEditable(false);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 1;
@@ -115,7 +120,12 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		return super.createDialogArea(parent);
 	}
 	
-	private EObject openDialogBox() {
+	/**
+	 * Opens an element selection dialog for choosing the type of the parameter as an {@link EClassifier}.
+	 * 
+	 * @return the type of the parameter
+	 */
+	private EClassifier openDialogBox() {
     	ElementListSelectionDialog listDialog = 
     			new ElementListSelectionDialog(
     					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
@@ -127,11 +137,16 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     	listDialog.open();
     	Object[] result = listDialog.getResult();
     	if (result != null && result.length > 0) {
-    		return (EObject) result[0];
+    		return (EClassifier) result[0];
     	}
         return null;
     }
 	
+	/**
+	 * Returns the array of {@link EClassifier} instances based on the imported {@link EPackage}s.
+	 * 
+	 * @return the array of {@link EClassifier}s
+	 */
 	private Object[] getElements() {
 		List<EObject> result = new ArrayList<EObject>();
 		for (EPackage _package : currentPackages) {
@@ -139,7 +154,7 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 			
 			while (iterator.hasNext()) {
 				EObject nextObject = iterator.next();
-				if (nextObject instanceof EClassifier || nextObject instanceof EDataType) {
+				if (nextObject instanceof EClassifier) {
 					result.add(nextObject);
 				}
 			}
@@ -147,10 +162,10 @@ public class ObjectParameterConfigurationDialog extends Dialog {
 		return result.toArray();
 	}
 	
-	private void setParameterType(EObject object) {
+	private void setParameterType(EClassifier object) {
 		this.result.setObject(object);
 		if (object != null) {
-			parameterType.setText(object.toString());
+			parameterType.setText(((EClassifier) object).getName());
 		}
 	}
 }

@@ -239,41 +239,38 @@ public class IncqueryFeatureHandler {
 	
 	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws CoreException {
 		List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
-		for (IPatternMatch signature : signatures) {
-			//if(source.equals(signature.get(sourceParamName))) {
-				if(kind == FeatureKind.ITERATION) {
-					ENotificationImpl notification = newMatchIteration(signature);
-					if(notification != null) {
-						notifications.add(notification);
-					}
-				} else {
-					Object target = signature.get(targetParamName);
-					if(target != null) {
-						if(feature.isMany()) {
-							if(kind == FeatureKind.SUM) {
-								increaseCounter((Integer) target);
-							} else {
-								notifications.add(
-										new ENotificationImpl(source, Notification.ADD,	feature, null, target));
-								addToManyRefMemory(target);
-							}
-						} else {
-							if(updateMemory != null) {
-								DefaultLoggerProvider.getDefaultLogger().logError("[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
-							} else {
-								// must handle later (either in lost matches or after that)
-								updateMemory = target;
-							}
-						}
-					} else {
-						if(kind == FeatureKind.COUNTER) {
-							increaseCounter(1);
-						}
-					}
-				}
-			//}
-			processed.add(signature);
-		}
+	    for (IPatternMatch signature : signatures) {
+	      if (kind == FeatureKind.ITERATION) {
+	        ENotificationImpl notification = newMatchIteration(signature);
+	        if (notification != null) {
+	          notifications.add(notification);
+	        }
+	      } else {
+	        Object target = signature.get(targetParamName);
+	        if (target != null) {
+	          if (kind == FeatureKind.SUM) {
+	            increaseCounter((Integer) target);
+	          } else {
+	            if (feature.isMany()) {
+	              notifications
+	                  .add(new ENotificationImpl(source, Notification.ADD, feature, null, target));
+	              addToManyRefMemory(target);
+	            } else {
+	              if (updateMemory != null) {
+	                DefaultLoggerProvider.getDefaultLogger().logError(
+	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
+	              } else {
+	                // must handle later (either in lost matches or after that)
+	                updateMemory = target;
+	              }
+	            }
+	          }
+	        } else if (kind == FeatureKind.COUNTER) {
+	          increaseCounter(1);
+	        }
+	      }
+	      processed.add(signature);
+	    }
 		return processed;
 	}
 	
@@ -283,7 +280,6 @@ public class IncqueryFeatureHandler {
 	private void increaseCounter(int delta) throws CoreException {
 		if(counterMemory <= Integer.MAX_VALUE-delta) {
 			int tempMemory = counterMemory+delta;
-			//source.eNotify(
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,	feature, counterMemory, tempMemory));
 			counterMemory = tempMemory;
@@ -292,52 +288,47 @@ public class IncqueryFeatureHandler {
 		}
 	}
 
-	private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws CoreException {
-		List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
-		for (IPatternMatch signature : signatures) {
-			//if(source.equals(signature.get(sourceParamName))) {
-				if(kind == FeatureKind.ITERATION) {
-					ENotificationImpl notification = lostMatchIteration(signature);
-					if(notification != null) {
-						notifications.add(notification);
-					}
-				} else {
-					Object target = signature.get(targetParamName);
-					if(target != null) {
-						if(feature.isMany()) {
-							if(kind == FeatureKind.SUM) {
-								decreaseCounter((Integer) target);
-							} else {
-								notifications.add(
-										new ENotificationImpl(source, Notification.REMOVE,
-										feature, target, null));
-								removeFromManyRefMemory(target);
-							}
-						} else {
-							if(updateMemory != null) {
-								notifications.add(
-										new ENotificationImpl(source, Notification.SET,
-										feature, target, updateMemory));
-								setSingleRefMemory(updateMemory);
-								updateMemory = null;
-							} else {
-								notifications.add(
-										new ENotificationImpl(source, Notification.SET,
-										feature, target, null));
-								setSingleRefMemory(null);
-							}
-						}
-					} else {
-						if(kind == FeatureKind.COUNTER) {
-							decreaseCounter(1);
-						}
-					}
-				}
-			//}
-			processed.add(signature);
-		}
-		return processed;
-	}
+  private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws CoreException {
+    List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
+    for (IPatternMatch signature : signatures) {
+      if (kind == FeatureKind.ITERATION) {
+        ENotificationImpl notification = lostMatchIteration(signature);
+        if (notification != null) {
+          notifications.add(notification);
+        }
+      } else {
+        Object target = signature.get(targetParamName);
+        if (target != null) {
+          if (kind == FeatureKind.SUM) {
+            decreaseCounter((Integer) target);
+          } else {
+            if (feature.isMany()) {
+              notifications.add(new ENotificationImpl(source, Notification.REMOVE, feature, target,
+                  null));
+              removeFromManyRefMemory(target);
+            } else {
+              if (updateMemory != null) {
+                notifications.add(new ENotificationImpl(source, Notification.SET, feature, target,
+                    updateMemory));
+                setSingleRefMemory(updateMemory);
+                updateMemory = null;
+              } else {
+                notifications.add(new ENotificationImpl(source, Notification.SET, feature, target,
+                    null));
+                setSingleRefMemory(null);
+              }
+            }
+          }
+        } else {
+          if (kind == FeatureKind.COUNTER) {
+            decreaseCounter(1);
+          }
+        }
+      }
+      processed.add(signature);
+    }
+    return processed;
+  }
 	
 	/**
 	 * Called each time when a new match is found for Iteration kind
@@ -384,7 +375,6 @@ public class IncqueryFeatureHandler {
 	
 	private void checkUnhandledNewMatch() {
 		if(updateMemory != null) {
-			//source.eNotify(
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,
 					feature, null, updateMemory));

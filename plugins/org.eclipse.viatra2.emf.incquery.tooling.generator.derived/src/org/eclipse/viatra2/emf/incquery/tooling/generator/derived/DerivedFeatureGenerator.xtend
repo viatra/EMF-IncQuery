@@ -12,11 +12,9 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.derived
 
 import com.google.inject.Inject
-import java.util.HashMap
-import java.util.List
 import java.util.Map
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.NullProgressMonitor
+import java.util.List
+import java.util.HashMap
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
@@ -44,20 +42,17 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
-import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
-import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
-import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
-import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
 import org.eclipse.xtext.xbase.lib.Pair
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
+import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
+import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator.*
 
@@ -70,7 +65,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	/* usage: @DerivedFeature(
-	 * 			feature="featureName",
+	 * 			feature="featureName", (default: patten name)
 	 * 			source="Src" (default: first parameter),
 	 * 			target="Trg" (default: second parameter),
 	 * 			kind="single/many/counter/sum/iteration" (default: feature.isMany?many:single)
@@ -88,13 +83,49 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	private static Map kinds = newHashMap(
-		Pair::of("single",FeatureKind::SINGLE_REFERENCE),
+	private static Map<String,FeatureKind> kinds = newHashMap(
+	  Pair::of("single",FeatureKind::SINGLE_REFERENCE),
 		Pair::of("many",FeatureKind::MANY_REFERENCE),
 		Pair::of("counter",FeatureKind::COUNTER),
 		Pair::of("sum",FeatureKind::SUM),
 		Pair::of("iteration",FeatureKind::ITERATION)
 	)
+
+	
+
+/*   override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override getAdditionalBinIncludes() {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override getProjectDependencies() {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override getProjectPostfix() {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override getRemovableExtensions() {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+  override removeExtension(Pattern pattern) {
+    throw new UnsupportedOperationException("Auto-generated function stub")
+  }
+  
+}*/
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		processJavaFiles(pattern, true)
@@ -123,7 +154,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val parser = ASTParser::newParser(AST::JLS3)
 				val document = new Document(docSource)
 				parser.setSource(compunit)
-				val astNode = parser.createAST(new NullProgressMonitor) as CompilationUnit
+				val astNode = parser.createAST(null) as CompilationUnit
 				val ast = astNode.AST
 				val rewrite = ASTRewrite::create(ast)
 				val types = astNode.types as List<AbstractTypeDeclaration>
@@ -134,7 +165,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				val bodyDeclListRewrite = rewrite.getListRewrite(type, TypeDeclaration::BODY_DECLARATIONS_PROPERTY)
 				
-				// FIXME remove disabled if cleanup is called when annotation is removed
 				if(generate){
 					ast.ensureImports(rewrite, astNode, type)
 					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature.name)
@@ -149,10 +179,12 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val newSource = document.get
 				compunit.buffer.setContents(newSource)
 				// save!
-				compunit.buffer.save(new NullProgressMonitor, false)
+				compunit.buffer.save(null, false)
 				
 			} catch(IllegalArgumentException e){
-				IncQueryEngine::defaultLogger.logError(e.message,e);
+			  if(generate){
+				  IncQueryEngine::defaultLogger.logError(e.message,e);
+				}
 			}
 			
 		}
@@ -177,7 +209,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	def private findJavaProject(GenPackage pckg){
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
-		val project = ResourcesPlugin::workspace.root.getProject(projectDir)
+		val project = ProjectLocator::locateProject(projectDir)
 		ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
 		JavaCore::create(project)
 	}
@@ -431,7 +463,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		val options = JavaCore::getOptions();
 		JavaCore::setComplianceOptions(JavaCore::VERSION_1_5, options);
 		methodBodyParser.setCompilerOptions(options);
-		val dummyAST = methodBodyParser.createAST(new NullProgressMonitor)
+		val dummyAST = methodBodyParser.createAST(null)
 		val dummyCU = dummyAST as CompilationUnit
 		val dummyType = dummyCU.types.get(0) as TypeDeclaration
 		dummyType.methods.get(0) as MethodDeclaration
@@ -581,7 +613,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		}
 		
 		if(featureTmp == ""){
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature not defined!")
+			//throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature not defined!")
+			featureTmp = pattern.name
 		}
 		
 		if(sourceTmp == ""){
@@ -625,6 +658,15 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				kindTmp = "single"
 			}
 		}
+		
+		if(kinds.empty){
+		  kinds.put("single",FeatureKind::SINGLE_REFERENCE)
+      kinds.put("many",FeatureKind::MANY_REFERENCE)
+      kinds.put("counter",FeatureKind::COUNTER)
+      kinds.put("sum",FeatureKind::SUM)
+      kinds.put("iteration",FeatureKind::ITERATION) 
+		}
+		
 		if(!kinds.keySet.contains(kindTmp)){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Kind not set, or not in " + kinds.keySet + "!")
 		}
@@ -690,5 +732,5 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	override getProjectPostfix() {
 		return null
 	}
-	
+
 }

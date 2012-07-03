@@ -6,14 +6,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -24,12 +20,10 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CompositeWorkspaceModifyOperation;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CreateGenmodelOperation;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.CreateProjectOperation;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.operations.EnsureProjectDependencies;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 public class NewGenmodelWizard extends Wizard implements INewWizard {

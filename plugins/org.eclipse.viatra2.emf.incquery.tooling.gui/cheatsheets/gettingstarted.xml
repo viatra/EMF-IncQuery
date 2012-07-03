@@ -2,26 +2,35 @@
 <compositeCheatsheet name="Getting Started with EMF-IncQuery">
    <taskGroup kind="set" name="Query your models using IncQuery" skip="false">
       <intro>
-         EMF-IncQuery is a technology, that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. Completing the tasks you will know how to create an IncQuery plug-in, how to use it, and where to look for further information. These sheets guide you through a library example, that works immediately.
+         <a href="http://viatra.inf.mit.bme.hu/incquery">EMF-IncQuery</a> is a technology that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. After completing the tasks, you will know how to create an IncQuery plug-in, how to use it, and where to look for further information. These sheets guide you through simple example that works immediately.
       </intro>
       <onCompletion>
       </onCompletion>
       <task kind="cheatsheet" name="Creating an EMF-IncQuery Project" skip="false">
          <intro>
-            This sheet describes how to create an EMF-IncQuery plug-in project from an EMF metamodel.
+            This sheet describes how to create an EMF-IncQuery plug-in project from scratch.
          </intro>
          <onCompletion>
          </onCompletion>
          <param name="path" value="newproject.xml">
          </param>
       </task>
-      <task kind="cheatsheet" name="Inspecting the Generated Code" skip="false">
+      <task kind="cheatsheet" name="Creating Queries" skip="false">
          <intro>
-            An EMF-IncQuery plugin provides only <b>the code base</b> to perform queries. This cheat sheet describes the automatic creation of a <b>sample project</b>, that can be used form the GUI. The generated code can also be inspected to write your own code.
+            This sheet describes how to create EMF-IncQuery queries.
          </intro>
          <onCompletion>
          </onCompletion>
-         <param name="path" value="evaluation.xml">
+         <param name="path" value="queries.xml">
+         </param>
+      </task>
+      <task kind="cheatsheet" name="EMF-IncQuery API Overview" skip="false">
+         <intro>
+            This cheat sheet describes the automatic creation of a <b>sample UI project</b> which demonstrates how EMF-IncQuery queries can be invoked from Java code. The Sample UI project provides a menu contribution that displays the query results in a dialog window.
+         </intro>
+         <onCompletion>
+         </onCompletion>
+         <param name="path" value="gencode.xml">
          </param>
       </task>
    </taskGroup>

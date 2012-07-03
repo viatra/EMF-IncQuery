@@ -15,7 +15,13 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-public class ObjectsListLabelProvider extends LabelProvider implements ITableLabelProvider {
+/**
+ * {@link ITableLabelProvider} implementation for the {@link ObjectListAdapter}.
+ * 
+ * @author Tamas Szabo
+ *
+ */
+public class ObjectListLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
@@ -30,7 +36,7 @@ public class ObjectsListLabelProvider extends LabelProvider implements ITableLab
 				return parameter.getParameterName();
 			}
 			else {
-				return parameter.getObject() != null ? parameter.getObject().toString() : "";
+				return parameter.getObject() != null ? parameter.getObject().getName() : "";
 			}
 		}
 		return null;

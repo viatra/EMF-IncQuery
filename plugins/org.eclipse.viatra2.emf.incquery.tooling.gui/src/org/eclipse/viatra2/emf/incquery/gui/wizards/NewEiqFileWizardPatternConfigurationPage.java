@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListLabelProvider;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportsListAdapter;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListAdapter;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectsListLabelProvider;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListAdapter;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListLabelProvider;
 
 /**
  * Second page of the {@link NewEiqFileWizard} which allows to specify pattern parameters and imported {@link EPackage}s. 
@@ -49,9 +49,9 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	private ListDialogField<EPackage> importList;
 	private ListDialogField<ObjectParameter> objectList;
 	private ImportListLabelProvider importListLabelProvider;
-	private ObjectsListLabelProvider objectListLabelProvider;
-	private ImportsListAdapter importListAdapter;
-	private ObjectsListAdapter objectListAdapter;
+	private ObjectListLabelProvider objectListLabelProvider;
+	private ImportListAdapter importListAdapter;
+	private ObjectListAdapter objectListAdapter;
 	public boolean parameterSet;
 	
 	public NewEiqFileWizardPatternConfigurationPage() {
@@ -62,7 +62,7 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	
 	private void createImportsControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Remove"};
-		importListAdapter = new ImportsListAdapter();
+		importListAdapter = new ImportListAdapter();
 		importListLabelProvider = new ImportListLabelProvider();
 		
 		importList = new ListDialogField<EPackage>(importListAdapter, buttonLiterals, importListLabelProvider);
@@ -74,8 +74,8 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	
 	private void createObjectSelectionControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Modify", "Remove"};
-		objectListAdapter = new ObjectsListAdapter(this, importList);
-		objectListLabelProvider = new ObjectsListLabelProvider();
+		objectListAdapter = new ObjectListAdapter(this, importList);
+		objectListLabelProvider = new ObjectListLabelProvider();
 		
 		objectList = new ListDialogField<ObjectParameter>(objectListAdapter, buttonLiterals, objectListLabelProvider);
 		objectList.setLabelText("&Pattern parameters:");
@@ -155,14 +155,29 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
+	/**
+	 * Returns the name of the pattern specified in the wizard.
+	 * 
+	 * @return the name of the pattern
+	 */
 	public String getPatternName() {
 		return patternText.getText();
 	}
 	
+	/**
+	 * Returns the import list of {@link EPackage}s specified in the wizard.
+	 * 
+	 * @return the list of imports
+	 */
 	public List<EPackage> getImports() {
 		return importList.getElements();
 	}
 	
+	/**
+	 * Returns the list of pattern parameters specified in the wizard.
+	 * 
+	 * @return the list of pattern parameters
+	 */
 	public List<ObjectParameter> getParameters() {
 		return objectList.getElements();
 	}
