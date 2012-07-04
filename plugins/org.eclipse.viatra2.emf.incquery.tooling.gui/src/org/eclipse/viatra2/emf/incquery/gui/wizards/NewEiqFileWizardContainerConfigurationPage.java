@@ -49,9 +49,9 @@ import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPage {
 
 	private Text fileText;
-		
+	private static final String TITLE = "EMF-IncQuery Query Definition Wizard";	
 	private static final String THE_GIVEN_FILE_ALREADY_EXISTS = "The given file already exists!";
-	private static final String defaultEiqFileName = "default.eiq";
+	private static final String defaultEiqFileName = "";
 	private static final String SOURCE_FOLDER_ERROR = "You must specify a valid source folder!";
 	private static final String FILE_NAME_ERROR = "File name must be specified!";
 	private static final String FILE_NAME_NOT_VALID = "File name must be valid!";
@@ -61,7 +61,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 	
 	public NewEiqFileWizardContainerConfigurationPage() {
 		super(false, "eiq");
-		setTitle("EMF-IncQuery query definition Wizard");
+		setTitle(TITLE);
 	}
 	
 	/**
