@@ -6,8 +6,8 @@ public class PatternsViewerInput {
 	private PatternComposite genericPatternsRoot;
 	
 	public PatternsViewerInput() {
-		this.generatedPatternsRoot = new PatternComposite("", null);
-		this.genericPatternsRoot = new PatternComposite("", null);
+		this.generatedPatternsRoot = new PatternComposite("Plug-in", null);
+		this.genericPatternsRoot = new PatternComposite("Runtime", null);
 	}
 	
 	public PatternComposite getGeneratedPatternsRoot() {

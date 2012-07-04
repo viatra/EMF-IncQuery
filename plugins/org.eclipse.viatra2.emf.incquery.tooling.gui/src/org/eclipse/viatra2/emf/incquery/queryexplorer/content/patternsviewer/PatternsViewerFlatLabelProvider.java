@@ -16,8 +16,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class PatternsViewerFlatLabelProvider implements ILabelProvider {
 
@@ -70,26 +68,15 @@ public class PatternsViewerFlatLabelProvider implements ILabelProvider {
 		if (element instanceof PatternComposite) {
 			PatternComposite composite = (PatternComposite) element;
 			
-			if (composite.equals(input.getGeneratedPatternsRoot())) {
-				return "Plug-in";
-			}
-			else if (composite.equals(input.getGenericPatternsRoot())) {
-				return "Runtime";
+			if (composite.equals(input.getGeneratedPatternsRoot()) || composite.equals(input.getGenericPatternsRoot())) {
+				return composite.getPatternNameFragment();
 			}
 			else {
 				return composite.getFullPatternNamePrefix();
 			}
 		}
 		else if (element instanceof PatternLeaf) {
-			String name = ((PatternComponent) element).getPatternNameFragment();
-			String gen = "";
-			String patternFqn = ((PatternComponent) element).getFullPatternNamePrefix();
-			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-			if (PatternRegistry.getInstance().isGenerated(pattern)) {
-				gen += " (plugin)";
-			}
-			
-			return String.format("%s %s", name, gen);
+			return ((PatternComponent) element).getPatternNameFragment();
 		}
 		
 		return null;

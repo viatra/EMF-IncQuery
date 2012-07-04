@@ -20,18 +20,9 @@ public class PatternsViewerHierarchicalLabelProvider extends
 
 	@Override
 	public String getText(Object element) {
-		if (element != null && element instanceof PatternComposite) {
-			PatternComposite composite = (PatternComposite) element;
-			if (composite.equals(input.getGeneratedPatternsRoot())) {
-				return "Plug-in";
-			} else if (composite.equals(input.getGenericPatternsRoot())) {
-				return "Runtime";
-			}
-		}
 		if (element instanceof PatternComponent) {
 			return ((PatternComponent) element).getPatternNameFragment();
 		}
-
 		return null;
 	}
 
