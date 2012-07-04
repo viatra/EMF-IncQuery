@@ -40,7 +40,6 @@ public class PatternComposite extends PatternComponent {
 	
 	/**
 	 * Returns the list of pattern components downwards the tree for the given fully qualified pattern name.
-	 * If the leaf associated to the given name cannot be found then null is returned. 
 	 * 
 	 * @param patternFragment the fully qualified name of the pattern
 	 * @return the list of components
@@ -51,6 +50,12 @@ public class PatternComposite extends PatternComponent {
 		return components;
 	}
 	
+	/**
+	 * Returns the root above this composite element.
+	 * This will result either the Plug-in or the Runtime composite.
+	 * 
+	 * @return the root composite
+	 */
 	public PatternComposite getRoot() {
 		if (parent == null) {
 			return this;
@@ -130,6 +135,11 @@ public class PatternComposite extends PatternComponent {
 		return leaves;
 	}
 	
+	/**
+	 * Returns the direct leaf children elements under this composite.
+	 * 
+	 * @return the list of direct leaf elements
+	 */
 	public List<PatternLeaf> getDirectLeaves() {
 		List<PatternLeaf> leaves = new ArrayList<PatternLeaf>();
 		
