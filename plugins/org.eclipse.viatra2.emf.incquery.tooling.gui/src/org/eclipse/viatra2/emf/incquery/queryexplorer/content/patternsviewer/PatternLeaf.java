@@ -41,4 +41,28 @@ public class PatternLeaf extends PatternComponent {
 		treeViewer.setChecked(this, selected);
 		return this.selected;
 	}
+	
+	@Override
+	public int hashCode() {
+		return patternNameFragment.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if((obj == null) || (obj.getClass() != this.getClass())) {
+			return false;
+		}
+		
+		PatternLeaf composite = (PatternLeaf) obj;
+		
+		if ((this.patternNameFragment == composite.patternNameFragment) &&
+				(this.parent == composite.parent)) {
+			return true;
+		}
+		
+		return false;
+	}
 }

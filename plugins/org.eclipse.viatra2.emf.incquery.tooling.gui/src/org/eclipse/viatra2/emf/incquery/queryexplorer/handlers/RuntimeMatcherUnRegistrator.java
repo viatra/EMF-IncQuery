@@ -37,7 +37,7 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 				root.unregisterPattern(pattern);
 			}
-			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+			QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 		}
 		
 		QueryExplorer.getInstance().getPatternsViewer().refresh();

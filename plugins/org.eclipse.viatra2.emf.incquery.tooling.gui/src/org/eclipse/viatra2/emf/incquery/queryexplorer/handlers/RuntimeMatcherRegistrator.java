@@ -57,7 +57,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 		QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
 		if (queryExplorerInstance != null) {	
 			MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
-			PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput();
+			PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot();
 			PatternModel oldParsedModel = PatternRegistry.getInstance().getPatternModelForFile(file);
 			PatternModel newParsedModel = dbUtil.parseEPM(file);
 			
@@ -90,7 +90,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 				}
 			}
 			
-			queryExplorerInstance.getPatternsViewerInput().purge();
+			queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot().purge();
 			queryExplorerInstance.getPatternsViewer().refresh();
 	
 			//REGISTERING PATTERNS

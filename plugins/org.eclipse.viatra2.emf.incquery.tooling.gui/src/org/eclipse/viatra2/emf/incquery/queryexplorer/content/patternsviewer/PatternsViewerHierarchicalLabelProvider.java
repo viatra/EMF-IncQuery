@@ -14,8 +14,7 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 public class PatternsViewerHierarchicalLabelProvider implements ILabelProvider {
 
@@ -46,18 +45,19 @@ public class PatternsViewerHierarchicalLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof PatternComponent) {
-			String name = ((PatternComponent) element).getPatternNameFragment();
-			String gen = "";
-			if (element instanceof PatternLeaf) {
-				String patternFqn = ((PatternComponent) element).getFullPatternNamePrefix();
-				Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-				if (PatternRegistry.getInstance().isGenerated(pattern)) {
-					gen += " (plugin)";
-				}
+		PatternsViewerInput input = QueryExplorer.getInstance().getPatternsViewerInput();
+		
+		if (element != null && element instanceof PatternComposite) {
+			PatternComposite composite = (PatternComposite) element;
+			if (composite.equals(input.getGeneratedPatternsRoot())) {
+				return "Plug-in";
 			}
-			
-			return String.format("%s %s", name, gen);
+			else if (composite.equals(input.getGenericPatternsRoot())) {
+				return "Runtime";
+			}
+		}
+		if (element instanceof PatternComponent) {
+			return ((PatternComponent) element).getPatternNameFragment();
 		}
 		
 		return null;

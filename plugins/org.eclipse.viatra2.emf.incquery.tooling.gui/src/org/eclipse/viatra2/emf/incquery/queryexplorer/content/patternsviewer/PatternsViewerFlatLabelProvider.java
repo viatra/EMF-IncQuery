@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -46,8 +47,19 @@ public class PatternsViewerFlatLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
+		PatternsViewerInput input = QueryExplorer.getInstance().getPatternsViewerInput();
 		if (element instanceof PatternComposite) {
-			return ((PatternComponent) element).getFullPatternNamePrefix();
+			PatternComposite composite = (PatternComposite) element;
+			
+			if (composite.equals(input.getGeneratedPatternsRoot())) {
+				return "Plug-in";
+			}
+			else if (composite.equals(input.getGenericPatternsRoot())) {
+				return "Runtime";
+			}
+			else {
+				return composite.getFullPatternNamePrefix();
+			}
 		}
 		else if (element instanceof PatternLeaf) {
 			String name = ((PatternComponent) element).getPatternNameFragment();
