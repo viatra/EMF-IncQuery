@@ -11,55 +11,27 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+public class PatternsViewerHierarchicalLabelProvider extends
+		PatternsViewerFlatLabelProvider {
 
-public class PatternsViewerHierarchicalLabelProvider implements ILabelProvider {
-
-	@Override
-	public void addListener(ILabelProviderListener listener) {
-		
-	}
-
-	@Override
-	public void dispose() {
-		
-	}
-
-	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
-
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-		
-	}
-
-	@Override
-	public Image getImage(Object element) {
-		return null;
+	public PatternsViewerHierarchicalLabelProvider(PatternsViewerInput input) {
+		super(input);
 	}
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof PatternComponent) {
-			String name = ((PatternComponent) element).getPatternNameFragment();
-			String gen = "";
-			if (element instanceof PatternLeaf) {
-				String patternFqn = ((PatternComponent) element).getFullPatternNamePrefix();
-				Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-				if (PatternRegistry.getInstance().isGenerated(pattern)) {
-					gen += " (plugin)";
-				}
+		if (element != null && element instanceof PatternComposite) {
+			PatternComposite composite = (PatternComposite) element;
+			if (composite.equals(input.getGeneratedPatternsRoot())) {
+				return "Plug-in";
+			} else if (composite.equals(input.getGenericPatternsRoot())) {
+				return "Runtime";
 			}
-			
-			return String.format("%s %s", name, gen);
 		}
-		
+		if (element instanceof PatternComponent) {
+			return ((PatternComponent) element).getPatternNameFragment();
+		}
+
 		return null;
 	}
 

@@ -40,6 +40,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 	public static final String ICON_ARROW_TOP = "arrow_top";
 	public static final String ICON_ARROW_BOTTOM = "arrow_bottom";
 	public static final String ICON_EPACKAGE = "epackage";
+	public static final String ICON_EIQ = "eiq";
 
 	// The shared instance
 	private static IncQueryGUIPlugin plugin;
@@ -88,6 +89,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 		reg.put(ICON_ARROW_TOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_top.gif"));
 		reg.put(ICON_ARROW_BOTTOM, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_bottom.gif"));
 		reg.put(ICON_EPACKAGE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/epackage.gif"));
+		reg.put(ICON_EIQ, imageDescriptorFromPlugin(PLUGIN_ID, "icons/logo2.png"));
 	}
 
 	public void logException(String message, Throwable exception) {

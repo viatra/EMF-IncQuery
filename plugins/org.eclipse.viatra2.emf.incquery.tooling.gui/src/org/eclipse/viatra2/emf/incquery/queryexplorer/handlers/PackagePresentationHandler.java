@@ -16,21 +16,26 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
 
 public class PackagePresentationHandler extends AbstractHandler {
 
 	private PatternsViewerFlatContentProvider flatCP = new PatternsViewerFlatContentProvider();
-	private PatternsViewerFlatLabelProvider flatLP = new PatternsViewerFlatLabelProvider();
+	private PatternsViewerFlatLabelProvider flatLP;
 	private PatternsViewerHierarchicalContentProvider hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
-	private PatternsViewerHierarchicalLabelProvider hierarchicalLP = new PatternsViewerHierarchicalLabelProvider();
+	private PatternsViewerHierarchicalLabelProvider hierarchicalLP;
 	
 	public PackagePresentationHandler() {
-		
+		//Constructor is called during eclipse shutdown and will result NPE because QueryExplorer view is disposed
+		if (QueryExplorer.getInstance() != null) {
+			PatternsViewerInput patternsViewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
+			hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
+			flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
+		}
 	}
 	
 	@Override
@@ -38,7 +43,7 @@ public class PackagePresentationHandler extends AbstractHandler {
 		String commandId = event.getCommand().getId();
 		
 		CheckboxTreeViewer patternsViewer = QueryExplorer.getInstance().getPatternsViewer();
-		PatternComposite patternsViewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
+		PatternsViewerInput patternsViewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
 		
 		if (commandId.contains("flat")) {
 			patternsViewer.setContentProvider(flatCP);
@@ -49,7 +54,8 @@ public class PackagePresentationHandler extends AbstractHandler {
 			patternsViewer.setLabelProvider(hierarchicalLP);
 		}
 		
-		patternsViewerInput.updateSelection(patternsViewer);
+		patternsViewerInput.getGeneratedPatternsRoot().updateSelection(patternsViewer);
+		patternsViewerInput.getGenericPatternsRoot().updateSelection(patternsViewer);
 		
 		return null;
 	}

@@ -72,43 +72,38 @@ public class ShowLocationHandler extends AbstractHandler {
 			reflectiveSetSelection(editorPart, preparedSelection); 
 		} else if(obj instanceof ObservablePatternMatcher) {
 			ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
-			IFile file = PatternRegistry.getInstance().getFileForPattern(matcher.getMatcher().getPattern());
-			
-			IEditorPart editorPart = matcher.getParent().getEditorPart();
-			for (IEditorReference ref : editorPart.getSite().getPage().getEditorReferences()) {
-				String id = ref.getId();
-				IEditorPart editor = ref.getEditor(true);
-				if(id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
-					//The editor id always registers an Xtext editor
-					assert editor instanceof XtextEditor;
-					XtextEditor providerEditor = (XtextEditor) editor;
-					// Bringing editor to top
-					IEditorInput input = providerEditor.getEditorInput();
-					if (input instanceof FileEditorInput) {
-						FileEditorInput editorInput = (FileEditorInput) input;
-						if (editorInput.getFile().equals(file)) {
-							editorPart.getSite().getPage().bringToTop(editor);
+			if (matcher.getMatcher() != null) {
+				IFile file = PatternRegistry.getInstance().getFileForPattern(matcher.getMatcher().getPattern());
+				
+				IEditorPart editorPart = matcher.getParent().getEditorPart();
+				for (IEditorReference ref : editorPart.getSite().getPage().getEditorReferences()) {
+					String id = ref.getId();
+					IEditorPart editor = ref.getEditor(true);
+					if(id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
+						//The editor id always registers an Xtext editor
+						assert editor instanceof XtextEditor;
+						XtextEditor providerEditor = (XtextEditor) editor;
+						// Bringing editor to top
+						IEditorInput input = providerEditor.getEditorInput();
+						if (input instanceof FileEditorInput) {
+							FileEditorInput editorInput = (FileEditorInput) input;
+							if (editorInput.getFile().equals(file)) {
+								editorPart.getSite().getPage().bringToTop(editor);
+							}
+						}
+						// Finding location using location service
+						ITextRegion location = locationProvider
+								.getSignificantTextRegion(matcher.getMatcher()
+										.getPattern());
+						//Location can be null in case of error
+						if (location != null) {
+							providerEditor.reveal(location.getOffset(),location.getLength());
+							providerEditor.getSelectionProvider().setSelection(new TextSelection(location.getOffset(), location.getLength()));
 						}
 					}
-					// Finding location using location service
-					ITextRegion location = locationProvider
-							.getSignificantTextRegion(matcher.getMatcher()
-									.getPattern());
-					//Location can be null in case of error
-					if (location == null) {
-						return;
-					}
-					providerEditor.reveal(location.getOffset(),
-							location.getLength());
-					providerEditor.getSelectionProvider().setSelection(
-							new TextSelection(location.getOffset(), location
-									.getLength()));
-
 				}
 			}
-			
 		}
-		
 	}
 
 	private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {

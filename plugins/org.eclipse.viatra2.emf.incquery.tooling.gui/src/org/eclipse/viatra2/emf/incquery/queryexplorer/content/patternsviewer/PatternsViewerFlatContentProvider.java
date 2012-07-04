@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
 public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
 	
@@ -28,11 +27,10 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
-	//OK
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement != null && inputElement instanceof PatternComposite) {
-			return getLeavesOrComponentsWithLeaves((PatternComposite) inputElement).toArray();
+		if (inputElement != null && inputElement instanceof PatternsViewerInput) {
+			return ((PatternsViewerInput) inputElement).getChildren();
 		}
 		return null;
 	}
@@ -53,7 +51,7 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
 			return ((PatternComponent) element).getParent();
 		}
 		else if (element != null && element instanceof PatternComposite) {
-			return QueryExplorer.getInstance().getPatternsViewerInput();
+			return ((PatternComposite) element).getRoot();
 		}
 		return null;
 	}

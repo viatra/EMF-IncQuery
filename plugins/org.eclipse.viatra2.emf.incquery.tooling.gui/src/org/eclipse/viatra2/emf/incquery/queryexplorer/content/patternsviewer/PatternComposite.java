@@ -27,7 +27,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
  */
 public class PatternComposite extends PatternComponent {
 
-	private List<PatternComponent> children;
+	protected List<PatternComponent> children;
 	private Map<String, PatternComposite> fragmentMap;
 	
 	public PatternComposite(String patternNameFragment, PatternComposite parent) {
@@ -49,6 +49,15 @@ public class PatternComposite extends PatternComponent {
 		List<PatternComponent> components = new ArrayList<PatternComponent>();
 		find(patternFragment, components);
 		return components;
+	}
+	
+	public PatternComposite getRoot() {
+		if (parent == null) {
+			return this;
+		}
+		else {
+			return parent.getRoot();
+		}
 	}
 	
 	private void find(String patternFragment, List<PatternComponent> components) {
@@ -147,7 +156,7 @@ public class PatternComposite extends PatternComponent {
 		}
 		
 		if (this.getAllLeaves().size() == 0) {
-			QueryExplorer.getInstance().getPatternsViewerInput().removeComponent(getFullPatternNamePrefix());
+			QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(getFullPatternNamePrefix());
 		}
 	}
 	
@@ -266,5 +275,34 @@ public class PatternComposite extends PatternComponent {
 		treeViewer.setChecked(this, allSelected);
 		
 		return allSelected;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = patternNameFragment.hashCode();
+		for (PatternComponent pc : children) {
+			hash += 31 * pc.hashCode();
+		}
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if((obj == null) || (obj.getClass() != this.getClass())) {
+			return false;
+		}
+		
+		PatternComposite composite = (PatternComposite) obj;
+		
+		if ((this.patternNameFragment == composite.patternNameFragment) &&
+				(this.parent == composite.parent) &&
+				(this.children.equals(composite.children))) {
+			return true;
+		}
+		
+		return false;
 	}
 }

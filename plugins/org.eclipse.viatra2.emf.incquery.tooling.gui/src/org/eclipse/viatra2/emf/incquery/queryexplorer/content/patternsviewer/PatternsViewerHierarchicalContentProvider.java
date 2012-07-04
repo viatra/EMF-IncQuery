@@ -28,8 +28,8 @@ public class PatternsViewerHierarchicalContentProvider implements ITreeContentPr
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement != null && inputElement instanceof PatternComposite) {
-			return ((PatternComposite) inputElement).getDirectChildren().toArray();
+		if (inputElement != null && inputElement instanceof PatternsViewerInput) {
+			return ((PatternsViewerInput) inputElement).getChildren();
 		}
 		return null;
 	}
