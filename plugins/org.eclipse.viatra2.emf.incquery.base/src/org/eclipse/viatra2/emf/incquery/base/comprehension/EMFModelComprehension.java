@@ -93,7 +93,7 @@ public class EMFModelComprehension {
 				}
 			} else {
 				Object target = source.eGet(feature);
-				visitFeatureInternal(visitor, source, feature, target, visitorPrunes);
+				if (target != null) visitFeatureInternal(visitor, source, feature, target, visitorPrunes);
 			}
 		}
 	}
@@ -114,10 +114,10 @@ public class EMFModelComprehension {
 
 
 
-
 	public static void visitFeature(
 			EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) 
 	{
+		if (target == null) return;
 		if (unvisitableDirectly(feature)) return;	
 		final boolean visitorPrunes = visitor.pruneFeature(feature);
 		if (visitorPrunes && !unprunableFeature(visitor, source, feature)) return;

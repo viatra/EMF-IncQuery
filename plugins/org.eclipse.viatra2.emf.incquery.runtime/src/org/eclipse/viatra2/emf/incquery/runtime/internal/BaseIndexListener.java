@@ -79,6 +79,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	 */
 	@Override
 	public void instanceInserted(EClass clazz, EObject instance) {
+		boundary.updateUnary(Direction.INSERT, instance, clazz);
 		boundary.updateInstantiation(Direction.INSERT, clazz, instance);
 	}
 
@@ -87,6 +88,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	 */
 	@Override
 	public void instanceDeleted(EClass clazz, EObject instance) {
+		boundary.updateUnary(Direction.REVOKE, instance, clazz);
 		boundary.updateInstantiation(Direction.REVOKE, clazz, instance);
 	}
 	
@@ -95,6 +97,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	 */
 	@Override
 	public void dataTypeInstanceInserted(EDataType type, Object instance) {
+		boundary.updateUnary(Direction.INSERT, instance, type);
 		boundary.updateInstantiation(Direction.INSERT, type, instance);
 	}
 	
@@ -103,8 +106,8 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	 */
 	@Override
 	public void dataTypeInstanceDeleted(EDataType type, Object instance) {
+		boundary.updateUnary(Direction.REVOKE, instance, type);
 		boundary.updateInstantiation(Direction.REVOKE, type, instance);
-
 	}
 	
 	/* (non-Javadoc)

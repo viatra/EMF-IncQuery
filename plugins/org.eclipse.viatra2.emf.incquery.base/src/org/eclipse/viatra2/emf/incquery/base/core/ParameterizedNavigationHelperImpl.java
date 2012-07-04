@@ -60,7 +60,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedFeatures.addAll(features);
 			} else {
 				observedFeatures.addAll(features);
-				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, features, noClass(), noDataType(), true);
+				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, features, noClass(), noDataType());
 				EMFModelComprehension.visitModel(visitor, notifier);
 			}
 		}
@@ -86,7 +86,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				delayedClasses.addAll(classes);
 			} else {
 				observedClasses.addAll(classes);
-				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, noFeature(), classes, noDataType(), true);
+				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, noFeature(), classes, noDataType());
 				EMFModelComprehension.visitModel(visitor, notifier);
 			}
 		}
@@ -109,8 +109,8 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			if (delayTraversals) {
 				delayedDataTypes.addAll(dataTypes);
 			} else {
-				dataTypes.addAll(dataTypes);
-				final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, noFeature(), noClass(), dataTypes, true);
+				observedDataTypes.addAll(dataTypes);
+				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, noFeature(), noClass(), dataTypes);
 				EMFModelComprehension.visitModel(visitor, notifier);
 
 			}
@@ -158,7 +158,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 					delayedClasses.clear();
 					delayedDataTypes.clear();
 					
-					final NavigationHelperVisitor visitor = new NavigationHelperVisitor(this, toGatherFeatures, toGatherClasses, toGatherDataTypes, true);
+					final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, toGatherFeatures, toGatherClasses, toGatherDataTypes);
 					EMFModelComprehension.visitModel(visitor, notifier);
 
 				}

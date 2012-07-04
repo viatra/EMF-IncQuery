@@ -18,41 +18,41 @@ public class NavigationHelperVisitor extends EMFVisitor {
 	Set<EClass> classes; 
 	Set<EDataType> dataTypes;
 	boolean isInsertion;
-
+	boolean descendHierarchy;
 	
 	
 	
 	/**
-	 * @param navigationHelper
-	 * @param features
-	 * @param classes
-	 * @param dataTypes
-	 * @param isInsertion
+	 * Creates a visitor for processing a single change event. Does not traverse the model. Uses all the observed types.
 	 */
-	public NavigationHelperVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
-		this(
+	public static NavigationHelperVisitor newChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
+		return new NavigationHelperVisitor(
 				navigationHelper, 
 				navigationHelper.getObservedFeatures(), 
 				navigationHelper.getObservedClasses(), 
 				navigationHelper.getObservedDataTypes(), 
-				isInsertion);
+				isInsertion, false);
 	}	
+	
 	/**
-	 * @param navigationHelper
-	 * @param features
-	 * @param classes
-	 * @param dataTypes
-	 * @param isInsertion
+	 * Creates a visitor for a single-pass traversal of the whole model, processing only the given types and inserting them.
 	 */
-	public NavigationHelperVisitor(NavigationHelperImpl navigationHelper,
+	public static NavigationHelperVisitor newTraversingVisitor(NavigationHelperImpl navigationHelper,
+			Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType> dataTypes) {
+		return new NavigationHelperVisitor(navigationHelper, features, classes, dataTypes, true, true);
+	}
+
+
+	NavigationHelperVisitor(NavigationHelperImpl navigationHelper,
 			Set<EStructuralFeature> features, Set<EClass> classes,
-			Set<EDataType> dataTypes, boolean isInsertion) {
+			Set<EDataType> dataTypes, boolean isInsertion, boolean descendHierarchy) {
 		super();
 		this.navigationHelper = navigationHelper;
 		this.features = features;
 		this.classes = classes;
 		this.dataTypes = dataTypes;
 		this.isInsertion = isInsertion;
+		this.descendHierarchy = descendHierarchy;
 	}
 	
 //	public void visitModel(Notifier emfRoot, Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType> dataTypes) {
@@ -90,12 +90,12 @@ public class NavigationHelperVisitor extends EMFVisitor {
 	
 	@Override
 	public boolean pruneSubtrees(EObject source) {
-		return true;
+		return !descendHierarchy;
 	}
 	
 	@Override
 	public boolean pruneSubtrees(Resource source) {
-		return true;
+		return !descendHierarchy;
 	}
 	
 	@Override

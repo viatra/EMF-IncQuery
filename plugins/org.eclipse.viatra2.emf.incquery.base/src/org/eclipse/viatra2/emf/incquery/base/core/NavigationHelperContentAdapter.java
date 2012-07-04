@@ -115,9 +115,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}	
 		
 	private void featureUpdate(boolean isInsertion, EObject notifier,  EStructuralFeature feature, Object value) {
-		if (value != null) {
-			EMFModelComprehension.visitFeature(visitor(isInsertion), notifier, feature, value);
-		}
+		EMFModelComprehension.visitFeature(visitor(isInsertion), notifier, feature, value);
 	}	
 	
 	@Override
@@ -154,7 +152,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	
 	protected EMFVisitor visitor(final boolean isInsertion) {
-		return new NavigationHelperVisitor(navigationHelper, isInsertion);
+		return NavigationHelperVisitor.newChangeVisitor(navigationHelper, isInsertion);
 	}
 	
 
