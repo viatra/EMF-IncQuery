@@ -42,7 +42,7 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListLabelProv
 @SuppressWarnings("restriction")
 public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 
-	private static final String TITLE = "EMF-IncQuery query definition Wizard";
+	private static final String TITLE = "EMF-IncQuery Query Definition Wizard";
 	private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
 	private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
 	private Text patternText;

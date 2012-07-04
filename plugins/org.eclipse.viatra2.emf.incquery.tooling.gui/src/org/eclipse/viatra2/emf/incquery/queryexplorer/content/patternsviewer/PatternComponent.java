@@ -39,10 +39,21 @@ public abstract class PatternComponent {
 		return this.parent;
 	}
 	
+	/**
+	 * Sets the selected state of the {@link PatternComponent}.
+	 * 
+	 * @param selected the selected state
+	 */
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
 	
+	/**
+	 * Updates the checked state of the {@link PatternComponent} in the given {@link CheckboxTreeViewer} instance. 
+	 * 
+	 * @param treeViewer the {@link CheckboxTreeViewer} instance
+	 * @return true if all children elements of the {@link PatternComponent} are checked, false otherwise
+	 */
 	public abstract boolean updateSelection(CheckboxTreeViewer treeViewer);
 	
 	/**

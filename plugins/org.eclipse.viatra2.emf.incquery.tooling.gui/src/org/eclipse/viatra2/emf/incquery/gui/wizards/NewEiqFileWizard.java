@@ -59,6 +59,8 @@ import com.google.inject.Inject;
  *
  */
 public class NewEiqFileWizard extends Wizard implements INewWizard {
+	
+	private static final String NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE = "Create a new EMF-IncQuery Query Definition file.";
 	private NewEiqFileWizardContainerConfigurationPage page1;
 	private NewEiqFileWizardPatternConfigurationPage page2;
 	private ISelection selection;
@@ -78,6 +80,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 	public void addPages() {
 		page1 = new NewEiqFileWizardContainerConfigurationPage();
 		page1.init((IStructuredSelection) selection);
+		page1.setDescription(NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE);
 		page2 = new NewEiqFileWizardPatternConfigurationPage();
 		addPage(page1);
 		addPage(page2);
