@@ -135,6 +135,7 @@ public class NavigationHelperVisitor extends EMFVisitor {
 	@Override
 	public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
 		visitReference(source, feature, target);
+//		if (isInsertion) navigationHelper.considerForExpansion(target);
 	};
 	
 	private void visitReference(EObject source, EReference feature,

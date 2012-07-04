@@ -61,10 +61,12 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			} else {
 				observedFeatures.addAll(features);
 				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, features, noClass(), noDataType());
-				EMFModelComprehension.visitModel(visitor, notifier);
+				traverse(visitor);
 			}
 		}
 	}
+
+
 
 	@Override
 	public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
@@ -74,6 +76,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			for (EStructuralFeature f : features) {
 				for (Object key : contentAdapter.featureMap.keySet()) {
 					contentAdapter.featureMap.get(key).remove(f);
+					// TODO proper notification
 				}
 			}
 		}
@@ -87,7 +90,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			} else {
 				observedClasses.addAll(classes);
 				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, noFeature(), classes, noDataType());
-				EMFModelComprehension.visitModel(visitor, notifier);
+				traverse(visitor);
 			}
 		}
 	}
@@ -111,7 +114,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			} else {
 				observedDataTypes.addAll(dataTypes);
 				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, noFeature(), noClass(), dataTypes);
-				EMFModelComprehension.visitModel(visitor, notifier);
+				traverse(visitor);
 
 			}
 		}
@@ -159,7 +162,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 					delayedDataTypes.clear();
 					
 					final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, toGatherFeatures, toGatherClasses, toGatherDataTypes);
-					EMFModelComprehension.visitModel(visitor, notifier);
+					traverse(visitor);
 
 				}
 			}
@@ -168,4 +171,10 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 		}
 		return result;
 	}
+	
+	private void traverse(final NavigationHelperVisitor visitor) {
+		EMFModelComprehension.visitModel(visitor, notifier);
+		runAfterUpdateCallbacks();
+	}
+	
 }

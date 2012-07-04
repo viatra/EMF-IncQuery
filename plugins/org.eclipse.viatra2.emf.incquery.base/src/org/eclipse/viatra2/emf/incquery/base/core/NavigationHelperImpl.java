@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
@@ -50,6 +52,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
 	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
 	
+	/**
+	 * These global listeners will be called after updates.
+	 */
+	protected Set<Runnable> afterUpdateCallbacks;
+
+	
 	public NavigationHelperImpl(Notifier emfRoot, NavigationHelperType type) throws IncQueryBaseException {
 
 		if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
@@ -64,6 +72,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.observedDataTypes = new HashSet<EDataType>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
 //		this.visitor = new NavigationHelperVisitor(this);
+		this.afterUpdateCallbacks = new HashSet<Runnable>();
 
 		this.notifier = emfRoot;
 		this.navigationHelperType = type;
@@ -278,10 +287,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public void unregisterInstanceListener(Collection<EClass> classes, InstanceListener listener) {
 		Collection<EClass> restriction = this.instanceListeners.get(listener);
-		restriction.removeAll(classes);
-		if (restriction.size() == 0) {
-			this.instanceListeners.remove(listener);
-		}		
+		if (restriction != null) {
+			restriction.removeAll(classes);
+			if (restriction.size() == 0) {
+				this.instanceListeners.remove(listener);
+			}		
+		}
 	}
 	
 	@Override
@@ -297,9 +308,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
 		Collection<EStructuralFeature> restriction = this.featureListeners.get(listener);
-		restriction.removeAll(features);
-		if (restriction.size() == 0) {
-			this.featureListeners.remove(listener);
+		if (restriction != null) {
+			restriction.removeAll(features);
+			if (restriction.size() == 0) {
+				this.featureListeners.remove(listener);
+			}
 		}
 	}
 	
@@ -316,9 +329,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public void unregisterDataTypeListener(Collection<EDataType> types,	DataTypeListener listener) {
 		Collection<EDataType> restriction = this.dataTypeListeners.get(listener);
-		restriction.removeAll(types);
-		if (restriction.size() == 0) {
-			this.dataTypeListeners.remove(listener);
+		if (restriction != null) {
+			restriction.removeAll(types);
+			if (restriction.size() == 0) {
+				this.dataTypeListeners.remove(listener);
+			}
 		}
 	}
 	
@@ -339,5 +354,32 @@ public class NavigationHelperImpl implements NavigationHelper {
 	 */
 	public HashSet<EDataType> getObservedDataTypes() {
 		return observedDataTypes;
+	}
+
+	/**
+	 * These runnables will be called after updates by the manipulationListener at its own discretion.
+	 * Can be used e.g. to check delta monitors.
+	 */
+	@Override
+	public Set<Runnable> getAfterUpdateCallbacks() {
+		return afterUpdateCallbacks;
+	}	
+	/**
+	 * This will run after updates.
+	 */
+//	 * If there are any such, updates are settled before they are run. 
+	public void runAfterUpdateCallbacks() {
+		try {
+			if (!afterUpdateCallbacks.isEmpty()) {
+				//settle();
+				for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
+					runnable.run();
+				}
+			}
+		} catch (Exception ex) {
+			DefaultLoggerProvider.getDefaultLogger().logError(
+					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
+			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
+		}
 	}
 }

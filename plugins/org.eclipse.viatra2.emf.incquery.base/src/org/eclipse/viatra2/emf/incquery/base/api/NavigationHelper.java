@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.base.api;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -212,6 +213,13 @@ public interface NavigationHelper {
 	 * @param features the collection of features
 	 */
 	public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+
+	/**
+	 * A set of coarse-grained callbacks that will be invoked after the NavigationHelper index is changed.
+	 * Can be used e.g. to check delta monitors.
+	 * 
+	 */
+	public Set<Runnable> getAfterUpdateCallbacks();
 	
 
 }

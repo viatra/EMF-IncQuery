@@ -39,6 +39,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected Map<EClass, Set<EClass>> subTypeMap;
 	private Set<EClass> visitedClasses;
 	
+	// since last run of after-update callbacks
+	boolean isDirty = false;
+	
 	public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
 		this.navigationHelper = navigationHelper;
 		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
@@ -112,6 +115,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 					notification, ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
+		
+		if (isDirty) {
+			isDirty = false;
+			navigationHelper.runAfterUpdateCallbacks();
+		}
+
 	}	
 		
 	private void featureUpdate(boolean isInsertion, EObject notifier,  EStructuralFeature feature, Object value) {
@@ -322,6 +331,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				addToReversedFeatureMap(feature, holder);
 			}
 			
+			isDirty = true;
 			notifyFeatureListeners(holder, feature, value, true);
 		}
 	}
@@ -334,6 +344,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				removeFromReversedFeatureMap(feature, holder);
 			}
 			
+			isDirty = true;
 			notifyFeatureListeners(holder, feature, value, false);
 		}
 	}
@@ -345,6 +356,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			} else {
 				removeFromDataTypeMmap(type, value);
 			}
+			isDirty = true;
 			notifyDataTypeListeners(type, value, isInsertion);
 		}
 	}
@@ -373,6 +385,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				}
 			}
 			
+			isDirty = true;
 			notifyInstanceListeners(key, value, true);
 		}
 	}
@@ -403,6 +416,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 				}
 			}
 			
+			isDirty = true;
 			notifyInstanceListeners(key, value, false);
 		}
 	}

@@ -108,7 +108,7 @@ public class EMFModelComprehension {
 				) || (
 						feature instanceof EReference &&
 						((EReference)feature).isContainment() &&
-						!visitor.pruneSubtrees(source)
+						(!visitor.pruneSubtrees(source) || ((EReference)feature).getEOpposite() != null)
 				);
 	}
 
@@ -130,7 +130,7 @@ public class EMFModelComprehension {
 	{
 		if (feature instanceof EAttribute) {
 			if (!visitorPrunes) visitor.visitAttribute(source, (EAttribute)feature, target);
-			if (target instanceof FeatureMap.Entry) {
+			if (target instanceof FeatureMap.Entry) { // emulated derived edge based on FeatureMap
 				Entry entry = (FeatureMap.Entry) target;
 				final EStructuralFeature emulated = entry.getEStructuralFeature();
 				
@@ -149,6 +149,14 @@ public class EMFModelComprehension {
 			if (reference.isContainment()) {
 				if (!visitorPrunes) visitor.visitInternalContainment(source, reference, targetObject);
 				if (!visitor.pruneSubtrees(source)) visitObject(visitor, targetObject);
+				
+				final EReference opposite = reference.getEOpposite();
+				if (opposite != null) { // emulated derived edge based on container opposite
+					final boolean visitorPrunesEmulated = visitor.pruneFeature(opposite);
+					if (visitorPrunesEmulated && !unprunableFeature(visitor, targetObject, opposite)) return;
+					
+					visitFeatureInternal(visitor, targetObject, opposite, source, visitorPrunesEmulated);
+				}
 			} else {
 //			if (containedElements.contains(target)) 
 				if (!visitorPrunes) visitor.visitNonContainmentReference(source, reference, targetObject);

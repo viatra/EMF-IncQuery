@@ -26,6 +26,7 @@ import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 
 /**
@@ -45,10 +46,12 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	/**
 	 * @param boundary
 	 */
-	public BaseIndexListener(ReteBoundary<?> boundary, ParameterizedNavigationHelper baseIndex) {
+	public BaseIndexListener(ReteEngine<?> engine, ParameterizedNavigationHelper baseIndex) {
 		super();
-		this.boundary = boundary;
+		this.boundary = engine.getBoundary();
 		this.baseIndex = baseIndex;
+		engine.addDisconnectable(this);
+		
 	}
 	
 	public void ensure(EClass eClass) {

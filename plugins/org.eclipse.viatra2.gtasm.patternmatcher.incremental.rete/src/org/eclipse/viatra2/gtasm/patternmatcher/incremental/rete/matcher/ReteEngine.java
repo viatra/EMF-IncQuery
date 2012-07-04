@@ -12,13 +12,10 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.Disconnectable;
@@ -63,12 +60,7 @@ public class ReteEngine<PatternDescription> {
 												// while RETE does its job.
 	
 //	protected BlockingQueue<Throwable> caughtExceptions;
-	
-	/**
-	 * These runnables will be called after updates by the manipulationListener at its own discretion.
-	 */
-	protected Set<Runnable> afterUpdateCallbacks;
-	
+		
 	/**
 	 * @param context the context of the pattern matcher, conveying all information from the outside world.
 	 * @param reteThreads the number of threads to operate the RETE network with; 
@@ -80,7 +72,6 @@ public class ReteEngine<PatternDescription> {
 		super();
 		this.context = context;
 		this.reteThreads = reteThreads;
-		this.afterUpdateCallbacks = new HashSet<Runnable>();
 		// this.framework = new WeakReference<IFramework>(context.getFramework());
 
 		initEngine();
@@ -472,24 +463,5 @@ public class ReteEngine<PatternDescription> {
 //		return caughtExceptions.poll();
 //	}
 	
-	/**
-	 * These runnables will be called after updates by the manipulationListener at its own discretion.
-	 * Can be used e.g. to check delta monitors.
-	 */
-	public Set<Runnable> getAfterUpdateCallbacks() {
-		return afterUpdateCallbacks;
-	}	
-	/**
-	 * The manipulationListener will run this after updates.
-	 * If there are any such, updates are settled before they are run. 
-	 */
-	public void runAfterUpdateCallbacks() {
-		if (!afterUpdateCallbacks.isEmpty()) {
-			settle();
-			for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
-				runnable.run();
-			}
-		}
-	}
 
 }
