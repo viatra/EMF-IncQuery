@@ -11,14 +11,21 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class PatternsViewerFlatLabelProvider implements ILabelProvider {
+
+	protected PatternsViewerInput input;
+	
+	public PatternsViewerFlatLabelProvider(PatternsViewerInput input) {
+		this.input = input;
+	}
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
@@ -42,12 +49,24 @@ public class PatternsViewerFlatLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
+		ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
+
+		if (element instanceof PatternLeaf) {
+			return imageRegistry.get(IncQueryGUIPlugin.ICON_EIQ);
+		}
+		else if (element instanceof PatternComposite) {
+			if (!element.equals(input.getGeneratedPatternsRoot()) && !element.equals(input.getGenericPatternsRoot())) {
+				return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
+			}
+			else {
+				return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
+			}
+		}  
 		return null;
 	}
 
 	@Override
 	public String getText(Object element) {
-		PatternsViewerInput input = QueryExplorer.getInstance().getPatternsViewerInput();
 		if (element instanceof PatternComposite) {
 			PatternComposite composite = (PatternComposite) element;
 			

@@ -27,7 +27,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
  */
 public class PatternComposite extends PatternComponent {
 
-	private List<PatternComponent> children;
+	protected List<PatternComponent> children;
 	private Map<String, PatternComposite> fragmentMap;
 	
 	public PatternComposite(String patternNameFragment, PatternComposite parent) {

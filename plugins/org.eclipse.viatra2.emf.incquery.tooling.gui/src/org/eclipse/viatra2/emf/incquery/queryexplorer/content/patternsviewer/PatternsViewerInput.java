@@ -24,4 +24,9 @@ public class PatternsViewerInput {
 		children[1] = genericPatternsRoot;
 		return children;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName();
+	}
 }

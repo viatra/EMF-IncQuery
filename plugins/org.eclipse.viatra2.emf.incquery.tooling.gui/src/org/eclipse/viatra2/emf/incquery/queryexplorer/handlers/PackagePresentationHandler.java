@@ -25,12 +25,17 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 public class PackagePresentationHandler extends AbstractHandler {
 
 	private PatternsViewerFlatContentProvider flatCP = new PatternsViewerFlatContentProvider();
-	private PatternsViewerFlatLabelProvider flatLP = new PatternsViewerFlatLabelProvider();
+	private PatternsViewerFlatLabelProvider flatLP;
 	private PatternsViewerHierarchicalContentProvider hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
-	private PatternsViewerHierarchicalLabelProvider hierarchicalLP = new PatternsViewerHierarchicalLabelProvider();
+	private PatternsViewerHierarchicalLabelProvider hierarchicalLP;
 	
 	public PackagePresentationHandler() {
-		
+		//Constructor is called during eclipse shutdown and will result NPE because QueryExplorer view is disposed
+		if (QueryExplorer.getInstance() != null) {
+			PatternsViewerInput patternsViewerInput = QueryExplorer.getInstance().getPatternsViewerInput();
+			hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
+			flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
+		}
 	}
 	
 	@Override

@@ -35,7 +35,9 @@ public class CheckStateListener implements ICheckStateListener {
 		
 		if (event.getChecked()) {
 			PatternComponent component = (PatternComponent) element;
-			component.getParent().propagateSelectionToTop(component);
+			if (component.getParent() != null) {
+				component.getParent().propagateSelectionToTop(component);
+			}
 		}
 		else {
 			PatternComposite composite = (element instanceof PatternLeaf) ? ((PatternLeaf) element).getParent() : (PatternComposite) element;

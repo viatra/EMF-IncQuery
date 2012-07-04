@@ -60,4 +60,9 @@ public abstract class PatternComponent {
 	public String getPatternNameFragment() {
 		return patternNameFragment;
 	}
+	
+	@Override
+	public String toString() {
+		return patternNameFragment;
+	}
 }
