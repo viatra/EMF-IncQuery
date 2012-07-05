@@ -23,6 +23,7 @@ public class EcoreGenmodelRegistry {
 	Map<String, GenPackage> genpackageMap = Maps.newHashMap();
 
 	public EcoreGenmodelRegistry() {
+		if (Platform.getExtensionRegistry() == null) return;
 		IConfigurationElement[] packages = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(EPACKAGE_EXTENSION_ID);
 		for (IConfigurationElement packageExtension : packages) {
