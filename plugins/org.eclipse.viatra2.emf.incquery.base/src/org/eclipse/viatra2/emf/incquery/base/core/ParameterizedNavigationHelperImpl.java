@@ -53,14 +53,24 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	private Set<EDataType> noDataType() { return Collections.emptySet(); };
 	private Set<EStructuralFeature> noFeature() { return Collections.emptySet(); };
 	
+	
+	<T> Set<T> setMinus(Set<T> a, Set<T> b) {
+		Set<T> result = new HashSet<T>(a);
+		result.removeAll(b);
+		return result;
+	}
+	
 	@Override
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
 			if (delayTraversals) {
 				delayedFeatures.addAll(features);
 			} else {
+				features = setMinus(features, observedFeatures);
+
 				observedFeatures.addAll(features);
-				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, features, noClass(), noDataType());
+				final NavigationHelperVisitor visitor = 
+						new NavigationHelperVisitor.TraversingVisitor(this, features, noClass(), noClass(), noDataType());
 				traverse(visitor);
 			}
 		}
@@ -88,17 +98,35 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			if (delayTraversals) {
 				delayedClasses.addAll(classes);
 			} else {
-				observedClasses.addAll(classes);
-				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, noFeature(), classes, noDataType());
+				classes = setMinus(classes, directlyObservedClasses);
+				
+				final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
+				startObservingClasses(classes);		
+				final NavigationHelperVisitor visitor = 
+						new NavigationHelperVisitor.TraversingVisitor(this, noFeature(), classes, oldClasses, noDataType());
 				traverse(visitor);
 			}
+		}
+	}
+	/**
+	 * @param classes
+	 */
+	protected void startObservingClasses(Set<EClass> classes) {
+		directlyObservedClasses.addAll(classes);
+		getAllObservedClasses().addAll(classes);
+		for (EClass eClass : classes) {
+			final Set<EClass> subTypes = NavigationHelperContentAdapter.subTypeMap.get(eClass);
+			if (subTypes != null) {
+				allObservedClasses.addAll(subTypes);
+			}					
 		}
 	}
 
 	@Override
 	public void unregisterEClasses(Set<EClass> classes) {
 		if (classes != null) {
-			observedClasses.removeAll(classes);
+			directlyObservedClasses.removeAll(classes);
+			allObservedClasses = null;
 			delayedClasses.removeAll(classes);
 			for (EClass c : classes) {
 				contentAdapter.instanceMap.remove(c);
@@ -112,8 +140,11 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			if (delayTraversals) {
 				delayedDataTypes.addAll(dataTypes);
 			} else {
+				dataTypes = setMinus(dataTypes, observedDataTypes);
+				
 				observedDataTypes.addAll(dataTypes);
-				final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, noFeature(), noClass(), dataTypes);
+				final NavigationHelperVisitor visitor = 
+						new NavigationHelperVisitor.TraversingVisitor(this, noFeature(), noClass(), noClass(), dataTypes);
 				traverse(visitor);
 
 			}
@@ -147,8 +178,16 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 				result = callable.call();
 			} finally {
 				delayTraversals = false;
+				
+				delayedFeatures = setMinus(delayedFeatures, observedFeatures);
+				delayedClasses = setMinus(delayedClasses, directlyObservedClasses);
+				delayedDataTypes = setMinus(delayedDataTypes, observedDataTypes);
+				
+				boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClasses()).isEmpty();
+
 				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
-					observedClasses.addAll(delayedClasses);
+					final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
+					startObservingClasses(delayedClasses);
 					observedFeatures.addAll(delayedFeatures);
 					observedDataTypes.addAll(delayedDataTypes);
 					
@@ -161,9 +200,11 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 					delayedClasses.clear();
 					delayedDataTypes.clear();
 					
-					final NavigationHelperVisitor visitor = NavigationHelperVisitor.newTraversingVisitor(this, toGatherFeatures, toGatherClasses, toGatherDataTypes);
-					traverse(visitor);
-
+					if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
+						final NavigationHelperVisitor visitor = 
+								new NavigationHelperVisitor.TraversingVisitor(this, toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+						traverse(visitor);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -174,6 +215,9 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	
 	private void traverse(final NavigationHelperVisitor visitor) {
 		EMFModelComprehension.visitModel(visitor, notifier);
+		for (Notifier additional : additionalRoots) {
+			EMFModelComprehension.visitModel(visitor, additional);		
+		}
 		runAfterUpdateCallbacks();
 	}
 	

@@ -1,7 +1,11 @@
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -11,46 +15,85 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
-public class NavigationHelperVisitor extends EMFVisitor {
-
-	private NavigationHelperImpl navigationHelper;
-	Set<EStructuralFeature> features; 
-	Set<EClass> classes; 
-	Set<EDataType> dataTypes;
-	boolean isInsertion;
-	boolean descendHierarchy;
-	
-	
+public abstract class NavigationHelperVisitor extends EMFVisitor {
 	
 	/**
-	 * Creates a visitor for processing a single change event. Does not traverse the model. Uses all the observed types.
+	 * A visitor for processing a single change event. Does not traverse the model. Uses all the observed types.
 	 */
-	public static NavigationHelperVisitor newChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
-		return new NavigationHelperVisitor(
-				navigationHelper, 
-				navigationHelper.getObservedFeatures(), 
-				navigationHelper.getObservedClasses(), 
-				navigationHelper.getObservedDataTypes(), 
-				isInsertion, false);
+	public static class ChangeVisitor extends NavigationHelperVisitor {
+		public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
+			super(navigationHelper, isInsertion, false);
+		}
+		
+		@Override
+		protected boolean observesClass(EClass eClass) {
+			return (navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getAllObservedClasses().contains(eClass);
+		}
+		@Override
+		protected boolean observesDataType(EDataType type) {
+			return (navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedDataTypes().contains(type);
+		}
+		@Override
+		protected boolean observesFeature(EStructuralFeature feature) {
+			return (navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature);
+		}
 	}	
 	
 	/**
-	 * Creates a visitor for a single-pass traversal of the whole model, processing only the given types and inserting them.
+	 * A visitor for a single-pass traversal of the whole model, processing only the given types and inserting them.
 	 */
-	public static NavigationHelperVisitor newTraversingVisitor(NavigationHelperImpl navigationHelper,
-			Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType> dataTypes) {
-		return new NavigationHelperVisitor(navigationHelper, features, classes, dataTypes, true, true);
+	public static class TraversingVisitor extends NavigationHelperVisitor {
+		Set<EStructuralFeature> features; 
+		Set<EClass> newClasses; 
+		Set<EClass> oldClasses; // if decends from an old class, no need to add!
+		Map<EClass, Boolean> classObservationMap; // true for a class even if only a supertype is included in classes;
+		Set<EDataType> dataTypes;
+
+		
+		public TraversingVisitor (
+				NavigationHelperImpl navigationHelper, 
+				Set<EStructuralFeature> features, Set<EClass> newClasses, Set<EClass> oldClasses, Set<EDataType> dataTypes) 
+		{
+			super(navigationHelper, true, true);
+			this.features = features;
+			this.newClasses = newClasses;
+			this.oldClasses = oldClasses;
+			this.classObservationMap = new HashMap<EClass, Boolean>();
+			this.dataTypes = dataTypes;
+		}
+		
+		@Override
+		protected boolean observesClass(EClass eClass) {
+			if (navigationHelper.getType() == NavigationHelperType.ALL) return true;
+			Boolean observed = classObservationMap.get(eClass);
+			if (observed == null) {
+				final EList<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
+				final boolean overApprox = newClasses.contains(eClass) || !Collections.disjoint(eAllSuperTypes, newClasses);
+				observed = overApprox && !oldClasses.contains(eClass) && Collections.disjoint(eAllSuperTypes, oldClasses); 
+				classObservationMap.put(eClass, observed);
+			}
+			return observed;
+		}
+		@Override
+		protected boolean observesDataType(EDataType type) {
+			return (navigationHelper.getType() == NavigationHelperType.ALL) || dataTypes.contains(type);
+		}
+		@Override
+		protected boolean observesFeature(EStructuralFeature feature) {
+			return (navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(feature);
+		}
+
 	}
 
+	protected NavigationHelperImpl navigationHelper;
+	private NavigationHelperContentAdapter store;
+	boolean isInsertion;
+	boolean descendHierarchy;	
 
-	NavigationHelperVisitor(NavigationHelperImpl navigationHelper,
-			Set<EStructuralFeature> features, Set<EClass> classes,
-			Set<EDataType> dataTypes, boolean isInsertion, boolean descendHierarchy) {
+	NavigationHelperVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion, boolean descendHierarchy) {
 		super();
 		this.navigationHelper = navigationHelper;
-		this.features = features;
-		this.classes = classes;
-		this.dataTypes = dataTypes;
+		this.store = navigationHelper.getContentAdapter();
 		this.isInsertion = isInsertion;
 		this.descendHierarchy = descendHierarchy;
 	}
@@ -100,31 +143,42 @@ public class NavigationHelperVisitor extends EMFVisitor {
 	
 	@Override
 	public boolean pruneFeature(EStructuralFeature feature) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(feature)) return false; 
-		if (feature instanceof EAttribute && dataTypes.contains(((EAttribute)feature).getEAttributeType())) return false;
+		if (observesFeature(feature)) return false; 
+		if (feature instanceof EAttribute && observesDataType(((EAttribute)feature).getEAttributeType())) return false;
+		if (isInsertion && navigationHelper.isExpansionAllowed() && feature instanceof EReference && !((EReference)feature).isContainment()) return false;
 		return true;
 	}
+
+
+	protected abstract boolean observesFeature(EStructuralFeature feature);
+	protected abstract boolean observesDataType(EDataType type);
+	protected abstract boolean observesClass(EClass eClass);
 	
 	@Override
 	public void visitElement(EObject source) {
 		final EClass eClass = source.eClass();
-		if (isInsertion) {
-			navigationHelper.getContentAdapter().insertInstanceTuple(eClass, source);
-		} else {
-			navigationHelper.getContentAdapter().removeInstanceTuple(eClass, source);
+		store.maintainTypeHierarchy(eClass);
+		if (observesClass(eClass)){
+			if (isInsertion) {
+				store.insertInstanceTuple(eClass, source);
+			} else {
+				store.removeInstanceTuple(eClass, source);
+			}
 		}
 	}
 	
 	@Override
 	public void visitAttribute(EObject source, EAttribute feature, Object target) {
 		final EDataType eAttributeType = feature.getEAttributeType();
-		if (isInsertion) {
-			navigationHelper.getContentAdapter().insertFeatureTuple(feature, target, source);
+		if (observesFeature(feature)) {
+			if (isInsertion) {
+				store.insertFeatureTuple(feature, target, source);
+			}
+			else {
+				store.removeFeatureTuple(feature, target, source);
+			}
 		}
-		else {
-			navigationHelper.getContentAdapter().removeFeatureTuple(feature, target, source);
-		}
-		navigationHelper.getContentAdapter().dataTypeInstanceUpdate(eAttributeType, target, isInsertion);
+		if (observesDataType(eAttributeType)) store.dataTypeInstanceUpdate(eAttributeType, target, isInsertion);
 	};
 	
 	@Override
@@ -135,15 +189,16 @@ public class NavigationHelperVisitor extends EMFVisitor {
 	@Override
 	public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
 		visitReference(source, feature, target);
-//		if (isInsertion) navigationHelper.considerForExpansion(target);
+		if (isInsertion) navigationHelper.considerForExpansion(target);
 	};
 	
-	private void visitReference(EObject source, EReference feature,
-			EObject target) {
-		if (isInsertion)
-			navigationHelper.getContentAdapter().insertFeatureTuple(feature, target, source);
-		else
-			navigationHelper.getContentAdapter().removeFeatureTuple(feature, target, source);
+	private void visitReference(EObject source, EReference feature, EObject target) {
+		if (observesFeature(feature)) {
+			if (isInsertion)
+				store.insertFeatureTuple(feature, target, source);
+			else
+				store.removeFeatureTuple(feature, target, source);
+		}
 	}
 	
 
@@ -152,7 +207,7 @@ public class NavigationHelperVisitor extends EMFVisitor {
 //
 //			if (classes != null) {
 //				if ((navigationHelper.getType() == NavigationHelperType.ALL) || classes.contains(obj.eClass())) {
-//					navigationHelper.getContentAdapter().insertInstanceTuple(obj.eClass(), obj);
+//					store.insertInstanceTuple(obj.eClass(), obj);
 //				}
 //			}
 //
@@ -167,10 +222,10 @@ public class NavigationHelperVisitor extends EMFVisitor {
 //								EObjectEList<EObject> list = (EObjectEList<EObject>) o;
 //								Iterator<EObject> it = list.iterator();
 //								while (it.hasNext()) {
-//									navigationHelper.getContentAdapter().insertFeatureTuple(ref, it.next(), obj);
+//									store.insertFeatureTuple(ref, it.next(), obj);
 //								}
 //							} else {
-//								navigationHelper.getContentAdapter().insertFeatureTuple(ref, o, obj);
+//								store.insertFeatureTuple(ref, o, obj);
 //							}
 //						}
 //					}

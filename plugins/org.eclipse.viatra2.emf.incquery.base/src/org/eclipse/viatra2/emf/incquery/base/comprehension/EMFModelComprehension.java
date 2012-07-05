@@ -29,7 +29,11 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 /**
  * @author Bergmann Gábor
  * 
- * Does not visit derived (volatile) links, but interprets EFeatureMaps correctly.
+ * Does not directly visit derived (volatile) links, unless marked as a WellBehavingFeature.
+ * Derived edges are automatically interpreted correctly in these cases:
+ *  - EFeatureMaps
+ *  - eOpposites of containments
+ *  
  *
  */
 public class EMFModelComprehension {
@@ -119,6 +123,13 @@ public class EMFModelComprehension {
 	{
 		if (target == null) return;
 		if (unvisitableDirectly(feature)) return;	
+		visitFeatureInternalSimple(visitor, source, feature, target);
+	}
+
+
+	private static void visitFeatureInternalSimple(EMFVisitor visitor,
+			EObject source, EStructuralFeature feature, Object target) 
+	{
 		final boolean visitorPrunes = visitor.pruneFeature(feature);
 		if (visitorPrunes && !unprunableFeature(visitor, source, feature)) return;
 		
@@ -133,11 +144,9 @@ public class EMFModelComprehension {
 			if (target instanceof FeatureMap.Entry) { // emulated derived edge based on FeatureMap
 				Entry entry = (FeatureMap.Entry) target;
 				final EStructuralFeature emulated = entry.getEStructuralFeature();
+				final Object emulatedTarget = entry.getValue();
 				
-				final boolean visitorPrunesEmulated = visitor.pruneFeature(emulated);
-				if (visitorPrunesEmulated && !unprunableFeature(visitor, source, emulated)) return;
-				
-				visitFeatureInternal(visitor, source, emulated, entry.getValue(), visitorPrunesEmulated);
+				emulateUnvisitableFeature(visitor, source, emulated, emulatedTarget);
 			}
 		} else if (feature instanceof EReference) {
 			EReference reference = (EReference)feature;
@@ -151,11 +160,8 @@ public class EMFModelComprehension {
 				if (!visitor.pruneSubtrees(source)) visitObject(visitor, targetObject);
 				
 				final EReference opposite = reference.getEOpposite();
-				if (opposite != null) { // emulated derived edge based on container opposite
-					final boolean visitorPrunesEmulated = visitor.pruneFeature(opposite);
-					if (visitorPrunesEmulated && !unprunableFeature(visitor, targetObject, opposite)) return;
-					
-					visitFeatureInternal(visitor, targetObject, opposite, source, visitorPrunesEmulated);
+				if (opposite != null) { // emulated derived edge based on container opposite					
+					emulateUnvisitableFeature(visitor, targetObject, opposite, source);
 				}
 			} else {
 //			if (containedElements.contains(target)) 
@@ -165,6 +171,16 @@ public class EMFModelComprehension {
 //				visitor.visitExternalReference(source, reference, targetObject);
 		}
 		
+	}
+
+	/**
+	 * Emulates a derived edge, if it is not visited otherwise
+	 */
+	private static void emulateUnvisitableFeature(EMFVisitor visitor,
+			EObject source, final EStructuralFeature emulated, final Object target) 
+	{
+		if (unvisitableDirectly(emulated)) 
+			visitFeatureInternalSimple(visitor, source, emulated, target);
 	}
 
 }

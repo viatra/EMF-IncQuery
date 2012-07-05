@@ -46,7 +46,17 @@ public interface IPatternMatcherContext<PatternDescription> {
 	 */
 	GeneralizationQueryDirection allowedGeneralizationQueryDirection();
 	public enum GeneralizationQueryDirection {
-		SUPERTYPE_ONLY /*EMF*/,
+		/**
+		 * Supertypes can be queried. Notifications registered for a supertype will be delivered for all subtypes. 
+		 */
+		SUPERTYPE_ONLY_SMART_NOTIFICATIONS /*EMF based on IncQuery-Base*/,
+		/**
+		 * Supertypes can be queried. Notifications are delivered for the registered types. 
+		 */
+		SUPERTYPE_ONLY /*EMF legacy*/,
+		/**
+		 * Supertypes and subtypes can be queried. Notifications are delivered for the registered types. 
+		 */
 		BOTH /*VPM*/
 	}	
 	

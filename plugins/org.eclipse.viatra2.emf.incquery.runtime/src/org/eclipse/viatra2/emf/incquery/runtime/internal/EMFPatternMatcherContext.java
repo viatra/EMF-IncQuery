@@ -52,7 +52,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	 */
 	@Override
 	public GeneralizationQueryDirection allowedGeneralizationQueryDirection() {
-		return GeneralizationQueryDirection.SUPERTYPE_ONLY;
+		return GeneralizationQueryDirection.SUPERTYPE_ONLY_SMART_NOTIFICATIONS;
 	}
 
 	@Override

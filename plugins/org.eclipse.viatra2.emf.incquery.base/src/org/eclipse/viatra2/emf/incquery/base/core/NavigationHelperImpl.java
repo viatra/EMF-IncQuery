@@ -39,11 +39,14 @@ import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
-	protected HashSet<EClass> observedClasses;
+	protected HashSet<EClass> directlyObservedClasses;
+	protected HashSet<EClass> allObservedClasses = null; // including subclasses
 	protected HashSet<EDataType> observedDataTypes;
 	protected HashSet<EStructuralFeature> observedFeatures;
 	
 	protected Notifier notifier;
+	protected Set<Notifier> additionalRoots;
+	private boolean expansionAllowed;
 	protected NavigationHelperType navigationHelperType;
 //	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
@@ -51,6 +54,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	private Map<InstanceListener, Collection<EClass>> instanceListeners;
 	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
 	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
+	
 	
 	/**
 	 * These global listeners will be called after updates.
@@ -67,7 +71,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.instanceListeners = new HashMap<InstanceListener, Collection<EClass>>();
 		this.featureListeners = new HashMap<FeatureListener, Collection<EStructuralFeature>>();
 		this.dataTypeListeners = new HashMap<DataTypeListener, Collection<EDataType>>();
-		this.observedClasses = new HashSet<EClass>();
+		this.directlyObservedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
 		this.observedDataTypes = new HashSet<EDataType>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
@@ -75,6 +79,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.afterUpdateCallbacks = new HashSet<Runnable>();
 
 		this.notifier = emfRoot;
+		this.additionalRoots = new HashSet<Notifier>();
+		this.expansionAllowed = notifier instanceof ResourceSet;
 		this.navigationHelperType = type;
 
 //		if (this.navigationHelperType == NavigationHelperType.ALL) {
@@ -91,10 +97,6 @@ public class NavigationHelperImpl implements NavigationHelper {
 		return contentAdapter;
 	}
 	
-	public HashSet<EClass> getObservedClasses() {
-		return observedClasses;
-	}
-	
 	public HashSet<EStructuralFeature> getObservedFeatures() {
 		return observedFeatures;
 	}
@@ -106,6 +108,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public void dispose() {
 		notifier.eAdapters().remove(contentAdapter);
+		for (Notifier additional : additionalRoots) {
+			additional.eAdapters().remove(contentAdapter);		
+		}
 	}
 	
 	@Override
@@ -381,5 +386,55 @@ public class NavigationHelperImpl implements NavigationHelper {
 					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
+	}
+	
+	protected void considerForExpansion(EObject obj) {
+		if (expansionAllowed) {
+			Resource eResource = obj.eResource();
+			if (eResource != null && eResource.getResourceSet() == null) {
+				expandToAdditionalRoot(eResource);
+			}
+		}
+	}
+	
+	protected void expandToAdditionalRoot(Notifier root) {
+		if (additionalRoots.add(root)) {
+			root.eAdapters().add(contentAdapter);
+		}
+	}
+
+	/**
+	 * @return the expansionAllowed
+	 */
+	public boolean isExpansionAllowed() {
+		return expansionAllowed;
+	}
+
+	/**
+	 * @return the directlyObservedClasses
+	 */
+	public HashSet<EClass> getDirectlyObservedClasses() {
+		return directlyObservedClasses;
+	}
+	
+	public boolean isObserved(EClass clazz) {
+		return getType() == NavigationHelperType.ALL || getAllObservedClasses().contains(clazz);
+	}
+
+	/**
+	 * not just the directly observed classes, but also their known subtypes
+	 */
+	public HashSet<EClass> getAllObservedClasses() {
+		if (allObservedClasses == null) {
+			allObservedClasses = new HashSet<EClass>();
+			for (EClass eClass : directlyObservedClasses) {
+				allObservedClasses.add(eClass);
+				final Set<EClass> subTypes = NavigationHelperContentAdapter.subTypeMap.get(eClass);
+				if (subTypes != null) {
+					allObservedClasses.addAll(subTypes);
+				}
+			}
+		}
+		return allObservedClasses;
 	}
 }

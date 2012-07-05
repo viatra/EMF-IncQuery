@@ -35,9 +35,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	// edatatype -> multiset of value(s)
 	protected Map<EDataType, Map<Object, Integer>> dataTypeMap;
 	
+	// static for all eClasses whose instances were encountered at least once
+	private static Set<EClass> knownClasses = new HashSet<EClass>();
+	// static for eclass -> all subtypes in knownClasses
+	protected static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
+	
 	private NavigationHelperImpl navigationHelper;
-	protected Map<EClass, Set<EClass>> subTypeMap;
-	private Set<EClass> visitedClasses;
 	
 	// since last run of after-update callbacks
 	boolean isDirty = false;
@@ -46,9 +49,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.navigationHelper = navigationHelper;
 		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
 		this.instanceMap = new HashMap<EClass, Set<EObject>>();
-		this.subTypeMap = new HashMap<EClass, Set<EClass>>();
 		this.dataTypeMap = new HashMap<EDataType, Map<Object,Integer>>();
-		this.visitedClasses = new HashSet<EClass>();
 	}
 	
 	public Map<EStructuralFeature, Set<EObject>> getReversedFeatureMap() {
@@ -161,7 +162,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	
 	protected EMFVisitor visitor(final boolean isInsertion) {
-		return NavigationHelperVisitor.newChangeVisitor(navigationHelper, isInsertion);
+		return new NavigationHelperVisitor.ChangeVisitor(navigationHelper, isInsertion);
 	}
 	
 
@@ -324,70 +325,71 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 
 	public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
-			addToFeatureMap(feature, value, holder);
-			
-			if (reversedFeatureMap != null) {
-				addToReversedFeatureMap(feature, holder);
-			}
-			
-			isDirty = true;
-			notifyFeatureListeners(holder, feature, value, true);
+		//if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
+		addToFeatureMap(feature, value, holder);
+		
+		if (reversedFeatureMap != null) {
+			addToReversedFeatureMap(feature, holder);
 		}
+		
+		isDirty = true;
+		notifyFeatureListeners(holder, feature, value, true);
+		//}
 	}
 
 	public void removeFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
-			removeFromFeatureMap(feature, value, holder);
-			
-			if (reversedFeatureMap != null) {
-				removeFromReversedFeatureMap(feature, holder);
-			}
-			
-			isDirty = true;
-			notifyFeatureListeners(holder, feature, value, false);
+		//if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature)) {
+		removeFromFeatureMap(feature, value, holder);
+		
+		if (reversedFeatureMap != null) {
+			removeFromReversedFeatureMap(feature, holder);
 		}
+		
+		isDirty = true;
+		notifyFeatureListeners(holder, feature, value, false);
+		//}
 	}
 	
 	public void dataTypeInstanceUpdate(EDataType type, Object value, boolean isInsertion) {
-		if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedDataTypes().contains(type)) {
-			if (isInsertion) {
-				addToDataTypeMap(type, value); 
-			} else {
-				removeFromDataTypeMmap(type, value);
-			}
-			isDirty = true;
-			notifyDataTypeListeners(type, value, isInsertion);
+		//if ((navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedDataTypes().contains(type)) {
+		if (isInsertion) {
+			addToDataTypeMap(type, value); 
+		} else {
+			removeFromDataTypeMmap(type, value);
 		}
+		isDirty = true;
+		notifyDataTypeListeners(type, value, isInsertion);
+		//}
 	}
 
 	public void insertInstanceTuple(EClass key, EObject value) {
-		if (navigationHelper.getType() == NavigationHelperType.ALL || navigationHelper.getObservedClasses().contains(key)) {
-			if (instanceMap.containsKey(key)) {
-				instanceMap.get(key).add(value);
-			} else {
-				HashSet<EObject> set = new HashSet<EObject>();
-				set.add(value);
-				instanceMap.put(key, set);
-			}
-			
-			//put subtype information into cache
-			if (!visitedClasses.contains(key)) {
-				visitedClasses.add(key);
-				
-				for (EClass superType : key.getEAllSuperTypes()) {
-					Set<EClass> set = subTypeMap.get(superType);
-					if (set == null) {
-						set = new HashSet<EClass>();
-						subTypeMap.put(superType, set);
-					}
-					set.add(key);
-				}
-			}
-			
-			isDirty = true;
-			notifyInstanceListeners(key, value, true);
+		//if (navigationHelper.isObserved(key)) {
+		if (instanceMap.containsKey(key)) {
+			instanceMap.get(key).add(value);
+		} else {
+			HashSet<EObject> set = new HashSet<EObject>();
+			set.add(value);
+			instanceMap.put(key, set);
 		}
+		
+		isDirty = true;
+		notifyInstanceListeners(key, value, true);
+		//}
+	}
+
+
+    void removeInstanceTuple(EClass key, EObject value) {
+		// if (navigationHelper.isObserved(key)) {
+		if (instanceMap.containsKey(key)) {
+			instanceMap.get(key).remove(value);
+			if (instanceMap.get(key).size() == 0) {
+				instanceMap.remove(key);
+			}
+		}
+		
+		isDirty = true;
+		notifyInstanceListeners(key, value, false);
+		//}
 	}
 	
 	/**
@@ -406,18 +408,26 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			return false;
 		}
 	}
-
-    void removeInstanceTuple(EClass key, EObject value) {
-		if (navigationHelper.getType() == NavigationHelperType.ALL || navigationHelper.getObservedClasses().contains(key)) {
-			if (instanceMap.containsKey(key)) {
-				instanceMap.get(key).remove(value);
-				if (instanceMap.get(key).size() == 0) {
-					instanceMap.remove(key);
-				}
-			}
+    
+	/**
+	 * put subtype information into cache
+	 */
+	protected void maintainTypeHierarchy(EClass clazz) {
+		if (!knownClasses.contains(clazz)) {
+			knownClasses.add(clazz);
 			
-			isDirty = true;
-			notifyInstanceListeners(key, value, false);
+			for (EClass superType : clazz.getEAllSuperTypes()) {
+				if (navigationHelper.directlyObservedClasses.contains(superType)) {
+					navigationHelper.getAllObservedClasses().add(clazz);
+				}
+				
+				Set<EClass> set = subTypeMap.get(superType);
+				if (set == null) {
+					set = new HashSet<EClass>();
+					subTypeMap.put(superType, set);
+				}
+				set.add(clazz);
+			}
 		}
 	}
 	
