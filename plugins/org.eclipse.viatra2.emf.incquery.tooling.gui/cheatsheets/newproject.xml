@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cheatsheet
       title="Creating an EMF-IncQuery Project">
-   <intro>
+   <intro href="http://viatra.inf.mit.bme.hu/incquery/new/examples/school">
       <description>
-         Creating an EMF-IncQuery project requires the existence of an EMF project which contains the <b>domain model in Ecore format</b>. This cheat sheet relies on the School example from the EMF-IncQuery website, for demonstration purposes. After completing this sheet, you will have a fully functional EMF-IncQuery plug-in project with a simple sample query.
+         Creating an EMF-IncQuery project requires the existence of an EMF project which contains the <b>domain model in Ecore format</b>. This cheat sheet relies on the School example from the EMF-IncQuery website, for demonstration purposes (click the ? for more details). After completing this sheet, you will have a fully functional EMF-IncQuery plug-in project with a simple sample query.
       </description>
    </intro>
    <item
@@ -11,15 +11,13 @@
          skip="true"
          title="Importing the School example EMF project">
       <description>
-         In this step, we import an example EMF project with a simple domain model. If you are unfamiliar with EMF, you should read the help by pressing the ? icon at the right of the section title. If you already have an EMF project with a domain model, you can skip this section. In that case query patterns must be adjusted for your domain model.
+         In this step, we import an example EMF project with a simple domain model. If you are unfamiliar with EMF, you should read the help by pressing the ? icon at the right of the section title. If you already have an EMF project with a domain model, you can skip this section. In that case the query patterns in later steps must be adjusted for your domain model.
 <br/> <br/>
-TODO rewrite:
-
-To create the example EMF metamodel, perform the following steps:<br/><br/>
-(1) Create an <b>Empty EMF Project</b>, setting <b>library</b> as the project name.<br/><br/>
-(2) Create an <b>Ecore Diagram</b> named <b>library.ecore</b> inside the model folder.<br/><br/>
-(3) Draw three <b>EClasses</b>: Library, Writer and Book. Create an <b>EReference</b> from Library to Writer named writers, and from Library to Book called books. In the <b>Properties</b> view set <b>Upper Bound</b> to * and tick <b>Is Containment</b> for both. Create an <b>EReference</b> from Writer to Book named books, and set <b>Upper Bound</b> to *. Save the diagram. (Other references, attributes and enumerations are not used in this example, described in the EMF tutorial.)<br/><br/>
-(4) Create an <b>EMF Generator Model</b> named library.genmodel from the library.ecore file.<br/><br/>
+To create the example EMF metamodel, you may either import the domain project (<b>school</b>) from the git repository on the website, or perform the following steps:<br/><br/>
+(1) Create an <b>Empty EMF Project</b>, setting <b>school</b> as the project name.<br/><br/>
+(2) Create an <b>Ecore Diagram</b> named <b>school.ecore</b> inside the model folder.<br/><br/>
+(3) Draw the domain model according to the metamodel diagram as shown on http://viatra.inf.mit.bme.hu/incquery/new/examples/school. Save the diagram. <br/><br/>
+(4) Create an <b>EMF Generator Model</b> named school.genmodel from the school.ecore file.<br/><br/>
 (5) Open the genmodel, and <b>Generate Model Code</b> since it is a requirement of IncQuery. For demonstrational purposes also <b>Generate Edit Code</b> and <b>Generate Editor Code</b>.
       </description>
    </item>
@@ -29,51 +27,13 @@ To create the example EMF metamodel, perform the following steps:<br/><br/>
       <description>
          
       </description>
-      <subitem
-            label="Issue: File | New | Project | EMF-IncQuery | Create New EMF-IncQuery Project">
+      <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Project">
          <command
                required="false"
                serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.newproject)"/>
       </subitem>
-      <subitem
-            label="Give a name to the project (e.g. library.incQuery), then press Finish.">
-      </subitem>
+      <subitem label="Give a name to the project (e.g. school.incquery), then press Next."></subitem>
+      <subitem label="On the second wizard page, add a reference to the school.genmodel Generator Model by pushing Add and browsing to the school.genmodel file in the school project. Click on Finish to proceed."></subitem>
    </item>
-   <item
-         title="Loading EMF metamodels">
-      <description>
-      You need to specify the EMF metamodels (Ecore models) that contain the types that your queries will use. These Ecore models will be loaded into the EMF-IncQuery project, more specifically into the VIATRA2 Model Space located at models/model.vpml. <br/>
-      Note, that EMF model code must be generated.<br/><br/>
-      
-      Caution: you will need to repeat this task whenever you add references to new metamodels. <br/>Additionally, you will have to repeat the final step only whenever you modify the content of your (already referenced) Ecore models.
-      </description>
-                             <subitem
-                                   label="Open the generator model of your new EMF-IncQuery project, found at models/generator.incquery.">
-                             </subitem>
-                             <subitem
-                                   label="Right-click in the opened tree editor, issue Load Resource... and select the generator model of the desired Ecore model. (We need the .genmodel and NOT the .ecore!)">
-                             </subitem>
-                             <subitem
-                                   label="Create a new Ecore Model child element for Inc Query Genmodel.">
-                             </subitem>
-                             <subitem
-                                   label="In the Properties view set the Models reference, then save the generator.incquery file.">
-                             </subitem>
-                             <subitem
-                                   label="Finally, select the Inc Query Genmodel root element in the tree editor, or the genmodel.incquery file itself in Project Explorer, then right-click and issue Load/reload referenced EMF GenModels into EMF-IncQuery project. This will initialize the VIATRA2 model space (located at models/model.vpml in your project) and import the Ecore metamodels.">
-                             </subitem>
-       
-   </item>
-  
-   <item
-         title="Generating the plug-in code">
-      <description>
-         Right click on the models/generator.incquery and issue <b>EMF-IncQuery | Generate EMF-IncQuery Source Code</b>. The result of code generation will be visible under the src-gen folder. 
-         <br/><br/>
-         Congratulation! Your code is ready to perform incremental queries over EMF models. <br/>
-* Reference the created plug-in from your code, and use the user-friendly query functions generated in the <b>patternmatchers.myMachine</b> package.<br/>
-* Use signature classes in <b>signatures.myMachine</b> to represent a single match of a pattern, with handy overloads for comparison and readable string output.<br/>
-* The internally used patternbuilders.myMachine package contains a representation of the parsed patterns, responsible for the actual pattern matching. <br/><br/>
-      </description>
-   </item>
+   
 </cheatsheet>
