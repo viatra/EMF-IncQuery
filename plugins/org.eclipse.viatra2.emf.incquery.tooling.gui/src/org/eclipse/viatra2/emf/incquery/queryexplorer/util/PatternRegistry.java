@@ -15,17 +15,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
@@ -42,7 +41,9 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 public class PatternRegistry {
 
 	private static PatternRegistry instance;
-	private Map<IFile, PatternModel> registeredPatterModels;
+	
+	//maps the eiq files to the list of patterns which were registered from that file 
+	private Map<IFile, List<Pattern>> registeredPatterModels;
 	private List<Pattern> activePatterns;
 	private Map<String, Pattern> patternNameMap;
 	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
@@ -55,7 +56,7 @@ public class PatternRegistry {
 	}
 
 	protected PatternRegistry() {
-		registeredPatterModels = new HashMap<IFile, PatternModel>();
+		registeredPatterModels = new HashMap<IFile, List<Pattern>>();
 		patternNameMap = new HashMap<String, Pattern>();
 		activePatterns = new ArrayList<Pattern>();
 	}
@@ -91,7 +92,6 @@ public class PatternRegistry {
 	 * @return the list of patterns registered
 	 */
 	public List<Pattern> registerPatternModel(IFile file, PatternModel pm) {
-		this.registeredPatterModels.put(file, pm);
 		List<Pattern> newPatterns = new ArrayList<Pattern>();
 
 		if (pm != null) {
@@ -106,15 +106,22 @@ public class PatternRegistry {
 					}
 				}
 				else {
-					String message = "A pattern with the fully qualified name " + patternFqn +" already exists in the pattern registry.";
+					String message = "A pattern with the fully qualified name '" + patternFqn +"' already exists in the pattern registry.";
 					IncQueryRuntimeException ex = new IncQueryRuntimeException(message);
+					IStatus status = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, message, ex);
+					logger.log(status);
 					
-					logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, message,	ex));
+					ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+							null, "Error occured during pattern registration", status);
 				}
 			}
 		}
+		
+		if (!newPatterns.isEmpty()) {
+			this.registeredPatterModels.put(file, newPatterns);
+		}
 
-		return newPatterns;
+		return Collections.unmodifiableList(newPatterns);
 	}
 
 	/**
@@ -130,8 +137,13 @@ public class PatternRegistry {
 		}
 	}
 
-	public PatternModel getPatternModelForFile(IFile file) {
-		return registeredPatterModels.get(file);
+	/**
+	 * Returns the (unmodifiable) list of registered patterns from the given file.
+	 * @param file the eiq file instance
+	 * @return the list of patterns registered
+	 */
+	public List<Pattern> getRegisteredPatternsForFile(IFile file) {
+		return Collections.unmodifiableList(registeredPatterModels.get(file));
 	}
 
 	/**
@@ -145,20 +157,19 @@ public class PatternRegistry {
 	}
 
 	/**
-	 * Unregisters the patterns within the given eiq file.
+	 * Unregisters the patterns within the given eiq file 
+	 * and returns the list of those patterns that were currently active from the given file.
 	 * 
-	 * @param file
-	 *            the eiq file instance
-	 * @return the set of removed patterns
+	 * @param file the eiq file instance
+	 * @return the list of removed patterns
 	 */
-	public Set<Pattern> unregisterPatternModel(IFile file) {
-		Set<Pattern> removedPatterns = new HashSet<Pattern>();
-		PatternModel pm = this.registeredPatterModels.remove(file);
+	public List<Pattern> unregisterPatternModel(IFile file) {
+		List<Pattern> removedPatterns = new ArrayList<Pattern>();
+		List<Pattern> patterns = this.registeredPatterModels.remove(file);
 
-		if (pm != null) {
-			for (Pattern p : pm.getPatterns()) {
-				String patternFqn = CorePatternLanguageHelper
-						.getFullyQualifiedName(p);
+		if (patterns != null) {
+			for (Pattern p : patterns) {
+				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
 				if (activePatterns.remove(p)) {
 					removedPatterns.add(p);
 				}
@@ -166,7 +177,7 @@ public class PatternRegistry {
 			}
 		}
 
-		return removedPatterns;
+		return Collections.unmodifiableList(removedPatterns);
 	}
 
 	/**
@@ -196,6 +207,7 @@ public class PatternRegistry {
 	 * @return the list of active patterns
 	 */
 	public List<Pattern> getActivePatterns() { 
+		//Must return a new copy of the active patterns list
 		return new ArrayList<Pattern>(activePatterns);
 	}
 
@@ -232,10 +244,10 @@ public class PatternRegistry {
 	 */
 	public List<Pattern> getPatterns() {
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		for (PatternModel pm : registeredPatterModels.values()) {
-			patterns.addAll(pm.getPatterns());
+		for (List<Pattern> pm : registeredPatterModels.values()) {
+			patterns.addAll(pm);
 		}
-		return patterns;
+		return Collections.unmodifiableList(patterns);
 	}
 
 	/**
@@ -256,9 +268,8 @@ public class PatternRegistry {
 	 */
 	public IFile getFileForPattern(Pattern pattern) {
 		if (pattern != null && patternNameMap.containsValue(pattern)) {
-			for (Entry<IFile, PatternModel> entry : registeredPatterModels
-					.entrySet()) {
-				EList<Pattern> patterns = entry.getValue().getPatterns();
+			for (Entry<IFile, List<Pattern>> entry : registeredPatterModels.entrySet()) {
+				List<Pattern> patterns = entry.getValue();
 				if (patterns.size() > 0 && patterns.contains(pattern)) {
 					return entry.getKey();
 				}
