@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
 public abstract class NavigationHelperVisitor extends EMFVisitor {
@@ -156,7 +157,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 	
 	@Override
 	public void visitElement(EObject source) {
-		final EClass eClass = source.eClass();
+		EClass eClass = source.eClass();
+		if(eClass.eIsProxy()) eClass = (EClass) EcoreUtil.resolve(eClass, source);
+	
 		store.maintainTypeHierarchy(eClass);
 		if (observesClass(eClass)){
 			if (isInsertion) {

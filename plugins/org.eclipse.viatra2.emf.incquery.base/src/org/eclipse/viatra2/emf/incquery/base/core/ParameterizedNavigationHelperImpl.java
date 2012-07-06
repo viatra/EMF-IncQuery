@@ -21,7 +21,10 @@ import java.util.concurrent.Callable;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
@@ -60,9 +63,22 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 		return result;
 	}
 	
+	<T extends EObject> Set<T> resolveAll(Set<T> a) {
+		Set<T> result = new HashSet<T>(a);
+		for (T t : a) {
+			if (t.eIsProxy())
+				result.add((T) EcoreUtil.resolve(t, (ResourceSet)null));				
+			else
+				result.add(t);
+		}
+		return result;
+	}
+	
+	
 	@Override
 	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
+			features = resolveAll(features);
 			if (delayTraversals) {
 				delayedFeatures.addAll(features);
 			} else {
@@ -81,6 +97,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	@Override
 	public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
 		if (features != null) {
+			features = resolveAll(features);
 			observedFeatures.removeAll(features);
 			delayedFeatures.removeAll(features);
 			for (EStructuralFeature f : features) {
@@ -91,10 +108,11 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 			}
 		}
 	}
-
+	
 	@Override
 	public void registerEClasses(Set<EClass> classes) {
 		if (classes != null) {
+			classes = resolveAll(classes);
 			if (delayTraversals) {
 				delayedClasses.addAll(classes);
 			} else {
@@ -125,6 +143,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	@Override
 	public void unregisterEClasses(Set<EClass> classes) {
 		if (classes != null) {
+			classes = resolveAll(classes);
 			directlyObservedClasses.removeAll(classes);
 			allObservedClasses = null;
 			delayedClasses.removeAll(classes);
@@ -137,6 +156,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	@Override
 	public void registerEDataTypes(Set<EDataType> dataTypes) {
 		if (dataTypes != null) {
+			dataTypes = resolveAll(dataTypes);
 			if (delayTraversals) {
 				delayedDataTypes.addAll(dataTypes);
 			} else {
@@ -154,6 +174,7 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	@Override
 	public void unregisterEDataTypes(Set<EDataType> dataTypes) {
 		if (dataTypes != null) {
+			dataTypes = resolveAll(dataTypes);
 			observedDataTypes.removeAll(dataTypes);
 			delayedDataTypes.removeAll(dataTypes);
 			for (EDataType dt : dataTypes) {
