@@ -29,7 +29,28 @@
          </annotationparameter>
       </annotation>
       <annotation
-            name="Off">
+            name="DisplayInExplorer">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="mode"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            name="OrderBy">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="key"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="direction"
+               type="string">
+         </annotationparameter>
       </annotation>
    </extension>
 

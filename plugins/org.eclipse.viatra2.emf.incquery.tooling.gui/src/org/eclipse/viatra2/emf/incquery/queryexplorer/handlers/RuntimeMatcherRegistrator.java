@@ -58,7 +58,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 		if (queryExplorerInstance != null) {	
 			MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
 			PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot();
-			PatternModel oldParsedModel = PatternRegistry.getInstance().getPatternModelForFile(file);
+			List<Pattern> oldParsedModel = PatternRegistry.getInstance().getRegisteredPatternsForFile(file);
 			PatternModel newParsedModel = dbUtil.parseEPM(file);
 			
 			//if no patterns were registered before, open the patterns viewer
@@ -85,7 +85,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			
 			//remove labels from pattern registry for the corresponding pattern model
 			if (oldParsedModel != null) {
-				for (Pattern pattern : oldParsedModel.getPatterns()) {
+				for (Pattern pattern : oldParsedModel) {
 					viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
 				}
 			}
