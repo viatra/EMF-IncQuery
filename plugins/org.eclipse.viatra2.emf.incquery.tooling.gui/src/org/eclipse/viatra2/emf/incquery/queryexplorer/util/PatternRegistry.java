@@ -143,7 +143,8 @@ public class PatternRegistry {
 	 * @return the list of patterns registered
 	 */
 	public List<Pattern> getRegisteredPatternsForFile(IFile file) {
-		return Collections.unmodifiableList(registeredPatterModels.get(file));
+		final List<Pattern> list = registeredPatterModels.get(file);
+		return list == null ? Collections.<Pattern>emptyList() : Collections.unmodifiableList(list);
 	}
 
 	/**
