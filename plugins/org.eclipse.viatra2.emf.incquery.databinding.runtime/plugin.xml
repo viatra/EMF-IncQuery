@@ -37,6 +37,21 @@
                type="string">
          </annotationparameter>
       </annotation>
+      <annotation
+            name="OrderBy">
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="key"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="direction"
+               type="string">
+         </annotationparameter>
+      </annotation>
    </extension>
 
 </plugin>
