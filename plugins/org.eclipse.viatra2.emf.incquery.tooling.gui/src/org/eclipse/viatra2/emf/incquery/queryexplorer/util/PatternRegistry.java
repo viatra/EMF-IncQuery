@@ -12,6 +12,8 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +22,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
@@ -39,7 +45,8 @@ public class PatternRegistry {
 	private Map<IFile, PatternModel> registeredPatterModels;
 	private List<Pattern> activePatterns;
 	private Map<String, Pattern> patternNameMap;
-
+	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
+	
 	public synchronized static PatternRegistry getInstance() {
 		if (instance == null) {
 			instance = new PatternRegistry();
@@ -89,15 +96,20 @@ public class PatternRegistry {
 
 		if (pm != null) {
 			for (Pattern p : pm.getPatterns()) {
-				Annotation annotation = DatabindingUtil.getAnnotation(p,
-						DatabindingUtil.OFF_ANNOTATION);
-
-				if (annotation == null) {
-					String patternFqn = CorePatternLanguageHelper
-							.getFullyQualifiedName(p);
-					patternNameMap.put(patternFqn, p);
-					newPatterns.add(p);
-					activePatterns.add(p);
+				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
+				if (!patternNameMap.containsKey(patternFqn)) {
+					String mode = DatabindingUtil.getModeOfDisplayInExplorer(p);
+					if (!(mode != null && mode.equalsIgnoreCase("off"))) {
+						patternNameMap.put(patternFqn, p);
+						newPatterns.add(p);
+						activePatterns.add(p);
+					}
+				}
+				else {
+					String message = "A pattern with the fully qualified name " + patternFqn +" already exists in the pattern registry.";
+					IncQueryRuntimeException ex = new IncQueryRuntimeException(message);
+					
+					logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, message,	ex));
 				}
 			}
 		}
@@ -209,10 +221,8 @@ public class PatternRegistry {
 	 * 
 	 * @return the list of names of the patterns
 	 */
-	public List<String> getPatternNames() {
-		List<String> patterns = new ArrayList<String>();
-		patterns.addAll(patternNameMap.keySet());
-		return patterns;
+	public Collection<String> getPatternNames() {
+		return Collections.unmodifiableCollection(patternNameMap.keySet());
 	}
 
 	/**
@@ -233,10 +243,8 @@ public class PatternRegistry {
 	 * 
 	 * @return the list of eiq files
 	 */
-	public List<IFile> getFiles() {
-		List<IFile> files = new ArrayList<IFile>();
-		files.addAll(registeredPatterModels.keySet());
-		return files;
+	public Collection<IFile> getFiles() {
+		return Collections.unmodifiableCollection(registeredPatterModels.keySet());
 	}
 
 	/**

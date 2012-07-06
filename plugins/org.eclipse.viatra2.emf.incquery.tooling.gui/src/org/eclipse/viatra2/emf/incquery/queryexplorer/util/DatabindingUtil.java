@@ -76,7 +76,7 @@ public class DatabindingUtil {
 	private static List<Pattern> generatedPatterns;
 	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories;
 	
-	public static final String OFF_ANNOTATION = "Off";
+	public static final String DISPLAY_IN_EXPLORER_ANNOTATION = "DisplayInExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
 	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
@@ -112,12 +112,27 @@ public class DatabindingUtil {
 		Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new HashMap<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
 		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			Pattern pattern = factory.getPattern();
-			Annotation annotation = DatabindingUtil.getAnnotation(pattern, DatabindingUtil.OFF_ANNOTATION);
-			if (annotation == null) {
+			String mode = getModeOfDisplayInExplorer(pattern);
+			if (mode != null && mode.equalsIgnoreCase("on")) {
 				factories.put(pattern, factory);
 			}
 		}
 		return factories;
+	}
+
+	public static String getModeOfDisplayInExplorer(Pattern pattern) {
+		Annotation annotation = getAnnotation(pattern, DISPLAY_IN_EXPLORER_ANNOTATION);
+		if (annotation == null) {
+			return null;
+		}
+		else {
+			for (AnnotationParameter ap : annotation.getParameters()) {
+				if (ap.getName().equalsIgnoreCase("mode")) {
+					return ((StringValueImpl) ap.getValue()).getValue();
+				}
+			}
+			return null;
+		}
 	}
 	
 	public static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {

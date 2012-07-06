@@ -29,7 +29,13 @@
          </annotationparameter>
       </annotation>
       <annotation
-            name="Off">
+            name="DisplayInExplorer">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="mode"
+               type="string">
+         </annotationparameter>
       </annotation>
    </extension>
 
