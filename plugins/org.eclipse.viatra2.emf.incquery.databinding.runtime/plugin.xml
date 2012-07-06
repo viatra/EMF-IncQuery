@@ -40,13 +40,13 @@
       <annotation
             name="OrderBy">
          <annotationparameter
-               mandatory="false"
+               mandatory="true"
                multiple="false"
                name="key"
                type="string">
          </annotationparameter>
          <annotationparameter
-               mandatory="false"
+               mandatory="true"
                multiple="false"
                name="direction"
                type="string">
