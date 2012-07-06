@@ -30,8 +30,10 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 			if (genmodel != null) {
 				String modelPluginID = genmodel.getModelPluginID();
 				try {
-					if (!ProjectGenerationHelper.checkBundleDependency(project,
-							modelPluginID)) {
+					if (modelPluginID != null
+							&& !modelPluginID.isEmpty()
+							&& !ProjectGenerationHelper.checkBundleDependency(
+									project, modelPluginID)) {
 						error(String.format(
 								"To refer elements from the Generator Model %s the bundle %s must be added as dependency",
 								genmodel.eResource().getURI().toString(),
