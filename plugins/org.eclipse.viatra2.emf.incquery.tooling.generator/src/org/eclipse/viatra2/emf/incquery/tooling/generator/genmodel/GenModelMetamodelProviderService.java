@@ -2,6 +2,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IFile;
@@ -39,11 +40,11 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		implements IEiqGenmodelProvider {
 
 	@Inject
-	IJavaProjectProvider projectProvider;
+	private IJavaProjectProvider projectProvider;
 	@Inject
-	IQualifiedNameConverter qualifiedNameConverter;
+	private IQualifiedNameConverter qualifiedNameConverter;
 	@Inject
-	ICrossReferenceSerializer refSerializer;
+	private ICrossReferenceSerializer refSerializer;
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
@@ -176,21 +177,16 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
 			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
 		}
-		GenPackage genPackage = null;
-		try {
-			genPackage = Iterables.find(genPackageIterable,
+		Iterable<GenPackage> genPackages = Iterables.filter(genPackageIterable,
 					new Predicate<GenPackage>() {
 						public boolean apply(GenPackage genPackage) {
 							return packageNsUri.equals(genPackage
 									.getEcorePackage().getNsURI());
 						}
 					});
-		} catch (NoSuchElementException e) {
-			// Ignoring the exception here - no found genpackage is handled
-			// right after
-		}
-		if (genPackage != null) {
-			return genPackage;
+		Iterator<GenPackage> it = genPackages.iterator();
+		if (it.hasNext()) {
+			return it.next();
 		} else {
 			// TODO genmodels should not be loaded if ecore is already loaded #192
 			//return genmodelRegistry.findGenPackage(packageNsUri, set);
