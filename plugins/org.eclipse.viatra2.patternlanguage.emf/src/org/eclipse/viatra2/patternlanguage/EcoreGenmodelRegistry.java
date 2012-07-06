@@ -19,11 +19,13 @@ public class EcoreGenmodelRegistry {
 	private static final String EPACKAGE_EXTENSION_ID = "org.eclipse.emf.ecore.generated_package";
 	private static final String GENMODEL_ATTRIBUTE = "genModel";
 	private static final String URI_ATTRIBUTE = "uri";
-	Map<String, String> genmodelUriMap = Maps.newHashMap();
-	Map<String, GenPackage> genpackageMap = Maps.newHashMap();
+	private Map<String, String> genmodelUriMap = Maps.newHashMap();
+	private Map<String, GenPackage> genpackageMap = Maps.newHashMap();
 
 	public EcoreGenmodelRegistry() {
-		if (Platform.getExtensionRegistry() == null) return;
+		if (Platform.getExtensionRegistry() == null) {
+			return;
+		}
 		IConfigurationElement[] packages = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(EPACKAGE_EXTENSION_ID);
 		for (IConfigurationElement packageExtension : packages) {
@@ -33,7 +35,7 @@ public class EcoreGenmodelRegistry {
 				if (genmodelUri != null && !genmodelUri.isEmpty()) {
 					String uri = packageExtension.getAttribute(URI_ATTRIBUTE);
 					if (URI.createURI(genmodelUri).isRelative()) {
-						genmodelUriMap.put(uri, String.format("/%s/%s",
+						genmodelUriMap.put(uri, String.format("platform:/plugin/%s/%s",
 								packageExtension.getContributor().getName(),
 								genmodelUri));
 					} else {
