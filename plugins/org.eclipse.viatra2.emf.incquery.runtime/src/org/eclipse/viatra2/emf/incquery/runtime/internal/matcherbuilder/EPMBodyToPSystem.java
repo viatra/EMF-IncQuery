@@ -241,7 +241,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	 */
 	protected void gatherCheckConstraint(final CheckConstraint check) {
 		XExpression expression = check.getExpression();
-		new XBaseCheck<StubHandle>(this, expression);
+		new XBaseCheck<StubHandle>(this, expression, pattern);
 	}
 
 	/**

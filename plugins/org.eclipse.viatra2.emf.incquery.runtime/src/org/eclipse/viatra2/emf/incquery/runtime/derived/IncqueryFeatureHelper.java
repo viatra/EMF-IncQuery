@@ -128,7 +128,9 @@ public class IncqueryFeatureHelper {
 				//featureList.put(feature,handler);
 				
 				if(matcherFactory == null) {
-					throw new IncQueryRuntimeException("Matcher factory not set!");
+					throw new IncQueryRuntimeException(
+							String.format("EMF-IncQuery can not provide the value of derived feature %s as no matcher factory was given.", feature),
+							"No matcher factory for derived feature handler!");
 				}
 				Resource eResource = source.eResource();
 				if(eResource != null) {
@@ -144,7 +146,9 @@ public class IncqueryFeatureHelper {
 					DefaultLoggerProvider.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
 				}
 				if(matcher == null) {
-					throw new IncQueryRuntimeException("Matcher cannot be initiated!");
+					throw new IncQueryRuntimeException(
+							String.format("Could not create matcher for pattern %d defining feature %s.", matcherFactory.getPattern(), feature),
+							"Derived feature handler could not initiate matcher.");
 				}/* else {
 					if(!featureList.containsKey(feature)) {
 						featureList.put(feature, matcher);

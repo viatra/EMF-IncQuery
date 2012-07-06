@@ -88,7 +88,9 @@ public class IncQueryEngine {
 		this.emfRoot = emfRoot;
 		
 		if (! (emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet)) 
-			throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
+			throw new IncQueryRuntimeException(
+					IncQueryRuntimeException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
+					IncQueryRuntimeException.INVALID_EMFROOT_SHORT);
 	}	
 	
 	/**
@@ -108,7 +110,10 @@ public class IncQueryEngine {
 			try {
 				baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
 			} catch (IncQueryBaseException e) {
-				throw new IncQueryRuntimeException("Could not initialize EMF-IncQuery base index", e);
+				throw new IncQueryRuntimeException(
+						"Could not initialize EMF-IncQuery base index", 
+						"Could not initialize base index", 
+						e);
 			}
 		}
 		return baseIndex;

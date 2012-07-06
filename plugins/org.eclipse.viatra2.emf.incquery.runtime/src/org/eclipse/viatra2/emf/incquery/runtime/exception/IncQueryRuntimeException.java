@@ -22,17 +22,30 @@ public class IncQueryRuntimeException extends RuntimeException{
 	public static final String RELATIONAL_PARAM_UNSUITABLE = "The parameters are not acceptable by the operation"; 
 	public static final String PATTERN_MATCHER_PROBLEM = "The following error occurred during the preparation of the generated pattern matcher";
 	public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
-	public static final String INVALID_EMFROOT = "Incremental query engine can only be attached on the contents of an EMF EObject, Resource, or ResourceSet.";
+
+	public static final String INVALID_EMFROOT = "Incremental query engine can only be attached on the contents of an EMF EObject, Resource, or ResourceSet. Received instead: ";
+	public static final String INVALID_EMFROOT_SHORT = "Invalid EMF model root";
 //    public static final String EMF_MODEL_PROCESSING_ERROR = "Error while processing the EMF model";
 	
-	public IncQueryRuntimeException(String s) {
+	private final String shortMessage;
+	
+	public IncQueryRuntimeException(String s, String shortMessage) {
 		super(s);
+		this.shortMessage = shortMessage;
 	}
 	public IncQueryRuntimeException(RetePatternBuildException e) {
 		super(PATTERN_MATCHER_PROBLEM+": " + e.getMessage(), e);
+		this.shortMessage = e.getMessage();
 	}
-	public IncQueryRuntimeException(String s, Exception e) {
+	public IncQueryRuntimeException(String s, String shortMessage, Exception e) {
 		super(s+": " + e.getMessage(), e);
+		this.shortMessage = shortMessage;
 	}
+
+
+	public String getShortMessage() {
+		return shortMessage;
+	}
+	
 
 }

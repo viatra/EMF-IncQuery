@@ -38,9 +38,10 @@ import com.google.inject.Injector;
  *
  */
 public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, StubHandle> {
-
+	
 	private final XExpression xExpression;
 	private final EPMBodyToPSystem<StubHandle, ?> pGraph;
+	private final Pattern pattern;
 	private final IQualifiedNameProvider nameProvider;
 //	private final IExpressionInterpreter interpreter = 
 //			IncQueryRuntimePlugin.getDefault().getInjector().getInstance(IExpressionInterpreter.class);
@@ -50,10 +51,11 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 	 * @param pSystem
 	 * @param affectedVariables
 	 */
-	public XBaseCheck(EPMBodyToPSystem<StubHandle, ?> pGraph, XExpression xExpression) {
+	public XBaseCheck(EPMBodyToPSystem<StubHandle, ?> pGraph, XExpression xExpression, Pattern pattern) {
 		super(pGraph.pSystem, getExternalPNodeReferencesOfXExpression(pGraph, xExpression));
 		this.pGraph = pGraph;
 		this.xExpression = xExpression;
+		this.pattern = pattern;
 		
 		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
 		nameProvider = injector.getInstance(IQualifiedNameProvider.class);
@@ -88,7 +90,7 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 //		}
 //		return 
 //				gtBuildable.buildGTASMTermChecker(topTerm, variableIndices, variableEquivalence, null, stub);
-		XBaseEvaluator evaluator = new XBaseEvaluator(xExpression, qualifiedNameMap);
+		XBaseEvaluator evaluator = new XBaseEvaluator(xExpression, qualifiedNameMap, pattern);
 		return buildable.buildPredicateChecker(evaluator, null, indices, stub);
 		
 	}

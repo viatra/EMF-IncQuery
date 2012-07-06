@@ -107,7 +107,7 @@ public class PatternRegistry {
 				}
 				else {
 					String message = "A pattern with the fully qualified name '" + patternFqn +"' already exists in the pattern registry.";
-					IncQueryRuntimeException ex = new IncQueryRuntimeException(message);
+					IncQueryRuntimeException ex = new IncQueryRuntimeException(message, "Duplicate qualified name of pattern");
 					IStatus status = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, message, ex);
 					logger.log(status);
 					

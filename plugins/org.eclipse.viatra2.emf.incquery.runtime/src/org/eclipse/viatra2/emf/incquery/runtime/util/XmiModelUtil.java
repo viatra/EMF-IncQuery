@@ -84,7 +84,9 @@ public class XmiModelUtil {
 		if (resourceURI != null) {
 			return resourceURI;
 		}
-		throw new IncQueryRuntimeException("Global XMI resource not found in bundle/project: " + bundleName);
+		throw new IncQueryRuntimeException(
+				String.format("EMF-IncQuery pattern storage %s not found in bundle/project: %s", GLOBAL_EIQ_FILENAME, bundleName),
+				"Missing " + GLOBAL_EIQ_FILENAME);
 	}
 
 	/**

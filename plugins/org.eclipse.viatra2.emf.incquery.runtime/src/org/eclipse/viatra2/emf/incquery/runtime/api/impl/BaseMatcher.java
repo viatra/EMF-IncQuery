@@ -57,7 +57,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		if (!admissible) 
 			throw new IncQueryRuntimeException(
 				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
-						CorePatternLanguageHelper.getFullyQualifiedName(pattern)));
+						CorePatternLanguageHelper.getFullyQualifiedName(pattern)), 
+				"Pattern failed a check");
 
 	}
 
