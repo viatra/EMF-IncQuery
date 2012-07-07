@@ -40,9 +40,6 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	private TcRelation<V> tc = null;
 	private TcRelation<V> dtc = null;
 	private ArrayList<ITcObserver<V>> observers;
-	public static long sumOfUpdateTime = 0;
-	public static long updateCount = 0;
-	public static long initTime = 0;
 	
 	/**
 	 * Constructs a new DRED algorithm and initializes the transitive closure relation with the given graph data source.
@@ -77,11 +74,9 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 * Initializes the transitive closure relation.
 	 */
 	private void initTc() {
-		long tmp = System.nanoTime();
 		DFSAlg<V> dfsa = new DFSAlg<V>(this.graphDataSource);
 		this.setTcRelation(dfsa.getTcRelation());
 		this.graphDataSource.detachObserver(dfsa);
-		initTime = (System.nanoTime() - tmp);
 	}
 	
 	/*
@@ -90,10 +85,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 */
 	@Override
 	public void edgeInserted(V source, V target) {
-		if (!source.equals(target)) {
-			updateCount++;
-			long tmp = System.nanoTime();
-			
+		if (!source.equals(target)) {			
 			Set<V> tupStarts = null;
 			Set<V> tupEnds = null;
 			Set<Tuple<V>> tuples = new HashSet<Tuple<V>>();
@@ -143,8 +135,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					}
 				}
 			}
-			
-			sumOfUpdateTime += (System.nanoTime() - tmp);
+
 			notifyTcObservers(tuples, 1);
 		}
 	}
@@ -156,8 +147,6 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	@Override
 	public void edgeDeleted(V source, V target) {		
 		if (!source.equals(target)) {
-			updateCount++;
-			long tmp = System.nanoTime();
 			
 			//Computing overestimate, Descartes product of A and B sets, where
 			// A: those nodes from which source is reachable
@@ -242,7 +231,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					}
 				}
 			}
-			sumOfUpdateTime += (System.nanoTime() - tmp);
+
 			notifyTcObservers(tuples.keySet(), -1);
 		}
 	}

@@ -11,14 +11,10 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.alg.dred;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class TcRelation<V> implements Serializable {
@@ -26,15 +22,15 @@ public class TcRelation<V> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	// tc(a,b) means that b is transitively reachable from a
-	private HashMap<V, HashSet<V>> tuplesForward;
+	private Map<V, Set<V>> tuplesForward;
 	
 	// data structure to efficiently get those nodes from which a given node is reachable
 	// symmetric to tuplesForward
-	private HashMap<V, HashSet<V>> tuplesBackward;
+	private Map<V, Set<V>> tuplesBackward;
 	
 	public TcRelation() {
-		this.tuplesForward = new HashMap<V, HashSet<V>>();
-		this.tuplesBackward = new HashMap<V, HashSet<V>>();
+		this.tuplesForward = new HashMap<V, Set<V>>();
+		this.tuplesBackward = new HashMap<V, Set<V>>();
 	}
 		
 	public void clear() {
@@ -49,7 +45,7 @@ public class TcRelation<V> implements Serializable {
 	public void removeTuple(V source, V target) {
 		
 		//removing tuple from 'forward' tc relation
-		HashSet<V> sSet = tuplesForward.get(source);
+		Set<V> sSet = tuplesForward.get(source);
 		if (sSet != null) {
 			sSet.remove(target);
 			if (sSet.size() == 0) 
@@ -57,7 +53,7 @@ public class TcRelation<V> implements Serializable {
 		}
 		
 		//removing tuple from 'backward' tc relation
-		HashSet<V> tSet = tuplesBackward.get(target);
+		Set<V> tSet = tuplesBackward.get(target);
 		if (tSet != null) {
 			tSet.remove(source);
 			if (tSet.size() == 0) 
@@ -77,9 +73,9 @@ public class TcRelation<V> implements Serializable {
 		
 		//symmetric modification, it is sufficient to check the return value in one collection
 		//adding tuple to 'forward' tc relation
-		HashSet<V> sSet = tuplesForward.get(source);
+		Set<V> sSet = tuplesForward.get(source);
 		if (sSet == null) {
-			HashSet<V> newSet = new HashSet<V>();
+			Set<V> newSet = new HashSet<V>();
 			newSet.add(target);
 			tuplesForward.put(source, newSet);
 		}
@@ -88,9 +84,9 @@ public class TcRelation<V> implements Serializable {
 		}
 		
 		//adding tuple to 'backward' tc relation
-		HashSet<V> tSet = tuplesBackward.get(target);
+		Set<V> tSet = tuplesBackward.get(target);
 		if (tSet == null) {
-			HashSet<V> newSet = new HashSet<V>();
+			Set<V> newSet = new HashSet<V>();
 			newSet.add(source);
 			tuplesBackward.put(target, newSet);
 			return true;
@@ -166,14 +162,14 @@ public class TcRelation<V> implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		String s = "TcRelation = ";
+		StringBuilder sb = new StringBuilder("TcRelation = ");
 		
 		for (V source : this.tuplesForward.keySet()) {
 			for (V target : this.tuplesForward.get(source)) {
-				s+="("+source+","+target+") ";
+				sb.append("("+source+","+target+") ");
 			}
 		}
-		return s;
+		return sb.toString();
 	}
 	
 	/**
@@ -194,62 +190,39 @@ public class TcRelation<V> implements Serializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TcRelation) {
-			TcRelation<V> aTR = (TcRelation<V>) obj;
-			
-			for (V source : aTR.tuplesForward.keySet()) {
-				for (V target : aTR.tuplesForward.get(source)) {
-					if (!this.containsTuple(source, target)) return false;
-				}
-			}
-			
-			for (V source : this.tuplesForward.keySet()) {
-				for (V target : this.tuplesForward.get(source)) {
-					if (!aTR.containsTuple(source, target)) return false;
-				}
-			}
-			
+		if (this == obj) {
 			return true;
 		}
-		return false;
+		if((obj == null) || (obj.getClass() != this.getClass())) {
+			return false;
+		}
+
+		TcRelation<V> aTR = (TcRelation<V>) obj;
+
+		for (V source : aTR.tuplesForward.keySet()) {
+			for (V target : aTR.tuplesForward.get(source)) {
+				if (!this.containsTuple(source, target)) return false;
+			}
+		}
+
+		for (V source : this.tuplesForward.keySet()) {
+			for (V target : this.tuplesForward.get(source)) {
+				if (!aTR.containsTuple(source, target)) return false;
+			}
+		}
+			
+		return true;
 	}
 	
-	public void marshall(String path) {
-		FileOutputStream fos = null;
-		ObjectOutputStream out = null;
-		try	{
-			fos = new FileOutputStream(path);
-			out = new ObjectOutputStream(fos);
-			out.writeObject(this);
-			out.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static TcRelation unmarshall(String path) {
-		FileInputStream fis = null;
-		ObjectInputStream in = null;
-		TcRelation tc = null;
-		try {
-			fis = new FileInputStream(path);
-			in = new ObjectInputStream(fis);
-			tc = (TcRelation) in.readObject();
-			in.close();
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		} 
-		catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return tc;
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + tuplesForward.hashCode();
+		hash = 31 * hash + tuplesBackward.hashCode();
+		return hash;
 	}
 
-	public HashMap<V, HashSet<V>> getTuplesForward() {
+	public Map<V, Set<V>> getTuplesForward() {
 		return tuplesForward;
 	}
 }
