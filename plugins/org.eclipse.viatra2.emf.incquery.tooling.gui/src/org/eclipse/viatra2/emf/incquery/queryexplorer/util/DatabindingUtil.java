@@ -135,14 +135,14 @@ public class DatabindingUtil {
 		}
 	}
 	
-	public static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
+	public synchronized static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
 		if (generatedMatcherFactories == null) {
 			generatedMatcherFactories = collectGeneratedMatcherFactories();
 		}
 		return Collections.unmodifiableCollection(generatedMatcherFactories.values());
 	}
 	
-	public static List<Pattern> getGeneratedPatterns() {
+	public synchronized static List<Pattern> getGeneratedPatterns() {
 		if (generatedPatterns == null) {
 			generatedPatterns = collectGeneratedPatterns();
 		}
