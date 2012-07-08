@@ -108,11 +108,11 @@ public class PatternRegistry {
 				else {
 					String message = "A pattern with the fully qualified name '" + patternFqn +"' already exists in the pattern registry.";
 					IncQueryRuntimeException ex = new IncQueryRuntimeException(message, "Duplicate qualified name of pattern");
-					IStatus status = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, message, ex);
+					IStatus status = new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, message, ex);
 					logger.log(status);
 					
 					ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-							null, "Error occured during pattern registration", status);
+							null, "Warning during pattern registration", status);
 				}
 			}
 		}
