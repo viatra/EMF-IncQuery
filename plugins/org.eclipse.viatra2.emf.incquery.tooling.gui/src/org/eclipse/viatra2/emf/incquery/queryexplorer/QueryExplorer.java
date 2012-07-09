@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -24,6 +26,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -47,6 +51,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLab
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
@@ -233,18 +238,28 @@ public class QueryExplorer extends ViewPart {
 			Object value = event.getObservableValue().getValue();
 			
 			if (value instanceof ObservablePatternMatcher) {
-//				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
-//				if (observableMatcher.getMatcher() != null) {
-//					tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
-//					String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher().getPattern());
-//					List<PatternComponent> components = patternsViewerInput.find(patternFqn);
-//					if (components != null) {
-//						patternsTreeViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
-//					}
-//				}
-//				else {
-//					clearTableViewer();
-//				}
+				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
+				if (observableMatcher.getMatcher() != null) {
+					tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
+					String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher().getPattern());
+					Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+					List<PatternComponent> components = null;
+					if (PatternRegistry.getInstance().isGenerated(pattern)) {
+						components = patternsViewerInput.getGeneratedPatternsRoot().find(patternFqn);
+						components.add(0, patternsViewerInput.getGeneratedPatternsRoot());
+					}
+					else {
+						components = patternsViewerInput.getGenericPatternsRoot().find(patternFqn);
+						components.add(0, patternsViewerInput.getGenericPatternsRoot());
+					}
+					
+					if (components != null) {
+						patternsTreeViewer.setSelection(new TreeSelection(new TreePath(components.toArray())));
+					}
+				}
+				else {
+					clearTableViewer();
+				}
 			}
 			else if (value instanceof ObservablePatternMatch) {
 				ObservablePatternMatch match = (ObservablePatternMatch) value;
