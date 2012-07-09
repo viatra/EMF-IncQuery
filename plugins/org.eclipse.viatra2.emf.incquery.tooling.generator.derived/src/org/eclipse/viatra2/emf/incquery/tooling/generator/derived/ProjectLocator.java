@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.tooling.generator.derived;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 
 /**
  * @author Abel Hegedus
@@ -19,8 +25,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
  */
 public final class ProjectLocator {
   
-  public static IProject locateProject(String path) {
-    return ResourcesPlugin.getWorkspace().getRoot().getProject(path);
+  public static IJavaProject locateProject(String path) {
+    IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
+    ArrayList<String> dependencies = new ArrayList<String>();
+    dependencies.add("org.eclipse.viatra2.emf.incquery.runtime");
+    try {
+      ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
+    } catch (CoreException e) {
+      e.printStackTrace();
+    }
+    return JavaCore.create(project);
   }
   
   private ProjectLocator() {

@@ -209,9 +209,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	def private findJavaProject(GenPackage pckg){
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
-		val project = ProjectLocator::locateProject(projectDir)
-		ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
-		JavaCore::create(project)
+		//val project = ProjectLocator::locateProject(projectDir)
+		ProjectLocator::locateProject(projectDir)
+		//ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
+		//JavaCore::create(project)
 	}
 	
 	def private findJavaFile(GenPackage pckg, GenClass genSourceClass, IJavaProject javaProject){
