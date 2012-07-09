@@ -4,30 +4,35 @@
    <intro href="http://viatra.inf.mit.bme.hu/incquery/language">
       <description>
          Queries return a set of EMF instance model objects that match the criteria specified in a query pattern. 
-         To learn more about the graph pattern-based query language, push (?).</description>
+         To learn more about the graph pattern-based query language, push (?).
+      </description>
    </intro>
    
     <item title="Creating a new query definition">
       <description>
-      You need to specify the EMF metamodels (Ecore models) that contain the types that your queries will use. These Ecore models will be loaded into the EMF-IncQuery project.<br/>
-      It is highly recommended that the EMF model code is generated prior to defining model queries with EMF-IncQuery.<br/><br/>
-      
-     
+        The EMF-IncQuery Query Definition should be located inside a <b>package</b>. You can specify the target package on the first page of the wizard. Make sure that the filename ends with the <b>.eiq</b> extension and that it is locally unique. Inside .eiq files, the query definition patterns are identified by their names (analogously to Java classes -- the notably exception is that an .eiq file may contain multiple query definition patterns). Make sure that the patterns have unique names too.<br/><br/>
+      	You need to specify the EMF domain (Ecore) models that contain the types that your queries will use. These Ecore models will be referenced by your EMF-IncQuery project. EMF-IncQuery can make use of EPackages that have been registered in the global Ecore registry (either by code or by plugin.xml), or you can also directly reference Ecore domains by using <b>.eiqgen</b> files. It is highly recommended that the EMF model code is generated prior to defining model queries with EMF-IncQuery.<br/><br/>
+      	Query definition patterns can have <b>header parameters</b>
       </description>
-      
-      <subitem label="New query def wizard start"></subitem>
-    
-      <subitem skip="true" label="2nd page: give your pattern a name"></subitem>
-    
-    
-      <subitem skip="true" label="2nd page: import packages"></subitem>
-    
-    
-      <subitem skip="true" label="2nd page: pattern parameters"></subitem>
-    
-    
+      <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Query Definition">
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqfile)"/>
+      </subitem>
+      <subitem skip="true" label="On the second wizard page, give your pattern a unique name"></subitem>
+      <subitem skip="true" label="Specify packages to import"></subitem>
+      <subitem skip="true" label="Specify the header parameters of the pattern"></subitem>
    </item>
    
+   <item title="Adding an EMF-IncQuery Generator Model">
+   		<description>
+   			TODO
+   		</description>
+   		<subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Generator Model">
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
+      	</subitem>
+      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added"></subitem>
+      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button"></subitem>
+      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary"></subitem>
+   </item>
    
    <item
          title="Writing query patterns">
@@ -69,7 +74,7 @@ TODO: some explanation on the meaning of this pattern.
       </description>
    </item>
    
-   <item title="Executing queries on instance models with the Query Explorer"
+   <item title="Executing queries on instance models with the Query Explorer">
       <description>
       TODO
       </description>
