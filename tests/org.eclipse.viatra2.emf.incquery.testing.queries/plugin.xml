@@ -19,7 +19,7 @@
    </extension>
    <extension
          id="extension.derived.org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
-         point="org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features">
+         point="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features">
       <wellbehaving-derived-feature
             classifier-name="MatchRecord"
             feature-name="role"
@@ -36,7 +36,7 @@
    </extension>
    <extension
          id="extension.derived.org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
-         point="org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features">
+         point="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features">
       <wellbehaving-derived-feature
             classifier-name="MatchSubstitutionRecord"
             feature-name="derivedValue"
