@@ -213,22 +213,14 @@ public class TableViewerUtil {
 		else if (Character.class.getName().toLowerCase().matches(classFqn)) {
 			return true;
 		}
-		else if (Byte.class.getName().toLowerCase().matches(classFqn)) {
+		else if (Byte.class.getName().toLowerCase().matches(classFqn)
+				|| Short.class.getName().toLowerCase().matches(classFqn)
+				|| Integer.class.getName().toLowerCase().matches(classFqn)
+				|| Long.class.getName().toLowerCase().matches(classFqn)) {
 			return value.matches("[0-9]*");
 		}
-		else if (Short.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*");
-		}
-		else if (Integer.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*");
-		}
-		else if (Long.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*");
-		}
-		else if (Float.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*\\.[0-9]*");
-		}
-		else if (Double.class.getName().toLowerCase().matches(classFqn)) {
+		else if (Float.class.getName().toLowerCase().matches(classFqn)
+				|| Double.class.getName().toLowerCase().matches(classFqn)) {
 			return value.matches("[0-9]*\\.?[0-9]*");
 		}
 		else if (String.class.getName().toLowerCase().matches(classFqn)) {
