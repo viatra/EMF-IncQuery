@@ -113,8 +113,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		Resource res = pattern.eResource();
 		if (res != null && projectProvider != null) {
 			ResourceSet set = res.getResourceSet();
-			IJavaProject javaProject = projectProvider.getJavaProject(set);
-			return getGeneratorModel(javaProject.getProject(), set);
+			return getGeneratorModel(set);
 		}
 		throw new IllegalArgumentException(
 				"The project of the context cannot be determined.");
@@ -127,7 +126,9 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	public IncQueryGeneratorModel getGeneratorModel(ResourceSet set) {
 		if (projectProvider != null) {
 			IJavaProject javaProject = projectProvider.getJavaProject(set);
-			return getGeneratorModel(javaProject.getProject(), set);
+			if (javaProject != null) {
+				return getGeneratorModel(javaProject.getProject(), set);
+			}
 		}
 		return null;
 	}
