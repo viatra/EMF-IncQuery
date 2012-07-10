@@ -29,12 +29,12 @@
          </annotationparameter>
       </annotation>
       <annotation
-            name="DisplayInExplorer">
+            name="QueryExplorer">
          <annotationparameter
-               mandatory="true"
+               mandatory="false"
                multiple="false"
-               name="mode"
-               type="string">
+               name="display"
+               type="boolean">
          </annotationparameter>
       </annotation>
       <annotation

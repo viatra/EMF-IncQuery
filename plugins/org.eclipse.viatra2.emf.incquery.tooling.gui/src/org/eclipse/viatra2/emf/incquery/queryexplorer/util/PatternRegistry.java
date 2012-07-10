@@ -98,8 +98,8 @@ public class PatternRegistry {
 			for (Pattern p : pm.getPatterns()) {
 				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
 				if (!patternNameMap.containsKey(patternFqn)) {
-					String mode = DatabindingUtil.getModeOfDisplayInExplorer(p);
-					if (!(mode != null && mode.equalsIgnoreCase("off"))) {
+					Boolean annotationValue = DatabindingUtil.getValueOfQueryExplorerAnnotation(p);
+					if (!(annotationValue != null && !annotationValue)) {
 						patternNameMap.put(patternFqn, p);
 						newPatterns.add(p);
 						activePatterns.add(p);

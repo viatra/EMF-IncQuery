@@ -53,6 +53,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParame
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
@@ -76,7 +77,7 @@ public class DatabindingUtil {
 	private static List<Pattern> generatedPatterns;
 	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories;
 	
-	public static final String DISPLAY_IN_EXPLORER_ANNOTATION = "DisplayInExplorer";
+	public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
 	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
@@ -112,26 +113,26 @@ public class DatabindingUtil {
 		Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new HashMap<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
 		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			Pattern pattern = factory.getPattern();
-			String mode = getModeOfDisplayInExplorer(pattern);
-			if (mode != null && mode.equalsIgnoreCase("on")) {
+			Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
+			if (annotationValue != null && annotationValue) {
 				factories.put(pattern, factory);
 			}
 		}
 		return factories;
 	}
 
-	public static String getModeOfDisplayInExplorer(Pattern pattern) {
-		Annotation annotation = getAnnotation(pattern, DISPLAY_IN_EXPLORER_ANNOTATION);
+	public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
+		Annotation annotation = getAnnotation(pattern, QUERY_EXPLORER_ANNOTATION);
 		if (annotation == null) {
 			return null;
 		}
 		else {
 			for (AnnotationParameter ap : annotation.getParameters()) {
-				if (ap.getName().equalsIgnoreCase("mode")) {
-					return ((StringValueImpl) ap.getValue()).getValue();
+				if (ap.getName().equalsIgnoreCase("display")) {
+					return Boolean.valueOf(((BoolValueImpl) ap.getValue()).isValue());
 				}
 			}
-			return null;
+			return Boolean.valueOf(true);
 		}
 	}
 	
