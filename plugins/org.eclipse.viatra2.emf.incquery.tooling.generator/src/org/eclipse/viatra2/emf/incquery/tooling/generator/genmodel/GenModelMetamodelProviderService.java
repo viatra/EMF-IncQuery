@@ -205,7 +205,6 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (it.hasNext()) {
 			return it.next();
 		} else if (fallbackToPackageRegistry){
-			// TODO genmodels should not be loaded if ecore is already loaded #192
 			return genmodelRegistry.findGenPackage(packageNsUri, set);
 		}
 		return null;
