@@ -94,7 +94,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public EPackage loadEPackage(final String packageUri, ResourceSet set) {
-		GenPackage loadedPackage = findGenPackage(set, packageUri);
+		GenPackage loadedPackage = findGenPackage(set, packageUri, false);
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
@@ -170,7 +170,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public GenPackage findGenPackage(EObject ctx, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
-		return findGenPackage(eiqGenModel, packageNsUri);
+		return findGenPackage(eiqGenModel, ctx.eResource().getResourceSet(), packageNsUri, true);
 	}
 	
 	@Override
@@ -181,10 +181,15 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public GenPackage findGenPackage(ResourceSet set, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
-		return findGenPackage(eiqGenModel, packageNsUri);		
+		return findGenPackage(eiqGenModel, set, packageNsUri, true);		
 	}
 	
-	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, final String packageNsUri) {
+	private GenPackage findGenPackage(ResourceSet set, final String packageNsUri, boolean fallbackToPackageRegistry) {
+		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
+		return findGenPackage(eiqGenModel, set, packageNsUri, fallbackToPackageRegistry);
+	}
+	
+	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri, boolean fallbackToPackageRegistry) {
 		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
 		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
 			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
@@ -199,11 +204,11 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		Iterator<GenPackage> it = genPackages.iterator();
 		if (it.hasNext()) {
 			return it.next();
-		} else {
+		} else if (fallbackToPackageRegistry){
 			// TODO genmodels should not be loaded if ecore is already loaded #192
-			//return genmodelRegistry.findGenPackage(packageNsUri, set);
-			return null;
+			return genmodelRegistry.findGenPackage(packageNsUri, set);
 		}
+		return null;
 	}
 	
 	public boolean isGeneratorModelDefined(IProject project) {
