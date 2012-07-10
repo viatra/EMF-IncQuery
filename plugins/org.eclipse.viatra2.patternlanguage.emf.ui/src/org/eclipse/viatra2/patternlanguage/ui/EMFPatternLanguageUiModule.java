@@ -19,6 +19,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTyp
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
+import org.eclipse.viatra2.patternlanguage.ui.labeling.EMFPatternLanguageHoverProvider;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -79,4 +80,9 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	public Class<? extends ITypeProvider> bindITypeProvider() {
 		return GenModelBasedTypeProvider.class;
 	}
+	
+	public Class<? extends org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider> bindIEObjectHoverProvider() {
+		return EMFPatternLanguageHoverProvider.class;
+	}
+
 }
