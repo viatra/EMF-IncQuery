@@ -11,7 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -30,9 +33,12 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactory
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.xmi.XmiModelSupport;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.builder.BuilderParticipant;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
@@ -40,6 +46,7 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -74,6 +81,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	
 	@Inject 
 	private GenerateMatcherFactoryExtension matcherFactoryExtensionGenerator;
+	
+	@Inject
+	private IEiqGenmodelProvider genmodelProvider;
 	
 	@Override
 	public void build(final IBuildContext context, IProgressMonitor monitor)
@@ -147,6 +157,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		final IProject project = context.getBuiltProject();
 		ExtensionGenerator generator = new ExtensionGenerator();
 		generator.setProject(project);
+		calculateEMFModelProjects(deltaResource, project);
 		TreeIterator<EObject> it = deltaResource.getAllContents();
 		while (it.hasNext()) {
 			EObject obj = it.next();
@@ -159,6 +170,26 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		}
 	}
 
+	private void calculateEMFModelProjects(Resource deltaResource, IProject project) {
+		TreeIterator<EObject> it = deltaResource.getAllContents();
+		while (it.hasNext()) {
+			EObject obj = it.next();
+			if (obj instanceof PatternModel) {
+				PatternModel patternModel = (PatternModel) obj;
+				for (PackageImport packageImport : patternModel.getImportPackages()) {
+					GenPackage genPackage = genmodelProvider.findGenPackage(packageImport, packageImport.getEPackage());
+					if (genPackage != null) {
+						String modelPluginID = genPackage.getGenModel().getModelPluginID();
+						if (modelPluginID != null && !modelPluginID.isEmpty()) {
+							ensureSupport.addModelBundleId(project, modelPluginID);
+						}
+					}
+				}
+				it.prune();
+			}
+		}
+	}
+	
 	/**
 	 * Executes all {@link IGenerationFragment} provided for the current {@link Pattern}.
 	 * @param modelProject
@@ -214,7 +245,10 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 					Lists.newArrayList(fragment.getProjectDependencies()));
 			return modelProject;
 		} else {
-			List<String> dependencies = Lists.asList(modelProjectName, fragment.getProjectDependencies());
+			List<String> dependencies = Lists.newArrayList();
+			dependencies.add(modelProjectName);
+			dependencies.addAll(ensureSupport.getModelBundleDependencies(modelProject));
+			dependencies.addAll(Lists.newArrayList(fragment.getProjectDependencies()));
 			IProject targetProject = fragmentProvider.getFragmentProject(modelProject, fragment);
 			if (!targetProject.exists()) {
 				ProjectGenerationHelper.initializePluginProject(targetProject, dependencies, fragment.getAdditionalBinIncludes());
