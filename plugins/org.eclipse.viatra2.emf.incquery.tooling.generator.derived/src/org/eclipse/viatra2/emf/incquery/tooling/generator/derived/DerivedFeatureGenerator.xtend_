@@ -74,7 +74,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 * 		  )
 	 */
 	private static String annotationLiteral 		= "DerivedFeature"
-	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features"
+	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features"
 	private static String IMPORT_QUALIFIER 			= "org.eclipse.viatra2.emf.incquery.runtime.derived"
 	private static String FEATUREKIND_IMPORT		= "FeatureKind"
 	private static String HELPER_IMPORT 			= "IncqueryFeatureHelper"

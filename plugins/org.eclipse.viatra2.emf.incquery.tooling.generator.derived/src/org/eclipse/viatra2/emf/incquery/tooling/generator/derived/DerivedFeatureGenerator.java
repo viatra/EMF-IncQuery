@@ -1,7 +1,5 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.derived;
 
-import com.google.common.base.Objects;
-import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature;
@@ -56,8 +55,6 @@ import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureSourceCodeUtil;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.derived.ProjectLocator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
@@ -84,6 +81,9 @@ import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
+import com.google.common.base.Objects;
+import com.google.inject.Inject;
+
 @SuppressWarnings("all")
 public class DerivedFeatureGenerator implements IGenerationFragment {
   @Inject
@@ -104,7 +104,7 @@ public class DerivedFeatureGenerator implements IGenerationFragment {
    */
   private static String annotationLiteral = "DerivedFeature";
   
-  private static String DERIVED_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features";
+  private static String DERIVED_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features";
   
   private static String IMPORT_QUALIFIER = "org.eclipse.viatra2.emf.incquery.runtime.derived";
   
