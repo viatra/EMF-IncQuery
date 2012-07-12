@@ -45,7 +45,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	protected HashSet<EStructuralFeature> observedFeatures;
 	
 	protected Notifier notifier;
-	protected Set<Notifier> additionalRoots;
+	protected Set<Notifier> modelRoots;
 	private boolean expansionAllowed;
 	protected NavigationHelperType navigationHelperType;
 //	protected NavigationHelperVisitor visitor;
@@ -79,14 +79,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.afterUpdateCallbacks = new HashSet<Runnable>();
 
 		this.notifier = emfRoot;
-		this.additionalRoots = new HashSet<Notifier>();
+		this.modelRoots = new HashSet<Notifier>();
 		this.expansionAllowed = notifier instanceof ResourceSet;
 		this.navigationHelperType = type;
 
 //		if (this.navigationHelperType == NavigationHelperType.ALL) {
 //			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
 //		}
-		this.notifier.eAdapters().add(contentAdapter);
+		expandToAdditionalRoot(emfRoot);
 	}
 	
 	public NavigationHelperType getType() {
@@ -107,9 +107,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public void dispose() {
-		notifier.eAdapters().remove(contentAdapter);
-		for (Notifier additional : additionalRoots) {
-			additional.eAdapters().remove(contentAdapter);		
+		for (Notifier root : modelRoots) {
+			root.eAdapters().remove(contentAdapter);		
 		}
 	}
 	
@@ -398,7 +397,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 	
 	protected void expandToAdditionalRoot(Notifier root) {
-		if (additionalRoots.add(root)) {
+		if (modelRoots.add(root)) {
 			root.eAdapters().add(contentAdapter);
 		}
 	}

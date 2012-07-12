@@ -235,9 +235,8 @@ public class ParameterizedNavigationHelperImpl extends NavigationHelperImpl impl
 	}
 	
 	private void traverse(final NavigationHelperVisitor visitor) {
-		EMFModelComprehension.visitModel(visitor, notifier);
-		for (Notifier additional : additionalRoots) {
-			EMFModelComprehension.visitModel(visitor, additional);		
+		for (Notifier root : modelRoots) {
+			EMFModelComprehension.visitModel(visitor, root);		
 		}
 		runAfterUpdateCallbacks();
 	}
