@@ -10,7 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.ui.quickfix;
 
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.ui.editor.model.edit.IModification;
+import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
+import org.eclipse.xtext.ui.editor.quickfix.Fix;
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
+import org.eclipse.xtext.validation.Issue;
 
 public class EMFPatternLanguageQuickfixProvider extends DefaultQuickfixProvider {
 
@@ -25,4 +32,15 @@ public class EMFPatternLanguageQuickfixProvider extends DefaultQuickfixProvider 
 //		});
 //	}
 
+	@Fix(EMFIssueCodes.IDENTIFIER_AS_KEYWORD)
+	public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Prefix Identifier", "Adds a ^ prefix to the identifier", null, new IModification() {
+			
+			@Override
+			public void apply(IModificationContext context) throws Exception {
+				IXtextDocument document = context.getXtextDocument();
+				document.replace(issue.getOffset(), 0, "^");
+			}
+		});
+	}
 }
