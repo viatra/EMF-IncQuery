@@ -1,0 +1,38 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+/** The parameter 'supertype' is the a direct supertype of the 'type' parameter,
+ *  so there is a direct inheritance edge in the metamodel from 'type' to 'supertype'.
+ *  @param type The lesser type.
+ *  @param supertype The greater type.
+ */
+@Off pattern directSupertype(type:EClass, supertype) =
+{
+	EClass.eAllSuperTypes(type,supertype);
+}
+
+/** The instances of the 'type' parameter are the instances of the 'supertype' parameter,
+ * so for every X if (X is a 'type') then (X is a 'supertype').
+ * This could happen by: <br/>
+ * 1 - Each parameter is a class, and the 'supertype' is higher in the class hiearchy. <br/>
+ * 2 - The two type is the same. <br/>
+ * And an unused (and commented) option:<br/>
+ * <strike>3 - The first is an EClass, the second is the EObject, so the EObject is superclass of every class.</strike>
+ * @param type The lesser type
+ * @param supertype The greater type.
+ */
+@Off pattern supertype(type:EClassifier, supertype:EClassifier) =
+{
+	find directSupertype+(type, supertype);
+} or
+{
+	type==supertype;
+}/* or
+{
+	EClass(type);
+	EClass(supertype);
+	check(supertype.name == "EObject");
+}*/

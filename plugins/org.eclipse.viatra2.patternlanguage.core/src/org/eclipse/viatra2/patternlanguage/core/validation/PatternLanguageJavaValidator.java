@@ -365,4 +365,16 @@ public class PatternLanguageJavaValidator extends
 					IssueCodes.LOWERCASE_PATTERN_NAME);
 		}
 	}
+	/*
+	//// Oszkár gányolt ez alá tesztelés céljából, ezt nem kerlhet fel!
+	
+	@Check
+	public void checkPatternName(Pattern pattern) {
+		String name = pattern.getName();
+		if(name.toLowerCase().contains("oszi"))
+			warning("Oszi van a minta nevében!",
+					PatternLanguagePackage.Literals.PATTERN__NAME);
+	}
+	
+	/// Teszt vége.*/
 }

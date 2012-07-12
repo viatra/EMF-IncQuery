@@ -1,0 +1,156 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+/**
+ * The 'pat' pattern  has a constraint in it's body called 'body' that compare two value reference called 'variable' and 'valueFrom'
+ * with respect of the compare feature called 'compare'. The pattern matches every constraint in two way, for example
+ * in case of <code>A==B</code> there is a match where A is the 'variable' and B is the 'valueFrom' and there is a match
+ * where the roles are reversed.
+ * @param The Pattern.
+ * @param body A body of the pattern.
+ * @param variable The first operand of the compare relation.
+ * @param valueFrom The second operand of the compare relation.
+ * @param constraint The compare relation.
+ * @param compare The compare feature.
+ */
+@Off pattern simmetricCompare(pat:Pattern, body:PatternBody, variable:ValueReference, valueFrom:ValueReference, constraint:CompareConstraint, compare:CompareFeature) =
+{
+	Pattern.bodies(pat,body);
+	PatternBody.constraints(body,constraint);
+	CompareConstraint.feature(constraint,compare);
+	CompareConstraint.leftOperand(constraint,variable);
+	CompareConstraint.rightOperand(constraint,valueFrom);
+} or
+{
+	find simmetricCompare(pat, body, valueFrom, variable, constraint, compare);
+}
+
+/**
+ * Support for the CompatibleLiteralReference pattern.
+ * It defines that if the CompatibleLiteralReference pattern can judge on the comparability of two
+ * value reference. Without this pattern adding a new kind of a value reference could give a false error.
+ * @param a The supported value reference.
+ */
+@Off pattern supportedValueReference(a:ValueReference) =
+{ IntValue(a); } or
+{ StringValue(a); } or
+{ BoolValue(a); } or
+{ DoubleValue(a); } or
+{ VariableValue(a); } or
+{ IntValue(a); } or
+{ AggregatedValue(a); AggregatedValue.aggregator(a,aggregator); CountAggregator(aggregator); } or
+{ ListValue(a); }
+
+/**
+ * Check if two value reference can be equivalent.
+ * The result of this pattern can be incorrect if one of its parameter doesn't satisfy the supportedValueReference pattern.
+ * @param a The first operand.
+ * @param b The second operand.
+ */
+@Off pattern ComparableValueReference(a:ValueReference, b:ValueReference) =
+{
+	find ComparableValueReference(b,a);
+} or
+{ IntValue(a); IntValue(b); } or
+{ StringValue(a); StringValue(b); } or
+{ BoolValue(a); BoolValue(b); } or
+{ DoubleValue(a); DoubleValue(b); } or
+{ VariableValue(a); } or
+{ IntValue(a); AggregatedValue(b); } or
+{ AggregatedValue(a); AggregatedValue(b); }
+
+/**
+ * Pattern for an unsatisfiable constraint.
+ * A pattern is unsatisfiable if it express that two different type value is equivalent.
+ * It don't work on variable, instead of this it makes the variable unsatisfiable.
+ * @param The unsatisfiable compare.
+ */
+pattern unsatisfiableCompare(constraint:CompareConstraint) =
+{
+	find simmetricCompare(_,_,variable,valueFrom,constraint,CompareFeature::equality);
+	find supportedValueReference(variable);
+	find supportedValueReference(valueFrom);
+	neg find ComparableValueReference(variable, valueFrom);
+}
+
+/**
+ * The two type has common subtype.
+ * @param a The first class.
+ * @param b The second class.
+ */
+pattern hasCommonSubclass(a:EClassifier, b:EClassifier) =
+{
+	find supertype(common,a);
+	find supertype(common,b);
+}
+
+/**
+ * Pattern for comparing the inequivalency of two different type that is always true.
+ * It works on two variables that hasn't got any common subtype.
+ * @param The always true compare.
+ */
+pattern tautologycCompare(constraint:CompareConstraint) =
+{
+	find simmetricCompare(_,_,variable,valueFrom,constraint,CompareFeature::inequality);
+	find supportedValueReference(variable);
+	find supportedValueReference(valueFrom);
+	neg find ComparableValueReference(variable, valueFrom);
+} or
+{
+	find simmetricCompare(pat,body,variable,valueFrom,constraint,CompareFeature::inequality);
+	find supportedValueReference(variable);
+	find supportedValueReference(valueFrom);
+	VariableValue.value.variable(variable, a);
+	VariableValue.value.variable(variable, b);
+	find typeOfVariableInBody(pat,body,a,class1);
+	find typeOfVariableInBody(pat,body,b,class2);
+	neg find hasCommonSubclass(class1,class2);
+}
+
+/**
+ * Defines the type constrains 'class' of a variable that is equivalent with a 'valref' value reference
+ * of the PatternBody called 'body' in the pattern  of the 'pat'.
+ * @param pat The pattern.
+ * @param body The body of the pattern.
+ * @param valref The equivalent value.
+ * @param the inferred type constraint.
+ */
+pattern ClassConstrainFromValueReference(pat:Pattern, body:PatternBody, valref:ValueReference, class:EClassifier) =
+{
+	IntValue(valref);
+	check(class.name=="EInt");
+} or
+{
+	StringValue(valref);
+	check(class.name=="EString");
+} or
+{
+	BoolValue(valref);
+	check(class.name=="EBoolean");
+} or
+{
+	DoubleValue(valref);
+	check(class.name=="EDouble");
+} or
+{
+	AggregatedValue(valref);
+	check(class.name="EInt");
+} or
+{
+	VariableValue.value.variable(valref, variable);
+	find ClassConstrainInPatternBody(pat,body,variable,class);
+}
+
+/**
+ * The 'pat' pattern has a PatternBody 'body' that contains a 
+ * equivalency checking relation with the variable 'var' that ensures that it have to be 'class' type.
+ */
+pattern ClassConstrainFromCompare(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	find simmetricCompare(pat,body,variableValue,valueFrom,_,CompareFeature::equality);
+	VariableValue.value.variable(variableValue,variable);
+	find ClassConstrainFromValueReference(pat,body,valueFrom,class);
+}

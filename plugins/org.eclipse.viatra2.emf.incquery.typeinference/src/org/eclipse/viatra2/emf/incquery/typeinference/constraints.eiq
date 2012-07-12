@@ -1,0 +1,164 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+/**
+ * The 'pat' pattern has a constraint over the type of the 'variable' defined in it's parameterlist.
+ * It defines that the type of 'variable' is 'class'.
+ * @param pat The pattern.
+ * @param variable The variable in the parameterlist.
+ * @param class The type of the parameter.
+ */
+@Off pattern ClassConstrainInParameters(pat:Pattern, variable:Variable, class:EClassifier) =
+{
+	Pattern.parameters(pat,variable);
+	Variable.type(variable,type);
+	ClassType.classname(type,class);
+}
+
+/**
+ * The 'pat' pattern has a PatternBody 'body' that contains a 
+ * EClassifierConstraint kind of constraint over the variable 'var' have to be 'class' type.
+ * <p><b>This pattern includes an unefficient and unneccecary check constraint!</b></p>
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The constraint references this variable.
+ * @param class The type of the variable.
+ */
+@Off pattern ClassConstrainInDirectBodyByEntities(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	Pattern.bodies(pat,body);
+	PatternBody.constraints(body,constraint);
+	
+	//EClassifierConstraint.var(constraint,variableReference);
+	check((constraint as org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint).getVar() == variableReference);
+	VariableReference.variable(variableReference,variable);
+	
+	EClassifierConstraint.type(constraint,type);
+	ClassType.classname(type,class);
+}
+
+/**
+ * The "most left part" of the PathExpressionConstraint 'constraint' defines that the variable 'var' have to be 'class' type.
+ * @param constraint The constraint.
+ * @param variable The referenced variable.
+ * @param class The type of the variable.
+ */
+@Off pattern getHeadOfPathConstrain(constraint:PathExpressionConstraint, variable:Variable, class:EClassifier) =
+{
+	PathExpressionConstraint.head(constraint,head);
+	PathExpressionHead.type(head,type);
+	ClassType.classname(type,class);
+	PathExpressionHead.src.variable(head,variable);
+}
+
+/**
+ * 'b' is the next element after 'a' in a chain of PathExpression.
+ * @param a An element.
+ * @param b The next element.
+ */
+@Off
+pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElement) =
+{
+	PathExpressionElement.tail(a,b);
+}
+
+/**
+ * The "most right part" of the PathExpressionConstraint 'constraint' defines that the variable 'var' have to be 'class' type.
+ * @param constraint The constraint.
+ * @param variable The referenced variable.
+ * @param class The type of the variable.
+ */
+@Off pattern getTailOfPathConstrain(constraint:PathExpressionConstraint, varible:Variable, class:EClassifier) =
+{
+	PathExpressionConstraint.head(constraint, head);
+	
+	PathExpressionHead.dst(head,varval);
+	VariableValue.value.variable(varval,varible);
+	
+	find nextTailOfPathExpression+(head, tail);
+	neg find nextTailOfPathExpression(tail,_);
+	PathExpressionTail.type(tail,type);
+	ReferenceType.refname.eType(type,class);
+}
+
+/**
+ * The 'pat' pattern has a PatternBody 'body' that contains a 
+ * PathExpressionConstraint kind of constraint over the variable 'var' have to be 'class' type.
+ * <p><b>This pattern includes an unefficient and unneccecary check constraint!</b></p>
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The constraint references this variable.
+ * @param class The type of the variable.
+ */
+@Off pattern ClassConstrainsInDirectBodyByRelations(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	Pattern.bodies(pat,body);
+	PatternBody.constraints(body,constraint);
+	PathExpressionConstraint(constraint);
+	find getHeadOfPathConstrain(constraint,variable,class);
+} or
+{
+	Pattern.bodies(pat,body);
+	PatternBody.constraints(body,constraint);
+	PathExpressionConstraint(constraint);
+	find getTailOfPathConstrain(constraint,variable,class);
+}
+
+/**
+ * The 'pat' pattern defines a constraint in one of it's patternbody named 'body' that some variables satisfies the pattern named 'subpat'.
+ * (So it is a positive subpattern).
+ * In the definition it binds the parameter 'parameterAs' of the called pattern to the variable called 'variable'. 
+ * @param pat A pattern.
+ * @param body A body of the pattern.
+ * @param subpat The referred subpattern.
+ * @param variable A variable in the body.
+ * @param variableAs The variable in the body binded to this parameter of the subpattern.
+ */
+@Off pattern subpatternWithVariable(pat:Pattern, body:PatternBody, subpat:Pattern, variable:Variable, variableAs:Variable) =
+{
+	Pattern.bodies(pat,body);
+	PatternBody.constraints(body, constrain);
+	PatternCompositionConstraint.call.patternRef(constrain,subpat);
+	PatternCompositionConstraint.negative(constrain,false);
+	
+	PatternCompositionConstraint.call(constrain, call);
+	PatternCall.parameters(call,varval);
+	VariableValue.value.variable(varval,variable);
+	Variable(variableAs);
+	check(variableAs == subpat.parameters.get(call.parameters.indexOf(varval)));
+}
+
+/**
+ * The 'pat' pattern has a constraint in it's body called 'body' that ensures that the variable called 'variable' must be 'class' typed.
+ * This constraint could came from those supported cases:</br>
+ * 1 - It is defined in the parameter list of the pattern.</br>
+ * 2 - It is defined as a classifier constraint in the body.</br>
+ * 3 - It is defined as a path constraint.</br>
+ * 4 - It is defined as an equivalence. If <code>X==Y</code> then the type of X and Y is the same.
+ * 5 - It is defined as a pattern composition constraint, so some constraints come from an other pattern.
+ * @param pat The pattern.
+ * @param body The body of the pattern.
+ * @param variable A variable used in the pattern.
+ * @param class Some constraints ensures that the variable must be this type.
+ */
+@Off pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	Pattern.bodies(pat,body);
+	find ClassConstrainInParameters(pat,variable,class);
+} or
+{
+	find ClassConstrainInDirectBodyByEntities(pat, body, variable, class);
+} or
+{
+	find ClassConstrainsInDirectBodyByRelations(pat, body, variable, class);
+} or
+{
+	find ClassConstrainFromValueReference(pat, body, variable, class);
+} or
+{
+	find subpatternWithVariable(pat,body,subpat,variable,variableas);
+	find TypeOfParameterOfPattern(subpat,variableas,class);
+}

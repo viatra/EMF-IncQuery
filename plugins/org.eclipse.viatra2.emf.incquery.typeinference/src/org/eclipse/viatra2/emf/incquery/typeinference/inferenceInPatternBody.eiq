@@ -1,0 +1,120 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+/**
+ * There is a variable 'var' in the scope of the body named 'body' in the pattern called 'pat'.
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ */
+@Off pattern variableOfPattern(pat:Pattern, body:PatternBody, variable:Variable) =
+{
+	Pattern.bodies(pat,body);
+	PatternBody.variables(body,variable);
+} or
+{
+	Pattern.bodies(pat,body);
+	Pattern.parameters(pat,variable);
+}
+
+/**
+ * There is a variable 'var' in the body named 'body' of the pattern called 'pat'.
+ * That variable can't be 'class' type, because it would confilct with at least 
+ * one of the type constraint over the variable.
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ * @param class An incompatible type.
+ */
+@Off pattern incompatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	find ClassConstrainInPatternBody(pat,body,variable,classconstrain);
+	neg find supertype(class,classconstrain);
+}
+
+/**
+ * There is a variable 'var' in the body named 'body' of the pattern called 'pat'.
+ * That variable can be 'class' type, the type constrains allow it.
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ * @param class A compatible type.
+ */
+@Off pattern compatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	find variableOfPattern(pat,body,variable);
+	neg find incompatibleTypeOfVariableInBody(pat,body,variable,class);
+}
+
+/**
+ * There is a variable 'var' in the body named 'body' of the pattern called 'pat'.
+ * There isn't any type that the variabe compatible with.
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ */
+pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable) =
+{
+	find variableOfPattern(pat,body,variable);
+	neg find compatibleTypeOfVariableInBody(pat,body,variable,_);
+}
+
+/**
+ * Test for enumerating the constrains of an unsatisfiable constrain.
+ */
+@Off pattern UnsatisfiableTypeConstrainInPatternBodyBecauseThoseConstrainsSays(pat:Pattern, body:PatternBody, variable:Variable/*, constrainInPattern: Pattern*/, constrainSayClass:EClassifier) =
+{
+	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
+	find ClassConstrainInPatternBody(pat,body,variable,constrainSayClass);
+}
+
+/**
+ * There is a variable 'var' in the body named 'body' of the pattern called 'pat'.
+ * There exists a type that the variable 'var ' is compatible with it, and more general than
+ * the type 'class' in the parameter 
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ * @param class A less general type we search for.
+ */
+@Off pattern haveMoreGenericType(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	find compatibleTypeOfVariableInBody(pat, body, variable, class);
+	find compatibleTypeOfVariableInBody(pat, body, variable, moreGenericClass);
+	class!=moreGenericClass;
+	find supertype(class,moreGenericClass);
+}
+
+/**
+ * There is a variable 'var' in the body named 'body' of the pattern called 'pat'.
+ * The type 'class' is the most generic type that satisfies every constraint.
+ * (There isn't any instance that satisfies the pattern but not 'class' typed.)
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ * @param class The most generic type that satisfies every constraints.
+ */
+pattern typeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+{
+	find variableOfPattern(pat,body,variable);
+	find compatibleTypeOfVariableInBody(pat,body, variable, class);
+	neg find haveMoreGenericType(pat,body, variable, class);
+	//If not too general
+	neg find tooGeneralTypeOfVariableInBody(pat,body,variable);	
+}
+
+/**
+ * There is a variable 'var' in the body named 'body' of the pattern called 'pat'.
+ * If there isn't any constraint for the referred variable the type of the variable is
+ * too general.
+ * @param pat The pattern.
+ * @param body A body of the pattern.
+ * @param variable The referred variable.
+ */
+pattern tooGeneralTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable) =
+{
+	neg find ClassConstrainInPatternBody(pat,body,variable,_);
+}

@@ -1,0 +1,112 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+/**
+ * The 'variable' parameter of the 'pat' pattern can't be 'class',
+ * because there is a body where the type of this variable isn't subclass of 'class'.
+ * So it might be a match where the value of the 'variable' isn't 'class'.
+ * @param pat A pattern.
+ * @param variable A variable that supposed to be a parameter. (The constraint will come from the caller.)
+ * @param class An incompatible type.
+ */
+@Off pattern incompatibleTypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+{
+	find typeOfVariableInBody(pat, _, variable, classfrombody);
+	neg find supertype(classfrombody,class);
+}
+
+/**
+ * The 'variable' parameter of the 'pat' pattern can be 'class',
+ * because it is a supertype of the inferred types of 'variable' in every bodies of the pattern.
+ * @param Pat A pattern.
+ * @param variable A variable that supposed to be a parameter. (The constraint will come from the caller.)
+ * @param class An incompatible type.
+ */
+@Off pattern compatibleTypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+{
+	Pattern.parameters(pat,variable);
+	neg find incompatibleTypeOfParameterOfPattern(pat,variable,class);
+}
+
+/**
+ * There is a more specific type than 'class' that can be the type of the type of 'variable' parameter of the 'pat' pattern.
+ * @param Pat A pattern.
+ * @param variable A variable that supposed to be a parameter. (The constraint will come from the caller.)
+ * @param class The pattern search a more specific pattern than this.
+ */
+@Off pattern haveMoreSpecificType(pat:Pattern, variable:Variable, class:EClassifier) =
+{
+	find compatibleTypeOfParameterOfPattern(pat, variable, class);
+	find compatibleTypeOfParameterOfPattern(pat, variable, otherClass);
+	find supertype(otherClass,class);
+	otherClass!=class;
+}
+/**
+ * The most spceific type of 'variable' parameter of the 'pat' pattern is 'class'.
+ * @param Pat A pattern.
+ * @param variable A variable that supposed to be a parameter.
+ * @param class The type of the parameter.
+ */
+pattern TypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+{
+	find compatibleTypeOfParameterOfPattern(pat, variable, class);
+	neg find haveMoreSpecificType(pat, variable, class);
+	//+satisfiable
+	neg find tooGeneralTypeOfPatternParameter(pat, variable);
+}
+
+/**
+ * The parameter 'variable' is satisfiable in at least one body of the pattern 'pat'.
+ * @param Pat A pattern.
+ * @param variable A parameter.
+ */
+pattern haveSatisfiableBodyOfPatternParameter(pat:Pattern, variable:Variable) =
+ {
+ 	Pattern.bodies(pat,body);
+ 	neg find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
+ }
+
+/**
+ * The parameter 'variable' is unsatisfiable in every body of the pattern 'pat',
+ * so it is unsatisfiable in the pattern too.
+ * @param Pat A pattern.
+ * @param variable A parameter.
+ */
+pattern UnsatisfiableTypeOfPatternParameter(pat:Pattern, variable:Variable) =
+{
+	neg find haveSatisfiableBodyOfPatternParameter(pat,variable);
+}
+
+
+/**
+ * 
+ */
+pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
+{
+	Pattern.parameters(pat,variable);
+	Pattern.bodies(pat,body);
+	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
+}
+
+////////////////////////////////////////////////////////////////////
+///                    Pattern checking                          ///
+////////////////////////////////////////////////////////////////////
+
+//@Off
+//pattern subpattern(pat:Pattern, subpat:Pattern) =
+//{
+//	Pattern.bodies.constraints(pat,constraint);
+//	PatternCompositionConstraint.call.patternRef(constraint,subpat);
+//}
+//
+//@Off
+//pattern badPattern(pat:Pattern, variable:Variable) =
+//{
+//	find UnsatisfiableTypeconstrainInPattern(pat,variable);
+//	find subpattern+(pat,subpat);
+//	subpat!=pat;
+//	neg find UnsatisfiableTypeconstrainInPattern(subpat,_);
+//}
