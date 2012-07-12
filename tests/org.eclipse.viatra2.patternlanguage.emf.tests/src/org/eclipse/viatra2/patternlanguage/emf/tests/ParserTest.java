@@ -262,7 +262,11 @@ public class ParserTest {
 	@Test
 	public void patternKeywordAsName() {
 		testParserRule("find pattern()", PATTERN_COMPOSITION_RULE,
-				new ExpectedIssue("mismatched input", 1));
+				new ExpectedIssue("^ character", 1));
+	}
+	@Test
+	public void patternKeywordEscapedAsName() {
+		testParserRule("find ^pattern()", PATTERN_COMPOSITION_RULE);
 	}
 
 	@Test
