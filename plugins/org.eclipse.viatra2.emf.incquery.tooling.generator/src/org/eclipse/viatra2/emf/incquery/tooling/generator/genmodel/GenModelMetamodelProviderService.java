@@ -189,22 +189,30 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		return findGenPackage(eiqGenModel, set, packageNsUri, fallbackToPackageRegistry);
 	}
 	
-	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri, boolean fallbackToPackageRegistry) {
-		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
-		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
-			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
-		}
-		Iterable<GenPackage> genPackages = Iterables.filter(genPackageIterable,
-					new Predicate<GenPackage>() {
+	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel,
+			ResourceSet set, final String packageNsUri,
+			boolean fallbackToPackageRegistry) {
+		// eiqGenModel is null if loading a pattern from the registry
+		// in this case only fallback to package Registry works
+		if (eiqGenModel != null) {
+			Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
+			for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
+				genPackageIterable = Iterables.concat(genPackageIterable,
+						genModel.getGenmodel().getGenPackages());
+			}
+			Iterable<GenPackage> genPackages = Iterables.filter(
+					genPackageIterable, new Predicate<GenPackage>() {
 						public boolean apply(GenPackage genPackage) {
 							return packageNsUri.equals(genPackage
 									.getEcorePackage().getNsURI());
 						}
 					});
-		Iterator<GenPackage> it = genPackages.iterator();
-		if (it.hasNext()) {
-			return it.next();
-		} else if (fallbackToPackageRegistry){
+			Iterator<GenPackage> it = genPackages.iterator();
+			if (it.hasNext()) {
+				return it.next();
+			}
+		}
+		if (fallbackToPackageRegistry){
 			return genmodelRegistry.findGenPackage(packageNsUri, set);
 		}
 		return null;
