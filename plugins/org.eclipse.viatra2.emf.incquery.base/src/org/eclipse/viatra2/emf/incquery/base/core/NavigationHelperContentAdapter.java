@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
@@ -479,5 +480,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 		}
 	}
+	
+	// WORKAROUND for EContentAdapter bug
+	// where proxy resolution during containment traversal would add a new Resource to the ResourceSet (and thus the adapter) 
+	// that will be set as target twice: 
+	//   - once when resolved (which happens while iterating through the resources), 
+	//   - and once when said iteration of resources reaches the end of the resource list in the ResourceSet   
+	Set<Resource> trackedResources = new HashSet<Resource>();
+	@Override
+	protected void setTarget(Resource target) {
+		if (trackedResources.add(target))
+			super.setTarget(target);
+	}
+	@Override
+	protected void unsetTarget(Resource target) {
+		trackedResources.remove(target);
+		super.unsetTarget(target);
+	}
+
 	
 }
