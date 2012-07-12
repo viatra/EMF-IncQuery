@@ -118,13 +118,11 @@ public class TableViewerUtil {
 				Variable var = pattern.getParameters().get(i);
 				String name = var.getName();
 				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
-				String clazz = ref.getType().getQualifiedName();
+				String clazz = (ref == null) ? "" : ref.getType().getQualifiedName();
 				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
 			}	
 			viewer.setInput(input);
 		}
-		
-		
 	}
 	
 	public void clearTableViewerColumns(TableViewer viewer) {

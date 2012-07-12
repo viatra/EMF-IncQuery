@@ -29,12 +29,14 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.ITextRegion;
@@ -73,34 +75,35 @@ public class ShowLocationHandler extends AbstractHandler {
 		} else if(obj instanceof ObservablePatternMatcher) {
 			ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
 			if (matcher.getMatcher() != null) {
-				IFile file = PatternRegistry.getInstance().getFileForPattern(matcher.getMatcher().getPattern());
-				
-				IEditorPart editorPart = matcher.getParent().getEditorPart();
-				for (IEditorReference ref : editorPart.getSite().getPage().getEditorReferences()) {
-					String id = ref.getId();
-					IEditorPart editor = ref.getEditor(true);
-					if(id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
-						//The editor id always registers an Xtext editor
-						assert editor instanceof XtextEditor;
-						XtextEditor providerEditor = (XtextEditor) editor;
-						// Bringing editor to top
-						IEditorInput input = providerEditor.getEditorInput();
-						if (input instanceof FileEditorInput) {
-							FileEditorInput editorInput = (FileEditorInput) input;
-							if (editorInput.getFile().equals(file)) {
-								editorPart.getSite().getPage().bringToTop(editor);
-							}
-						}
-						// Finding location using location service
-						ITextRegion location = locationProvider
-								.getSignificantTextRegion(matcher.getMatcher()
-										.getPattern());
-						//Location can be null in case of error
-						if (location != null) {
-							providerEditor.reveal(location.getOffset(),location.getLength());
-							providerEditor.getSelectionProvider().setSelection(new TextSelection(location.getOffset(), location.getLength()));
-						}
+				setSelectionToXTextEditor(matcher.getMatcher().getPattern());
+			}
+		}
+	}
+	
+	protected void setSelectionToXTextEditor(Pattern pattern) {
+		IFile file = PatternRegistry.getInstance().getFileForPattern(pattern);
+
+		for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences()) {
+			String id = ref.getId();
+			IEditorPart editor = ref.getEditor(true);
+			if(id.equals("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage")) {
+				//The editor id always registers an Xtext editor
+				assert editor instanceof XtextEditor;
+				XtextEditor providerEditor = (XtextEditor) editor;
+				// Bringing editor to top
+				IEditorInput input = providerEditor.getEditorInput();
+				if (input instanceof FileEditorInput) {
+					FileEditorInput editorInput = (FileEditorInput) input;
+					if (editorInput.getFile().equals(file)) {
+						editor.getSite().getPage().bringToTop(editor);
 					}
+				}
+				// Finding location using location service
+				ITextRegion location = locationProvider.getSignificantTextRegion(pattern);
+				//Location can be null in case of error
+				if (location != null) {
+					providerEditor.reveal(location.getOffset(),location.getLength());
+					providerEditor.getSelectionProvider().setSelection(new TextSelection(location.getOffset(), location.getLength()));
 				}
 			}
 		}
