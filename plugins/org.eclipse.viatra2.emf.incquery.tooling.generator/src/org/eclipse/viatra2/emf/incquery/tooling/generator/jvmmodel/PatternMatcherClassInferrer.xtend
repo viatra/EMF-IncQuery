@@ -78,11 +78,11 @@ class PatternMatcherClassInferrer {
 			it.documentation = pattern.javadocMatcherConstructorNotifier.toString
 			it.parameters += pattern.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
-			it.body = [
+			it.setBody([
 				append('''this(''')
 				referClass(pattern, typeof(EngineManager))
 				append('''.getInstance().getIncQueryEngine(emfRoot));''')
-			]
+			])
 		]
 		
 		matcherClass.members += pattern.toConstructor [
@@ -91,7 +91,7 @@ class PatternMatcherClassInferrer {
 			it.documentation = pattern.javadocMatcherConstructorEngine.toString
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
-			it.body = [append('''super(engine, FACTORY);''')]
+			it.setBody([append('''super(engine, FACTORY);''')])
 		]
    	}
    	

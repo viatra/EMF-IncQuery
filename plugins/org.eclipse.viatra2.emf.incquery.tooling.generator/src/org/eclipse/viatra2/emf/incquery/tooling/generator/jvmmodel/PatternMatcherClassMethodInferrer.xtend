@@ -43,36 +43,36 @@ class PatternMatcherClassMethodInferrer {
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawGetAllMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-   				]
+   				])
    			]
    			type.members += pattern.toMethod("getOneArbitraryMatch", cloneWithProxies(matchClassReference)) [
    				it.documentation = pattern.javadocGetOneArbitraryMatchMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawGetOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-   				]
+   				])
    			]
    			type.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawHasMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-   				]
+   				])
    			]
    			type.members += pattern.toMethod("countMatches", pattern.newTypeRef(typeof(int))) [
    				it.documentation = pattern.javadocCountMatchesMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawCountMatches(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-   				]
+   				])
    			]
    			type.members += pattern.toMethod("forEachMatch", null) [
    				it.documentation = pattern.javadocForEachMatchMethod.toString
@@ -80,9 +80,9 @@ class PatternMatcherClassMethodInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
 				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassReference).wildCardSuper))
-   				it.body = [append('''
+   				it.setBody([append('''
    					rawForEachMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);''')
-   				]
+   				])
    			]
    			type.members += pattern.toMethod("forOneArbitraryMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocForOneArbitraryMatchMethod.toString
@@ -90,9 +90,9 @@ class PatternMatcherClassMethodInferrer {
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
    				it.parameters += pattern.toParameter("processor", pattern.newTypeRef(typeof (IMatchProcessor), cloneWithProxies(matchClassReference).wildCardSuper))
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);''')
-   				]
+   				])
    			]
    			type.members += pattern.toMethod("newFilteredDeltaMonitor", pattern.newTypeRef(typeof(DeltaMonitor), cloneWithProxies(matchClassReference))) [
    				it.documentation = pattern.javadocNewFilteredDeltaMonitorMethod.toString
@@ -100,16 +100,16 @@ class PatternMatcherClassMethodInferrer {
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-   				]
+   				])
    			]
    			for (variable : pattern.parameters){
    				val typeOfVariable = variable.calculateType
    				type.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 	   				it.parameters += pattern.toParameter("parameters", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
-	   				it.body = [
+	   				it.setBody([
 						referClass(pattern, typeof(Set), typeOfVariable)
 						append(''' results = new ''')
 	   					referClass(pattern, typeof(HashSet), typeOfVariable)
@@ -117,20 +117,20 @@ class PatternMatcherClassMethodInferrer {
 	   					();
 	   					rawAccumulateAllValues(«variable.positionConstant», parameters, results);
 	   					return results;''')
-					]
+					])
 	   			]
 	   			type.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
-	   				it.body = [append('''
+	   				it.setBody([append('''
 	   					return rawAccumulateAllValuesOf«variable.name»(emptyArray());''')
-	   				]
+	   				])
 	   			]
 	   			if(pattern.parameters.size > 1){
 		   			type.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 		   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 		   				it.parameters += pattern.toParameter("partialMatch", cloneWithProxies(matchClassReference))
-		   				it.body = [append('''
-		   					return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());''')]
+		   				it.setBody([append('''
+		   					return rawAccumulateAllValuesOf«variable.name»(partialMatch.toArray());''')])
 		   			]
 		   			type.members += pattern.toMethod("getAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 		   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
@@ -139,21 +139,21 @@ class PatternMatcherClassMethodInferrer {
 								it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
 			   				}
 		   				}
-		   				it.body = [
+		   				it.setBody([
 		   					serialize(typeOfVariable, pattern)
 		   					append(''' «variable.parameterName» = null;
 		   					''')
 		   					append('''return rawAccumulateAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-		   				]
+		   				])
 		   			]
 	   			}
    			}
 		} else {
 			type.members += pattern.toMethod("hasMatch", pattern.newTypeRef(typeof(boolean))) [
    				it.documentation = pattern.javadocHasMatchMethodNoParameter.toString
-   				it.body = [append('''
+   				it.setBody([append('''
    					return rawHasMatch(new Object[]{});''')
-   				]
+   				])
    			]
 		}
 		type.inferMatcherClassToMatchMethods(pattern, matchClassReference)
