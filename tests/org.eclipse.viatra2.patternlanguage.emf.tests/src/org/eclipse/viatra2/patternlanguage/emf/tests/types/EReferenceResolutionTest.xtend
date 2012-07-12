@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.patternlanguage.emf.tests.types
 
-	import org.junit.runner.RunWith
+import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.XtextRunner
@@ -60,6 +60,22 @@ class EReferenceResolutionTest {
 		val tail = interim.tail
 		val type = tail.type as ReferenceType
 		assertEquals(type.refname.EType, PatternLanguagePackage$Literals::CONSTRAINT)		
+	}
+	
+	@Test
+	def referenceResolutionEscapedKeyword() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+
+			pattern keywordAsIdentifier(A,B) = {
+				EClassifierConstraint.^var(A,B); 
+			}
+		') as PatternModel
+		model.assertNoErrors
+		val pattern = model.patterns.get(0)
+		val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
+		val type = constraint.head.tail.type as ReferenceType
+		assertEquals(type.refname, EMFPatternLanguagePackage$Literals::ECLASSIFIER_CONSTRAINT__VAR)
 	}
 	
 	@Test
