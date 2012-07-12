@@ -59,12 +59,12 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 		return EMFPatternLanguageBuilderParticipant.class;
 	}
 	
-	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+	@Override
 	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
 		return EMFPatternLanguageHighlightingCalculator.class;
 	}
 
-	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+	@Override
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
 		return EMFPatternLanguageHighlightingConfiguration.class;
 	}
@@ -72,7 +72,7 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
 		return GenModelMetamodelProviderService.class;
 	}
-	
+
 	public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
 		return GenModelMetamodelProviderService.class;
 	}
@@ -81,8 +81,9 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 		return GenModelBasedTypeProvider.class;
 	}
 	
+	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider> bindIEObjectHoverProvider() {
 		return EMFPatternLanguageHoverProvider.class;
 	}
-
+	
 }
