@@ -184,7 +184,7 @@ public class ReteEngine<PatternDescription> {
 					} catch (InvocationTargetException ex) {
 						final Throwable cause = ex.getCause();
 						if (cause instanceof RetePatternBuildException) throw (RetePatternBuildException) cause;
-						if (cause instanceof RuntimeException) throw (RetePatternBuildException) cause;
+						if (cause instanceof RuntimeException) throw (RuntimeException) cause;
 						assert(false);
 					}
 				} finally {
@@ -228,7 +228,7 @@ public class ReteEngine<PatternDescription> {
 				} catch (InvocationTargetException ex) {
 					final Throwable cause = ex.getCause();
 					if (cause instanceof RetePatternBuildException) throw (RetePatternBuildException) cause;
-					if (cause instanceof RuntimeException) throw (RetePatternBuildException) cause;
+					if (cause instanceof RuntimeException) throw (RuntimeException) cause;
 					assert(false);
 				}
 			} finally {
