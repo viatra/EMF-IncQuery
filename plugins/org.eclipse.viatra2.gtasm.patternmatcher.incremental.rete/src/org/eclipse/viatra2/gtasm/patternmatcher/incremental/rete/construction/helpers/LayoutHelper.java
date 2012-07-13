@@ -132,16 +132,20 @@ public class LayoutHelper {
 		PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, stub);
 		if (unenforcedConstraint != null) {
 			throw new RetePatternBuildException(
-					"Pattern matcher construction terminated without successfully enforcing constraint {1}.", 
-					new String[]{unenforcedConstraint.toString()}, null);
+					"Pattern matcher construction terminated without successfully enforcing constraint {1}." +
+					" Could be caused if the value of some variables can not be deduced, e.g. by circularity of pattern constraints.", 
+					new String[]{unenforcedConstraint.toString()}, 
+					"Could not enforce a pattern constraint", null);
 		}
 		for (ExportedParameter<PatternDescription, StubHandle> export : 
 			pSystem.getConstraintsOfType(ExportedParameter.class)) 
 		{
 			if (!export.isReadyAt(stub)) { 
 				throw new RetePatternBuildException(
-						"Exported parameter {1} was lost during construction.", 
-						new String[]{export.getParameterName()}, null);
+					"Exported pattern parameter {1} could not be deduced during pattern matcher construction." + 
+					" A pattern constraint is required to positively deduce its value.", 
+					new String[]{export.getParameterName()}, 
+					"Could not calculate pattern parameter", null);
 			}
 		}
 	}

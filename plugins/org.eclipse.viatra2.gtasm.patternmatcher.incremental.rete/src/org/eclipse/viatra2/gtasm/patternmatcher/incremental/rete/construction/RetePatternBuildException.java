@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction;
 
 
+
 /**
  * A problem has occured during the construction of the RETE net.
  * 
@@ -28,17 +29,19 @@ public class RetePatternBuildException extends Exception {
 	private Object patternDescription;
 	private String templateMessage;
 	private String[] templateContext;
+	private String shortMessage;
 	
 	/**
 	 * @param message The template of the exception message
 	 * @param context The data elements to be used to instantiate the template. Can be null if no context parameter is defined
 	 * @param patternDescription the PatternDescription where the exception occurred
 	 */
-	public RetePatternBuildException(String message, String[] context, Object patternDescription) {
+	public RetePatternBuildException(String message, String[] context, String shortMessage, Object patternDescription) {
 		super(bind(message, context));		
 		this.patternDescription = patternDescription;
 		this.templateMessage = message;
 		this.templateContext = context;
+		this.shortMessage = shortMessage;
 	}
 	
 	/**
@@ -46,11 +49,12 @@ public class RetePatternBuildException extends Exception {
 	 * @param context The data elements to be used to instantiate the template. Can be null if no context parameter is defined
 	 * @param patternDescription the PatternDescription where the exception occurred
 	 */
-	public RetePatternBuildException(String message, String[] context, Object patternDescription, Throwable cause) {
+	public RetePatternBuildException(String message, String[] context, String shortMessage, Object patternDescription, Throwable cause) {
 		super(bind(message, context), cause);		
 		this.patternDescription = patternDescription;
 		this.templateMessage = message;
 		this.templateContext = context;
+		this.shortMessage = shortMessage;
 	}
 
 	public Object getPatternDescription() {
@@ -67,6 +71,7 @@ public class RetePatternBuildException extends Exception {
 	public String[] getTemplateContext() {
 		return templateContext;
 	}
+	
 
 	/**
 	 * Binding the '{n}' (n = 1..N) strings to contextual conditions in 'context'
@@ -79,10 +84,17 @@ public class RetePatternBuildException extends Exception {
 		
 		for(int i = 0; i<context.length; i++){
 			message = message.replace("{"+(i+1)+"}", context[i]!= null? context[i] : "<<null>>");
-			//error handling in case there is a null value in the context array
-			if(context[i] == null)
-				additionalError = "[INTERNAL ERROR] A name value in the GTASM model is null. \n\n";
+//			//error handling in case there is a null value in the context array
+//			if(context[i] == null)
+//				additionalError = "[INTERNAL ERROR] A name value in the GTASM model is null. \n\n";
 		}
 		return additionalError+message;
+	}
+
+	/**
+	 * @return the shortMessage
+	 */
+	public String getShortMessage() {
+		return shortMessage;
 	}
 }

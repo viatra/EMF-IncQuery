@@ -113,7 +113,8 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 			String msg = "Impossible to match pattern: "
 				+ "exported pattern variable {1} can not be determined based on the pattern constraints. "
 				+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
-			throw new RetePatternBuildException(msg, args, null);
+			String shortMsg = "Could not deduce value of parameter";
+			throw new RetePatternBuildException(msg, args, shortMsg, null);
 		}					
 
 	}
@@ -128,7 +129,8 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 			String msg = "Pattern Graph Search terminated incompletely: "
 				+ "exported pattern variable {1} could not be determined based on the pattern constraints. "
 				+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
-			throw new RetePatternBuildException(msg, args, null);
+			String shortMsg = "Could not deduce value of parameter";
+			throw new RetePatternBuildException(msg, args, shortMsg, null);
 	}
 	
 }

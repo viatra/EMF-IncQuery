@@ -48,6 +48,7 @@ public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle
 		String[] args = {toString(), missing.toArray().toString()};
 		String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. " + 
 			"HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
-		throw new RetePatternBuildException(msg, args, null);
+		String shortMsg = "Could not check all constraints due to undeducible variables";
+		throw new RetePatternBuildException(msg, args, shortMsg, null);
 	}
 }

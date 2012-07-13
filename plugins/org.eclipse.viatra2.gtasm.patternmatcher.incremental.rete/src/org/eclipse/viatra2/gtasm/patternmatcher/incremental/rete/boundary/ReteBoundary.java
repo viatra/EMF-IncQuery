@@ -484,7 +484,8 @@ public class ReteBoundary<PatternDescription> {
 			pn = productions.get(gtPattern);
 			if (pn == null) {
 				String[] args = {gtPattern.toString()};
-				throw new RetePatternBuildException("Unsuccessful creation of production node for pattern {1}", args, gtPattern);
+				throw new RetePatternBuildException("Unsuccessful creation of RETE production node for pattern {1}", args, 
+						"Could not create RETE production node.", gtPattern);
 			}
 		}
 		return pn;
@@ -499,7 +500,8 @@ public class ReteBoundary<PatternDescription> {
 	throws RetePatternBuildException {
 		if (productions.containsKey(gtPattern)) {
 			String[] args = {gtPattern.toString()};
-			throw new RetePatternBuildException("Multiple creation attempts of production node for {1}", args, gtPattern);
+			throw new RetePatternBuildException("Multiple creation attempts of production node for {1}", args, 
+					"Duplicate RETE production node.", gtPattern);
 		}
 		
 		HashMap<Object, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
