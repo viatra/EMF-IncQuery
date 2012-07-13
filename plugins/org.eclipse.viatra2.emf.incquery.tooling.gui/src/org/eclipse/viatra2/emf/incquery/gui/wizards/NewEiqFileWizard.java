@@ -162,10 +162,10 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		}
 		
 		//Setting imports
-		for (EPackage _package : imports) {
-			PackageImport _import = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
-			_import.setEPackage(_package);
-			pm.getImportPackages().add(_import);
+		for (EPackage importedPackage : imports) {
+			PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
+			importDecl.setEPackage(importedPackage);
+			pm.getImportPackages().add(importDecl);
 		}
 		
 		//Creating pattern

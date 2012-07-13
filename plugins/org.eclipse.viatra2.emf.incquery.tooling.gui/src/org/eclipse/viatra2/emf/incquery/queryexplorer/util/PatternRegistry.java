@@ -48,7 +48,7 @@ public class PatternRegistry {
 	private Map<String, Pattern> patternNameMap;
 	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
-	public synchronized static PatternRegistry getInstance() {
+	public static synchronized PatternRegistry getInstance() {
 		if (instance == null) {
 			instance = new PatternRegistry();
 		}

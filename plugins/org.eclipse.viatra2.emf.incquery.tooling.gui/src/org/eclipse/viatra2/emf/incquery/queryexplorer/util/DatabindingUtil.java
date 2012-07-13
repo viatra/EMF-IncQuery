@@ -82,6 +82,9 @@ public class DatabindingUtil {
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
 	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
 	
+	@Inject
+	private IResourceSetProvider resSetProvider;
+	
 	/**
 	 * Creates a marker with a warning for the given pattern. 
 	 * The marker's message will be set to the given message parameter.
@@ -132,18 +135,18 @@ public class DatabindingUtil {
 					return Boolean.valueOf(((BoolValueImpl) ap.getValue()).isValue());
 				}
 			}
-			return Boolean.valueOf(true);
+			return Boolean.TRUE;
 		}
 	}
 	
-	public synchronized static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
+	public static synchronized Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
 		if (generatedMatcherFactories == null) {
 			generatedMatcherFactories = collectGeneratedMatcherFactories();
 		}
 		return Collections.unmodifiableCollection(generatedMatcherFactories.values());
 	}
 	
-	public synchronized static List<Pattern> getGeneratedPatterns() {
+	public static synchronized List<Pattern> getGeneratedPatterns() {
 		if (generatedPatterns == null) {
 			generatedPatterns = collectGeneratedPatterns();
 		}
@@ -387,7 +390,7 @@ public class DatabindingUtil {
 					if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(pattern)) {
 						Object obj = ce.createExecutableExtension("class");
 
-						if (obj != null && obj instanceof DatabindingAdapter) {
+						if (obj instanceof DatabindingAdapter) {
 							return (DatabindingAdapter<IPatternMatch>) obj;
 						}
 					}
@@ -493,9 +496,6 @@ public class DatabindingUtil {
 		}
 		return null;
 	}
-
-	@Inject
-	IResourceSetProvider resSetProvider;
 	
 	/**
 	 * Parses the given .eiq file into a {@link PatternModel}.

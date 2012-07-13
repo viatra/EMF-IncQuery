@@ -25,21 +25,23 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 public class DoubleClickListener implements IDoubleClickListener {
 
+	private static final String EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION = "Exception when activating show location!";
+
 	@Override
 	public void doubleClick(DoubleClickEvent event) {
 		ISelection selection = event.getSelection();
-		if (selection != null && selection instanceof TreeSelection) {
+		if (selection instanceof TreeSelection) {
 			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(IHandlerService.class);
 			try {
 				handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
 			} catch (ExecutionException e) {
-				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
+				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			} catch (NotDefinedException e) {
-				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
+				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			} catch (NotEnabledException e) {
-				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
+				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			} catch (NotHandledException e) {
-				IncQueryEngine.getDefaultLogger().logError("Exception when activating show location!", e);
+				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			}
 		}
 	}

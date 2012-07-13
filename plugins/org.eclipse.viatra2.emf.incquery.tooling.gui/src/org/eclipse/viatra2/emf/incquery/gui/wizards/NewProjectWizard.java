@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -55,9 +56,11 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	private IWorkspace workspace;
 
 	@Inject
-	IEiqGenmodelProvider genmodelProvider;
+	private IEiqGenmodelProvider genmodelProvider;
 	@Inject
-	IResourceSetProvider resourceSetProvider;
+	private IResourceSetProvider resourceSetProvider;
+	@Inject
+	private Logger logger;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,7 +81,6 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 		workspace = ResourcesPlugin.getWorkspace();
-		// this.selection = selection;
 	}
 
 	@Override
@@ -127,13 +129,11 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 				try {
 					projectHandle.delete(true, new NullProgressMonitor());
 				} catch (CoreException e1) {
-					//TODO real error logging
-					e1.printStackTrace();
+					logger.error("Cannot remove partially created EMF-IncQuery project.", e1);
 				}
 			}
-			//TODO real error logging!
 			Throwable realException = e.getTargetException();
-			realException.printStackTrace();
+			logger.error("Cannot create EMF-IncQuery project: " + realException.getMessage(), realException);
 			MessageDialog.openError(getShell(), "Error",
 					realException.getMessage());
 			return false;

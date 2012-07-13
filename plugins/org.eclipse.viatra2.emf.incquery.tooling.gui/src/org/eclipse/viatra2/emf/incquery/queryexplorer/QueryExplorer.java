@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -75,6 +74,8 @@ import com.google.inject.Injector;
  */
 public class QueryExplorer extends ViewPart {
 
+	private static final String DETAILS_VIEW_FLYOUT_STATE = "detailsViewFlyoutState";
+
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	
 	private TableViewer detailsTableViewer;
@@ -95,10 +96,10 @@ public class QueryExplorer extends ViewPart {
 	private IFlyoutPreferences patternsViewerFlyoutPreferences;
 	
 	@Inject
-	Injector injector;
+	private Injector injector;
 	
 	@Inject
-	TableViewerUtil tableViewerUtil;
+	private TableViewerUtil tableViewerUtil;
 	
 	public QueryExplorer() {
 		matcherContentProvider = new MatcherContentProvider();
@@ -116,8 +117,7 @@ public class QueryExplorer extends ViewPart {
 		//In Juno activeWorkbenchWindow will be null when Eclipse is closing
 		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
-			IViewPart form = activeWorkbenchWindow.getActivePage().findView(ID);
-	    	return (QueryExplorer) form;
+			return (QueryExplorer) activeWorkbenchWindow.getActivePage().findView(ID);
 		}
 		return null;
 	}
@@ -132,11 +132,11 @@ public class QueryExplorer extends ViewPart {
 		int detailsState = IFlyoutPreferences.STATE_OPEN;
 		int patternsState = IFlyoutPreferences.STATE_COLLAPSED;
 		if (memento != null) {
-			if (memento.getInteger("detailsViewFlyoutState") != null) {
-				detailsState = memento.getInteger("detailsViewFlyoutState");
+			if (memento.getInteger(DETAILS_VIEW_FLYOUT_STATE) != null) {
+				detailsState = memento.getInteger(DETAILS_VIEW_FLYOUT_STATE);
 			}
 			if (memento.getInteger("patternsViewerFlyoutState") != null) {
-				patternsState = memento.getInteger("detailsViewFlyoutState");
+				patternsState = memento.getInteger(DETAILS_VIEW_FLYOUT_STATE);
 			}
 		}
 		detailsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, detailsState, 300);
@@ -308,7 +308,7 @@ public class QueryExplorer extends ViewPart {
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		memento.putInteger("detailsViewFlyoutState", detailsViewerFlyout.getPreferences().getState());
+		memento.putInteger(DETAILS_VIEW_FLYOUT_STATE, detailsViewerFlyout.getPreferences().getState());
 		memento.putInteger("patternsViewerFlyoutState", patternsViewerFlyout.getPreferences().getState());
 	}
 }

@@ -46,7 +46,7 @@ import com.google.inject.Inject;
 public class ShowLocationHandler extends AbstractHandler {
 	
 	@Inject
-	ILocationInFileProvider locationProvider;
+	private ILocationInFileProvider locationProvider;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
