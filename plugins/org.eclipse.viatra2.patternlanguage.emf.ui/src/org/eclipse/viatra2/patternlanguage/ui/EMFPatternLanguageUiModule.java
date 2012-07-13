@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.ui;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
@@ -28,6 +30,8 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 
 /**
@@ -36,6 +40,16 @@ import com.google.inject.name.Names;
 public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlanguage.ui.AbstractEMFPatternLanguageUiModule {
 	public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	@Provides
+	@Singleton
+	Logger provideLoggerImplementation() {
+		Logger logger = Logger.getLogger(EMFPatternLanguageUiModule.class);
+		logger.setAdditivity(false);
+		logger.addAppender(new ConsoleAppender());
+		logger.addAppender(new EclipseLogAppender());
+		return logger;
 	}
 
 	@Override
