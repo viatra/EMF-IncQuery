@@ -246,4 +246,5 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
 		typeReferenceSerializer.serialize(ref, ctx, appendable)		
 	}
+
 }

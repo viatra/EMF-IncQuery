@@ -11,17 +11,16 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
+import org.apache.log4j.Logger
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.apache.log4j.Logger
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -31,7 +30,7 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
  * 
  * @author Mark Czotter
  */
-class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
+class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmModelInferrer {
 
 	Logger logger = Logger::getLogger(getClass())
 
@@ -86,9 +85,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		   	acceptor.accept(matchClass)
 		   	acceptor.accept(matcherClass)
 		   	acceptor.accept(matcherFactoryClass)
-		   	acceptor.accept(processorClass)	   		
+		   	acceptor.accept(processorClass)
 	   	} catch(Exception e) {
-	   		logger.error("Exception during Jvm Model Infer", e)
+	   		logger.error("Exception during Jvm Model Infer for: " + pattern, e)
 	   	}
    	}
    	
