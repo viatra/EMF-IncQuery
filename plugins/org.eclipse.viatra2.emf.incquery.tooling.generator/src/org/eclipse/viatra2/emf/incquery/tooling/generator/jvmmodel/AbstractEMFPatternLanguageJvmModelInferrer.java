@@ -11,7 +11,6 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.xtext.common.types.JvmGenericType;
@@ -38,7 +37,7 @@ public class AbstractEMFPatternLanguageJvmModelInferrer extends
 	 * @see org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer#_infer(org.eclipse.emf.ecore.EObject, org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor, boolean)
 	 */
 	@Override
-	public void _infer(EObject e, @NonNull IJvmDeclaredTypeAcceptor acceptor,
+	public void _infer(EObject e, IJvmDeclaredTypeAcceptor acceptor,
 			boolean preIndexingPhase) {
 		super._infer(e, acceptor, preIndexingPhase);
 		if (e instanceof PatternModel) {
@@ -49,7 +48,7 @@ public class AbstractEMFPatternLanguageJvmModelInferrer extends
 	/**
 	 * Infers a group Class from a {@link PatternModel}
 	 */
-	private void inferGroupClass(PatternModel model, @NonNull IJvmDeclaredTypeAcceptor acceptor,
+	private void inferGroupClass(PatternModel model, IJvmDeclaredTypeAcceptor acceptor,
 			boolean preIndexingPhase) {
 		try {
 			final JvmGenericType groupClass = groupClassInferrer.inferPatternGroup(model);
