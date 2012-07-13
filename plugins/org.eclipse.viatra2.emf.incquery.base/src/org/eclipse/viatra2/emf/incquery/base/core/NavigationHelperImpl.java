@@ -112,6 +112,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public boolean isInWildcardMode() {
 		return inWildcardMode;
 	}
+//	@Override
+//	public void setInWildcardMode(boolean newWildcardMode) {
+//		if (inWildcardMode && !newWildcardMode)
+//			throw new UnsupportedOperationException();
+//		if (!inWildcardMode && newWildcardMode) {
+//			this.inWildcardMode = true;
+//			
+//			this.allObservedClasses = null;
+//			this.directlyObservedClasses = null;
+//			this.observedDataTypes = null;
+//			this.observedFeatures = null;
+//			
+//			this.contentAdapter. // TODO lot of work because need to send proper notifications
+//		}
+//			
+//	}
 
 	
 	public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode) throws IncQueryBaseException {

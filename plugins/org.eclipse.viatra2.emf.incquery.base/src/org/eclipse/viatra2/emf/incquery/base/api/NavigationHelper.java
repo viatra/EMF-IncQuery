@@ -67,6 +67,12 @@ public interface NavigationHelper {
 	 * @return true if everything is indexed, false if manual registration of interesting EClassifiers and EStructuralFeatures is required.
 	 */
 	public boolean isInWildcardMode();
+//	/** // COMING SOON
+//	 * Sets the <em>wildcard mode</em>. 
+//	 * <p>If turned on from off, all registrations are erased and the model is re-parsed in a single pass.
+//	 * Turning off from on is not supported yet. 
+//	 */
+//	public void setInWildcardMode(boolean newWildcardMode);
 	
 	/**
 	 * Find all {@link EAttribute} and their owners for a given <code>value</code> of the attribute.

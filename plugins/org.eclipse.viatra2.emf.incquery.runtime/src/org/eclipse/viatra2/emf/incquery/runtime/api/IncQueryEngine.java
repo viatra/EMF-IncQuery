@@ -57,11 +57,16 @@ public class IncQueryEngine {
 	/**
 	 * The model to which the engine is attached.
 	 */
-	private Notifier emfRoot;	
+	private Notifier emfRoot;
+	
 	/**
 	 * The base index keeping track of basic EMF contents of the model.
 	 */
 	private NavigationHelper baseIndex;
+	/**
+	 * Whether to initialize the base index in wildcard mode.
+	 */
+	private static final boolean WILDCARD_MODE_DEFAULT = false;
 	/**
 	 * The RETE pattern matcher component of the EMF-IncQuery engine.
 	 */	
@@ -105,9 +110,18 @@ public class IncQueryEngine {
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
 	protected NavigationHelper getBaseIndexInternal() {
+		return getBaseIndexInternal(WILDCARD_MODE_DEFAULT);
+	}
+	
+	/**
+	 * Internal accessor for the base index.
+	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryBaseException if the base index could not be constructed
+	 */
+	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), false);
+				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode);
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryRuntimeException(
 						"Could not initialize EMF-IncQuery base index", 
@@ -117,7 +131,7 @@ public class IncQueryEngine {
 		}
 		return baseIndex;
 	}
-	
+		
 	/**
 	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
@@ -267,6 +281,19 @@ public class IncQueryEngine {
 	 */
 	public static EMFIncQueryRuntimeLogger getDefaultLogger() {
 		return DefaultLoggerProvider.getDefaultLogger();
+	}
+
+	/**
+	 * Specifies whether the base index should be built in wildcard mode.
+	 * @param wildcardMode the wildcardMode to set
+	 * @throws IllegalStateException if baseIndex is already constructed in the opposite mode, since the mode can not be changed
+	 */
+	public void setWildcardMode(boolean wildcardMode) {
+		if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
+			throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
+			
+		if (wildcardMode != WILDCARD_MODE_DEFAULT) 
+			getBaseIndexInternal(wildcardMode);		
 	}
 	
 //	/**
