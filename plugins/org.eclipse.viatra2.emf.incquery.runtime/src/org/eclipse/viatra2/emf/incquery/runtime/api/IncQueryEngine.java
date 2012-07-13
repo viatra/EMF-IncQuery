@@ -11,8 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -21,9 +20,9 @@ import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
+import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder.EPMBuilder;
@@ -78,8 +77,6 @@ public class IncQueryEngine {
 	private int reteThreads = 0;
 	
 	private EMFIncQueryRuntimeLogger logger;
-	private static EMFIncQueryRuntimeLogger defaultLogger;
-	// TODO IncQueryBase?
 	
 	/**
 	 * @param manager
@@ -89,6 +86,11 @@ public class IncQueryEngine {
 		super();
 		this.manager = manager;
 		this.emfRoot = emfRoot;
+		
+		if (! (emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet)) 
+			throw new IncQueryRuntimeException(
+					IncQueryRuntimeException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
+					IncQueryRuntimeException.INVALID_EMFROOT_SHORT);
 	}	
 	
 	/**
@@ -103,9 +105,16 @@ public class IncQueryEngine {
 	 * @return the baseIndex the NavigationHelper maintaining the base index
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected ParameterizedNavigationHelper getBaseIndexInternal() throws IncQueryBaseException {
+	protected ParameterizedNavigationHelper getBaseIndexInternal() {
 		if (baseIndex == null) {
-			baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+			try {
+				baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+			} catch (IncQueryBaseException e) {
+				throw new IncQueryRuntimeException(
+						"Could not initialize EMF-IncQuery base index", 
+						"Could not initialize base index", 
+						e);
+			}
 		}
 		return baseIndex;
 	}
@@ -115,7 +124,7 @@ public class IncQueryEngine {
 	 * @return the baseIndex the NavigationHelper maintaining the base index
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	public NavigationHelper getBaseIndex() throws IncQueryBaseException {
+	public NavigationHelper getBaseIndex() {
 		return getBaseIndexInternal();
 	}	
 	
@@ -127,14 +136,14 @@ public class IncQueryEngine {
 	 */
 	public ReteEngine<Pattern> getReteEngine() throws IncQueryRuntimeException {
 		if (reteEngine == null) {
-			EMFPatternMatcherRuntimeContext<Pattern> context;
-			if (emfRoot instanceof EObject) 
-				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
-			else if (emfRoot instanceof Resource) 
-				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot, this);
-			else if (emfRoot instanceof ResourceSet) 
-				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
-			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
+			EMFPatternMatcherRuntimeContext<Pattern> context = new EMFPatternMatcherRuntimeContext<Pattern>(this, getBaseIndexInternal());
+//			if (emfRoot instanceof EObject) 
+//				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
+//			else if (emfRoot instanceof Resource) 
+//				context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot, this);
+//			else if (emfRoot instanceof ResourceSet) 
+//				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
+//			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 			
 			reteEngine = buildReteEngineInternal(context);
 			//if (reteEngine != null) engines.put(emfRoot, new WeakReference<ReteEngine<String>>(engine));
@@ -208,68 +217,11 @@ public class IncQueryEngine {
 	 */
 	public EMFIncQueryRuntimeLogger getLogger() {
 		if (logger == null) {
-			logger = createLogger();
+			logger = DefaultLoggerProvider.getDefaultLogger();
 		}
 		return logger;
 	}
 
-	/**
-	 * Creates a new logger instance
-	 */
-	private static EMFIncQueryRuntimeLogger createLogger() {
-		final IncQueryRuntimePlugin plugin = IncQueryRuntimePlugin.getDefault();
-		EMFIncQueryRuntimeLogger newLogger;
-		if (plugin !=null) newLogger = new EMFIncQueryRuntimeLogger() {
-			@Override
-			public void logDebug(String message) {
-				//plugin.getLog().log(new Status(IStatus.INFO, IncQueryRuntimePlugin.PLUGIN_ID, message));
-			}
-
-			@Override
-			public void logError(String message) {
-				plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message));
-			}
-
-			@Override
-			public void logError(String message, Throwable cause) {
-				plugin.getLog().log(new Status(IStatus.ERROR, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
-			}
-
-			@Override
-			public void logWarning(String message) {
-				plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message));
-			}
-
-			@Override
-			public void logWarning(String message, Throwable cause) {
-				plugin.getLog().log(new Status(IStatus.WARNING, IncQueryRuntimePlugin.PLUGIN_ID, message, cause));
-			}
-		}; else newLogger = new EMFIncQueryRuntimeLogger() {
-			@Override
-			public void logDebug(String message) {
-				System.err.println("[DEBUG] " + message);
-			}
-			@Override
-			public void logError(String message) {
-				System.err.println("[ERROR] " + message);
-			}
-			@Override
-			public void logError(String message, Throwable cause) {
-				System.err.println("[ERROR] " + message);
-				cause.printStackTrace();
-			}
-			@Override
-			public void logWarning(String message) {
-				System.err.println("[WARNING] " + message);
-			}
-			@Override
-			public void logWarning(String message, Throwable cause) {
-				System.err.println("[WARNING] " + message);
-				cause.printStackTrace();
-			}				
-		};
-		return newLogger;
-	}
 
 	/**
 	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
@@ -284,16 +236,7 @@ public class IncQueryEngine {
 	public void setLogger(EMFIncQueryRuntimeLogger logger) {
 		this.logger = logger;
 	}
-	
-	/**
-	 * Returns the default logger
-	 */
-	public static EMFIncQueryRuntimeLogger getDefaultLogger() {
-		if(defaultLogger == null) {
-			defaultLogger = createLogger();
-		}
-		return defaultLogger;
-	}
+
 
 	
 	/**
@@ -304,6 +247,13 @@ public class IncQueryEngine {
 			sanitizer = new PatternSanitizer(getLogger());
 		}
 		return sanitizer;
+	}
+
+	/**
+	 * Provides a static default logger.
+	 */
+	public static EMFIncQueryRuntimeLogger getDefaultLogger() {
+		return DefaultLoggerProvider.getDefaultLogger();
 	}
 	
 //	/**

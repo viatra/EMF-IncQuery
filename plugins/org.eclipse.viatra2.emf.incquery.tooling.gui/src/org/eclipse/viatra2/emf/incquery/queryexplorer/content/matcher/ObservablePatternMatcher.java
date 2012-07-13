@@ -55,36 +55,26 @@ public class ObservablePatternMatcher {
 	private Object[] parameterFilter;
 	private String orderParameter;
 	private boolean descendingOrder;
+	private String exceptionMessage;
 	
-	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher, String patternFqn, boolean generated) {
+	public ObservablePatternMatcher(
+			ObservablePatternMatcherRoot parent, 
+			IncQueryMatcher<IPatternMatch> matcher, 
+			String patternFqn, 
+			boolean generated, 
+			String exceptionMessage) {
 		this.parent = parent;
 		this.patternFqn = patternFqn;
 		this.matches = new ArrayList<ObservablePatternMatch>();
 		this.matcher = matcher;
 		this.generated = generated;
 		this.orderParameter = null;
+		this.exceptionMessage = exceptionMessage;
 		
 		DatabindingUtil.removeOrderByPatternWarning(patternFqn);
 
 		if (matcher != null) {
-			Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
-			if (annotation != null) {
-				for (AnnotationParameter ap : annotation.getParameters()) {
-					if (ap.getName().matches("key")) {
-						orderParameter = ((StringValueImpl) ap.getValue()).getValue(); 
-					}
-					if (ap.getName().matches("direction")) {
-						String direction = ((StringValueImpl) ap.getValue()).getValue(); 
-						if (direction.matches("desc")) {
-							descendingOrder = true;
-						}
-						else {
-							descendingOrder = false;
-						}
-					}
-				}
-			}
-
+			initOrdering();
 			initFilter();
 			this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
 			this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
@@ -99,6 +89,29 @@ public class ObservablePatternMatcher {
 			
 			this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
 			this.processMatchesRunnable.run();
+		}
+	}
+	
+	/**
+	 * Initializes the matcher for ordering if the annotation is present. 
+	 */
+	private void initOrdering() {
+		Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
+		if (annotation != null) {
+			for (AnnotationParameter ap : annotation.getParameters()) {
+				if (ap.getName().matches("key")) {
+					orderParameter = ((StringValueImpl) ap.getValue()).getValue(); 
+				}
+				if (ap.getName().matches("direction")) {
+					String direction = ((StringValueImpl) ap.getValue()).getValue(); 
+					if (direction.matches("desc")) {
+						descendingOrder = true;
+					}
+					else {
+						descendingOrder = false;
+					}
+				}
+			}
 		}
 	}
 	
@@ -274,7 +287,7 @@ public class ObservablePatternMatcher {
 	 * @return the label
 	 */
 	public String getText() {
-		return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered());
+		return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(), exceptionMessage);
 	}
 
 	public static final String MATCHES_ID = "matches";

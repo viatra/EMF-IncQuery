@@ -26,8 +26,10 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -46,6 +48,7 @@ public class EnsurePluginSupport {
 	private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
 	private Multimap<IProject, IPluginExtension> appendableExtensionMap = ArrayListMultimap.create();
 	private Multimap<IProject, Pair<String, String>> removableExtensionMap = ArrayListMultimap.create();
+	private Multimap<IProject, String> modelBundleIds = HashMultimap.create();
 	
 	public void appendExtension(IProject project, IPluginExtension extension) {
 		appendableExtensionMap.put(project, extension);
@@ -68,10 +71,22 @@ public class EnsurePluginSupport {
 		exportedPackageMap.put(project, packageName);
 	}
 	
+	/**
+	 * Adds a bundle id to the projects bundle collection. The implementation
+	 * manages multiple additions by storing only a single element for each id.
+	 * 
+	 * @param project
+	 * @param bundleId
+	 */
+	public void addModelBundleId(IProject project, String bundleId) {
+		modelBundleIds.put(project, bundleId);
+	}
+	
 	public void clean() {
 		exportedPackageMap.clear();
 		appendableExtensionMap.clear();
 		removableExtensionMap.clear();
+		modelBundleIds.clear();
 	}
 
 	/**
@@ -89,6 +104,10 @@ public class EnsurePluginSupport {
 		} finally {
 			monitor.worked(1);
 		}
+	}
+	
+	public Collection<String> getModelBundleDependencies(IProject project) {
+		return modelBundleIds.get(project);
 	}
 	
 	private void internalEnsure(IProject modelProject, IProgressMonitor monitor) throws CoreException {

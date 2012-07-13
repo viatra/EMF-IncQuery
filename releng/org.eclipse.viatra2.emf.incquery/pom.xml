@@ -21,7 +21,7 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.ui</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.databinding</module>
-		<!-- <module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.derived</module> -->
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.derived</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.gui</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core.ui</module>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>

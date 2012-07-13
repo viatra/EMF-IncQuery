@@ -16,7 +16,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger;
+import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
 
 /**
  * @author Abel Hegedus

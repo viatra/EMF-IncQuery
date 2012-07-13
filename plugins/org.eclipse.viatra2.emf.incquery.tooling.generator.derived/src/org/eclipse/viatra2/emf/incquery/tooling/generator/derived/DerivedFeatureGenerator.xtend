@@ -74,7 +74,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 * 		  )
 	 */
 	private static String annotationLiteral 		= "DerivedFeature"
-	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features"
+	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features"
 	private static String IMPORT_QUALIFIER 			= "org.eclipse.viatra2.emf.incquery.runtime.derived"
 	private static String FEATUREKIND_IMPORT		= "FeatureKind"
 	private static String HELPER_IMPORT 			= "IncqueryFeatureHelper"
@@ -209,9 +209,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	def private findJavaProject(GenPackage pckg){
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
-		val project = ProjectLocator::locateProject(projectDir)
-		ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
-		JavaCore::create(project)
+		//val project = ProjectLocator::locateProject(projectDir)
+		ProjectLocator::locateProject(projectDir)
+		//ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
+		//JavaCore::create(project)
 	}
 	
 	def private findJavaFile(GenPackage pckg, GenClass genSourceClass, IJavaProject javaProject){

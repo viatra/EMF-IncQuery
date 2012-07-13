@@ -54,6 +54,7 @@ class PatternLanguageScopeProvider extends XbaseScopeProvider {
 	}
 	
 	def createIEObjectDescription(Variable parameter) {
-		EObjectDescription::^create(QualifiedName::^create(parameter.name), parameter, null);
+		var name = if (parameter.name != null)  QualifiedName::^create(parameter.name) else QualifiedName::EMPTY
+		EObjectDescription::^create(name, parameter, null);
 	}
 }

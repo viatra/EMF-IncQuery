@@ -22,9 +22,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreEList;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
@@ -128,7 +128,9 @@ public class IncqueryFeatureHelper {
 				//featureList.put(feature,handler);
 				
 				if(matcherFactory == null) {
-					throw new IncQueryRuntimeException("Matcher factory not set!");
+					throw new IncQueryRuntimeException(
+							String.format("EMF-IncQuery can not provide the value of derived feature %s as no matcher factory was given.", feature),
+							"No matcher factory for derived feature handler!");
 				}
 				Resource eResource = source.eResource();
 				if(eResource != null) {
@@ -137,14 +139,16 @@ public class IncqueryFeatureHelper {
 						matcher = matcherFactory.getMatcher(resourceSet);
 					} else {
 						matcher = matcherFactory.getMatcher(eResource);
-						IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
+						DefaultLoggerProvider.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
 					}
 				} else {
 					matcher = matcherFactory.getMatcher(source);
-					IncQueryEngine.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
+					DefaultLoggerProvider.getDefaultLogger().logWarning(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
 				}
 				if(matcher == null) {
-					throw new IncQueryRuntimeException("Matcher cannot be initiated!");
+					throw new IncQueryRuntimeException(
+							String.format("Could not create matcher for pattern %d defining feature %s.", matcherFactory.getPattern(), feature),
+							"Derived feature handler could not initiate matcher.");
 				}/* else {
 					if(!featureList.containsKey(feature)) {
 						featureList.put(feature, matcher);
@@ -164,7 +168,7 @@ public class IncqueryFeatureHelper {
 				SOURCEMAP.remove(source);
 			}
 			if(counter.get(feature) == 1) {
-				//IncQueryEngine.getDefaultLogger().logWarning("Starting handler for feature " + feature);
+				//DefaultLoggerProvider.getDefaultLogger().logWarning("Starting handler for feature " + feature);
 				handler.startMonitoring();
 				counter.remove(feature);
 				return handler;
@@ -174,7 +178,7 @@ public class IncqueryFeatureHelper {
 			}
 			//}
 		} catch (IncQueryRuntimeException e) {
-			IncQueryEngine.getDefaultLogger().logError("Handler initialization failed", e);
+			DefaultLoggerProvider.getDefaultLogger().logError("Handler initialization failed", e);
 		}
 		return null;
 	}

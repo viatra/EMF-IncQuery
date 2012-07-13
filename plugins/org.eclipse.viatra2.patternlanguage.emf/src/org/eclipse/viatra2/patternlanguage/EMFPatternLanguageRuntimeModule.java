@@ -20,7 +20,9 @@ import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.viatra2.patternlanguage.serializer.EMFPatternLanguageCrossRefSerializer;
 import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
+import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
+import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
@@ -74,5 +76,9 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	
 	public Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
 		return EMFPatternLanguageCrossRefSerializer.class;
+	}
+	
+	public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
+		return EMFPatternLanguageSyntaxErrorMessageProvider.class;
 	}
 }

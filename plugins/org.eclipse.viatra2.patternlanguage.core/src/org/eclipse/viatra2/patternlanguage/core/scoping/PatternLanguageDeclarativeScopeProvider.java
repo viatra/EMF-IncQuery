@@ -47,7 +47,6 @@ public class PatternLanguageDeclarativeScopeProvider extends
 	private final class UndefinedVariable implements Predicate<Variable> {
 		@Override
 		public boolean apply(Variable input) {
-			System.out.println(input);
 			return input.getName() != null && !input.getName().isEmpty();
 		}
 	}

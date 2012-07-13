@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,19 +35,32 @@ import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
-	protected HashSet<EClass> observedClasses;
+	protected HashSet<EClass> directlyObservedClasses;
+	protected HashSet<EClass> allObservedClasses = null; // including subclasses
+	protected HashSet<EDataType> observedDataTypes;
 	protected HashSet<EStructuralFeature> observedFeatures;
+	
 	protected Notifier notifier;
+	protected Set<Notifier> modelRoots;
+	private boolean expansionAllowed;
 	protected NavigationHelperType navigationHelperType;
-	protected NavigationHelperVisitor visitor;
+//	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
 	private Map<InstanceListener, Collection<EClass>> instanceListeners;
 	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
 	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
+	
+	
+	/**
+	 * These global listeners will be called after updates.
+	 */
+	protected Set<Runnable> afterUpdateCallbacks;
+
 	
 	public NavigationHelperImpl(Notifier emfRoot, NavigationHelperType type) throws IncQueryBaseException {
 
@@ -57,18 +71,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.instanceListeners = new HashMap<InstanceListener, Collection<EClass>>();
 		this.featureListeners = new HashMap<FeatureListener, Collection<EStructuralFeature>>();
 		this.dataTypeListeners = new HashMap<DataTypeListener, Collection<EDataType>>();
-		this.observedClasses = new HashSet<EClass>();
+		this.directlyObservedClasses = new HashSet<EClass>();
 		this.observedFeatures = new HashSet<EStructuralFeature>();
+		this.observedDataTypes = new HashSet<EDataType>();
 		this.contentAdapter = new NavigationHelperContentAdapter(this);
-		this.visitor = new NavigationHelperVisitor(this);
+//		this.visitor = new NavigationHelperVisitor(this);
+		this.afterUpdateCallbacks = new HashSet<Runnable>();
 
 		this.notifier = emfRoot;
+		this.modelRoots = new HashSet<Notifier>();
+		this.expansionAllowed = notifier instanceof ResourceSet;
 		this.navigationHelperType = type;
 
-		if (this.navigationHelperType == NavigationHelperType.ALL) {
-			visitor.visitModel(notifier, observedFeatures, observedClasses);
-		}
-		this.notifier.eAdapters().add(contentAdapter);
+//		if (this.navigationHelperType == NavigationHelperType.ALL) {
+//			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
+//		}
+		expandToAdditionalRoot(emfRoot);
 	}
 	
 	public NavigationHelperType getType() {
@@ -79,21 +97,19 @@ public class NavigationHelperImpl implements NavigationHelper {
 		return contentAdapter;
 	}
 	
-	public HashSet<EClass> getObservedClasses() {
-		return observedClasses;
-	}
-	
 	public HashSet<EStructuralFeature> getObservedFeatures() {
 		return observedFeatures;
 	}
 	
-	public NavigationHelperVisitor getVisitor() {
-		return visitor;
-	}
+//	public NavigationHelperVisitor getVisitor() {
+//		return visitor;
+//	}
 
 	@Override
 	public void dispose() {
-		notifier.eAdapters().remove(contentAdapter);
+		for (Notifier root : modelRoots) {
+			root.eAdapters().remove(contentAdapter);		
+		}
 	}
 	
 	@Override
@@ -152,22 +168,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 	}
 
-	@Override
-	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
-		Set<Setting> retSet = new HashSet<Setting>();
-
-		for (Object value : contentAdapter.featureMap.keySet()) {
-			if (value.getClass().equals(clazz)) {
-				for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
-					for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
-						retSet.add(new NavigationHelperSetting(attr, holder, value));
-					}
-				}
-			}
-		}
-
-		return retSet;
-	}
+//	@Override
+//	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
+//		Set<Setting> retSet = new HashSet<Setting>();
+//
+//		for (Object value : contentAdapter.featureMap.keySet()) {
+//			if (value.getClass().equals(clazz)) {
+//				for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
+//					for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
+//						retSet.add(new NavigationHelperSetting(attr, holder, value));
+//					}
+//				}
+//			}
+//		}
+//
+//		return retSet;
+//	}
 
 	@Override
 	public Collection<Setting> getInverseReferences(EObject target) {
@@ -232,10 +248,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 		Set<EClass> valSet = contentAdapter.subTypeMap.get(type);
 		if (valSet != null) {
 			for (EClass c : valSet) {
-				retSet.addAll(contentAdapter.instanceMap.get(c));
+				final Set<EObject> instances = contentAdapter.instanceMap.get(c);
+				if (instances != null) retSet.addAll(instances);
 			}
 		}
-		retSet.addAll(contentAdapter.instanceMap.get(type));
+		final Set<EObject> instances = contentAdapter.instanceMap.get(type);
+		if (instances != null) retSet.addAll(instances);
 		
 		return retSet;
 	}
@@ -262,43 +280,64 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener) {
-		this.instanceListeners.put(listener, classes);		
+		Collection<EClass> registered = this.instanceListeners.get(listener);
+		if (registered == null) {
+			registered = new HashSet<EClass>();
+			this.instanceListeners.put(listener, registered);	
+		}
+		registered.addAll(classes);
 	}
 
 	@Override
 	public void unregisterInstanceListener(Collection<EClass> classes, InstanceListener listener) {
 		Collection<EClass> restriction = this.instanceListeners.get(listener);
-		restriction.removeAll(classes);
-		if (restriction.size() == 0) {
-			this.instanceListeners.remove(listener);
-		}		
+		if (restriction != null) {
+			restriction.removeAll(classes);
+			if (restriction.size() == 0) {
+				this.instanceListeners.remove(listener);
+			}		
+		}
 	}
 	
 	@Override
 	public void registerFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
-		this.featureListeners.put(listener, features);
+		Collection<EStructuralFeature> registered = this.featureListeners.get(listener);
+		if (registered == null) {
+			registered = new HashSet<EStructuralFeature>();
+			this.featureListeners.put(listener, registered);	
+		}
+		registered.addAll(features);
 	}
 
 	@Override
 	public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
 		Collection<EStructuralFeature> restriction = this.featureListeners.get(listener);
-		restriction.removeAll(features);
-		if (restriction.size() == 0) {
-			this.featureListeners.remove(listener);
+		if (restriction != null) {
+			restriction.removeAll(features);
+			if (restriction.size() == 0) {
+				this.featureListeners.remove(listener);
+			}
 		}
 	}
 	
 	@Override
 	public void registerDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
-		this.dataTypeListeners.put(listener, types);
+		Collection<EDataType> registered = this.dataTypeListeners.get(listener);
+		if (registered == null) {
+			registered = new HashSet<EDataType>();
+			this.dataTypeListeners.put(listener, registered);	
+		}
+		registered.addAll(types);
 	}
 	
 	@Override
 	public void unregisterDataTypeListener(Collection<EDataType> types,	DataTypeListener listener) {
 		Collection<EDataType> restriction = this.dataTypeListeners.get(listener);
-		restriction.removeAll(types);
-		if (restriction.size() == 0) {
-			this.dataTypeListeners.remove(listener);
+		if (restriction != null) {
+			restriction.removeAll(types);
+			if (restriction.size() == 0) {
+				this.dataTypeListeners.remove(listener);
+			}
 		}
 	}
 	
@@ -312,5 +351,89 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	public Map<DataTypeListener, Collection<EDataType>> getDataTypeListeners() {
 		return dataTypeListeners;
+	}
+
+	/**
+	 * @return the observedDataTypes
+	 */
+	public HashSet<EDataType> getObservedDataTypes() {
+		return observedDataTypes;
+	}
+
+	/**
+	 * These runnables will be called after updates by the manipulationListener at its own discretion.
+	 * Can be used e.g. to check delta monitors.
+	 */
+	@Override
+	public Set<Runnable> getAfterUpdateCallbacks() {
+		return afterUpdateCallbacks;
+	}	
+	/**
+	 * This will run after updates.
+	 */
+//	 * If there are any such, updates are settled before they are run. 
+	public void runAfterUpdateCallbacks() {
+		try {
+			if (!afterUpdateCallbacks.isEmpty()) {
+				//settle();
+				for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
+					runnable.run();
+				}
+			}
+		} catch (Exception ex) {
+			DefaultLoggerProvider.getDefaultLogger().logError(
+					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
+			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
+		}
+	}
+	
+	protected void considerForExpansion(EObject obj) {
+		if (expansionAllowed) {
+			Resource eResource = obj.eResource();
+			if (eResource != null && eResource.getResourceSet() == null) {
+				expandToAdditionalRoot(eResource);
+			}
+		}
+	}
+	
+	protected void expandToAdditionalRoot(Notifier root) {
+		if (modelRoots.add(root)) {
+			root.eAdapters().add(contentAdapter);
+		}
+	}
+
+	/**
+	 * @return the expansionAllowed
+	 */
+	public boolean isExpansionAllowed() {
+		return expansionAllowed;
+	}
+
+	/**
+	 * @return the directlyObservedClasses
+	 */
+	public HashSet<EClass> getDirectlyObservedClasses() {
+		return directlyObservedClasses;
+	}
+	
+	public boolean isObserved(EClass clazz) {
+		return getType() == NavigationHelperType.ALL || getAllObservedClasses().contains(clazz);
+	}
+
+	/**
+	 * not just the directly observed classes, but also their known subtypes
+	 */
+	public HashSet<EClass> getAllObservedClasses() {
+		if (allObservedClasses == null) {
+			allObservedClasses = new HashSet<EClass>();
+			for (EClass eClass : directlyObservedClasses) {
+				allObservedClasses.add(eClass);
+				final Set<EClass> subTypes = NavigationHelperContentAdapter.subTypeMap.get(eClass);
+				if (subTypes != null) {
+					allObservedClasses.addAll(subTypes);
+				}
+			}
+		}
+		return allObservedClasses;
 	}
 }

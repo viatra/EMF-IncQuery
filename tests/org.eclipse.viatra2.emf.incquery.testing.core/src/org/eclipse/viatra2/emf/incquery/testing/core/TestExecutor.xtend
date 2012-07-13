@@ -24,7 +24,6 @@ import static org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor.*
 import static org.junit.Assert.*
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import static org.hamcrest.CoreMatchers.*
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EMFIncQueryRuntimeLogger
 import junit.framework.TestListener
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 

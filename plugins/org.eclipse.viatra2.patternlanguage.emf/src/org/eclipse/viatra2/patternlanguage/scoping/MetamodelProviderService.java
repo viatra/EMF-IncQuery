@@ -74,15 +74,16 @@ public class MetamodelProviderService implements IMetamodelProvider {
 		if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
 			return EPackage.Registry.INSTANCE.getEPackage(packageUri);
 		}
-		URI uri = URI.createURI(packageUri);
+		URI uri = null;
 		try {
+			 uri = URI.createURI(packageUri);
 			if (uri.fragment() == null) {
 				Resource resource = resourceSet.getResource(uri, true);
 				return (EPackage) resource.getContents().get(0);
 			}
 			return (EPackage) resourceSet.getEObject(uri, true);
 		} catch(RuntimeException ex) {
-			if (uri.isPlatformResource()) {
+			if (uri != null && uri.isPlatformResource()) {
 				String platformString = uri.toPlatformString(true);
 				URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
 				return loadEPackage(platformPluginURI.toString(), resourceSet);

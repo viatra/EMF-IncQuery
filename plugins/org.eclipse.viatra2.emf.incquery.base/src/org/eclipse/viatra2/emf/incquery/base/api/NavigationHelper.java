@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.base.api;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
  * 
@@ -84,14 +86,14 @@ public interface NavigationHelper {
 	 */
 	public Collection<Object> getDataTypeInstances(EDataType type);
 	
-	/**
-	 * Find all the EAttributes and their owners which have a value of a class that equals to the given one.
-	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}. 
-	 * 
-	 * @param clazz the class of the value
-	 * @return the collection of settings
-	 */
-	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
+//	/**
+//	 * Find all the EAttributes and their owners which have a value of a class that equals to the given one.
+//	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}. 
+//	 * 
+//	 * @param clazz the class of the value
+//	 * @return the collection of settings
+//	 */
+//	public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
 	
 	/**
 	 * Find all the {@link EObject} instances that have an {@link EReference} instance with the given <code>target</code>.
@@ -211,6 +213,13 @@ public interface NavigationHelper {
 	 * @param features the collection of features
 	 */
 	public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+
+	/**
+	 * A set of coarse-grained callbacks that will be invoked after the NavigationHelper index is changed.
+	 * Can be used e.g. to check delta monitors.
+	 * 
+	 */
+	public Set<Runnable> getAfterUpdateCallbacks();
 	
 
 }

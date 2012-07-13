@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cheatsheet
       title="Creating EMF-IncQuery queries">
-   <intro>
+   <intro href="http://viatra.inf.mit.bme.hu/incquery/language">
       <description>
-         Queries return a set of EMF instance objects, matching a given criteria. These criteria can be formulated in the graph pattern language.
-         To learn more about the graph pattern-based query language, visit:<br/><br/>
-http://viatra.inf.mit.bme.hu/incquery/language<br/><br/>
-
-
-      
+         Queries return a set of EMF instance model objects that match the criteria specified in a query pattern. 
+         To learn more about the graph pattern-based query language, push (?).
       </description>
    </intro>
+   
+    <item title="Creating a new query definition">
+      <description>
+        The EMF-IncQuery Query Definition should be located inside a <b>package</b>. You can specify the target package on the first page of the wizard. Make sure that the filename ends with the <b>.eiq</b> extension and that it is locally unique. Inside .eiq files, the query definition patterns are identified by their names (analogously to Java classes -- the notably exception is that an .eiq file may contain multiple query definition patterns). Make sure that the patterns have unique names too.<br/><br/>
+      	You need to specify the EMF domain (Ecore) models that contain the types that your queries will use. These Ecore models will be referenced by your EMF-IncQuery project. EMF-IncQuery can make use of EPackages that have been registered in the global Ecore registry (either by code or by plugin.xml), or you can also directly reference Ecore domains by using <b>.eiqgen</b> files. It is highly recommended that the EMF model code is generated prior to defining model queries with EMF-IncQuery.<br/><br/>
+      	Query definition patterns can have <b>header parameters</b>
+      </description>
+      <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Query Definition">
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqfile)"/>
+      </subitem>
+      <subitem skip="true" label="On the second wizard page, give your pattern a unique name"></subitem>
+      <subitem skip="true" label="Specify packages to import"></subitem>
+      <subitem skip="true" label="Specify the header parameters of the pattern"></subitem>
+   </item>
+   
+   <item title="Adding an EMF-IncQuery Generator Model">
+   		<description>
+   			TODO
+   		</description>
+   		<subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Generator Model">
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
+      	</subitem>
+      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added"></subitem>
+      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button"></subitem>
+      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary"></subitem>
+   </item>
    
    <item
          title="Writing query patterns">
@@ -18,35 +40,45 @@ http://viatra.inf.mit.bme.hu/incquery/language<br/><br/>
       <command
             required="false"
             serialization="org.eclipse.ui.browser.openBrowser(url=http://viatra.inf.mit.bme.hu/incquery/language)"/>
-To develop queries open the model space models/model.vpml, and create a new <b>VIATRA2 Textual Command Language script</b> under models/vtcl. EMF-IncQuery machines should import nemf.packages, the container of imported Ecore metamodels. IncQuery will transform all VTCL <b>pattern</b>s into EMF queries. 
+In the context of the school example, we define a pattern that matches connected pairs of Teachers and Schools. 
+EMF-IncQuery allows the user and the programmer to determine which parameters are used as input and which are output when a query is actually being issued (instantiated), therefore the same pattern can be used to: <br/>
+(a) list the Teachers of a given School (with School as an input parameter), <br/>
+(b) or to find the School that is associated to a given Teacher (Teacher is the input parameter),  <br/>
+(c) or to list all Schools with their Teachers (both are output parameters), <br/>
+(d) or to simply verify whether a given object is a Teacher, the other one is a School, and that the Teacher is indeed associated to the School instance (both are input parameters). 
 <br/><br/>
-For those who follow the library example, we define a pattern that matches pairs of writers and their books. 
-You can determine which parameters are used as input and which are output at run-time when you actually issue the query, therefore the same pattern can be used to: <br/>
-(a) list the books of a writer (with Writer as an input parameter), <br/>
-(b) or to find the author of a book (Book is the input parameter),  <br/>
-(c) or to list all books with their respective authors (both are output parameters), <br/>
-(d) or to simply verify whether a given object is a writer, the other one is a book, and that the author has written the book (both are input parameters). 
-<br/><br/>
-Create the library.vtcl under models/vtcl, and paste the following code:<br/><br/>
-<br/>
-import nemf.packages;<br/>
-<br/>
-machine &apos;myMachine&apos; {<br/>
-<br/>
-  pattern Writes(Writer, Book) = {<br/>
-    library.Writer(Writer);<br/>
-    library.Book(Book);<br/>
-    library.Writer.books(Ref, Writer, Book);<br/>
+Inside the newly created .eiq file, paste the following code:<br/><br/>
+
+  pattern TeachersOfSchool(T:Teacher, Sch:School) = {<br/>
+    School.teachers(Sch,T);<br/>
   }<br/>
 <br/>
 }<br/>
-<br/>
-<br/>
-Alternatively, you can import "nemf.packages.library", and omit the "library." prefixes that specify the EPackage at the EClass / EReference declarations.  
-<br/><br/>
-Optionally, you can make sure that your .vtcl file is syntactically correct by opening the .vpml model space, and parsing the .vtcl code by pressing Alt+P in the VTCL editor. 
-In the VIATRA2 Model spaces view the machine shows up, but can not be run, because it has no entry point (main rule). As EMF-IncQuery is a query technology, it only uses the query features (i.e. patterns) of the VTCL language, so this is OK. 
-For pattern debugging, rules and other VTCL language features can be used during development, but they are ignored by EMF-IncQuery. Those of you familiar with VIATRA2 can import an instance model into the model space and add an entry point to the machine in order to test the behavior of the patterns under development. 
+TODO: some explanation on the meaning of this pattern.
       </description>
    </item>
+   
+   
+  
+  
+   <item
+         title="Inspecting the generated code">
+      <description>
+         EMF-IncQuery automatically generates Java source code for your query pattern definitions inside the src-gen folder located inside your EMF-IncQuery project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | EMF-IncQuery | Compiler | Uncheck "Compiler is activated". As the compilation can be a resource-intensive task (especially for large .eiq files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler's support! 
+         <br/><br/>
+         The generated code consists of the following main components:<br/>
+         TODO rewrite me:
+* Reference the created plug-in from your code, and use the user-friendly query functions generated in the <b>patternmatchers.myMachine</b> package.<br/>
+* Use signature classes in <b>signatures.myMachine</b> to represent a single match of a pattern, with handy overloads for comparison and readable string output.<br/>
+* The internally used patternbuilders.myMachine package contains a representation of the parsed patterns, responsible for the actual pattern matching. <br/><br/>
+      </description>
+   </item>
+   
+   <item title="Executing queries on instance models with the Query Explorer">
+      <description>
+      TODO
+      </description>
+   
+   </item>
+   
 </cheatsheet>

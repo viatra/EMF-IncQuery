@@ -146,7 +146,7 @@
          </menu>
       </menuContribution>
    </extension>
-   <!--<extension
+   <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
             id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
@@ -161,5 +161,5 @@
             </iterate>
          </with>
       </definition>
-   </extension>-->
+   </extension>
 </plugin>

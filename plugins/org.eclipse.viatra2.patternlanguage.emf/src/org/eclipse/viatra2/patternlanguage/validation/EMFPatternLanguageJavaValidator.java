@@ -141,7 +141,7 @@ public class EMFPatternLanguageJavaValidator extends
 		 */
 		public boolean isNamedSingleUse() {
 			String name = referredVariable.getName();
-			return name.startsWith("_") && !name.contains("<");
+			return name != null && name.startsWith("_") && !name.contains("<");
 		}
 
 		public Set<Variable> getEqualsVariables() {
@@ -152,7 +152,7 @@ public class EMFPatternLanguageJavaValidator extends
 		 */
 		public boolean isUnnamedSingleUse() {
 			String name = referredVariable.getName();
-			return name.startsWith("_") && name.contains("<");
+			return name != null && name.startsWith("_") && name.contains("<");
 		}
 		
 		public ClassifiedVariableReferences(Variable referredVariable,

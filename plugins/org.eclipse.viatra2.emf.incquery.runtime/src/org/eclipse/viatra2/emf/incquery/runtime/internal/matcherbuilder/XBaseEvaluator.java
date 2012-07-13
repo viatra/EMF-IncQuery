@@ -18,6 +18,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeExcepti
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.xbase.XExpression;
@@ -36,6 +37,7 @@ import com.google.inject.Provider;
 public class XBaseEvaluator extends AbstractEvaluator {
 	private final XExpression xExpression;
 	private final Map<QualifiedName, Integer> qualifiedMapping;
+	private final Pattern pattern;
 	
 	private final IExpressionInterpreter interpreter;
 	private final Provider<IEvaluationContext> contextProvider;
@@ -43,12 +45,14 @@ public class XBaseEvaluator extends AbstractEvaluator {
 	/**
 	 * @param xExpression the expression to evaluate
 	 * @param qualifiedMapping maps variable qualified names to positions.
+	 * @param pattern 
 	 */
 	public XBaseEvaluator(XExpression xExpression,
-			Map<QualifiedName, Integer> qualifiedMapping) {
+			Map<QualifiedName, Integer> qualifiedMapping, Pattern pattern) {
 		super();
 		this.xExpression = xExpression;
 		this.qualifiedMapping = qualifiedMapping;
+		this.pattern = pattern;
 		
 		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
 		interpreter = injector.getInstance(IExpressionInterpreter.class);
@@ -66,7 +70,10 @@ public class XBaseEvaluator extends AbstractEvaluator {
 			context.newValue(varPosition.getKey(), tuple.get(varPosition.getValue()));
 		}
 		IEvaluationResult result = interpreter.evaluate(xExpression, context, CancelIndicator.NullImpl);
-		if (result==null) throw new IncQueryRuntimeException("XBase expression interpreter returned no result.");
+		if (result==null) throw new IncQueryRuntimeException(
+				String.format("XBase expression interpreter returned no result while evaluating expression %s in pattern %s.", xExpression, pattern),
+				"XBase expression interpreter returned no result."
+				);
 		if (result.getException()!=null) throw result.getException();
 		return result.getResult();
 	}

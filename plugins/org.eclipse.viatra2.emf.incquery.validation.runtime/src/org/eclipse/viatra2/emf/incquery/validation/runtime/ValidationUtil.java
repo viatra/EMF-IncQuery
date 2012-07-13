@@ -28,7 +28,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 public class ValidationUtil {
-
+	
 	/**
 	 * The list of registered constraints (cached at first call)
 	 */
@@ -79,9 +79,8 @@ public class ValidationUtil {
 		List<Constraint<IPatternMatch>> result = new ArrayList<Constraint<IPatternMatch>>();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg
-				.getExtensionPoint("org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");
-
+		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");
+		
 		for (IExtension extension : ep.getExtensions()) {
 			for (IConfigurationElement ce : extension
 					.getConfigurationElements()) {

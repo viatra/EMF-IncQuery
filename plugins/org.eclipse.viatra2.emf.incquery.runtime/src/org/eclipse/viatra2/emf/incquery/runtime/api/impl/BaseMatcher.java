@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
@@ -43,18 +44,21 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	protected IncQueryEngine engine;
 	protected RetePatternMatcher patternMatcher;
 	protected ReteEngine<Pattern> reteEngine;
+	protected NavigationHelper baseIndex;
 
 	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher, Pattern pattern) throws IncQueryRuntimeException {
 		super();
 		this.engine = engine;
 		this.patternMatcher = patternMatcher;
 		this.reteEngine = engine.getReteEngine();
+		this.baseIndex = engine.getBaseIndex();
 		
 		final boolean admissible = engine.getSanitizer().admit(pattern);
 		if (!admissible) 
 			throw new IncQueryRuntimeException(
 				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
-						CorePatternLanguageHelper.getFullyQualifiedName(pattern)));
+						CorePatternLanguageHelper.getFullyQualifiedName(pattern)), 
+				"Pattern failed a check");
 
 	}
 
@@ -323,7 +327,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	 */
 	@Override
 	public boolean addCallbackAfterUpdates(Runnable callback) {
-		return reteEngine.getAfterUpdateCallbacks().add(callback);
+		return baseIndex.getAfterUpdateCallbacks().add(callback);
 	}
 
 	/* (non-Javadoc)
@@ -331,7 +335,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	 */
 	@Override
 	public boolean removeCallbackAfterUpdates(Runnable callback) {
-		return reteEngine.getAfterUpdateCallbacks().remove(callback);
+		return baseIndex.getAfterUpdateCallbacks().remove(callback);
 	}
 	
 	/* (non-Javadoc)

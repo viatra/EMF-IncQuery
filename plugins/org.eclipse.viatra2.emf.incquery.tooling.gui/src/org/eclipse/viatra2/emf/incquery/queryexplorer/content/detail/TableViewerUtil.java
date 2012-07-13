@@ -118,13 +118,11 @@ public class TableViewerUtil {
 				Variable var = pattern.getParameters().get(i);
 				String name = var.getName();
 				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
-				String clazz = ref.getType().getQualifiedName();
+				String clazz = (ref == null) ? "" : ref.getType().getQualifiedName();
 				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
 			}	
 			viewer.setInput(input);
 		}
-		
-		
 	}
 	
 	public void clearTableViewerColumns(TableViewer viewer) {
@@ -213,22 +211,14 @@ public class TableViewerUtil {
 		else if (Character.class.getName().toLowerCase().matches(classFqn)) {
 			return true;
 		}
-		else if (Byte.class.getName().toLowerCase().matches(classFqn)) {
+		else if (Byte.class.getName().toLowerCase().matches(classFqn)
+				|| Short.class.getName().toLowerCase().matches(classFqn)
+				|| Integer.class.getName().toLowerCase().matches(classFqn)
+				|| Long.class.getName().toLowerCase().matches(classFqn)) {
 			return value.matches("[0-9]*");
 		}
-		else if (Short.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*");
-		}
-		else if (Integer.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*");
-		}
-		else if (Long.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*");
-		}
-		else if (Float.class.getName().toLowerCase().matches(classFqn)) {
-			return value.matches("[0-9]*\\.[0-9]*");
-		}
-		else if (Double.class.getName().toLowerCase().matches(classFqn)) {
+		else if (Float.class.getName().toLowerCase().matches(classFqn)
+				|| Double.class.getName().toLowerCase().matches(classFqn)) {
 			return value.matches("[0-9]*\\.?[0-9]*");
 		}
 		else if (String.class.getName().toLowerCase().matches(classFqn)) {

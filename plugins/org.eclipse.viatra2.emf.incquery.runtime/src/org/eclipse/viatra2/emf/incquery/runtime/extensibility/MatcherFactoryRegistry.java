@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -84,10 +84,10 @@ public class MatcherFactoryRegistry {
 						}
 						catch (Exception e)
 						{
-							IncQueryEngine.getDefaultLogger().logError("[MatcherFactoryRegistry] Exception during matcher factory registry initialization " + e.getMessage(),e);
+							DefaultLoggerProvider.getDefaultLogger().logError("[MatcherFactoryRegistry] Exception during matcher factory registry initialization " + e.getMessage(),e);
 						}
 					} else {
-						IncQueryEngine.getDefaultLogger().logError("[MatcherFactoryRegistry] Unknown configuration element " + el.getName() + " in plugin.xml of "
+						DefaultLoggerProvider.getDefaultLogger().logError("[MatcherFactoryRegistry] Unknown configuration element " + el.getName() + " in plugin.xml of "
 								+ el.getDeclaringExtension().getUniqueIdentifier());
 					}
 				}

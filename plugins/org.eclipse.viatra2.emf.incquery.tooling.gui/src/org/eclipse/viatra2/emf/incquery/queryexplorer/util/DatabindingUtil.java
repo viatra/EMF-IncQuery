@@ -53,6 +53,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParame
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
@@ -76,7 +77,7 @@ public class DatabindingUtil {
 	private static List<Pattern> generatedPatterns;
 	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories;
 	
-	public static final String OFF_ANNOTATION = "Off";
+	public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
 	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
@@ -112,22 +113,37 @@ public class DatabindingUtil {
 		Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new HashMap<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
 		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			Pattern pattern = factory.getPattern();
-			Annotation annotation = DatabindingUtil.getAnnotation(pattern, DatabindingUtil.OFF_ANNOTATION);
-			if (annotation == null) {
+			Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
+			if (annotationValue != null && annotationValue) {
 				factories.put(pattern, factory);
 			}
 		}
 		return factories;
 	}
+
+	public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
+		Annotation annotation = getAnnotation(pattern, QUERY_EXPLORER_ANNOTATION);
+		if (annotation == null) {
+			return null;
+		}
+		else {
+			for (AnnotationParameter ap : annotation.getParameters()) {
+				if (ap.getName().equalsIgnoreCase("display")) {
+					return Boolean.valueOf(((BoolValueImpl) ap.getValue()).isValue());
+				}
+			}
+			return Boolean.valueOf(true);
+		}
+	}
 	
-	public static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
+	public synchronized static Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
 		if (generatedMatcherFactories == null) {
 			generatedMatcherFactories = collectGeneratedMatcherFactories();
 		}
 		return Collections.unmodifiableCollection(generatedMatcherFactories.values());
 	}
 	
-	public static List<Pattern> getGeneratedPatterns() {
+	public synchronized static List<Pattern> getGeneratedPatterns() {
 		if (generatedPatterns == null) {
 			generatedPatterns = collectGeneratedPatterns();
 		}
@@ -218,7 +234,7 @@ public class DatabindingUtil {
 	public static String getMessage(
 			IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
 			String patternFqn) {
-		return getMessage(matcher, matchesSize, patternFqn, true, false);
+		return getMessage(matcher, matchesSize, patternFqn, true, false, null);
 	}
 	
 	/**
@@ -231,10 +247,13 @@ public class DatabindingUtil {
 	 * @param isFiltered true, if the matcher is filtered, false otherwise
 	 * @return the label associated to the matcher
 	 */
-	public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, boolean isGenerated, boolean isFiltered) {
+	public static String getMessage(
+			IncQueryMatcher<? extends IPatternMatch> matcher, 
+			int matchesSize, String patternFqn, 
+			boolean isGenerated, boolean isFiltered, String exceptionMessage) {
 		String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
 		if (matcher == null) {
-			return String.format("Matcher could not be created for pattern '%s': %s", patternFqn, isGeneratedString);
+			return String.format("%s - %s (see Error Log)", patternFqn, exceptionMessage);
 		} else {
 			String matchString;
 			switch (matchesSize){

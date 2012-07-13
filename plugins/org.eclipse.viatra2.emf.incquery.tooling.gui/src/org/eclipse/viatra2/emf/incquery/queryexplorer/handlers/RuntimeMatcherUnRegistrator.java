@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
@@ -32,7 +32,7 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 	@Override
 	public void run() {		
 		MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-		Set<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
+		List<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
 		for (Pattern pattern : removedPatterns) {
 			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 				root.unregisterPattern(pattern);

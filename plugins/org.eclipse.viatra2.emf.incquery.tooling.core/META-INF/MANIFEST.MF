@@ -15,5 +15,4 @@ Require-Bundle: org.eclipse.core.resources,
 Export-Package: org.eclipse.viatra2.emf.incquery.core.project
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin
 Bundle-ActivationPolicy: lazy
-Import-Package: com.google.inject;version="1.3.0",
- org.eclipse.xtext.ui.resource
+Import-Package: org.eclipse.xtext.ui.resource

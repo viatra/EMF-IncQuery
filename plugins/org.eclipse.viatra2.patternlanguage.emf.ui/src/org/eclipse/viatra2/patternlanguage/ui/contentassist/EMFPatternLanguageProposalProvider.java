@@ -12,6 +12,8 @@ package org.eclipse.viatra2.patternlanguage.ui.contentassist;
 
 import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -33,6 +35,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EnumRule;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -50,11 +53,15 @@ import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 /**
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
 public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLanguageProposalProvider {
+	
+	private static final Set<String> FILTERED_KEYWORDS = Sets.newHashSet("pattern");
+	
 	@Inject
 	IScopeProvider scopeProvider;
 	@Inject
@@ -91,6 +98,19 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.xtext.xbase.ui.contentassist.XbaseProposalProvider#completeKeyword(org.eclipse.xtext.Keyword, org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext, org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor)
+	 */
+	@Override
+	public void completeKeyword(Keyword keyword,
+			ContentAssistContext contentAssistContext,
+			ICompletionProposalAcceptor acceptor) {
+		// ignore keywords in FILTERED set
+		if (FILTERED_KEYWORDS.contains(keyword.getValue())) {
+			return;
+		}
+		super.completeKeyword(keyword, contentAssistContext, acceptor);
+	}	
 	
 	@Override
 	public void complete_ValueReference(EObject model, RuleCall ruleCall,

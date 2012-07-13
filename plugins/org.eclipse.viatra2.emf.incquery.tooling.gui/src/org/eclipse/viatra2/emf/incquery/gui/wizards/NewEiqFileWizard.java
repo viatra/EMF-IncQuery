@@ -158,7 +158,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 
 		//Setting package name
 		if (packageName != null && !packageName.isEmpty()) {
-			pm.setPackageName(packageName);
+			pm.setPackageName(packageName.replace("/", "."));
 		}
 		
 		//Setting imports

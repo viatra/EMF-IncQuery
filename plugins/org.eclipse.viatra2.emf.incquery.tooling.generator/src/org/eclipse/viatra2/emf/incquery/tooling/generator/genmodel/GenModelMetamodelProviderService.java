@@ -2,7 +2,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.NoSuchElementException;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -26,6 +26,7 @@ import org.eclipse.xtext.parsetree.reconstr.ITokenSerializer.ICrossReferenceSeri
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.impl.FilteringScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
@@ -38,12 +39,27 @@ import com.google.inject.Inject;
 public class GenModelMetamodelProviderService extends MetamodelProviderService
 		implements IEiqGenmodelProvider {
 
+	private final class ParentScopeFilter implements
+			Predicate<IEObjectDescription> {
+		Iterable<IEObjectDescription> referencedPackages;
+
+		public ParentScopeFilter(
+				Iterable<IEObjectDescription> referencedPackages) {
+			super();
+			this.referencedPackages = referencedPackages;
+		}
+
+		public boolean apply(IEObjectDescription desc) {
+			return !Iterables.contains(referencedPackages, desc.getQualifiedName());
+		}
+	}
+
 	@Inject
-	IJavaProjectProvider projectProvider;
+	private IJavaProjectProvider projectProvider;
 	@Inject
-	IQualifiedNameConverter qualifiedNameConverter;
+	private IQualifiedNameConverter qualifiedNameConverter;
 	@Inject
-	ICrossReferenceSerializer refSerializer;
+	private ICrossReferenceSerializer refSerializer;
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
@@ -53,36 +69,32 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public IScope getAllMetamodelObjects(EObject ctx) {
 		Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
-		try {
-			IncQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
-			for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
+		IncQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
+		for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
 
-				Iterable<IEObjectDescription> packages = Iterables.transform(
-						ref.getGenmodel().getGenPackages(),
-						new Function<GenPackage, IEObjectDescription>() {
-							public IEObjectDescription apply(GenPackage from) {
-								EPackage ePackage = from.getEcorePackage();
-								QualifiedName qualifiedName = qualifiedNameConverter
-										.toQualifiedName(ePackage.getNsURI());
-								return EObjectDescription.create(qualifiedName,
-										ePackage, Collections.singletonMap(
-												"nsURI", "true"));
-							}
-						});
-				referencedPackages = Iterables.concat(referencedPackages,
-						packages);
+			Iterable<IEObjectDescription> packages = Iterables.transform(ref
+					.getGenmodel().getGenPackages(),
+					new Function<GenPackage, IEObjectDescription>() {
+						public IEObjectDescription apply(GenPackage from) {
+							EPackage ePackage = from.getEcorePackage();
+							QualifiedName qualifiedName = qualifiedNameConverter
+									.toQualifiedName(ePackage.getNsURI());
+							return EObjectDescription.create(qualifiedName,
+									ePackage,
+									Collections.singletonMap("nsURI", "true"));
+						}
+					});
+			referencedPackages = Iterables.concat(referencedPackages, packages);
 			}
-		} catch (IllegalArgumentException e) {
-			//TODO logging needed
-			e.printStackTrace();
-		}
-		return new SimpleScope(super.getAllMetamodelObjects(ctx),
-				referencedPackages);
+		//The FilteringScope is used to ensure elements in eiq genmodel are not accidentally found in the parent version
+		return new SimpleScope(new FilteringScope(
+				super.getAllMetamodelObjects(ctx), new ParentScopeFilter(
+						referencedPackages)), referencedPackages);
 	}
 
 	@Override
 	public EPackage loadEPackage(final String packageUri, ResourceSet set) {
-		GenPackage loadedPackage = findGenPackage(set, packageUri);
+		GenPackage loadedPackage = findGenPackage(set, packageUri, false);
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
@@ -101,8 +113,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		Resource res = pattern.eResource();
 		if (res != null && projectProvider != null) {
 			ResourceSet set = res.getResourceSet();
-			IJavaProject javaProject = projectProvider.getJavaProject(set);
-			return getGeneratorModel(javaProject.getProject(), set);
+			return getGeneratorModel(set);
 		}
 		throw new IllegalArgumentException(
 				"The project of the context cannot be determined.");
@@ -115,7 +126,9 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	public IncQueryGeneratorModel getGeneratorModel(ResourceSet set) {
 		if (projectProvider != null) {
 			IJavaProject javaProject = projectProvider.getJavaProject(set);
-			return getGeneratorModel(javaProject.getProject(), set);
+			if (javaProject != null) {
+				return getGeneratorModel(javaProject.getProject(), set);
+			}
 		}
 		return null;
 	}
@@ -157,7 +170,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public GenPackage findGenPackage(EObject ctx, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
-		return findGenPackage(eiqGenModel, packageNsUri);
+		return findGenPackage(eiqGenModel, ctx.eResource().getResourceSet(), packageNsUri, true);
 	}
 	
 	@Override
@@ -168,34 +181,41 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public GenPackage findGenPackage(ResourceSet set, final String packageNsUri) {
 		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
-		return findGenPackage(eiqGenModel, packageNsUri);		
+		return findGenPackage(eiqGenModel, set, packageNsUri, true);		
 	}
 	
-	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, final String packageNsUri) {
-		Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
-		for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
-			genPackageIterable = Iterables.concat(genPackageIterable, genModel.getGenmodel().getGenPackages());
-		}
-		GenPackage genPackage = null;
-		try {
-			genPackage = Iterables.find(genPackageIterable,
-					new Predicate<GenPackage>() {
+	private GenPackage findGenPackage(ResourceSet set, final String packageNsUri, boolean fallbackToPackageRegistry) {
+		IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
+		return findGenPackage(eiqGenModel, set, packageNsUri, fallbackToPackageRegistry);
+	}
+	
+	private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel,
+			ResourceSet set, final String packageNsUri,
+			boolean fallbackToPackageRegistry) {
+		// eiqGenModel is null if loading a pattern from the registry
+		// in this case only fallback to package Registry works
+		if (eiqGenModel != null) {
+			Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
+			for (GeneratorModelReference genModel : eiqGenModel.getGenmodels()) {
+				genPackageIterable = Iterables.concat(genPackageIterable,
+						genModel.getGenmodel().getGenPackages());
+			}
+			Iterable<GenPackage> genPackages = Iterables.filter(
+					genPackageIterable, new Predicate<GenPackage>() {
 						public boolean apply(GenPackage genPackage) {
 							return packageNsUri.equals(genPackage
 									.getEcorePackage().getNsURI());
 						}
 					});
-		} catch (NoSuchElementException e) {
-			// Ignoring the exception here - no found genpackage is handled
-			// right after
+			Iterator<GenPackage> it = genPackages.iterator();
+			if (it.hasNext()) {
+				return it.next();
+			}
 		}
-		if (genPackage != null) {
-			return genPackage;
-		} else {
-			// TODO genmodels should not be loaded if ecore is already loaded #192
-			//return genmodelRegistry.findGenPackage(packageNsUri, set);
-			return null;
+		if (fallbackToPackageRegistry){
+			return genmodelRegistry.findGenPackage(packageNsUri, set);
 		}
+		return null;
 	}
 	
 	public boolean isGeneratorModelDefined(IProject project) {

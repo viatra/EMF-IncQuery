@@ -80,11 +80,11 @@ class PatternMatchClassInferrer {
    				val javaType = variable.calculateType
    				it.parameters += variable.toParameter(variable.parameterName, javaType)
    			}
-   			it.body = [append('''
+   			it.setBody([append('''
    				«FOR variable : pattern.parameters»
    				this.«variable.fieldName» = «variable.parameterName»;
    				«ENDFOR»
-   			''')]
+   			''')])
    		]
    	}
    	
@@ -95,18 +95,18 @@ class PatternMatchClassInferrer {
 		matchClass.members += pattern.toMethod("get", pattern.newTypeRef(typeof (Object))) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
-   			it.body = [append('''
+   			it.setBody([append('''
    				«FOR variable : pattern.parameters»
    				if ("«variable.name»".equals(parameterName)) return this.«variable.fieldName»;
    				«ENDFOR»
    				return null;
-   			''')]
+   			''')])
    		]
    		for (Variable variable : pattern.parameters) {
 			matchClass.members += pattern.toMethod(variable.getterMethodName, variable.calculateType) [
-	   			it.body = [append('''
+	   			it.setBody([append('''
 	   				return this.«variable.fieldName»;
-	   			''')]
+	   			''')])
 	   		]
    		}
    	}
@@ -119,7 +119,7 @@ class PatternMatchClassInferrer {
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    			it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
-   			it.body = [append('''
+   			it.setBody([append('''
    				«FOR variable : pattern.parameters»
    				if ("«variable.name»".equals(parameterName) && newValue instanceof «variable.calculateType.qualifiedName») {
    					this.«variable.fieldName» = («variable.calculateType.qualifiedName») newValue;
@@ -127,14 +127,14 @@ class PatternMatchClassInferrer {
    				}
    				«ENDFOR»
    				return false;
-   			''')]
+   			''')])
    		]
    		for (Variable variable : pattern.parameters) {
    			matchClass.members += pattern.toMethod(variable.setterMethodName, null) [
    				it.parameters += pattern.toParameter(variable.parameterName, variable.calculateType)
-   				it.body = [append('''
+   				it.setBody([append('''
    					this.«variable.fieldName» = «variable.parameterName»;
-   				''')]
+   				''')])
    			]
    		}
    	}
@@ -145,26 +145,26 @@ class PatternMatchClassInferrer {
    	def inferMatchClassMethods(JvmDeclaredType matchClass, Pattern pattern) {
    		matchClass.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
-   			it.body = [append('''
+   			it.setBody([append('''
    				return "«pattern.fullyQualifiedName»";
-   			''')]
+   			''')])
    		]
 		// add extra methods like equals, hashcode, toArray, parameterNames
 		matchClass.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
-   			it.body = [append('''
+   			it.setBody([append('''
    				return «pattern.matchClassName».parameterNames;
-   			''')]
+   			''')])
    		]
    		matchClass.members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
-   			it.body = [append('''
+   			it.setBody([append('''
    				return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
-   			''')]
+   			''')])
    		]
 		matchClass.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.body = [
+			it.setBody([
 				if (pattern.parameters.empty)
 					append('''return "[]";''')
 				else 
@@ -174,23 +174,23 @@ class PatternMatchClassInferrer {
 					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
 				«ENDFOR»
 				return result.toString();
-			''')]
+			''')])
 		]
 		matchClass.members += pattern.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.body = [append('''
+			it.setBody([append('''
 				final int prime = 31;
 				int result = 1;
 				«FOR variable : pattern.parameters»
 				result = prime * result + ((«variable.fieldName» == null) ? 0 : «variable.fieldName».hashCode()); 
 				«ENDFOR»
 				return result; 
-			''')]
+			''')])
 		]
 		matchClass.members += pattern.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
-			it.body = [append('''
+			it.setBody([append('''
 				if (this == obj)
 					return true;
 				if (obj == null)
@@ -212,11 +212,11 @@ class PatternMatchClassInferrer {
 				«ENDFOR»
 				«ENDIF»
 				return true;
-		''')]
+		''')])
 		]
 		matchClass.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.body = [append('''return «pattern.matcherClassName».FACTORY.getPattern();''')]
+			it.setBody([append('''return «pattern.matcherClassName».FACTORY.getPattern();''')])
 		]
   	}
    	

@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
@@ -25,7 +24,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ps
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.BaseTypeSafePredicateCheck;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -40,9 +38,10 @@ import com.google.inject.Injector;
  *
  */
 public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, StubHandle> {
-
+	
 	private final XExpression xExpression;
 	private final EPMBodyToPSystem<StubHandle, ?> pGraph;
+	private final Pattern pattern;
 	private final IQualifiedNameProvider nameProvider;
 //	private final IExpressionInterpreter interpreter = 
 //			IncQueryRuntimePlugin.getDefault().getInjector().getInstance(IExpressionInterpreter.class);
@@ -52,10 +51,11 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 	 * @param pSystem
 	 * @param affectedVariables
 	 */
-	public XBaseCheck(EPMBodyToPSystem<StubHandle, ?> pGraph, XExpression xExpression) {
+	public XBaseCheck(EPMBodyToPSystem<StubHandle, ?> pGraph, XExpression xExpression, Pattern pattern) {
 		super(pGraph.pSystem, getExternalPNodeReferencesOfXExpression(pGraph, xExpression));
 		this.pGraph = pGraph;
 		this.xExpression = xExpression;
+		this.pattern = pattern;
 		
 		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
 		nameProvider = injector.getInstance(IQualifiedNameProvider.class);
@@ -90,7 +90,7 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 //		}
 //		return 
 //				gtBuildable.buildGTASMTermChecker(topTerm, variableIndices, variableEquivalence, null, stub);
-		XBaseEvaluator evaluator = new XBaseEvaluator(xExpression, qualifiedNameMap);
+		XBaseEvaluator evaluator = new XBaseEvaluator(xExpression, qualifiedNameMap, pattern);
 		return buildable.buildPredicateChecker(evaluator, null, indices, stub);
 		
 	}

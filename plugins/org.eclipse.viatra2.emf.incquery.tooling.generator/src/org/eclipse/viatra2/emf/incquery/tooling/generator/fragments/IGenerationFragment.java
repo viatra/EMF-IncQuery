@@ -36,7 +36,7 @@ public interface IGenerationFragment {
 	 * 
 	 * @return A project postfix, or null
 	 */
-	public String getProjectPostfix();
+	String getProjectPostfix();
 
 	/**
 	 * Returns an array of bundle id's to add to the destination project as dependency. This
@@ -45,7 +45,7 @@ public interface IGenerationFragment {
 	 * 
 	 * @return A non-null (but possibly empty) array of dependencies to add.
 	 */
-	public String[] getProjectDependencies();
+	String[] getProjectDependencies();
 	
 	/**
 	 * Executes code generation for a selected pattern. All resulting files
@@ -54,7 +54,7 @@ public interface IGenerationFragment {
 	 * @param pattern
 	 * @param fsa
 	 */
-	public void generateFiles(Pattern pattern, IFileSystemAccess fsa);
+	void generateFiles(Pattern pattern, IFileSystemAccess fsa);
 	
 	/**
 	 * Cleans up the previosly generated files for the selected pattern. Delete
@@ -63,7 +63,7 @@ public interface IGenerationFragment {
 	 * @param pattern
 	 * @param fsa
 	 */
-	public void cleanUp(Pattern pattern, IFileSystemAccess fsa);
+	void cleanUp(Pattern pattern, IFileSystemAccess fsa);
 
 	//public Iterable<JvmGenericType> inferFiles(Pattern pattern);
 	/**
@@ -75,14 +75,14 @@ public interface IGenerationFragment {
 	 * @param exGen
 	 * @return a collection of plugin extensions
 	 */
-	public Iterable<IPluginExtension> extensionContribution(Pattern pattern, ExtensionGenerator exGen);
+	Iterable<IPluginExtension> extensionContribution(Pattern pattern, ExtensionGenerator exGen);
 	
 	/**
 	 * Returns a collections of extensions, that need to be removed from the plugin.xml.
 	 * @param pattern
 	 * @return
 	 */
-	public Iterable<Pair<String, String>> removeExtension(Pattern pattern);
+	Iterable<Pair<String, String>> removeExtension(Pattern pattern);
 	
 	/**
 	 * Returns pairs of extension id prefix and point id. All extension with one of these ids and prefixes will be
@@ -91,8 +91,8 @@ public interface IGenerationFragment {
 	 * 
 	 * @return
 	 */
-	public Collection<Pair<String, String>> getRemovableExtensions();
+	Collection<Pair<String, String>> getRemovableExtensions();
 	
-	public IPath[] getAdditionalBinIncludes();
+	IPath[] getAdditionalBinIncludes();
 	
 }

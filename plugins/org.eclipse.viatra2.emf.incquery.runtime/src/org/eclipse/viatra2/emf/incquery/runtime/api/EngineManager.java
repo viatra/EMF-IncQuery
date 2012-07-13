@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -34,11 +33,11 @@ public class EngineManager {
 	public static EngineManager getInstance() {
 		return instance;
 	}
-	Map<Notifier, WeakReference<IncQueryEngine>> engines;
+	Map<Notifier, IncQueryEngine> engines;
 	
 	EngineManager() {
 		super();
-		engines = new WeakHashMap<Notifier, WeakReference<IncQueryEngine>>();
+		engines = new WeakHashMap<Notifier, IncQueryEngine>();
 	}
 	
 	/**
@@ -56,7 +55,7 @@ public class EngineManager {
 		IncQueryEngine engine = getEngineInternal(emfRoot);
 		if (engine == null) {	
 			engine = new IncQueryEngine(this, emfRoot);
-			engines.put(emfRoot, new WeakReference<IncQueryEngine>(engine));
+			engines.put(emfRoot, engine);
 		}
 		return engine;
 	}
@@ -92,8 +91,7 @@ public class EngineManager {
 	 * @return
 	 */
 	private IncQueryEngine getEngineInternal(Notifier emfRoot) {
-		WeakReference<IncQueryEngine> weakReference = engines.get(emfRoot);
-		IncQueryEngine engine = weakReference != null ? weakReference.get() : null;
+		IncQueryEngine engine = engines.get(emfRoot);
 		return engine;
 	}
 	

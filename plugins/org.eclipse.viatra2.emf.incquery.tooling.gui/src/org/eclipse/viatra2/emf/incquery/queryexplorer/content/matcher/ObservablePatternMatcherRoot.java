@@ -55,10 +55,10 @@ public class ObservablePatternMatcherRoot {
 		this.key = key;
 	}
 	
-	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
+	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated, String exceptionMessage) {
 		//This cast could not be avoided because later the filtered delta monitor will need the base IPatternMatch
 		@SuppressWarnings("unchecked")
-		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated);
+		ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher, patternFqn, generated, exceptionMessage);
 		this.matchers.put(patternFqn, pm);
 		
 		//generated matchers are inserted in front of the list
@@ -114,6 +114,7 @@ public class ObservablePatternMatcherRoot {
 	public void registerPattern(Pattern pattern) {
 		IncQueryMatcher<? extends IPatternMatch> matcher = null;
 		boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
+		String message = null;
 		try {
 			if (isGenerated) {
 				matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
@@ -128,9 +129,10 @@ public class ObservablePatternMatcherRoot {
 					"Cannot initialize pattern matcher for pattern "
 							+ pattern.getName(), e));
 			matcher = null;
+			message = e.getShortMessage();
 		}
 
-		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated);
+		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated, message);
 	}
 	
 	public void unregisterPattern(Pattern pattern) {
