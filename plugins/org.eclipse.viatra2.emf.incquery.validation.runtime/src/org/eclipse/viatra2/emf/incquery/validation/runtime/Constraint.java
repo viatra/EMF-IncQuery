@@ -32,5 +32,5 @@ public abstract class Constraint<T extends IPatternMatch> {
 	
 	public abstract int getSeverity();
 	
-	public abstract BaseGeneratedMatcherFactory<T, ? extends BaseGeneratedMatcher<T>> getMatcherFactory();
+	public abstract BaseGeneratedMatcherFactory<? extends BaseGeneratedMatcher<T>> getMatcherFactory();
 }

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
@@ -27,8 +28,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
  * @author Mark Czotter
  *
  */
-public abstract class BaseGeneratedMatcherFactory<Signature extends IPatternMatch, Matcher extends BaseGeneratedMatcher<Signature>>
-		extends BaseMatcherFactory<Signature, Matcher> 
+public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>>
+		extends BaseMatcherFactory<Matcher> 
 {
 	private Logger logger = Logger.getLogger(getClass());
 	private static Map<String, PatternModel> bundleNameToPatternModelMap = new HashMap<String, PatternModel>();

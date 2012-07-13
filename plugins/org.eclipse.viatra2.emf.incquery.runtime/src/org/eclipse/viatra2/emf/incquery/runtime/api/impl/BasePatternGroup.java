@@ -50,7 +50,7 @@ public abstract class BasePatternGroup implements IPatternGroup {
 	 */
 	public static Set<Pattern> patterns(Set<IMatcherFactory> matcherFactories) {
 		Set<Pattern> result = new HashSet<Pattern>();
-		for (IMatcherFactory factory : matcherFactories) {
+		for (IMatcherFactory<?> factory : matcherFactories) {
 			result.add(factory.getPattern());
 		}
 		return result;

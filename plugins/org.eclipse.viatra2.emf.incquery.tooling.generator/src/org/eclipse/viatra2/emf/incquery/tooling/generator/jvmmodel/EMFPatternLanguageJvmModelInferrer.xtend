@@ -75,7 +75,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 		   	// infer Processor class
 		   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
 		   	// add Factory field to Matcher class
-		   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))) [
+		   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matcherClassRef))) [
 		   		it.visibility = JvmVisibility::PUBLIC
 		   		it.setStatic(true)
 				it.setFinal(true)

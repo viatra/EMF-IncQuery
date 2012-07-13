@@ -25,6 +25,8 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -54,7 +56,7 @@ class PatternGroupClassInferrer {
 	}
 	
 	def JvmOperation inferGetMatcherFactoriesMethod(PatternModel model) {
-		val matcherFactoryInterfaceReference = model.newRawTypeRef(typeof (IMatcherFactory))
+		val matcherFactoryInterfaceReference = model.newRawTypeRef(typeof (IMatcherFactory)) 
 		val returnTypeReference = model.newTypeRef(typeof (Set), matcherFactoryInterfaceReference)
 		val matcherReferences = gatherMatchers(model)
 		model.toMethod("getMatcherFactories", returnTypeReference) [

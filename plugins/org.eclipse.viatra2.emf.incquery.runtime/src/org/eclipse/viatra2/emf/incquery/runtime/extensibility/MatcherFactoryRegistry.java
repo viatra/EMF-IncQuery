@@ -36,7 +36,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  */
 @SuppressWarnings("rawtypes")
 public class MatcherFactoryRegistry {
-	private static final Map<String, IMatcherFactory> MATCHER_FACTORIES = new HashMap<String, IMatcherFactory>();
+	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = new HashMap<String, IMatcherFactory<?>>();
 	// NOTE pattern group management is relegated to PatternGroup classes
 	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
 	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
@@ -172,7 +172,7 @@ public class MatcherFactoryRegistry {
 	 * @param packageFQN the fully qualified name of the package
 	 * @return the set of matcher factories inside the given package, empty set otherwise.
 	 */
-	public static Set<IMatcherFactory> getPatternGroup(String packageFQN) {
+	public static Set<IMatcherFactory<?>> getPatternGroup(String packageFQN) {
 		return getPatternGroupOrSubTree(packageFQN, false);
 	}
 	
@@ -182,7 +182,7 @@ public class MatcherFactoryRegistry {
 	 * @param packageFQN the fully qualified name of the package
 	 * @return the set of matcher factories in the given package subtree, empty set otherwise.
 	 */
-	public static Set<IMatcherFactory> getPatternSubTree(String packageFQN) {
+	public static Set<IMatcherFactory<?>> getPatternSubTree(String packageFQN) {
 		return getPatternGroupOrSubTree(packageFQN, true);
 	}
 
@@ -194,13 +194,13 @@ public class MatcherFactoryRegistry {
 	 *  if false, the pattern is added only if it is in the given package
 	 * @return the matcher factories in the group
 	 */
-	private static Set<IMatcherFactory> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
-		Map<String, Set<IMatcherFactory>> map = new HashMap<String, Set<IMatcherFactory>>();
+	private static Set<IMatcherFactory<?>> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
+		Map<String, Set<IMatcherFactory<?>>> map = new HashMap<String, Set<IMatcherFactory<?>>>();
 		if(map.containsKey(packageFQN)) {
 			return map.get(packageFQN);
 		} else {
-			Set<IMatcherFactory> group = new HashSet<IMatcherFactory>();
-			for (Entry<String, IMatcherFactory> entry : MATCHER_FACTORIES.entrySet()) {
+			Set<IMatcherFactory<?>> group = new HashSet<IMatcherFactory<?>>();
+			for (Entry<String, IMatcherFactory<?>> entry : MATCHER_FACTORIES.entrySet()) {
 				addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
 			}
 			if(group.size() > 0) {
@@ -220,7 +220,7 @@ public class MatcherFactoryRegistry {
 	 * @param includeSubPackages if true, the pattern is added if it is in the package hierarchy,
 	 *  if false, the pattern is added only if it is in the given package
 	 */
-	private static void addPatternToGroup(String packageFQN, Set<IMatcherFactory> group, String patternFQN, IMatcherFactory factory, boolean includeSubPackages) {
+	private static void addPatternToGroup(String packageFQN, Set<IMatcherFactory<?>> group, String patternFQN, IMatcherFactory<?> factory, boolean includeSubPackages) {
 		if(packageFQN.length() + 1 < patternFQN.length()) {
 			if(includeSubPackages) {
 				if(patternFQN.startsWith(packageFQN+'.')) {

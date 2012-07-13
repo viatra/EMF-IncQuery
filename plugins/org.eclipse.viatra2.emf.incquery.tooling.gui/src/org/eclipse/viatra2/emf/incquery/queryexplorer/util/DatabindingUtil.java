@@ -75,7 +75,7 @@ public class DatabindingUtil {
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
 	private static List<Pattern> generatedPatterns;
-	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> generatedMatcherFactories;
+	private static Map<Pattern, IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>>> generatedMatcherFactories;
 	
 	public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
@@ -112,9 +112,9 @@ public class DatabindingUtil {
 		}
 	}
 	
-	private static Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> collectGeneratedMatcherFactories() {
-		Map<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> factories = new HashMap<Pattern, IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
+	private static Map<Pattern, IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>>> collectGeneratedMatcherFactories() {
+		Map<Pattern, IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>>> factories = new HashMap<Pattern, IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>>>();
+		for (IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
 			Pattern pattern = factory.getPattern();
 			Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
 			if (annotationValue != null && annotationValue) {
@@ -139,7 +139,7 @@ public class DatabindingUtil {
 		}
 	}
 	
-	public static synchronized Collection<IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getGeneratedMatcherFactories() {
+	public static synchronized Collection<IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>>> getGeneratedMatcherFactories() {
 		if (generatedMatcherFactories == null) {
 			generatedMatcherFactories = collectGeneratedMatcherFactories();
 		}
@@ -155,7 +155,7 @@ public class DatabindingUtil {
 	
 	private static List<Pattern> collectGeneratedPatterns() {
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		for (IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> factory : getGeneratedMatcherFactories()) {
+		for (IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory : getGeneratedMatcherFactories()) {
 			patterns.add(factory.getPattern());
 		}
 		return patterns;
@@ -460,7 +460,7 @@ public class DatabindingUtil {
 	 * @param pattern the pattern instance
 	 * @return the matcher factory for the given pattern
 	 */
-	public static IMatcherFactory<IPatternMatch, IncQueryMatcher<IPatternMatch>> getMatcherFactoryForGeneratedPattern(Pattern pattern) {
+	public static IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> getMatcherFactoryForGeneratedPattern(Pattern pattern) {
 		return generatedMatcherFactories.get(pattern);
 	}
 

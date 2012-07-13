@@ -41,7 +41,7 @@ class PatternMatcherFactoryClassInferrer {
 		val matcherFactoryClass = pattern.toClass(pattern.matcherFactoryClassName) [
   			it.packageName = matcherFactoryPackageName
   			it.documentation = pattern.javadocMatcherFactoryClass.toString
-  			it.superTypes += pattern.newTypeRef(typeof (BaseGeneratedMatcherFactory), cloneWithProxies(matchClassRef), cloneWithProxies(matcherClassRef))
+  			it.superTypes += pattern.newTypeRef(typeof (BaseGeneratedMatcherFactory), cloneWithProxies(matcherClassRef))
   		]
   		matcherFactoryClass.inferMatcherFactoryMethods(pattern, matcherClassRef)
   		return matcherFactoryClass

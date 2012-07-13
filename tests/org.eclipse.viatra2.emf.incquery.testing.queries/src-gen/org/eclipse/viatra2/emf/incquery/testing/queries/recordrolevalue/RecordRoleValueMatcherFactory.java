@@ -3,8 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
-import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcher;
 
 /**
  * A pattern-specific matcher factory that can instantiate RecordRoleValueMatcher in a type-safe way.
@@ -13,7 +11,7 @@ import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRo
  * @see RecordRoleValueMatch
  * 
  */
-public class RecordRoleValueMatcherFactory extends BaseGeneratedMatcherFactory<RecordRoleValueMatch,RecordRoleValueMatcher> {
+public class RecordRoleValueMatcherFactory extends BaseGeneratedMatcherFactory<RecordRoleValueMatcher> {
   @Override
   protected RecordRoleValueMatcher instantiate(final IncQueryEngine engine) throws IncQueryRuntimeException {
     return new RecordRoleValueMatcher(engine);
