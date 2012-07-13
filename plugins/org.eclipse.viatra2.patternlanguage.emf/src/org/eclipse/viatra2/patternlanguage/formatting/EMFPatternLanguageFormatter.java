@@ -11,7 +11,6 @@
 package org.eclipse.viatra2.patternlanguage.formatting;
 
 import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.AnnotationElements;
-import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.PatternBodyElements;
 import org.eclipse.viatra2.patternlanguage.core.services.PatternLanguageGrammarAccess.PatternElements;
 import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAccess;
 import org.eclipse.viatra2.patternlanguage.services.EMFPatternLanguageGrammarAccess.EMFPatternModelElements;

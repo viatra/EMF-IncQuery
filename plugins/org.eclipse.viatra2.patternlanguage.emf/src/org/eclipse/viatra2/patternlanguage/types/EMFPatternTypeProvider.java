@@ -52,8 +52,8 @@ import com.google.inject.Singleton;
 @SuppressWarnings("restriction")
 public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
-	// TODO replace with new logger
-	private Logger logger = Logger.getLogger(getClass());
+	@Inject
+	private Logger logger;
 	
 	@Inject
 	private TypeReferences typeReferences;
