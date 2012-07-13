@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternGroup;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
- * Generic implementation of {@link BasePatternGroup}.
+ * Generic implementation of {@link IPatternGroup}, covering an arbitrarily chosen set of patterns. 
+ * Use the public constructor or static GenericPatternGroup.of(...) methods to instantiate.
  * 
  * @author Mark Czotter
  * 
@@ -41,7 +44,7 @@ public class GenericPatternGroup extends BasePatternGroup {
 	public Set<Pattern> getPatterns() {
 		return patterns;
 	}
-
+	
 	/**
 	 * Creates a generic {@link IPatternGroup} instance from
 	 * {@link IMatcherFactory} objects.
@@ -52,5 +55,42 @@ public class GenericPatternGroup extends BasePatternGroup {
 	public static IPatternGroup of(Set<IMatcherFactory> matcherFactories) {
 		return new GenericPatternGroup(patterns(matcherFactories));
 	}
-	
+
+	/**
+	 * Creates a generic {@link IPatternGroup} instance from
+	 * {@link Pattern} objects.
+	 * 
+	 * @param matcherFactories
+	 * @return
+	 */
+	public static IPatternGroup of(Pattern... patterns) {
+		return new GenericPatternGroup(new HashSet<Pattern>(Arrays.asList(patterns)));
+	}	
+
+	/**
+	 * Creates a generic {@link IPatternGroup} instance from
+	 * {@link IMatcherFactory} objects.
+	 * 
+	 * @param matcherFactories
+	 * @return
+	 */
+	public static IPatternGroup of(IMatcherFactory... matcherFactories) {
+		return of(new HashSet<IMatcherFactory>(Arrays.asList(matcherFactories)));
+	}	
+
+	/**
+	 * Creates a generic {@link IPatternGroup} instance from other
+	 * {@link IPatternGroup} objects (subgroups).
+	 * 
+	 * @param matcherFactories
+	 * @return
+	 */
+	public static IPatternGroup of(IPatternGroup... subGroups) {
+		Set<Pattern> patterns = new HashSet<Pattern>();
+		for (IPatternGroup group : subGroups) {
+			patterns.addAll(group.getPatterns());
+		}
+		return new GenericPatternGroup(patterns);
+	}	
 }
+
