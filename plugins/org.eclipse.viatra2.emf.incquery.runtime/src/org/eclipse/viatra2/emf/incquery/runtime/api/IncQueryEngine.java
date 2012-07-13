@@ -151,17 +151,35 @@ public class IncQueryEngine {
 		
 	}
 	/**
-	 * Disconnects the engine. 
-	 * Matcher objects will continue to return stale results. 
+	 * Completely disconnects and dismantles the engine. 
+	 * <p>Matcher objects will continue to return stale results. 
 	 * If no references are retained to the matchers or the engine, they can eventually be GC'ed, 
 	 * 	and they won't block the EMF model from being GC'ed anymore. 
 	 * 
-	 * Cannot be reversed.
-	 * @return true is an engine was found and disconnected, false if no engine was found for the given root.
+	 * <p>Cannot be reversed.
 	 */
 	public void dispose() {
 		manager.killInternal(emfRoot);
 		killInternal();
+	}
+	
+	/**
+	 * Discards any pattern matcher caches and forgets known patterns. 
+	 * The base index built directly on the underlying EMF model, however, 
+	 * 	is kept in memory to allow reuse when new pattern matchers are built.
+	 * Use this method if you have e.g. new versions of the same patterns, to be matched on the same model.
+	 * 
+	 * <p>Matcher objects will continue to return stale results. 
+	 * If no references are retained to the matchers, they can eventually be GC'ed. 
+	 * 
+	 * 
+	 */
+	public void wipe() {
+		if (reteEngine != null) {
+			reteEngine.killEngine();
+			reteEngine = null;
+		}
+		sanitizer = null;
 	}
 	
 	private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) 
@@ -193,11 +211,7 @@ public class IncQueryEngine {
 	 * To be called after already removed from engineManager.
 	 */
 	void killInternal() {
-		if (reteEngine != null) {
-			reteEngine.killEngine();
-			reteEngine = null;
-		}
-		sanitizer = null;
+		wipe();
 		if (baseIndex != null) {
 			baseIndex.dispose();
 		}
