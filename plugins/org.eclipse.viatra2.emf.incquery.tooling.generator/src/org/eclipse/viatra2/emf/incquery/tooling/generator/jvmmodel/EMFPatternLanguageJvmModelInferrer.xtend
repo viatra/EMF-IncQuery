@@ -32,7 +32,8 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmModelInferrer {
 
-	Logger logger = Logger::getLogger(getClass())
+	@Inject
+	Logger logger;
 
     /**
      * convenience API to build and initialize JvmTypes and their members.

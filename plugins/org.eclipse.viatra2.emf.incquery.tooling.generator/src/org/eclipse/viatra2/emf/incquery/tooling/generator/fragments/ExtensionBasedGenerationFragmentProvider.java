@@ -37,11 +37,12 @@ import com.google.inject.Inject;
 public class ExtensionBasedGenerationFragmentProvider implements
 		IGenerationFragmentProvider {
 	
-	Logger logger = Logger.getLogger(getClass());
+	@Inject
+	private Logger logger;
 
 	static final String EXTENSIONID = "org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment";
 	static final String GENERIC_ATTRIBUTE = "";
-	Multimap<String, IGenerationFragment> fragments;
+	private Multimap<String, IGenerationFragment> fragments;
 	
 	@Inject
 	private IWorkspaceRoot workspaceRoot;

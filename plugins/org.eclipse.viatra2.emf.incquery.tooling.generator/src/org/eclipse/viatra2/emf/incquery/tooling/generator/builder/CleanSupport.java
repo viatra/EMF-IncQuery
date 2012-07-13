@@ -67,7 +67,7 @@ public class CleanSupport {
 	private final class PrepareResourceSetWithLoader implements
 			IResourceSetPreparer {
 		
-		IProject project;
+		private IProject project;
 		
 		public PrepareResourceSetWithLoader(IProject project) {
 			this.project = project;

@@ -30,7 +30,8 @@ import com.google.inject.Singleton;
 @Singleton
 public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 
-	@Inject IEiqGenmodelProvider genModelProvider;
+	@Inject 
+	private IEiqGenmodelProvider genModelProvider;
 	
 	@Override
 	protected JvmTypeReference resolve(EClassifier classifier,
