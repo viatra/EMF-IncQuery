@@ -60,7 +60,7 @@ class PatternGroupClassInferrer {
 		model.toMethod("getMatcherFactories", returnTypeReference) [
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += model.toAnnotation(typeof (Override))
-			it.body = [
+			it.setBody([
 				serialize(returnTypeReference, model)
 				append(''' result = new ''')
 				serialize(model.newTypeRef(typeof(HashSet), matcherFactoryInterfaceReference), model)
@@ -73,7 +73,7 @@ class PatternGroupClassInferrer {
 				}
 				newLine
 				append('''return result;''')
-			]
+			])
 		]
 	}
 	
