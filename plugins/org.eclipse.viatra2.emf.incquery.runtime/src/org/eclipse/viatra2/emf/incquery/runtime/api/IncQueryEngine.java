@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
-import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
@@ -62,7 +61,7 @@ public class IncQueryEngine {
 	/**
 	 * The base index keeping track of basic EMF contents of the model.
 	 */
-	private ParameterizedNavigationHelper baseIndex;
+	private NavigationHelper baseIndex;
 	/**
 	 * The RETE pattern matcher component of the EMF-IncQuery engine.
 	 */	
@@ -105,10 +104,10 @@ public class IncQueryEngine {
 	 * @return the baseIndex the NavigationHelper maintaining the base index
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected ParameterizedNavigationHelper getBaseIndexInternal() {
+	protected NavigationHelper getBaseIndexInternal() {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), false);
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryRuntimeException(
 						"Could not initialize EMF-IncQuery base index", 

@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
-import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
@@ -36,7 +36,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Directi
  */
 public class BaseIndexListener implements FeatureListener, InstanceListener, DataTypeListener, IManipulationListener {
 	private ReteBoundary<?> boundary;
-	private ParameterizedNavigationHelper baseIndex;
+	private NavigationHelper baseIndex;
 	
 	
 	private Set<EClass> classes = new HashSet<EClass>();
@@ -46,7 +46,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	/**
 	 * @param boundary
 	 */
-	public BaseIndexListener(ReteEngine<?> engine, ParameterizedNavigationHelper baseIndex) {
+	public BaseIndexListener(ReteEngine<?> engine, NavigationHelper baseIndex) {
 		super();
 		this.boundary = engine.getBoundary();
 		this.baseIndex = baseIndex;
@@ -57,22 +57,25 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	public void ensure(EClass eClass) {
 		if (classes.add(eClass)) {
 			final Set<EClass> newClasses = Collections.singleton(eClass);
-			baseIndex.registerEClasses(newClasses);
+			if (!baseIndex.isInWildcardMode()) 
+				baseIndex.registerEClasses(newClasses);
 			baseIndex.registerInstanceListener(newClasses, this);
 		}
 	}
 	public void ensure(EDataType eDataType) {
 		if (dataTypes.add(eDataType)) {
 			final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
-			baseIndex.registerEDataTypes(newDataTypes);
+			if (!baseIndex.isInWildcardMode()) 
+				baseIndex.registerEDataTypes(newDataTypes);
 			baseIndex.registerDataTypeListener(newDataTypes, this);
 		}
 	}
 	public void ensure(EStructuralFeature feature) {
 		if (features.add(feature)) {
-				final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
+			final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
+			if (!baseIndex.isInWildcardMode()) 
 				baseIndex.registerEStructuralFeatures(newFeatures);
-				baseIndex.registerFeatureListener(newFeatures, this);
+			baseIndex.registerFeatureListener(newFeatures, this);
 		}
 	}
 	
