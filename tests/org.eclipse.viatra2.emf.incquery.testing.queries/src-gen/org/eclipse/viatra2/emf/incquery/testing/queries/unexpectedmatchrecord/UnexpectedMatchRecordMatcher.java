@@ -287,7 +287,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   public UnexpectedMatchRecordMatch tupleToMatch(final Tuple t) {
     try {
     	return new UnexpectedMatchRecordMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));	
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -297,7 +297,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   public UnexpectedMatchRecordMatch arrayToMatch(final Object[] match) {
     try {
     	return new UnexpectedMatchRecordMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     

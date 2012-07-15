@@ -240,7 +240,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   public RecordRoleValueMatch tupleToMatch(final Tuple t) {
     try {
     	return new RecordRoleValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_ROLE));	
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -250,7 +250,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   public RecordRoleValueMatch arrayToMatch(final Object[] match) {
     try {
     	return new RecordRoleValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (java.lang.Object) match[POSITION_ROLE]);
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
