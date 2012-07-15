@@ -3,7 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
 import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcher;
 
 /**
@@ -13,7 +12,7 @@ import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.Substi
  * @see SubstitutionValueMatch
  * 
  */
-public class SubstitutionValueMatcherFactory extends BaseGeneratedMatcherFactory<SubstitutionValueMatch,SubstitutionValueMatcher> {
+public class SubstitutionValueMatcherFactory extends BaseGeneratedMatcherFactory<SubstitutionValueMatcher> {
   @Override
   protected SubstitutionValueMatcher instantiate(final IncQueryEngine engine) throws IncQueryRuntimeException {
     return new SubstitutionValueMatcher(engine);

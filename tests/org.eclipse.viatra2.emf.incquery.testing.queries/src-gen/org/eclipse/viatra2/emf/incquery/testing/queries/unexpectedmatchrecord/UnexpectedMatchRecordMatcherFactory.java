@@ -3,7 +3,6 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
-import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher;
 
 /**
@@ -13,7 +12,7 @@ import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.Un
  * @see UnexpectedMatchRecordMatch
  * 
  */
-public class UnexpectedMatchRecordMatcherFactory extends BaseGeneratedMatcherFactory<UnexpectedMatchRecordMatch,UnexpectedMatchRecordMatcher> {
+public class UnexpectedMatchRecordMatcherFactory extends BaseGeneratedMatcherFactory<UnexpectedMatchRecordMatcher> {
   @Override
   protected UnexpectedMatchRecordMatcher instantiate(final IncQueryEngine engine) throws IncQueryRuntimeException {
     return new UnexpectedMatchRecordMatcher(engine);
