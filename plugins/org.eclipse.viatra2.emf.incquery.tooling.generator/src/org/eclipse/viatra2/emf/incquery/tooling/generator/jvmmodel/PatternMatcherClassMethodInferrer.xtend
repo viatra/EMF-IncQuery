@@ -229,9 +229,9 @@ class PatternMatcherClassMethodInferrer {
   	 */
   	def inferErrorLogging(String message, String exceptionName,  ITreeAppendable appendable) {
   		if(exceptionName == null){
-	  		appendable.append('''engine.getLogger().logError("«message»");''')
+	  		appendable.append('''engine.getLogger().error("«message»");''')
   		} else {
-  			appendable.append('''engine.getLogger().logError("«message»",«exceptionName»);''')
+  			appendable.append('''engine.getLogger().error("«message»",«exceptionName»);''')
   		}
 	}
 	

@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
-import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
@@ -70,7 +69,7 @@ public class IncqueryFeatureHandler {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
+	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, final IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
 		this.source = source;
 		this.feature = feature;
 		if(feature.isMany() && targetParamName != null) {
@@ -82,10 +81,10 @@ public class IncqueryFeatureHandler {
 		this.sourceParamName = sourceParamName;
 		this.targetParamName = targetParamName;
 		if(matcher.getPositionOfParameter(sourceParamName) == null) {
-			DefaultLoggerProvider.getDefaultLogger().logError("[IncqueryFeatureHandler] Source parameter " + sourceParamName + " not found!");
+			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Source parameter " + sourceParamName + " not found!");
 		}
 		if(targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
-			DefaultLoggerProvider.getDefaultLogger().logError("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
+			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
 		}
 		IPatternMatch partialMatch = matcher.newEmptyMatch();
 		partialMatch.set(sourceParamName, source);
@@ -102,7 +101,7 @@ public class IncqueryFeatureHandler {
 					checkUnhandledNewMatch();
 					sendNextNotfication();
 				} catch (CoreException e) {
-					DefaultLoggerProvider.getDefaultLogger().logError("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
+					matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
 				}
 				
 			}
@@ -112,7 +111,7 @@ public class IncqueryFeatureHandler {
 	private void sendNextNotfication() {
 		while(!notifications.isEmpty()) {
 			ENotificationImpl remove = notifications.remove(0);
-			//DefaultLoggerProvider.getDefaultLogger().logError(this + " : " +remove.toString());
+			//matcher.getEngine().getLogger().logError(this + " : " +remove.toString());
 			source.eNotify(remove);
 		}
 	}
@@ -124,15 +123,15 @@ public class IncqueryFeatureHandler {
 	 * @param matcher
 	 * @param sourceParamName
 	 */
-	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, IncQueryMatcher matcher, String sourceParamName, String targetParamName, FeatureKind kind) {
+	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, final IncQueryMatcher matcher, String sourceParamName, String targetParamName, FeatureKind kind) {
 		this(source, feature, matcher, sourceParamName, targetParamName);
 		this.kind = kind;
 		if((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
-			DefaultLoggerProvider.getDefaultLogger().logError("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
+			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
 				return;
 		}
 		if(kind == FeatureKind.SUM && !(feature instanceof EAttribute)) {
-			DefaultLoggerProvider.getDefaultLogger().logError("[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
+			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
 		}
 	}
 	
@@ -179,7 +178,7 @@ public class IncqueryFeatureHandler {
 			IPatternMatch match = matcher.newEmptyMatch();
 			match.set(sourceParamName, source);
 			if(matcher.countMatches(match) > 1) {
-				DefaultLoggerProvider.getDefaultLogger().logWarning("[IncqueryFeatureHandler] Single reference derived feature has multiple possible values, returning one arbitrary value");
+				matcher.getEngine().getLogger().warn("[IncqueryFeatureHandler] Single reference derived feature has multiple possible values, returning one arbitrary value");
 			}
 			IPatternMatch patternMatch = matcher.getOneArbitraryMatch(match);
 			if(patternMatch != null) {
@@ -257,7 +256,7 @@ public class IncqueryFeatureHandler {
 	              addToManyRefMemory(target);
 	            } else {
 	              if (updateMemory != null) {
-	                DefaultLoggerProvider.getDefaultLogger().logError(
+	                matcher.getEngine().getLogger().error(
 	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
 	              } else {
 	                // must handle later (either in lost matches or after that)

@@ -183,7 +183,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 			} catch(IllegalArgumentException e){
 			  if(generate){
-				  IncQueryEngine::defaultLogger.logError(e.message,e);
+				  IncQueryEngine::defaultLogger.error(e.message,e);
 				}
 			}
 			
@@ -547,7 +547,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				return wellbehaving
 			} catch(IllegalArgumentException e){
-				IncQueryEngine::defaultLogger.logError(e.message)
+				IncQueryEngine::defaultLogger.error(e.message)
 				return newArrayList
 			}
 

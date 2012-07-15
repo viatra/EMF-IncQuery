@@ -116,10 +116,10 @@ public class ShowLocationHandler extends AbstractHandler {
 			m.invoke(editorPart, preparedSelection.toList());
 		}
 		catch (NoSuchMethodException e) {
-			IncQueryEngine.getDefaultLogger().logDebug("setSelectionToViewer method not found");
+			IncQueryEngine.getDefaultLogger().debug("setSelectionToViewer method not found");
 		}
 		catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logDebug("setSelectionToViewer call failed");
+			IncQueryEngine.getDefaultLogger().debug("setSelectionToViewer call failed");
 		}
 	}
 
@@ -140,7 +140,7 @@ public class ShowLocationHandler extends AbstractHandler {
 		}
 
 		if(paths.size() > 0) {
-			return new TreeSelection((TreePath[]) paths.toArray(new TreePath[1]));
+			return new TreeSelection(paths.toArray(new TreePath[1]));
 		}
 		return new TreeSelection();
 	}
@@ -153,7 +153,7 @@ public class ShowLocationHandler extends AbstractHandler {
 	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
 		List<Object> nodes = new ArrayList<Object>();
 		nodes.add(obj);
-		EObject tmp = ((EObject) obj).eContainer();
+		EObject tmp = obj.eContainer();
 			
 		while (tmp != null) {
 			nodes.add(0, tmp);

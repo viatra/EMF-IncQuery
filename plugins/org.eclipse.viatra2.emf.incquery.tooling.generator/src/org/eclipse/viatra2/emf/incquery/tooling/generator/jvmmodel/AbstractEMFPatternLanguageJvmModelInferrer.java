@@ -55,7 +55,7 @@ public class AbstractEMFPatternLanguageJvmModelInferrer extends
 			associator.associatePrimary(model, groupClass);
 			acceptor.accept(groupClass);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during Jvm model infer for: " + model, e);
+			IncQueryEngine.getDefaultLogger().error("Exception during Jvm model infer for: " + model, e);
 		}
 	}
 	

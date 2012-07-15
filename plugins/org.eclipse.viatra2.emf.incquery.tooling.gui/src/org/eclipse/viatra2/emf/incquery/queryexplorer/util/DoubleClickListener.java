@@ -35,13 +35,13 @@ public class DoubleClickListener implements IDoubleClickListener {
 			try {
 				handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
 			} catch (ExecutionException e) {
-				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+				IncQueryEngine.getDefaultLogger().error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			} catch (NotDefinedException e) {
-				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+				IncQueryEngine.getDefaultLogger().error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			} catch (NotEnabledException e) {
-				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+				IncQueryEngine.getDefaultLogger().error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			} catch (NotHandledException e) {
-				IncQueryEngine.getDefaultLogger().logError(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+				IncQueryEngine.getDefaultLogger().error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
 			}
 		}
 	}

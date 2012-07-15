@@ -112,7 +112,7 @@ public class CleanSupport {
 		try {
 			internalFullClean(context, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during Full Clean!", e);
+			IncQueryEngine.getDefaultLogger().error("Exception during Full Clean!", e);
 		} finally {
 			monitor.worked(1);
 		}
@@ -138,7 +138,7 @@ public class CleanSupport {
 			try {
 				cleanFragment(modelProject, fragment);
 			} catch (Exception e) {
-				IncQueryEngine.getDefaultLogger().logError("Exception during full Clean on " + fragment.getClass().getCanonicalName(), e);
+				IncQueryEngine.getDefaultLogger().error("Exception during full Clean on " + fragment.getClass().getCanonicalName(), e);
 			}
 		}
 	}
@@ -211,7 +211,7 @@ public class CleanSupport {
 		try {
 			internalNormalClean(context, relevantDeltas, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during Normal Clean!", e);
+			IncQueryEngine.getDefaultLogger().error("Exception during Normal Clean!", e);
 		} finally {
 			monitor.worked(1);
 		}
@@ -279,7 +279,7 @@ public class CleanSupport {
 				fsa.deleteFile(classPackagePath);				
 			} catch (Exception e) {
 				String msg = String.format("Java file cannot be deleted through IFileSystemAccess: %s", classPackagePath);
-				IncQueryEngine.getDefaultLogger().logWarning(msg, e);
+				IncQueryEngine.getDefaultLogger().warn(msg, e);
 				IFile classFile = modelProject.getFile(new Path(outputDir + "/" + classPackagePath));
 				if (classFile != null && classFile.exists()) {
 					classFile.delete(IResource.KEEP_HISTORY, null);
@@ -332,7 +332,7 @@ public class CleanSupport {
 				}				
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing clean for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				IncQueryEngine.getDefaultLogger().logError(msg, e);
+				IncQueryEngine.getDefaultLogger().error(msg, e);
 			}
 		}
 	}

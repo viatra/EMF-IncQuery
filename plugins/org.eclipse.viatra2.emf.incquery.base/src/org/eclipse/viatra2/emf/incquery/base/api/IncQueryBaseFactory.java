@@ -16,6 +16,7 @@ package org.eclipse.viatra2.emf.incquery.base.api;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra2.emf.incquery.base.core.NavigationHelperImpl;
@@ -50,7 +51,7 @@ public class IncQueryBaseFactory {
 	protected IncQueryBaseFactory() {
 		super();
 	}
-	
+		
 	/**
 	 * The method creates a {@link NavigationHelper} index for the given EMF model root. <p>
 	 * A NavigationHelper in wildcard mode will process and index all EStructuralFeatures, EClasses and EDatatypes. 
@@ -59,12 +60,15 @@ public class IncQueryBaseFactory {
 	 *  
 	 * @param emfRoot the root of the EMF tree to be indexed. Recommended: Resource or ResourceSet.
 	 * @param wildcardMode true if all aspects of the EMF model should be indexed automatically, false if manual registration of interesting aspects is desirable
+	 * @param logger the log output where errors will be logged if encountered during the operation of the NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
 	 * @return the NavigationHelper instance
 	 * @throws IncQueryBaseException 
 	 */
-	public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode) throws IncQueryBaseException {
-		return new NavigationHelperImpl(emfRoot, wildcardMode);
+	public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, Logger logger) throws IncQueryBaseException {
+		if (logger == null) logger = Logger.getLogger(NavigationHelper.class);
+		return new NavigationHelperImpl(emfRoot, wildcardMode, logger);
 	}
+	
 	
 	/**
 	 * The method creates a TransitiveClosureHelper instance for the given EMF model root.

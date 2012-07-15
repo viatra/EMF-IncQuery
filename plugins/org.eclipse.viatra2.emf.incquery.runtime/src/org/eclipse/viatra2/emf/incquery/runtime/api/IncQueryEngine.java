@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -19,11 +20,10 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
-import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
@@ -32,6 +32,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receive
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+
+import com.google.inject.Injector;
 
 /**
  * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
@@ -80,7 +82,7 @@ public class IncQueryEngine {
 	 */
 	private int reteThreads = 0;
 	
-	private EMFIncQueryRuntimeLogger logger;
+	private Logger logger;
 	
 	/**
 	 * @param manager
@@ -121,7 +123,7 @@ public class IncQueryEngine {
 	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode);
+				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryRuntimeException(
 						"Could not initialize EMF-IncQuery base index", 
@@ -237,32 +239,30 @@ public class IncQueryEngine {
 	 * DEFAULT BEHAVIOUR:
 	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
 	 * Otherwise, messages are written to stderr.
-	 * In both cases, debug messages are ignored.
 	 * </p>
-	 * Custom logger can be provided via setter to override the default behaviour.
 	 * @return the logger that errors will be logged to during runtime execution.
 	 */
-	public EMFIncQueryRuntimeLogger getLogger() {
+	public Logger getLogger() {
 		if (logger == null) {
-			logger = DefaultLoggerProvider.getDefaultLogger();
+			logger = getDefaultLogger();
 		}
 		return logger;
 	}
-
-
-	/**
-	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
-	 * <p>
-	 * DEFAULT BEHAVIOUR:
-	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
-	 * Otherwise, messages are written to stderr.
-	 * In both cases, debug messages are ignored.
-	 * </p>
-	 * @param logger a custom logger that errors will be logged to during runtime execution.
-	 */
-	public void setLogger(EMFIncQueryRuntimeLogger logger) {
-		this.logger = logger;
-	}
+//
+//
+//	/**
+//	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
+//	 * <p>
+//	 * DEFAULT BEHAVIOUR:
+//	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
+//	 * Otherwise, messages are written to stderr.
+//	 * In both cases, debug messages are ignored.
+//	 * </p>
+//	 * @param logger a custom logger that errors will be logged to during runtime execution.
+//	 */
+//	public void setLogger(EMFIncQueryRuntimeLogger logger) {
+//		this.logger = logger;
+//	}
 
 
 	
@@ -279,8 +279,13 @@ public class IncQueryEngine {
 	/**
 	 * Provides a static default logger.
 	 */
-	public static EMFIncQueryRuntimeLogger getDefaultLogger() {
-		return DefaultLoggerProvider.getDefaultLogger();
+	public static Logger getDefaultLogger() {
+		final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		assert(injector!=null);
+		Logger logger = injector.getInstance(Logger.class);
+		assert(logger != null);
+		
+		return logger;
 	}
 
 	/**

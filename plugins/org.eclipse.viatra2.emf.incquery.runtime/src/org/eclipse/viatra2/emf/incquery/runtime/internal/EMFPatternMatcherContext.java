@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -21,7 +22,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 
@@ -165,23 +165,23 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 		// Ignore, because we don't support changing machines here
 	}
 
-	public EMFIncQueryRuntimeLogger getLogger() {
+	public Logger getLogger() {
 		return iqEngine.getLogger();
 	}
 	
 	@Override
 	public void logDebug(String message) {
-		if (getLogger()!=null) getLogger().logDebug(message);
+		if (getLogger()!=null) getLogger().debug(message);
 	}
 
 	@Override
 	public void logError(String message) {
-		if (getLogger()!=null) getLogger().logError(message);
+		if (getLogger()!=null) getLogger().error(message);
 	}
 
 	@Override
 	public void logError(String message, Throwable cause) {
-		if (getLogger()!=null) getLogger().logError(message, cause);
+		if (getLogger()!=null) getLogger().error(message, cause);
 	}
 	
 	 /* (non-Javadoc)
@@ -189,7 +189,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	 */
 	@Override
 	public void logWarning(String message) {
-		if (getLogger()!=null) getLogger().logWarning(message);
+		if (getLogger()!=null) getLogger().warn(message);
 	}
 
 	/* (non-Javadoc)
@@ -197,7 +197,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	 */
 	@Override
 	public void logWarning(String message, Throwable cause) {
-		if (getLogger()!=null) getLogger().logWarning(message, cause);
+		if (getLogger()!=null) getLogger().warn(message, cause);
 	}
 
 

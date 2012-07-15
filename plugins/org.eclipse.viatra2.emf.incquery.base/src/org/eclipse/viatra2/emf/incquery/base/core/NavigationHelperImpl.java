@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -39,7 +40,6 @@ import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
@@ -55,6 +55,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 //	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
+	private Logger logger;
 	
 	/**
 	 * These global listeners will be called after updates.
@@ -130,8 +131,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 //	}
 
 	
-	public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode) throws IncQueryBaseException {
-
+	public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode, Logger logger) throws IncQueryBaseException {
+		this.logger = logger;
+		assert(logger!=null);
+		
 		if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
 			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
 		}
@@ -447,7 +450,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				}
 			}
 		} catch (Exception ex) {
-			DefaultLoggerProvider.getDefaultLogger().logError(
+			logger.error(
 					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
@@ -675,6 +678,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 		runAfterUpdateCallbacks();
 	}
-
+	/**
+	 * @return the logger
+	 */
+	public Logger getLogger() {
+		return logger;
+	}
 
 }

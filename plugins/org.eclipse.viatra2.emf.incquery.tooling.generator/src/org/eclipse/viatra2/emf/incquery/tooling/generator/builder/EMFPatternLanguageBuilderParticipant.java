@@ -202,7 +202,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				executeGeneratorFragment(fragment, modelProject, pattern);
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing generation for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				IncQueryEngine.getDefaultLogger().logError(msg, e);
+				IncQueryEngine.getDefaultLogger().error(msg, e);
 			}
 		}
 	}

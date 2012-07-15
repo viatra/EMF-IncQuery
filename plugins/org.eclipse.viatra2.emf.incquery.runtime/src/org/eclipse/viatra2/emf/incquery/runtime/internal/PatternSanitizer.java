@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
+import org.apache.log4j.Logger;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -40,7 +40,7 @@ public class PatternSanitizer {
 	Set<Pattern> admittedPatterns = new HashSet<Pattern>();
 	Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
 		
-	EMFIncQueryRuntimeLogger logger;
+	Logger logger;
 	
 
 	/**
@@ -48,7 +48,7 @@ public class PatternSanitizer {
 	 * 
 	 * @param logger where detected problems will be logged
 	 */
-	public PatternSanitizer(final EMFIncQueryRuntimeLogger logger) {
+	public PatternSanitizer(final Logger logger) {
 		super();
 
 		this.logger = logger;	
@@ -90,7 +90,7 @@ public class PatternSanitizer {
 			final boolean duplicate = patternsByName.containsKey(fullyQualifiedName) || newPatternsByName.containsKey(fullyQualifiedName);
 			if (duplicate) {
 				inadmissible.add(current);
-				logger.logError("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
+				logger.error("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
 			} else {
 				newPatternsByName.put(fullyQualifiedName, current);
 			}

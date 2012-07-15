@@ -99,7 +99,7 @@ public class EnsurePluginSupport {
 		try {
 			internalEnsure(modelProject, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during Extension/Package ensure Phase", e);
+			IncQueryEngine.getDefaultLogger().error("Exception during Extension/Package ensure Phase", e);
 		} finally {
 			monitor.worked(1);
 		}
