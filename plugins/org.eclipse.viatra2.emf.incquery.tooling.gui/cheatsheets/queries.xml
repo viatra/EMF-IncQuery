@@ -10,75 +10,60 @@
    
     <item title="Creating a new query definition">
       <description>
-        The EMF-IncQuery Query Definition should be located inside a <b>package</b>. You can specify the target package on the first page of the wizard. Make sure that the filename ends with the <b>.eiq</b> extension and that it is locally unique. Inside .eiq files, the query definition patterns are identified by their names (analogously to Java classes -- the notably exception is that an .eiq file may contain multiple query definition patterns). Make sure that the patterns have unique names too.<br/><br/>
-      	You need to specify the EMF domain (Ecore) models that contain the types that your queries will use. These Ecore models will be referenced by your EMF-IncQuery project. EMF-IncQuery can make use of EPackages that have been registered in the global Ecore registry (either by code or by plugin.xml), or you can also directly reference Ecore domains by using <b>.eiqgen</b> files. It is highly recommended that the EMF model code is generated prior to defining model queries with EMF-IncQuery.<br/><br/>
-      	Query definition patterns can have <b>header parameters</b>
+        The EMF-IncQuery Query Definition should be located inside a <b>package</b>. You can specify the target package on the first page of the wizard. Make sure that the filename ends with the <b>.eiq</b> extension and that it is locally unique. Inside .eiq files, the query definition patterns are identified by their names (analogously to Java classes -- the notable exception is that an .eiq file may contain multiple query definition patterns). Make sure that the patterns have unique names too.<br/><br/>
+      	You need to specify the EMF domain (Ecore) models that contain the types that your queries will use. These Ecore models will be referenced by your EMF-IncQuery project. EMF-IncQuery can make use of EPackages that have been registered in the global Ecore registry (either by code or by plugin.xml), or you can also directly reference Ecore domains by using <b>generator.eiqgen</b> files. It is highly recommended that the EMF model code is generated prior to defining model queries with EMF-IncQuery and that you check the generated plugin.xml for correctness.<br/><br/>
+      	Query definition patterns can have <b>header parameters</b> that specify the input/output variables of a query. Each header parameter should have a type assigned, and it can serves both as input and output depending on the <b>parameter binding</b>. Parameter bindings may be later provided using the Details/Filters panel (right side) in the Query Explorer, or using the Java API. A binding may specify that a header parameter should correspond to a pre-determined value, e.g. a model object or a scalar value.<br/>
       </description>
       <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Query Definition">
          <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqfile)"/>
       </subitem>
-      <subitem skip="true" label="On the second wizard page, give your pattern a unique name"></subitem>
-      <subitem skip="true" label="Specify packages to import"></subitem>
-      <subitem skip="true" label="Specify the header parameters of the pattern"></subitem>
+      <subitem skip="true" label="On the second wizard page, give your pattern a unique name."></subitem>
+      <subitem skip="true" label="Specify packages to import."></subitem>
+      <subitem skip="true" label="Specify the header parameters of the pattern."></subitem>
    </item>
    
    <item title="Adding an EMF-IncQuery Generator Model">
    		<description>
-   			TODO
+   			In order to specify query definition patterns for domains defined in a workspace project, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. These files contain references to <b>.genmodel</b> files that are located in an EMF project in your workspace. 
    		</description>
    		<subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Generator Model">
          <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
       	</subitem>
-      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added"></subitem>
-      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button"></subitem>
-      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary"></subitem>
+      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added."></subitem>
+      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button."></subitem>
+      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary."></subitem>
    </item>
    
    <item
          title="Writing query patterns">
       <description>
-      <command
-            required="false"
-            serialization="org.eclipse.ui.browser.openBrowser(url=http://viatra.inf.mit.bme.hu/incquery/language)"/>
-In the context of the school example, we define a pattern that matches connected pairs of Teachers and Schools. 
-EMF-IncQuery allows the user and the programmer to determine which parameters are used as input and which are output when a query is actually being issued (instantiated), therefore the same pattern can be used to: <br/>
-(a) list the Teachers of a given School (with School as an input parameter), <br/>
-(b) or to find the School that is associated to a given Teacher (Teacher is the input parameter),  <br/>
-(c) or to list all Schools with their Teachers (both are output parameters), <br/>
-(d) or to simply verify whether a given object is a Teacher, the other one is a School, and that the Teacher is indeed associated to the School instance (both are input parameters). 
-<br/><br/>
-Inside the newly created .eiq file, paste the following code:<br/><br/>
+		In the context of the School example, we now define a query pattern that matches connected pairs of Teachers and Schools. Inside the newly created <b>.eiq</b> file, paste the following code:<br/><br/>
 
   pattern TeachersOfSchool(T:Teacher, Sch:School) = {<br/>
     School.teachers(Sch,T);<br/>
   }<br/>
 <br/>
 }<br/>
-TODO: some explanation on the meaning of this pattern.
-      </description>
-   </item>
-   
-   
-  
-  
-   <item
-         title="Inspecting the generated code">
-      <description>
-         EMF-IncQuery automatically generates Java source code for your query pattern definitions inside the src-gen folder located inside your EMF-IncQuery project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | EMF-IncQuery | Compiler | Uncheck "Compiler is activated". As the compilation can be a resource-intensive task (especially for large .eiq files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler's support! 
-         <br/><br/>
-         The generated code consists of the following main components:<br/>
-         TODO rewrite me:
-* Reference the created plug-in from your code, and use the user-friendly query functions generated in the <b>patternmatchers.myMachine</b> package.<br/>
-* Use signature classes in <b>signatures.myMachine</b> to represent a single match of a pattern, with handy overloads for comparison and readable string output.<br/>
-* The internally used patternbuilders.myMachine package contains a representation of the parsed patterns, responsible for the actual pattern matching. <br/><br/>
+This pattern includes a simple <b>edge type constraint</b> of type School.teachers, specifying that T-Sch pairs in the match set (the result of a query) should be Teacher-School instance pairs that are actually connected by a reference of this type.
       </description>
    </item>
    
    <item title="Executing queries on instance models with the Query Explorer">
-      <description>
-      TODO
-      </description>
-   
+   	<description>
+   		To execute queries (i.e. invoke pattern matching) with EMF-IncQuery's development tools, the <b>Query Explorer view</b> is the tool to use. Query Explorer features a three-panel layout where the middle section shows actual query results (i.e. match sets against instance models), the collapsible left panel shows the <b>Pattern Registry</b> (a collection of registered and validated query pattern definitions, specified either in the workspace ("Runtime") or plug-ins already loaded in your Eclipse instance ("Plug-in"). <br/><br/>
+   			The (also collapsible) right panel in the Query Explorer (<b>Details/Filters</b>) may be used to inspect a detailed view of output parameter values, as well as provide input bindings using cell editors and picker dialogs. EMF-IncQuery allows the user and the programmer to determine which parameters are used as input and which are output when a query is actually being issued (instantiated), therefore the same pattern can be used to: <br/>
+(a) list the Teachers of a given School (with School as an input parameter), <br/>
+(b) or to find the School that is associated to a given Teacher (Teacher is the input parameter),  <br/>
+(c) or to list all Schools with their Teachers (both are output parameters), <br/>
+(d) or to simply verify whether a given object is a Teacher, the other one is a School, and that the Teacher is indeed associated to the School instance (both are input parameters).<br/>
+
+   	</description>
+   	<subitem skip="false" label="Open the Query Explorer view, if not already open.">
+   		<command required="true" serialization="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"></command>
+   	</subitem>
+   	<subitem skip="false" label="Import your query definition patterns by putting the Query Definition Editor in focus, and then pushing the green button in the top right corner of the Query Explorer."></subitem>
+   	<subitem skip="false" label="Apply the query patterns on an instance model, by opening an instance model in the School Editor, and then pushing the green button again."></subitem>
+   	<subitem skip="true" label="Experiment with providing input bindings to the TeachersOfSchool pattern, by selecting the pattern in the middle section, then opening the Details/Filters panel, and then providing an appropriate Teacher instance as the value for the second parameter in the Filter column."></subitem> 
    </item>
    
 </cheatsheet>

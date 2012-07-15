@@ -6,6 +6,20 @@
         This section shows how to use the IncQuery project. The first part describes how to generate a sample code, and use it to query an instance model. The second part describes how to use the generated code.
       </description>
    </intro>
+   
+   <item
+         title="Inspecting the generated code">
+      <description>
+         EMF-IncQuery automatically generates Java source code for your query pattern definitions inside the src-gen folder located inside your EMF-IncQuery project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | EMF-IncQuery | Compiler | Uncheck "Compiler is activated". As the compilation can be a resource-intensive task (especially for large .eiq files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler's support (see above, "Executing queries on instance models with the Query Explorer")!<br/><br/>
+         For each query pattern definition, the generated code is placed inside a new package (with a name derived from the package declaration inside the .eiq file and the name of the pattern), and it consists of the following main components:<br/>
+ 
+* Reference the created plug-in from your code, and use the user-friendly query functions generated in the <b>patternmatchers.myMachine</b> package.<br/>
+* Use signature classes in <b>signatures.myMachine</b> to represent a single match of a pattern, with handy overloads for comparison and readable string output.<br/>
+* The internally used patternbuilders.myMachine package contains a representation of the parsed patterns, responsible for the actual pattern matching. <br/><br/>
+      </description>
+   </item>
+   
+   
    <item
          title="Run queries using the Sample UI project">
       <description>
