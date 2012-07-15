@@ -1,57 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cheatsheet
-      title="Evaluating queries using the generated code">
-   <intro>
+      title="Generating Code from Queries">
+   <intro href="https://viatra.inf.mit.bme.hu/incquery/new/examples/school#Generated_code_overview">
       <description>
-        This section shows how to use the IncQuery project. The first part describes how to generate a sample code, and use it to query an instance model. The second part describes how to use the generated code.
+      	EMF-IncQuery provides a powerful Java API that you can use to integrate queries into Eclipse/OSGi/Java applications. EMF-IncQuery automatically generates Java source code for your query pattern definitions inside the <b>src-gen</b> folder located inside your EMF-IncQuery project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | EMF-IncQuery | Compiler | Uncheck "Compiler is activated". As the compilation can be a resource-intensive task (especially for large .eiq files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler's support (see above, "Executing queries on instance models with the Query Explorer")!<br/><br/>
+      	
+      	To use the generated EMF-IncQuery pattern matchers, either create your own plug-in project and add a dependency on the generated EMF-IncQuery plug-in (the EMF plug-ins corresponding to the referenced metamodels are automatically re-exported and made available to your code), or simply put your own code in the src/ folder of the generated project.
+      	
+      	For a more detailed description of the generated code and the API, click (?).
       </description>
    </intro>
    
-   <item
-         title="Inspecting the generated code">
+   <item title="Inspecting the generated code">
       <description>
-         EMF-IncQuery automatically generates Java source code for your query pattern definitions inside the src-gen folder located inside your EMF-IncQuery project. The code generation is carried out by a <b>builder</b> that can be disabled (i) either by disabling auto-build globally in your Eclipse workspace, (ii) or by a project-specific setting (project properties | EMF-IncQuery | Compiler | Uncheck "Compiler is activated". As the compilation can be a resource-intensive task (especially for large .eiq files), it is sometimes a good practice to disable it while you are actively working on your query definitions -- they can be completely tested and debugged without the compiler's support (see above, "Executing queries on instance models with the Query Explorer")!<br/><br/>
          For each query pattern definition, the generated code is placed inside a new package (with a name derived from the package declaration inside the .eiq file and the name of the pattern), and it consists of the following main components:<br/>
- 
-* Reference the created plug-in from your code, and use the user-friendly query functions generated in the <b>patternmatchers.myMachine</b> package.<br/>
-* Use signature classes in <b>signatures.myMachine</b> to represent a single match of a pattern, with handy overloads for comparison and readable string output.<br/>
-* The internally used patternbuilders.myMachine package contains a representation of the parsed patterns, responsible for the actual pattern matching. <br/><br/>
+* <b>XYZMatch</b>: a Data Transfer class corresponding to a match of the query pattern. A match is essentially a tuple that holds actual values of the header parameters. If EMF-IncQuery is able to correctly resolve the Java type of your model objects, the generated tuple class will be typesafe.<br/>
+* <b>XYZMatcher</b>: the main entry point of the EMF-IncQuery API, used to initialize a pattern matcher (query evaluation) on an instance model and then perform subsequent queries.<br/>
+* <b>XYZMatcherFactory</b>: helper class used to instantiate matchers.<br/>
+* <b>XYZProcessor</b>: helper class that aids the programmer to formulate iteration cycles over sets of matches in a concise way. <br/>
       </description>
+       <subitem label="To match a pattern on an EMF instance model, find the corresponding generated class and use the static FACTORY to instantiate it on your EMF ResourceSet. The matcher object will have useful methods such as getAllMatches(), some of them declared in the class itself, some of them in the interface IncQueryMatcher. Refer to the Javadoc on method usage.">
+      </subitem>
+      <subitem label="During the lifetime of the instance model (Resource|Set), the match sets will be incrementally maintained and therefore the pattern match retriever methods of the matcher object always return the up-to-date results virtually instantly. The actual (&quot;heavy&quot;) pattern matcher engine is constructed behind the scenes. The generated matcher class is only a lightweight wrapper; therefore you can instantiate it for the same ResourceSet multiple times without significant performance penalties.">
+      </subitem>
+      <subitem label="Altogether, the public pattern query API can be used very simply to: (1) Initialize an incremental pattern matcher on any EMF Notifier (preferably Resource or ResourceSet, but can also be any EObject representing their respective containment subtrees). (2) Execute a query any time on the model, binding zero or more of the pattern parameters to input values, retrieving the result set immediately (3) Register a delta monitor to incrementally and efficiently track changes in the result sets of queries.">
+      </subitem>
    </item>
    
+   <item title="Run queries using the sample generated UI project">
+      <description>
+      The built-in <b>sample UI Generator</b> is able to automatically generate an auxiliary project that illustrates the basic usage of the EMF-IncQuery Java API. To use this generator, simply append the @Handler annotation to your pattern definition as follows:<br/><br/>
+  <b>@Handler(fileExtension = "school")</b><br/>
+  pattern TeachersOfSchool(T:Teacher, Sch:School) = {<br/>
+    School.teachers(Sch,T);<br/>
+  }<br/>
+<br/>
+
+This will trigger the generation of the <b>school.incquery.ui</b> project, with a generated command definition and command handler class.
+      </description>
+      <subitem skip="true" label="To generate the sample UI project, add the @Handler annotation with the appropriate fileExtension parameter and save the .eiq file to trigger the building process.">
+      </subitem>
+      <subitem skip="true" label="Check that the .ui project has been created with the appropriate content.">
+      </subitem>
+      <subitem skip="true" label="Launch a new Eclipse Application with all the workspace projects compiled and included, right-click on a .school instance model (e.g. in the Package Explorer), and select EMF-IncQuery | Get All Matches for school.TeachersOfSchool.">
+      </subitem>
+   </item>
    
-   <item
-         title="Run queries using the Sample UI project">
-      <description>
-      </description>
-      <subitem
-            label="To create the Sample UI project, right click on models/generator.incquery, and issue EMF-IncQuery | Generate Sample UI project for EMF-IncQuery.">
-      </subitem>
-      <subitem
-            label="Create an EMF instance model. Following the library example, start a runtime Eclipse that contains the editor plug-in, as well as the generated EMF-IncQuery projects. Create a new Library Model in a project, and select Library as the Model Object (root element).">
-      </subitem>
-      <subitem
-            label="Fill up your model with writers and books, also associate some books to writers through writers&apos; books reference. Finally save the model.">
-      </subitem>
-      <subitem
-            label="Right click on the model file, and issue a command from the Sample EMF-IncQuery Queries category. This returns the pattern result in a pop up message box.">
-      </subitem>
+   <item title="Customize the Appearance of Query Results and Create Databinding Observables for Queries" href="https://viatra.inf.mit.bme.hu/incquery/new/examples/school#Step_7_-_combining_everything">
+   	<description>
+   		The appearance (format strings) of how query results are displayed in the middle section of the Query Explorer can be customized using the <b>@PatternUI</b> annotation. Additionally, observable helper classes (compatible with JFace Databinding) can be generated that allow you to easily display query results on the UI of Eclipse/JFace/Forms apps, by using the <b>@ObservableValue</b> annotation. For reference on these techniques, click (?).<br/>
+   		The example can be extended e.g. as follows to demonstrate the usage:<br/><br/>
+  <b>@Handler(fileExtension = "school")</b><br/>
+  <b>@PatternUI(message="Teacher $T.name$ teaches in school $Sch.name$")</b><br/>
+  <b>@ObservableValue(name = "nameOfTeacher", expression="T.name")</b><br/>
+  pattern TeachersOfSchool(T:Teacher, Sch:School) = {<br/>
+    School.teachers(Sch,T);<br/>
+  }<br/>
+<br/>
+This will then result in (a) the formatstring provided in @PatternUI being used in the Query Explorer and (b) a new <b>.databinding</b> project will be generated with the Observable class. The Observable can be also seen using the <b>Details</b> panel of the Query Explorer.
+   	</description>
+   	
+   	<subitem skip="true" label="Apply the annotations as shown above in your .eiq file."></subitem>
+   	<subitem skip="true" label="Check that the .databinding project has been generated."></subitem>
+   	<subitem skip="true" label="Check the effects in the Query Explorer."></subitem>
    </item>
-   <item
-         title="Information on using the generated pattern matcher code">
-      <description>
-      </description>
-      <subitem
-            label="To use the generated EMF-IncQuery pattern matchers, either create your own plug-in project and add a dependency on the generated EMF-IncQuery plug-in (the EMF plug-ins corresponding to the referenced metamodels are automatically re-exported and made available to your code), or simply put your own code in the src/ folder of the generated project.">
-      </subitem>
-      <subitem
-            label="To match a pattern on an EMF instance model, find the corresponding generated class from src-gen/patternmatchers/ and use the static FACTORY to instantiate it on your EMF ResourceSet. The object will have useful methods such as getAllMatches(), some of them declared in the class itself, some of them in the interface IncQueryMatcher. Refer to the Javadoc on method usage. Advanced tip: using only the (fully qualified) name of the pattern, you can instantiate org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory to attach a pattern matcher to your EMF Resource or ResourceSet without compile-time dependence on the generated project; the resulting generic matcher will be less user-friendly than the generated ones though. The (fully qualified) name of patterns are formed as machineNameSpace.machineSimpleName.patternSimpleName; in our library example, the machine did not have a namespace declaration, so the name of the pattern became myMachine.Writes. ">
-      </subitem>
-      <subitem
-            label="During the lifetime of the ResourceSet, the match sets will be incrementally maintained and therefore the pattern match retriever methods of the matcher object always return the up-to-date results virtually instantly. The actual (&quot;heavy&quot;) pattern matcher engine is constructed behind the scenes. The generated matcher class is only a lightweight wrapper; therefore you can instantiate it for the same ResourceSet multiple times without significant performance penalties.">
-      </subitem>
-      <subitem
-            label="Altogether, the public pattern query API can be used very simply to: (1) Initialize an incremental pattern matcher on any EMF Notifier (preferably Resource or ResourceSet, but can also be any EObject representing their respective containment subtrees). (2) Execute a query any time on the model, binding zero or more of the pattern parameters to input values, retrieving the result set immediately (3) Register a delta monitor to incrementally and efficiently track changes in the result sets of queries.">
-      </subitem>
-   </item>
+   
 </cheatsheet>
