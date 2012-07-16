@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 public class EMFModelComprehension {
 
 	public static boolean unvisitableDirectly(EStructuralFeature feature) {
-		boolean suspect = feature.isDerived();// || feature.isVolatile();
+		boolean suspect = feature.isDerived() || feature.isVolatile();
 		if(suspect) {
 			// override support here 
 			// (e.g. if manual notifications available, or no changes expected afterwards)

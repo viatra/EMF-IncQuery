@@ -21,7 +21,7 @@ public class IncQueryBasePlugin extends Plugin {
 	private static IncQueryBasePlugin plugin;
 	
 	public static final String PLUGIN_ID="org.eclipse.viatra2.emf.incquery.base";
-	public static final String WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.wellbehaving.derived.features";
+	public static final String WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features";
 
 	/*
 	 * (non-Javadoc)
