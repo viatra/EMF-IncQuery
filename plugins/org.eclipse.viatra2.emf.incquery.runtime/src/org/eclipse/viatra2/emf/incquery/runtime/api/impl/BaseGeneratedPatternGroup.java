@@ -34,5 +34,5 @@ public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
 	 * 
 	 * @return
 	 */
-	protected abstract Set<IMatcherFactory> getMatcherFactories();
+	protected abstract Set<IMatcherFactory<?>> getMatcherFactories();
 }

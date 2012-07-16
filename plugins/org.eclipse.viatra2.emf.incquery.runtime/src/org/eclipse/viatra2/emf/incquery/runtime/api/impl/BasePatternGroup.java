@@ -48,7 +48,7 @@ public abstract class BasePatternGroup implements IPatternGroup {
 	 * @param matcherFactories
 	 * @return
 	 */
-	public static Set<Pattern> patterns(Set<IMatcherFactory> matcherFactories) {
+	public static Set<Pattern> patterns(Set<IMatcherFactory<?>> matcherFactories) {
 		Set<Pattern> result = new HashSet<Pattern>();
 		for (IMatcherFactory<?> factory : matcherFactories) {
 			result.add(factory.getPattern());

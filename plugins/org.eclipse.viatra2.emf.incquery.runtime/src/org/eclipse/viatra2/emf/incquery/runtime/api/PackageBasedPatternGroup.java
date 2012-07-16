@@ -24,10 +24,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @author Abel Hegedus, Mark Czotter
  * 
  */
-@SuppressWarnings("rawtypes")
 public class PackageBasedPatternGroup extends BasePatternGroup {
 
-	private final Set<IMatcherFactory> matcherFactories = new HashSet<IMatcherFactory>();
+	private final Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
 	private final String packageName;
 	private final boolean includeSubPackages;
 	
@@ -61,7 +60,7 @@ public class PackageBasedPatternGroup extends BasePatternGroup {
 	/**
 	 * @return the matcherFactories
 	 */
-	public Set<IMatcherFactory> getMatcherFactories() {
+	public Set<IMatcherFactory<?>> getMatcherFactories() {
 		return matcherFactories;
 	}
 	

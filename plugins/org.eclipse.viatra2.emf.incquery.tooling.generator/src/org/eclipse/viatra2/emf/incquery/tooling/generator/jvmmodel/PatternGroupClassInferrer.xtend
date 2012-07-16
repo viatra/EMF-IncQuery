@@ -56,7 +56,7 @@ class PatternGroupClassInferrer {
 	}
 	
 	def JvmOperation inferGetMatcherFactoriesMethod(PatternModel model) {
-		val matcherFactoryInterfaceReference = model.newRawTypeRef(typeof (IMatcherFactory)) 
+		val matcherFactoryInterfaceReference = model.newTypeRef(typeof (IMatcherFactory)) 
 		val returnTypeReference = model.newTypeRef(typeof (Set), matcherFactoryInterfaceReference)
 		val matcherReferences = gatherMatchers(model)
 		model.toMethod("getMatcherFactories", returnTypeReference) [
