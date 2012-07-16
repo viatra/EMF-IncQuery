@@ -22,7 +22,6 @@ import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.parsetree.reconstr.ITokenSerializer.ICrossReferenceSerializer;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
@@ -39,9 +38,9 @@ import com.google.inject.Inject;
 public class GenModelMetamodelProviderService extends MetamodelProviderService
 		implements IEiqGenmodelProvider {
 
-	private final class ParentScopeFilter implements
+	private static final class ParentScopeFilter implements
 			Predicate<IEObjectDescription> {
-		Iterable<IEObjectDescription> referencedPackages;
+		private Iterable<IEObjectDescription> referencedPackages;
 
 		public ParentScopeFilter(
 				Iterable<IEObjectDescription> referencedPackages) {
@@ -58,8 +57,6 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	private IJavaProjectProvider projectProvider;
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
-	@Inject
-	private ICrossReferenceSerializer refSerializer;
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
@@ -98,8 +95,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
-//		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
-		return (loadedPackage != null) ? loadedPackage.getEcorePackage() : super.loadEPackage(packageUri, set);
+		return super.loadEPackage(packageUri, set);
 	}
 
 	@Override
