@@ -85,12 +85,12 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			}
 		}
 		if(engine == null) {
-			IncQueryEngine.getDefaultLogger().logError("Cannot save snapshot without IncQueryEngine!");
+			IncQueryEngine.getDefaultLogger().error("Cannot save snapshot without IncQueryEngine!");
 			return;
 		}
 		ResourceSet resourceSet = getResourceSetForNotifier(engine.getEmfRoot());
 		if(resourceSet == null) {
-			engine.getLogger().logError("Cannot save snapshot, models not in ResourceSet!");
+			engine.getLogger().error("Cannot save snapshot, models not in ResourceSet!");
 			return;
 		}
 		IFile snapshotFile = null;
@@ -104,7 +104,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
 				res.getContents().add(snapshot);
 			} else {
-				engine.getLogger().logError("Selected file name must use .eiqsnapshot extension!");
+				engine.getLogger().error("Selected file name must use .eiqsnapshot extension!");
 				return;
 			}
 		} else {
@@ -118,11 +118,11 @@ public class SaveSnapshotHandler extends AbstractHandler {
 						return;
 					}
 				} else {
-					engine.getLogger().logError("Selected file does not contain snapshot!");
+					engine.getLogger().error("Selected file does not contain snapshot!");
 					return;
 				}
 			} else {
-				engine.getLogger().logError("Selected file not .eiqsnapshot!");
+				engine.getLogger().error("Selected file not .eiqsnapshot!");
 				return;
 			}
 		} 
@@ -137,7 +137,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			try {
 				snapshot.eResource().save(null);
 			} catch(IOException e) {
-				engine.getLogger().logError("Error during saving snapshot into file!",e);
+				engine.getLogger().error("Error during saving snapshot into file!",e);
 			}
 		}
 	}
@@ -152,7 +152,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
 			Notifier matcherRoot = engine.getEmfRoot();
 			if(matcherRoot != root) {
-				engine.getLogger().logError("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
+				engine.getLogger().error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
 				return false;
 			}
 			return true;

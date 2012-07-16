@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cheatsheet
-      title="Creating EMF-IncQuery queries">
+      title="Creating and Executing EMF-IncQuery Queries">
    <intro href="http://viatra.inf.mit.bme.hu/incquery/language">
       <description>
          Queries return a set of EMF instance model objects that match the criteria specified in a query pattern. 
@@ -43,7 +43,6 @@
     School.teachers(Sch,T);<br/>
   }<br/>
 <br/>
-}<br/>
 This pattern includes a simple <b>edge type constraint</b> of type School.teachers, specifying that T-Sch pairs in the match set (the result of a query) should be Teacher-School instance pairs that are actually connected by a reference of this type.
       </description>
    </item>
@@ -58,7 +57,7 @@ This pattern includes a simple <b>edge type constraint</b> of type School.teache
 (d) or to simply verify whether a given object is a Teacher, the other one is a School, and that the Teacher is indeed associated to the School instance (both are input parameters).<br/>
 
    	</description>
-   	<subitem skip="false" label="Open the Query Explorer view, if not already open.">
+   	<subitem skip="true" label="Open the Query Explorer view, if not already open.">
    		<command required="true" serialization="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"></command>
    	</subitem>
    	<subitem skip="false" label="Import your query definition patterns by putting the Query Definition Editor in focus, and then pushing the green button in the top right corner of the Query Explorer."></subitem>

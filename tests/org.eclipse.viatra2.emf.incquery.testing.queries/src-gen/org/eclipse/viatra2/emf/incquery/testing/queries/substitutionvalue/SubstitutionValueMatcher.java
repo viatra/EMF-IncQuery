@@ -252,7 +252,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   public SubstitutionValueMatch tupleToMatch(final Tuple t) {
     try {
     	return new SubstitutionValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));	
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -262,7 +262,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   public SubstitutionValueMatch arrayToMatch(final Object[] match) {
     try {
     	return new SubstitutionValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
