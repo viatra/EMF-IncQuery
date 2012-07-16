@@ -39,6 +39,7 @@ public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> exte
 	}
 	
 	static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryRuntimeException {
+		checkPattern(engine, pattern);
 		try {
 			return engine.getReteEngine().accessMatcher(pattern);
 		} catch (RetePatternBuildException e) {

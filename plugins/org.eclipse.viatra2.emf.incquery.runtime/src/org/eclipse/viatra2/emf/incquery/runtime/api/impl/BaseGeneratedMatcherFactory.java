@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
@@ -41,8 +43,13 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
 	 */
 	@Override
 	public Pattern getPattern() {
-		if (pattern == null) 
+		if (pattern == null) {
 			pattern = parsePattern();
+			if (pattern == null) 
+				throw new IncQueryRuntimeException(
+						"Unable to parse the definition of generated pattern " + patternName() + " (see log for any errors that could have caused this)", 
+						"Could not parse pattern definition.");
+		}
 		return pattern;
 	}
 
@@ -59,11 +66,14 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
 	protected abstract String patternName();
 	
 	protected Pattern parsePattern() {
+		if (!Platform.isRunning()) {
+			throw new IllegalStateException("Generated EMF-IncQuery patterns can only be used if the Eclipse Platform is running");
+		}
 		try {
 			PatternModel model = getModelRoot(getBundleName());
 			return findPattern(model, patternName());
 		} catch (Exception e) {
-			logger.error("Exception during parsePattern!", e);
+			logger.error("An error occured while parsing generated pattern " + patternName(), e);
 		}
 		return null;
 	}
