@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 /**
  * @author Bergmann Gábor
  * 
- * Does not directly visit derived (volatile) links, unless marked as a WellBehavingFeature.
+ * Does not directly visit derived links, unless marked as a WellBehavingFeature.
  * Derived edges are automatically interpreted correctly in these cases:
  *  - EFeatureMaps
  *  - eOpposites of containments
@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 public class EMFModelComprehension {
 
 	public static boolean unvisitableDirectly(EStructuralFeature feature) {
-		boolean suspect = feature.isDerived() || feature.isVolatile();
+		boolean suspect = feature.isDerived();// || feature.isVolatile();
 		if(suspect) {
 			// override support here 
 			// (e.g. if manual notifications available, or no changes expected afterwards)
