@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
@@ -22,6 +23,8 @@ import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
+
+	public static final EClass eObjectClass = EcorePackage.eINSTANCE.getEObject();
 
 	// value -> feature (attr or ref) -> holder(s)
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
@@ -417,18 +420,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			knownClasses.add(clazz);
 			
 			for (EClass superType : clazz.getEAllSuperTypes()) {
-				if (navigationHelper.directlyObservedClasses.contains(superType)) {
-					navigationHelper.getAllObservedClasses().add(clazz);
-				}
-				
-				Set<EClass> set = subTypeMap.get(superType);
-				if (set == null) {
-					set = new HashSet<EClass>();
-					subTypeMap.put(superType, set);
-				}
-				set.add(clazz);
+				maintainTypeHierarhyInternal(clazz, superType);
 			}
+			maintainTypeHierarhyInternal(clazz, eObjectClass);
 		}
+	}
+
+	private void maintainTypeHierarhyInternal(EClass clazz, EClass superType) {
+		if (navigationHelper.directlyObservedClasses.contains(superType)) {
+			navigationHelper.getAllObservedClasses().add(clazz);
+		}
+		
+		Set<EClass> set = subTypeMap.get(superType);
+		if (set == null) {
+			set = new HashSet<EClass>();
+			subTypeMap.put(superType, set);
+		}
+		set.add(clazz);
 	}
 	
 	private void notifyDataTypeListeners(EDataType type, Object value, boolean isInsertion) {

@@ -69,8 +69,14 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 			Boolean observed = classObservationMap.get(eClass);
 			if (observed == null) {
 				final EList<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
-				final boolean overApprox = newClasses.contains(eClass) || !Collections.disjoint(eAllSuperTypes, newClasses);
-				observed = overApprox && !oldClasses.contains(eClass) && Collections.disjoint(eAllSuperTypes, oldClasses); 
+				final boolean overApprox = 
+						newClasses.contains(eClass) || 
+						newClasses.contains(NavigationHelperContentAdapter.eObjectClass) || 
+						!Collections.disjoint(eAllSuperTypes, newClasses);
+				observed = overApprox && 
+						!oldClasses.contains(eClass) && 
+						!oldClasses.contains(NavigationHelperContentAdapter.eObjectClass) && 
+						Collections.disjoint(eAllSuperTypes, oldClasses); 
 				classObservationMap.put(eClass, observed);
 			}
 			return observed;
