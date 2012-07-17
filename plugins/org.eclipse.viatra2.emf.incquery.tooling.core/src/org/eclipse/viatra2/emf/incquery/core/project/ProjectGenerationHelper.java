@@ -739,7 +739,7 @@ public abstract class ProjectGenerationHelper {
 				return !existingSourceEntries.contains(entry);
 			}
 		});
-		Collections2.transform(
+		Collection<IBundleClasspathEntry> newClasspathEntries= Collections2.transform(
 				missingSourceFolders, new Function<String, IBundleClasspathEntry>() {
 					@Override
 					public IBundleClasspathEntry apply(String input) {
@@ -747,7 +747,7 @@ public abstract class ProjectGenerationHelper {
 								null, null);
 					}
 				});
-		classPathList.addAll(classPathList);
+		classPathList.addAll(newClasspathEntries);
 		return classPathList.toArray(new IBundleClasspathEntry[classPathList.size()]);
 	}
 	

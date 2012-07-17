@@ -27,8 +27,8 @@ public class IncQueryNature implements IProjectNature {
 	public static final String NATURE_ID = "org.eclipse.viatra2.emf.incquery.projectnature"; //$NON-NLS-1$
 	public static final String BUNDLE_ID = "org.eclipse.viatra2.emf.incquery.core"; //$NON-NLS-1$
 	public static final String MODEL_BUNDLE_ID = "org.eclipse.viatra2.emf.importer.generic"; //$NON-NLS-1$
-	public static final String SRCGEN_DIR = "src-gen"; //$NON-NLS-1$
-	public static final String SRC_DIR = "src"; //$NON-NLS-1$
+	public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
+	public static final String SRC_DIR = "src/"; //$NON-NLS-1$
 	public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; //$NON_NLS-1$
 	public static final String IQGENMODEL = "generator.eiqgen";
 	
