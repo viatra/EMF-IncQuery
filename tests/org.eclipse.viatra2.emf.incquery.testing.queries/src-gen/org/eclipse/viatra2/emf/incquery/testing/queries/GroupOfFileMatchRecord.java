@@ -10,10 +10,10 @@ import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.Un
 
 public final class GroupOfFileMatchRecord extends BaseGeneratedPatternGroup {
   @Override
-  protected Set<IMatcherFactory> getMatcherFactories() {
-    Set<IMatcherFactory> result = new HashSet<IMatcherFactory>();
-    result.add(SubstitutionValueMatcher.FACTORY);
+  protected Set<IMatcherFactory<?>> getMatcherFactories() {
+    Set<IMatcherFactory<?>> result = new HashSet<IMatcherFactory<?>>();
     result.add(RecordRoleValueMatcher.FACTORY);
+    result.add(SubstitutionValueMatcher.FACTORY);
     result.add(UnexpectedMatchRecordMatcher.FACTORY);
     return result;
   }
