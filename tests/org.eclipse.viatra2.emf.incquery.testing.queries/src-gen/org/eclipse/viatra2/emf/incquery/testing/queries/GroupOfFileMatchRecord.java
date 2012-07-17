@@ -12,9 +12,9 @@ public final class GroupOfFileMatchRecord extends BaseGeneratedPatternGroup {
   @Override
   protected Set<IMatcherFactory<?>> getMatcherFactories() {
     Set<IMatcherFactory<?>> result = new HashSet<IMatcherFactory<?>>();
+    result.add(UnexpectedMatchRecordMatcher.FACTORY);
     result.add(RecordRoleValueMatcher.FACTORY);
     result.add(SubstitutionValueMatcher.FACTORY);
-    result.add(UnexpectedMatchRecordMatcher.FACTORY);
     return result;
   }
 }
