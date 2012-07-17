@@ -210,7 +210,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			}
 			
 			@Override
-			public BaseGeneratedMatcherFactory<«pattern.matchClassName», «pattern.matcherClassName»> getMatcherFactory() {
+			public BaseGeneratedMatcherFactory<«pattern.matcherClassName»> getMatcherFactory() {
 				return matcherFactory;
 			}
 		}
