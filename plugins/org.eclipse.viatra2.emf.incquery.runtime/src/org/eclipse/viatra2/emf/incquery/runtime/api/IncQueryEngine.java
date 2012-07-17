@@ -12,19 +12,18 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
-import org.eclipse.viatra2.emf.incquery.base.api.ParameterizedNavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
-import org.eclipse.viatra2.emf.incquery.base.logging.EMFIncQueryRuntimeLogger;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.ReteContainerBuildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
@@ -33,6 +32,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receive
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+
+import com.google.inject.Injector;
 
 /**
  * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
@@ -58,11 +59,16 @@ public class IncQueryEngine {
 	/**
 	 * The model to which the engine is attached.
 	 */
-	private Notifier emfRoot;	
+	private Notifier emfRoot;
+	
 	/**
 	 * The base index keeping track of basic EMF contents of the model.
 	 */
-	private ParameterizedNavigationHelper baseIndex;
+	private NavigationHelper baseIndex;
+	/**
+	 * Whether to initialize the base index in wildcard mode.
+	 */
+	private static final boolean WILDCARD_MODE_DEFAULT = false;
 	/**
 	 * The RETE pattern matcher component of the EMF-IncQuery engine.
 	 */	
@@ -76,7 +82,7 @@ public class IncQueryEngine {
 	 */
 	private int reteThreads = 0;
 	
-	private EMFIncQueryRuntimeLogger logger;
+	private Logger logger;
 	
 	/**
 	 * @param manager
@@ -105,10 +111,19 @@ public class IncQueryEngine {
 	 * @return the baseIndex the NavigationHelper maintaining the base index
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected ParameterizedNavigationHelper getBaseIndexInternal() {
+	protected NavigationHelper getBaseIndexInternal() {
+		return getBaseIndexInternal(WILDCARD_MODE_DEFAULT);
+	}
+	
+	/**
+	 * Internal accessor for the base index.
+	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryBaseException if the base index could not be constructed
+	 */
+	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createManualNavigationHelper(getEmfRoot());
+				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryRuntimeException(
 						"Could not initialize EMF-IncQuery base index", 
@@ -118,7 +133,7 @@ public class IncQueryEngine {
 		}
 		return baseIndex;
 	}
-	
+		
 	/**
 	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
@@ -152,17 +167,35 @@ public class IncQueryEngine {
 		
 	}
 	/**
-	 * Disconnects the engine. 
-	 * Matcher objects will continue to return stale results. 
+	 * Completely disconnects and dismantles the engine. 
+	 * <p>Matcher objects will continue to return stale results. 
 	 * If no references are retained to the matchers or the engine, they can eventually be GC'ed, 
 	 * 	and they won't block the EMF model from being GC'ed anymore. 
 	 * 
-	 * Cannot be reversed.
-	 * @return true is an engine was found and disconnected, false if no engine was found for the given root.
+	 * <p>Cannot be reversed.
 	 */
 	public void dispose() {
 		manager.killInternal(emfRoot);
 		killInternal();
+	}
+	
+	/**
+	 * Discards any pattern matcher caches and forgets known patterns. 
+	 * The base index built directly on the underlying EMF model, however, 
+	 * 	is kept in memory to allow reuse when new pattern matchers are built.
+	 * Use this method if you have e.g. new versions of the same patterns, to be matched on the same model.
+	 * 
+	 * <p>Matcher objects will continue to return stale results. 
+	 * If no references are retained to the matchers, they can eventually be GC'ed. 
+	 * 
+	 * 
+	 */
+	public void wipe() {
+		if (reteEngine != null) {
+			reteEngine.killEngine();
+			reteEngine = null;
+		}
+		sanitizer = null;
 	}
 	
 	private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) 
@@ -194,11 +227,7 @@ public class IncQueryEngine {
 	 * To be called after already removed from engineManager.
 	 */
 	void killInternal() {
-		if (reteEngine != null) {
-			reteEngine.killEngine();
-			reteEngine = null;
-		}
-		sanitizer = null;
+		wipe();
 		if (baseIndex != null) {
 			baseIndex.dispose();
 		}
@@ -210,32 +239,30 @@ public class IncQueryEngine {
 	 * DEFAULT BEHAVIOUR:
 	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
 	 * Otherwise, messages are written to stderr.
-	 * In both cases, debug messages are ignored.
 	 * </p>
-	 * Custom logger can be provided via setter to override the default behaviour.
 	 * @return the logger that errors will be logged to during runtime execution.
 	 */
-	public EMFIncQueryRuntimeLogger getLogger() {
+	public Logger getLogger() {
 		if (logger == null) {
-			logger = DefaultLoggerProvider.getDefaultLogger();
+			logger = getDefaultLogger();
 		}
 		return logger;
 	}
-
-
-	/**
-	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
-	 * <p>
-	 * DEFAULT BEHAVIOUR:
-	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
-	 * Otherwise, messages are written to stderr.
-	 * In both cases, debug messages are ignored.
-	 * </p>
-	 * @param logger a custom logger that errors will be logged to during runtime execution.
-	 */
-	public void setLogger(EMFIncQueryRuntimeLogger logger) {
-		this.logger = logger;
-	}
+//
+//
+//	/**
+//	 * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
+//	 * <p>
+//	 * DEFAULT BEHAVIOUR:
+//	 * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
+//	 * Otherwise, messages are written to stderr.
+//	 * In both cases, debug messages are ignored.
+//	 * </p>
+//	 * @param logger a custom logger that errors will be logged to during runtime execution.
+//	 */
+//	public void setLogger(EMFIncQueryRuntimeLogger logger) {
+//		this.logger = logger;
+//	}
 
 
 	
@@ -252,8 +279,26 @@ public class IncQueryEngine {
 	/**
 	 * Provides a static default logger.
 	 */
-	public static EMFIncQueryRuntimeLogger getDefaultLogger() {
-		return DefaultLoggerProvider.getDefaultLogger();
+	public static Logger getDefaultLogger() {
+		final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		assert(injector!=null);
+		Logger logger = injector.getInstance(Logger.class);
+		assert(logger != null);
+		
+		return logger;
+	}
+
+	/**
+	 * Specifies whether the base index should be built in wildcard mode.
+	 * @param wildcardMode the wildcardMode to set
+	 * @throws IllegalStateException if baseIndex is already constructed in the opposite mode, since the mode can not be changed
+	 */
+	public void setWildcardMode(boolean wildcardMode) {
+		if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
+			throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
+			
+		if (wildcardMode != WILDCARD_MODE_DEFAULT) 
+			getBaseIndexInternal(wildcardMode);		
 	}
 	
 //	/**

@@ -2,6 +2,7 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -23,33 +24,70 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 
 public class SelectIncQueryProjectPage extends WizardPage {
+	private final static class ProjectColumnLabelProvider extends
+			ColumnLabelProvider {
+		private Color disabledColor;
+		
+		public ProjectColumnLabelProvider(Color disabledColor) {
+			super();
+			this.disabledColor = disabledColor;
+		}
+
+		@Override
+		public String getText(Object element) {
+			if (element instanceof IProject) {
+				return ((IProject) element).getName();
+			}
+			return super.getText(element);
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			if (element instanceof IProject
+					&& ((IProject) element)
+							.findMember(IncQueryNature.IQGENMODEL) != null) {
+				return disabledColor;
+			}
+			return super.getForeground(element);
+		}
+
+		@Override
+		public String getToolTipText(Object element) {
+			if (element instanceof IProject
+					&& ((IProject) element)
+							.findMember(IncQueryNature.IQGENMODEL) != null) {
+				return String
+						.format("Project %s has already defined an EMF-IncQuery Generator model.",
+								((IProject) element).getName());
+			}
+			return super.getToolTipText(element);
+		}
+	}
+
 	private final FormToolkit formToolkit = new FormToolkit(
 			Display.getDefault());
-	private Table table;
 	private IStructuredSelection selection;
 	private TableViewer viewer;
-	private IEiqGenmodelProvider genmodelProvider;
-	private Color disabledColor;
+	
+	private Logger logger;
 
 	/**
 	 * Create the wizard.
 	 */
 	public SelectIncQueryProjectPage(String title,
 			IStructuredSelection selection,
-			IEiqGenmodelProvider genmodelProvider) {
+			Logger logger) {
 		super("wizardPage");
 		this.selection = selection;
-		this.genmodelProvider = genmodelProvider;
+		this.logger = logger;
 		setTitle(title);
 		setDescription("Select an EMF-IncQuery project without an EMF-IncQuery Generator model");
 	}
@@ -60,15 +98,12 @@ public class SelectIncQueryProjectPage extends WizardPage {
 	 * @param parent
 	 */
 	public void createControl(Composite parent) {
-
-		disabledColor = new Color(parent.getDisplay(), new RGB(100, 100, 100));
-
 		Composite container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
 		container.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-		table = formToolkit.createTable(container, SWT.NONE);
+		Table table = formToolkit.createTable(container, SWT.NONE);
 		formToolkit.paintBordersFor(table);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -78,42 +113,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
 		viewer = new TableViewer(table);
 		viewer.setContentProvider(new ArrayContentProvider());
 		TableViewerColumn column = new TableViewerColumn(viewer, SWT.LEFT);
-		column.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof IProject) {
-					return ((IProject) element).getName();
-				}
-				return super.getText(element);
-			}
-
-			@Override
-			public Color getForeground(Object element) {
-				if (element instanceof IProject
-						&& ((IProject) element)
-								.findMember(IncQueryNature.IQGENMODEL) != null) {
-					return disabledColor;
-				}
-				return super.getForeground(element);
-			}
-
-			@Override
-			public String getToolTipText(Object element) {
-				if (element instanceof IProject
-						&& ((IProject) element)
-								.findMember(IncQueryNature.IQGENMODEL) != null) {
-					return String
-							.format("Project %s has already defined an EMF-IncQuery Generator model.",
-									((IProject) element).getName());
-				}
-				return super.getToolTipText(element);
-			}
-
-		});
-		// viewer.setLabelProvider(new LabelProvider() {
-		//
-		//
-		// });
+		column.setLabelProvider(new ProjectColumnLabelProvider(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY)));
 		viewer.addFilter(new ViewerFilter() {
 
 			@Override
@@ -126,7 +126,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
 								&& project.hasNature(IncQueryNature.NATURE_ID);
 					} catch (CoreException e) {
 						// This exception shall not come forth
-						// TODO logging
+						logger.error("Error while filtering project list", e);
 					}
 				}
 				return false;
@@ -171,7 +171,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
 			}
 		} catch (CoreException e) {
 			// This exception shall not come forth
-			// TODO logging
+			logger.error("Error while selecting project " + containerProject.getName(), e);
 		}
 	}
 
@@ -187,14 +187,6 @@ public class SelectIncQueryProjectPage extends WizardPage {
 	public boolean isPageComplete() {
 		return !viewer.getSelection().isEmpty()
 				&& !(getSelectedProject().findMember(IncQueryNature.IQGENMODEL) != null);
-	}
-
-	@Override
-	public void dispose() {
-		if (disabledColor != null) {
-			disabledColor.dispose();
-		}
-		super.dispose();
 	}
 
 }

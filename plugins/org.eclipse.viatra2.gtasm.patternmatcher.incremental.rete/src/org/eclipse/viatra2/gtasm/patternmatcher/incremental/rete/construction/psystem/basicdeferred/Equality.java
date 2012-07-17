@@ -133,6 +133,7 @@ public class Equality<PatternDescription, StubHandle> extends
 	public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
 		String[] args = {who.toString(), withWhom.toString()};
 		String msg = "Cannot express equality of variables {1} and {2} if neither of them is deducable.";
-		throw new RetePatternBuildException(msg, args, null);
+		String shortMsg = "Equality between undeducible variables.";
+		throw new RetePatternBuildException(msg, args, shortMsg, null);
 	}
 }

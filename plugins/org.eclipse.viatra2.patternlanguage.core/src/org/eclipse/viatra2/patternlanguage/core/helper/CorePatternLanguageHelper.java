@@ -36,7 +36,7 @@ public final class CorePatternLanguageHelper {
 		}
 		PatternModel patternModel = (PatternModel) p.eContainer();
 		
-		String packageName = patternModel.getPackageName();
+		String packageName = (patternModel == null) ? null : patternModel.getPackageName();
 		if (packageName == null || packageName.isEmpty()) {
 			return p.getName();
 		} else {

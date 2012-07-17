@@ -13,15 +13,18 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
-import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
+
+	public static final EClass eObjectClass = EcorePackage.eINSTANCE.getEObject();
 
 	// value -> feature (attr or ref) -> holder(s)
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
@@ -110,7 +113,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 //			handleAttributeChange(notification, (EAttribute) feature);
 //		}
 		} catch (Exception ex) {
-			DefaultLoggerProvider.getDefaultLogger().logError(
+			navigationHelper.getLogger().error(
 					"EMF-IncQuery encountered an error in processing the EMF model. " +
 					"This happened while handling the following update notification: " + 
 					notification, ex);
@@ -136,7 +139,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 			super.addAdapter(notifier);
 		} catch (Exception ex) {
-			DefaultLoggerProvider.getDefaultLogger().logError(
+			navigationHelper.getLogger().error(
 					"EMF-IncQuery encountered an error in processing the EMF model. " +
 					"This happened while trying to add the object: " + 
 					notifier, ex);
@@ -152,7 +155,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 			super.removeAdapter(notifier);
 		} catch (Exception ex) {
-			DefaultLoggerProvider.getDefaultLogger().logError(
+			navigationHelper.getLogger().error(
 					"EMF-IncQuery encountered an error in processing the EMF model. " +
 					"This happened while trying to remove the object: " + 
 					notifier, ex);
@@ -417,18 +420,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			knownClasses.add(clazz);
 			
 			for (EClass superType : clazz.getEAllSuperTypes()) {
-				if (navigationHelper.directlyObservedClasses.contains(superType)) {
-					navigationHelper.getAllObservedClasses().add(clazz);
-				}
-				
-				Set<EClass> set = subTypeMap.get(superType);
-				if (set == null) {
-					set = new HashSet<EClass>();
-					subTypeMap.put(superType, set);
-				}
-				set.add(clazz);
+				maintainTypeHierarhyInternal(clazz, superType);
 			}
+			maintainTypeHierarhyInternal(clazz, eObjectClass);
 		}
+	}
+
+	private void maintainTypeHierarhyInternal(EClass clazz, EClass superType) {
+		if (navigationHelper.directlyObservedClasses.contains(superType)) {
+			navigationHelper.getAllObservedClasses().add(clazz);
+		}
+		
+		Set<EClass> set = subTypeMap.get(superType);
+		if (set == null) {
+			set = new HashSet<EClass>();
+			subTypeMap.put(superType, set);
+		}
+		set.add(clazz);
 	}
 	
 	private void notifyDataTypeListeners(EDataType type, Object value, boolean isInsertion) {
@@ -479,5 +487,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 		}
 	}
+	
+	// WORKAROUND for EContentAdapter bug
+	// where proxy resolution during containment traversal would add a new Resource to the ResourceSet (and thus the adapter) 
+	// that will be set as target twice: 
+	//   - once when resolved (which happens while iterating through the resources), 
+	//   - and once when said iteration of resources reaches the end of the resource list in the ResourceSet   
+	Set<Resource> trackedResources = new HashSet<Resource>();
+	@Override
+	protected void setTarget(Resource target) {
+		if (trackedResources.add(target))
+			super.setTarget(target);
+	}
+	@Override
+	protected void unsetTarget(Resource target) {
+		trackedResources.remove(target);
+		super.unsetTarget(target);
+	}
+
 	
 }

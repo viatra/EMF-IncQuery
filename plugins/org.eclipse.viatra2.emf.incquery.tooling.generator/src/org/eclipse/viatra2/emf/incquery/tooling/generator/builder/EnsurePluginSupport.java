@@ -29,7 +29,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -100,7 +99,7 @@ public class EnsurePluginSupport {
 		try {
 			internalEnsure(modelProject, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during Extension/Package ensure Phase", e);
+			IncQueryEngine.getDefaultLogger().error("Exception during Extension/Package ensure Phase", e);
 		} finally {
 			monitor.worked(1);
 		}

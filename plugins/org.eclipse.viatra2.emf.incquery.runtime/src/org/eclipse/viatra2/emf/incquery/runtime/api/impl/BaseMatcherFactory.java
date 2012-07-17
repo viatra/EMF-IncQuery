@@ -25,8 +25,8 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
  * @author Bergmann Gábor
  *
  */
-public abstract class BaseMatcherFactory<Signature extends IPatternMatch, Matcher extends IncQueryMatcher<Signature>> 
-	implements IMatcherFactory<Signature, Matcher> 
+public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> 
+	implements IMatcherFactory<Matcher> 
 {
 
 	protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException;

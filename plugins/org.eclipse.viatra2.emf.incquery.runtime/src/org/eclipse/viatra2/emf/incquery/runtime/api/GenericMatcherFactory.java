@@ -31,8 +31,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @author Bergmann Gábor
  */
 @SuppressWarnings("unused")
-public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatch, GenericPatternMatcher> 
-	implements IMatcherFactory<GenericPatternMatch, GenericPatternMatcher>
+public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatcher> 
+	implements IMatcherFactory<GenericPatternMatcher>
 {
 	public Pattern pattern;
 	

@@ -11,8 +11,10 @@
 
 package org.eclipse.viatra2.emf.incquery.base.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -25,28 +27,52 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
  * 
- * The interface exposes useful functionalities for EMF models:
- * <br>
- * - Inverse navigation along arbitrary {@link EReference} instances (heterogenous paths too) 
- * <br>
- * - Finding model elements by attribute value (i.e. inverse navigation along  {@link EAttribute}) 
- * <br>
- * - Getting all the (direct) instances of a given {@link EClass} 
- * <br>
- * - Querying instances of given data types
- * <br>
- * These information can also be observed by registering listeners on the navigation helper.
- * <br><br>
- * Note that the helper will maintain these information incrementally 
- * on a given node's subgraph in the model ({@link EObject}, {@link Resource} or {@link ResourceSet}). <br>
+ * Using an index of the EMF model, this interface exposes useful query functionalities, such as:<ul>
+ * <li>
+ * Inverse navigation along arbitrary {@link EReference} instances (heterogenous paths too) 
+ * <li>
+ * Finding model elements by attribute value (i.e. inverse navigation along  {@link EAttribute}) 
+ * <li>
+ * Getting all the (direct) instances of a given {@link EClass} 
+ * <li>
+ * Querying instances of given data types
+ * </ul>
+ * 
+ * <p>
+ * These indices will be built on an EMF model rooted at an {@link EObject}, {@link Resource} or {@link ResourceSet}. 
+ * The indices will be <strong>maintained incrementally</strong> on changes to the model;
+ * these changes can also be observed by registering listeners.
+ * </p> 
+ * 
+ * <p>
+ * By default, the indices are built in <em>wildcard mode</em>, meaning that all EClasses, EDataTypes, EReferences and EAttributes are indexed. This is convenient, but comes at a high memory cost.
+ * To save memory, one can disable <em>wildcard mode</em> and manually register those EClasses, EDataTypes, EReferences and EAttributes that should be indexed.
+ * </p> 
+ * 
+ * <p>
  * Note that none of the defined methods return null upon empty result sets.
- * <br><br>
  * All query methods return either a copy of the result sets (where {@link Setting} is instantiated) or an unmodifiable collection of the result view.
+ * 
+ * <p>
+ * Instantiate using {@link IncQueryBaseFactory}
  * 
  * @author Tamas Szabo
  *
  */
 public interface NavigationHelper {
+	
+	/**
+	 * Indicates whether indexing is performed in <em>wildcard mode</em>, where every aspect of the EMF model is automatically indexed.
+	 * 
+	 * @return true if everything is indexed, false if manual registration of interesting EClassifiers and EStructuralFeatures is required.
+	 */
+	public boolean isInWildcardMode();
+//	/** // COMING SOON
+//	 * Sets the <em>wildcard mode</em>. 
+//	 * <p>If turned on from off, all registrations are erased and the model is re-parsed in a single pass.
+//	 * Turning off from on is not supported yet. 
+//	 */
+//	public void setInWildcardMode(boolean newWildcardMode);
 	
 	/**
 	 * Find all {@link EAttribute} and their owners for a given <code>value</code> of the attribute.
@@ -215,8 +241,69 @@ public interface NavigationHelper {
 	public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
 
 	/**
+	 * Manually turns on indexing for the given features (indexing of other features are unaffected).
+	 * Note that registering new features requires to visit the whole attached model.
+	 * 
+	 * <pre>Not usable in <em>wildcard mode</em></pre>
+	 * @param features the set of features to observe
+	 */
+	public void registerEStructuralFeatures(Set<EStructuralFeature> features);
+	
+	/**
+	 * Manually turns off indexing for the given features (indexing of other features are unaffected).
+	 * Note that if the unregistered features are re-registered later, the whole attached model needs to be visited again.
+	 * 
+	 * @param features the set of features that will be ignored
+	 */
+	public void unregisterEStructuralFeatures(Set<EStructuralFeature> features);
+	
+	/**
+	 * Manually turns on indexing for the given classes (indexing of other classes are unaffected). 
+	 * Instances of subclasses will also be indexed. 
+	 * Note that registering new classes requires to visit the whole attached model.
+	 * 
+	 * <pre>Not usable in <em>wildcard mode</em></pre>
+	 * @param classes the set of classes to observe
+	 */
+	public void registerEClasses(Set<EClass> classes);
+	
+	/**
+	 * Manually turns off indexing for the given classes (indexing of other classes are unaffected).
+	 * Note that if the unregistered classes are re-registered later, the whole attached model needs to be visited again.
+	 * 
+	 * @param classes the set of classes that will be ignored
+	 */
+	public void unregisterEClasses(Set<EClass> classes);
+	
+	/**
+	 * Manually turns on indexing for the given data types (indexing of other features are unaffected).
+	 * Note that registering new data types requires to visit the whole attached model.
+	 * 
+	 * <pre>Not usable in <em>wildcard mode</em></pre>
+	 * @param dataTypes the set of data types to observe
+	 */
+	public void registerEDataTypes(Set<EDataType> dataTypes);
+	
+	/**
+	 * Manually turns off indexing for the given data types (indexing of other data types are unaffected).
+	 * Note that if the unregistered data types are re-registered later, the whole attached model needs to be visited again.
+	 * 
+	 * @param dataTypes the set of data types that will be ignored
+	 */
+	public void unregisterEDataTypes(Set<EDataType> dataTypes);
+	
+	/**
+	 * The given callback will be executed, and all model traversals and feature registrations will be delayed until the execution is done.
+	 * If there are any outstanding feature or class registrations, a single coalesced model traversal will initialize the caches and deliver the notifications.
+	 * 
+	 * @param runnable
+	 */
+	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
+	
+	
+	/**
 	 * A set of coarse-grained callbacks that will be invoked after the NavigationHelper index is changed.
-	 * Can be used e.g. to check delta monitors.
+	 * Can be used e.g. to check delta monitors. Not intended for general use.
 	 * 
 	 */
 	public Set<Runnable> getAfterUpdateCallbacks();

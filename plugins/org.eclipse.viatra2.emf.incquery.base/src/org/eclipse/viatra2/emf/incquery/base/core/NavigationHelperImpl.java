@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +20,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -30,40 +33,108 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.base.logging.DefaultLoggerProvider;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
+	protected boolean inWildcardMode;
 	protected HashSet<EClass> directlyObservedClasses;
 	protected HashSet<EClass> allObservedClasses = null; // including subclasses
 	protected HashSet<EDataType> observedDataTypes;
 	protected HashSet<EStructuralFeature> observedFeatures;
 	
 	protected Notifier notifier;
-	protected Set<Notifier> additionalRoots;
+	protected Set<Notifier> modelRoots;
 	private boolean expansionAllowed;
-	protected NavigationHelperType navigationHelperType;
 //	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
-	private Map<InstanceListener, Collection<EClass>> instanceListeners;
-	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
-	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
-	
+	private Logger logger;
 	
 	/**
 	 * These global listeners will be called after updates.
 	 */
 	protected Set<Runnable> afterUpdateCallbacks;
+	
+	private Map<InstanceListener, Collection<EClass>> instanceListeners;
+	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
+	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
+	
+	/**
+	 * Feature registration and model traversal is delayed while true
+	 */
+	protected boolean delayTraversals = false;
+	/**
+	 * Classes to be registered once the coalescing period is over
+	 */
+	protected Set<EClass> delayedClasses;
+	/**
+	 * EStructuralFeatures to be registered once the coalescing period is over
+	 */
+	protected Set<EStructuralFeature> delayedFeatures;
+	/**
+	 * EDataTypes to be registered once the coalescing period is over
+	 */
+	protected Set<EDataType> delayedDataTypes;
+	
+	private Set<EClass> noClass() { return Collections.emptySet(); };
+	private Set<EDataType> noDataType() { return Collections.emptySet(); };
+	private Set<EStructuralFeature> noFeature() { return Collections.emptySet(); };
+	
+	
+	<T> Set<T> setMinus(Set<T> a, Set<T> b) {
+		Set<T> result = new HashSet<T>(a);
+		result.removeAll(b);
+		return result;
+	}
+	
+	<T extends EObject> Set<T> resolveAll(Set<T> a) {
+		Set<T> result = new HashSet<T>(a);
+		for (T t : a) {
+			if (t.eIsProxy())
+				result.add((T) EcoreUtil.resolve(t, (ResourceSet)null));				
+			else
+				result.add(t);
+		}
+		return result;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper#isInWildcardMode()
+	 */
+	@Override
+	public boolean isInWildcardMode() {
+		return inWildcardMode;
+	}
+//	@Override
+//	public void setInWildcardMode(boolean newWildcardMode) {
+//		if (inWildcardMode && !newWildcardMode)
+//			throw new UnsupportedOperationException();
+//		if (!inWildcardMode && newWildcardMode) {
+//			this.inWildcardMode = true;
+//			
+//			this.allObservedClasses = null;
+//			this.directlyObservedClasses = null;
+//			this.observedDataTypes = null;
+//			this.observedFeatures = null;
+//			
+//			this.contentAdapter. // TODO lot of work because need to send proper notifications
+//		}
+//			
+//	}
 
 	
-	public NavigationHelperImpl(Notifier emfRoot, NavigationHelperType type) throws IncQueryBaseException {
-
+	public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode, Logger logger) throws IncQueryBaseException {
+		this.logger = logger;
+		assert(logger!=null);
+		
 		if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
 			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
 		}
@@ -79,19 +150,17 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.afterUpdateCallbacks = new HashSet<Runnable>();
 
 		this.notifier = emfRoot;
-		this.additionalRoots = new HashSet<Notifier>();
+		this.modelRoots = new HashSet<Notifier>();
 		this.expansionAllowed = notifier instanceof ResourceSet;
-		this.navigationHelperType = type;
+		this.inWildcardMode = wildcardMode;
 
 //		if (this.navigationHelperType == NavigationHelperType.ALL) {
 //			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
 //		}
-		this.notifier.eAdapters().add(contentAdapter);
+		expandToAdditionalRoot(emfRoot);
 	}
 	
-	public NavigationHelperType getType() {
-		return navigationHelperType;
-	}
+	
 	
 	public NavigationHelperContentAdapter getContentAdapter() {
 		return contentAdapter;
@@ -107,9 +176,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 	@Override
 	public void dispose() {
-		notifier.eAdapters().remove(contentAdapter);
-		for (Notifier additional : additionalRoots) {
-			additional.eAdapters().remove(contentAdapter);		
+		for (Notifier root : modelRoots) {
+			root.eAdapters().remove(contentAdapter);		
 		}
 	}
 	
@@ -382,7 +450,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				}
 			}
 		} catch (Exception ex) {
-			DefaultLoggerProvider.getDefaultLogger().logError(
+			logger.error(
 					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
@@ -398,7 +466,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 	
 	protected void expandToAdditionalRoot(Notifier root) {
-		if (additionalRoots.add(root)) {
+		if (modelRoots.add(root)) {
 			root.eAdapters().add(contentAdapter);
 		}
 	}
@@ -418,7 +486,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 	
 	public boolean isObserved(EClass clazz) {
-		return getType() == NavigationHelperType.ALL || getAllObservedClasses().contains(clazz);
+		return inWildcardMode || getAllObservedClasses().contains(clazz);
 	}
 
 	/**
@@ -437,4 +505,184 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 		return allObservedClasses;
 	}
+	
+	
+	@Override
+	public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
+		if (inWildcardMode) throw new IllegalStateException();
+		if (features != null) {
+			features = resolveAll(features);
+			if (delayTraversals) {
+				delayedFeatures.addAll(features);
+			} else {
+				features = setMinus(features, observedFeatures);
+
+				observedFeatures.addAll(features);
+				final NavigationHelperVisitor visitor = 
+						new NavigationHelperVisitor.TraversingVisitor(this, features, noClass(), noClass(), noDataType());
+				traverse(visitor);
+			}
+		}
+	}
+
+
+
+	@Override
+	public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
+		if (inWildcardMode) throw new IllegalStateException();
+		if (features != null) {
+			features = resolveAll(features);
+			observedFeatures.removeAll(features);
+			delayedFeatures.removeAll(features);
+			for (EStructuralFeature f : features) {
+				for (Object key : contentAdapter.featureMap.keySet()) {
+					contentAdapter.featureMap.get(key).remove(f);
+					// TODO proper notification
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void registerEClasses(Set<EClass> classes) {
+		if (inWildcardMode) throw new IllegalStateException();
+		if (classes != null) {
+			classes = resolveAll(classes);
+			if (delayTraversals) {
+				delayedClasses.addAll(classes);
+			} else {
+				classes = setMinus(classes, directlyObservedClasses);
+				
+				final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
+				startObservingClasses(classes);		
+				final NavigationHelperVisitor visitor = 
+						new NavigationHelperVisitor.TraversingVisitor(this, noFeature(), classes, oldClasses, noDataType());
+				traverse(visitor);
+			}
+		}
+	}
+	/**
+	 * @param classes
+	 */
+	protected void startObservingClasses(Set<EClass> classes) {
+		directlyObservedClasses.addAll(classes);
+		getAllObservedClasses().addAll(classes);
+		for (EClass eClass : classes) {
+			final Set<EClass> subTypes = NavigationHelperContentAdapter.subTypeMap.get(eClass);
+			if (subTypes != null) {
+				allObservedClasses.addAll(subTypes);
+			}					
+		}
+	}
+
+	@Override
+	public void unregisterEClasses(Set<EClass> classes) {
+		if (inWildcardMode) throw new IllegalStateException();
+		if (classes != null) {
+			classes = resolveAll(classes);
+			directlyObservedClasses.removeAll(classes);
+			allObservedClasses = null;
+			delayedClasses.removeAll(classes);
+			for (EClass c : classes) {
+				contentAdapter.instanceMap.remove(c);
+			}
+		}
+	}
+
+	@Override
+	public void registerEDataTypes(Set<EDataType> dataTypes) {
+		if (inWildcardMode) throw new IllegalStateException();
+		if (dataTypes != null) {
+			dataTypes = resolveAll(dataTypes);
+			if (delayTraversals) {
+				delayedDataTypes.addAll(dataTypes);
+			} else {
+				dataTypes = setMinus(dataTypes, observedDataTypes);
+				
+				observedDataTypes.addAll(dataTypes);
+				final NavigationHelperVisitor visitor = 
+						new NavigationHelperVisitor.TraversingVisitor(this, noFeature(), noClass(), noClass(), dataTypes);
+				traverse(visitor);
+
+			}
+		}
+	}
+
+	@Override
+	public void unregisterEDataTypes(Set<EDataType> dataTypes) {
+		if (inWildcardMode) throw new IllegalStateException();
+		if (dataTypes != null) {
+			dataTypes = resolveAll(dataTypes);
+			observedDataTypes.removeAll(dataTypes);
+			delayedDataTypes.removeAll(dataTypes);
+			for (EDataType dt : dataTypes) {
+				contentAdapter.dataTypeMap.remove(dt);
+			}
+		}
+	}
+	
+	@Override
+	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
+		if(delayTraversals) 
+			throw new UnsupportedOperationException("Coalescing EMF model traversals in EMF-IncQuery base is not reentrant.");
+		
+		delayedClasses = new HashSet<EClass>();
+		delayedFeatures = new HashSet<EStructuralFeature>();
+		delayedDataTypes = new HashSet<EDataType>(); 
+		
+		V result = null;
+		try {
+			try {
+				delayTraversals = true;
+				result = callable.call();
+			} finally {
+				delayTraversals = false;
+				
+				delayedFeatures = setMinus(delayedFeatures, observedFeatures);
+				delayedClasses = setMinus(delayedClasses, directlyObservedClasses);
+				delayedDataTypes = setMinus(delayedDataTypes, observedDataTypes);
+				
+				boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClasses()).isEmpty();
+
+				if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
+					final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
+					startObservingClasses(delayedClasses);
+					observedFeatures.addAll(delayedFeatures);
+					observedDataTypes.addAll(delayedDataTypes);
+					
+					// make copies and clean original accumulators, for the rare case that a coalesced 
+					// 	traversal is invoked during visitation, e.g. by a derived feature implementation
+					final HashSet<EClass> toGatherClasses = new HashSet<EClass>(delayedClasses);
+					final HashSet<EStructuralFeature> toGatherFeatures = new HashSet<EStructuralFeature>(delayedFeatures);
+					final HashSet<EDataType> toGatherDataTypes = new HashSet<EDataType>(delayedDataTypes);
+					delayedFeatures.clear();
+					delayedClasses.clear();
+					delayedDataTypes.clear();
+					
+					if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
+						final NavigationHelperVisitor visitor = 
+								new NavigationHelperVisitor.TraversingVisitor(this, toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+						traverse(visitor);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new InvocationTargetException(e);
+		}
+		return result;
+	}
+	
+	private void traverse(final NavigationHelperVisitor visitor) {
+		for (Notifier root : modelRoots) {
+			EMFModelComprehension.visitModel(visitor, root);		
+		}
+		runAfterUpdateCallbacks();
+	}
+	/**
+	 * @return the logger
+	 */
+	public Logger getLogger() {
+		return logger;
+	}
+
 }

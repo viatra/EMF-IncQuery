@@ -116,7 +116,8 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
 			String[] args = {toString(), checkTypeSafety(stub).toString()};
 			String msg = "The checking of pattern constraint {1} cannot be deferred further, but variable {2} is still not type safe. " + 
 				"HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
-			throw new RetePatternBuildException(msg, args, null);
+			String shortMsg = "Could not check all constraints due to undeducible type restrictions";
+			throw new RetePatternBuildException(msg, args, shortMsg, null);
 		}
 			
 	}

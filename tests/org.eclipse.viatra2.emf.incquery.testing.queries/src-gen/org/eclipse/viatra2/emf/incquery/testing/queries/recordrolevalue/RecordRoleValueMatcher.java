@@ -11,6 +11,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -78,7 +79,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return matches represented as a RecordRoleValueMatch object.
    * 
    */
-  public Collection<RecordRoleValueMatch> getAllMatches(final Object pRecord, final Object pRole) {
+  public Collection<RecordRoleValueMatch> getAllMatches(final MatchRecord pRecord, final Object pRole) {
     return rawGetAllMatches(new Object[]{pRecord, pRole});
   }
   
@@ -90,7 +91,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return a match represented as a RecordRoleValueMatch object, or null if no match is found.
    * 
    */
-  public RecordRoleValueMatch getOneArbitraryMatch(final Object pRecord, final Object pRole) {
+  public RecordRoleValueMatch getOneArbitraryMatch(final MatchRecord pRecord, final Object pRole) {
     return rawGetOneArbitraryMatch(new Object[]{pRecord, pRole});
   }
   
@@ -102,7 +103,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final Object pRecord, final Object pRole) {
+  public boolean hasMatch(final MatchRecord pRecord, final Object pRole) {
     return rawHasMatch(new Object[]{pRecord, pRole});
   }
   
@@ -113,7 +114,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final Object pRecord, final Object pRole) {
+  public int countMatches(final MatchRecord pRecord, final Object pRole) {
     return rawCountMatches(new Object[]{pRecord, pRole});
   }
   
@@ -124,7 +125,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final Object pRecord, final Object pRole, final IMatchProcessor<? super RecordRoleValueMatch> processor) {
+  public void forEachMatch(final MatchRecord pRecord, final Object pRole, final IMatchProcessor<? super RecordRoleValueMatch> processor) {
     rawForEachMatch(new Object[]{pRecord, pRole}, processor);
   }
   
@@ -137,7 +138,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final Object pRecord, final Object pRole, final IMatchProcessor<? super RecordRoleValueMatch> processor) {
+  public boolean forOneArbitraryMatch(final MatchRecord pRecord, final Object pRole, final IMatchProcessor<? super RecordRoleValueMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pRecord, pRole}, processor);
   }
   
@@ -153,7 +154,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the delta monitor.
    * 
    */
-  public DeltaMonitor<RecordRoleValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Object pRecord, final Object pRole) {
+  public DeltaMonitor<RecordRoleValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchRecord pRecord, final Object pRole) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pRecord, pRole});
   }
   
@@ -162,8 +163,8 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
-    Set<Object> results = new HashSet<Object>();
+  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+    Set<MatchRecord> results = new HashSet<MatchRecord>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
   }
@@ -173,7 +174,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRecord() {
+  public Set<MatchRecord> getAllValuesOfRecord() {
     return rawAccumulateAllValuesOfRecord(emptyArray());
   }
   
@@ -182,7 +183,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRecord(final RecordRoleValueMatch partialMatch) {
+  public Set<MatchRecord> getAllValuesOfRecord(final RecordRoleValueMatch partialMatch) {
     return rawAccumulateAllValuesOfRecord(partialMatch.toArray());
   }
   
@@ -191,8 +192,8 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRecord(final Object pRole) {
-    Object pRecord = null;
+  public Set<MatchRecord> getAllValuesOfRecord(final Object pRole) {
+    MatchRecord pRecord = null;
     return rawAccumulateAllValuesOfRecord(new Object[]{pRecord, pRole});
   }
   
@@ -230,7 +231,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRole(final Object pRecord) {
+  public Set<Object> getAllValuesOfRole(final MatchRecord pRecord) {
     Object pRole = null;
     return rawAccumulateAllValuesOfRole(new Object[]{pRecord, pRole});
   }
@@ -238,8 +239,8 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   @Override
   public RecordRoleValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new RecordRoleValueMatch((java.lang.Object) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_ROLE));	
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return new RecordRoleValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_ROLE));	
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -248,8 +249,8 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   @Override
   public RecordRoleValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new RecordRoleValueMatch((java.lang.Object) match[POSITION_RECORD], (java.lang.Object) match[POSITION_ROLE]);
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return new RecordRoleValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (java.lang.Object) match[POSITION_ROLE]);
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -260,5 +261,5 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
     return arrayToMatch(new Object[getParameterNames().length]);
   }
   
-  public final static IMatcherFactory<RecordRoleValueMatch,RecordRoleValueMatcher> FACTORY =  new RecordRoleValueMatcherFactory();
+  public final static IMatcherFactory<RecordRoleValueMatcher> FACTORY =  new RecordRoleValueMatcherFactory();
 }

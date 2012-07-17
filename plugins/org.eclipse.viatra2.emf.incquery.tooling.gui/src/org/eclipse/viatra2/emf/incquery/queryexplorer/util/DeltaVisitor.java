@@ -30,7 +30,7 @@ class DeltaVisitor implements IResourceDeltaVisitor {
 	public boolean visit(IResourceDelta delta) {
 		IResource res = delta.getResource();
 		
-		if (res != null && res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
+		if (res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
 			
 			IFile file = (IFile) res;
 			if (PatternRegistry.getInstance().getFiles().contains(file)) {

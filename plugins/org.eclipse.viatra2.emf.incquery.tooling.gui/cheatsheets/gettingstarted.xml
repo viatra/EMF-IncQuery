@@ -15,7 +15,7 @@
          <param name="path" value="newproject.xml">
          </param>
       </task>
-      <task kind="cheatsheet" name="Creating Queries" skip="false">
+      <task kind="cheatsheet" name="Creating and Executing Queries" skip="false">
          <intro>
             This sheet describes how to create EMF-IncQuery queries.
          </intro>
@@ -24,7 +24,7 @@
          <param name="path" value="queries.xml">
          </param>
       </task>
-      <task kind="cheatsheet" name="EMF-IncQuery API Overview" skip="false">
+      <task kind="cheatsheet" name="Generating Code from Queries" skip="false">
          <intro>
             This cheat sheet describes the automatic creation of a <b>sample UI project</b> which demonstrates how EMF-IncQuery queries can be invoked from Java code. The Sample UI project provides a menu contribution that displays the query results in a dialog window.
          </intro>

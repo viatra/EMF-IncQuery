@@ -16,11 +16,10 @@ package org.eclipse.viatra2.emf.incquery.base.api;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra2.emf.incquery.base.core.NavigationHelperImpl;
-import org.eclipse.viatra2.emf.incquery.base.core.NavigationHelperType;
-import org.eclipse.viatra2.emf.incquery.base.core.ParameterizedNavigationHelperImpl;
 import org.eclipse.viatra2.emf.incquery.base.core.TransitiveClosureHelperImpl;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 
@@ -52,44 +51,37 @@ public class IncQueryBaseFactory {
 	protected IncQueryBaseFactory() {
 		super();
 	}
-	
+		
 	/**
-	 * The method creates a NavigationHelper instance for the given Notifier instance. 
-	 * This type of NavigationHelper will process all the notifications about EStructuralFeatures and EClasses.
+	 * The method creates a {@link NavigationHelper} index for the given EMF model root. <p>
+	 * A NavigationHelper in wildcard mode will process and index all EStructuralFeatures, EClasses and EDatatypes. 
+	 * If wildcard mode is off, the client will have to manually register the interesting aspects of the model.
+	 * @see NavigationHelper
 	 *  
-	 * @param notifier the Notifier instance
+	 * @param emfRoot the root of the EMF tree to be indexed. Recommended: Resource or ResourceSet.
+	 * @param wildcardMode true if all aspects of the EMF model should be indexed automatically, false if manual registration of interesting aspects is desirable
+	 * @param logger the log output where errors will be logged if encountered during the operation of the NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
 	 * @return the NavigationHelper instance
 	 * @throws IncQueryBaseException 
 	 */
-	public NavigationHelper createNavigationHelper(Notifier notifier) throws IncQueryBaseException {
-		return new NavigationHelperImpl(notifier, NavigationHelperType.ALL);
+	public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, Logger logger) throws IncQueryBaseException {
+		if (logger == null) logger = Logger.getLogger(NavigationHelper.class);
+		return new NavigationHelperImpl(emfRoot, wildcardMode, logger);
 	}
 	
-	/**
-	 * The method creates a ParameterizedNavigationHelper instance for the given Notifier instance.
-	 * After instantiation one can register and unregister set of EStructuralFeatures and EClasses 
-	 * whose notifications will be processed by the ParameterizedNavigationHelper instance.
-	 * 
-	 * @param notifier the Notifier instance
-	 * @return the ParameterizedNavigationHelper instance
-	 * @throws IncQueryBaseException 
-	 */
-	public ParameterizedNavigationHelper createManualNavigationHelper(Notifier notifier) throws IncQueryBaseException {
-		return new ParameterizedNavigationHelperImpl(notifier);
-	}
 	
 	/**
-	 * The method creates a TransitiveClosureHelper instance for the given Notifier instance.
-	 * One must set the set of EReferences whose notifications will be observed by the Util.
-	 * The set can contain multiple elements; this way one can query forward and backward reachability informations along heterogenous paths.
+	 * The method creates a TransitiveClosureHelper instance for the given EMF model root.
 	 * 
-	 * @param notifier the Notifier instance
-	 * @param referencesToObserv the setof references to observ
+	 * <p> One must specify the set of EReferences that will be considered as edged. The set can contain multiple elements; this way one can query forward and backward reachability information along heterogenous paths.
+	 * 
+	 * @param emfRoot the root of the EMF tree to be processed. Recommended: Resource or ResourceSet.
+	 * @param referencesToObserve the set of references to observe
 	 * @return the TransitiveClosureHelper instance
 	 * @throws IncQueryBaseException
 	 */
-	public TransitiveClosureHelper createTransitiveClosureHelper(Notifier notifier, Set<EReference> referencesToObserv) throws IncQueryBaseException {
-		return new TransitiveClosureHelperImpl(notifier, referencesToObserv);
+	public TransitiveClosureHelper createTransitiveClosureHelper(Notifier emfRoot, Set<EReference> referencesToObserve) throws IncQueryBaseException {
+		return new TransitiveClosureHelperImpl(emfRoot, referencesToObserve);
 	}
 	
 }

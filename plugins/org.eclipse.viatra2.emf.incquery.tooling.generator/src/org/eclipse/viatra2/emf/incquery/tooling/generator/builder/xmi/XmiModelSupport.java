@@ -71,7 +71,7 @@ public class XmiModelSupport {
 			monitor.beginTask("Building XMI model", 1);
 			internalBuild(baseDelta, context, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().logError("Exception during XMI Model Building Phase", e);
+			IncQueryEngine.getDefaultLogger().error("Exception during XMI Model Building Phase", e);
 		} finally {
 			monitor.worked(1);
 		}

@@ -28,15 +28,15 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 		
 		@Override
 		protected boolean observesClass(EClass eClass) {
-			return (navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getAllObservedClasses().contains(eClass);
+			return navigationHelper.isInWildcardMode() || navigationHelper.getAllObservedClasses().contains(eClass);
 		}
 		@Override
 		protected boolean observesDataType(EDataType type) {
-			return (navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedDataTypes().contains(type);
+			return navigationHelper.isInWildcardMode() || navigationHelper.getObservedDataTypes().contains(type);
 		}
 		@Override
 		protected boolean observesFeature(EStructuralFeature feature) {
-			return (navigationHelper.getType() == NavigationHelperType.ALL) || navigationHelper.getObservedFeatures().contains(feature);
+			return navigationHelper.isInWildcardMode() || navigationHelper.getObservedFeatures().contains(feature);
 		}
 	}	
 	
@@ -65,23 +65,29 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 		
 		@Override
 		protected boolean observesClass(EClass eClass) {
-			if (navigationHelper.getType() == NavigationHelperType.ALL) return true;
+			if (navigationHelper.isInWildcardMode()) return true;
 			Boolean observed = classObservationMap.get(eClass);
 			if (observed == null) {
 				final EList<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
-				final boolean overApprox = newClasses.contains(eClass) || !Collections.disjoint(eAllSuperTypes, newClasses);
-				observed = overApprox && !oldClasses.contains(eClass) && Collections.disjoint(eAllSuperTypes, oldClasses); 
+				final boolean overApprox = 
+						newClasses.contains(eClass) || 
+						newClasses.contains(NavigationHelperContentAdapter.eObjectClass) || 
+						!Collections.disjoint(eAllSuperTypes, newClasses);
+				observed = overApprox && 
+						!oldClasses.contains(eClass) && 
+						!oldClasses.contains(NavigationHelperContentAdapter.eObjectClass) && 
+						Collections.disjoint(eAllSuperTypes, oldClasses); 
 				classObservationMap.put(eClass, observed);
 			}
 			return observed;
 		}
 		@Override
 		protected boolean observesDataType(EDataType type) {
-			return (navigationHelper.getType() == NavigationHelperType.ALL) || dataTypes.contains(type);
+			return navigationHelper.isInWildcardMode() || dataTypes.contains(type);
 		}
 		@Override
 		protected boolean observesFeature(EStructuralFeature feature) {
-			return (navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(feature);
+			return navigationHelper.isInWildcardMode() || features.contains(feature);
 		}
 
 	}
@@ -209,14 +215,14 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 //		if (obj != null) {
 //
 //			if (classes != null) {
-//				if ((navigationHelper.getType() == NavigationHelperType.ALL) || classes.contains(obj.eClass())) {
+//				if (navigationHelper.isInWildcardMode() || classes.contains(obj.eClass())) {
 //					store.insertInstanceTuple(obj.eClass(), obj);
 //				}
 //			}
 //
 //			if (features != null) {
 //				for (EReference ref : obj.eClass().getEAllReferences()) {
-//					if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(ref)) {
+//					if (navigationHelper.isInWildcardMode() || features.contains(ref)) {
 //						Object o = obj.eGet(ref);
 //
 //						if (o != null) {
@@ -245,7 +251,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 //		if (obj != null) {
 //			for (EAttribute attr : obj.eClass().getEAllAttributes()) {
 //				final EDataType eAttributeType = attr.getEAttributeType();
-//				if ((navigationHelper.getType() == NavigationHelperType.ALL) || features.contains(attr) || dataTypes.contains(eAttributeType)) {
+//				if (navigationHelper.isInWildcardMode() || features.contains(attr) || dataTypes.contains(eAttributeType)) {
 //					if (attr.isMany()) {
 //						Collection<Object> values = (Collection<Object>) obj.eGet(attr);
 //						for (Object value : values) {

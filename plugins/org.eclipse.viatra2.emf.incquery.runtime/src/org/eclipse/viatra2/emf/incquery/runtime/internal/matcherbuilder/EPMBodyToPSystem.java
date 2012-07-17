@@ -168,7 +168,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 						reference != null? reference.eClass().getName() : "(null)",
 						reference != null? reference.eClass().getEPackage().getNsURI() : "(null)",
 						pattern.getName()
-				}, pattern);
+				}, "Unsupported value expression", pattern);
 	}
 	
 
@@ -232,7 +232,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			throw new RetePatternBuildException(
 					"Unsupported constraint type {1} in pattern {2}.", 
 					new String[]{constraint.eClass().getName(), patternFQN}, 
-					pattern);
+					"Unsupported constraint type", pattern);
 		}
 	}
 
@@ -264,7 +264,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			throw new RetePatternBuildException(
 				"Unsupported path expression head type {1} in pattern {2}: {3}", 
 				new String[]{headType.eClass().getName(), patternFQN, typeStr(headType)}, 
-				pattern);
+				"Unsupported navigation source", pattern);
 		}
 
 		// process each segment			
@@ -317,13 +317,14 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 			if (pNodeTuple.getSize() != 2)
 				throw new RetePatternBuildException(
 						"Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.", 
-						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
+						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN},
+						"Transitive closure only supported for binary patterns.", 
 						pattern); 
 			else if (constraint.isNegative()) 
 				throw new RetePatternBuildException(
 						"Unsupported negated transitive closure of {1} in pattern {2}", 
 						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
-						pattern);
+						"Unsupported negated transitive closure", pattern);
 			else 
 				new BinaryTransitiveClosure<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
 //				throw new RetePatternBuildException(
@@ -353,7 +354,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		} else throw new RetePatternBuildException(
 				"Unsupported path segment type {1} in pattern {2}: {3}", 
 				new String[]{segmentType.eClass().getName(), patternFQN, typeStr(segmentType)}, 
-				pattern);		
+				"Unsupported navigation step", pattern);		
 	}
 
 
@@ -370,7 +371,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		} else throw new RetePatternBuildException(
 				"Unsupported aggregator expression type {1} in pattern {2}.", 
 				new String[]{aggregator.eClass().getName(), patternFQN}, 
-				pattern);	
+				"Unsupported aggregator expression", pattern);	
 		
 		
 		return result;

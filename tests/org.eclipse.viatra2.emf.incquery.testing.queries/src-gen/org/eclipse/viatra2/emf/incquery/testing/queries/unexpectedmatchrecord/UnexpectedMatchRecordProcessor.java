@@ -1,6 +1,8 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
 
 /**
@@ -17,7 +19,7 @@ public abstract class UnexpectedMatchRecordProcessor implements IMatchProcessor<
    * @param pRecord the value of pattern parameter Record in the currently processed match 
    * 
    */
-  public abstract void process(final Object ActualSet, final Object ExpectedSet, final Object Record);
+  public abstract void process(final MatchSetRecord ActualSet, final MatchSetRecord ExpectedSet, final MatchRecord Record);
   
   @Override
   public void process(final UnexpectedMatchRecordMatch match) {

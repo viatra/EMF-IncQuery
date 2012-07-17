@@ -19,13 +19,14 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
+import junit.framework.TestListener
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
+import org.eclipse.viatra2.emf.incquery.testing.core.TestingLogAppender
 
 import static org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor.*
 import static org.junit.Assert.*
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import static org.hamcrest.CoreMatchers.*
-import junit.framework.TestListener
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -207,16 +208,20 @@ class TestExecutor {
 	}
 	
 	def registerLogger(IncQueryEngine engine){
-		engine.setLogger(new TestingLogger)
+		engine.logger.addAppender(new TestingLogAppender)
 	}
 	
 	def retrieveLoggerOutput(IncQueryEngine engine){
 		val logger = engine.getLogger
-		if(logger instanceof TestingLogger){
-			(logger as TestingLogger).output.toString
-		} else {
-			"Logger output not recorded"
+		
+		val appers = logger.allAppenders
+		while (appers.hasMoreElements) {
+			val apper = appers.nextElement
+			if(apper instanceof TestingLogAppender){
+				(apper as TestingLogAppender).getOutput.toString
+			} 
 		}
+		"Logger output not recorded"
 	}
 	
 	def logDifference(Set<Object> diff){

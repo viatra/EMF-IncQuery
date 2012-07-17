@@ -40,8 +40,7 @@ public interface IEiqGenmodelProvider {
 	 *             if the parameter pattern is not serialized into a
 	 *             {@link ResourceSet} that is not linked to an IncQuery project
 	 */
-	IncQueryGeneratorModel getGeneratorModel(EObject context)
-			throws IllegalArgumentException;
+	IncQueryGeneratorModel getGeneratorModel(EObject context);
 
 	/**
 	 * Gets the generator model for a selected IncQuery project. If the project

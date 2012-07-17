@@ -75,12 +75,12 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			//deactivate patterns within the given file
 			PatternRegistry.getInstance().unregisterPatternModel(file);
 			
-			//unregister all active patterns from the roots and dispose the appropriate iq engine
+			//unregister all active patterns from the roots and wipe the appropriate iq engine
 			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
 				for (Pattern pattern : allActivePatterns) {
 					root.unregisterPattern(pattern);
 				}
-				EngineManager.getInstance().getIncQueryEngine(root.getNotifier()).dispose();
+				EngineManager.getInstance().getIncQueryEngine(root.getNotifier()).wipe();
 			}
 			
 			//remove labels from pattern registry for the corresponding pattern model

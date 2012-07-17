@@ -20,7 +20,7 @@ public class IncQueryRuntimeException extends RuntimeException{
 	public static final String CONVERSION_FAILED = "Could not convert the term to the designated type";
 	public static final String CONVERT_NULL_PARAMETER = "Could not convert null to the designated type";
 	public static final String RELATIONAL_PARAM_UNSUITABLE = "The parameters are not acceptable by the operation"; 
-	public static final String PATTERN_MATCHER_PROBLEM = "The following error occurred during the preparation of the generated pattern matcher";
+	public static final String PATTERN_MATCHER_PROBLEM = "The following error occurred during the preparation of an EMF-IncQuery pattern matcher";
 	public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 
 	public static final String INVALID_EMFROOT = "Incremental query engine can only be attached on the contents of an EMF EObject, Resource, or ResourceSet. Received instead: ";
@@ -35,7 +35,7 @@ public class IncQueryRuntimeException extends RuntimeException{
 	}
 	public IncQueryRuntimeException(RetePatternBuildException e) {
 		super(PATTERN_MATCHER_PROBLEM+": " + e.getMessage(), e);
-		this.shortMessage = e.getMessage();
+		this.shortMessage = e.getShortMessage();
 	}
 	public IncQueryRuntimeException(String s, String shortMessage, Exception e) {
 		super(s+": " + e.getMessage(), e);

@@ -12,9 +12,9 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.derived
 
 import com.google.inject.Inject
-import java.util.Map
-import java.util.List
 import java.util.HashMap
+import java.util.List
+import java.util.Map
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
@@ -40,19 +40,18 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
-import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
+import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
+import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
-import org.eclipse.xtext.xbase.lib.Pair
-import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
-import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.xbase.lib.Pair
 
 import static org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator.*
 
@@ -148,6 +147,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val genFeature = genSourceClass.findGenFeatureForFeature(feature, pattern)
 				
 				val javaProject = pckg.findJavaProject
+				if(javaProject == null){
+				  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Model project for GenPackage " + pckg + " not found!")
+				}
 				val compunit = pckg.findJavaFile(genSourceClass, javaProject)
 				
 				val docSource = compunit.source
@@ -183,7 +185,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 			} catch(IllegalArgumentException e){
 			  if(generate){
-				  IncQueryEngine::defaultLogger.logError(e.message,e);
+				  IncQueryEngine::defaultLogger.error(e.message,e);
 				}
 			}
 			
@@ -238,7 +240,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			}
 		}
 		val packageName = packageNameTmp
-		val implPackage = javaProject.packageFragments.findFirst[it.elementName == packageName]			
+		val implPackage = javaProject.packageFragments.findFirst[it.elementName == packageName]
+		if(implPackage == null){
+		  throw new IllegalArgumentException("Derived feature generation: Implementation package "+packageName+" not found!")
+		}			
 		implPackage.compilationUnits.findFirst[it.elementName == genSourceClass.className+".java"]
 	}
 	
@@ -547,7 +552,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				return wellbehaving
 			} catch(IllegalArgumentException e){
-				IncQueryEngine::defaultLogger.logError(e.message)
+				IncQueryEngine::defaultLogger.error(e.message)
 				return newArrayList
 			}
 
@@ -635,6 +640,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		parameters.put("source", source)
 		//parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
 		
+		if(source == null || source.EPackage == null){
+		  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
+		}
 		val pckg = provider.findGenPackage(pattern, source.EPackage)
 		if(pckg == null){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")

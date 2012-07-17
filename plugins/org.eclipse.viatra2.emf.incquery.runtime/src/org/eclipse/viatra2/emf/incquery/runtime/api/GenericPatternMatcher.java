@@ -109,6 +109,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) 
 		throws IncQueryRuntimeException 
 	{
+		checkPattern(engine, pattern);
 		try {
 			return engine.getReteEngine().accessMatcher(pattern);
 		} catch (RetePatternBuildException e) {

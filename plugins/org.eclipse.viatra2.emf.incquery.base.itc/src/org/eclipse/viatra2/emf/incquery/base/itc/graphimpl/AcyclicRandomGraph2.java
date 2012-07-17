@@ -28,7 +28,6 @@ public class AcyclicRandomGraph2 extends Graph<Integer> {
 		
 		nodes = new ArrayList<Integer>();
 		int s = 0;
-		int eInserted = 0;
 		
 		for (int i=0;i<nodeCount;i++) {
 			this.insertNode(i);
@@ -36,12 +35,9 @@ public class AcyclicRandomGraph2 extends Graph<Integer> {
 				Collections.shuffle(nodes);
 				s = nodes.get(0);
 				this.insertEdge(s, i);
-				eInserted++;
 			}
 			nodes.add(i);
 		}
-		
-		//System.out.println("Edges inserted: "+eInserted);
 	}
 
 	@Override

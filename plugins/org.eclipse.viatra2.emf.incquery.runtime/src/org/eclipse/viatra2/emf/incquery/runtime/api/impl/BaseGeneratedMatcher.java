@@ -27,11 +27,11 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  */
 public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> extends BaseMatcher<Signature> {
 	
-	protected IMatcherFactory<Signature, ? extends BaseGeneratedMatcher<Signature>> factory;
+	protected IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory;
 	
 	public BaseGeneratedMatcher(
 			IncQueryEngine engine, 
-			IMatcherFactory<Signature, ? extends BaseGeneratedMatcher<Signature>> factory) 
+			IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory) 
 			throws IncQueryRuntimeException 
 	{
 		super(engine, accessMatcher(engine, factory.getPattern()), factory.getPattern());
@@ -39,6 +39,7 @@ public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> exte
 	}
 	
 	static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryRuntimeException {
+		checkPattern(engine, pattern);
 		try {
 			return engine.getReteEngine().accessMatcher(pattern);
 		} catch (RetePatternBuildException e) {

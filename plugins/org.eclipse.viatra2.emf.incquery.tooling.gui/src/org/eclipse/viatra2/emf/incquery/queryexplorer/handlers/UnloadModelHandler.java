@@ -26,7 +26,7 @@ public class UnloadModelHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		if (selection != null && selection instanceof TreeSelection) {
+		if (selection instanceof TreeSelection) {
 			TreeSelection ts = (TreeSelection) selection;
 			ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ts.getFirstElement();
 			root.getEditorPart().getSite().getPage().removePartListener(QueryExplorer.getInstance().getModelPartListener());

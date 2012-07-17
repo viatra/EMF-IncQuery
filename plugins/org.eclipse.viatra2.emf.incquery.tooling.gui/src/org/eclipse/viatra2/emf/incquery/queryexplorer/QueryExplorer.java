@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -52,6 +51,8 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTre
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatContentProvider;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerFlatLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
@@ -75,6 +76,10 @@ import com.google.inject.Injector;
  */
 public class QueryExplorer extends ViewPart {
 
+	private static final String PACKAGE_PRESENTATION_STATE = "packagePresentationState";
+	private static final String PATTERNS_VIEWER_FLYOUT_STATE = "patternsViewerFlyoutState";
+	private static final String DETAILS_VIEW_FLYOUT_STATE = "detailsViewFlyoutState";
+
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	
 	private TableViewer detailsTableViewer;
@@ -94,11 +99,18 @@ public class QueryExplorer extends ViewPart {
 	private IFlyoutPreferences detailsViewerFlyoutPreferences;
 	private IFlyoutPreferences patternsViewerFlyoutPreferences;
 	
-	@Inject
-	Injector injector;
+	private PatternsViewerFlatContentProvider flatCP;
+	private PatternsViewerFlatLabelProvider flatLP;
+	private PatternsViewerHierarchicalContentProvider hierarchicalCP;
+	private PatternsViewerHierarchicalLabelProvider hierarchicalLP;
 	
 	@Inject
-	TableViewerUtil tableViewerUtil;
+	private Injector injector;
+	
+	@Inject
+	private TableViewerUtil tableViewerUtil;
+	
+	private String mementoPackagePresentation = "flat";
 	
 	public QueryExplorer() {
 		matcherContentProvider = new MatcherContentProvider();
@@ -106,6 +118,10 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
 		patternsViewerInput = new PatternsViewerInput();
+		flatCP = new PatternsViewerFlatContentProvider();
+		hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
+		hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
+		flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
 	}
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
@@ -116,8 +132,7 @@ public class QueryExplorer extends ViewPart {
 		//In Juno activeWorkbenchWindow will be null when Eclipse is closing
 		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
-			IViewPart form = activeWorkbenchWindow.getActivePage().findView(ID);
-	    	return (QueryExplorer) form;
+			return (QueryExplorer) activeWorkbenchWindow.getActivePage().findView(ID);
 		}
 		return null;
 	}
@@ -126,17 +141,36 @@ public class QueryExplorer extends ViewPart {
 		return matcherTreeViewer;
 	}
 	
+	public PatternsViewerFlatContentProvider getFlatContentProvider() {
+		return flatCP;
+	}
+	
+	public PatternsViewerFlatLabelProvider getFlatLabelProvider() {
+		return flatLP;
+	}
+	
+	public PatternsViewerHierarchicalContentProvider getHierarchicalContentProvider() {
+		return hierarchicalCP;
+	}
+	
+	public PatternsViewerHierarchicalLabelProvider getHierarchicalLabelProvider() {
+		return hierarchicalLP;
+	}
+	
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		int detailsState = IFlyoutPreferences.STATE_OPEN;
 		int patternsState = IFlyoutPreferences.STATE_COLLAPSED;
 		if (memento != null) {
-			if (memento.getInteger("detailsViewFlyoutState") != null) {
-				detailsState = memento.getInteger("detailsViewFlyoutState");
+			if (memento.getInteger(DETAILS_VIEW_FLYOUT_STATE) != null) {
+				detailsState = memento.getInteger(DETAILS_VIEW_FLYOUT_STATE);
 			}
-			if (memento.getInteger("patternsViewerFlyoutState") != null) {
-				patternsState = memento.getInteger("detailsViewFlyoutState");
+			if (memento.getInteger(PATTERNS_VIEWER_FLYOUT_STATE) != null) {
+				patternsState = memento.getInteger(DETAILS_VIEW_FLYOUT_STATE);
+			}
+			if (memento.getString(PACKAGE_PRESENTATION_STATE) != null) {
+				mementoPackagePresentation = memento.getString(PACKAGE_PRESENTATION_STATE);
 			}
 		}
 		detailsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, detailsState, 300);
@@ -173,8 +207,9 @@ public class QueryExplorer extends ViewPart {
 		//patternsViewer configuration		
 		patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		patternsTreeViewer.addCheckStateListener(new CheckStateListener());
-		patternsTreeViewer.setContentProvider(new PatternsViewerHierarchicalContentProvider());
-		patternsTreeViewer.setLabelProvider(new PatternsViewerHierarchicalLabelProvider(patternsViewerInput));
+//		patternsTreeViewer.setContentProvider(flatCP);
+//		patternsTreeViewer.setLabelProvider(flatLP);
+		setPackagePresentation(mementoPackagePresentation, false);
 		patternsTreeViewer.setInput(patternsViewerInput);
 		
 		// Create menu manager.
@@ -308,7 +343,25 @@ public class QueryExplorer extends ViewPart {
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		memento.putInteger("detailsViewFlyoutState", detailsViewerFlyout.getPreferences().getState());
-		memento.putInteger("patternsViewerFlyoutState", patternsViewerFlyout.getPreferences().getState());
+		memento.putInteger(DETAILS_VIEW_FLYOUT_STATE, detailsViewerFlyout.getPreferences().getState());
+		memento.putInteger(PATTERNS_VIEWER_FLYOUT_STATE, patternsViewerFlyout.getPreferences().getState());
+		memento.putString(PACKAGE_PRESENTATION_STATE, (patternsTreeViewer.getContentProvider() == flatCP) ? "flat" : "hierarchical");
+	}
+	
+	public void setPackagePresentation(String command, boolean update) {
+		
+		if (command.contains("flat")) {
+			patternsTreeViewer.setContentProvider(flatCP);
+			patternsTreeViewer.setLabelProvider(flatLP);
+		}
+		else {
+			patternsTreeViewer.setContentProvider(hierarchicalCP);
+			patternsTreeViewer.setLabelProvider(hierarchicalLP);
+		}
+		
+		if (update) {
+			patternsViewerInput.getGeneratedPatternsRoot().updateSelection(patternsTreeViewer);
+			patternsViewerInput.getGenericPatternsRoot().updateSelection(patternsTreeViewer);
+		}
 	}
 }

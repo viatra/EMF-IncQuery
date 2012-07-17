@@ -22,7 +22,6 @@ import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.parsetree.reconstr.ITokenSerializer.ICrossReferenceSerializer;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
@@ -30,6 +29,7 @@ import org.eclipse.xtext.scoping.impl.FilteringScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -39,9 +39,19 @@ import com.google.inject.Inject;
 public class GenModelMetamodelProviderService extends MetamodelProviderService
 		implements IEiqGenmodelProvider {
 
-	private final class ParentScopeFilter implements
+	private static final class ParentScopeFilter implements
 			Predicate<IEObjectDescription> {
-		Iterable<IEObjectDescription> referencedPackages;
+		private final class NameTransformerFunction implements
+				Function<IEObjectDescription, QualifiedName> {
+			@Override
+			public QualifiedName apply(IEObjectDescription desc) {
+				Preconditions.checkNotNull(desc);
+				
+				return desc.getQualifiedName();
+			}
+		}
+
+		private Iterable<IEObjectDescription> referencedPackages;
 
 		public ParentScopeFilter(
 				Iterable<IEObjectDescription> referencedPackages) {
@@ -50,7 +60,10 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		}
 
 		public boolean apply(IEObjectDescription desc) {
-			return !Iterables.contains(referencedPackages, desc.getQualifiedName());
+			Preconditions.checkNotNull(desc);
+			
+			return !Iterables.contains(Iterables.transform(referencedPackages, new NameTransformerFunction
+					()), desc.getQualifiedName());
 		}
 	}
 
@@ -58,8 +71,6 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	private IJavaProjectProvider projectProvider;
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
-	@Inject
-	private ICrossReferenceSerializer refSerializer;
 
 	private URI getGenmodelURI(IProject project) {
 		IFile file = project.getFile(IncQueryNature.IQGENMODEL);
@@ -68,6 +79,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	
 	@Override
 	public IScope getAllMetamodelObjects(EObject ctx) {
+		Preconditions.checkNotNull(ctx, "Context is required");
 		Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
 		IncQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
 		for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
@@ -76,6 +88,8 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 					.getGenmodel().getGenPackages(),
 					new Function<GenPackage, IEObjectDescription>() {
 						public IEObjectDescription apply(GenPackage from) {
+							Preconditions.checkNotNull(from);
+							
 							EPackage ePackage = from.getEcorePackage();
 							QualifiedName qualifiedName = qualifiedNameConverter
 									.toQualifiedName(ePackage.getNsURI());
@@ -98,8 +112,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
-//		loadedPackage = genmodelRegistry.findGenPackage(packageUri, set);
-		return (loadedPackage != null) ? loadedPackage.getEcorePackage() : super.loadEPackage(packageUri, set);
+		return super.loadEPackage(packageUri, set);
 	}
 
 	@Override
@@ -203,6 +216,8 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 			Iterable<GenPackage> genPackages = Iterables.filter(
 					genPackageIterable, new Predicate<GenPackage>() {
 						public boolean apply(GenPackage genPackage) {
+							Preconditions.checkNotNull(genPackage, "Checked genpackage must not be null");
+							
 							return packageNsUri.equals(genPackage
 									.getEcorePackage().getNsURI());
 						}

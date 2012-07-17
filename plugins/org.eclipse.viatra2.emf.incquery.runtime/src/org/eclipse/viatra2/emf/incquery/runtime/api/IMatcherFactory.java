@@ -23,7 +23,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @author Bergmann Gábor
  *
  */
-public interface IMatcherFactory<Signature extends IPatternMatch, Matcher extends IncQueryMatcher<Signature>> {
+public interface IMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> {
 	
 	/** 
 	 * @returns the pattern for which matchers can be instantiated. 

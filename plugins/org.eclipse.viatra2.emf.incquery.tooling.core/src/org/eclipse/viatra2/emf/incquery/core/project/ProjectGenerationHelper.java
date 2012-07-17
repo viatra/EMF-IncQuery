@@ -53,7 +53,9 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -247,7 +249,7 @@ public abstract class ProjectGenerationHelper {
 		bundleDesc.setExtensionRegistry(true);
 		bundleDesc.setBinIncludes(additionalBinIncludes);
 		
-		bundleDesc.setBundleClasspath(getBundleClasspathEntries(service));
+		bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], service));
 		bundleDesc
 				.setExecutionEnvironments(new String[] { IncQueryNature.EXECUTION_ENVIRONMENT });
 		// Adding dependencies
@@ -708,7 +710,7 @@ public abstract class ProjectGenerationHelper {
 			final IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service
 					.getDescription(project);
-			bundleDesc.setBundleClasspath(getBundleClasspathEntries(service));
+			bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(bundleDesc.getBundleClasspath(), service));
 			bundleDesc.apply(monitor);
 		} finally {
 			if (context != null && ref != null) {
@@ -718,21 +720,35 @@ public abstract class ProjectGenerationHelper {
 	}
 	
 	/**
-	 * Returns an array of {@link IBundleClasspathEntry}. This array contains
-	 * entries for the main source folders.
+	 * Returns an updated the classpath entries of a project by ensuring all required source folders are present.
 	 * 
 	 * @param service
 	 * @return
 	 */
-	private static IBundleClasspathEntry[] getBundleClasspathEntries(final IBundleProjectService service) {
-		return Lists.transform(
-				SOURCEFOLDERS, new Function<String, IBundleClasspathEntry>() {
+	private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath, final IBundleProjectService service) {
+		ArrayList<IBundleClasspathEntry> classPathList = Lists.newArrayList(oldClasspath);
+		final List<String> existingSourceEntries = Lists.transform(classPathList, new Function<IBundleClasspathEntry, String>() {
+			@Override
+			public String apply(IBundleClasspathEntry entry) {
+				return entry.getSourcePath().toString();
+			}
+		});
+		Collection<String> missingSourceFolders = Collections2.filter(SOURCEFOLDERS, new Predicate<String>() {
+			@Override
+			public boolean apply(String entry) {
+				return !existingSourceEntries.contains(entry);
+			}
+		});
+		Collection<IBundleClasspathEntry> newClasspathEntries= Collections2.transform(
+				missingSourceFolders, new Function<String, IBundleClasspathEntry>() {
 					@Override
 					public IBundleClasspathEntry apply(String input) {
 						return service.newBundleClasspathEntry(new Path(input),
 								null, null);
 					}
-				}).toArray(new IBundleClasspathEntry[SOURCEFOLDERS.size()]);
+				});
+		classPathList.addAll(newClasspathEntries);
+		return classPathList.toArray(new IBundleClasspathEntry[classPathList.size()]);
 	}
 	
 	@SuppressWarnings("restriction")

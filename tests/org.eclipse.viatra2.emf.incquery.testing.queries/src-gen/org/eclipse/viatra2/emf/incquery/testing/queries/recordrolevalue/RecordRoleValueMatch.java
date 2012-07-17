@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue;
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -19,13 +20,13 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * 
  */
 public final class RecordRoleValueMatch extends BasePatternMatch implements IPatternMatch {
-  private Object fRecord;
+  private MatchRecord fRecord;
   
   private Object fRole;
   
   private static String[] parameterNames = {"Record", "Role"};
   
-  public RecordRoleValueMatch(final Object pRecord, final Object pRole) {
+  public RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
     this.fRecord = pRecord;
     this.fRole = pRole;
     
@@ -39,7 +40,7 @@ public final class RecordRoleValueMatch extends BasePatternMatch implements IPat
     
   }
   
-  public Object getRecord() {
+  public MatchRecord getRecord() {
     return this.fRecord;
     
   }
@@ -51,8 +52,8 @@ public final class RecordRoleValueMatch extends BasePatternMatch implements IPat
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("Record".equals(parameterName) && newValue instanceof java.lang.Object) {
-    	this.fRecord = (java.lang.Object) newValue;
+    if ("Record".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) {
+    	this.fRecord = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
     	return true;
     }
     if ("Role".equals(parameterName) && newValue instanceof java.lang.Object) {
@@ -63,7 +64,7 @@ public final class RecordRoleValueMatch extends BasePatternMatch implements IPat
     
   }
   
-  public void setRecord(final Object pRecord) {
+  public void setRecord(final MatchRecord pRecord) {
     this.fRecord = pRecord;
     
   }

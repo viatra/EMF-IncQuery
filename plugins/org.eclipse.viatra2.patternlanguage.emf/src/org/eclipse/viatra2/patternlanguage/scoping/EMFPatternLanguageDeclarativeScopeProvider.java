@@ -97,8 +97,9 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 		EObject root = getRootContainer(ctx);
 		if (root instanceof PatternModel){
 			return createReferencedPackagesScope((PatternModel) root);
-		} else 
+		} else { 
 			return IScope.NULLSCOPE;
+		}
 	}
 	
 	public IScope scope_EClassifier(ClassType ctx, EReference ref) {

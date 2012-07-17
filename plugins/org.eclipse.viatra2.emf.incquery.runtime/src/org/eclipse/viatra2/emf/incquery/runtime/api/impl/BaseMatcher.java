@@ -52,19 +52,24 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 		this.patternMatcher = patternMatcher;
 		this.reteEngine = engine.getReteEngine();
 		this.baseIndex = engine.getBaseIndex();
-		
+	}
+
+
+
+	// HELPERS
+	
+	/**
+	 * Call this to sanitize the pattern before usage.
+	 */
+	protected static void checkPattern(IncQueryEngine engine, Pattern pattern) {
 		final boolean admissible = engine.getSanitizer().admit(pattern);
 		if (!admissible) 
 			throw new IncQueryRuntimeException(
 				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
 						CorePatternLanguageHelper.getFullyQualifiedName(pattern)), 
 				"Pattern failed a check");
-
 	}
 
-
-	// HELPERS
-	
 	protected abstract Match tupleToMatch(Tuple t);
 
 	private static Object[] fEmptyArray;

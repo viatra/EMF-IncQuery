@@ -153,7 +153,7 @@ public class TcRelation<V> implements Serializable {
 	 */
 	public Set<V> getTupleStarts() {
 		Set<V> t = tuplesForward.keySet();
-		return (t == null) ? new HashSet<V>() : new HashSet<V>(t);
+		return new HashSet<V>(t);
 	}
 	
 	/*

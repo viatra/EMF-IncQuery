@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
@@ -34,14 +35,16 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
 	private NewEiqGenmodelPage genmodelPage;
 
 	@Inject
-	IEiqGenmodelProvider genmodelProvider;
+	private IEiqGenmodelProvider genmodelProvider;
 	@Inject
-	IResourceSetProvider resourceSetProvider;
+	private IResourceSetProvider resourceSetProvider;
+	@Inject
+	private Logger logger;
 
 	@Override
 	public void addPages() {
 		projectPage = new SelectIncQueryProjectPage(
-				"Select EMF-IncQuery project", selection, genmodelProvider);
+				"Select EMF-IncQuery project", selection, logger);
 		addPage(projectPage);
 		genmodelPage = new NewEiqGenmodelPage(false);
 		addPage(genmodelPage);
@@ -80,9 +83,8 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			// TODO real error logging!
 			Throwable realException = e.getTargetException();
-			realException.printStackTrace();
+			logger.error("Cannot initialize EMF-IncQuery generator model " + realException.getMessage(), realException);
 			MessageDialog.openError(getShell(), "Error",
 					realException.getMessage());
 			return false;
@@ -97,8 +99,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
 		try {
 			page.openEditor(new FileEditorInput(genmodelFile), workbench.getEditorRegistry().getDefaultEditor(genmodelFile.getName()).getId());
 		} catch (PartInitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Cannot open EMF-IncQuery generator model", e);
 		}
 		return true;
 	}

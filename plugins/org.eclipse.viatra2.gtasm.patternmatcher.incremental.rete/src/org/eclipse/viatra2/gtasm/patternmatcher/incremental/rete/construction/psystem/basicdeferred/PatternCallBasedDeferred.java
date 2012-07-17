@@ -101,7 +101,7 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle>
 					throw new RetePatternBuildException(
 							"Variable {1} of constraint {2} is not a positively determined part of the pattern, yet it is also affected by {3}.", 
 							new String[]{var.toString(), this.toString(), pConstraint.toString()}, 
-							null);
+							"Read-only variable can not be deduced", null);
 				}
 			}
 		}

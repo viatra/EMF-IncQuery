@@ -11,6 +11,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -79,7 +81,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return matches represented as a UnexpectedMatchRecordMatch object.
    * 
    */
-  public Collection<UnexpectedMatchRecordMatch> getAllMatches(final Object pActualSet, final Object pExpectedSet, final Object pRecord) {
+  public Collection<UnexpectedMatchRecordMatch> getAllMatches(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawGetAllMatches(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -92,7 +94,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return a match represented as a UnexpectedMatchRecordMatch object, or null if no match is found.
    * 
    */
-  public UnexpectedMatchRecordMatch getOneArbitraryMatch(final Object pActualSet, final Object pExpectedSet, final Object pRecord) {
+  public UnexpectedMatchRecordMatch getOneArbitraryMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawGetOneArbitraryMatch(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -105,7 +107,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final Object pActualSet, final Object pExpectedSet, final Object pRecord) {
+  public boolean hasMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawHasMatch(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -117,7 +119,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final Object pActualSet, final Object pExpectedSet, final Object pRecord) {
+  public int countMatches(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawCountMatches(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -129,7 +131,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final Object pActualSet, final Object pExpectedSet, final Object pRecord, final IMatchProcessor<? super UnexpectedMatchRecordMatch> processor) {
+  public void forEachMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord, final IMatchProcessor<? super UnexpectedMatchRecordMatch> processor) {
     rawForEachMatch(new Object[]{pActualSet, pExpectedSet, pRecord}, processor);
   }
   
@@ -143,7 +145,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final Object pActualSet, final Object pExpectedSet, final Object pRecord, final IMatchProcessor<? super UnexpectedMatchRecordMatch> processor) {
+  public boolean forOneArbitraryMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord, final IMatchProcessor<? super UnexpectedMatchRecordMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pActualSet, pExpectedSet, pRecord}, processor);
   }
   
@@ -160,7 +162,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the delta monitor.
    * 
    */
-  public DeltaMonitor<UnexpectedMatchRecordMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Object pActualSet, final Object pExpectedSet, final Object pRecord) {
+  public DeltaMonitor<UnexpectedMatchRecordMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -169,8 +171,8 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfActualSet(final Object[] parameters) {
-    Set<Object> results = new HashSet<Object>();
+  public Set<MatchSetRecord> rawAccumulateAllValuesOfActualSet(final Object[] parameters) {
+    Set<MatchSetRecord> results = new HashSet<MatchSetRecord>();
     rawAccumulateAllValues(POSITION_ACTUALSET, parameters, results);
     return results;
   }
@@ -180,7 +182,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfActualSet() {
+  public Set<MatchSetRecord> getAllValuesOfActualSet() {
     return rawAccumulateAllValuesOfActualSet(emptyArray());
   }
   
@@ -189,7 +191,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfActualSet(final UnexpectedMatchRecordMatch partialMatch) {
+  public Set<MatchSetRecord> getAllValuesOfActualSet(final UnexpectedMatchRecordMatch partialMatch) {
     return rawAccumulateAllValuesOfActualSet(partialMatch.toArray());
   }
   
@@ -198,8 +200,8 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfActualSet(final Object pExpectedSet, final Object pRecord) {
-    Object pActualSet = null;
+  public Set<MatchSetRecord> getAllValuesOfActualSet(final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+    MatchSetRecord pActualSet = null;
     return rawAccumulateAllValuesOfActualSet(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -208,8 +210,8 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfExpectedSet(final Object[] parameters) {
-    Set<Object> results = new HashSet<Object>();
+  public Set<MatchSetRecord> rawAccumulateAllValuesOfExpectedSet(final Object[] parameters) {
+    Set<MatchSetRecord> results = new HashSet<MatchSetRecord>();
     rawAccumulateAllValues(POSITION_EXPECTEDSET, parameters, results);
     return results;
   }
@@ -219,7 +221,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfExpectedSet() {
+  public Set<MatchSetRecord> getAllValuesOfExpectedSet() {
     return rawAccumulateAllValuesOfExpectedSet(emptyArray());
   }
   
@@ -228,7 +230,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfExpectedSet(final UnexpectedMatchRecordMatch partialMatch) {
+  public Set<MatchSetRecord> getAllValuesOfExpectedSet(final UnexpectedMatchRecordMatch partialMatch) {
     return rawAccumulateAllValuesOfExpectedSet(partialMatch.toArray());
   }
   
@@ -237,8 +239,8 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfExpectedSet(final Object pActualSet, final Object pRecord) {
-    Object pExpectedSet = null;
+  public Set<MatchSetRecord> getAllValuesOfExpectedSet(final MatchSetRecord pActualSet, final MatchRecord pRecord) {
+    MatchSetRecord pExpectedSet = null;
     return rawAccumulateAllValuesOfExpectedSet(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
@@ -247,8 +249,8 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
-    Set<Object> results = new HashSet<Object>();
+  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+    Set<MatchRecord> results = new HashSet<MatchRecord>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
   }
@@ -258,7 +260,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRecord() {
+  public Set<MatchRecord> getAllValuesOfRecord() {
     return rawAccumulateAllValuesOfRecord(emptyArray());
   }
   
@@ -267,7 +269,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRecord(final UnexpectedMatchRecordMatch partialMatch) {
+  public Set<MatchRecord> getAllValuesOfRecord(final UnexpectedMatchRecordMatch partialMatch) {
     return rawAccumulateAllValuesOfRecord(partialMatch.toArray());
   }
   
@@ -276,16 +278,16 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfRecord(final Object pActualSet, final Object pExpectedSet) {
-    Object pRecord = null;
+  public Set<MatchRecord> getAllValuesOfRecord(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet) {
+    MatchRecord pRecord = null;
     return rawAccumulateAllValuesOfRecord(new Object[]{pActualSet, pExpectedSet, pRecord});
   }
   
   @Override
   public UnexpectedMatchRecordMatch tupleToMatch(final Tuple t) {
     try {
-    	return new UnexpectedMatchRecordMatch((java.lang.Object) t.get(POSITION_ACTUALSET), (java.lang.Object) t.get(POSITION_EXPECTEDSET), (java.lang.Object) t.get(POSITION_RECORD));	
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return new UnexpectedMatchRecordMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));	
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -294,8 +296,8 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   @Override
   public UnexpectedMatchRecordMatch arrayToMatch(final Object[] match) {
     try {
-    	return new UnexpectedMatchRecordMatch((java.lang.Object) match[POSITION_ACTUALSET], (java.lang.Object) match[POSITION_EXPECTEDSET], (java.lang.Object) match[POSITION_RECORD]);
-    } catch(ClassCastException e) {engine.getLogger().logError("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return new UnexpectedMatchRecordMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -306,5 +308,5 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
     return arrayToMatch(new Object[getParameterNames().length]);
   }
   
-  public final static IMatcherFactory<UnexpectedMatchRecordMatch,UnexpectedMatchRecordMatcher> FACTORY =  new UnexpectedMatchRecordMatcherFactory();
+  public final static IMatcherFactory<UnexpectedMatchRecordMatcher> FACTORY =  new UnexpectedMatchRecordMatcherFactory();
 }

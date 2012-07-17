@@ -24,7 +24,8 @@ import com.google.inject.Inject;
 
 public class MetamodelProviderService implements IMetamodelProvider {
 
-	private static final Logger LOG = Logger.getLogger(MetamodelProviderService.class);
+	@Inject
+	private Logger logger;
 	
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
@@ -88,7 +89,7 @@ public class MetamodelProviderService implements IMetamodelProvider {
 				URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
 				return loadEPackage(platformPluginURI.toString(), resourceSet);
 			}
-			LOG.trace("Cannot load package with URI '" + packageUri + "'", ex);
+			logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
 			return null;
 		}
 	}

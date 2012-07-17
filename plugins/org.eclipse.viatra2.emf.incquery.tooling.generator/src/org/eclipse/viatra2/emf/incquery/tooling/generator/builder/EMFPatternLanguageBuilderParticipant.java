@@ -11,9 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -46,7 +44,6 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -155,14 +152,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	private void doPostGenerate(Resource deltaResource,
 			IBuildContext context) throws CoreException {
 		final IProject project = context.getBuiltProject();
-		ExtensionGenerator generator = new ExtensionGenerator();
-		generator.setProject(project);
+		ExtensionGenerator extGenerator = new ExtensionGenerator();
+		extGenerator.setProject(project);
 		calculateEMFModelProjects(deltaResource, project);
 		TreeIterator<EObject> it = deltaResource.getAllContents();
 		while (it.hasNext()) {
 			EObject obj = it.next();
 			if (obj instanceof Pattern && !CorePatternLanguageHelper.isPrivate((Pattern)obj)) {
-				Iterable<IPluginExtension> extensionContribution = matcherFactoryExtensionGenerator.extensionContribution((Pattern)obj, generator);
+				Iterable<IPluginExtension> extensionContribution = matcherFactoryExtensionGenerator.extensionContribution((Pattern)obj, extGenerator);
 				ensureSupport.appendAllExtension(project, extensionContribution);
 				executeGeneratorFragments(context.getBuiltProject(), (Pattern) obj);
 				ensureSupport.exportPackage(project, util.getPackageName((Pattern) obj));
@@ -205,7 +202,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				executeGeneratorFragment(fragment, modelProject, pattern);
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing generation for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				IncQueryEngine.getDefaultLogger().logError(msg, e);
+				IncQueryEngine.getDefaultLogger().error(msg, e);
 			}
 		}
 	}
@@ -217,9 +214,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 		EclipseResourceFileSystemAccess2 fsa = eclipseResourceSupport.createProjectFileSystemAccess(targetProject);
 		fragment.generateFiles(pattern, fsa);
 		// Generating Eclipse extensions
-		ExtensionGenerator generator = new ExtensionGenerator();
-		generator.setProject(targetProject);
-		Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, generator);
+		ExtensionGenerator exGenerator = new ExtensionGenerator();
+		exGenerator.setProject(targetProject);
+		Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, exGenerator);
 		// Gathering all registered extensions together to avoid unnecessary plugin.xml modifications
 		// Both for performance and for avoiding race conditions
 		ensureSupport.appendAllExtension(targetProject, extensionContribution);		
