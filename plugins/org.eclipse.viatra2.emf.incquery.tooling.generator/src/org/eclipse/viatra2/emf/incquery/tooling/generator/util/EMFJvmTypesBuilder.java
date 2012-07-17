@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 /**
@@ -63,8 +64,8 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
    	 * @return
    	 */
    	public JvmTypeReference newRawTypeRef(EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
-   		if (clazz == null)
-			throw new NullPointerException("clazz");
+   		Preconditions.checkNotNull(clazz, "clazz");
+   		
    		JvmType declaredType = typeReferences.findDeclaredType(clazz, ctx);
    		if (declaredType == null) {
    			return null;   			
@@ -77,10 +78,9 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
    	 * @return
    	 */
    	public JvmTypeReference newRawTypeRef(EObject ctx, String typeName, JvmTypeReference... typeArgs) {
-   		if (typeName == null)
-			throw new NullPointerException("typeName");
-		if (ctx == null)
-			throw new NullPointerException("context");
+   		Preconditions.checkNotNull(typeName, "typeName");
+   		Preconditions.checkNotNull(ctx, "context");
+   		
    		JvmType declaredType = typeReferences.findDeclaredType(typeName, ctx);
    		if (declaredType == null) {
    			return null;   			
