@@ -126,7 +126,7 @@
 						</goals>
 						<configuration>
 							<dataFile>${project.basedir}/../../target/jacoco.exec</dataFile>
-							<outputDirectory>${project.basedir}/../../target</outputDirectory>
+							<outputDirectory>${project.basedir}/../../target/jacoco</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
