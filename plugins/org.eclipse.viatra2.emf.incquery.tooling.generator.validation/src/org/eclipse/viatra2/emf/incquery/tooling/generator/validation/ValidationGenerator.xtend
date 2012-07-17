@@ -103,7 +103,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 				val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
 				
 				if (genPackage != null) {
-					val editorId = genPackage.genModel.editorPluginID;
+					val editorId = genPackage.qualifiedEditorClassName+"ID";
 					//val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
 					if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
 						val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
@@ -112,7 +112,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 								exGen.contribElement(it, "menu") [
 									exGen.contribAttribute(it, "label", "EMF-IncQuery")
 									exGen.contribElement(it, "command") [
-										exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators")
+										exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor")
 										exGen.contribAttribute(it, "style", "push")
 										exGen.contribAttribute(it, "label", "Initialize EMF-IncQuery Validators")
 										exGen.contribElement(it, "visibleWhen") [
