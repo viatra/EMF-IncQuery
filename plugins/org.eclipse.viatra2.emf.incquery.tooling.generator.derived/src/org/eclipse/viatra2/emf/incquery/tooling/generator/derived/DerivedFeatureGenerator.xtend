@@ -238,7 +238,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			}
 		}
 		val packageName = packageNameTmp
-		val implPackage = javaProject.packageFragments.findFirst[it.elementName == packageName]			
+		val implPackage = javaProject.packageFragments.findFirst[it.elementName == packageName]
+		if(implPackage == null){
+		  throw new IllegalArgumentException("Derived feature generation: Implementation package "+packageName+" not found!")
+		}			
 		implPackage.compilationUnits.findFirst[it.elementName == genSourceClass.className+".java"]
 	}
 	
@@ -635,6 +638,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		parameters.put("source", source)
 		//parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
 		
+		if(source == null || source.EPackage == null){
+		  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
+		}
 		val pckg = provider.findGenPackage(pattern, source.EPackage)
 		if(pckg == null){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
