@@ -147,6 +147,9 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				val genFeature = genSourceClass.findGenFeatureForFeature(feature, pattern)
 				
 				val javaProject = pckg.findJavaProject
+				if(javaProject == null){
+				  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Model project for GenPackage " + pckg + " not found!")
+				}
 				val compunit = pckg.findJavaFile(genSourceClass, javaProject)
 				
 				val docSource = compunit.source
