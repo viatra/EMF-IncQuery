@@ -34,7 +34,6 @@ public class AcyclicRandomGraph extends Graph<Integer> {
 		numbers = new ArrayList<ArrayList<Integer>>(L);
 		int s = 0;
 		int t = 0;
-		int eInserted = 0;
 		
 		for (int i=0;i<L;i++)
 			numbers.add(new ArrayList<Integer>());
@@ -52,12 +51,9 @@ public class AcyclicRandomGraph extends Graph<Integer> {
 				for (int l=0;l<K;l++) {
 					t = numbers.get(i+1).get(l);
 					this.insertEdge(s, t);
-					eInserted++;
 				}
 			}
 		}
-		
-		//System.out.println("Edges inserted: "+eInserted);
 	}
 
 	@Override
