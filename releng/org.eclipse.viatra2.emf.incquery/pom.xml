@@ -62,6 +62,26 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${project.basedir}/../../target/site</directory>
+							<includes>
+								<include>**</include>
+							</includes>
+						</fileset>
+						<fileset>
+							<directory>${project.basedir}/../../target</directory>
+							<includes>
+								<include>jacoco.exec</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
@@ -171,52 +191,9 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.0</version>
+					<version>3.1</version>
 					<configuration>
 						<relativizeDecorationLinks>true</relativizeDecorationLinks>
-						<reportPlugins>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-plugin-plugin</artifactId>
-								<version>2.9</version>
-								<configuration>
-									<requirements>
-										<maven>3.0</maven>
-									</requirements>
-								</configuration>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-project-info-reports-plugin</artifactId>
-								<version>2.4</version>
-								<outputDirectory>${project.basedir}/../../target/site/{$project.name}</outputDirectory>
-								<reportSets>
-									<reportSet>
-										<reports>
-											<report>index</report>
-											<report>dependencies</report>
-											<report>cim</report>
-											<report>issue-tracking</report>
-											<report>license</report>
-											<report>scm</report>
-										</reports>
-									</reportSet>
-								</reportSets>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-surefire-report-plugin</artifactId>
-								<version>2.12</version>
-								<configuration>
-									<aggregate>true</aggregate>
-								</configuration>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-jxr-plugin</artifactId>
-								<version>2.3</version>
-							</plugin>
-						</reportPlugins>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -224,6 +201,33 @@
 	</build>
 	<reporting>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<requirements>
+						<maven>3.0</maven>
+					</requirements>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.4</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>dependencies</report>
+							<report>cim</report>
+							<report>issue-tracking</report>
+							<report>license</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
