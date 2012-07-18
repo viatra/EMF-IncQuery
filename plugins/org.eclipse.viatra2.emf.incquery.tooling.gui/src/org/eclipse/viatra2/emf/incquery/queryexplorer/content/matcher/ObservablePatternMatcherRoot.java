@@ -117,14 +117,14 @@ public class ObservablePatternMatcherRoot {
 	}
 		
 	public void registerPattern(Pattern... patterns) {
-		boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.WILDCARD_MODE);
-		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
-		engine.setWildcardMode(wildcardMode);
-		
-		if (!wildcardMode) {
-			IPatternGroup group = GenericPatternGroup.of(patterns);
-			group.prepare(engine);
-		}
+//		boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.WILDCARD_MODE);
+//		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
+//		engine.setWildcardMode(wildcardMode);
+//		
+//		if (!wildcardMode) {
+//			IPatternGroup group = GenericPatternGroup.of(patterns);
+//			group.prepare(engine);
+//		}
 		
 		for (Pattern pattern : patterns) {
 			IncQueryMatcher<? extends IPatternMatch> matcher = null;
@@ -135,7 +135,7 @@ public class ObservablePatternMatcherRoot {
 					matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
 				}
 				else {
-					matcher = new GenericPatternMatcher(pattern, key.getNotifier());
+					matcher = new GenericPatternMatcher(pattern, getNotifier());
 				}
 			}
 			catch (IncQueryRuntimeException e) {
