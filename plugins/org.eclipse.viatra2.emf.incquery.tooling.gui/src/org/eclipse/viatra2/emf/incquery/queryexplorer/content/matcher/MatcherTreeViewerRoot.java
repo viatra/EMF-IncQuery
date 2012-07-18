@@ -49,6 +49,8 @@ private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 			Notifier notifier = key.getNotifier();
 			//disposing IncQueryEngine instance associated to the given Notifier
 			EngineManager.getInstance().getIncQueryEngine(notifier).dispose();			
+			EngineManager.getInstance().getIncQueryEngine(notifier).setWildcardMode(false);
+			
 			this.roots.get(key).dispose();
 			this.roots.remove(key);
 			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
