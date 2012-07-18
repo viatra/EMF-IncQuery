@@ -170,7 +170,7 @@ class PatternMatchClassInferrer {
 				else 
 					append('''
 				StringBuilder result = new StringBuilder();
-				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");"»
+				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");\n"»
 					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
 				«ENDFOR»
 				return result.toString();

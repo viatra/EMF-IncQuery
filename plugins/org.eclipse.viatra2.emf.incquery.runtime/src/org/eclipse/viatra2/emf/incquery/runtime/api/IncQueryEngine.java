@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
@@ -39,13 +39,15 @@ import com.google.inject.Injector;
  * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
  * The engine hosts pattern matchers, and will listen on EMF update notifications stemming from the given model in order to maintain live results. 
  * 
- * Pattern matchers within this engine may be instantiated in the following ways: <ul>
+ * <p>Pattern matchers within this engine may be instantiated in the following ways: <ul>
  *  <li> Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
  *  <li> Use the matcher factory associated with the generated matcher class to achieve the same.
  *  <li> Use GenericMatcherFactory instead of the various generated factories.
  *  </ul>
+ * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; 
+ * 	this improves the performance of pattern matcher construction, unless the engine is in wildcard mode.
  * 
- * The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
+ * <p>The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
  * 
  * @author Bergmann Gábor
  *
@@ -87,16 +89,17 @@ public class IncQueryEngine {
 	/**
 	 * @param manager
 	 * @param emfRoot
+	 * @throws IncQueryException if the emf root is invalid
 	 */
-	IncQueryEngine(EngineManager manager, Notifier emfRoot) {
+	IncQueryEngine(EngineManager manager, Notifier emfRoot) throws IncQueryException {
 		super();
 		this.manager = manager;
 		this.emfRoot = emfRoot;
 		
 		if (! (emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet)) 
-			throw new IncQueryRuntimeException(
-					IncQueryRuntimeException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
-					IncQueryRuntimeException.INVALID_EMFROOT_SHORT);
+			throw new IncQueryException(
+					IncQueryException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
+					IncQueryException.INVALID_EMFROOT_SHORT);
 	}	
 	
 	/**
@@ -109,23 +112,24 @@ public class IncQueryEngine {
 	/**
 	 * Internal accessor for the base index.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
-	 * @throws IncQueryBaseException if the base index could not be constructed
+	 * @throws IncQueryException if the base index could not be constructed
 	 */
-	protected NavigationHelper getBaseIndexInternal() {
+	protected NavigationHelper getBaseIndexInternal() throws IncQueryException {
 		return getBaseIndexInternal(WILDCARD_MODE_DEFAULT);
 	}
 	
 	/**
 	 * Internal accessor for the base index.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryException if the base index could not be initialized
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) {
+	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex == null) {
 			try {
 				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
 			} catch (IncQueryBaseException e) {
-				throw new IncQueryRuntimeException(
+				throw new IncQueryException(
 						"Could not initialize EMF-IncQuery base index", 
 						"Could not initialize base index", 
 						e);
@@ -137,9 +141,9 @@ public class IncQueryEngine {
 	/**
 	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
-	 * @throws IncQueryBaseException if the base index could not be constructed
+	 * @throws IncQueryException if the base index could not be constructed
 	 */
-	public NavigationHelper getBaseIndex() {
+	public NavigationHelper getBaseIndex() throws IncQueryException {
 		return getBaseIndexInternal();
 	}	
 	
@@ -149,7 +153,7 @@ public class IncQueryEngine {
 	 * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
 	 * @noreference A typical user would not need to call this method.
 	 */
-	public ReteEngine<Pattern> getReteEngine() throws IncQueryRuntimeException {
+	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
 		if (reteEngine == null) {
 			EMFPatternMatcherRuntimeContext<Pattern> context = new EMFPatternMatcherRuntimeContext<Pattern>(this, getBaseIndexInternal());
 //			if (emfRoot instanceof EObject) 
@@ -199,7 +203,6 @@ public class IncQueryEngine {
 	}
 	
 	private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) 
-			throws IncQueryRuntimeException 
 	{
 		ReteEngine<Pattern> engine;
 		engine = new ReteEngine<Pattern>(context, reteThreads);
@@ -289,11 +292,12 @@ public class IncQueryEngine {
 	}
 
 	/**
-	 * Specifies whether the base index should be built in wildcard mode.
+	 * Specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for the explanation of wildcard mode.
 	 * @param wildcardMode the wildcardMode to set
-	 * @throws IllegalStateException if baseIndex is already constructed in the opposite mode, since the mode can not be changed
+	 * @throws IncQueryException if the base index could not be initialized
+	 * @throws IllegalStateException if baseIndex is already constructed in the opposite mode, since the mode can not be changed once applied
 	 */
-	public void setWildcardMode(boolean wildcardMode) {
+	public void setWildcardMode(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
 			throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
 			

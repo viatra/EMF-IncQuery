@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.IFlyoutPreferences;
@@ -80,7 +81,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
 				for (Pattern pattern : allActivePatterns) {
 					root.unregisterPattern(pattern);
 				}
-				EngineManager.getInstance().getIncQueryEngine(root.getNotifier()).dispose();
+				final Notifier notifier = root.getNotifier();
+				EngineManager.getInstance().disposeEngine(notifier);
 			}
 			
 			//remove labels from pattern registry for the corresponding pattern model

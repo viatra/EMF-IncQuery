@@ -68,7 +68,7 @@ class JavadocInferrer {
 		The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
 		The match set will be incrementally refreshed upon updates from this scope.
 		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+		@throws IncQueryException if an error occurs during pattern matcher creation
 	'''
 	
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
@@ -76,7 +76,7 @@ class JavadocInferrer {
 		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
-		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+		@throws IncQueryException if an error occurs during pattern matcher creation
 	'''
 	
 	def javadocGetAllMatchesMethod(Pattern pattern) '''

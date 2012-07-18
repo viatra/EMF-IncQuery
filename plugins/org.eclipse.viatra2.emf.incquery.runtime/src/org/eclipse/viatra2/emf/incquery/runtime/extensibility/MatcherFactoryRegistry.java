@@ -72,7 +72,8 @@ public class MatcherFactoryRegistry {
 						try
 						{
 							String id = el.getAttribute("id");
-							IMatcherFactory matcherFactory = (IMatcherFactory)el.createExecutableExtension("factory");
+							IMatcherFactoryProvider provider = (IMatcherFactoryProvider)el.createExecutableExtension("factoryProvider");
+							IMatcherFactory matcherFactory = provider.get();
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
 							  MATCHER_FACTORIES.put(fullyQualifiedName, matcherFactory);

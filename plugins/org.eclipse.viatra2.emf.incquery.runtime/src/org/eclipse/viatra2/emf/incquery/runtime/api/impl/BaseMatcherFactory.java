@@ -17,7 +17,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 
 /**
@@ -29,13 +29,13 @@ public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? exten
 	implements IMatcherFactory<Matcher> 
 {
 
-	protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException;
+	protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.common.notify.Notifier, int)
 	 */
 	@Override
-	public Matcher getMatcher(Notifier emfRoot) throws IncQueryRuntimeException {
+	public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
 		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(emfRoot);
 		return instantiate(engine);
 	}
@@ -44,7 +44,7 @@ public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? exten
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine)
 	 */
 	@Override
-	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryRuntimeException {
+	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
 		return instantiate(engine);
 	}
 

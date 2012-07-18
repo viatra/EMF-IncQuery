@@ -13,7 +13,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -47,10 +47,10 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	 * 
 	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
 	 * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	 * @throws IncQueryException if an error occurs during pattern matcher creation
 	 */
 	public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) 
-			throws IncQueryRuntimeException 
+			throws IncQueryException 
 	{
 		this(pattern, EngineManager.getInstance().getIncQueryEngine(emfRoot));
 	}
@@ -61,10 +61,10 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	 * The match set will be incrementally refreshed upon updates.
 	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
 	 * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	 * @throws IncQueryException if an error occurs during pattern matcher creation
 	 */
 	public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) 
-			throws IncQueryRuntimeException 
+			throws IncQueryException 
 	{
 		super(engine, accessMatcher(pattern, engine), pattern);
 		this.pattern = pattern;		
@@ -107,13 +107,13 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	}
 
 	private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) 
-		throws IncQueryRuntimeException 
+		throws IncQueryException 
 	{
 		checkPattern(engine, pattern);
 		try {
 			return engine.getReteEngine().accessMatcher(pattern);
 		} catch (RetePatternBuildException e) {
-			throw new IncQueryRuntimeException(e);
+			throw new IncQueryException(e);
 		}
 	}
 }

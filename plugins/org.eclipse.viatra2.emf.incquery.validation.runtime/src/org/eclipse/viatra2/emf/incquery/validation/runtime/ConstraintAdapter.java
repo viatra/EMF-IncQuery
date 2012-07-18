@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
 public class ConstraintAdapter<T extends IPatternMatch> {
@@ -28,7 +29,7 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 	private DeltaMonitor<T> deltaMonitor;
 	private Constraint<T> constraint;
 	
-	public ConstraintAdapter(Constraint<T> constraint, Notifier notifier) {
+	public ConstraintAdapter(Constraint<T> constraint, Notifier notifier) throws IncQueryException {
 		this.constraint = constraint;
 		this.matcher = constraint.getMatcherFactory().getMatcher(notifier);
 		this.constraintViolations = new HashMap<T, ConstraintViolation<T>>();

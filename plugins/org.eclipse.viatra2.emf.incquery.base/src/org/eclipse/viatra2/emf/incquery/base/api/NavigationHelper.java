@@ -45,7 +45,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
  * </p> 
  * 
  * <p>
- * By default, the indices are built in <em>wildcard mode</em>, meaning that all EClasses, EDataTypes, EReferences and EAttributes are indexed. This is convenient, but comes at a high memory cost.
+ * One of the options is to build indices in <em>wildcard mode</em>, meaning that all EClasses, EDataTypes, EReferences and EAttributes are indexed. This is convenient, but comes at a high memory cost.
  * To save memory, one can disable <em>wildcard mode</em> and manually register those EClasses, EDataTypes, EReferences and EAttributes that should be indexed.
  * </p> 
  * 

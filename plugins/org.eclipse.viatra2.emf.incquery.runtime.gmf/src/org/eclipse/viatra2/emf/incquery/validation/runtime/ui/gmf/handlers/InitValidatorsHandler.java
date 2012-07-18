@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ConstraintAdapter;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
@@ -60,7 +61,14 @@ public class InitValidatorsHandler extends AbstractHandler {
 	
 		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
 		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
-			adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
+			try {
+				adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
+			} catch (IncQueryException ex) {
+				throw new ExecutionException(
+						"Could not validate constraint " + c.getClass().getSimpleName()
+							+ " due to a pattern matcher error", 
+						ex);
+			}
 		}
 		ValidationUtil.getAdapterMap().put(activeEditor, adapters);
 		activeEditor.getEditorSite().getPage().addPartListener(ValidationUtil.editorPartListener);
