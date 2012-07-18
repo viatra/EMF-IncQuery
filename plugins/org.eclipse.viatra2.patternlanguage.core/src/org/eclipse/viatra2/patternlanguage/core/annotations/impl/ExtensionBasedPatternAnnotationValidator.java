@@ -13,7 +13,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -22,48 +24,59 @@ import com.google.common.collect.Iterables;
  * {@link PatternAnnotationProvider}.
  * 
  * @author Zoltan Ujhelyi
- * @noinstantiate This class is not intended to be instantiated outside the plug-in
+ * @noinstantiate This class is not intended to be instantiated by clients
  */
 public class ExtensionBasedPatternAnnotationValidator implements
 		IPatternAnnotationValidator {
 
 	private Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
+	private final String name;
+	
+	private final static ImmutableMap<String, Class<? extends ValueReference>> typeMapping = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
+			.put(ExtensionBasedPatternAnnotationParameter.INT, IntValue.class)
+			.put(ExtensionBasedPatternAnnotationParameter.STRING,
+					StringValue.class)
+			.put(ExtensionBasedPatternAnnotationParameter.DOUBLE,
+					DoubleValue.class)
+			.put(ExtensionBasedPatternAnnotationParameter.BOOLEAN,
+					BoolValue.class)
+			.put(ExtensionBasedPatternAnnotationParameter.LIST, ListValue.class)
+			.put(ExtensionBasedPatternAnnotationParameter.VARIABLEREFERENCE,
+					VariableValue.class).build();
 
 	public ExtensionBasedPatternAnnotationValidator(String name,
-			String languageID,
 			Iterable<ExtensionBasedPatternAnnotationParameter> parameters) {
 		super();
+		this.name = name;
 		this.definedAttributes = parameters;
 	}
 	
-	private class ParameterName implements Function<ExtensionBasedPatternAnnotationParameter, String> {
+	private static final class AnnotationParameterName implements
+			Function<AnnotationParameter, String> {
+		@Override
+		public String apply(AnnotationParameter input) {
+			Preconditions.checkNotNull(input, "annotation");
+			return input.getName();
+		}
+	}
+
+	private static final class AnnotationDefinitionParameterName implements Function<ExtensionBasedPatternAnnotationParameter, String> {
 
 		@Override
 		public String apply(ExtensionBasedPatternAnnotationParameter input) {
-			return input.name;
+			Preconditions.checkNotNull(input, "input");
+			return input.getName();
 		}
 		
 	}
 	
 	@Override
 	public Iterable<String> getAllAvailableParameterNames() {
-		return Iterables.transform(definedAttributes, new Function<ExtensionBasedPatternAnnotationParameter, String>() {
-
-			@Override
-			public String apply(ExtensionBasedPatternAnnotationParameter input) {
-				return input.getName();
-			}
-		});
+		return Iterables.transform(definedAttributes, new AnnotationDefinitionParameterName());
 	}
 	
 	private Iterable<String> getParameterNames(Annotation annotation) {
-		return Iterables.transform(annotation.getParameters(), new Function<AnnotationParameter, String>() {
-
-			@Override
-			public String apply(AnnotationParameter input) {
-				return input.getName();
-			}
-		});
+		return Iterables.transform(annotation.getParameters(), new AnnotationParameterName());
 	}
 	
 	@Override
@@ -74,20 +87,22 @@ public class ExtensionBasedPatternAnnotationValidator implements
 
 			@Override
 			public boolean apply(ExtensionBasedPatternAnnotationParameter input) {
+				Preconditions.checkNotNull(input, "input");
 				return input.isMandatory() && !Iterables.contains(actualAttributeNames, input.getName());
 			}
 		});
-		return Iterables.transform(filteredParameters, new ParameterName()); 
+		return Iterables.transform(filteredParameters, new AnnotationDefinitionParameterName()); 
 	}
 
 	@Override
 	public Iterable<AnnotationParameter> getUnknownAttributes(
 			Annotation annotation) {
-		final Iterable<String> parameterNames = Iterables.transform(definedAttributes, new ParameterName());
+		final Iterable<String> parameterNames = Iterables.transform(definedAttributes, new AnnotationDefinitionParameterName());
 		return Iterables.filter(annotation.getParameters(), new Predicate<AnnotationParameter>() {
 
 			@Override
 			public boolean apply(AnnotationParameter input) {
+				Preconditions.checkNotNull(input, "input");
 				return !Iterables.contains(parameterNames, input.getName());
 			}
 		}); 
@@ -101,23 +116,19 @@ public class ExtensionBasedPatternAnnotationValidator implements
 				expectedParameter = p;
 			}
 		}
-		if (expectedParameter == null || expectedParameter.getType() == null) {
+		String type = expectedParameter.getType();
+		if (expectedParameter == null || type == null) {
 			return null;
 		}
-		if (ExtensionBasedPatternAnnotationParameter.INT.equals(expectedParameter.getType())) {
-			return IntValue.class;
-		} else if (ExtensionBasedPatternAnnotationParameter.STRING.equals(expectedParameter.getType())) {
-			return StringValue.class;
-		} else if (ExtensionBasedPatternAnnotationParameter.DOUBLE.equals(expectedParameter.getType())) {
-			return DoubleValue.class;
-		} else if (ExtensionBasedPatternAnnotationParameter.BOOLEAN.equals(expectedParameter.getType())) {
-			return BoolValue.class;
-		} else if (ExtensionBasedPatternAnnotationParameter.LIST.equals(expectedParameter.getType())) {
-			return ListValue.class;
-		} if (ExtensionBasedPatternAnnotationParameter.VARIABLEREFERENCE.equals(expectedParameter.getType())) {
-			return VariableValue.class;
+		if (typeMapping.containsKey(type)) {
+			return typeMapping.get(type);
 		} 
 		return null;
+	}
+
+	@Override
+	public String getAnnotationName() {
+		return name;
 	}
 
 }
