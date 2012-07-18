@@ -16,7 +16,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param constraint The compare relation.
  * @param compare The compare feature.
  */
-@Off pattern simmetricCompare(pat:Pattern, body:PatternBody, variable:ValueReference, valueFrom:ValueReference, constraint:CompareConstraint, compare:CompareFeature) =
+@QueryExplorer(display = false) pattern simmetricCompare(pat:Pattern, body:PatternBody, variable:ValueReference, valueFrom:ValueReference, constraint:CompareConstraint, compare:CompareFeature) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body,constraint);
@@ -34,7 +34,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * value reference. Without this pattern adding a new kind of a value reference could give a false error.
  * @param a The supported value reference.
  */
-@Off pattern supportedValueReference(a:ValueReference) =
+@QueryExplorer(display = false) pattern supportedValueReference(a:ValueReference) =
 { IntValue(a); } or
 { StringValue(a); } or
 { BoolValue(a); } or
@@ -50,7 +50,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param a The first operand.
  * @param b The second operand.
  */
-@Off pattern ComparableValueReference(a:ValueReference, b:ValueReference) =
+@QueryExplorer(display = false) pattern ComparableValueReference(a:ValueReference, b:ValueReference) =
 {
 	find ComparableValueReference(b,a);
 } or
@@ -68,7 +68,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * It don't work on variable, instead of this it makes the variable unsatisfiable.
  * @param The unsatisfiable compare.
  */
-pattern unsatisfiableCompare(constraint:CompareConstraint) =
+@QueryExplorer(display = true) pattern unsatisfiableCompare(constraint:CompareConstraint) =
 {
 	find simmetricCompare(_,_,variable,valueFrom,constraint,CompareFeature::equality);
 	find supportedValueReference(variable);
@@ -81,7 +81,7 @@ pattern unsatisfiableCompare(constraint:CompareConstraint) =
  * @param a The first class.
  * @param b The second class.
  */
-pattern hasCommonSubclass(a:EClassifier, b:EClassifier) =
+@QueryExplorer(display = false) pattern hasCommonSubclass(a:EClassifier, b:EClassifier) =
 {
 	find supertype(common,a);
 	find supertype(common,b);
@@ -92,7 +92,7 @@ pattern hasCommonSubclass(a:EClassifier, b:EClassifier) =
  * It works on two variables that hasn't got any common subtype.
  * @param The always true compare.
  */
-pattern tautologycCompare(constraint:CompareConstraint) =
+@QueryExplorer(display = true) pattern tautologycCompare(constraint:CompareConstraint) =
 {
 	find simmetricCompare(_,_,variable,valueFrom,constraint,CompareFeature::inequality);
 	find supportedValueReference(variable);
@@ -118,26 +118,26 @@ pattern tautologycCompare(constraint:CompareConstraint) =
  * @param valref The equivalent value.
  * @param the inferred type constraint.
  */
-pattern ClassConstrainFromValueReference(pat:Pattern, body:PatternBody, valref:ValueReference, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainFromValueReference(pat:Pattern, body:PatternBody, valref:ValueReference, class:EClassifier) =
 {
 	IntValue(valref);
-	check(class.name=="EInt");
+	check((class as org.eclipse.emf.ecore.EClassifier).classifierID == org::eclipse::emf::ecore::EcorePackage::EINT);
 } or
 {
 	StringValue(valref);
-	check(class.name=="EString");
+	check((class as org.eclipse.emf.ecore.EClassifier).classifierID == org::eclipse::emf::ecore::EcorePackage::ESTRING);
 } or
 {
 	BoolValue(valref);
-	check(class.name=="EBoolean");
+	check((class as org.eclipse.emf.ecore.EClassifier).classifierID == org::eclipse::emf::ecore::EcorePackage::EBOOLEAN);
 } or
 {
 	DoubleValue(valref);
-	check(class.name=="EDouble");
+	check((class as org.eclipse.emf.ecore.EClassifier).classifierID == org::eclipse::emf::ecore::EcorePackage::EDOUBLE);
 } or
 {
 	AggregatedValue(valref);
-	check(class.name="EInt");
+	check((class as org.eclipse.emf.ecore.EClassifier).classifierID == org::eclipse::emf::ecore::EcorePackage::EINT);
 } or
 {
 	VariableValue.value.variable(valref, variable);
@@ -148,7 +148,7 @@ pattern ClassConstrainFromValueReference(pat:Pattern, body:PatternBody, valref:V
  * The 'pat' pattern has a PatternBody 'body' that contains a 
  * equivalency checking relation with the variable 'var' that ensures that it have to be 'class' type.
  */
-pattern ClassConstrainFromCompare(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainFromCompare(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	find simmetricCompare(pat,body,variableValue,valueFrom,_,CompareFeature::equality);
 	VariableValue.value.variable(variableValue,variable);

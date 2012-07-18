@@ -12,7 +12,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable A variable that supposed to be a parameter. (The constraint will come from the caller.)
  * @param class An incompatible type.
  */
-@Off pattern incompatibleTypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern incompatibleTypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
 {
 	find typeOfVariableInBody(pat, _, variable, classfrombody);
 	neg find supertype(classfrombody,class);
@@ -25,7 +25,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable A variable that supposed to be a parameter. (The constraint will come from the caller.)
  * @param class An incompatible type.
  */
-@Off pattern compatibleTypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern compatibleTypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
 {
 	Pattern.parameters(pat,variable);
 	neg find incompatibleTypeOfParameterOfPattern(pat,variable,class);
@@ -37,7 +37,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable A variable that supposed to be a parameter. (The constraint will come from the caller.)
  * @param class The pattern search a more specific pattern than this.
  */
-@Off pattern haveMoreSpecificType(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern haveMoreSpecificType(pat:Pattern, variable:Variable, class:EClassifier) =
 {
 	find compatibleTypeOfParameterOfPattern(pat, variable, class);
 	find compatibleTypeOfParameterOfPattern(pat, variable, otherClass);
@@ -50,7 +50,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable A variable that supposed to be a parameter.
  * @param class The type of the parameter.
  */
-pattern TypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = true) pattern TypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
 {
 	find compatibleTypeOfParameterOfPattern(pat, variable, class);
 	neg find haveMoreSpecificType(pat, variable, class);
@@ -63,7 +63,7 @@ pattern TypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifi
  * @param Pat A pattern.
  * @param variable A parameter.
  */
-pattern haveSatisfiableBodyOfPatternParameter(pat:Pattern, variable:Variable) =
+@QueryExplorer(display = false) pattern haveSatisfiableBodyOfPatternParameter(pat:Pattern, variable:Variable) =
  {
  	Pattern.bodies(pat,body);
  	neg find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
@@ -75,16 +75,20 @@ pattern haveSatisfiableBodyOfPatternParameter(pat:Pattern, variable:Variable) =
  * @param Pat A pattern.
  * @param variable A parameter.
  */
-pattern UnsatisfiableTypeOfPatternParameter(pat:Pattern, variable:Variable) =
+@QueryExplorer(display = true) pattern UnsatisfiableTypeOfPatternParameter(pat:Pattern, variable:Variable) =
 {
 	neg find haveSatisfiableBodyOfPatternParameter(pat,variable);
 }
 
-
 /**
- * 
+ * There isn't any type that defines the values of the variable.
  */
-pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
+@QueryExplorer(display = true) pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
+{
+	Pattern.parameters(pat,variable);
+	Pattern.bodies(pat,body);
+	find tooGeneralTypeOfVariableInBody(pat,body,variable);
+} or
 {
 	Pattern.parameters(pat,variable);
 	Pattern.bodies(pat,body);
@@ -95,14 +99,14 @@ pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
 ///                    Pattern checking                          ///
 ////////////////////////////////////////////////////////////////////
 
-//@Off
+//@QueryExplorer(display = false)
 //pattern subpattern(pat:Pattern, subpat:Pattern) =
 //{
 //	Pattern.bodies.constraints(pat,constraint);
 //	PatternCompositionConstraint.call.patternRef(constraint,subpat);
 //}
 //
-//@Off
+//@QueryExplorer(display = false)
 //pattern badPattern(pat:Pattern, variable:Variable) =
 //{
 //	find UnsatisfiableTypeconstrainInPattern(pat,variable);

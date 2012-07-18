@@ -11,7 +11,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The variable in the parameterlist.
  * @param class The type of the parameter.
  */
-@Off pattern ClassConstrainInParameters(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainInParameters(pat:Pattern, variable:Variable, class:EClassifier) =
 {
 	Pattern.parameters(pat,variable);
 	Variable.type(variable,type);
@@ -27,13 +27,13 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The constraint references this variable.
  * @param class The type of the variable.
  */
-@Off pattern ClassConstrainInDirectBodyByEntities(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainInDirectBodyByEntities(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body,constraint);
 	
-	//EClassifierConstraint.var(constraint,variableReference);
-	check((constraint as org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint).getVar() == variableReference);
+	EClassifierConstraint.^var(constraint,variableReference);
+	//check((constraint as org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint).getVar() == variableReference);
 	VariableReference.variable(variableReference,variable);
 	
 	EClassifierConstraint.type(constraint,type);
@@ -46,7 +46,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The referenced variable.
  * @param class The type of the variable.
  */
-@Off pattern getHeadOfPathConstrain(constraint:PathExpressionConstraint, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern getHeadOfPathConstrain(constraint:PathExpressionConstraint, variable:Variable, class:EClassifier) =
 {
 	PathExpressionConstraint.head(constraint,head);
 	PathExpressionHead.type(head,type);
@@ -59,7 +59,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param a An element.
  * @param b The next element.
  */
-@Off
+@QueryExplorer(display = false)
 pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElement) =
 {
 	PathExpressionElement.tail(a,b);
@@ -71,7 +71,7 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable The referenced variable.
  * @param class The type of the variable.
  */
-@Off pattern getTailOfPathConstrain(constraint:PathExpressionConstraint, varible:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern getTailOfPathConstrain(constraint:PathExpressionConstraint, varible:Variable, class:EClassifier) =
 {
 	PathExpressionConstraint.head(constraint, head);
 	
@@ -93,7 +93,7 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable The constraint references this variable.
  * @param class The type of the variable.
  */
-@Off pattern ClassConstrainsInDirectBodyByRelations(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainsInDirectBodyByRelations(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body,constraint);
@@ -117,7 +117,7 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable A variable in the body.
  * @param variableAs The variable in the body binded to this parameter of the subpattern.
  */
-@Off pattern subpatternWithVariable(pat:Pattern, body:PatternBody, subpat:Pattern, variable:Variable, variableAs:Variable) =
+@QueryExplorer(display = false) pattern subpatternWithVariable(pat:Pattern, body:PatternBody, subpat:Pattern, variable:Variable, variableAs:Variable) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body, constrain);
@@ -144,7 +144,7 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable A variable used in the pattern.
  * @param class Some constraints ensures that the variable must be this type.
  */
-@Off pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = true) pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	Pattern.bodies(pat,body);
 	find ClassConstrainInParameters(pat,variable,class);

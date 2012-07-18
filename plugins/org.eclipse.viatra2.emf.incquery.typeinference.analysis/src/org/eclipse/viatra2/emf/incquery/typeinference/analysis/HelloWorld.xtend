@@ -32,12 +32,13 @@ class HelloWorld {
 	
 	@Test
 	def firstTest() {
-		//val teiq = typeEIQ
-		//val matcher = teiq.initializeMatcherFromModel(patternModelInput,"org.eclipse.viatra2.emf.incquery.typeinference.nextTailOfPathExpression")
-		//System::out.println(matcher.countMatches)
+		/*val teiq = typeEIQ
+		System::out.println("*")
+		val matcher = teiq.initializeMatcherFromModel(patternModelInput,"org.eclipse.viatra2.emf.incquery.typeinference.nextTailOfPathExpression")
+		System::out.println(matcher.countMatches)*/
 		
 		val patternInput = patternModelInput
 		val t = new TypeAnalysis(patternInput);
-		System::out.println("New TypeAnalysis object on the pattern model: " + patternInput.toString)
+		System::out.println("New TypeAnalysis object on the pattern model: " + t)
 	}
 }

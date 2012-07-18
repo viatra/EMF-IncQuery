@@ -10,7 +10,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param body A body of the pattern.
  * @param variable The referred variable.
  */
-@Off pattern variableOfPattern(pat:Pattern, body:PatternBody, variable:Variable) =
+@QueryExplorer(display = false) pattern variableOfPattern(pat:Pattern, body:PatternBody, variable:Variable) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.variables(body,variable);
@@ -29,7 +29,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The referred variable.
  * @param class An incompatible type.
  */
-@Off pattern incompatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern incompatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	find ClassConstrainInPatternBody(pat,body,variable,classconstrain);
 	neg find supertype(class,classconstrain);
@@ -43,7 +43,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The referred variable.
  * @param class A compatible type.
  */
-@Off pattern compatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern compatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	find variableOfPattern(pat,body,variable);
 	neg find incompatibleTypeOfVariableInBody(pat,body,variable,class);
@@ -56,7 +56,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param body A body of the pattern.
  * @param variable The referred variable.
  */
-pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable) =
+@QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable) =
 {
 	find variableOfPattern(pat,body,variable);
 	neg find compatibleTypeOfVariableInBody(pat,body,variable,_);
@@ -65,7 +65,7 @@ pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, v
 /**
  * Test for enumerating the constrains of an unsatisfiable constrain.
  */
-@Off pattern UnsatisfiableTypeConstrainInPatternBodyBecauseThoseConstrainsSays(pat:Pattern, body:PatternBody, variable:Variable/*, constrainInPattern: Pattern*/, constrainSayClass:EClassifier) =
+@QueryExplorer(display = false) pattern UnsatisfiableTypeConstrainInPatternBodyBecauseThoseConstrainsSays(pat:Pattern, body:PatternBody, variable:Variable/*, constrainInPattern: Pattern*/, constrainSayClass:EClassifier) =
 {
 	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
 	find ClassConstrainInPatternBody(pat,body,variable,constrainSayClass);
@@ -80,7 +80,7 @@ pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, v
  * @param variable The referred variable.
  * @param class A less general type we search for.
  */
-@Off pattern haveMoreGenericType(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern haveMoreGenericType(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	find compatibleTypeOfVariableInBody(pat, body, variable, class);
 	find compatibleTypeOfVariableInBody(pat, body, variable, moreGenericClass);
@@ -97,7 +97,7 @@ pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, v
  * @param variable The referred variable.
  * @param class The most generic type that satisfies every constraints.
  */
-pattern typeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = true) pattern typeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	find variableOfPattern(pat,body,variable);
 	find compatibleTypeOfVariableInBody(pat,body, variable, class);
@@ -114,7 +114,7 @@ pattern typeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, c
  * @param body A body of the pattern.
  * @param variable The referred variable.
  */
-pattern tooGeneralTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable) =
+@QueryExplorer(display = true) pattern tooGeneralTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable) =
 {
 	neg find ClassConstrainInPatternBody(pat,body,variable,_);
 }
