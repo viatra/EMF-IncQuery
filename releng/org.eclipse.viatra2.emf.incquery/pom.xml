@@ -111,6 +111,7 @@
 				<version>${jacoco.version}</version>
 				<configuration>
 					<destFile>${project.basedir}/../../target/jacoco.exec</destFile>
+					
 				</configuration>
 				<executions>
 					<execution>
@@ -126,7 +127,7 @@
 						</goals>
 						<configuration>
 							<dataFile>${project.basedir}/../../target/jacoco.exec</dataFile>
-							<outputDirectory>${project.basedir}/../../target/jacoco</outputDirectory>
+							<outputDirectory>${project.basedir}/../../target/jacoco/${project.artifactId}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
