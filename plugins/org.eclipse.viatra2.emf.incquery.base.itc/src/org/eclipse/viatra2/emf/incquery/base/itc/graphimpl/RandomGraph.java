@@ -30,7 +30,6 @@ public class RandomGraph extends Graph<Integer> {
 	
 	public void buildGraph() {
 		numbers = new ArrayList<Integer>();
-		int eInserted = 0;
 		
 		for (int i = 0;i< nodeCount;i++) {
 			numbers.add(i);
@@ -44,13 +43,10 @@ public class RandomGraph extends Graph<Integer> {
 			
 			for (int j=0;j<K;j++) {
 				this.insertEdge(i, numbers.get(j));
-				eInserted++;
 			}
 			
 			numbers.add(i);
 		}
-		
-		//System.out.println("Edges inserted: "+eInserted);
 	}
 
 	@Override

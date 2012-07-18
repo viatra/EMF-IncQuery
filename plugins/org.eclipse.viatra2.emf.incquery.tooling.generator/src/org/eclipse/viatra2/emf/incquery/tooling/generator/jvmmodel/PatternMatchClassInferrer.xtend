@@ -172,8 +172,7 @@ class PatternMatchClassInferrer {
 					append('''
 				StringBuilder result = new StringBuilder();
 				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");\n"»
-					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
-				«ENDFOR»
+					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)«ENDFOR»
 				return result.toString();
 			''')])
 		]
@@ -204,7 +203,8 @@ class PatternMatchClassInferrer {
 				if (!«pattern.matchClassName».class.equals(obj.getClass()))
 					return ''')
 				referClass(pattern, typeof(Arrays))
-				append('''.deepEquals(toArray(), otherSig.toArray());
+				append('''
+				.deepEquals(toArray(), otherSig.toArray());
 				«IF !pattern.parameters.isEmpty»
 				«pattern.matchClassName» other = («pattern.matchClassName») obj;
 				«FOR variable : pattern.parameters» 
@@ -212,18 +212,25 @@ class PatternMatchClassInferrer {
 				else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
 				«ENDFOR»
 				«ENDIF»
-				return true;
-		''')])
+				return true;''')])
 		]
 		matchClass.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.setBody([append('''
+			it.setBody([
+				append('''
 				try {
 					return «pattern.matcherClassName».factory().getPattern();
-				} catch (IncQueryException ex) {
-					// This cannot happen, as the match object can only be instantiated if the matcher factory exists
-					ex.printStackTrace();
-					throw new IllegalStateException (ex);
+				} catch (''') 
+				referClass(pattern, typeof (IncQueryException)) 
+				append(" ")
+				append(''' 
+				ex) {
+				 	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+				 	ex.printStackTrace();
+				 	throw new ''')
+				referClass(pattern, typeof (IllegalStateException))
+				append('''
+					(ex);
 				}
 			''')])
 		]

@@ -21,7 +21,7 @@ import java.util.Set;
  *	dE means dE
  *	original edges means E
  * 
- * @author Szabó Tamás
+ * @author Tamas Szabo
  *
  * @param <V>
  */

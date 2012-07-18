@@ -15,6 +15,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.kingopt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -385,15 +386,15 @@ public class TcRelation<V> {
 	@Override
 	public String toString() {
 	
-		String s = "TcRelation = ";
+		StringBuilder sb = new StringBuilder("TcRelation = ");
 
 		for (V source : this.tuplesForward.keySet()) {
 			for (V target : this.tuplesForward.get(source).keySet()) {
-				s += "{(" + source + "," + target + "),"
-						+ this.tuplesForward.get(source).get(target).toString() + "} ";
+				sb.append("{(" + source + "," + target + "),"
+						+ this.tuplesForward.get(source).get(target).toString() + "} ");
 			}
 		}
-		return s;
+		return sb.toString();
 	}
 	
 	public HashMap<V, HashSet<V>> getStarredAtLevel(int levelNumber) {
@@ -402,7 +403,7 @@ public class TcRelation<V> {
 	
 	public Set<V> getTupleStarts() {
 		Set<V> t = tuplesForward.keySet();
-		return (t == null) ? new HashSet<V>() : new HashSet<V>(t);
+		return new HashSet<V>(t);
 	}
 	
 	public Set<V> getTupleStarts(V target) {
@@ -439,6 +440,21 @@ public class TcRelation<V> {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		
+		for (Entry<V, HashMap<V, CountList>> entry : this.tuplesForward.entrySet()) {
+			hash += 31 * hash + entry.hashCode();
+		}
+		
+		for (Entry<V, HashMap<V, CountList>> entry : this.tuplesBackward.entrySet()) {
+			hash += 31 * hash + entry.hashCode();
+		}
+		
+		return hash;
 	}
 
 	public boolean containsTuple(V source, V target) {

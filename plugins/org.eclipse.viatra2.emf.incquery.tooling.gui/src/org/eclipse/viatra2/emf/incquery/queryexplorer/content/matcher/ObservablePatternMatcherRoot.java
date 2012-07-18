@@ -110,29 +110,40 @@ public class ObservablePatternMatcherRoot {
 	public Notifier getNotifier() {
 		return this.key.getNotifier();
 	}
+		
+	public void registerPattern(Pattern... patterns) {
+//		boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.WILDCARD_MODE);
+//		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
+//		engine.setWildcardMode(wildcardMode);
+//		
+//		if (!wildcardMode) {
+//			IPatternGroup group = GenericPatternGroup.of(patterns);
+//			group.prepare(engine);
+//		}
+		
+		for (Pattern pattern : patterns) {
+			IncQueryMatcher<? extends IPatternMatch> matcher = null;
+			boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
+			String message = null;
+			try {
+				if (isGenerated) {
+					matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
+				}
+				else {
+					matcher = new GenericPatternMatcher(pattern, getNotifier());
+				}
+			}
+			catch (IncQueryException e) {
+				logger.log(new Status(IStatus.ERROR,
+						IncQueryGUIPlugin.PLUGIN_ID,
+						"Cannot initialize pattern matcher for pattern "
+								+ pattern.getName(), e));
+				matcher = null;
+				message = e.getShortMessage();
+			}
 	
-	public void registerPattern(Pattern pattern) {
-		IncQueryMatcher<? extends IPatternMatch> matcher = null;
-		boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
-		String message = null;
-		try {
-			if (isGenerated) {
-				matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
-			}
-			else {
-				matcher = new GenericPatternMatcher(pattern, key.getNotifier());
-			}
+			addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated, message);
 		}
-		catch (IncQueryException e) {
-			logger.log(new Status(IStatus.ERROR,
-					IncQueryGUIPlugin.PLUGIN_ID,
-					"Cannot initialize pattern matcher for pattern "
-							+ pattern.getName(), e));
-			matcher = null;
-			message = e.getShortMessage();
-		}
-
-		addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated, message);
 	}
 	
 	public void unregisterPattern(Pattern pattern) {
