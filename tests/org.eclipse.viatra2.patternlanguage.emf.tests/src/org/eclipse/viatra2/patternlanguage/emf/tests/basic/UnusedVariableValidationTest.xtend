@@ -1,19 +1,18 @@
 package org.eclipse.viatra2.patternlanguage.emf.tests.basic
 
+import com.google.inject.Inject
+import com.google.inject.Injector
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider
 import org.eclipse.viatra2.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
-import org.junit.runner.RunWith
 import org.junit.Before
 import org.junit.Test
-import com.google.inject.Inject
-import com.google.inject.Injector
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
-import org.junit.Ignore
+import org.junit.runner.RunWith
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
