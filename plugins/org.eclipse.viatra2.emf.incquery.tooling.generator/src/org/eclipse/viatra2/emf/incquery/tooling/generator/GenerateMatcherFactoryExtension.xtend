@@ -35,7 +35,7 @@ class GenerateMatcherFactoryExtension {
 				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
 				val el = associations.getJvmElements(pattern).
 				  findFirst[it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.matcherFactoryClassName)] as JvmIdentifiableElement
-				exGen.contribAttribute(it, "factory", el.qualifiedName)
+				exGen.contribAttribute(it, "factoryProvider", el.qualifiedName)
 			]
 		]
 		)

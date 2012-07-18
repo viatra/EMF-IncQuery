@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -75,7 +76,7 @@ class PatternMatchClassInferrer {
    	def inferMatchClassConstructors(JvmDeclaredType matchClass, Pattern pattern) {
    		matchClass.members += pattern.toConstructor() [
    			it.simpleName = pattern.matchClassName
-   			it.visibility = JvmVisibility::PUBLIC
+   			it.visibility = JvmVisibility::DEFAULT
    			for (Variable variable : pattern.parameters) {
    				val javaType = variable.calculateType
    				it.parameters += variable.toParameter(variable.parameterName, javaType)
@@ -216,7 +217,15 @@ class PatternMatchClassInferrer {
 		]
 		matchClass.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.setBody([append('''return «pattern.matcherClassName».FACTORY.getPattern();''')])
+			it.setBody([append('''
+				try {
+					return «pattern.matcherClassName».factory().getPattern();
+				} catch (IncQueryException ex) {
+					// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+					ex.printStackTrace();
+					throw new IllegalStateException (ex);
+				}
+			''')])
 		]
   	}
    	
