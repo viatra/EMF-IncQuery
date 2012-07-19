@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,14 +96,10 @@ public class DatabindingAdapterUtil {
 	public static List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
 		List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
 		if (object != null && object instanceof EObject) {
-			Class<?> clazz = object.getClass();
-			for (Field field : clazz.getDeclaredFields()) {
-				if (field.isAccessible()) {
-					EStructuralFeature feature = getFeature(object, field.getName());
-					IObservableValue val = EMFProperties.value(feature).observe(object);
-					affectedValues.add(val);
-					val.addValueChangeListener(changeListener);
-				}
+			for (EStructuralFeature feature : ((EObject) object).eClass().getEAllStructuralFeatures()) {
+				IObservableValue val = EMFProperties.value(feature).observe(object);
+				affectedValues.add(val);
+				val.addValueChangeListener(changeListener);
 			}
 		}
 		return affectedValues;

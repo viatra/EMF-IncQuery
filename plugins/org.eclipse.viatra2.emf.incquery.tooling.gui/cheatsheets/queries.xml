@@ -14,7 +14,7 @@
       	You need to specify the EMF domain (Ecore) models that contain the types that your queries will use. These Ecore models will be referenced by your EMF-IncQuery project. EMF-IncQuery can make use of EPackages that have been registered in the global Ecore registry (either by code or by plugin.xml), or you can also directly reference Ecore domains by using <b>generator.eiqgen</b> files. It is highly recommended that the EMF model code is generated prior to defining model queries with EMF-IncQuery and that you check the generated plugin.xml for correctness.<br/><br/>
       	Query definition patterns can have <b>header parameters</b> that specify the input/output variables of a query. Each header parameter should have a type assigned, and it can serves both as input and output depending on the <b>parameter binding</b>. Parameter bindings may be later provided using the Details/Filters panel (right side) in the Query Explorer, or using the Java API. A binding may specify that a header parameter should correspond to a pre-determined value, e.g. a model object or a scalar value.<br/>
       </description>
-      <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Query Definition">
+      <subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Query Definition">
          <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqfile)"/>
       </subitem>
       <subitem skip="true" label="On the second wizard page, give your pattern a unique name."></subitem>
@@ -26,7 +26,7 @@
    		<description>
    			In order to specify query definition patterns for domains defined in a workspace project, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. These files contain references to <b>.genmodel</b> files that are located in an EMF project in your workspace. 
    		</description>
-   		<subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Generator Model">
+   		<subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Generator Model">
          <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
       	</subitem>
       	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added."></subitem>
@@ -58,7 +58,7 @@ This pattern includes a simple <b>edge type constraint</b> of type School.teache
 
    	</description>
    	<subitem skip="true" label="Open the Query Explorer view, if not already open.">
-   		<command required="true" serialization="org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer"></command>
+   		<command required="true" serialization="org.eclipse.ui.views.showView(org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer)"></command>
    	</subitem>
    	<subitem skip="false" label="Import your query definition patterns by putting the Query Definition Editor in focus, and then pushing the green button in the top right corner of the Query Explorer."></subitem>
    	<subitem skip="false" label="Apply the query patterns on an instance model, by opening an instance model in the School Editor, and then pushing the green button again."></subitem>
