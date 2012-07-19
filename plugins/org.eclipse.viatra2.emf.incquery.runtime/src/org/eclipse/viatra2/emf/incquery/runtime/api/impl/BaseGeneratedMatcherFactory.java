@@ -120,6 +120,17 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
 		return bundleNameToPatternModelMap.get(bundleName);
 	}
 	
+	protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
+		Throwable cause1 = err.getCause();
+		if (cause1 != null && cause1 instanceof RuntimeException) {
+			Throwable cause2 = ((RuntimeException)cause1).getCause();
+			if (cause2 != null && cause2 instanceof IncQueryException) {
+				throw (IncQueryException)cause2;
+			}
+		}
+	}
+
+	
 //	private PatternModel parseRoot(InputStream inputStream) {
 //		final Injector injector = IncQueryRuntimePlugin.getDefault().getInjector();
 //		final ResourceSet resourceSet = injector.getProvider(XtextResourceSet.class).get();

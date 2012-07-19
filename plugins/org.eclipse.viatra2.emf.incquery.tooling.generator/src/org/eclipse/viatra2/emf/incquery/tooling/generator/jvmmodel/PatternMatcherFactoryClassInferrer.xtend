@@ -50,7 +50,7 @@ class PatternMatcherFactoryClassInferrer {
   		matcherFactoryClass.inferMatcherFactoryMethods(pattern, matcherClassRef)
   		matcherFactoryClass.inferMatcherFactoryConstructor(pattern)
   		matcherFactoryClass.inferMatcherFactoryField(pattern)
-  		matcherFactoryClass.inferMatcherFactoryInnerClass(pattern)
+  		matcherFactoryClass.inferMatcherFactoryInnerClasses(pattern)
   		return matcherFactoryClass
   	}
   	
@@ -64,16 +64,13 @@ class PatternMatcherFactoryClassInferrer {
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.documentation = pattern.javadocFactoryInstanceMethod.toString
 			it.setBody([append('''
-				«matcherFactoryClass.simpleName» result = INSTANCE;
-				if (result == null) {
-					synchronized («matcherFactoryClass.simpleName».class) {
-						result = INSTANCE;
-						if (result == null) {
-							result = INSTANCE = new «matcherFactoryClass.simpleName»();
-						}
-					}
+				try {
+					return «pattern.matcherFactoryHolderClassName».INSTANCE;
+				} catch (''') referClass(pattern, typeof(ExceptionInInitializerError)) append(" ") append(''' 
+				err) {
+					processInitializerError(err);
+					throw err;
 				}
-				return result;
 			''')])
 		]
 
@@ -129,17 +126,17 @@ class PatternMatcherFactoryClassInferrer {
    	 */
   	def inferMatcherFactoryField(JvmDeclaredType matcherFactoryClass, Pattern pattern) {
   		// TODO volatile?
-  		matcherFactoryClass.members += pattern.toField("INSTANCE", types.createTypeRef(matcherFactoryClass)/*pattern.newTypeRef("volatile " + matcherFactoryClass.simpleName)*/) [
-			it.visibility = JvmVisibility::PRIVATE
-			it.setStatic(true)
-			it.setInitializer([append('''null''')]);
-		]
+  		//matcherFactoryClass.members += pattern.toField("INSTANCE", types.createTypeRef(matcherFactoryClass)/*pattern.newTypeRef("volatile " + matcherFactoryClass.simpleName)*/) [
+		//	it.visibility = JvmVisibility::PRIVATE
+		//	it.setStatic(true)
+		//	it.setInitializer([append('''null''')]);
+		//]
   	}
   	
  	/**
    	 * Infers inner class for MatcherFactory class based on the input 'pattern'.
    	 */
-  	def inferMatcherFactoryInnerClass(JvmDeclaredType matcherFactoryClass, Pattern pattern) {
+  	def inferMatcherFactoryInnerClasses(JvmDeclaredType matcherFactoryClass, Pattern pattern) {
   		matcherFactoryClass.members += pattern.toClass(pattern.matcherFactoryProviderClassName) [
 			it.visibility = JvmVisibility::PUBLIC
 			it.setStatic(true)
@@ -150,8 +147,30 @@ class PatternMatcherFactoryClassInferrer {
 				it.annotations += pattern.toAnnotation(typeof (Override))
 				it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 				it.setBody([append('''return instance();''')])			
-			]
+			]		
 		]
-  	}
+   		matcherFactoryClass.members += pattern.toClass(pattern.matcherFactoryHolderClassName) [
+			it.visibility = JvmVisibility::PRIVATE
+			it.setStatic(true)
+			it.members += pattern.toField("INSTANCE", types.createTypeRef(matcherFactoryClass)/*pattern.newTypeRef("volatile " + matcherFactoryClass.simpleName)*/) [
+				it.setFinal(true)
+				it.setStatic(true)
+				it.setInitializer([append('''make()''')]);
+			]
+			it.members += pattern.toMethod("make", types.createTypeRef(matcherFactoryClass)) [
+				it.visibility = JvmVisibility::PUBLIC
+				it.setStatic(true)
+				it.setBody([append('''
+					try {
+						return new «pattern.matcherFactoryClassName»();
+					} catch (''') referClass(pattern, typeof(IncQueryException)) append(" ") append(''' 
+					ex) {
+						throw new ''') referClass(pattern, typeof(RuntimeException)) append('''
+						(ex);
+					}
+				''')])			
+			]		
+		]
+ 	}
 	
 }

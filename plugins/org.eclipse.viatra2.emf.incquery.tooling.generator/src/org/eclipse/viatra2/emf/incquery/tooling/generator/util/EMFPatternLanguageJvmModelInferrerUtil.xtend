@@ -78,6 +78,13 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		"Provider"
 	}	
 	/**
+	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 */
+	def matcherFactoryHolderClassName(Pattern pattern) {
+		"LazyHolder"
+	}	
+
+	/**
 	 * Returns the MatcherClass name based on the Pattern's name
 	 */
    	def matcherClassName(Pattern pattern) {
