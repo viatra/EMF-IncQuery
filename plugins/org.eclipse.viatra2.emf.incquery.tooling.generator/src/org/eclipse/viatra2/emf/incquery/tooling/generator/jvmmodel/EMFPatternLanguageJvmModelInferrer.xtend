@@ -21,6 +21,8 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.xtext.common.types.JvmDeclaredType
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -44,6 +46,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 	@Inject extension PatternMatcherClassInferrer
 	@Inject extension PatternMatcherFactoryClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
+	@Inject extension JavadocInferrer	
 	@Inject extension TypeReferences types
 	@Inject extension IJvmModelAssociator associator
 	
@@ -72,21 +75,28 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 		   	val matcherClassRef = types.createTypeRef(matcherClass)
 		   	// infer MatcherFactory class
 		   	val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
+		   	val matcherFactoryClassRef = types.createTypeRef(matcherFactoryClass)
+		   	/*val matcherFactoryProviderClass = matcherFactoryClass.members.findFirst([it instanceof JvmDeclaredType]) as JvmDeclaredType*/
 		   	// infer Processor class
 		   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
 		   	// add Factory field to Matcher class
-		   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matcherClassRef))) [
+		   	matcherClass.members += pattern.toMethod("factory", pattern.newTypeRef(typeof(IMatcherFactory), cloneWithProxies(matcherClassRef))) [
 		   		it.visibility = JvmVisibility::PUBLIC
 		   		it.setStatic(true)
-				it.setFinal(true)
-				it.setInitializer([append(''' new «matcherFactoryClass.simpleName»()''')])
-		   	]
+				it.documentation = pattern.javadocFactoryMethod.toString
+				it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+				it.setBody([append('''
+					return ''') serialize(matcherFactoryClassRef, pattern) append('''.instance();''')
+				])
+			]
+		   	
 		   	associator.associatePrimary(pattern, matcherClass)
 		   	// accept new classes
 		   	acceptor.accept(matchClass)
 		   	acceptor.accept(matcherClass)
 		   	acceptor.accept(matcherFactoryClass)
 		   	acceptor.accept(processorClass)
+		   	/*acceptor.accept(matcherFactoryProviderClass)*/
 	   	} catch(Exception e) {
 	   		logger.error("Exception during Jvm Model Infer for: " + pattern, e)
 	   	}

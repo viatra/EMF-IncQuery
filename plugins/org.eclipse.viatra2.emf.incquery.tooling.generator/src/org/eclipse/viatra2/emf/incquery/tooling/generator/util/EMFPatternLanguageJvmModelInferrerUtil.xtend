@@ -72,6 +72,12 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	}
 	
 	/**
+	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 */
+	def matcherFactoryProviderClassName(Pattern pattern) {
+		"Provider"
+	}	
+	/**
 	 * Returns the MatcherClass name based on the Pattern's name
 	 */
    	def matcherClassName(Pattern pattern) {
@@ -108,18 +114,18 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	 * Returns field name for Variable
    	 */
    	def fieldName(Variable variable) {
-   		"f"+variable.name.toFirstUpper
+   		"f"+variable?.name.toFirstUpper
    	}
    	
    	/**
    	 * Returns parameter name for Variable
    	 */
    	def parameterName(Variable variable) {
-   		"p"+variable.name.toFirstUpper
+   		"p"+variable?.name?.toFirstUpper
    	}
    	
    	def positionConstant(Variable variable) {
-   		"POSITION_"+variable.name.toUpperCase;
+   		"POSITION_"+variable?.name?.toUpperCase;
    	}
    	
    	/**
@@ -130,7 +136,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		if (variable.name == "class") {
    			return "getValueOfClass"
    		} else {
-   			return "get" + variable.name.toFirstUpper
+   			return "get" + variable?.name?.toFirstUpper
    		}
    	}
    	
@@ -139,7 +145,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	 * Currently returns <code>set#variable.name.toFirstUpper#</code>.
    	 */
    	def setterMethodName(Variable variable) {
-   		"set" + variable.name.toFirstUpper
+   		"set" + variable?.name?.toFirstUpper
    	}
    	
 	/**

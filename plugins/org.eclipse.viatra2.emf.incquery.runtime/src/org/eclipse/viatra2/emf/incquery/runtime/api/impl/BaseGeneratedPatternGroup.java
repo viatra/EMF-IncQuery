@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
@@ -26,13 +27,12 @@ public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
 	 */
 	@Override
 	public Set<Pattern> getPatterns() {
-		return patterns(getMatcherFactories());
+		return patterns(matcherFactories);
 	}
 
 	/**
-	 * Returns {@link IMatcherFactory} objects for handling them as a group.
-	 * 
-	 * @return
+	 * Returns {@link IMatcherFactory} objects for handling them as a group. 
+	 * To be filled by constructors of subclasses.
 	 */
-	protected abstract Set<IMatcherFactory<?>> getMatcherFactories();
+	protected Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
 }
