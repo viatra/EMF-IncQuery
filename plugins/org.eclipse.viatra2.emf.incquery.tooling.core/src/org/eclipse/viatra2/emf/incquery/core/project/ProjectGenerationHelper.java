@@ -726,8 +726,13 @@ public abstract class ProjectGenerationHelper {
 	 * @return
 	 */
 	private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath, final IBundleProjectService service) {
-		ArrayList<IBundleClasspathEntry> classPathList = Lists.newArrayList(oldClasspath);
-		final List<String> existingSourceEntries = Lists.transform(classPathList, new Function<IBundleClasspathEntry, String>() {
+		Collection<IBundleClasspathEntry> classPathList = Collections2.filter(Lists.newArrayList(oldClasspath), new Predicate<IBundleClasspathEntry>() {
+			@Override
+			public boolean apply(IBundleClasspathEntry entry) {
+				return entry.getSourcePath() != null && !entry.getSourcePath().isEmpty();
+			}
+		});
+		final Collection<String> existingSourceEntries = Collections2.transform(classPathList, new Function<IBundleClasspathEntry, String>() {
 			@Override
 			public String apply(IBundleClasspathEntry entry) {
 				return entry.getSourcePath().toString();
