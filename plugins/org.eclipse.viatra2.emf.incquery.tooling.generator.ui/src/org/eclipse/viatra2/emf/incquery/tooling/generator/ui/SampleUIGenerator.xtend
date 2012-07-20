@@ -190,6 +190,7 @@ class SampleUIGenerator implements IGenerationFragment {
 		import org.eclipse.swt.widgets.Display;
 		import org.eclipse.ui.handlers.HandlerUtil;
 		import org.eclipse.viatra2.emf.incquery.gui.dialog.SampleUIDialogCreator;
+		import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 		import «pattern.packageName + "." + pattern.matchClassName»;
@@ -210,7 +211,12 @@ class SampleUIGenerator implements IGenerationFragment {
 						.toString(), false);
 				Resource resource = resourceSet.getResource(fileURI, true);
 
-				«pattern.matcherClassName» matcher = «pattern.matcherClassName».FACTORY.getMatcher(resource);
+				«pattern.matcherClassName» matcher;
+				try{
+					matcher = «pattern.matcherClassName».factory().getMatcher(resource);
+				} catch (IncQueryException ex) {
+					throw new ExecutionException("Error creating pattern matcher", ex);
+				}
 				SampleUIDialogCreator.createDialog(matcher).open();
 «««				String matches = getMatches(resource);
 «««				//prints the match set to a dialog window 
