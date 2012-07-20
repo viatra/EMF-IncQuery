@@ -14,4 +14,5 @@ Require-Bundle: org.eclipse.viatra2.emf.incquery.typeinference;bundle-version="0
  org.junit4;bundle-version="4.8.1",
  org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0",
  org.eclipse.viatra2.emf.incquery.testing.core;bundle-version="0.6.0",
- org.eclipse.viatra2.emf.incquery.snapshot;bundle-version="0.6.0"
+ org.eclipse.viatra2.emf.incquery.snapshot;bundle-version="0.6.0",
+ org.eclipse.emf.transaction;bundle-version="1.4.0"

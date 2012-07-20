@@ -7,7 +7,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  *  @param type The lesser type.
  *  @param supertype The greater type.
  */
-@QueryExplorer(display = true) pattern directSupertype(type:EClass, supertype) =
+@QueryExplorer(display = false) pattern directSupertype(type:EClass, supertype) =
 {
 	EClass.eAllSuperTypes(type,supertype);
 }
