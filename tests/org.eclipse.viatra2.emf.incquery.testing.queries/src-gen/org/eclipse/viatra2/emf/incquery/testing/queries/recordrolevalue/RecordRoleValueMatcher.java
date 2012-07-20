@@ -10,9 +10,10 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
+import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
@@ -53,10 +54,10 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
    * The match set will be incrementally refreshed upon updates from this scope.
    * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-   * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+   * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public RecordRoleValueMatcher(final Notifier emfRoot) throws IncQueryRuntimeException {
+  public RecordRoleValueMatcher(final Notifier emfRoot) throws IncQueryException {
     this(EngineManager.getInstance().getIncQueryEngine(emfRoot));
   }
   
@@ -65,11 +66,11 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+   * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public RecordRoleValueMatcher(final IncQueryEngine engine) throws IncQueryRuntimeException {
-    super(engine, FACTORY);
+  public RecordRoleValueMatcher(final IncQueryEngine engine) throws IncQueryException {
+    super(engine, factory());
   }
   
   /**
@@ -156,6 +157,19 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    */
   public DeltaMonitor<RecordRoleValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchRecord pRecord, final Object pRole) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pRecord, pRole});
+  }
+  
+  /**
+   * Returns a new (partial) Match object for the matcher. 
+   * This can be used e.g. to call the matcher with a partial match. 
+   * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
+   * @param pRole the fixed value of pattern parameter Role, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public RecordRoleValueMatch newMatch(final MatchRecord pRecord, final Object pRole) {
+    return new RecordRoleValueMatch(pRecord, pRole);
+    
   }
   
   /**
@@ -256,10 +270,12 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
     
   }
   
-  @Override
-  public RecordRoleValueMatch newEmptyMatch() {
-    return arrayToMatch(new Object[getParameterNames().length]);
+  /**
+   * @return the singleton instance of the factory of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IMatcherFactory<RecordRoleValueMatcher> factory() throws IncQueryException {
+    return RecordRoleValueMatcherFactory.instance();
   }
-  
-  public final static IMatcherFactory<RecordRoleValueMatcher> FACTORY =  new RecordRoleValueMatcherFactory();
 }

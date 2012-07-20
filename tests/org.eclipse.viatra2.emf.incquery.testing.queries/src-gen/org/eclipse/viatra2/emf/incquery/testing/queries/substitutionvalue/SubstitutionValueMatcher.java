@@ -10,9 +10,10 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
+import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
@@ -65,10 +66,10 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
    * The match set will be incrementally refreshed upon updates from this scope.
    * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-   * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+   * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public SubstitutionValueMatcher(final Notifier emfRoot) throws IncQueryRuntimeException {
+  public SubstitutionValueMatcher(final Notifier emfRoot) throws IncQueryException {
     this(EngineManager.getInstance().getIncQueryEngine(emfRoot));
   }
   
@@ -77,11 +78,11 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+   * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public SubstitutionValueMatcher(final IncQueryEngine engine) throws IncQueryRuntimeException {
-    super(engine, FACTORY);
+  public SubstitutionValueMatcher(final IncQueryEngine engine) throws IncQueryException {
+    super(engine, factory());
   }
   
   /**
@@ -168,6 +169,19 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    */
   public DeltaMonitor<SubstitutionValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pSubstitution, pValue});
+  }
+  
+  /**
+   * Returns a new (partial) Match object for the matcher. 
+   * This can be used e.g. to call the matcher with a partial match. 
+   * @param pSubstitution the fixed value of pattern parameter Substitution, or null if not bound.
+   * @param pValue the fixed value of pattern parameter Value, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public SubstitutionValueMatch newMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+    return new SubstitutionValueMatch(pSubstitution, pValue);
+    
   }
   
   /**
@@ -268,10 +282,12 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
     
   }
   
-  @Override
-  public SubstitutionValueMatch newEmptyMatch() {
-    return arrayToMatch(new Object[getParameterNames().length]);
+  /**
+   * @return the singleton instance of the factory of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IMatcherFactory<SubstitutionValueMatcher> factory() throws IncQueryException {
+    return SubstitutionValueMatcherFactory.instance();
   }
-  
-  public final static IMatcherFactory<SubstitutionValueMatcher> FACTORY =  new SubstitutionValueMatcherFactory();
 }
