@@ -11,10 +11,12 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -27,9 +29,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PreferenceConst
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternGroup;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -116,7 +116,7 @@ public class ObservablePatternMatcherRoot {
 		return this.key.getNotifier();
 	}
 		
-	public void registerPattern(Pattern... patterns) {
+	public void registerPattern(final Pattern... patterns) {
 		boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.WILDCARD_MODE);
 		IncQueryEngine engine;
 		try {
@@ -124,42 +124,55 @@ public class ObservablePatternMatcherRoot {
 			try {
 				engine.setWildcardMode(wildcardMode);
 			} catch (IllegalStateException ex) {
-				// can not set wildcard mode
+				// could not set wildcard mode
 			}
 			
-			if (!engine.getBaseIndex().isInWildcardMode()) {
-				IPatternGroup group = GenericPatternGroup.of(patterns);
-				group.prepare(engine);
-			}
-			
-			for (Pattern pattern : patterns) {
-				IncQueryMatcher<? extends IPatternMatch> matcher = null;
-				boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
-				String message = null;
-				try {
-					if (isGenerated) {
-						matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
+			if (engine.getBaseIndex().isInWildcardMode()) {
+				addMatchersForPatterns(patterns);
+			} else {
+				engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+					@Override
+					public Void call() throws Exception {
+						addMatchersForPatterns(patterns);
+						return null;
 					}
-					else {
-						matcher = new GenericPatternMatcher(pattern, getNotifier());
-					}
-				}
-				catch (IncQueryException e) {
-					logger.log(new Status(IStatus.ERROR,
-							IncQueryGUIPlugin.PLUGIN_ID,
-							"Cannot initialize pattern matcher for pattern "
-									+ pattern.getName(), e));
-					matcher = null;
-					message = e.getShortMessage();
-				}
-		
-				addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated, message);
-			}
+				});
+			}	
 			
 		} catch (IncQueryException ex) {
 			logger.log(new Status(IStatus.ERROR,
 					IncQueryGUIPlugin.PLUGIN_ID,
 					"Cannot initialize pattern matcher engine.", ex));
+		} catch (InvocationTargetException e) {
+			logger.log(new Status(IStatus.ERROR,
+					IncQueryGUIPlugin.PLUGIN_ID,
+					"Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause()));
+		}
+	}
+
+	private void addMatchersForPatterns(Pattern... patterns) {
+		for (Pattern pattern : patterns) {
+			IncQueryMatcher<? extends IPatternMatch> matcher = null;
+			boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
+			String message = null;
+			try {
+				if (isGenerated) {
+					matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
+				}
+				else {
+					matcher = new GenericPatternMatcher(pattern, getNotifier());
+				}
+			} catch (Exception e) {
+				logger.log(new Status(IStatus.ERROR,
+						IncQueryGUIPlugin.PLUGIN_ID,
+						"Cannot initialize pattern matcher for pattern "
+								+ pattern.getName(), e));
+				matcher = null;
+				message = (e instanceof IncQueryException) ? 
+					((IncQueryException)e).getShortMessage() : e.getMessage();
+			} 
+
+			addMatcher(matcher, CorePatternLanguageHelper.getFullyQualifiedName(pattern), isGenerated, message);
 		}
 	}
 	
