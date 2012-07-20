@@ -12,7 +12,11 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -79,6 +83,12 @@ public class IncQueryEngine {
 	 * A sanitizer to catch faulty patterns.
 	 */	
 	private PatternSanitizer sanitizer = null;
+	
+	/**
+	 * Indicates whether the engine is in a tainted, inconsistent state.
+	 */
+	private boolean tainted = false;
+	
 	/**
 	 * EXPERIMENTAL
 	 */
@@ -251,6 +261,20 @@ public class IncQueryEngine {
 			logger = Logger.getLogger(getDefaultLogger().getName() + "." + hash);
 			if (logger == null)
 				throw new AssertionError("Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
+			
+			// if an error is logged, the engine becomes tainted
+			logger.addAppender(new AppenderSkeleton() {			
+				@Override
+				public boolean requiresLayout() {return false;}		
+				@Override
+				public void close() {}			
+				@Override
+				protected void append(LoggingEvent event) {
+					if (event.getLevel().isGreaterOrEqual(Level.FATAL)) {
+						tainted = true;
+					}					
+				}
+			});
 		}
 		return logger;
 	}
@@ -316,6 +340,22 @@ public class IncQueryEngine {
 		if (wildcardMode != WILDCARD_MODE_DEFAULT) 
 			getBaseIndexInternal(wildcardMode);		
 	}
+
+	/**
+	 * Indicates whether the engine is in a tainted, inconsistent state due to some internal errors. 
+	 * If true, results are no longer reliable; engine should be disposed.
+	 * 
+	 * <p>The engine is defined to be in a tainted state if any of its internal processes has logged a <strong>fatal</strong> error to the engine's logger. 
+	 * The cause of the error can therefore be determined by checking the contents of the log.
+	 * This is possible e.g. through a custom {@link Appender} that was attached to the engine's logger.  
+	 * 
+	 * @return the tainted state
+	 */
+	public boolean isTainted() {
+		return tainted;
+	}
+	
+	
 	
 //	/**
 //	 * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.

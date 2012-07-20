@@ -450,7 +450,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				}
 			}
 		} catch (Exception ex) {
-			logger.error(
+			logger.fatal(
 					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}

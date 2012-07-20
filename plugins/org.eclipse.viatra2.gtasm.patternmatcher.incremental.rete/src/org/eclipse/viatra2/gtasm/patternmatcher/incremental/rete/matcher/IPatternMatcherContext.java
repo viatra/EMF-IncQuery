@@ -79,6 +79,8 @@ public interface IPatternMatcherContext<PatternDescription> {
 	void reportPatternDependency(PatternDescription pattern);
 	
 	//Logger getLogger();
+	void logFatal(String message);
+	void logFatal(String message, Throwable cause);
 	void logError(String message);
 	void logError(String message, Throwable cause);
 	void logWarning(String message);

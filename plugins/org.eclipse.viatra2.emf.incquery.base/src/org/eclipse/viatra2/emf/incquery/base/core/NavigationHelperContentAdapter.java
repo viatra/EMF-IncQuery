@@ -119,7 +119,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		} catch (Exception ex) {
 			navigationHelper
 					.getLogger()
-					.error("EMF-IncQuery encountered an error in processing the EMF model. "
+					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
 							+ "This happened while handling the following update notification: "
 							+ notification, ex);
 			// throw new
@@ -149,7 +149,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 			super.addAdapter(notifier);
 		} catch (Exception ex) {
-			navigationHelper.getLogger().error(
+			navigationHelper.getLogger().fatal(
 					"EMF-IncQuery encountered an error in processing the EMF model. "
 							+ "This happened while trying to add the object: "
 							+ notifier, ex);
@@ -170,7 +170,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		} catch (Exception ex) {
 			navigationHelper
 					.getLogger()
-					.error("EMF-IncQuery encountered an error in processing the EMF model. "
+					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
 							+ "This happened while trying to remove the object: "
 							+ notifier, ex);
 			// throw new

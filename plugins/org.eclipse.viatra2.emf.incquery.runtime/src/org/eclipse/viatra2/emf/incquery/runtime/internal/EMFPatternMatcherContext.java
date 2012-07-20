@@ -186,6 +186,22 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 		if (getLogger()!=null) getLogger().error(message, cause);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logFatal(java.lang.String)
+	 */
+	@Override
+	public void logFatal(String message) {
+		if (getLogger()!=null) getLogger().fatal(message);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logFatal(java.lang.String, java.lang.Throwable)
+	 */
+	@Override
+	public void logFatal(String message, Throwable cause) {
+		if (getLogger()!=null) getLogger().fatal(message, cause);
+	}
+	
 	 /* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logWarning(java.lang.String)
 	 */
