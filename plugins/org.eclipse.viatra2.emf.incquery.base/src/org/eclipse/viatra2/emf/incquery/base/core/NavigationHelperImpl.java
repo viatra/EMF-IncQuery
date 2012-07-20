@@ -674,6 +674,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				}
 			}
 		} catch (Exception e) {
+			getLogger().fatal("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. " , e);
 			throw new InvocationTargetException(e);
 		}
 		return result;
