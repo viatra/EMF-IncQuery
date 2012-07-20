@@ -38,6 +38,8 @@ import com.google.inject.name.Names;
  * Use this class to register components to be used within the IDE.
  */
 public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlanguage.ui.AbstractEMFPatternLanguageUiModule {
+	private static final String loggerRoot = "org.eclipse.viatra2.emf.incquery";
+
 	public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
@@ -45,7 +47,7 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	@Provides
 	@Singleton
 	Logger provideLoggerImplementation() {
-		Logger logger = Logger.getLogger(EMFPatternLanguageUiModule.class);
+		Logger logger = Logger.getLogger(loggerRoot);
 		logger.setAdditivity(false);
 		logger.addAppender(new ConsoleAppender());
 		logger.addAppender(new EclipseLogAppender());

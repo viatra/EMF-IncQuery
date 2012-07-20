@@ -247,7 +247,10 @@ public class IncQueryEngine {
 	 */
 	public Logger getLogger() {
 		if (logger == null) {
-			logger = getDefaultLogger();
+			final int hash = System.identityHashCode(this);
+			logger = Logger.getLogger(getDefaultLogger().getName() + "." + hash);
+			if (logger == null)
+				throw new AssertionError("Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
 		}
 		return logger;
 	}
@@ -283,15 +286,22 @@ public class IncQueryEngine {
 	 * Provides a static default logger.
 	 */
 	public static Logger getDefaultLogger() {
-		final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-		if (injector==null) 
-			throw new AssertionError("Configuration error: EMF-IncQuery injector not initialized.");
-		Logger logger = injector.getInstance(Logger.class);
-		if (logger == null) 
-			throw new AssertionError("Configuration error: EMF-IncQuery logger not found.");
+		if (defaultRuntimeLogger == null) {
+			final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+			if (injector==null) 
+				throw new AssertionError("Configuration error: EMF-IncQuery injector not initialized.");
+			Logger parentLogger = injector.getInstance(Logger.class);
+			if (parentLogger == null) 
+				throw new AssertionError("Configuration error: EMF-IncQuery logger not found.");
+			
+			defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
+			if (defaultRuntimeLogger == null) 
+				throw new AssertionError("Configuration error: unable to create default EMF-IncQuery runtime logger.");
+		}
 		
-		return logger;
+		return defaultRuntimeLogger;
 	}
+	private static Logger defaultRuntimeLogger;
 
 	/**
 	 * Specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for the explanation of wildcard mode.
