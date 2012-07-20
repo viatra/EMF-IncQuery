@@ -284,9 +284,11 @@ public class IncQueryEngine {
 	 */
 	public static Logger getDefaultLogger() {
 		final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-		assert(injector!=null);
+		if (injector==null) 
+			throw new AssertionError("Configuration error: EMF-IncQuery injector not initialized.");
 		Logger logger = injector.getInstance(Logger.class);
-		assert(logger != null);
+		if (logger == null) 
+			throw new AssertionError("Configuration error: EMF-IncQuery logger not found.");
 		
 		return logger;
 	}
