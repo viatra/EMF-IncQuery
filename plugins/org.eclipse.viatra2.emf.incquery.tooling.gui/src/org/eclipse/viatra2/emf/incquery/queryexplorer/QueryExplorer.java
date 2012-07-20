@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreePath;
@@ -41,6 +42,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail.TableViewerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutPreferences;
@@ -56,6 +58,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
@@ -175,6 +178,11 @@ public class QueryExplorer extends ViewPart {
 		}
 		detailsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, detailsState, 300);
 		patternsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, patternsState, 100);
+		
+		IPreferenceStore preferenceStore = IncQueryGUIPlugin.getDefault().getPreferenceStore();
+		if (preferenceStore.contains(PreferenceConstants.WILDCARD_MODE)) {
+			preferenceStore.setValue(PreferenceConstants.WILDCARD_MODE, true);
+		}
 	}
 	
 	public void clearTableViewer() {
