@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="ASCII"?>
+<eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage">
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.IncorrectSubstitution" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <modifiers private="true"/>
+    <parameters name="Record">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <parameters name="CorrespondingRecord">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord/substitutions"/>
+            </type>
+          </tail>
+          <src var="Record"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Substitution"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord/parameterName"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Name"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord/substitutions"/>
+            </type>
+          </tail>
+          <src var="CorrespondingRecord"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="CorrespondingSubstitution"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord/parameterName"/>
+            </type>
+          </tail>
+          <src var="CorrespondingSubstitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Name"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord/derivedValue"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value1"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord/derivedValue"/>
+            </type>
+          </tail>
+          <src var="CorrespondingSubstitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value2"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Value1"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Value2"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecords" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <modifiers private="true"/>
+    <parameters name="Record">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <parameters name="CorrespondingRecord">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Record"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="CorrespondingRecord"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.0">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="CorrespondingRecord"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.CorrespondingRecordInMatchSetRecord" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <modifiers private="true"/>
+    <parameters name="Record">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <parameters name="CorrespodingRecord">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <parameters name="ExpectedSet">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Record"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="CorrespodingRecord"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/matches"/>
+            </type>
+          </tail>
+          <src var="ExpectedSet"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="CorrespodingRecord"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="CorrespodingRecord"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <annotations name="Off"/>
+    <parameters name="ActualSet">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+      </type>
+    </parameters>
+    <parameters name="ExpectedSet">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+      </type>
+    </parameters>
+    <parameters name="Record">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/matches"/>
+            </type>
+          </tail>
+          <src var="ActualSet"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/patternQualifiedName"/>
+            </type>
+          </tail>
+          <src var="ActualSet"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="PatternName"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/patternQualifiedName"/>
+            </type>
+          </tail>
+          <src var="ExpectedSet"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="PatternName"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="ActualSet"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="ExpectedSet"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.2">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_CorrespodingRecord"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="ExpectedSet"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <annotations name="Off"/>
+    <annotations name="DerivedFeature">
+      <parameters name="feature">
+        <value xsi:type="patternLanguage:StringValue" value="role"/>
+      </parameters>
+    </annotations>
+    <parameters name="Record">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchRecord"/>
+      </type>
+    </parameters>
+    <parameters name="Role"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/filter"/>
+            </type>
+          </tail>
+          <src var="_MS"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="eMFPatternLanguage:EnumValue">
+          <enumeration href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole"/>
+          <literal href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole/Filter"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Role"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord/matches"/>
+            </type>
+          </tail>
+          <src var="_MS"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Record"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="eMFPatternLanguage:EnumValue">
+          <enumeration href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole"/>
+          <literal href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//RecordRole/Match"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Role"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
+    <annotations name="Off"/>
+    <annotations name="DerivedFeature">
+      <parameters name="feature">
+        <value xsi:type="patternLanguage:StringValue" value="derivedValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="Substitution">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSubstitutionRecord"/>
+      </type>
+    </parameters>
+    <parameters name="Value"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MiscellaneousSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MiscellaneousSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//EMFSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//EMFSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//IntSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//IntSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//LongSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//LongSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//DoubleSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//DoubleSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//FloatSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//FloatSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//BooleanSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//BooleanSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//StringSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//StringSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//DateSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//DateSubstitution/value"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//EnumSubstitution"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//EnumSubstitution/valueLiteral"/>
+            </type>
+          </tail>
+          <src var="Substitution"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Value"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <importPackages>
+    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
+  </importPackages>
+  <importPackages>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+  </importPackages>
+</eMFPatternLanguage:PatternModel>
