@@ -178,7 +178,4 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 	public Integer[] insertRandomEdge() {
 		return null;
 	}
-
-
-
 }

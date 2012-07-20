@@ -25,8 +25,8 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.xtext.common.types.JvmConstructor
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -46,7 +46,7 @@ class PatternGroupClassInferrer {
 			it.final = true
 			it.superTypes += model.newTypeRef(typeof (BaseGeneratedPatternGroup))
 		]
-		groupClass.members += model.inferGetMatcherFactoriesMethod
+		groupClass.members += model.inferConstructor
 		groupClass
 	}
 	
@@ -55,26 +55,27 @@ class PatternGroupClassInferrer {
 		return "GroupOfFile" + fileName.toFirstUpper
 	}
 	
-	def JvmOperation inferGetMatcherFactoriesMethod(PatternModel model) {
-		val matcherFactoryInterfaceReference = model.newRawTypeRef(typeof (IMatcherFactory)) 
-		val returnTypeReference = model.newTypeRef(typeof (Set), matcherFactoryInterfaceReference)
+	def JvmConstructor inferConstructor(PatternModel model) {
+		/*val matcherFactoryInterfaceReference = model.newTypeRef(typeof (IMatcherFactory))*/ 
+		val incQueryException = model.newTypeRef(typeof (IncQueryException)) 
 		val matcherReferences = gatherMatchers(model)
-		model.toMethod("getMatcherFactories", returnTypeReference) [
-			it.visibility = JvmVisibility::PROTECTED
-			it.annotations += model.toAnnotation(typeof (Override))
+		model.toConstructor [
+			it.visibility = JvmVisibility::PUBLIC
+			it.simpleName = groupClassName(model)
+			it.exceptions += incQueryException
 			it.setBody([
-				serialize(returnTypeReference, model)
+				/*serialize(returnTypeReference, model)
 				append(''' result = new ''')
 				serialize(model.newTypeRef(typeof(HashSet), matcherFactoryInterfaceReference), model)
-				append('''();''')
+				append('''();''')*/
 				for (matcherRef : matcherReferences) {
-					newLine
-					append('''result.add(''')
+					append('''matcherFactories.add(''')
 					serialize(matcherRef, model)
-					append('''.FACTORY);''')
+					append('''.factory());''')
+					newLine
 				}
-				newLine
-				append('''return result;''')
+				/*newLine
+				append('''return result;''')*/
 			])
 		]
 	}

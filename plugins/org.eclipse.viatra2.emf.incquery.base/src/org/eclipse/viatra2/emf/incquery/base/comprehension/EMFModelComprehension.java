@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 /**
  * @author Bergmann Gábor
  * 
- * Does not directly visit derived (volatile) links, unless marked as a WellBehavingFeature.
+ * Does not directly visit derived links, unless marked as a WellBehavingFeature.
  * Derived edges are automatically interpreted correctly in these cases:
  *  - EFeatureMaps
  *  - eOpposites of containments

@@ -68,7 +68,7 @@ class JavadocInferrer {
 		The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
 		The match set will be incrementally refreshed upon updates from this scope.
 		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+		@throws IncQueryException if an error occurs during pattern matcher creation
 	'''
 	
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
@@ -76,7 +76,7 @@ class JavadocInferrer {
 		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
-		@throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+		@throws IncQueryException if an error occurs during pattern matcher creation
 	'''
 	
 	def javadocGetAllMatchesMethod(Pattern pattern) '''
@@ -156,8 +156,27 @@ class JavadocInferrer {
 		@return the delta monitor.
 	'''
 	
+	def javadocNewMatchMethod(Pattern pattern) '''
+		Returns a new (partial) Match object for the matcher. 
+		This can be used e.g. to call the matcher with a partial match. 
+		«FOR p : pattern.parameters»
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return the (partial) match object.
+	'''
+	
 	def javadocGetAllValuesOfMethod(Variable parameter) '''
 		Retrieve the set of values that occur in matches for «parameter.name».
 		@return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
+	'''
+	
+	def javadocFactoryMethod(Pattern pattern) '''
+		@return the singleton instance of the factory of this pattern
+		@throws IncQueryException if the pattern definition could not be loaded
+	'''
+	
+	def javadocFactoryInstanceMethod(Pattern pattern) '''
+		@return the singleton instance of the matcher factory
+		@throws IncQueryException if the pattern definition could not be loaded
 	'''
 }

@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -70,7 +70,7 @@ public class XBaseEvaluator extends AbstractEvaluator {
 			context.newValue(varPosition.getKey(), tuple.get(varPosition.getValue()));
 		}
 		IEvaluationResult result = interpreter.evaluate(xExpression, context, CancelIndicator.NullImpl);
-		if (result==null) throw new IncQueryRuntimeException(
+		if (result==null) throw new IncQueryException(
 				String.format("XBase expression interpreter returned no result while evaluating expression %s in pattern %s.", xExpression, pattern),
 				"XBase expression interpreter returned no result."
 				);

@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.ValidationInitUtil;
 
 public class InitValidatorsForEditorHandler extends InitValidatorsForSelectionHandler {
 
@@ -28,7 +30,13 @@ public class InitValidatorsForEditorHandler extends InitValidatorsForSelectionHa
 			IEditingDomainProvider provider = (IEditingDomainProvider) activeEditor;
 			ResourceSet resourceSet = provider.getEditingDomain().getResourceSet();
 			if (resourceSet != null) {
-				initializeAdapters(activeEditor, resourceSet);
+				try {
+					ValidationInitUtil.initializeAdapters(activeEditor, resourceSet);
+				} catch (IncQueryException ex) {
+					throw new ExecutionException(
+							"Could not validate constraints due to a pattern matcher error", 
+							ex);
+				}
 			}
 		}
 		

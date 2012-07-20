@@ -27,14 +27,16 @@ public final class ProjectLocator {
   
   public static IJavaProject locateProject(String path) {
     IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
-    ArrayList<String> dependencies = new ArrayList<String>();
-    dependencies.add("org.eclipse.viatra2.emf.incquery.runtime");
-    try {
-      ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-    return JavaCore.create(project);
+    if(project.exists()) {
+      ArrayList<String> dependencies = new ArrayList<String>();
+      dependencies.add("org.eclipse.viatra2.emf.incquery.runtime");
+      try {
+        ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
+      } catch (CoreException e) {
+        e.printStackTrace();
+      }
+      return JavaCore.create(project);
+    } else return null;
   }
   
   private ProjectLocator() {

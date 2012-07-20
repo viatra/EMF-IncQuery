@@ -21,6 +21,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import org.eclipse.xtext.common.types.JvmDeclaredType
 
 class GenerateMatcherFactoryExtension {
 	
@@ -33,9 +34,12 @@ class GenerateMatcherFactoryExtension {
 		exGen.contribExtension(pattern.getFullyQualifiedName, IExtensions::MATCHERFACTORY_EXTENSION_POINT_ID) [
 			exGen.contribElement(it, "matcher") [
 				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
-				val el = associations.getJvmElements(pattern).
-				  findFirst[it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.matcherFactoryClassName)] as JvmIdentifiableElement
-				exGen.contribAttribute(it, "factory", el.qualifiedName)
+				
+				val matcherFactoryClass = associations.getJvmElements(pattern).
+				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.matcherFactoryClassName)] as JvmDeclaredType 
+				val providerClass = matcherFactoryClass.members.
+				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.matcherFactoryProviderClassName)]) as JvmIdentifiableElement
+				exGen.contribAttribute(it, "factoryProvider", providerClass.qualifiedName)
 			]
 		]
 		)

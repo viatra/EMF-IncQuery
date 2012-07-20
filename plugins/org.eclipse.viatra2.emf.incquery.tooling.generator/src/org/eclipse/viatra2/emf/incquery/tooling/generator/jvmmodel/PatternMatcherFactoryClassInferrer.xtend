@@ -14,7 +14,6 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
@@ -22,6 +21,10 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IMatcherFactoryProvider
 
 /**
  * {@link IMatcherFactory} implementation inferrer.
@@ -33,6 +36,7 @@ class PatternMatcherFactoryClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
+	@Inject extension TypeReferences types
 
 	/**
 	 * Infers the {@link IMatcherFactory} implementation class from {@link Pattern}.
@@ -44,6 +48,9 @@ class PatternMatcherFactoryClassInferrer {
   			it.superTypes += pattern.newTypeRef(typeof (BaseGeneratedMatcherFactory), cloneWithProxies(matcherClassRef))
   		]
   		matcherFactoryClass.inferMatcherFactoryMethods(pattern, matcherClassRef)
+  		matcherFactoryClass.inferMatcherFactoryConstructor(pattern)
+  		matcherFactoryClass.inferMatcherFactoryField(pattern)
+  		matcherFactoryClass.inferMatcherFactoryInnerClasses(pattern)
   		return matcherFactoryClass
   	}
   	
@@ -51,11 +58,27 @@ class PatternMatcherFactoryClassInferrer {
    	 * Infers methods for MatcherFactory class based on the input 'pattern'.
    	 */
   	def inferMatcherFactoryMethods(JvmDeclaredType matcherFactoryClass, Pattern pattern, JvmTypeReference matcherClassRef) {
+   		matcherFactoryClass.members += pattern.toMethod("instance", types.createTypeRef(matcherFactoryClass)) [
+			it.visibility = JvmVisibility::PUBLIC
+			it.setStatic(true)
+			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+			it.documentation = pattern.javadocFactoryInstanceMethod.toString
+			it.setBody([append('''
+				try {
+					return «pattern.matcherFactoryHolderClassName».INSTANCE;
+				} catch (''') referClass(pattern, typeof(ExceptionInInitializerError)) append(" ") append(''' 
+				err) {
+					processInitializerError(err);
+					throw err;
+				}
+			''')])
+		]
+
   		matcherFactoryClass.members += pattern.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
 			it.visibility = JvmVisibility::PROTECTED
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
-			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
+			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.setBody([append('''
 				return new «pattern.matcherClassName»(engine);
 			''')])
@@ -85,5 +108,69 @@ class PatternMatcherFactoryClassInferrer {
 			''')])
 		]
   	}
+  	
+ 	/**
+   	 * Infers constructor for MatcherFactory class based on the input 'pattern'.
+   	 */
+  	def inferMatcherFactoryConstructor(JvmDeclaredType matcherFactoryClass, Pattern pattern) {
+  		matcherFactoryClass.members += pattern.toConstructor [
+  			it.simpleName = matcherFactoryClass.simpleName
+			it.visibility = JvmVisibility::PRIVATE
+			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+			it.setBody([append('''super();''')])
+		]
+  	}
+  	
+ 	/**
+   	 * Infers field for MatcherFactory class based on the input 'pattern'.
+   	 */
+  	def inferMatcherFactoryField(JvmDeclaredType matcherFactoryClass, Pattern pattern) {
+  		// TODO volatile?
+  		//matcherFactoryClass.members += pattern.toField("INSTANCE", types.createTypeRef(matcherFactoryClass)/*pattern.newTypeRef("volatile " + matcherFactoryClass.simpleName)*/) [
+		//	it.visibility = JvmVisibility::PRIVATE
+		//	it.setStatic(true)
+		//	it.setInitializer([append('''null''')]);
+		//]
+  	}
+  	
+ 	/**
+   	 * Infers inner class for MatcherFactory class based on the input 'pattern'.
+   	 */
+  	def inferMatcherFactoryInnerClasses(JvmDeclaredType matcherFactoryClass, Pattern pattern) {
+  		matcherFactoryClass.members += pattern.toClass(pattern.matcherFactoryProviderClassName) [
+			it.visibility = JvmVisibility::PUBLIC
+			it.setStatic(true)
+			it.superTypes += pattern.newTypeRef(typeof(IMatcherFactoryProvider), types.createTypeRef(matcherFactoryClass))
+			
+			it.members += pattern.toMethod("get", types.createTypeRef(matcherFactoryClass)) [
+				it.visibility = JvmVisibility::PUBLIC
+				it.annotations += pattern.toAnnotation(typeof (Override))
+				it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+				it.setBody([append('''return instance();''')])			
+			]		
+		]
+   		matcherFactoryClass.members += pattern.toClass(pattern.matcherFactoryHolderClassName) [
+			it.visibility = JvmVisibility::PRIVATE
+			it.setStatic(true)
+			it.members += pattern.toField("INSTANCE", types.createTypeRef(matcherFactoryClass)/*pattern.newTypeRef("volatile " + matcherFactoryClass.simpleName)*/) [
+				it.setFinal(true)
+				it.setStatic(true)
+				it.setInitializer([append('''make()''')]);
+			]
+			it.members += pattern.toMethod("make", types.createTypeRef(matcherFactoryClass)) [
+				it.visibility = JvmVisibility::PUBLIC
+				it.setStatic(true)
+				it.setBody([append('''
+					try {
+						return new «pattern.matcherFactoryClassName»();
+					} catch (''') referClass(pattern, typeof(IncQueryException)) append(" ") append(''' 
+					ex) {
+						throw new ''') referClass(pattern, typeof(RuntimeException)) append('''
+						(ex);
+					}
+				''')])			
+			]		
+		]
+ 	}
 	
 }

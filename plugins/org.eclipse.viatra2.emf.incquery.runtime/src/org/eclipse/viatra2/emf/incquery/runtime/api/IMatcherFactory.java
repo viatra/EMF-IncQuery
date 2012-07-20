@@ -12,7 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -26,6 +26,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public interface IMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> {
 	
 	/** 
+	 * @throws IncQueryException if there was an error loading the pattern definition
 	 * @returns the pattern for which matchers can be instantiated. 
 	 */
 	public Pattern getPattern();
@@ -38,22 +39,22 @@ public interface IMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatt
 	 * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
 	 * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
 	 * 
-	 * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
-	 * The match set will be incrementally refreshed upon updates from this scope.
+	 * <p>The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
+	 * <p>The match set will be incrementally refreshed upon updates from this scope.
 	 * 
 	 * @param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	 * @throws IncQueryException if an error occurs during pattern matcher creation
 	 */
-	public Matcher getMatcher(Notifier emfRoot) throws IncQueryRuntimeException;
+	public Matcher getMatcher(Notifier emfRoot) throws IncQueryException;
 	
 	/**
-	 * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+	 * Initializes the pattern matcher within an existing {@link IncQueryEngine}. 
 	 * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon updates.
+	 * <p>The match set will be incrementally refreshed upon updates.
 	 * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-	 * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+	 * @throws IncQueryException if an error occurs during pattern matcher creation
 	 */
-	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryRuntimeException;
+	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException;
 
 // // EXPERIMENTAL	
 // 	

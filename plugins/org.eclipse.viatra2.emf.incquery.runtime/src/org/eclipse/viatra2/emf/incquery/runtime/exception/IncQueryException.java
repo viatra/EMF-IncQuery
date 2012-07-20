@@ -12,7 +12,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.exception;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 
-public class IncQueryRuntimeException extends RuntimeException{
+public class IncQueryException extends Exception {
 	
 	private static final long serialVersionUID = -74252748358355750L;
 	
@@ -29,15 +29,15 @@ public class IncQueryRuntimeException extends RuntimeException{
 	
 	private final String shortMessage;
 	
-	public IncQueryRuntimeException(String s, String shortMessage) {
+	public IncQueryException(String s, String shortMessage) {
 		super(s);
 		this.shortMessage = shortMessage;
 	}
-	public IncQueryRuntimeException(RetePatternBuildException e) {
+	public IncQueryException(RetePatternBuildException e) {
 		super(PATTERN_MATCHER_PROBLEM+": " + e.getMessage(), e);
 		this.shortMessage = e.getShortMessage();
 	}
-	public IncQueryRuntimeException(String s, String shortMessage, Exception e) {
+	public IncQueryException(String s, String shortMessage, Exception e) {
 		super(s+": " + e.getMessage(), e);
 		this.shortMessage = shortMessage;
 	}

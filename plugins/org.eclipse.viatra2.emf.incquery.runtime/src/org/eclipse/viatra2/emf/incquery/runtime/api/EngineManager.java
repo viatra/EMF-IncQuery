@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 
 
 
@@ -47,11 +47,10 @@ public class EngineManager {
 	 * The match set of any patterns will be incrementally refreshed upon updates from this scope.
 	 * 
 	 * @param emfRoot the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or ResourceSet.
-	 * @param reteThreads experimental feature; 0 is recommended
 	 * @return a new or previously existing engine
-	 * @throws IncQueryRuntimeException
+	 * @throws IncQueryException
 	 */
-	public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryRuntimeException {
+	public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
 		IncQueryEngine engine = getEngineInternal(emfRoot);
 		if (engine == null) {	
 			engine = new IncQueryEngine(this, emfRoot);
@@ -60,6 +59,15 @@ public class EngineManager {
 		return engine;
 	}
 
+	/**
+	 * Retrieves an already existing EMF-IncQuery engine. 
+	 * 
+	 * @param emfRoot the root of the EMF containment hierarchy where this engine operates.
+	 * @return a previously existing engine, or null if no engine is active for the given EMF model root
+	 */
+	public IncQueryEngine getIncQueryEngineIfExists(Notifier emfRoot) {
+		return getEngineInternal(emfRoot);
+	}
 
 		
 

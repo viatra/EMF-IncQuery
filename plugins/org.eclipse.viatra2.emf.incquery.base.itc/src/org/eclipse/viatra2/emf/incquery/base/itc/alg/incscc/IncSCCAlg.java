@@ -334,18 +334,16 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					Set<V> targetRoots = (Set<V>) ((reachableTargetsTmp == null) ? Collections.emptySet() : new HashSet<V>(reachableTargetsTmp));
 					targetRoots.add(newTargetRoot);
 					
-					if (sourceRoots != null && targetRoots != null) {
-						for (V sRoot : sourceRoots) {						
-							for (V tRoot : targetRoots) {	
-								if (!sRoot.equals(tRoot) && !countingAlg.isReachable(sRoot, tRoot)) {
-									Set<V> sourcesOfNotification = new HashSet<V>();
-									sourcesOfNotification.addAll(sccs.setMap.get(sRoot));
-									
-									Set<V> targetsOfNotification = new HashSet<V>();
-									targetsOfNotification.addAll(sccs.setMap.get(tRoot));
-									
-									notifyTcObservers(sourcesOfNotification, targetsOfNotification, -1);
-								}
+					for (V sRoot : sourceRoots) {						
+						for (V tRoot : targetRoots) {	
+							if (!sRoot.equals(tRoot) && !countingAlg.isReachable(sRoot, tRoot)) {
+								Set<V> sourcesOfNotification = new HashSet<V>();
+								sourcesOfNotification.addAll(sccs.setMap.get(sRoot));
+
+								Set<V> targetsOfNotification = new HashSet<V>();
+								targetsOfNotification.addAll(sccs.setMap.get(tRoot));
+
+								notifyTcObservers(sourcesOfNotification, targetsOfNotification, -1);
 							}
 						}
 					}

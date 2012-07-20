@@ -27,7 +27,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 
@@ -128,7 +128,7 @@ public class IncqueryFeatureHelper {
 				//featureList.put(feature,handler);
 				
 				if(matcherFactory == null) {
-					throw new IncQueryRuntimeException(
+					throw new IncQueryException(
 							String.format("EMF-IncQuery can not provide the value of derived feature %s as no matcher factory was given.", feature),
 							"No matcher factory for derived feature handler!");
 				}
@@ -146,7 +146,7 @@ public class IncqueryFeatureHelper {
 					matcher.getEngine().getLogger().debug(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
 				}
 				if(matcher == null) {
-					throw new IncQueryRuntimeException(
+					throw new IncQueryException(
 							String.format("Could not create matcher for pattern %d defining feature %s.", matcherFactory.getPattern(), feature),
 							"Derived feature handler could not initiate matcher.");
 				}/* else {
@@ -177,7 +177,7 @@ public class IncqueryFeatureHelper {
 				//return null;
 			}
 			//}
-		} catch (IncQueryRuntimeException e) {
+		} catch (IncQueryException e) {
 			IncQueryEngine.getDefaultLogger().error("Handler initialization failed", e);
 		}
 		return null;

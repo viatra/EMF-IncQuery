@@ -26,7 +26,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -114,7 +114,7 @@ public class PatternMatcherRoot {
 		try {
 			matcher = new GenericPatternMatcher(pattern, key.getNotifier());
 		}
-		catch (IncQueryRuntimeException e) {
+		catch (IncQueryException e) {
 			logger.log(new Status(IStatus.ERROR,
 					IncQueryGUIPlugin.PLUGIN_ID,
 					"Cannot initialize pattern matcher for pattern "

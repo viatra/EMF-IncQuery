@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -32,17 +32,18 @@ public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> exte
 	public BaseGeneratedMatcher(
 			IncQueryEngine engine, 
 			IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory) 
-			throws IncQueryRuntimeException 
+			throws IncQueryException 
 	{
 		super(engine, accessMatcher(engine, factory.getPattern()), factory.getPattern());
 		this.factory = factory;
 	}
 	
-	static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryRuntimeException {
+	static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+		checkPattern(engine, pattern);
 		try {
 			return engine.getReteEngine().accessMatcher(pattern);
 		} catch (RetePatternBuildException e) {
-			throw new IncQueryRuntimeException(e);
+			throw new IncQueryException(e);
 		}
 	}
 	

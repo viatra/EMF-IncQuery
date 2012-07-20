@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.counting;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -161,14 +162,14 @@ public class TcRelation<V> {
 	 */
 	@Override
 	public String toString() {
-		String s = "TcRelation = ";
+		StringBuilder sb = new StringBuilder("TcRelation = ");
 		
 		for (V source : this.tuplesForward.keySet()) {
 			for (V target : this.tuplesForward.get(source).keySet()) {
-				s+="{("+source+","+target+"),"+this.tuplesForward.get(source).get(target)+"} ";
+				sb.append("{("+source+","+target+"),"+this.tuplesForward.get(source).get(target)+"} ");
 			}
 		}
-		return s;
+		return sb.toString();
 	}
 	
 	/**
@@ -234,23 +235,47 @@ public class TcRelation<V> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TcRelation) {
+		if (this == obj) {
+			return true;
+		}
+		else if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		else {
 			TcRelation<V> aTR = (TcRelation<V>) obj;
 			
 			for (V source : aTR.tuplesForward.keySet()) {
 				for (V target : aTR.tuplesForward.get(source).keySet()) {
-					if (!this.containsTuple(source, target)) return false;
+					if (!this.containsTuple(source, target)) {
+						return false;
+					}
 				}
 			}	
 			
 			for (V source : this.tuplesForward.keySet()) {
 				for (V target : this.tuplesForward.get(source).keySet()) {
-					if (!aTR.containsTuple(source, target)) return false;
+					if (!aTR.containsTuple(source, target)) {
+						return false;
+					}
 				}
 			}	
 			
 			return true;
 		}
-		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		
+		for (Entry<V, HashMap<V, Integer>> entry : this.tuplesForward.entrySet()) {
+			hash += 31 * hash + entry.hashCode();
+		}
+		
+		for (Entry<V, HashMap<V, Integer>> entry : this.tuplesBackward.entrySet()) {
+			hash += 31 * hash + entry.hashCode();
+		}
+		
+		return hash;
 	}
 }

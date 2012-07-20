@@ -11,6 +11,7 @@ import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedP
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationValidator;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 
 public class PatternAnnotationProvider {
@@ -21,6 +22,7 @@ public class PatternAnnotationProvider {
 		@Override
 		public ExtensionBasedPatternAnnotationParameter apply(
 				IConfigurationElement input) {
+			Preconditions.checkNotNull(input, "input");
 			final String parameterName = input.getAttribute("name");
 			final boolean mandatory = Boolean.parseBoolean(input
 					.getAttribute("mandatory"));
@@ -41,7 +43,6 @@ public class PatternAnnotationProvider {
 				.getConfigurationElementsFor(EXTENSIONID);
 		for (IConfigurationElement e : config) {
 			final String annotationName = e.getAttribute("name");
-			final String languageName = e.getAttribute("language");
 
 			final IConfigurationElement[] parameters = e
 					.getChildren("annotationparameter");
@@ -49,7 +50,7 @@ public class PatternAnnotationProvider {
 					.transform(
 							Arrays.asList(parameters),
 							new ExtensionConverter());
-			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, languageName, parameterIterable);
+			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, parameterIterable);
 			annotationValidators.put(annotationName, annotationValidator);
 		}
 	}

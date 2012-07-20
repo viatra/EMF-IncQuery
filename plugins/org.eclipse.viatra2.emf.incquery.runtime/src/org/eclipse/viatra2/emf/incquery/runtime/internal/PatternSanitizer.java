@@ -80,11 +80,14 @@ public class PatternSanitizer {
 	public boolean admit(Collection<Pattern> patterns) {		
 		Set<Pattern> newPatterns = getAllReferencedUnvalidatedPatterns(patterns);
 		
-		
 		// TODO validate(toBeValidated) as a group
 		Set<Pattern> inadmissible = new HashSet<Pattern>();
 		Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
 		for (Pattern current : newPatterns) {
+			if (current == null) {
+				inadmissible.add(current);
+				logger.error("Null pattern value");
+			}
 			
 			final String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(current);
 			final boolean duplicate = patternsByName.containsKey(fullyQualifiedName) || newPatternsByName.containsKey(fullyQualifiedName);

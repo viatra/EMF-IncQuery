@@ -23,7 +23,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
@@ -46,25 +46,31 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	protected ReteEngine<Pattern> reteEngine;
 	protected NavigationHelper baseIndex;
 
-	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher, Pattern pattern) throws IncQueryRuntimeException {
+	public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher, Pattern pattern) throws IncQueryException {
 		super();
 		this.engine = engine;
 		this.patternMatcher = patternMatcher;
 		this.reteEngine = engine.getReteEngine();
 		this.baseIndex = engine.getBaseIndex();
-		
-		final boolean admissible = engine.getSanitizer().admit(pattern);
-		if (!admissible) 
-			throw new IncQueryRuntimeException(
-				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
-						CorePatternLanguageHelper.getFullyQualifiedName(pattern)), 
-				"Pattern failed a check");
-
 	}
+
 
 
 	// HELPERS
 	
+	/**
+	 * Call this to sanitize the pattern before usage.
+	 * @throws IncQueryException if the pattern has errors
+	 */
+	protected static void checkPattern(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+		final boolean admissible = engine.getSanitizer().admit(pattern);
+		if (!admissible) 
+			throw new IncQueryException(
+				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
+						CorePatternLanguageHelper.getFullyQualifiedName(pattern)), 
+				"Pattern failed a check");
+	}
+
 	protected abstract Match tupleToMatch(Tuple t);
 
 	private static Object[] fEmptyArray;

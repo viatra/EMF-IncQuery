@@ -52,7 +52,7 @@ public class GenericPatternGroup extends BasePatternGroup {
 	 * @param matcherFactories
 	 * @return
 	 */
-	public static IPatternGroup of(Set<IMatcherFactory> matcherFactories) {
+	public static IPatternGroup of(Set<IMatcherFactory<?>> matcherFactories) {
 		return new GenericPatternGroup(patterns(matcherFactories));
 	}
 
@@ -74,8 +74,8 @@ public class GenericPatternGroup extends BasePatternGroup {
 	 * @param matcherFactories
 	 * @return
 	 */
-	public static IPatternGroup of(IMatcherFactory... matcherFactories) {
-		return of(new HashSet<IMatcherFactory>(Arrays.asList(matcherFactories)));
+	public static IPatternGroup of(IMatcherFactory<?>... matcherFactories) {
+		return of(new HashSet<IMatcherFactory<?>>(Arrays.asList(matcherFactories)));
 	}	
 
 	/**

@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.tooling.generator.util;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmLowerBound;
 import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
@@ -20,7 +21,9 @@ import org.eclipse.xtext.common.types.JvmWildcardTypeReference;
 import org.eclipse.xtext.common.types.TypesFactory;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 /**
@@ -37,6 +40,8 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
 	
 	@Inject 
 	private TypeReferences typeReferences;
+	@Inject
+	private Logger logger;
    	
 	/**
 	 * Creates a {@link JvmWildcardTypeReference} with a {@link JvmLowerBound}
@@ -59,8 +64,8 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
    	 * @return
    	 */
    	public JvmTypeReference newRawTypeRef(EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
-   		if (clazz == null)
-			throw new NullPointerException("clazz");
+   		Preconditions.checkNotNull(clazz, "clazz");
+   		
    		JvmType declaredType = typeReferences.findDeclaredType(clazz, ctx);
    		if (declaredType == null) {
    			return null;   			
@@ -73,10 +78,9 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
    	 * @return
    	 */
    	public JvmTypeReference newRawTypeRef(EObject ctx, String typeName, JvmTypeReference... typeArgs) {
-   		if (typeName == null)
-			throw new NullPointerException("typeName");
-		if (ctx == null)
-			throw new NullPointerException("context");
+   		Preconditions.checkNotNull(typeName, "typeName");
+   		Preconditions.checkNotNull(ctx, "context");
+   		
    		JvmType declaredType = typeReferences.findDeclaredType(typeName, ctx);
    		if (declaredType == null) {
    			return null;   			
@@ -90,4 +94,18 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
 		return reference;
    	}
 	
+	/**
+	 * Overriding parent method to replace logging
+	 * {@inheritDoc}
+	 */
+	protected <T extends EObject> T initializeSafely(T targetElement, Procedure1<? super T> initializer) {
+		if(targetElement != null && initializer != null) {
+			try {
+				initializer.apply(targetElement);
+			} catch (Exception e) {
+				logger.error("Error initializing JvmElement", e);
+			}
+		}
+		return targetElement;
+	}
 }

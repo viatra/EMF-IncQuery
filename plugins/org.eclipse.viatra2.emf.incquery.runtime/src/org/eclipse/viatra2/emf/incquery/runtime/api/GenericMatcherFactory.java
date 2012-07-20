@@ -12,7 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -57,7 +57,7 @@ public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatc
 	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory#instantiate(org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine)
 	 */
 	@Override
-	public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryRuntimeException {
+	public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryException {
 		return new GenericPatternMatcher(pattern, engine);
 	}
 

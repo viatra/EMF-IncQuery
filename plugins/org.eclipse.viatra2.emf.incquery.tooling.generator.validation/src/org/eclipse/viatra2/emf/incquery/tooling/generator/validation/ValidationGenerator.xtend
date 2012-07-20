@@ -103,7 +103,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 				val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
 				
 				if (genPackage != null) {
-					val editorId = genPackage.genModel.editorPluginID;
+					val editorId = genPackage.qualifiedEditorClassName+"ID";
 					//val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
 					if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
 						val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
@@ -112,7 +112,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 								exGen.contribElement(it, "menu") [
 									exGen.contribAttribute(it, "label", "EMF-IncQuery")
 									exGen.contribElement(it, "command") [
-										exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidators")
+										exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor")
 										exGen.contribAttribute(it, "style", "push")
 										exGen.contribAttribute(it, "label", "Initialize EMF-IncQuery Validators")
 										exGen.contribElement(it, "visibleWhen") [
@@ -178,6 +178,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 		import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 		import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
+		import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 		import «pattern.packageName + "." + pattern.matchClassName»;
 		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
@@ -186,8 +187,8 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 
 			private «pattern.matcherFactoryClassName» matcherFactory;
 
-			public «pattern.name.toFirstUpper»Constraint() {
-				matcherFactory = new «pattern.matcherFactoryClassName»();
+			public «pattern.name.toFirstUpper»Constraint() throws IncQueryException {
+				matcherFactory = «pattern.matcherFactoryClassName».instance();
 			}
 
 			@Override
@@ -210,7 +211,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			}
 			
 			@Override
-			public BaseGeneratedMatcherFactory<«pattern.matchClassName», «pattern.matcherClassName»> getMatcherFactory() {
+			public BaseGeneratedMatcherFactory<«pattern.matcherClassName»> getMatcherFactory() {
 				return matcherFactory;
 			}
 		}
