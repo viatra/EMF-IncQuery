@@ -44,4 +44,11 @@ public class PositivePatternCall<PatternDescription, StubHandle>
 		return buildable.patternCallStub(variablesTuple, supplierKey);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
+	 */
+	@Override
+	protected String keyToString() {
+		return pSystem.getContext().printPattern(supplierKey);
+	}
 }

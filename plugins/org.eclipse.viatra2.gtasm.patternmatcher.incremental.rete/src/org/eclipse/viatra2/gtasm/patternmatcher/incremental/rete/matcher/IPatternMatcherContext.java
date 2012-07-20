@@ -86,8 +86,8 @@ public interface IPatternMatcherContext<PatternDescription> {
 	void logDebug(String message);
 
 
-
-
+	String printPattern(PatternDescription pattern);
+	String printType(Object typeObject);
 
 
 	

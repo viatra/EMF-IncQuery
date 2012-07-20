@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,7 +46,7 @@ public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle
 			throws RetePatternBuildException {
 		Set<PVariable> missing = new HashSet<PVariable>(getDeferringVariables());
 		missing.removeAll(stub.getVariablesIndex().keySet());
-		String[] args = {toString(), missing.toArray().toString()};
+		String[] args = {toString(), Arrays.toString(missing.toArray())};
 		String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. " + 
 			"HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
 		String shortMsg = "Could not check all constraints due to undeducible variables";

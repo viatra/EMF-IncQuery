@@ -155,7 +155,7 @@ public class IncQueryEngine {
 	 */
 	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
 		if (reteEngine == null) {
-			EMFPatternMatcherRuntimeContext<Pattern> context = new EMFPatternMatcherRuntimeContext<Pattern>(this, getBaseIndexInternal());
+			EMFPatternMatcherRuntimeContext context = new EMFPatternMatcherRuntimeContext(this, getBaseIndexInternal());
 //			if (emfRoot instanceof EObject) 
 //				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
 //			else if (emfRoot instanceof Resource) 

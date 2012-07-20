@@ -24,13 +24,15 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * TODO generics? 
  * TODO TODO no subtyping between EDataTypes? no EDataTypes metainfo at all?
  * @author Bergmann Gábor
  */
-public class EMFPatternMatcherContext<PatternDescription> implements IPatternMatcherContext<PatternDescription> {
+public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern> {
 		
 	protected IncQueryEngine iqEngine;
 	
@@ -161,7 +163,7 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 	}
 
 	@Override
-	public void reportPatternDependency(PatternDescription pattern) {
+	public void reportPatternDependency(Pattern pattern) {
 		// Ignore, because we don't support changing machines here
 	}
 
@@ -200,7 +202,27 @@ public class EMFPatternMatcherContext<PatternDescription> implements IPatternMat
 		if (getLogger()!=null) getLogger().warn(message, cause);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#printPattern(java.lang.Object)
+	 */
+	@Override
+	public String printPattern(Pattern pattern) {
+		return CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#printType(java.lang.Object)
+	 */
+	@Override
+	public String printType(Object typeObject) {
+		if (typeObject instanceof EClassifier) {
+			final EClassifier eClassifier = (EClassifier) typeObject;
+			return eClassifier.getEPackage().getNsURI()+"/"+eClassifier.getName();
+		} else if (typeObject instanceof EStructuralFeature) {
+			final EStructuralFeature feature = (EStructuralFeature) typeObject;
+			return printType(feature.getEContainingClass())+"."+feature.getName();
+		} else return typeObject.toString();
+	}
 
 
 }
