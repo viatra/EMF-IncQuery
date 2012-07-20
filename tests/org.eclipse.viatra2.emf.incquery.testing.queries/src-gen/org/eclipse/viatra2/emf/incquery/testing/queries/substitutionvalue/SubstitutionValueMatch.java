@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue;
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -26,7 +27,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
   
   private static String[] parameterNames = {"Substitution", "Value"};
   
-  public SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+  SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     this.fSubstitution = pSubstitution;
     this.fValue = pValue;
     
@@ -96,9 +97,8 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Substitution\"=" + prettyPrintValue(fSubstitution) + ", ");
-    
-    result.append("\"Value\"=" + prettyPrintValue(fValue)
-    );return result.toString();
+    result.append("\"Value\"=" + prettyPrintValue(fValue));
+    return result.toString();
     
   }
   
@@ -125,17 +125,23 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
     	return false;
     if (!SubstitutionValueMatch.class.equals(obj.getClass()))
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
-    				SubstitutionValueMatch other = (SubstitutionValueMatch) obj;
-    				if (fSubstitution == null) {if (other.fSubstitution != null) return false;}
-    				else if (!fSubstitution.equals(other.fSubstitution)) return false;
-    				if (fValue == null) {if (other.fValue != null) return false;}
-    				else if (!fValue.equals(other.fValue)) return false;
-    				return true;
-    
+    SubstitutionValueMatch other = (SubstitutionValueMatch) obj;
+    if (fSubstitution == null) {if (other.fSubstitution != null) return false;}
+    else if (!fSubstitution.equals(other.fSubstitution)) return false;
+    if (fValue == null) {if (other.fValue != null) return false;}
+    else if (!fValue.equals(other.fValue)) return false;
+    return true;
   }
   
   @Override
   public Pattern pattern() {
-    return SubstitutionValueMatcher.FACTORY.getPattern();
+    try {
+    	return SubstitutionValueMatcher.factory().getPattern();
+    } catch (IncQueryException ex) {
+     	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+     	ex.printStackTrace();
+     	throw new IllegalStateException	(ex);
+    }
+    
   }
 }

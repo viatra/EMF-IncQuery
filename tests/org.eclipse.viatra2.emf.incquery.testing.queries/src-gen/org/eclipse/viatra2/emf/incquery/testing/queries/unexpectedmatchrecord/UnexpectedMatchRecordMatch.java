@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord;
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -29,7 +30,7 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch implement
   
   private static String[] parameterNames = {"ActualSet", "ExpectedSet", "Record"};
   
-  public UnexpectedMatchRecordMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+  UnexpectedMatchRecordMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     this.fActualSet = pActualSet;
     this.fExpectedSet = pExpectedSet;
     this.fRecord = pRecord;
@@ -115,11 +116,9 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch implement
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"ActualSet\"=" + prettyPrintValue(fActualSet) + ", ");
-    
     result.append("\"ExpectedSet\"=" + prettyPrintValue(fExpectedSet) + ", ");
-    
-    result.append("\"Record\"=" + prettyPrintValue(fRecord)
-    );return result.toString();
+    result.append("\"Record\"=" + prettyPrintValue(fRecord));
+    return result.toString();
     
   }
   
@@ -147,19 +146,25 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch implement
     	return false;
     if (!UnexpectedMatchRecordMatch.class.equals(obj.getClass()))
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
-    				UnexpectedMatchRecordMatch other = (UnexpectedMatchRecordMatch) obj;
-    				if (fActualSet == null) {if (other.fActualSet != null) return false;}
-    				else if (!fActualSet.equals(other.fActualSet)) return false;
-    				if (fExpectedSet == null) {if (other.fExpectedSet != null) return false;}
-    				else if (!fExpectedSet.equals(other.fExpectedSet)) return false;
-    				if (fRecord == null) {if (other.fRecord != null) return false;}
-    				else if (!fRecord.equals(other.fRecord)) return false;
-    				return true;
-    
+    UnexpectedMatchRecordMatch other = (UnexpectedMatchRecordMatch) obj;
+    if (fActualSet == null) {if (other.fActualSet != null) return false;}
+    else if (!fActualSet.equals(other.fActualSet)) return false;
+    if (fExpectedSet == null) {if (other.fExpectedSet != null) return false;}
+    else if (!fExpectedSet.equals(other.fExpectedSet)) return false;
+    if (fRecord == null) {if (other.fRecord != null) return false;}
+    else if (!fRecord.equals(other.fRecord)) return false;
+    return true;
   }
   
   @Override
   public Pattern pattern() {
-    return UnexpectedMatchRecordMatcher.FACTORY.getPattern();
+    try {
+    	return UnexpectedMatchRecordMatcher.factory().getPattern();
+    } catch (IncQueryException ex) {
+     	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+     	ex.printStackTrace();
+     	throw new IllegalStateException	(ex);
+    }
+    
   }
 }
