@@ -16,7 +16,13 @@ import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 public class PatternInitializationPreferencePage extends PreferencePage
 		implements IWorkbenchPreferencePage {
 
-	private static final String WILDCARD_MODE_DESCRIPTION = "&Description: Turn off wildcard mode to decrease the memory usage\nwhile working with very large models during query development.";
+	private static final String WILDCARD_MODE_DESCRIPTION = 
+			"&In wildcard mode, every aspect of the EMF model is automatically indexed, " +
+				"as opposed to only indexing model elements and features relevant to the " + 
+				"currently registered patterns; thus patterns can be registered and " +
+				"unregistered without re-traversing the model. This is typically useful " +
+				"during query development. Turn off wildcard mode to decrease the memory " +
+				"usage while working with very large models.";
 
 	public PatternInitializationPreferencePage() {
 		
@@ -31,9 +37,13 @@ public class PatternInitializationPreferencePage extends PreferencePage
 	protected Control createContents(Composite parent) {
 		
 		Composite control = new Composite(parent, SWT.NONE);
-		Label label = new Label(control, SWT.NONE | SWT.TOP);
-		label.setText(WILDCARD_MODE_DESCRIPTION);
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		Label wildcardDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
+		wildcardDescriptionLabel.setText(WILDCARD_MODE_DESCRIPTION);
+		final GridData layoutData = new GridData(GridData.FILL_HORIZONTAL) ;
+		layoutData.grabExcessHorizontalSpace = true;
+		layoutData.horizontalAlignment = SWT.FILL;
+		layoutData.widthHint = 200;
+		wildcardDescriptionLabel.setLayoutData(layoutData);
 		final BooleanFieldEditor wildcardModeEditor = new BooleanFieldEditor(PreferenceConstants.WILDCARD_MODE, "&Wildcard mode", control);
 		wildcardModeEditor.setPreferenceStore(IncQueryGUIPlugin.getDefault().getPreferenceStore());
 		wildcardModeEditor.load();

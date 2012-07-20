@@ -539,7 +539,7 @@
             category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
             class="org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PatternInitializationPreferencePage"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.page1"
-            name="Pattern initialization">
+            name="Query Explorer">
          <keywordReference
                id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage">
          </keywordReference>
