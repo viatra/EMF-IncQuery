@@ -100,9 +100,10 @@ public class Equality<PatternDescription, StubHandle> extends
 	 */
 	@Override
 	public boolean isReadyAt(Stub<StubHandle> stub) {
-		return stub.getVariablesIndex().containsKey(who) && stub.getVariablesIndex().containsKey(withWhom);
-		// will be replaced by || if copierNode is available; 
-		// before that, LayoutHelper.unifyVariablesAlongEqualities(PSystem<PatternDescription, StubHandle, Collector>) is recommended.
+		return isMoot() || 
+				stub.getVariablesIndex().containsKey(who) && stub.getVariablesIndex().containsKey(withWhom);
+				// will be replaced by || if copierNode is available; 
+				// until then, LayoutHelper.unifyVariablesAlongEqualities(PSystem<PatternDescription, StubHandle, Collector>) is recommended.
 	}
 
 
