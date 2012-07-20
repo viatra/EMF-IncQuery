@@ -166,7 +166,7 @@ public class ObservablePatternMatcherRoot {
 				logger.log(new Status(IStatus.ERROR,
 						IncQueryGUIPlugin.PLUGIN_ID,
 						"Cannot initialize pattern matcher for pattern "
-								+ pattern.getName(), e));
+								+ CorePatternLanguageHelper.getFullyQualifiedName(pattern), e));
 				matcher = null;
 				message = (e instanceof IncQueryException) ? 
 					((IncQueryException)e).getShortMessage() : e.getMessage();
