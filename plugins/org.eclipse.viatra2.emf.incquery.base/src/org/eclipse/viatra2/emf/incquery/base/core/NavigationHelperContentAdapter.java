@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.base.core;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
@@ -67,7 +69,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	@Override
 	public void notifyChanged(Notification notification) {
 		try {
-			super.notifyChanged(notification);
+			baseHandleNotification(notification);
 
 			Object oFeature = notification.getFeature();
 			final Object oNotifier = notification.getNotifier();
@@ -541,18 +543,34 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	// resources),
 	// - and once when said iteration of resources reaches the end of the
 	// resource list in the ResourceSet
-	Set<Resource> trackedResources = new HashSet<Resource>();
-
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi
+	
 	@Override
-	protected void setTarget(Resource target) {
-		if (trackedResources.add(target))
-			super.setTarget(target);
+	protected void setTarget(ResourceSet target) {
+		basicSetTarget(target);
+	    List<Resource> resources =  target.getResources();
+	    for (int i = 0; i < resources.size(); ++i)
+	    {
+	      Notifier notifier = resources.get(i);
+	      if (!notifier.eAdapters().contains(this))
+	      {
+	        addAdapter(notifier);
+	      }
+	    }	
 	}
-
-	@Override
-	protected void unsetTarget(Resource target) {
-		trackedResources.remove(target);
-		super.unsetTarget(target);
+	
+	private void baseHandleNotification(Notification notification) {
+		if (notification.getNotifier() instanceof ResourceSet 
+				&& notification.getEventType() == Notification.ADD_MANY
+				&& notification.getFeatureID(ResourceSet.class) == ResourceSet.RESOURCE_SET__RESOURCES) 
+		{
+			@SuppressWarnings("unchecked") 
+			Collection<Notifier> newValues = (Collection<Notifier>)notification.getNewValue();
+			for (Notifier notifier : newValues) {
+				if (!notifier.eAdapters().contains(this)) {
+					addAdapter(notifier);
+				}
+			}    
+		} else super.notifyChanged(notification);
 	}
-
 }
