@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.preference;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -23,19 +24,15 @@ public class PatternInitializationPreferencePage extends PreferencePage
 				"unregistered without re-traversing the model. This is typically useful " +
 				"during query development. Turn off wildcard mode to decrease the memory " +
 				"usage while working with very large models.";
-
-	public PatternInitializationPreferencePage() {
-		
-	}
-
+	
 	@Override
 	public void init(IWorkbench workbench) {
-		
+
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
-		
+		final IPreferenceStore store = IncQueryGUIPlugin.getDefault().getPreferenceStore();
 		Composite control = new Composite(parent, SWT.NONE);
 		Label wildcardDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
 		wildcardDescriptionLabel.setText(WILDCARD_MODE_DESCRIPTION);
@@ -48,9 +45,13 @@ public class PatternInitializationPreferencePage extends PreferencePage
 		wildcardModeEditor.setPreferenceStore(IncQueryGUIPlugin.getDefault().getPreferenceStore());
 		wildcardModeEditor.load();
 		wildcardModeEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+			
+			@SuppressWarnings("deprecation")
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-				IncQueryGUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.WILDCARD_MODE, wildcardModeEditor.getBooleanValue());
+				store.setValue(PreferenceConstants.WILDCARD_MODE, wildcardModeEditor.getBooleanValue());
+				//the mentioned replace method did not work for me
+				IncQueryGUIPlugin.getDefault().savePluginPreferences();
 			}
 		});
 		return control;
