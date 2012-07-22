@@ -8,6 +8,18 @@
       </description>
    </intro>
    
+   <item title="Adding an EMF-IncQuery Generator Model">
+   		<description>
+   			Before specifying query definition patterns for domains defined in a workspace project, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. This file contains references to <b>.genmodel</b> files that are located in an EMF project in your workspace. 
+   		</description>
+   		<subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Generator Model">
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
+      	</subitem>
+      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added."></subitem>
+      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button."></subitem>
+      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary."></subitem>
+   </item>
+   
     <item title="Creating a new query definition">
       <description>
         The EMF-IncQuery Query Definition should be located inside a <b>package</b>. You can specify the target package on the first page of the wizard. Make sure that the filename ends with the <b>.eiq</b> extension and that it is locally unique. Inside .eiq files, the query definition patterns are identified by their names (analogously to Java classes -- the notable exception is that an .eiq file may contain multiple query definition patterns). Make sure that the patterns have unique names too.<br/><br/>
@@ -20,18 +32,6 @@
       <subitem skip="true" label="On the second wizard page, give your pattern a unique name."></subitem>
       <subitem skip="true" label="Specify packages to import."></subitem>
       <subitem skip="true" label="Specify the header parameters of the pattern."></subitem>
-   </item>
-   
-   <item title="Adding an EMF-IncQuery Generator Model">
-   		<description>
-   			In order to specify query definition patterns for domains defined in a workspace project, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. These files contain references to <b>.genmodel</b> files that are located in an EMF project in your workspace. 
-   		</description>
-   		<subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Generator Model">
-         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
-      	</subitem>
-      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added."></subitem>
-      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button."></subitem>
-      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary."></subitem>
    </item>
    
    <item
