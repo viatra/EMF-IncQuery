@@ -14,6 +14,8 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IMatcherFactoryProvider
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
@@ -21,10 +23,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.xbase.XExpression
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IMatcherFactoryProvider
 
 /**
  * {@link IMatcherFactory} implementation inferrer.

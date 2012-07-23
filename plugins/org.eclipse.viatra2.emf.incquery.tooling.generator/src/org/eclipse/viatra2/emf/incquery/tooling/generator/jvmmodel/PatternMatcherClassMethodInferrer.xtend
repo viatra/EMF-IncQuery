@@ -13,18 +13,17 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Collection
+import java.util.HashSet
+import java.util.Set
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
-import java.util.Set
-import java.util.HashSet
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 
 class PatternMatcherClassMethodInferrer {
 	

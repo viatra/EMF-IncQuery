@@ -13,20 +13,17 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.HashSet
-import java.util.Set
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedPatternGroup
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
+import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmGenericType
-import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtext.common.types.JvmConstructor
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -51,7 +48,7 @@ class PatternGroupClassInferrer {
 	}
 	
 	def String groupClassName(PatternModel model) {
-		val fileName = model.eResource.URI.trimFileExtension.lastSegment 
+		val fileName = model.modelFileName 
 		return "GroupOfFile" + fileName.toFirstUpper
 	}
 	
