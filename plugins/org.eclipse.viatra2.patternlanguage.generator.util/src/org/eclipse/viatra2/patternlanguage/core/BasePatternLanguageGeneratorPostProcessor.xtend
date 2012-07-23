@@ -61,6 +61,8 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        
        varClass.addJvmIdentifiableOperations
        
+       varRefClass.addWarningComment
+       
        type.updateTypeClass
 	}
 	
@@ -199,5 +201,19 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	def updateTypeClass(EClass type) {
 		val nameFeature = type.EStructuralFeatures.findFirst(e | e.name == "typename")
 		nameFeature.transient = true
+	}
+	
+	def addWarningComment(EClass varRefClass) {
+		val varFeature = varRefClass.EStructuralFeatures.findFirst(e | e.name == "var")
+		var annotation = EcoreFactory::eINSTANCE.createEAnnotation
+  
+		annotation.source = "http://www.eclipse.org/emf/2002/GenModel" 
+		annotation.details.put("documentation", 
+		"<p>Warning! This feature contains the original reference text,
+         not the variable name. For variable name, use the
+         {@link #variable}/{@link Variable#getName} reference chain.
+
+		This is significant when using anonymous variables (named '_').</p>"); 
+		varFeature.EAnnotations += annotation
 	}
 }
