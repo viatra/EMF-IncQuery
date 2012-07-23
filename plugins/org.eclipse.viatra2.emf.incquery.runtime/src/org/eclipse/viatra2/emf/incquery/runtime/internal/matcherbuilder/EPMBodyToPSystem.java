@@ -202,6 +202,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	}
 	private void gatherBodyConstraints() throws RetePatternBuildException {
 		EList<Constraint> constraints = body.getConstraints();
+		//XXX Making sure all variables are resolved
+		body.getVariables();
 		for (Constraint constraint : constraints) {
 			gatherConstraint(constraint);
 		}
