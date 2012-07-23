@@ -330,7 +330,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			return false;
 		}
 		final Variable variableReferenceVariable = variableReference.getVariable();
-		final String variableName = variableReference.getVar();
+		final String variableName = variableReference.getVariable().getName();
 		if (equal(variable, variableReferenceVariable) || equal(variableName, variable.getName())) {
 			return true;
 		}

@@ -130,7 +130,9 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		return getPNode(variable.getName());
 	}
 	protected PVariable getPNode(VariableReference variable) {
-		return getPNode(variable.getVar());
+		// Warning! variable.getVar() does not differentiate between 
+		// multiple anonymous variables ('_')
+		return getPNode(variable.getVariable().getName());
 	}
 	protected Tuple getPNodeTuple(List<? extends ValueReference> variables) throws RetePatternBuildException {
 		PVariable[] pNodeArray = getPNodeArray(variables);
