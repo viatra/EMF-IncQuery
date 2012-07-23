@@ -2,6 +2,7 @@ package org.eclipse.viatra2.patternlanguage.scoping;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -19,7 +20,9 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 public class MetamodelProviderService implements IMetamodelProvider {
@@ -40,13 +43,13 @@ public class MetamodelProviderService implements IMetamodelProvider {
 	 */
 	@Override
 	public IScope getAllMetamodelObjects(EObject context) {
+		final Map<String, EPackage> metamodelMap = getMetamodelMap();
 		Set<String> packageURIs = new HashSet<String>(
-				EPackage.Registry.INSTANCE.keySet());
+				metamodelMap.keySet());
 		Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
 				new Function<String, IEObjectDescription>() {
 					public IEObjectDescription apply(String from) {
-						EPackage ePackage = EPackage.Registry.INSTANCE
-								.getEPackage(from);
+						EPackage ePackage = metamodelMap.get(from);
 						// InternalEObject proxyPackage = (InternalEObject)
 						// EcoreFactory.eINSTANCE.createEPackage();
 						// proxyPackage.eSetProxyURI(URI.createURI(from));
@@ -63,6 +66,19 @@ public class MetamodelProviderService implements IMetamodelProvider {
 		return new SimpleScope(IScope.NULLSCOPE, metamodels);
 	}
 
+	protected Map<String, EPackage> getMetamodelMap(){
+		return Maps.transformValues(EPackage.Registry.INSTANCE,
+				new Function<Object, EPackage>() {
+					
+					@Override
+					public EPackage apply(Object obj) {
+						Preconditions.checkArgument(obj instanceof EPackage);
+						return (EPackage) obj;
+					}
+				});
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

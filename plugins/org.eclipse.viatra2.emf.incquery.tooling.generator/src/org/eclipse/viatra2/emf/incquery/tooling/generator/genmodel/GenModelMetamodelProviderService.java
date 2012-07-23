@@ -1,11 +1,15 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -34,6 +38,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 public class GenModelMetamodelProviderService extends MetamodelProviderService
@@ -104,6 +109,33 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 		return new SimpleScope(new FilteringScope(
 				super.getAllMetamodelObjects(ctx), new ParentScopeFilter(
 						referencedPackages)), referencedPackages);
+	}
+	
+	@Override
+	public Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException {
+		Preconditions
+				.checkArgument(
+						project.exists()
+								&& project.hasNature(IncQueryNature.NATURE_ID),
+						"Only works for EMF-IncQuery projects");
+
+		List<EPackage> referencedPackages = Lists.newArrayList();
+		IncQueryGeneratorModel generatorModel = getGeneratorModel(project);
+		for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
+			
+			referencedPackages.addAll(Lists.transform(ref
+					.getGenmodel().getGenPackages(), new Function<GenPackage, EPackage>() {
+				@Override
+				public EPackage apply(GenPackage desc) {
+					Preconditions.checkNotNull(desc);
+					return desc.getEcorePackage();
+				}
+					}));
+			}
+		Set<EPackage> packageSet = Sets.newHashSet();
+		packageSet.addAll(referencedPackages);
+		packageSet.addAll(getMetamodelMap().values());
+		return packageSet;
 	}
 
 	@Override
