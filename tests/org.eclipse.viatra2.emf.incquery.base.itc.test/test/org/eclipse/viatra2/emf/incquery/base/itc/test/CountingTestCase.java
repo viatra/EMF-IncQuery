@@ -43,7 +43,7 @@ public class CountingTestCase extends TestCase {
 					
 					gen = new TcRelationGenerator<Integer>(g);
 					
-					assertEquals(gen.getCounting1TcRelation(), ca.getTcRelation());
+					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
 		}
@@ -55,7 +55,7 @@ public class CountingTestCase extends TestCase {
 					
 					gen = new TcRelationGenerator<Integer>(g);
 					
-					assertEquals(gen.getCounting1TcRelation(), ca.getTcRelation());
+					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
 		} 

@@ -24,7 +24,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 
 	private static final long serialVersionUID = -748676749122336868L;
 	private int levelCount;
-	private ArrayList<TcRelation<V>> relations;
+	private ArrayList<KingTcRelation<V>> relations;
 	private IGraphDataSource<V> gds;
 
 	public KingAlg(IGraphDataSource<V> gds) {
@@ -36,9 +36,9 @@ public class KingAlg<V> implements IGraphObserver<V> {
 		} else
 			this.levelCount = 0;
 
-		this.relations = new ArrayList<TcRelation<V>>();
+		this.relations = new ArrayList<KingTcRelation<V>>();
 		for (int i = 0; i < levelCount; i++)
-			this.relations.add(new TcRelation<V>());
+			this.relations.add(new KingTcRelation<V>());
 
 		gds.attachObserver(this);
 	}
@@ -201,7 +201,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 		int newLevelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
 
 		if (newLevelCount > levelCount) {
-			relations.add(new TcRelation<V>());
+			relations.add(new KingTcRelation<V>());
 			this.levelCount = newLevelCount;
 		}
 	}
@@ -217,10 +217,10 @@ public class KingAlg<V> implements IGraphObserver<V> {
 		}
 	}
 
-	public org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V> getMergedRelation() {
-		org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V> dTc = new org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V>();
+	public org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V> getMergedRelation() {
+		org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V> dTc = new org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V>();
 		
-		for (TcRelation<V> tc : relations) {
+		for (KingTcRelation<V> tc : relations) {
 			for (V s : tc.getTupleStarts()) {
 				for (V t : tc.getTupleEnds(s)) {
 					dTc.addTuple(s, t);

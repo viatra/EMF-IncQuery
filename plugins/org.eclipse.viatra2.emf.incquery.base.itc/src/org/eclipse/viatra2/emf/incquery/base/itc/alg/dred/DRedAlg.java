@@ -37,8 +37,8 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
 	private static final long serialVersionUID = 356353826099208151L;
 	private IGraphDataSource<V> graphDataSource = null;
-	private TcRelation<V> tc = null;
-	private TcRelation<V> dtc = null;
+	private DRedTcRelation<V> tc = null;
+	private DRedTcRelation<V> dtc = null;
 	private ArrayList<ITcObserver<V>> observers;
 	
 	/**
@@ -50,8 +50,8 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	public DRedAlg(IGraphDataSource<V> gds) {	
 		this.observers = new ArrayList<ITcObserver<V>>();
 		this.graphDataSource = gds;
-		this.tc = new TcRelation<V>();
-		this.dtc = new TcRelation<V>();
+		this.tc = new DRedTcRelation<V>();
+		this.dtc = new DRedTcRelation<V>();
 		initTc();
 		graphDataSource.attachObserver(this);
 	}
@@ -63,10 +63,10 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 * @param gds the graph data source instance
 	 * @param tc the transitive closure instance
 	 */
-	public DRedAlg(IGraphDataSource<V> gds, TcRelation<V> tc) {
+	public DRedAlg(IGraphDataSource<V> gds, DRedTcRelation<V> tc) {
 		this.graphDataSource = gds;
 		this.tc = tc;
-		this.dtc = new TcRelation<V>();
+		this.dtc = new DRedTcRelation<V>();
 		graphDataSource.attachObserver(this);
 	}
 	
@@ -205,7 +205,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 			}
 			
 			//2. q+(tc(x,y)) :- tcv(x,z) & lv(z,y)
-			TcRelation<V> newTups = new TcRelation<V>();
+			DRedTcRelation<V> newTups = new DRedTcRelation<V>();
 			dtc.clear();
 			dtc.union(tc);
 			
@@ -276,11 +276,11 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}
 	}
 	
-	public TcRelation<V> getTcRelation() {
+	public DRedTcRelation<V> getTcRelation() {
 		return this.tc;
 	}
 	
-	public void setTcRelation(TcRelation<V> tc) {
+	public void setTcRelation(DRedTcRelation<V> tc) {
 		this.tc = tc;
 	}
 

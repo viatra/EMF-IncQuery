@@ -11,9 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.test.relations;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation;
 
-public class DRedTcRelation1 extends TcRelation<Integer>{
+public class DRedTcRelation1 extends DRedTcRelation<Integer>{
 
 	private static final long serialVersionUID = -9211874694848138868L;
 	

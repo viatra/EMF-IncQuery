@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.fw;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalWrapper;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
@@ -24,7 +24,7 @@ import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 	
 	private static final long serialVersionUID = 8551056305625218732L;
-	private TcRelation<V> tc = null;
+	private DRedTcRelation<V> tc = null;
 	private IBiDirectionalGraphDataSource<V> gds = null;
 	
 	public FloydWarshallAlg(IGraphDataSource<V> gds) {
@@ -35,7 +35,7 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 			this.gds = new IBiDirectionalWrapper<V>(gds);
 		}
 		
-		this.tc = new TcRelation<V>();
+		this.tc = new DRedTcRelation<V>();
 		gds.attachObserver(this);
 		generateTc();
 	}
@@ -109,7 +109,7 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 		generateTc();
 	}
 	
-	public TcRelation<V> getTcRelation() {
+	public DRedTcRelation<V> getTcRelation() {
 		return this.tc;
 	}
 }

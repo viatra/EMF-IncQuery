@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.TcRelationGenerator;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalWrapper;
@@ -34,8 +35,8 @@ import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
 	private static final long serialVersionUID = -2383210800242398869L;
-	private TcRelation<V> tc = null;
-	private TcRelation<V> dtc = null;
+	private CountingTcRelation<V> tc = null;
+	private CountingTcRelation<V> dtc = null;
 	private IBiDirectionalGraphDataSource<V> gds = null;
 	private ArrayList<ITcObserver<V>> observers;
 
@@ -56,8 +57,8 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}
 
 		observers = new ArrayList<ITcObserver<V>>();
-		tc = new TcRelation<V>(true);
-		dtc = new TcRelation<V>(false);
+		tc = new CountingTcRelation<V>(true);
+		dtc = new CountingTcRelation<V>(false);
 
 		initTc();
 		gds.attachObserver(this);
@@ -68,7 +69,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 */
 	private void initTc() {
 		TcRelationGenerator<V> tcg = new TcRelationGenerator<V>(gds);
-		this.setTcRelation(tcg.getCounting1TcRelation());
+		this.setTcRelation(tcg.getTcRelation());
 	}
 
 	/*
@@ -158,8 +159,8 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}		
 		
 		// 3. d(tc(x,y)) :- lv(x,z) & d(tc(z,y))
-		TcRelation<V> newTuples = new TcRelation<V>(false);
-		TcRelation<V> tmp = null;
+		CountingTcRelation<V> newTuples = new CountingTcRelation<V>(false);
+		CountingTcRelation<V> tmp = null;
 		List<V> nodes = null;
 		newTuples.union(dtc);
 
@@ -198,12 +199,17 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		//System.out.println(tc);
 	}
 
-	public TcRelation<V> getTcRelation() {
+	public ITcRelation<V> getTcRelation() {
 		return this.tc;
 	}
 
-	public void setTcRelation(TcRelation<V> tc) {
-		this.tc = tc;
+	public void setTcRelation(ITcRelation<V> tc) {
+		this.tc = new CountingTcRelation<V>(true);
+		for (V s : tc.getTupleStarts()) {
+			for (V t : tc.getTupleEnds(s)) {
+				this.tc.addTuple(s, t, 1);
+			}
+		}
 	}
 
 	/*

@@ -17,12 +17,14 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class TcRelation<V> {
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
+
+public class Counting2TcRelation<V> implements ITcRelation<V> {
 	
 	private HashMap<V, HashMap<V, BigInteger>> tuplesForward = null;
 	private HashMap<V, HashMap<V, BigInteger>> tuplesBackward = null;
 	
-	public TcRelation() {
+	protected Counting2TcRelation() {
 		tuplesForward = new HashMap<V, HashMap<V, BigInteger>>();
 		tuplesBackward = new HashMap<V, HashMap<V,BigInteger>>();
 	}
@@ -78,7 +80,7 @@ public class TcRelation<V> {
 		this.tuplesBackward.clear();
 	}
 	
-	public void union(TcRelation<V> rA) {	
+	public void union(Counting2TcRelation<V> rA) {	
 		/*for (V source : rA.tuplesForward.keySet()) {
 			for (V target : rA.tuplesForward.get(source).keySet()) {
 				this.addTuple(source, target, rA.tuplesForward.get(source).get(target));
@@ -146,10 +148,16 @@ public class TcRelation<V> {
 		return sb.toString();
 	}
 	
+	@Override
 	public Set<V> getTupleEnds(V source) {
 		HashMap<V, BigInteger> tupEnds = tuplesForward.get(source);	
 		if (tupEnds == null) return null;
 		return tupEnds.keySet();
+	}
+	
+	@Override
+	public Set<V> getTupleStarts() {
+		return tuplesForward.keySet();
 	}
 	
 	public Set<V> getTupleStarts(V target) {
@@ -176,7 +184,7 @@ public class TcRelation<V> {
 			return false;
 		}
 		else {
-			TcRelation<V> aTR = (TcRelation<V>) obj;
+			Counting2TcRelation<V> aTR = (Counting2TcRelation<V>) obj;
 			
 			for (V source : aTR.tuplesForward.keySet()) {
 				for (V target : aTR.tuplesForward.get(source).keySet()) {

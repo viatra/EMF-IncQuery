@@ -13,9 +13,8 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.kingopt;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
 	private static final long serialVersionUID = -748676749122336868L;
-	private TcRelation<V> tc;
+	private KingOptTcRelation<V> tc;
 	private ArrayList<ITcObserver<V>> observers;
 	private IGraphDataSource<V> gds;
 	private int levelCount;
@@ -49,42 +48,26 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	public KingOptAlg(IGraphDataSource<V> gds) {
 		this.gds = gds;		
 		observers = new ArrayList<ITcObserver<V>>();
-		tc = new TcRelation<V>(calculateLevelCount(), observers);
+		tc = new KingOptTcRelation<V>(calculateLevelCount(), observers);
 		fullGen();
 		gds.attachObserver(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.IGraphObserver#edgeInserted(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void edgeInserted(V source, V target) {
 		tc.deriveBaseTuple(source, target, 1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.IGraphObserver#edgeDeleted(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void edgeDeleted(V source, V target) {
 		tc.deriveBaseTuple(source, target, -1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.IGraphObserver#nodeInserted(java.lang.Object)
-	 */
 	@Override
 	public void nodeInserted(V n) {
 		tc.setLevelCount(calculateLevelCount());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.IGraphObserver#nodeDeleted(java.lang.Object)
-	 */
 	@Override
 	public void nodeDeleted(V n) {
 		tc.setLevelCount(calculateLevelCount());
@@ -97,7 +80,7 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}
 		else {
 			double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-			this.levelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+			this.levelCount = (int) Math.ceil(j);
 		}
 		return levelCount;
 	}
@@ -107,11 +90,8 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 */
 	public void fullGen() {
 		tc.clearTc();
-		//System.out.println("Level count: "+calculateLevelCount());
-		
 		tc.setLevelCount(calculateLevelCount());
 		
-		//System.out.println(new Timestamp(System.currentTimeMillis()));
 		for (V s : gds.getAllNodes()) {
 			List<V> targets = gds.getTargetNodes(s);
 			if (targets != null) {
@@ -120,20 +100,19 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				}
 			}
 		}
-		//System.out.println(new Timestamp(System.currentTimeMillis()));
+		
 		//we just need the starred tuples at level 0, so it is not necessary to spread the modification
 		tc.clearQueue();
 		
-		HashMap<V, HashSet<V>> _targetSet = null;
+		Map<V, Set<V>> _targetSet = null;
 		
 		//E(i) = *E(i-1) X-> *U(i-1)
 		for (int levelNumber = 1;levelNumber<=levelCount;levelNumber++) {
-			HashMap<V, HashSet<V>> _sourceSet = tc.getStarredAtLevel(levelNumber-1);
-			
-			//System.out.println(levelNumber);
+			Map<V, Set<V>> _sourceSet = tc.getStarredAtLevel(levelNumber-1);
+
 			if (_sourceSet != null) {
 				
-				for (Entry<V, HashSet<V>> entry : _sourceSet.entrySet()) {
+				for (Entry<V, Set<V>> entry : _sourceSet.entrySet()) {
 					
 					for (V _target : entry.getValue()) {
 						
@@ -142,8 +121,7 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 							if (_targetSet != null && _targetSet.get(_target) != null) {
 								
 								for (V _targetTarget : _targetSet.get(_target)) {
-									//if (!_targetTarget.equals(_source))
-										tc.addTuple(entry.getKey(), _targetTarget, levelNumber);
+									tc.addTuple(entry.getKey(), _targetTarget, levelNumber);
 								}
 							}	
 						}
@@ -151,58 +129,34 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				}
 			}
 		}
-		//System.out.println(new Timestamp(System.currentTimeMillis()));
+
 		tc.doQueue();
-		//System.out.println(new Timestamp(System.currentTimeMillis()));
-		//System.out.println("Average count list size: "+getCountListAvg());
-		
-		//System.out.println(tc);
 	}
 
-	public TcRelation<V> getTcRelation() {
+	public KingOptTcRelation<V> getTcRelation() {
 		return tc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.ITcDataSource#attachObserver(itc.igraph.ITcObserver)
-	 */
 	@Override
 	public void attachObserver(ITcObserver<V> to) {
 		observers.add(to);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.ITcDataSource#detachObserver(itc.igraph.ITcObserver)
-	 */
 	@Override
 	public void detachObserver(ITcObserver<V> to) {
 		observers.remove(to);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.ITcDataSource#getTargetNodes(java.lang.Object)
-	 */
 	@Override
 	public Set<V> getAllReachableTargets(V source) {
 		return tc.getTupleEnds(source);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.ITcDataSource#getSourceNodes(java.lang.Object)
-	 */
 	@Override
 	public Set<V> getAllReachableSources(V target) {
 		return tc.getTupleStarts(target);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see itc.igraph.ITcDataSource#isReachable(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public boolean isReachable(V source, V target) {
 		return tc.containsTuple(source, target);

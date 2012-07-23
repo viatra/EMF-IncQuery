@@ -14,7 +14,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 
@@ -23,13 +23,13 @@ public class DFSAlg<V> implements IGraphObserver<V> {
 
 	private static final long serialVersionUID = 7397186805581323071L;
 	private IGraphDataSource<V> gds;
-	private TcRelation<V> tc;
+	private DRedTcRelation<V> tc;
 	private int[] visited;
 	private HashMap<V, Integer> nodeMap;
 	
 	public DFSAlg(IGraphDataSource<V> gds) {
 		this.gds = gds;
-		this.tc = new TcRelation<V>();
+		this.tc = new DRedTcRelation<V>();
 		gds.attachObserver(this);
 		deriveTc();
 	}
@@ -75,7 +75,7 @@ public class DFSAlg<V> implements IGraphObserver<V> {
 		}
 	}
 	
-	public TcRelation<V> getTcRelation() {
+	public DRedTcRelation<V> getTcRelation() {
 		return this.tc;
 	}
 	
