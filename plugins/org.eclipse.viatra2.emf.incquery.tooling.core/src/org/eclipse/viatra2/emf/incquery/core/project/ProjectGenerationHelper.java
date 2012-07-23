@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -40,6 +41,7 @@ import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.viatra2.emf.incquery.core.IncQueryPlugin;
@@ -52,6 +54,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -64,7 +67,10 @@ import com.google.common.collect.Multimap;
  * 
  * @author Zoltan Ujhelyi
  */
+@SuppressWarnings("restriction")
 public abstract class ProjectGenerationHelper {
+
+	private static final String INVALID_PROJECT_MESSAGE = "Only existing, open plug-in projects are supported by the generator.";
 
 	private static final class IDToRequireBundleTransformer implements
 			Function<String, IRequiredBundleDescription> {
@@ -260,12 +266,14 @@ public abstract class ProjectGenerationHelper {
 
 	/**
 	 * Checks whether the project depends on a selected bundle ID
-	 * @param project the project to check
+	 * @param project an existing, open plug-in project to check
 	 * @param dependency bundle identifier
 	 * @return true, if the project depends on the given bundle
 	 * @throws CoreException
 	 */
 	public static boolean checkBundleDependency(IProject project, String dependency) throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
+				INVALID_PROJECT_MESSAGE);
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 		try {
@@ -305,7 +313,7 @@ public abstract class ProjectGenerationHelper {
 	 * Updates project manifest to ensure the selected bundle dependencies are
 	 * set. Does not change existing dependencies.
 	 * 
-	 * @param project
+	 * @param project an existing, open PDE plug-in project
 	 * @param dependencies
 	 * @param monitor
 	 * @throws CoreException
@@ -313,6 +321,11 @@ public abstract class ProjectGenerationHelper {
 	public static void ensureBundleDependencies(IProject project,
 			final List<String> dependencies, IProgressMonitor monitor)
 			throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
+				INVALID_PROJECT_MESSAGE);
+		if (dependencies.isEmpty()) {
+			return;
+		}
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 		try {
@@ -337,7 +350,7 @@ public abstract class ProjectGenerationHelper {
 	 * @param bundleDesc
 	 * @param dependencies
 	 */
-	public static void ensureBundleDependencies(IBundleProjectService service,
+	static void ensureBundleDependencies(IBundleProjectService service,
 			IBundleProjectDescription bundleDesc,
 			final List<String> dependencies) {
 		IRequiredBundleDescription[] requiredBundles = bundleDesc
@@ -372,14 +385,20 @@ public abstract class ProjectGenerationHelper {
 	 * Updates project manifest to ensure the selected packages are exported.
 	 * Does not change existing exports.
 	 * 
-	 * @param project
-	 * @param dependencies
+	 * @param project an existing, open PDE plug-in project
+	 * @param exports a non-empty list of package exports
 	 * @param monitor
 	 * @throws CoreException
 	 */
 	public static void ensurePackageExports(IProject project,
-			final Collection<String> dependencies, IProgressMonitor monitor)
+			final Collection<String> exports, IProgressMonitor monitor)
 			throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
+				INVALID_PROJECT_MESSAGE);
+		if (exports.isEmpty()) {
+			return;
+		}
+		
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 		try {
@@ -388,7 +407,7 @@ public abstract class ProjectGenerationHelper {
 			final IBundleProjectService service = context.getService(ref);
 			IBundleProjectDescription bundleDesc = service
 					.getDescription(project);
-			ensurePackageExports(service, bundleDesc, dependencies);
+			ensurePackageExports(service, bundleDesc, exports);
 			bundleDesc.apply(monitor);
 		} finally {
 			if (context != null && ref != null) {
@@ -401,7 +420,7 @@ public abstract class ProjectGenerationHelper {
 	 * Updates project manifest to ensure the selected packages are removed.
 	 * Does not change existing exports.
 	 * 
-	 * @param project
+	 * @param project an existing, open plug-in project
 	 * @param dependencies
 	 * @param monitor
 	 * @throws CoreException
@@ -409,6 +428,12 @@ public abstract class ProjectGenerationHelper {
 	public static void removePackageExports(IProject project,
 			final List<String> dependencies, IProgressMonitor monitor)
 			throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
+				INVALID_PROJECT_MESSAGE);
+		if (dependencies.isEmpty()) {
+			return;
+		}
+		
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 		try {
@@ -434,7 +459,7 @@ public abstract class ProjectGenerationHelper {
 	 * @param bundleDesc
 	 * @param exports
 	 */
-	public static void ensurePackageExports(
+	static void ensurePackageExports(
 			final IBundleProjectService service,
 			IBundleProjectDescription bundleDesc, final Collection<String> exports) {
 		IPackageExportDescription[] packageExports = bundleDesc
@@ -471,7 +496,7 @@ public abstract class ProjectGenerationHelper {
 	 * @param bundleDesc
 	 * @param exports
 	 */
-	public static void removePackageExports(
+	static void removePackageExports(
 			final IBundleProjectService service,
 			IBundleProjectDescription bundleDesc, final List<String> exports) {
 		IPackageExportDescription[] packageExports = bundleDesc
@@ -511,16 +536,18 @@ public abstract class ProjectGenerationHelper {
 	 * together; old extensions are replaced with the new ones, other extensions
 	 * are kept intact. An extension will be ignored, if exist in the removedExtensions list. 
 	 * 
-	 * @param project
+	 * @param project an existing, open PDE plug-in project
 	 * @param contributedExtensions
 	 * @param removedExtensions
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("restriction")
 	public static void ensureExtensions(IProject project,
 			Iterable<IPluginExtension> contributedExtensions, Iterable<Pair<String, String>> removedExtensions,
 			IProgressMonitor monitor) throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
+				INVALID_PROJECT_MESSAGE);
+		
 		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
@@ -605,14 +632,15 @@ public abstract class ProjectGenerationHelper {
 	 * Removes all extensions from the project, if the extension's pointId
 	 * equals to one of the given pointId.
 	 * 
-	 * @param project
+	 * @param project an existing, open PDE project
 	 * @param removableExtensionIdentifiers
 	 *            - contains both the extension id prefix (key), and the
 	 *            extension point id (value)
 	 * @throws CoreException
 	 */
-	@SuppressWarnings("restriction")
 	public static void removeAllExtension(IProject project, Collection<Pair<String, String>> removableExtensionIdentifiers) throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)));
+		
 		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
@@ -696,11 +724,13 @@ public abstract class ProjectGenerationHelper {
 	
 	/**
 	 * Ensures that the project contains the src and src-gen folders as source folders.
-	 * @param project
+	 * @param project an existing, open plug-in project
 	 * @param monitor
 	 * @throws CoreException
 	 */
 	public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
+		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
+				INVALID_PROJECT_MESSAGE);
 		BundleContext context = null;
 		ServiceReference<IBundleProjectService> ref = null;
 		try {
@@ -755,7 +785,6 @@ public abstract class ProjectGenerationHelper {
 		return classPathList.toArray(new IBundleClasspathEntry[classPathList.size()]);
 	}
 	
-	@SuppressWarnings("restriction")
 	public static String getBundleSymbolicName(IProject project) {
 		IPluginModel plugin = (IPluginModel) PDECore.getDefault()
 				.getModelManager().findModel(project);
