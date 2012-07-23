@@ -184,7 +184,7 @@ public class DatabindingUtil {
 	 * @param uri the uri
 	 * @return the {@link AdapterFactoryLabelProvider} instance
 	 */
-	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
+	public synchronized static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
 			uriConfElementMap = collectItemProviders();
 		}

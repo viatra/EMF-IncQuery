@@ -36,12 +36,13 @@ public class ValidationInitUtil {
 		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
 		
 		Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = ValidationUtil.getAdapterMap();
-		if(adapterMap.containsKey(activeEditor)) {
+//		if(adapterMap.containsKey(activeEditor)) {
 			// FIXME define proper semantics for validation based on selection
 			// FIXME handle already existing violations
 			
 			//adapterMap.get(activeEditor).addAll(adapters);
-		} else {
+//		} else {
+		if (!adapterMap.containsKey(activeEditor)) {	
 			for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
 				adapters.add(new ConstraintAdapter<IPatternMatch>(c, root));
 			}

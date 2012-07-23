@@ -19,7 +19,6 @@ import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph1;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph2;
-import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph3;
 import org.junit.Test;
 
 public class DRedTestCase extends TestCase {
@@ -41,18 +40,11 @@ public class DRedTestCase extends TestCase {
         Graph2 g2 = new Graph2();
     	fwa = new FloydWarshallAlg<Integer>(g2);
     	da = new DRedAlg<Integer>(g2);
-    	//g2.detachObserver(koa);
 		g2.modify();	
     	
 		//koa.fullGen();
 		assertEquals(da.getTcRelation(), fwa.getTcRelation());
-        
-        Graph3 g3 = new Graph3();
-    	fwa = new FloydWarshallAlg<Integer>(g3);
-    	da = new DRedAlg<Integer>(g3);
-    	//g3.detachObserver(koa);
-		g3.modify();	
-		
+        		
 		int nodeCount = 10;
 		Graph<Integer> g = new Graph<Integer>();
 		DFSAlg<Integer> dfsa = new DFSAlg<Integer>(g);
