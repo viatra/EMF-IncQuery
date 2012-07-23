@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
@@ -132,9 +133,9 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 			//System.out.println(levelNumber);
 			if (_sourceSet != null) {
 				
-				for (V _source : _sourceSet.keySet()) {
+				for (Entry<V, HashSet<V>> entry : _sourceSet.entrySet()) {
 					
-					for (V _target : _sourceSet.get(_source)) {
+					for (V _target : entry.getValue()) {
 						
 						for (int j = 0 ; j <= levelNumber ; j++) {
 							_targetSet = tc.getStarredAtLevel(j);
@@ -142,7 +143,7 @@ public class KingOptAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 								
 								for (V _targetTarget : _targetSet.get(_target)) {
 									//if (!_targetTarget.equals(_source))
-										tc.addTuple(_source, _targetTarget, levelNumber);
+										tc.addTuple(entry.getKey(), _targetTarget, levelNumber);
 								}
 							}	
 						}

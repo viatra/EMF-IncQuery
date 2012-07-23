@@ -123,8 +123,8 @@ public class PKAlg<V> implements IGraphObserver<V> {
 	}
 
 	@SuppressWarnings("unused")
-	private ArrayList<V> getTopSort() {
-		ArrayList<V> topsort = new ArrayList<V>();
+	private List<V> getTopSort() {
+		List<V> topsort = new ArrayList<V>();
 		
 		for (int i : topsort2index.values()) {
 			topsort.add(index2node.get(i));
