@@ -41,21 +41,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.patternlanguage.core.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra2.patternlanguage.emf.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.patternlanguage.emf.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -74,9 +60,23 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.gui.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -88,9 +88,23 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+              
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.core.ui.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.viatra2.patternlanguage.emf.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra2.patternlanguage.emf.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -123,6 +137,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+    <plugin
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>     
 
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui"
@@ -132,14 +153,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.model"
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui.source"
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
