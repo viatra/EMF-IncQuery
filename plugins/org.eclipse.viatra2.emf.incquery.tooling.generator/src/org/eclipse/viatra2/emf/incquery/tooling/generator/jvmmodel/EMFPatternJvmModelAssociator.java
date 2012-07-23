@@ -33,9 +33,12 @@ public class EMFPatternJvmModelAssociator extends JvmModelAssociator {
 	@Override
 	public void installDerivedState(DerivedStateAwareResource resource,
 			boolean preIndexingPhase) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IFile file = root.getFile(new Path(resource.getURI().toPlatformString(true)));
-		feedback.clearMarkers(file, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+		if (!resource.getURI().isEmpty() && resource.getURI().isPlatformResource()) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IFile file = root.getFile(new Path(resource.getURI()
+					.toPlatformString(true)));
+			feedback.clearMarkers(file, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+		}
 		super.installDerivedState(resource, preIndexingPhase);
 	}
 	
