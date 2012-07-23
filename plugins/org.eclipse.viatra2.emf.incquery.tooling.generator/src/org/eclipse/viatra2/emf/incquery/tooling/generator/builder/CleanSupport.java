@@ -102,6 +102,9 @@ public class CleanSupport {
 	@Inject
 	private EnsurePluginSupport ensureSupport;
 	
+	@Inject
+	private IErrorFeedback errorFeedback;
+	
 	/**
 	 * Performs a full clean on the currently built project and all related
 	 * fragments.
@@ -155,6 +158,8 @@ public class CleanSupport {
 			}
 			// clean all removable extensions
 			ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
+			// removing all fragment-related markers
+			errorFeedback.clearMarkers(fragmentProject, IErrorFeedback.FRAGMENT_ERROR_TYPE);
 		}		
 	}
 
