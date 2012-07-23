@@ -13,7 +13,6 @@ package org.eclipse.viatra2.patternlanguage;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra2.patternlanguage.core.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.core.scoping.PatternLanguageResourceDescriptionStrategy;
-import org.eclipse.viatra2.patternlanguage.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.viatra2.patternlanguage.scoping.EMFPatternLanguageScopeProvider;
@@ -28,7 +27,6 @@ import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
-import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
 import org.eclipse.xtext.xbase.scoping.XbaseImportedNamespaceScopeProvider;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
@@ -71,10 +69,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	@Override
 	public Class<? extends ITypeProvider> bindITypeProvider() {
 		return EMFPatternTypeProvider.class;
-	}
-	
-	public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
-		return EMFPatternJvmModelAssociator.class;
 	}
 	
 	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {

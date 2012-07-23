@@ -25,6 +25,9 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.jdt.core.JavaConventions
+import org.eclipse.jdt.core.JavaCore
+import org.eclipse.core.runtime.IStatus
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -60,6 +63,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		return name
 	}
 	
+	def modelFileName(EObject object) {
+		val name = object.eResource?.URI.trimFileExtension.lastSegment
+		val status = JavaConventions::validateJavaTypeName(name, JavaCore::VERSION_1_6, JavaCore::VERSION_1_6)
+		if (status.severity == IStatus::ERROR) {
+			throw new IllegalArgumentException(name + " is not a valid Java Type name")
+		}
+		name
+	}
 	/**
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
 	 */

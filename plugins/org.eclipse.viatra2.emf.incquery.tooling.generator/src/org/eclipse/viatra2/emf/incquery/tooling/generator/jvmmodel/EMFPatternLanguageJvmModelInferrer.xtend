@@ -13,16 +13,20 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.GeneratorIssueCodes
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
-import org.eclipse.xtext.common.types.JvmDeclaredType
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -32,11 +36,12 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
  * 
  * @author Mark Czotter
  */
-class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmModelInferrer {
+class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
 	@Inject
-	Logger logger;
-
+	private Logger logger;
+	@Inject
+	private IErrorFeedback errorFeedback;
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */
@@ -46,6 +51,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 	@Inject extension PatternMatcherClassInferrer
 	@Inject extension PatternMatcherFactoryClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
+	@Inject extension PatternGroupClassInferrer
 	@Inject extension JavadocInferrer	
 	@Inject extension TypeReferences types
 	@Inject extension IJvmModelAssociator associator
@@ -102,4 +108,25 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 	   	}
    	}
    	
+   	/**
+	 * Is called for each Pattern instance in a resource.
+	 * 
+	 * @param pattern - the model to create one or more JvmDeclaredTypes from.
+	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
+	 *                   current resource.
+	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
+	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
+	 */
+   	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
+	   	try {
+	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
+   			val groupClass = model.inferPatternGroup
+   			model.associatePrimary(groupClass)
+   			acceptor.accept(groupClass)
+   		} catch (IllegalArgumentException e){
+   			errorFeedback.reportErrorNoLocation(model, e.message, GeneratorIssueCodes::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
+   		} catch(Exception e) {
+	   		logger.error("Exception during Jvm Model Infer for pattern model: " + model, e)
+	   	}
+   	}
 }

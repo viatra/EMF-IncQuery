@@ -14,19 +14,25 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.EMFPatternLanguageBuilderParticipant;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
+import org.eclipse.viatra2.patternlanguage.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.viatra2.patternlanguage.ui.labeling.EMFPatternLanguageHoverProvider;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
+import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
@@ -98,8 +104,20 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	}
 	
 	@Override
-	public Class<? extends org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider> bindIEObjectHoverProvider() {
+	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
 		return EMFPatternLanguageHoverProvider.class;
 	}
 	
+	public Class<? extends IErrorFeedback> bindIErrorFeedback(){
+		return GeneratorMarkerFeedback.class;
+	}
+	
+
+	public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
+		return EMFPatternJvmModelAssociator.class;
+	}
+	
+	public Class<? extends JvmModelAssociator> bindJvmModelAssociator() {
+		return EMFPatternJvmModelAssociator.class;
+	}
 }
