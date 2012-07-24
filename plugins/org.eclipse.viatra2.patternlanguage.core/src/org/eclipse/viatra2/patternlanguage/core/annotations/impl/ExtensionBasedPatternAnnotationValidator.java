@@ -122,12 +122,12 @@ public class ExtensionBasedPatternAnnotationValidator implements
 	public Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter) {
 		ExtensionBasedPatternAnnotationParameter expectedParameter = null;
 		for (ExtensionBasedPatternAnnotationParameter p : definedAttributes) {
-			if (p.name.equals(parameter.getName())) {
+			if (p.getName().equals(parameter.getName())) {
 				expectedParameter = p;
 			}
 		}
-		String type = expectedParameter.getType();
-		if (expectedParameter == null || type == null) {
+		String type;
+		if (expectedParameter == null || (type = expectedParameter.getType()) == null) {
 			return null;
 		}
 		if (typeMapping.containsKey(type)) {
