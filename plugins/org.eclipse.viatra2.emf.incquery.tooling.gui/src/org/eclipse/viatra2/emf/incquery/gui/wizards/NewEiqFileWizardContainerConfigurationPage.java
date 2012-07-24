@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.gui.wizards;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -235,5 +236,9 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		}
 
 		return getPackageText();
+	}
+	
+	public IProject getProject() {
+		return this.getPackageFragmentRoot().getJavaProject().getProject();
 	}
 }

@@ -12,15 +12,19 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardContainerConfigurationPage;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 
 /**
  * An {@link IListAdapter} implementation for importing {@link EPackage}s.
@@ -30,7 +34,17 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 @SuppressWarnings("restriction")
 public class ImportListAdapter implements IListAdapter<EPackage> {
-		
+	
+	private NewEiqFileWizardContainerConfigurationPage firstPage;
+	private IEiqGenmodelProvider metamodelProviderService;
+	
+	public ImportListAdapter(
+			NewEiqFileWizardContainerConfigurationPage firstPage,
+			IEiqGenmodelProvider metamodelProviderService) {
+		this.firstPage = firstPage;
+		this.metamodelProviderService = metamodelProviderService;
+	}
+
 	@Override
 	public void customButtonPressed(ListDialogField<EPackage> field, int index) {
 		//if Add button is pressed
@@ -69,6 +83,15 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 				result.add(_package);
 			}
 		}
+		
+		try {
+			Collection<EPackage> packages = metamodelProviderService.getAllMetamodelObjects(firstPage.getProject());
+			result.addAll(packages);
+		} 
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
+		
 		return result.toArray();
 	}
 
