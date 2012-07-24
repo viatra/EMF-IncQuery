@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
@@ -29,6 +30,8 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 
 	@Inject
 	private IJavaProjectProvider projectProvider;
+	@Inject
+	private Logger logger;
 
 	@Check
 	public void checkGenmodelDependencies(GeneratorModelReference ref) {
@@ -51,8 +54,7 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 								modelPluginID);
 					}
 				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error checking project: ", e);
 				}
 			}
 		}

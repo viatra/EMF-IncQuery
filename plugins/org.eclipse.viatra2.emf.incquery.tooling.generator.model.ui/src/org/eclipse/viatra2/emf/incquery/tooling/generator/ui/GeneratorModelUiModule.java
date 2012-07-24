@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 
+import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.validation.GeneratorModelJavaValidator;
 import org.eclipse.xtext.service.SingletonBinding;
+
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -20,6 +24,14 @@ import org.eclipse.xtext.service.SingletonBinding;
 public class GeneratorModelUiModule extends org.eclipse.viatra2.emf.incquery.tooling.generator.ui.AbstractGeneratorModelUiModule {
 	public GeneratorModelUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+
+	private static final String loggerRoot = "org.eclipse.viatra2.emf.incquery";
+
+	@Provides
+	@Singleton
+	Logger provideLoggerImplementation() {
+		return Logger.getLogger(loggerRoot);
 	}
 
 	@SingletonBinding(eager = true)
