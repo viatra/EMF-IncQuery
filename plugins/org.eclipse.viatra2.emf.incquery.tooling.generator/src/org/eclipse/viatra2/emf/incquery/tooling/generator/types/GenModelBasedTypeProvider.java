@@ -14,11 +14,16 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.types;
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.GeneratorIssueCodes;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.diagnostics.Severity;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -32,6 +37,8 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 
 	@Inject 
 	private IEiqGenmodelProvider genModelProvider;
+	@Inject
+	private IErrorFeedback errorFeedback;
 	
 	@Override
 	protected JvmTypeReference resolve(EClassifier classifier,
@@ -64,7 +71,23 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 			EClassifier classifier, Variable variable) {
 		GenClass genClass = findGenClass(genPackage, classifier);
 		if (genClass != null) {
-			return typeReference(genClass.getQualifiedInterfaceName(), variable);
+			JvmTypeReference typeReference = typeReference(genClass.getQualifiedInterfaceName(), variable);
+			if (typeReference == null) {
+				EObject context = variable;
+				if (variable.eContainer() instanceof PatternBody && variable.getReferences().size() > 0) {
+					context = variable.getReferences().get(0);
+				}
+				errorFeedback
+						.reportError(
+								context,
+								String.format(
+										"Cannot resolve corresponding Java type for variable %s. Are the required bundle dependencies set?",
+										variable.getName()),
+								GeneratorIssueCodes.INVALID_TYPEREF_CODE,
+								Severity.WARNING,
+								IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+			}
+			return typeReference;
 		}
 		return null;
 	}
