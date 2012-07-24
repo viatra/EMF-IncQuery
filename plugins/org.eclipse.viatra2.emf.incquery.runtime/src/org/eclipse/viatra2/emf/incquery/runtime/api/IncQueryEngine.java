@@ -13,10 +13,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
 import org.apache.log4j.Appender;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -25,6 +22,7 @@ import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
@@ -88,6 +86,7 @@ public class IncQueryEngine {
 	 * Indicates whether the engine is in a tainted, inconsistent state.
 	 */
 	private boolean tainted = false;
+	private EngineTaintListener taintListener;
 	
 	/**
 	 * EXPERIMENTAL
@@ -244,6 +243,7 @@ public class IncQueryEngine {
 		if (baseIndex != null) {
 			baseIndex.dispose();
 		}
+		getLogger().removeAppender(taintListener);
 	}
 
 	/**
@@ -263,18 +263,13 @@ public class IncQueryEngine {
 				throw new AssertionError("Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
 			
 			// if an error is logged, the engine becomes tainted
-			logger.addAppender(new AppenderSkeleton() {			
+			taintListener = new EngineTaintListener() {
 				@Override
-				public boolean requiresLayout() {return false;}		
-				@Override
-				public void close() {}			
-				@Override
-				protected void append(LoggingEvent event) {
-					if (event.getLevel().isGreaterOrEqual(Level.FATAL)) {
-						tainted = true;
-					}					
+				public void engineBecameTainted() {
+					tainted = true;
 				}
-			});
+			};
+			logger.addAppender(taintListener);
 		}
 		return logger;
 	}
