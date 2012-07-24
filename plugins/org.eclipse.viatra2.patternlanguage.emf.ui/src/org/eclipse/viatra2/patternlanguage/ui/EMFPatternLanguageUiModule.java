@@ -25,7 +25,10 @@ import org.eclipse.viatra2.patternlanguage.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.viatra2.patternlanguage.ui.labeling.EMFPatternLanguageHoverProvider;
+import org.eclipse.viatra2.patternlanguage.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
+import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
+import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -119,5 +122,10 @@ public class EMFPatternLanguageUiModule extends org.eclipse.viatra2.patternlangu
 	
 	public Class<? extends JvmModelAssociator> bindJvmModelAssociator() {
 		return EMFPatternJvmModelAssociator.class;
+	}
+	
+	@SingletonBinding(eager = true)
+	public Class<? extends EMFPatternLanguageJavaValidator> bindEMFPatternLanguageJavaValidator() {
+		return GenmodelBasedEMFPatternLanguageJavaValidator.class;
 	}
 }

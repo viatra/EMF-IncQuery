@@ -1,8 +1,11 @@
 package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
-public class GeneratorIssueCodes {
-
-	private final static String GENERATOR_ROOT_CODE = "org.eclipse.viatra2.emf.incquery.tooling.generator.";
+public final class GeneratorIssueCodes {
 	
-	public final static String INVALID_PATTERN_MODEL_CODE = GENERATOR_ROOT_CODE + "invalid.patternmodel";
+	private GeneratorIssueCodes() {}
+
+	private static final String GENERATOR_ROOT_CODE = "org.eclipse.viatra2.emf.incquery.tooling.generator.";
+	
+	public static final String INVALID_PATTERN_MODEL_CODE = GENERATOR_ROOT_CODE + "invalid.patternmodel";
+	public static final String INVALID_TYPEREF_CODE = GENERATOR_ROOT_CODE + "invalid.typeref";
 }

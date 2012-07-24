@@ -14,11 +14,11 @@ import com.google.inject.Inject;
 
 public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator {
 
-	public final static String GENMODEL_DEPENDENCY = "org.eclipse.viatra2.emf.incquery.tooling.generator.ui."
+	public static final String GENMODEL_DEPENDENCY = "org.eclipse.viatra2.emf.incquery.tooling.generator.ui."
 			+ "genmodel_dependency";
 
 	@Inject
-	IJavaProjectProvider projectProvider;
+	private IJavaProjectProvider projectProvider;
 
 	@Check
 	public void checkGenmodelDependencies(GeneratorModelReference ref) {
