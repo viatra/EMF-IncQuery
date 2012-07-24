@@ -9,6 +9,7 @@ public final class EMFIssueCodes {
 	
 	public static final String DUPLICATE_IMPORT = ISSUE_CODE_PREFIX + "duplicate_import";
 	public static final String IMPORT_WITH_GENERATEDCODE = ISSUE_CODE_PREFIX + "missing_imported_code";
+	public static final String IMPORT_DEPENDENCY_MISSING = ISSUE_CODE_PREFIX + "missing_import_dependency";
 	public static final String INVALID_ENUM_LITERAL = ISSUE_CODE_PREFIX + "invalid_enum";
 	
 	public static final String SYMBOLIC_VARIABLE_NEVER_REFERENCED = ISSUE_CODE_PREFIX + "symbolic_variable_never_referenced";

@@ -260,7 +260,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 			}
 		}
 		if (fallbackToPackageRegistry){
-			return genmodelRegistry.findGenPackage(packageNsUri, set);
+			return getGenmodelRegistry().findGenPackage(packageNsUri, set);
 		}
 		return null;
 	}

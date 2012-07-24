@@ -66,7 +66,7 @@ public class EMFPatternLanguageJavaValidator extends
 	public static final String DUPLICATE_IMPORT = "Duplicate import of ";
 	
 	@Inject
-	IMetamodelProvider metamodelProvider;
+	private IMetamodelProvider metamodelProvider;
 
 	@Check
 	public void checkDuplicatePackageImports(PatternModel patternModel) {
@@ -95,7 +95,7 @@ public class EMFPatternLanguageJavaValidator extends
 				&& !metamodelProvider.isGeneratedCodeAvailable(packageImport
 				.getEPackage(), packageImport.eResource().getResourceSet())) {
 			warning(String
-					.format("The generated code of the Ecore model cannot be found. Consider setting up a generator model for the generated code to work.",
+					.format("The generated code of the Ecore model %s cannot be found. Consider setting up a generator model for the generated code to work.",
 							packageImport.getEPackage().getNsURI()),
 					EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
 					EMFIssueCodes.IMPORT_WITH_GENERATEDCODE);

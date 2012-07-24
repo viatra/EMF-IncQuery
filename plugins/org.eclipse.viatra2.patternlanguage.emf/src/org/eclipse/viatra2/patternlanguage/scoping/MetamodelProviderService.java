@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -27,14 +28,27 @@ import com.google.inject.Inject;
 
 public class MetamodelProviderService implements IMetamodelProvider {
 
+	private final static class CastToEPackage implements
+			Function<Object, EPackage> {
+		@Override
+		public EPackage apply(Object obj) {
+			Preconditions.checkArgument(obj instanceof EPackage);
+			return (EPackage) obj;
+		}
+	}
+
 	@Inject
 	private Logger logger;
 	
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
 	
-	protected EcoreGenmodelRegistry genmodelRegistry = new EcoreGenmodelRegistry();
+	private EcoreGenmodelRegistry genmodelRegistry = new EcoreGenmodelRegistry();
 
+	protected EcoreGenmodelRegistry getGenmodelRegistry() {
+		return genmodelRegistry;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -68,14 +82,7 @@ public class MetamodelProviderService implements IMetamodelProvider {
 
 	protected Map<String, EPackage> getMetamodelMap(){
 		return Maps.transformValues(EPackage.Registry.INSTANCE,
-				new Function<Object, EPackage>() {
-					
-					@Override
-					public EPackage apply(Object obj) {
-						Preconditions.checkArgument(obj instanceof EPackage);
-						return (EPackage) obj;
-					}
-				});
+				new CastToEPackage());
 		
 	}
 	
