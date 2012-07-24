@@ -177,7 +177,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	@Override
 	public void dispose() {
 		for (Notifier root : modelRoots) {
-			root.eAdapters().remove(contentAdapter);		
+			contentAdapter.removeAdapter(root);		
 		}
 	}
 	
@@ -467,7 +467,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	protected void expandToAdditionalRoot(Notifier root) {
 		if (modelRoots.add(root)) {
-			root.eAdapters().add(contentAdapter);
+			contentAdapter.addAdapter(root);
 		}
 	}
 
