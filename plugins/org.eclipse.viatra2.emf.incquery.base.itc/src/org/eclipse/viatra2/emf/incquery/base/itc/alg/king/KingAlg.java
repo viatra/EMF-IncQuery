@@ -15,6 +15,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.king;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
@@ -32,7 +33,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 		// calculate k
 		if (gds.getAllNodes().size() != 0) {
 			double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-			this.levelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+			this.levelCount = (int) Math.ceil(j);
 		} else
 			this.levelCount = 0;
 
@@ -68,31 +69,34 @@ public class KingAlg<V> implements IGraphObserver<V> {
 			modEdges = relations.get(i - 1).getModEdges();
 
 			// dE(i-1) X U'(i-1)
-			for (V s : modEdges.keySet()) {
-				for (V t : modEdges.get(s))
+			for (Entry<V, HashSet<V>> entry : modEdges.entrySet()) {
+				for (V t : entry.getValue()) {
 					for (int j = 0; j < i; j++) {
 						tupEnds = relations.get(j).getTupleEnds(t);
 						if (tupEnds != null) {
-							for (V tEnd : tupEnds)
-								if (!tEnd.equals(s))
-									relations.get(i).addTuple(s, tEnd, dCount);
+							for (V tEnd : tupEnds) {
+								if (!tEnd.equals(entry.getKey())) {
+									relations.get(i).addTuple(entry.getKey(), tEnd, dCount);
+								}
+							}
 						}
 					}
+				}
 			}
 
 			E = relations.get(i - 1).getOriginalEdges(dCount);
 			HashMap<V, HashSet<V>> dU = dUnionAll(i - 1, dCount);
 			// E(i-1) X dU(i-1)
-			for (V s : E.keySet()) {
-				for (V t : E.get(s)) {
-
+			for (Entry<V, HashSet<V>> entry : E.entrySet()) {
+				for (V t : entry.getValue()) {
 					tupEnds = dU.get(t);
-
-					if (tupEnds != null)
+					if (tupEnds != null) {
 						for (V tEnd : dU.get(t)) {
-							if (!s.equals(tEnd))
-								relations.get(i).addTuple(s, tEnd, dCount);
+							if (!entry.getKey().equals(tEnd)) {
+								relations.get(i).addTuple(entry.getKey(), tEnd, dCount);
+							}
 						}
+					}
 				}
 			}
 
@@ -198,7 +202,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 	@Override
 	public void nodeInserted(V n) {
 		double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-		int newLevelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+		int newLevelCount = (int) Math.ceil(j);
 
 		if (newLevelCount > levelCount) {
 			relations.add(new KingTcRelation<V>());
@@ -209,7 +213,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 	@Override
 	public void nodeDeleted(V n) {
 		double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-		int newLevelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+		int newLevelCount = (int) Math.ceil(j);
 
 		if (newLevelCount < levelCount) {
 			relations.remove(levelCount - 1);

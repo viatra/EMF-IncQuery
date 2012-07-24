@@ -101,7 +101,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 			tupStarts = tc.getTupleStarts(source);
 			tupEnds = tc.getTupleEnds(target);
 			
-			if (tupStarts != null && tupEnds != null)
+			if (tupStarts != null && tupEnds != null) {
 				for (V s : tupStarts) {
 					for (V t : tupEnds) {
 						if (!s.equals(t)) {
@@ -111,6 +111,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 						}
 					}
 				}
+			}
 			
 			// (s, source) -> (source, target)
 			//tupStarts = tc.getTupleStarts(source);
