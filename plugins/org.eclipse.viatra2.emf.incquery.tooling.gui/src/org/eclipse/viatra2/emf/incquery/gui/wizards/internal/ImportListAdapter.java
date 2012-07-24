@@ -13,16 +13,18 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardContainerConfigurationPage;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 
@@ -37,6 +39,7 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 	
 	private NewEiqFileWizardContainerConfigurationPage firstPage;
 	private IEiqGenmodelProvider metamodelProviderService;
+	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
 	public ImportListAdapter(
 			NewEiqFileWizardContainerConfigurationPage firstPage,
@@ -86,7 +89,9 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 			}
 		} 
 		catch (CoreException e) {
-			e.printStackTrace();
+			logger.log(new Status(IStatus.ERROR,
+					IncQueryGUIPlugin.PLUGIN_ID,
+					"Error during EPackage collecting: " + e.getCause().getMessage(), e.getCause()));
 		}
 		
 		return result.toArray();
