@@ -37,7 +37,9 @@ public class EMFPatternJvmModelAssociator extends JvmModelAssociator {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IFile file = root.getFile(new Path(resource.getURI()
 					.toPlatformString(true)));
-			feedback.clearMarkers(file, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+			if (file.exists()) {
+				feedback.clearMarkers(file, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+			}
 		}
 		super.installDerivedState(resource, preIndexingPhase);
 	}
