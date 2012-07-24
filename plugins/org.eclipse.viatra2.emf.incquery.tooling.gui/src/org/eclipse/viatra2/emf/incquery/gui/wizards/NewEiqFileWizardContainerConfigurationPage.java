@@ -163,7 +163,13 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 			} else {
 				int dotLoc = fileName.lastIndexOf('.');
 				String ext = fileName.substring(dotLoc + 1);
-				wrongExtension = !ext.equalsIgnoreCase("eiq"); 
+				wrongExtension = !ext.equalsIgnoreCase("eiq");
+				
+				String name = fileName.substring(0, dotLoc);
+				IStatus nameValidatorStatus = JavaConventions.validateTypeVariableName(name, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
+				if (nameValidatorStatus.getSeverity() == IStatus.ERROR) {
+					si.setError(String.format("Filename %s is not a valid Java type name.", name)); 
+				}
 			}
 			
 			if (wrongExtension) {
@@ -186,12 +192,12 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		if (text == null || text.isEmpty()) {
 			return new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, DEFAULT_PACKAGE_WARNING);
 		}
-		IJavaProject project= getJavaProject();
+		IJavaProject project = getJavaProject();
 		if (project == null || !project.exists()) {
 			 return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
 		}
 		IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-		if (status.getSeverity() != ERROR && !text.toLowerCase().equals(text)) {
+		if (status.getSeverity() != ERROR && !text.equalsIgnoreCase(text)) {
 			return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, PACKAGE_NAME_WARNING);
 		}
 		return status;

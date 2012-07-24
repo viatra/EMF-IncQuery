@@ -67,7 +67,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		val name = object.eResource?.URI.trimFileExtension.lastSegment
 		val status = JavaConventions::validateJavaTypeName(name, JavaCore::VERSION_1_6, JavaCore::VERSION_1_6)
 		if (status.severity == IStatus::ERROR) {
-			throw new IllegalArgumentException(name + " is not a valid Java Type name")
+			throw new IllegalArgumentException("The file name " + name + " is not a valid Java type name. Please, rename the file!")
 		}
 		name
 	}
