@@ -11,10 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.handlers;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,10 +18,8 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ConstraintAdapter;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.ValidationInitUtil;
 
 
 
@@ -38,31 +32,16 @@ public class InitValidatorsForSelectionHandler extends AbstractHandler {
 		Object selectedElement = selection.getFirstElement();
 		
 		if (selectedElement instanceof Notifier) {
-			initializeAdapters(activeEditor, (Notifier) selectedElement);
+			try {
+				ValidationInitUtil.initializeAdapters(activeEditor, (Notifier) selectedElement);
+			} catch (IncQueryException ex) {
+				throw new ExecutionException(
+						"Could not validate constraints due to a pattern matcher error", 
+						ex);
+			}
 		}
 	
 		return null;
 	}
 
-	/**
-	 * @param activeEditor
-	 * @param root
-	 */
-	protected void initializeAdapters(IEditorPart activeEditor, Notifier root) {
-		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
-		
-		Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = ValidationUtil.getAdapterMap();
-		if(adapterMap.containsKey(activeEditor)) {
-			// FIXME define proper semantics for validation based on selection
-			// FIXME handle already existing violations
-			
-			//adapterMap.get(activeEditor).addAll(adapters);
-		} else {
-			for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
-				adapters.add(new ConstraintAdapter<IPatternMatch>(c, root));
-			}
-			adapterMap.put(activeEditor, adapters);
-			activeEditor.getEditorSite().getPage().addPartListener(ValidationUtil.editorPartListener);
-		}
-	}
 }

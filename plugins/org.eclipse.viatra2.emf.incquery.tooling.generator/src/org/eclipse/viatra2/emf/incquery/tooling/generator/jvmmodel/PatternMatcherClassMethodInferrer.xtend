@@ -13,17 +13,17 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Collection
+import java.util.HashSet
+import java.util.Set
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
+import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
-import java.util.Set
-import java.util.HashSet
 
 class PatternMatcherClassMethodInferrer {
 	
@@ -104,6 +104,19 @@ class PatternMatcherClassMethodInferrer {
    					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
    				])
    			]
+   			type.members += pattern.toMethod("newMatch", cloneWithProxies(matchClassReference)) [
+    			it.documentation = pattern.javadocNewMatchMethod.toString
+   				for (parameter : pattern.parameters){
+					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
+   				}
+   				it.setBody([append('''
+   					return new ''')
+	   				serialize(matchClassReference, pattern)
+	   				append('''
+	   				(«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»);
+	   				''')
+   				])
+	   		]
    			for (variable : pattern.parameters){
    				val typeOfVariable = variable.calculateType
    				type.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
@@ -156,6 +169,7 @@ class PatternMatcherClassMethodInferrer {
    				])
    			]
 		}
+		
 		type.inferMatcherClassToMatchMethods(pattern, matchClassReference)
    	}
    	
@@ -171,15 +185,10 @@ class PatternMatcherClassMethodInferrer {
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
-   		val newEmptyMatchMethod = pattern.toMethod("newEmptyMatch", cloneWithProxies(matchClassRef)) [
-   			it.annotations += pattern.toAnnotation(typeof (Override))
-   		]
    		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it)])
    		arrayToMatchMethod.setBody([it | pattern.inferArrayToMatchMethodBody(it)])
-   		newEmptyMatchMethod.setBody([it | pattern.inferNewEmptyMatchMethodBody(it)])
    		matcherClass.members += tupleToMatchMethod
    		matcherClass.members += arrayToMatchMethod
-   		matcherClass.members += newEmptyMatchMethod
    	}
   	
   	/**
@@ -213,15 +222,6 @@ class PatternMatcherClassMethodInferrer {
    			}
    		''')
   	}
-  	
-  	/**
-   	 * Infers the newEmptyMatch method body
-   	 */
-	def inferNewEmptyMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
-		appendable.append('''
-   			return arrayToMatch(new Object[getParameterNames().length]);''')
-	}
-  	
 	  	
   	/**
   	 * Infers the appropriate logging based on the parameters.

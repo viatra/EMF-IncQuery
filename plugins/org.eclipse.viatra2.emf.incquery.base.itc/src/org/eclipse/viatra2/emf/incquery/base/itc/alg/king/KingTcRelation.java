@@ -14,6 +14,9 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.king;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map.Entry;
+
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
 
 /**
  * 
@@ -25,13 +28,13 @@ import java.util.Set;
  *
  * @param <V>
  */
-public class TcRelation<V> {
+public class KingTcRelation<V> implements ITcRelation<V> {
 
 	private HashMap<V, HashMap<V, Integer>> forwardTuples = null;
 	private HashMap<V, HashMap<V, Integer>> backwardTuples = null;
 	private HashMap<V, HashSet<V>> dE = null;
 
-	public TcRelation() {
+	KingTcRelation() {
 		forwardTuples = new HashMap<V, HashMap<V, Integer>>();
 		backwardTuples = new HashMap<V, HashMap<V, Integer>>();
 		dE = new HashMap<V, HashSet<V>>();
@@ -51,7 +54,7 @@ public class TcRelation<V> {
 		this.dE.clear();
 	}
 
-	public void union(TcRelation<V> rA) {
+	public void union(KingTcRelation<V> rA) {
 		for (V source : rA.forwardTuples.keySet()) {
 			for (V target : rA.forwardTuples.get(source).keySet()) {
 				this.addTuple(source, target,
@@ -201,17 +204,18 @@ public class TcRelation<V> {
 
 	@Override
 	public String toString() {
-		String s = "TcRelation = ";
+		StringBuilder sb = new StringBuilder("TcRelation = ");
 
 		for (V source : this.forwardTuples.keySet()) {
 			for (V target : this.forwardTuples.get(source).keySet()) {
-				s += "{(" + source + "," + target + "),"
-						+ this.forwardTuples.get(source).get(target) + "} ";
+				sb.append("{(" + source + "," + target + "),"
+						+ this.forwardTuples.get(source).get(target) + "} ");
 			}
 		}
-		return s;
+		return sb.toString();
 	}
 
+	@Override
 	public Set<V> getTupleEnds(V source) {
 		HashMap<V, Integer> tupEnds = forwardTuples.get(source);
 		if (tupEnds == null)
@@ -226,6 +230,7 @@ public class TcRelation<V> {
 		return backwardTuples.get(target).keySet();
 	}
 
+	@Override
 	public Set<V> getTupleStarts() {
 		HashSet<V> nodes = new HashSet<V>();
 		nodes.addAll(forwardTuples.keySet());
@@ -244,12 +249,33 @@ public class TcRelation<V> {
 	public HashMap<V, HashSet<V>> getModEdges() {
 		return dE;
 	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		
+		for (Entry<V, HashMap<V, Integer>> entry : this.forwardTuples.entrySet()) {
+			hash += 31 * hash + entry.hashCode();
+		}
+		
+		for (Entry<V, HashMap<V, Integer>> entry : this.backwardTuples.entrySet()) {
+			hash += 31 * hash + entry.hashCode();
+		}
+		
+		return hash;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TcRelation) {
-			TcRelation<V> aTR = (TcRelation<V>) obj;
+		if (this == obj) {
+			return true;
+		}
+		else if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		else {
+			KingTcRelation<V> aTR = (KingTcRelation<V>) obj;
 
 			for (V source : aTR.forwardTuples.keySet()) {
 				for (V target : aTR.forwardTuples.get(source).keySet()) {
@@ -267,6 +293,5 @@ public class TcRelation<V> {
 
 			return true;
 		}
-		return false;
 	}
 }

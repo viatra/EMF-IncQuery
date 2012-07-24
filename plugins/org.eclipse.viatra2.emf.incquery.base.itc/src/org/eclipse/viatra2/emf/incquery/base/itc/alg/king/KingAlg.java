@@ -15,6 +15,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.king;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
@@ -24,7 +25,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 
 	private static final long serialVersionUID = -748676749122336868L;
 	private int levelCount;
-	private ArrayList<TcRelation<V>> relations;
+	private ArrayList<KingTcRelation<V>> relations;
 	private IGraphDataSource<V> gds;
 
 	public KingAlg(IGraphDataSource<V> gds) {
@@ -32,13 +33,13 @@ public class KingAlg<V> implements IGraphObserver<V> {
 		// calculate k
 		if (gds.getAllNodes().size() != 0) {
 			double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-			this.levelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+			this.levelCount = (int) Math.ceil(j);
 		} else
 			this.levelCount = 0;
 
-		this.relations = new ArrayList<TcRelation<V>>();
+		this.relations = new ArrayList<KingTcRelation<V>>();
 		for (int i = 0; i < levelCount; i++)
-			this.relations.add(new TcRelation<V>());
+			this.relations.add(new KingTcRelation<V>());
 
 		gds.attachObserver(this);
 	}
@@ -68,31 +69,34 @@ public class KingAlg<V> implements IGraphObserver<V> {
 			modEdges = relations.get(i - 1).getModEdges();
 
 			// dE(i-1) X U'(i-1)
-			for (V s : modEdges.keySet()) {
-				for (V t : modEdges.get(s))
+			for (Entry<V, HashSet<V>> entry : modEdges.entrySet()) {
+				for (V t : entry.getValue()) {
 					for (int j = 0; j < i; j++) {
 						tupEnds = relations.get(j).getTupleEnds(t);
 						if (tupEnds != null) {
-							for (V tEnd : tupEnds)
-								if (!tEnd.equals(s))
-									relations.get(i).addTuple(s, tEnd, dCount);
+							for (V tEnd : tupEnds) {
+								if (!tEnd.equals(entry.getKey())) {
+									relations.get(i).addTuple(entry.getKey(), tEnd, dCount);
+								}
+							}
 						}
 					}
+				}
 			}
 
 			E = relations.get(i - 1).getOriginalEdges(dCount);
 			HashMap<V, HashSet<V>> dU = dUnionAll(i - 1, dCount);
 			// E(i-1) X dU(i-1)
-			for (V s : E.keySet()) {
-				for (V t : E.get(s)) {
-
+			for (Entry<V, HashSet<V>> entry : E.entrySet()) {
+				for (V t : entry.getValue()) {
 					tupEnds = dU.get(t);
-
-					if (tupEnds != null)
+					if (tupEnds != null) {
 						for (V tEnd : dU.get(t)) {
-							if (!s.equals(tEnd))
-								relations.get(i).addTuple(s, tEnd, dCount);
+							if (!entry.getKey().equals(tEnd)) {
+								relations.get(i).addTuple(entry.getKey(), tEnd, dCount);
+							}
 						}
+					}
 				}
 			}
 
@@ -198,10 +202,10 @@ public class KingAlg<V> implements IGraphObserver<V> {
 	@Override
 	public void nodeInserted(V n) {
 		double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-		int newLevelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+		int newLevelCount = (int) Math.ceil(j);
 
 		if (newLevelCount > levelCount) {
-			relations.add(new TcRelation<V>());
+			relations.add(new KingTcRelation<V>());
 			this.levelCount = newLevelCount;
 		}
 	}
@@ -209,7 +213,7 @@ public class KingAlg<V> implements IGraphObserver<V> {
 	@Override
 	public void nodeDeleted(V n) {
 		double j = Math.log10(gds.getAllNodes().size()) / Math.log10(2);
-		int newLevelCount = (int) ((j == Math.floor(j)) ? j : j + 1);
+		int newLevelCount = (int) Math.ceil(j);
 
 		if (newLevelCount < levelCount) {
 			relations.remove(levelCount - 1);
@@ -217,10 +221,10 @@ public class KingAlg<V> implements IGraphObserver<V> {
 		}
 	}
 
-	public org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V> getMergedRelation() {
-		org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V> dTc = new org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V>();
+	public org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V> getMergedRelation() {
+		org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V> dTc = new org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V>();
 		
-		for (TcRelation<V> tc : relations) {
+		for (KingTcRelation<V> tc : relations) {
 			for (V s : tc.getTupleStarts()) {
 				for (V t : tc.getTupleEnds(s)) {
 					dTc.addTuple(s, t);

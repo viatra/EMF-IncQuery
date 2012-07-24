@@ -41,6 +41,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail.TableViewerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.FlyoutPreferences;
@@ -56,6 +57,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
@@ -91,7 +93,7 @@ public class QueryExplorer extends ViewPart {
 	private MatcherTreeViewerRoot matcherTreeViewerRoot;
 	
 	private ModelEditorPartListener modelPartListener;
-	public static PatternsViewerInput patternsViewerInput;
+	public static PatternsViewerInput patternsViewerInput = new PatternsViewerInput();
 	
 	private FlyoutControlComposite patternsViewerFlyout;
 	private FlyoutControlComposite detailsViewerFlyout;
@@ -117,7 +119,6 @@ public class QueryExplorer extends ViewPart {
 		matcherLabelProvider = new MatcherLabelProvider();
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
 		modelPartListener = new ModelEditorPartListener();
-		patternsViewerInput = new PatternsViewerInput();
 		flatCP = new PatternsViewerFlatContentProvider();
 		hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
 		hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
@@ -175,6 +176,8 @@ public class QueryExplorer extends ViewPart {
 		}
 		detailsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_EAST, detailsState, 300);
 		patternsViewerFlyoutPreferences = new FlyoutPreferences(IFlyoutPreferences.DOCK_WEST, patternsState, 100);
+		
+		IncQueryGUIPlugin.getDefault().getPreferenceStore().setDefault(PreferenceConstants.WILDCARD_MODE, true);
 	}
 	
 	public void clearTableViewer() {

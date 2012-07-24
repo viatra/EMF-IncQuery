@@ -76,21 +76,28 @@ public class PVariable {
 	public void unifyInto(PVariable replacement) {
 		replacementCheck();
 		replacement = replacement.getUnifiedIntoRoot();
-		//replacement.referringConstraints.addAll(this.referringConstraints);
-		//replacement.exportedParameter |= this.exportedParameter;
-		replacement.virtual &= this.virtual;
-		if (replacement.deducable != null && this.deducable != null)
-			replacement.deducable |= this.deducable;
-		else 
-			replacement.deducable = null;
-		Set<PConstraint> snapshotConstraints = // avoid ConcurrentModificationX
-			new HashSet<PConstraint>(this.referringConstraints);
-		for (PConstraint constraint : snapshotConstraints) {
-			constraint.replaceVariable(this, replacement);
+		
+		if (this.equals(replacement)) return;
+		
+		if (!this.isVirtual() && replacement.isVirtual())
+			replacement.unifyInto(this);
+		else {	
+			//replacement.referringConstraints.addAll(this.referringConstraints);
+			//replacement.exportedParameter |= this.exportedParameter;
+			replacement.virtual &= this.virtual;
+			if (replacement.deducable != null && this.deducable != null)
+				replacement.deducable |= this.deducable;
+			else 
+				replacement.deducable = null;
+			Set<PConstraint> snapshotConstraints = // avoid ConcurrentModificationX
+				new HashSet<PConstraint>(this.referringConstraints);
+			for (PConstraint constraint : snapshotConstraints) {
+				constraint.replaceVariable(this, replacement);
+			}
+			// replacementCheck() will fail from this point
+			this.unifiedInto = replacement;
+			pSystem.noLongerUnique(this);
 		}
-		// replacementCheck() will fail from this point
-		this.unifiedInto = replacement;
-		pSystem.noLongerUnique(this);
 	}
 	
 	/**

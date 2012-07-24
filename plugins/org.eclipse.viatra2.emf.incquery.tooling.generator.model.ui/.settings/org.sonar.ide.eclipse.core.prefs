@@ -1,0 +1,7 @@
+analyseLocally=false
+eclipse.preferences.version=1
+projectArtifactId=org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui
+projectBranch=
+projectGroupId=org.eclipse.viatra2
+serverUrl=https\://build.inf.mit.bme.hu/sonar
+version=1

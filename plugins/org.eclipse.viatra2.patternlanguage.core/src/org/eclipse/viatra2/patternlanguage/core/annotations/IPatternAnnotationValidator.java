@@ -1,6 +1,13 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.annotations;
 
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
@@ -14,20 +21,22 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
  */
 public interface IPatternAnnotationValidator {
 
-	public Iterable<String> getMissingMandatoryAttributes(Annotation annotation);
+	Iterable<String> getMissingMandatoryAttributes(Annotation annotation);
 	
 	/**
 	 * @param annotation
 	 * @return
 	 */
-	public Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation);
+	Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation);
 	
 	/**
 	 * Returns whether a parameter of an annotation is mistyped
 	 * @param parameter
 	 * @return the expected class of the parameter variable
 	 */
-	public Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter);
+	Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter);
 
-	public Iterable<String> getAllAvailableParameterNames();
+	Iterable<String> getAllAvailableParameterNames();
+	
+	String getAnnotationName();
 }

@@ -27,11 +27,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListLabelProvider;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListAdapter;
-import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListLabelProvider;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListLabelProvider;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
+
+import com.google.inject.Inject;
 
 /**
  * Second page of the {@link NewEiqFileWizard} which allows to specify pattern parameters and imported {@link EPackage}s. 
@@ -54,6 +57,9 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	private ObjectListAdapter objectListAdapter;
 	public boolean parameterSet;
 	
+	@Inject
+	private IEiqGenmodelProvider metamodelProviderService;
+	
 	public NewEiqFileWizardPatternConfigurationPage() {
 		super(TITLE);
 		setTitle(TITLE);
@@ -62,7 +68,10 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 	
 	private void createImportsControl(Composite parent, int nColumns) {
 		String[] buttonLiterals= new String[] {"Add", "Remove"};
-		importListAdapter = new ImportListAdapter();
+		
+		NewEiqFileWizardContainerConfigurationPage firstPage = (NewEiqFileWizardContainerConfigurationPage) this.getPreviousPage();
+		
+		importListAdapter = new ImportListAdapter(firstPage, metamodelProviderService);
 		importListLabelProvider = new ImportListLabelProvider();
 		
 		importList = new ListDialogField<EPackage>(importListAdapter, buttonLiterals, importListLabelProvider);

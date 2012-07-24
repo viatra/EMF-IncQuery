@@ -10,10 +10,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
+import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
@@ -54,10 +55,10 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
    * The match set will be incrementally refreshed upon updates from this scope.
    * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-   * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+   * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public UnexpectedMatchRecordMatcher(final Notifier emfRoot) throws IncQueryRuntimeException {
+  public UnexpectedMatchRecordMatcher(final Notifier emfRoot) throws IncQueryException {
     this(EngineManager.getInstance().getIncQueryEngine(emfRoot));
   }
   
@@ -66,11 +67,11 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
+   * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public UnexpectedMatchRecordMatcher(final IncQueryEngine engine) throws IncQueryRuntimeException {
-    super(engine, FACTORY);
+  public UnexpectedMatchRecordMatcher(final IncQueryEngine engine) throws IncQueryException {
+    super(engine, factory());
   }
   
   /**
@@ -164,6 +165,20 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    */
   public DeltaMonitor<UnexpectedMatchRecordMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pActualSet, pExpectedSet, pRecord});
+  }
+  
+  /**
+   * Returns a new (partial) Match object for the matcher. 
+   * This can be used e.g. to call the matcher with a partial match. 
+   * @param pActualSet the fixed value of pattern parameter ActualSet, or null if not bound.
+   * @param pExpectedSet the fixed value of pattern parameter ExpectedSet, or null if not bound.
+   * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public UnexpectedMatchRecordMatch newMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+    return new UnexpectedMatchRecordMatch(pActualSet, pExpectedSet, pRecord);
+    
   }
   
   /**
@@ -303,10 +318,12 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
     
   }
   
-  @Override
-  public UnexpectedMatchRecordMatch newEmptyMatch() {
-    return arrayToMatch(new Object[getParameterNames().length]);
+  /**
+   * @return the singleton instance of the factory of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IMatcherFactory<UnexpectedMatchRecordMatcher> factory() throws IncQueryException {
+    return UnexpectedMatchRecordMatcherFactory.instance();
   }
-  
-  public final static IMatcherFactory<UnexpectedMatchRecordMatcher> FACTORY =  new UnexpectedMatchRecordMatcherFactory();
 }

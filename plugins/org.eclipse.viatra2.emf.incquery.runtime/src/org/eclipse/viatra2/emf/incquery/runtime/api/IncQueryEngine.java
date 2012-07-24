@@ -12,7 +12,11 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -20,7 +24,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
@@ -39,13 +43,15 @@ import com.google.inject.Injector;
  * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
  * The engine hosts pattern matchers, and will listen on EMF update notifications stemming from the given model in order to maintain live results. 
  * 
- * Pattern matchers within this engine may be instantiated in the following ways: <ul>
+ * <p>Pattern matchers within this engine may be instantiated in the following ways: <ul>
  *  <li> Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
  *  <li> Use the matcher factory associated with the generated matcher class to achieve the same.
  *  <li> Use GenericMatcherFactory instead of the various generated factories.
  *  </ul>
+ * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; 
+ * 	this improves the performance of pattern matcher construction, unless the engine is in wildcard mode.
  * 
- * The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
+ * <p>The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
  * 
  * @author Bergmann Gábor
  *
@@ -77,6 +83,12 @@ public class IncQueryEngine {
 	 * A sanitizer to catch faulty patterns.
 	 */	
 	private PatternSanitizer sanitizer = null;
+	
+	/**
+	 * Indicates whether the engine is in a tainted, inconsistent state.
+	 */
+	private boolean tainted = false;
+	
 	/**
 	 * EXPERIMENTAL
 	 */
@@ -87,16 +99,17 @@ public class IncQueryEngine {
 	/**
 	 * @param manager
 	 * @param emfRoot
+	 * @throws IncQueryException if the emf root is invalid
 	 */
-	IncQueryEngine(EngineManager manager, Notifier emfRoot) {
+	IncQueryEngine(EngineManager manager, Notifier emfRoot) throws IncQueryException {
 		super();
 		this.manager = manager;
 		this.emfRoot = emfRoot;
 		
 		if (! (emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet)) 
-			throw new IncQueryRuntimeException(
-					IncQueryRuntimeException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
-					IncQueryRuntimeException.INVALID_EMFROOT_SHORT);
+			throw new IncQueryException(
+					IncQueryException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
+					IncQueryException.INVALID_EMFROOT_SHORT);
 	}	
 	
 	/**
@@ -109,23 +122,24 @@ public class IncQueryEngine {
 	/**
 	 * Internal accessor for the base index.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
-	 * @throws IncQueryBaseException if the base index could not be constructed
+	 * @throws IncQueryException if the base index could not be constructed
 	 */
-	protected NavigationHelper getBaseIndexInternal() {
+	protected NavigationHelper getBaseIndexInternal() throws IncQueryException {
 		return getBaseIndexInternal(WILDCARD_MODE_DEFAULT);
 	}
 	
 	/**
 	 * Internal accessor for the base index.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
+	 * @throws IncQueryException if the base index could not be initialized
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) {
+	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex == null) {
 			try {
 				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
 			} catch (IncQueryBaseException e) {
-				throw new IncQueryRuntimeException(
+				throw new IncQueryException(
 						"Could not initialize EMF-IncQuery base index", 
 						"Could not initialize base index", 
 						e);
@@ -137,9 +151,9 @@ public class IncQueryEngine {
 	/**
 	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
 	 * @return the baseIndex the NavigationHelper maintaining the base index
-	 * @throws IncQueryBaseException if the base index could not be constructed
+	 * @throws IncQueryException if the base index could not be constructed
 	 */
-	public NavigationHelper getBaseIndex() {
+	public NavigationHelper getBaseIndex() throws IncQueryException {
 		return getBaseIndexInternal();
 	}	
 	
@@ -149,9 +163,9 @@ public class IncQueryEngine {
 	 * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
 	 * @noreference A typical user would not need to call this method.
 	 */
-	public ReteEngine<Pattern> getReteEngine() throws IncQueryRuntimeException {
+	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
 		if (reteEngine == null) {
-			EMFPatternMatcherRuntimeContext<Pattern> context = new EMFPatternMatcherRuntimeContext<Pattern>(this, getBaseIndexInternal());
+			EMFPatternMatcherRuntimeContext context = new EMFPatternMatcherRuntimeContext(this, getBaseIndexInternal());
 //			if (emfRoot instanceof EObject) 
 //				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
 //			else if (emfRoot instanceof Resource) 
@@ -199,7 +213,6 @@ public class IncQueryEngine {
 	}
 	
 	private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) 
-			throws IncQueryRuntimeException 
 	{
 		ReteEngine<Pattern> engine;
 		engine = new ReteEngine<Pattern>(context, reteThreads);
@@ -244,7 +257,24 @@ public class IncQueryEngine {
 	 */
 	public Logger getLogger() {
 		if (logger == null) {
-			logger = getDefaultLogger();
+			final int hash = System.identityHashCode(this);
+			logger = Logger.getLogger(getDefaultLogger().getName() + "." + hash);
+			if (logger == null)
+				throw new AssertionError("Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
+			
+			// if an error is logged, the engine becomes tainted
+			logger.addAppender(new AppenderSkeleton() {			
+				@Override
+				public boolean requiresLayout() {return false;}		
+				@Override
+				public void close() {}			
+				@Override
+				protected void append(LoggingEvent event) {
+					if (event.getLevel().isGreaterOrEqual(Level.FATAL)) {
+						tainted = true;
+					}					
+				}
+			});
 		}
 		return logger;
 	}
@@ -280,26 +310,52 @@ public class IncQueryEngine {
 	 * Provides a static default logger.
 	 */
 	public static Logger getDefaultLogger() {
-		final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-		assert(injector!=null);
-		Logger logger = injector.getInstance(Logger.class);
-		assert(logger != null);
+		if (defaultRuntimeLogger == null) {
+			final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+			if (injector==null) 
+				throw new AssertionError("Configuration error: EMF-IncQuery injector not initialized.");
+			Logger parentLogger = injector.getInstance(Logger.class);
+			if (parentLogger == null) 
+				throw new AssertionError("Configuration error: EMF-IncQuery logger not found.");
+			
+			defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
+			if (defaultRuntimeLogger == null) 
+				throw new AssertionError("Configuration error: unable to create default EMF-IncQuery runtime logger.");
+		}
 		
-		return logger;
+		return defaultRuntimeLogger;
 	}
+	private static Logger defaultRuntimeLogger;
 
 	/**
-	 * Specifies whether the base index should be built in wildcard mode.
+	 * Specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for the explanation of wildcard mode.
 	 * @param wildcardMode the wildcardMode to set
-	 * @throws IllegalStateException if baseIndex is already constructed in the opposite mode, since the mode can not be changed
+	 * @throws IncQueryException if the base index could not be initialized
+	 * @throws IllegalStateException if baseIndex is already constructed in the opposite mode, since the mode can not be changed once applied
 	 */
-	public void setWildcardMode(boolean wildcardMode) {
+	public void setWildcardMode(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
 			throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
 			
 		if (wildcardMode != WILDCARD_MODE_DEFAULT) 
 			getBaseIndexInternal(wildcardMode);		
 	}
+
+	/**
+	 * Indicates whether the engine is in a tainted, inconsistent state due to some internal errors. 
+	 * If true, results are no longer reliable; engine should be disposed.
+	 * 
+	 * <p>The engine is defined to be in a tainted state if any of its internal processes has logged a <strong>fatal</strong> error to the engine's logger. 
+	 * The cause of the error can therefore be determined by checking the contents of the log.
+	 * This is possible e.g. through a custom {@link Appender} that was attached to the engine's logger.  
+	 * 
+	 * @return the tainted state
+	 */
+	public boolean isTainted() {
+		return tainted;
+	}
+	
+	
 	
 //	/**
 //	 * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.

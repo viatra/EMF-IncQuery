@@ -62,4 +62,12 @@ public class TypeTernary<PatternDescription, StubHandle>
 		return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
+	 */
+	@Override
+	protected String keyToString() {
+		return pSystem.getContext().printType(supplierKey);
+	}
+
 }

@@ -28,6 +28,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.Predic
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 
 
@@ -35,9 +36,9 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Bergmann Gábor
  *
  */
-public class EMFPatternMatcherRuntimeContext<PatternDescription> 
-	extends EMFPatternMatcherContext<PatternDescription> 
-	implements IPatternMatcherRuntimeContext<PatternDescription>
+public class EMFPatternMatcherRuntimeContext 
+	extends EMFPatternMatcherContext 
+	implements IPatternMatcherRuntimeContext<Pattern>
 {
 
 	
@@ -446,7 +447,7 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 	
 	@Override
 	// TODO Transactional?
-	public IManipulationListener subscribePatternMatcherForUpdates(ReteEngine<PatternDescription> engine) {
+	public IManipulationListener subscribePatternMatcherForUpdates(ReteEngine<Pattern> engine) {
 		if (listener == null) listener = new BaseIndexListener(engine, baseIndex);
 		return listener;
 	}
@@ -465,7 +466,7 @@ public class EMFPatternMatcherRuntimeContext<PatternDescription>
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.IPatternMatcherRuntimeContext#subscribePatternMatcherForTraceInfluences(org.eclipse.viatra2.gtasm.patternmatcher.incremental.ReteEngine)
 	 */
 	@Override
-	public IPredicateTraceListener subscribePatternMatcherForTraceInfluences(ReteEngine<PatternDescription> engine) {
+	public IPredicateTraceListener subscribePatternMatcherForTraceInfluences(ReteEngine<Pattern> engine) {
 		// No ASMFunctions, use DUMMY
 		return new IPredicateTraceListener() {
 			@Override

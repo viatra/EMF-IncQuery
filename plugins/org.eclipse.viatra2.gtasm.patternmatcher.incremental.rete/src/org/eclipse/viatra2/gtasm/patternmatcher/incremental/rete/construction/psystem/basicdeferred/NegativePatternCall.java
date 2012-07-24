@@ -14,11 +14,11 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.p
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable; import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
@@ -74,7 +74,7 @@ public class NegativePatternCall<PatternDescription, StubHandle> extends
 	}
 	@Override
 	protected String toStringRest() {
-		return "!" + pattern.toString() + "@" + actualParametersTuple.toString();
+		return "!" + pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString();
 	}
 
 

@@ -175,6 +175,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @return
 	 */
 	protected Type searchForConstraintType(PatternBody body, Variable variable) {
+		body.getVariables();
 		for (Constraint constraint : body.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
 				if (equalVariable(variable, ((EClassifierConstraint) constraint).getVar())) {
@@ -330,7 +331,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			return false;
 		}
 		final Variable variableReferenceVariable = variableReference.getVariable();
-		final String variableName = variableReference.getVar();
+		final String variableName = variableReference.getVariable().getName();
 		if (equal(variable, variableReferenceVariable) || equal(variableName, variable.getName())) {
 			return true;
 		}

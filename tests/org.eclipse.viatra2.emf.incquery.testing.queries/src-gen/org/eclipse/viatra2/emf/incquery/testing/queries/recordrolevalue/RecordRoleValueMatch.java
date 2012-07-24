@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue;
 import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -26,7 +27,7 @@ public final class RecordRoleValueMatch extends BasePatternMatch implements IPat
   
   private static String[] parameterNames = {"Record", "Role"};
   
-  public RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
+  RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
     this.fRecord = pRecord;
     this.fRole = pRole;
     
@@ -96,9 +97,8 @@ public final class RecordRoleValueMatch extends BasePatternMatch implements IPat
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Record\"=" + prettyPrintValue(fRecord) + ", ");
-    
-    result.append("\"Role\"=" + prettyPrintValue(fRole)
-    );return result.toString();
+    result.append("\"Role\"=" + prettyPrintValue(fRole));
+    return result.toString();
     
   }
   
@@ -125,17 +125,23 @@ public final class RecordRoleValueMatch extends BasePatternMatch implements IPat
     	return false;
     if (!RecordRoleValueMatch.class.equals(obj.getClass()))
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
-    				RecordRoleValueMatch other = (RecordRoleValueMatch) obj;
-    				if (fRecord == null) {if (other.fRecord != null) return false;}
-    				else if (!fRecord.equals(other.fRecord)) return false;
-    				if (fRole == null) {if (other.fRole != null) return false;}
-    				else if (!fRole.equals(other.fRole)) return false;
-    				return true;
-    
+    RecordRoleValueMatch other = (RecordRoleValueMatch) obj;
+    if (fRecord == null) {if (other.fRecord != null) return false;}
+    else if (!fRecord.equals(other.fRecord)) return false;
+    if (fRole == null) {if (other.fRole != null) return false;}
+    else if (!fRole.equals(other.fRole)) return false;
+    return true;
   }
   
   @Override
   public Pattern pattern() {
-    return RecordRoleValueMatcher.FACTORY.getPattern();
+    try {
+    	return RecordRoleValueMatcher.factory().getPattern();
+    } catch (IncQueryException ex) {
+     	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+     	ex.printStackTrace();
+     	throw new IllegalStateException	(ex);
+    }
+    
   }
 }

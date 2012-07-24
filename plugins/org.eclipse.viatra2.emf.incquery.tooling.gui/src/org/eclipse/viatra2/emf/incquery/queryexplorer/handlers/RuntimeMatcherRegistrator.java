@@ -25,6 +25,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
@@ -80,7 +81,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
 				for (Pattern pattern : allActivePatterns) {
 					root.unregisterPattern(pattern);
 				}
-				EngineManager.getInstance().getIncQueryEngine(root.getNotifier()).wipe();
+				final IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
+				if (engine!=null) engine.wipe();
 			}
 			
 			//remove labels from pattern registry for the corresponding pattern model
@@ -101,9 +103,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
 			
 			//now the active patterns also contain of the new patterns
 			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-				for (Pattern pattern : allActivePatterns) {
-					root.registerPattern(pattern);
-				}
+				root.registerPattern(allActivePatterns.toArray(new Pattern[allActivePatterns.size()]));
 			}
 			
 			//setting check states

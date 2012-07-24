@@ -12,15 +12,21 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
+import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardContainerConfigurationPage;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 
 /**
  * An {@link IListAdapter} implementation for importing {@link EPackage}s.
@@ -30,7 +36,18 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 @SuppressWarnings("restriction")
 public class ImportListAdapter implements IListAdapter<EPackage> {
-		
+	
+	private NewEiqFileWizardContainerConfigurationPage firstPage;
+	private IEiqGenmodelProvider metamodelProviderService;
+	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
+	
+	public ImportListAdapter(
+			NewEiqFileWizardContainerConfigurationPage firstPage,
+			IEiqGenmodelProvider metamodelProviderService) {
+		this.firstPage = firstPage;
+		this.metamodelProviderService = metamodelProviderService;
+	}
+
 	@Override
 	public void customButtonPressed(ListDialogField<EPackage> field, int index) {
 		//if Add button is pressed
@@ -62,13 +79,21 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 	 */
 	private Object[] getElements(ListDialogField<EPackage> field) {
 		List<EPackage> result = new ArrayList<EPackage>();
-		Set<String> keys = new HashSet<String>(EPackage.Registry.INSTANCE.keySet());
-		for (String key : keys) {
-			EPackage _package = EPackage.Registry.INSTANCE.getEPackage(key);
-			if (!field.getElements().contains(_package)) {
-				result.add(_package);
+		
+		try {
+			Collection<EPackage> packages = metamodelProviderService.getAllMetamodelObjects(firstPage.getProject());
+			for (EPackage ePackage : packages) {
+				if (!field.getElements().contains(ePackage)) {
+					result.add(ePackage);
+				}
 			}
+		} 
+		catch (CoreException e) {
+			logger.log(new Status(IStatus.ERROR,
+					IncQueryGUIPlugin.PLUGIN_ID,
+					"Error during EPackage collecting: " + e.getCause().getMessage(), e.getCause()));
 		}
+		
 		return result.toArray();
 	}
 

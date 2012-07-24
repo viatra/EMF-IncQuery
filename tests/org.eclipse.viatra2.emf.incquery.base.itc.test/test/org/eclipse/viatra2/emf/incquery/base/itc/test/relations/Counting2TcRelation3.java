@@ -13,10 +13,10 @@ package org.eclipse.viatra2.emf.incquery.base.itc.test.relations;
 
 import java.math.BigInteger;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.counting2.TcRelation;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.counting2.Counting2TcRelation;
 
 
-public class Counting2TcRelation3 extends TcRelation<Integer> {
+public class Counting2TcRelation3 extends Counting2TcRelation<Integer> {
 	
 	public Counting2TcRelation3() {
 		BigInteger one = BigInteger.valueOf(1);

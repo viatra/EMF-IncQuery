@@ -17,7 +17,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
@@ -25,6 +24,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -77,7 +77,7 @@ class PatternMatcherClassInferrer {
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorNotifier.toString
 			it.parameters += pattern.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
-			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
+			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.setBody([
 				append('''this(''')
 				referClass(pattern, typeof(EngineManager))
@@ -90,8 +90,8 @@ class PatternMatcherClassInferrer {
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorEngine.toString
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
-			it.exceptions += pattern.newTypeRef(typeof (IncQueryRuntimeException))
-			it.setBody([append('''super(engine, FACTORY);''')])
+			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+			it.setBody([append('''super(engine, factory());''')])
 		]
    	}
    	

@@ -148,7 +148,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				val javaProject = pckg.findJavaProject
 				if(javaProject == null){
-				  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Model project for GenPackage " + pckg + " not found!")
+				  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Model project for GenPackage " + pckg.NSURI + " not found!")
 				}
 				val compunit = pckg.findJavaFile(genSourceClass, javaProject)
 				
@@ -359,7 +359,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					rewrite.set(oldTag,TagElement::TAG_NAME_PROPERTY,"@derived",null)
 					val tagsRewrite = rewrite.getListRewrite(oldTag,TagElement::FRAGMENTS_PROPERTY)
 					val tagText = ast.newTextElement
-					tagText.text = "getter created by EMF-InccQuery for derived feature "+genFeature.name 
+					tagText.text = "getter created by EMF-IncQuery for derived feature "+genFeature.name 
 					tagsRewrite.insertLast(tagText, null)
 					bodyDeclListRewrite.insertLast(method, null)	
 					if(getGenMethod == null){
@@ -380,7 +380,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				// generated tag dirty or javadoc null
 				replaceMethodBody(ast, rewrite, getMethod.body, dummyMethod.body,
 					javadoc, document, true, "@derived",
-					"getter created by EMF-InccQuery for derived feature "+genFeature.name, null
+					"getter created by EMF-IncQuery for derived feature "+genFeature.name, null
 				)
 			}
 			

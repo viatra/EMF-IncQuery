@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -75,7 +76,7 @@ class PatternMatchClassInferrer {
    	def inferMatchClassConstructors(JvmDeclaredType matchClass, Pattern pattern) {
    		matchClass.members += pattern.toConstructor() [
    			it.simpleName = pattern.matchClassName
-   			it.visibility = JvmVisibility::PUBLIC
+   			it.visibility = JvmVisibility::DEFAULT
    			for (Variable variable : pattern.parameters) {
    				val javaType = variable.calculateType
    				it.parameters += variable.toParameter(variable.parameterName, javaType)
@@ -170,9 +171,8 @@ class PatternMatchClassInferrer {
 				else 
 					append('''
 				StringBuilder result = new StringBuilder();
-				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");"»
-					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)
-				«ENDFOR»
+				«FOR variable : pattern.parameters SEPARATOR " + \", \");\n" AFTER ");\n"»
+					result.append("\"«variable.name»\"=" + prettyPrintValue(«variable.fieldName»)«ENDFOR»
 				return result.toString();
 			''')])
 		]
@@ -203,7 +203,8 @@ class PatternMatchClassInferrer {
 				if (!«pattern.matchClassName».class.equals(obj.getClass()))
 					return ''')
 				referClass(pattern, typeof(Arrays))
-				append('''.deepEquals(toArray(), otherSig.toArray());
+				append('''
+				.deepEquals(toArray(), otherSig.toArray());
 				«IF !pattern.parameters.isEmpty»
 				«pattern.matchClassName» other = («pattern.matchClassName») obj;
 				«FOR variable : pattern.parameters» 
@@ -211,12 +212,27 @@ class PatternMatchClassInferrer {
 				else if (!«variable.fieldName».equals(other.«variable.fieldName»)) return false;
 				«ENDFOR»
 				«ENDIF»
-				return true;
-		''')])
+				return true;''')])
 		]
 		matchClass.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
-			it.setBody([append('''return «pattern.matcherClassName».FACTORY.getPattern();''')])
+			it.setBody([
+				append('''
+				try {
+					return «pattern.matcherClassName».factory().getPattern();
+				} catch (''') 
+				referClass(pattern, typeof (IncQueryException)) 
+				append(" ")
+				append(''' 
+				ex) {
+				 	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+				 	ex.printStackTrace();
+				 	throw new ''')
+				referClass(pattern, typeof (IllegalStateException))
+				append('''
+					(ex);
+				}
+			''')])
 		]
   	}
    	

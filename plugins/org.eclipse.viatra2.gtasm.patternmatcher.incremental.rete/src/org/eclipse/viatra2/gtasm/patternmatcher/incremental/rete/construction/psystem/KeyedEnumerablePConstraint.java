@@ -38,8 +38,13 @@ public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, St
 	 */
 	@Override
 	protected String toStringRestRest() {
-		return supplierKey == null ? "$any(null)" : supplierKey.toString();
+		return supplierKey == null ? "$any(null)" : keyToString();
 	}
+
+	/**
+	 * @return
+	 */
+	protected abstract String keyToString();
 
 	/**
 	 * @return the supplierKey

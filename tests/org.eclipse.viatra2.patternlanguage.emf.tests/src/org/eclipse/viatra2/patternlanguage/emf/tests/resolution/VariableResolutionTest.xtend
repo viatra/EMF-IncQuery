@@ -1,7 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.patternlanguage.emf.tests.resolution
 
 import com.google.inject.Inject
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
@@ -13,10 +27,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))

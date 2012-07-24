@@ -450,7 +450,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				}
 			}
 		} catch (Exception ex) {
-			logger.error(
+			logger.fatal(
 					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
 			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
 		}
@@ -623,9 +623,16 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	@Override
 	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
-		if(delayTraversals) 
-			throw new UnsupportedOperationException("Coalescing EMF model traversals in EMF-IncQuery base is not reentrant.");
-		
+		if(delayTraversals) { // reentrant case, no special action needed
+			V result = null;
+			try {
+				result = callable.call();
+			} catch (Exception e) {
+				throw new InvocationTargetException(e);
+			}
+			return result;
+		}
+			
 		delayedClasses = new HashSet<EClass>();
 		delayedFeatures = new HashSet<EStructuralFeature>();
 		delayedDataTypes = new HashSet<EDataType>(); 
@@ -667,6 +674,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				}
 			}
 		} catch (Exception e) {
+			getLogger().fatal("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. " , e);
 			throw new InvocationTargetException(e);
 		}
 		return result;

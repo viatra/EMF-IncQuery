@@ -45,4 +45,12 @@ public class BinaryTransitiveClosure<PatternDescription, StubHandle>
 		return buildable.buildTransitiveClosure(patternProduction);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
+	 */
+	@Override
+	protected String keyToString() {
+		return pSystem.getContext().printType(supplierKey)+"+";
+	}
+
 }

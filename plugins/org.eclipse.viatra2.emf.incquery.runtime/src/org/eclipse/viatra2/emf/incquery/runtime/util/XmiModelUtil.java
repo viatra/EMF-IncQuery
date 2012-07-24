@@ -14,7 +14,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryRuntimeException;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.patternlanguage.IResourceSetPreparer;
 import org.eclipse.xtext.common.types.access.ClasspathTypeProviderFactory;
@@ -36,9 +36,10 @@ public class XmiModelUtil {
 	 * If something happened during model load, an exception is thrown.
 	 * @param bundleName
 	 * @return the global xmi resource
+	 * @throws IncQueryException if the XMI store is unavailable
 	 * @see {@link ResourceSet#getResource(URI, boolean)}.
 	 */
-	public static Resource getGlobalXmiResource(String bundleName) {
+	public static Resource getGlobalXmiResource(String bundleName) throws IncQueryException {
 		return getGlobalXmiResource(bundleName, null);
 	}
 
@@ -48,14 +49,23 @@ public class XmiModelUtil {
 	 * @param bundleName
 	 * @param loadParameters parameters for the resource loading
 	 * @return the global xmi resource
+	 * @throws IncQueryException if the XMI store is unavailable
 	 * @see {@link ResourceSet#getResource(URI, boolean)}.
 	 */
-	public static Resource getGlobalXmiResource(String bundleName, IResourceSetPreparer preparer) {
-		ResourceSet set = prepareXtextResource();
-		if(preparer != null) {
-			preparer.prepareResourceSet(set);
+	public static Resource getGlobalXmiResource(String bundleName, IResourceSetPreparer preparer) throws IncQueryException {
+		try {
+			ResourceSet set = prepareXtextResource();
+			if(preparer != null) {
+				preparer.prepareResourceSet(set);
+			}
+			final URI globalXmiResourceURI = getGlobalXmiResourceURI(bundleName);
+			return set.getResource(globalXmiResourceURI, true);
+		} catch (Exception ex) {
+			if (ex instanceof IncQueryException) throw (IncQueryException)ex;
+			else throw new IncQueryException(
+					"An error occured while trying to load the generated patterns stored in bundle " + bundleName, 
+					"Error loading generated patterns", ex);
 		}
-		return set.getResource(getGlobalXmiResourceURI(bundleName), true);
 	}
 
 	/**
@@ -81,20 +91,20 @@ public class XmiModelUtil {
 	}
 	
 	/**
-	 * Returns the URI for global XMI Model URI located at path queries/globalEiqModel.xmi in the given bundle/project.
+	 * Returns the URI for global XMI Model located at path queries/globalEiqModel.xmi in the given bundle/project.
 	 * First tries to resolve the path with platformResource (in workspace), 
-	 * if not found, uses the platformPluginURI (in bundles), if not found in here either, throws {@link IncQueryRuntimeException}.
+	 * if not found, uses the platformPluginURI (in bundles), if not found in here either, throws {@link IncQueryException}.
 	 * @param bundleName - workspace project name or platform bundle name.
-	 * @return
-	 * @throws IncQueryRuntimeException - when the global XMI model is not found in bundle/project.
+	 * @return the EMF resource URI pointing to the XMI store of generated pattern 
+	 * @throws IncQueryException - when the global XMI model is not found in bundle/project.
 	 */
-	public static URI getGlobalXmiResourceURI(String bundleName) {
+	public static URI getGlobalXmiResourceURI(String bundleName) throws IncQueryException {
 		URI resourceURI = resolvePlatformURI(String.format("%s/%s/%s",
 				bundleName, XMI_OUTPUT_FOLDER, GLOBAL_EIQ_FILENAME));
 		if (resourceURI != null) {
 			return resourceURI;
 		}
-		throw new IncQueryRuntimeException(
+		throw new IncQueryException(
 				String.format("EMF-IncQuery pattern storage %s not found in bundle/project: %s", GLOBAL_EIQ_FILENAME, bundleName),
 				"Missing " + GLOBAL_EIQ_FILENAME);
 	}

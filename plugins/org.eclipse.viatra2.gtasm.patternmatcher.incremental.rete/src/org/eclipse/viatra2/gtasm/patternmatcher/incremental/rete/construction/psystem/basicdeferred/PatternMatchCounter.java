@@ -102,7 +102,7 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
 	 */
 	@Override
 	protected String toStringRest() {
-		return pattern.toString() + "@" + actualParametersTuple.toString() + "->" + resultVariable.toString();
+		return pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString() + "->" + resultVariable.toString();
 	}
 
 }

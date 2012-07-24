@@ -184,7 +184,7 @@ public class DatabindingUtil {
 	 * @param uri the uri
 	 * @return the {@link AdapterFactoryLabelProvider} instance
 	 */
-	public static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
+	public synchronized static AdapterFactoryLabelProvider getAdapterFactoryLabelProvider(URI uri) {
 		if (uriConfElementMap == null) {
 			uriConfElementMap = collectItemProviders();
 		}
@@ -472,12 +472,9 @@ public class DatabindingUtil {
 	 */
 	public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
-		
+		List<Pattern> activePatterns = PatternRegistry.getInstance().getActivePatterns();
 		//runtime & generated matchers
-		for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
-			root.registerPattern(pattern);
-		}
-
+		root.registerPattern(activePatterns.toArray(new Pattern[activePatterns.size()]));
 		return root;
 	}
 	

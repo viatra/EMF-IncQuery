@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.counting.CountingAlg;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.Tuple;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.bfs.BFS;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.scc.SCC;
@@ -517,7 +517,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	}
 	
 	// for JUnit
-	public boolean checkTcRelation(TcRelation<V> tc) {
+	public boolean checkTcRelation(DRedTcRelation<V> tc) {
 		
 		for (V s : tc.getTupleStarts()) {
 			for (V t : tc.getTupleEnds(s)) {

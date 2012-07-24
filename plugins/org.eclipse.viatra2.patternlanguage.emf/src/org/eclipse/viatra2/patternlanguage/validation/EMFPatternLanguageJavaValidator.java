@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 Zoltan Ujhelyi and Daniel Varro
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Zoltan Ujhelyi - initial API and implementation
+ *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
 
@@ -66,7 +66,7 @@ public class EMFPatternLanguageJavaValidator extends
 	public static final String DUPLICATE_IMPORT = "Duplicate import of ";
 	
 	@Inject
-	IMetamodelProvider metamodelProvider;
+	private IMetamodelProvider metamodelProvider;
 
 	@Check
 	public void checkDuplicatePackageImports(PatternModel patternModel) {
@@ -95,7 +95,7 @@ public class EMFPatternLanguageJavaValidator extends
 				&& !metamodelProvider.isGeneratedCodeAvailable(packageImport
 				.getEPackage(), packageImport.eResource().getResourceSet())) {
 			warning(String
-					.format("The generated code of the Ecore model cannot be found. Consider setting up a generator model for the generated code to work.",
+					.format("The generated code of the Ecore model %s cannot be found. Consider setting up a generator model for the generated code to work.",
 							packageImport.getEPackage().getNsURI()),
 					EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
 					EMFIssueCodes.IMPORT_WITH_GENERATEDCODE);

@@ -1,6 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.annotations.impl;
-
-
 
 public class ExtensionBasedPatternAnnotationParameter {
 	public static final String STRING = "string";
@@ -9,10 +17,10 @@ public class ExtensionBasedPatternAnnotationParameter {
 	public static final String BOOLEAN = "boolean";
 	public static final String DOUBLE = "double";
 	public static final String INT = "int";
-	String name;
-	String type;
-	boolean multiple;
-	boolean mandatory;
+	private String name;
+	private String type;
+	private boolean multiple;
+	private boolean mandatory;
 	public ExtensionBasedPatternAnnotationParameter(String name,
 			String type, boolean multiple, boolean mandatory) {
 		super();

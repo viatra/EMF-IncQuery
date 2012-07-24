@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Mark Czotter, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Mark Czotter, Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
 
 /**
@@ -9,6 +19,7 @@ public final class EMFIssueCodes {
 	
 	public static final String DUPLICATE_IMPORT = ISSUE_CODE_PREFIX + "duplicate_import";
 	public static final String IMPORT_WITH_GENERATEDCODE = ISSUE_CODE_PREFIX + "missing_imported_code";
+	public static final String IMPORT_DEPENDENCY_MISSING = ISSUE_CODE_PREFIX + "missing_import_dependency";
 	public static final String INVALID_ENUM_LITERAL = ISSUE_CODE_PREFIX + "invalid_enum";
 	
 	public static final String SYMBOLIC_VARIABLE_NEVER_REFERENCED = ISSUE_CODE_PREFIX + "symbolic_variable_never_referenced";

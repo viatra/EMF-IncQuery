@@ -40,11 +40,8 @@ public class Counting2TestCase extends TestCase {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i < j) {
 					g.insertEdge(i, j);
-
 					gen = new TcRelationGenerator<Integer>(g);
-
-					assertEquals(gen.getCounting2TcRelation(),
-							ca.getTcRelation());
+					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
 		}
@@ -53,11 +50,8 @@ public class Counting2TestCase extends TestCase {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i < j) {
 					g.deleteEdge(i, j);
-
 					gen = new TcRelationGenerator<Integer>(g);
-
-					assertEquals(gen.getCounting2TcRelation(),
-							ca.getTcRelation());
+					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
 		}

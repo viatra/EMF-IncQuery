@@ -59,7 +59,6 @@ public class KingTestCase extends TestCase {
 			g.insertNode(i);
 		}
 
-		System.out.println("insert");
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i != j) {
@@ -70,7 +69,6 @@ public class KingTestCase extends TestCase {
 			}
 		}
 
-		System.out.println("delete");
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i != j) {

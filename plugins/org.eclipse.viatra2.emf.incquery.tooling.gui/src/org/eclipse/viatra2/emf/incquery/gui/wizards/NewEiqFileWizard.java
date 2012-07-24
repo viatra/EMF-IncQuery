@@ -51,6 +51,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * A wizard implementation used to create new eiq files.
@@ -71,6 +72,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 	@Inject
 	private IResourceSetProvider resourceSetProvider;
 	
+	@Inject
+	private Injector injector;
+	
 	public NewEiqFileWizard() {
 		super();
 		setNeedsProgressMonitor(true);
@@ -82,6 +86,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
 		page1.init((IStructuredSelection) selection);
 		page1.setDescription(NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE);
 		page2 = new NewEiqFileWizardPatternConfigurationPage();
+		injector.injectMembers(page2);
 		addPage(page1);
 		addPage(page2);
 		setForcePreviousAndNextButtons(false);

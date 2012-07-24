@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 
 import org.eclipse.core.resources.IProject;
@@ -14,11 +24,11 @@ import com.google.inject.Inject;
 
 public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator {
 
-	public final static String GENMODEL_DEPENDENCY = "org.eclipse.viatra2.emf.incquery.tooling.generator.ui."
+	public static final String GENMODEL_DEPENDENCY = "org.eclipse.viatra2.emf.incquery.tooling.generator.ui."
 			+ "genmodel_dependency";
 
 	@Inject
-	IJavaProjectProvider projectProvider;
+	private IJavaProjectProvider projectProvider;
 
 	@Check
 	public void checkGenmodelDependencies(GeneratorModelReference ref) {

@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.counting2;
 import java.math.BigInteger;
 import java.util.Set;
 
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 
@@ -21,10 +22,10 @@ import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 public class CountingAlg2<V> implements IGraphObserver<V> {
 
 	private static final long serialVersionUID = -2383210800242398869L;
-	private TcRelation<V> tc = null;
+	private Counting2TcRelation<V> tc = null;
 
 	public CountingAlg2(IGraphDataSource<V> g) {
-		tc = new TcRelation<V>();
+		tc = new Counting2TcRelation<V>();
 		g.attachObserver(this);
 	}
 
@@ -84,11 +85,11 @@ public class CountingAlg2<V> implements IGraphObserver<V> {
 		tc.normalize();
 	}
 
-	public TcRelation<V> getTcRelation() {
+	public ITcRelation<V> getTcRelation() {
 		return this.tc;
 	}
 
-	public void setTcRelation(TcRelation<V> tc) {
+	public void setTcRelation(Counting2TcRelation<V> tc) {
 		this.tc = tc;
 	}
 

@@ -13,14 +13,13 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.HashSet
-import java.util.Set
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedPatternGroup
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
+import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmGenericType
-import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
@@ -44,35 +43,36 @@ class PatternGroupClassInferrer {
 			it.final = true
 			it.superTypes += model.newTypeRef(typeof (BaseGeneratedPatternGroup))
 		]
-		groupClass.members += model.inferGetMatcherFactoriesMethod
+		groupClass.members += model.inferConstructor
 		groupClass
 	}
 	
 	def String groupClassName(PatternModel model) {
-		val fileName = model.eResource.URI.trimFileExtension.lastSegment 
+		val fileName = model.modelFileName 
 		return "GroupOfFile" + fileName.toFirstUpper
 	}
 	
-	def JvmOperation inferGetMatcherFactoriesMethod(PatternModel model) {
-		val matcherFactoryInterfaceReference = model.newTypeRef(typeof (IMatcherFactory)) 
-		val returnTypeReference = model.newTypeRef(typeof (Set), matcherFactoryInterfaceReference)
+	def JvmConstructor inferConstructor(PatternModel model) {
+		/*val matcherFactoryInterfaceReference = model.newTypeRef(typeof (IMatcherFactory))*/ 
+		val incQueryException = model.newTypeRef(typeof (IncQueryException)) 
 		val matcherReferences = gatherMatchers(model)
-		model.toMethod("getMatcherFactories", returnTypeReference) [
-			it.visibility = JvmVisibility::PROTECTED
-			it.annotations += model.toAnnotation(typeof (Override))
+		model.toConstructor [
+			it.visibility = JvmVisibility::PUBLIC
+			it.simpleName = groupClassName(model)
+			it.exceptions += incQueryException
 			it.setBody([
-				serialize(returnTypeReference, model)
+				/*serialize(returnTypeReference, model)
 				append(''' result = new ''')
 				serialize(model.newTypeRef(typeof(HashSet), matcherFactoryInterfaceReference), model)
-				append('''();''')
+				append('''();''')*/
 				for (matcherRef : matcherReferences) {
-					newLine
-					append('''result.add(''')
+					append('''matcherFactories.add(''')
 					serialize(matcherRef, model)
-					append('''.FACTORY);''')
+					append('''.factory());''')
+					newLine
 				}
-				newLine
-				append('''return result;''')
+				/*newLine
+				append('''return result;''')*/
 			])
 		]
 	}

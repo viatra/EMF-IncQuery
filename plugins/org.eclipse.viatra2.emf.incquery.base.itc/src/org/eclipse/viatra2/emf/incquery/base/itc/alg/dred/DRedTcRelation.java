@@ -17,7 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class TcRelation<V> implements Serializable {
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
+
+public class DRedTcRelation<V> implements Serializable, ITcRelation<V> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -28,7 +30,7 @@ public class TcRelation<V> implements Serializable {
 	// symmetric to tuplesForward
 	private Map<V, Set<V>> tuplesBackward;
 	
-	public TcRelation() {
+	public DRedTcRelation() {
 		this.tuplesForward = new HashMap<V, Set<V>>();
 		this.tuplesBackward = new HashMap<V, Set<V>>();
 	}
@@ -103,7 +105,7 @@ public class TcRelation<V> implements Serializable {
 	 * 
 	 * @param rA the other tc relation
 	 */
-	public void union(TcRelation<V> rA) {	
+	public void union(DRedTcRelation<V> rA) {	
 		for (V source : rA.tuplesForward.keySet()) {
 			for (V target : rA.tuplesForward.get(source)) {
 				this.addTuple(source, target);
@@ -116,7 +118,7 @@ public class TcRelation<V> implements Serializable {
 	 * 
 	 * @param rA the subtrahend relation
 	 */
-	public void difference(TcRelation<V> rA) {	
+	public void difference(DRedTcRelation<V> rA) {	
 		for (V source : rA.tuplesForward.keySet()) {
 			for (V target : rA.tuplesForward.get(source)) {
 				this.removeTuple(source, target);
@@ -124,12 +126,7 @@ public class TcRelation<V> implements Serializable {
 		}
 	}
 	
-	/**
-	 * Returns the set of nodes that are reachable from the given source node.
-	 * 
-	 * @param source the source node
-	 * @return the set of target nodes
-	 */
+	@Override
 	public Set<V> getTupleEnds(V source) {
 		Set<V> t = tuplesForward.get(source);
 		return (t == null) ? new HashSet<V>() : new HashSet<V>(t);
@@ -146,11 +143,7 @@ public class TcRelation<V> implements Serializable {
 		return (t == null) ? new HashSet<V>() : new HashSet<V>(t);
 	}
 	
-	/**
-	 * Returns the set of nodes that are present on the left side of a transitive closure tuple.
-	 * 
-	 * @return the set of nodes
-	 */
+	@Override
 	public Set<V> getTupleStarts() {
 		Set<V> t = tuplesForward.keySet();
 		return new HashSet<V>(t);
@@ -197,7 +190,7 @@ public class TcRelation<V> implements Serializable {
 			return false;
 		}
 
-		TcRelation<V> aTR = (TcRelation<V>) obj;
+		DRedTcRelation<V> aTR = (DRedTcRelation<V>) obj;
 
 		for (V source : aTR.tuplesForward.keySet()) {
 			for (V target : aTR.tuplesForward.get(source)) {

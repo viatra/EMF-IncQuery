@@ -15,47 +15,47 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.kingopt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 
-public class TcRelation<V> {
+public class KingOptTcRelation<V> implements ITcRelation<V> {
 
-	//TODO DEBUG miatt public
-	public HashMap<V, HashMap<V, CountList>> tuplesForward = null;
-	private HashMap<V, HashMap<V, CountList>> tuplesBackward = null;
+	private Map<V, Map<V, CountList>> tuplesForward = null;
+	private Map<V, Map<V, CountList>> tuplesBackward = null;
 	
 	/**
 	 * Maps level numbers to tuples on which those are starred.
 	 */
-	private HashMap<Integer, HashMap<V, HashSet<V>>> starredAtLevel = null;
+	private Map<Integer, Map<V, Set<V>>> starredAtLevel = null;
 	
-	private ArrayList<ITcObserver<V>> observers;
+	private List<ITcObserver<V>> observers;
 
 	//private ArrayList<StarWork<V>> starWorkQueue;
 	private TreeSet<StarWork<V>> starWorkQueue;
 	
 	private int levelCount;
 	
-	public TcRelation(int levelCount, ArrayList<ITcObserver<V>> observers) {
+	KingOptTcRelation(int levelCount, ArrayList<ITcObserver<V>> observers) {
 		//starWorkQueue = new ArrayList<StarWork<V>>();
 		starWorkQueue = new TreeSet<StarWork<V>>();
-		tuplesForward = new HashMap<V, HashMap<V, CountList>>();
-		tuplesBackward = new HashMap<V, HashMap<V, CountList>>();
-		starredAtLevel = new HashMap<Integer, HashMap<V, HashSet<V>>>();
+		tuplesForward = new HashMap<V, Map<V, CountList>>();
+		tuplesBackward = new HashMap<V, Map<V, CountList>>();
+		starredAtLevel = new HashMap<Integer, Map<V, Set<V>>>();
 		this.levelCount = levelCount;
 		this.observers = observers;
 	}
 	
-	//TODO DEBUG
 	public void clearTc() {
-		tuplesForward = new HashMap<V, HashMap<V,CountList>>();
-		tuplesBackward = new HashMap<V, HashMap<V,CountList>>();
-		starredAtLevel = new HashMap<Integer, HashMap<V,HashSet<V>>>();
+		tuplesForward = new HashMap<V, Map<V,CountList>>();
+		tuplesBackward = new HashMap<V, Map<V,CountList>>();
+		starredAtLevel = new HashMap<Integer, Map<V, Set<V>>>();
 		starWorkQueue = new TreeSet<StarWork<V>>();
-		//starWorkQueue = new ArrayList<StarWork<V>>();
 	}
 	
 	public void setLevelCount(int levelCount) {
@@ -110,8 +110,8 @@ public class TcRelation<V> {
 		if (!source.equals(target) && (levelNumber <= levelCount)) {
 			notifyObservers(source, target, 1);
 			
-			HashMap<V, CountList> sMap = tuplesForward.get(source);
-			HashMap<V, CountList> tMap = tuplesBackward.get(target);
+			Map<V, CountList> sMap = tuplesForward.get(source);
+			Map<V, CountList> tMap = tuplesBackward.get(target);
 			
 			StarDir sd = StarDir.NONE;
 			int fromIdx = -1, toIdx = -1;
@@ -158,7 +158,7 @@ public class TcRelation<V> {
 				}
 			}
 			else {
-				HashMap<V, CountList> mapTmp = new HashMap<V, CountList>();
+				Map<V, CountList> mapTmp = new HashMap<V, CountList>();
 				CountList arrayTmp = new CountList();
 				arrayTmp.addCount(levelNumber);
 				mapTmp.put(target, arrayTmp);
@@ -190,8 +190,8 @@ public class TcRelation<V> {
 			
 			notifyObservers(source, target, -1);
 			
-			HashMap<V, CountList> sMap = tuplesForward.get(source);
-			HashMap<V, CountList> tMap = tuplesBackward.get(target);
+			Map<V, CountList> sMap = tuplesForward.get(source);
+			Map<V, CountList> tMap = tuplesBackward.get(target);
 			
 			StarDir sd = StarDir.NONE;
 			int fromIdx = -1, toIdx = -1;
@@ -268,13 +268,13 @@ public class TcRelation<V> {
 		
 		//put start to toIdx level
 		if (starredAtLevel.get(toIdx) == null) {
-			HashMap<V, HashSet<V>> eSet = new HashMap<V, HashSet<V>>();
+			Map<V, Set<V>> eSet = new HashMap<V, Set<V>>();
 			starredAtLevel.put(toIdx, eSet);
 		}
 		
 		if (starredAtLevel.get(toIdx).get(source) == null) {
 			//needs to create new set for targets
-			HashSet<V> tSet = new HashSet<V>();
+			Set<V> tSet = new HashSet<V>();
 			tSet.add(target);
 			starredAtLevel.get(toIdx).put(source, tSet);
 		}
@@ -294,8 +294,8 @@ public class TcRelation<V> {
 	 */
 	private void handleStars(StarDir sd, V source, V target, int fromIdx, int toIdx) {
 		
-		HashMap<V, CountList> sMap = tuplesBackward.get(source);
-		HashMap<V, CountList> tMap = tuplesForward.get(target);
+		Map<V, CountList> sMap = tuplesBackward.get(source);
+		Map<V, CountList> tMap = tuplesForward.get(target);
 		CountList arrayTmp = null;
 		int starredLevel = -1;
 		
@@ -397,10 +397,11 @@ public class TcRelation<V> {
 		return sb.toString();
 	}
 	
-	public HashMap<V, HashSet<V>> getStarredAtLevel(int levelNumber) {
+	public Map<V, Set<V>> getStarredAtLevel(int levelNumber) {
 		return starredAtLevel.get(levelNumber);
 	}
 	
+	@Override
 	public Set<V> getTupleStarts() {
 		Set<V> t = tuplesForward.keySet();
 		return new HashSet<V>(t);
@@ -412,6 +413,7 @@ public class TcRelation<V> {
 		return null;
 	}
 	
+	@Override
 	public Set<V> getTupleEnds(V source) {
 		if (tuplesForward.containsKey(source))
 			return tuplesForward.get(source).keySet();
@@ -421,9 +423,9 @@ public class TcRelation<V> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation) {
+		if (obj instanceof org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation) {
 		
-			org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V> aTR = (org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.TcRelation<V>) obj;
+			org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V> aTR = (org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedTcRelation<V>) obj;
 			
 			for (V source : aTR.getTuplesForward().keySet()) {
 				for (V target : aTR.getTuplesForward().get(source)) {
@@ -446,11 +448,11 @@ public class TcRelation<V> {
 	public int hashCode() {
 		int hash = 7;
 		
-		for (Entry<V, HashMap<V, CountList>> entry : this.tuplesForward.entrySet()) {
+		for (Entry<V, Map<V, CountList>> entry : this.tuplesForward.entrySet()) {
 			hash += 31 * hash + entry.hashCode();
 		}
 		
-		for (Entry<V, HashMap<V, CountList>> entry : this.tuplesBackward.entrySet()) {
+		for (Entry<V, Map<V, CountList>> entry : this.tuplesBackward.entrySet()) {
 			hash += 31 * hash + entry.hashCode();
 		}
 		

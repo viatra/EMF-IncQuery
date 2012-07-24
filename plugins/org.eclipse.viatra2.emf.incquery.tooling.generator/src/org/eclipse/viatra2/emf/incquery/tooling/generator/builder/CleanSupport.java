@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
@@ -101,6 +102,9 @@ public class CleanSupport {
 	@Inject
 	private EnsurePluginSupport ensureSupport;
 	
+	@Inject
+	private IErrorFeedback errorFeedback;
+	
 	/**
 	 * Performs a full clean on the currently built project and all related
 	 * fragments.
@@ -118,7 +122,7 @@ public class CleanSupport {
 		}
 	}
 	
-	private void internalFullClean(IBuildContext context, IProgressMonitor monitor) throws CoreException {
+	private void internalFullClean(IBuildContext context, IProgressMonitor monitor) throws CoreException, IncQueryException {
 		IProject modelProject = context.getBuiltProject();
 		// clean all fragments
 		cleanAllFragment(modelProject);
@@ -154,6 +158,8 @@ public class CleanSupport {
 			}
 			// clean all removable extensions
 			ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
+			// removing all fragment-related markers
+			errorFeedback.clearMarkers(fragmentProject, IErrorFeedback.FRAGMENT_ERROR_TYPE);
 		}		
 	}
 
@@ -171,8 +177,9 @@ public class CleanSupport {
 	 * Removes all packages, based on the Xmi Model.
 	 * @param project
 	 * @throws CoreException
+	 * @throws IncQueryException 
 	 */
-	private void removeExportedPackages(IProject project) throws CoreException {
+	private void removeExportedPackages(IProject project) throws CoreException, IncQueryException {
 		if (getGlobalXmiFile(project).exists()) {
 			ArrayList<String> packageNames = new ArrayList<String>();
 			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName(), new PrepareResourceSetWithLoader(project));
@@ -217,7 +224,7 @@ public class CleanSupport {
 		}
 	}
 	
-	private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor) throws CoreException {
+	private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor) throws CoreException, IncQueryException {
 		IProject modelProject = context.getBuiltProject();
 		if (getGlobalXmiFile(modelProject).exists()) {
 			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(modelProject.getName(), new PrepareResourceSetWithLoader(modelProject));

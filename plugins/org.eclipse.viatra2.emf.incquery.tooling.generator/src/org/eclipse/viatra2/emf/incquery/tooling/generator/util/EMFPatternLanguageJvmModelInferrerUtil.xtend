@@ -25,6 +25,9 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.jdt.core.JavaConventions
+import org.eclipse.jdt.core.JavaCore
+import org.eclipse.core.runtime.IStatus
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -60,6 +63,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		return name
 	}
 	
+	def modelFileName(EObject object) {
+		val name = object.eResource?.URI.trimFileExtension.lastSegment
+		val status = JavaConventions::validateJavaTypeName(name, JavaCore::VERSION_1_6, JavaCore::VERSION_1_6)
+		if (status.severity == IStatus::ERROR) {
+			throw new IllegalArgumentException("The file name " + name + " is not a valid Java type name. Please, rename the file!")
+		}
+		name
+	}
 	/**
 	 * Returns the MatcherFactoryClass name based on the Pattern's name
 	 */
@@ -71,6 +82,19 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		name.toFirstUpper+"MatcherFactory"
 	}
 	
+	/**
+	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 */
+	def matcherFactoryProviderClassName(Pattern pattern) {
+		"Provider"
+	}	
+	/**
+	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 */
+	def matcherFactoryHolderClassName(Pattern pattern) {
+		"LazyHolder"
+	}	
+
 	/**
 	 * Returns the MatcherClass name based on the Pattern's name
 	 */
@@ -108,18 +132,18 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	 * Returns field name for Variable
    	 */
    	def fieldName(Variable variable) {
-   		"f"+variable.name.toFirstUpper
+   		"f"+variable?.name.toFirstUpper
    	}
    	
    	/**
    	 * Returns parameter name for Variable
    	 */
    	def parameterName(Variable variable) {
-   		"p"+variable.name.toFirstUpper
+   		"p"+variable?.name?.toFirstUpper
    	}
    	
    	def positionConstant(Variable variable) {
-   		"POSITION_"+variable.name.toUpperCase;
+   		"POSITION_"+variable?.name?.toUpperCase;
    	}
    	
    	/**
@@ -130,7 +154,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		if (variable.name == "class") {
    			return "getValueOfClass"
    		} else {
-   			return "get" + variable.name.toFirstUpper
+   			return "get" + variable?.name?.toFirstUpper
    		}
    	}
    	
@@ -139,7 +163,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	 * Currently returns <code>set#variable.name.toFirstUpper#</code>.
    	 */
    	def setterMethodName(Variable variable) {
-   		"set" + variable.name.toFirstUpper
+   		"set" + variable?.name?.toFirstUpper
    	}
    	
 	/**

@@ -64,9 +64,16 @@ public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pa
 	 */
 	@Override
 	public Collector construct(Pattern pattern) throws RetePatternBuildException {
-		EPMBuildScaffold<StubHandle, Collector> epmBuildScaffold = 
-				new EPMBuildScaffold<StubHandle, Collector>(baseBuildable, context);
-		return epmBuildScaffold.construct(pattern);
+		try {
+			EPMBuildScaffold<StubHandle, Collector> epmBuildScaffold = 
+					new EPMBuildScaffold<StubHandle, Collector>(baseBuildable, context);
+			return epmBuildScaffold.construct(pattern);
+		} catch (RuntimeException ex) {
+			throw new RetePatternBuildException(
+				"Error during constructing Rete pattern matcher; please review Error Log and consult developers", new String[0], 
+				"Error during pattern matcher construction", 
+				pattern, ex);
+		}
 	}
 
 	/* (non-Javadoc)

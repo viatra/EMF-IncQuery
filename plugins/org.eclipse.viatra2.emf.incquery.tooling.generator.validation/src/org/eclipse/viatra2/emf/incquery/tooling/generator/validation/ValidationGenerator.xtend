@@ -178,6 +178,8 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
 		import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 		import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
+		import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+		
 		import «pattern.packageName + "." + pattern.matchClassName»;
 		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
@@ -186,8 +188,8 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 
 			private «pattern.matcherFactoryClassName» matcherFactory;
 
-			public «pattern.name.toFirstUpper»Constraint() {
-				matcherFactory = new «pattern.matcherFactoryClassName»();
+			public «pattern.name.toFirstUpper»Constraint() throws IncQueryException {
+				matcherFactory = «pattern.matcherFactoryClassName».instance();
 			}
 
 			@Override

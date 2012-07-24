@@ -13,12 +13,18 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.GeneratorIssueCodes
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 
@@ -30,11 +36,12 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
  * 
  * @author Mark Czotter
  */
-class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmModelInferrer {
+class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
 	@Inject
-	Logger logger;
-
+	private Logger logger;
+	@Inject
+	private IErrorFeedback errorFeedback;
     /**
      * convenience API to build and initialize JvmTypes and their members.
      */
@@ -44,6 +51,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 	@Inject extension PatternMatcherClassInferrer
 	@Inject extension PatternMatcherFactoryClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
+	@Inject extension PatternGroupClassInferrer
+	@Inject extension JavadocInferrer	
 	@Inject extension TypeReferences types
 	@Inject extension IJvmModelAssociator associator
 	
@@ -72,24 +81,55 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractEMFPatternLanguageJvmMo
 		   	val matcherClassRef = types.createTypeRef(matcherClass)
 		   	// infer MatcherFactory class
 		   	val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
+		   	val matcherFactoryClassRef = types.createTypeRef(matcherFactoryClass)
+		   	/*val matcherFactoryProviderClass = matcherFactoryClass.members.findFirst([it instanceof JvmDeclaredType]) as JvmDeclaredType*/
 		   	// infer Processor class
 		   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
 		   	// add Factory field to Matcher class
-		   	matcherClass.members += pattern.toField("FACTORY", pattern.newTypeRef(typeof (IMatcherFactory), cloneWithProxies(matcherClassRef))) [
+		   	matcherClass.members += pattern.toMethod("factory", pattern.newTypeRef(typeof(IMatcherFactory), cloneWithProxies(matcherClassRef))) [
 		   		it.visibility = JvmVisibility::PUBLIC
 		   		it.setStatic(true)
-				it.setFinal(true)
-				it.setInitializer([append(''' new «matcherFactoryClass.simpleName»()''')])
-		   	]
+				it.documentation = pattern.javadocFactoryMethod.toString
+				it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+				it.setBody([append('''
+					return ''') serialize(matcherFactoryClassRef, pattern) append('''.instance();''')
+				])
+			]
+		   	
 		   	associator.associatePrimary(pattern, matcherClass)
 		   	// accept new classes
 		   	acceptor.accept(matchClass)
 		   	acceptor.accept(matcherClass)
 		   	acceptor.accept(matcherFactoryClass)
 		   	acceptor.accept(processorClass)
+		   	/*acceptor.accept(matcherFactoryProviderClass)*/
 	   	} catch(Exception e) {
 	   		logger.error("Exception during Jvm Model Infer for: " + pattern, e)
 	   	}
    	}
    	
+   	/**
+	 * Is called for each Pattern instance in a resource.
+	 * 
+	 * @param pattern - the model to create one or more JvmDeclaredTypes from.
+	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
+	 *                   current resource.
+	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
+	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
+	 */
+   	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
+	   	try {
+	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
+   			val groupClass = model.inferPatternGroup
+   			model.associatePrimary(groupClass)
+   			acceptor.accept(groupClass)
+   			for (pattern : model.patterns){
+   				pattern.infer(acceptor, isPrelinkingPhase)
+   			}
+   		} catch (IllegalArgumentException e){
+   			errorFeedback.reportErrorNoLocation(model, e.message, GeneratorIssueCodes::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
+   		} catch(Exception e) {
+	   		logger.error("Exception during Jvm Model Infer for pattern model: " + model, e)
+	   	}
+   	}
 }

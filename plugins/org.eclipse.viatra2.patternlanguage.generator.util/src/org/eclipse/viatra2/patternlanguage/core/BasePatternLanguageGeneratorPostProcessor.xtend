@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 Zoltan Ujhelyi and Daniel Varro
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Zoltan Ujhelyi - initial API and implementation
+ *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core
 
@@ -60,6 +60,8 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        pathExpressionElement.changeTailType(pathExpressionTail)
        
        varClass.addJvmIdentifiableOperations
+       
+       varRefClass.addWarningComment
        
        type.updateTypeClass
 	}
@@ -199,5 +201,19 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	def updateTypeClass(EClass type) {
 		val nameFeature = type.EStructuralFeatures.findFirst(e | e.name == "typename")
 		nameFeature.transient = true
+	}
+	
+	def addWarningComment(EClass varRefClass) {
+		val varFeature = varRefClass.EStructuralFeatures.findFirst(e | e.name == "var")
+		var annotation = EcoreFactory::eINSTANCE.createEAnnotation
+  
+		annotation.source = "http://www.eclipse.org/emf/2002/GenModel" 
+		annotation.details.put("documentation", 
+		"<p>Warning! This feature contains the original reference text,
+         not the variable name. For variable name, use the
+         {@link #variable}/{@link Variable#getName} reference chain.
+
+		This is significant when using anonymous variables (named '_').</p>"); 
+		varFeature.EAnnotations += annotation
 	}
 }

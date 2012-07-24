@@ -16,19 +16,21 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
+
 /**
  * Transitive closure relation implementation for the Counting algorithm. 
  * 
- * @author Tam�s Szab�
+ * @author Tamas Szabo
  *
  * @param <V>
  */
-public class TcRelation<V> {
+public class CountingTcRelation<V> implements ITcRelation<V> {
 	
 	private HashMap<V, HashMap<V, Integer>> tuplesForward = null;
 	private HashMap<V, HashMap<V, Integer>> tuplesBackward = null;
 	
-	public TcRelation(boolean backwardIndexing) {
+	protected CountingTcRelation(boolean backwardIndexing) {
 		tuplesForward = new HashMap<V, HashMap<V,Integer>>();
 		if (backwardIndexing) tuplesBackward = new HashMap<V, HashMap<V,Integer>>();
 	}
@@ -45,7 +47,7 @@ public class TcRelation<V> {
 		}
 	}
 	
-	protected void union(TcRelation<V> rA) {	
+	protected void union(CountingTcRelation<V> rA) {	
 		for (V source : rA.tuplesForward.keySet()) {
 			for (V target : rA.tuplesForward.get(source).keySet()) {
 				this.addTuple(source, target, rA.tuplesForward.get(source).get(target));
@@ -172,12 +174,7 @@ public class TcRelation<V> {
 		return sb.toString();
 	}
 	
-	/**
-	 * Returns the set of nodes that are reachable from the given source node.
-	 * 
-	 * @param source the source node
-	 * @return the set of target nodes
-	 */
+	@Override
 	public Set<V> getTupleEnds(V source) {
 		HashMap<V, Integer> tupEnds = tuplesForward.get(source);
 		if (tupEnds == null) return null;
@@ -201,11 +198,7 @@ public class TcRelation<V> {
 		}
 	}
 	
-	/**
-	 * Returns the set of nodes that are present on the left side of a transitive closure tuple.
-	 * 
-	 * @return the set of nodes
-	 */
+	@Override
 	public Set<V> getTupleStarts() {
 		HashSet<V> nodes = new HashSet<V>();
 		nodes.addAll(tuplesForward.keySet());
@@ -242,7 +235,7 @@ public class TcRelation<V> {
 			return false;
 		}
 		else {
-			TcRelation<V> aTR = (TcRelation<V>) obj;
+			CountingTcRelation<V> aTR = (CountingTcRelation<V>) obj;
 			
 			for (V source : aTR.tuplesForward.keySet()) {
 				for (V target : aTR.tuplesForward.get(source).keySet()) {

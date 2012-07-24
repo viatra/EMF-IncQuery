@@ -56,13 +56,13 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="factory" type="string" use="required">
+         <attribute name="factoryProvider" type="string" use="required">
             <annotation>
                <documentation>
                   A generated matcher factory for the pattern
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.runtime.extensibility.IMatcherFactoryProvider"/>
                </appInfo>
             </annotation>
          </attribute>

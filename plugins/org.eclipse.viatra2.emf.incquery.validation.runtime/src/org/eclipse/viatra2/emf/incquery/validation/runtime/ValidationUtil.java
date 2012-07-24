@@ -67,7 +67,7 @@ public class ValidationUtil {
 		return IMarker.SEVERITY_INFO;
 	}
 
-	public static List<Constraint<IPatternMatch>> getConstraints() {
+	public synchronized static List<Constraint<IPatternMatch>> getConstraints() {
 		if (constraints == null) {
 			constraints = loadConstraintsFromExtensions();
 		}

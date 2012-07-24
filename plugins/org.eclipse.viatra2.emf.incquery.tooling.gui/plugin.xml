@@ -533,4 +533,16 @@
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.queriesFolderFilter"
             name="EMF-IncQuery output folder"></filter>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PatternInitializationPreferencePage"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.page1"
+            name="Query Explorer">
+         <keywordReference
+               id="org.eclipse.viatra2.patternlanguage.ui.keyword_EMFPatternLanguage">
+         </keywordReference>
+      </page>
+   </extension>
 </plugin>
