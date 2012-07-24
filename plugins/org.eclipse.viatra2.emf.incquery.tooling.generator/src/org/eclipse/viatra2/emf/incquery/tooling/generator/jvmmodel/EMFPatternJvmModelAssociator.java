@@ -30,14 +30,17 @@ import com.google.inject.Inject;
  * @author Mark Czotter
  * 
  */
+@SuppressWarnings("restriction")
 public class EMFPatternJvmModelAssociator extends JvmModelAssociator {
 
 	@Inject
-	IErrorFeedback feedback;
+	private IErrorFeedback feedback;
 	
 	@Override
 	public JvmIdentifiableElement getLogicalContainer(EObject object) {
-		if (object instanceof PatternBody) return null;
+		if (object instanceof PatternBody) {
+			return null;
+		}
 		return super.getLogicalContainer(object);
 	}
 

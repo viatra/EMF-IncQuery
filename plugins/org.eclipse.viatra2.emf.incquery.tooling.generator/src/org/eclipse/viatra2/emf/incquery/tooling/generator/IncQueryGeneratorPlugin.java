@@ -22,7 +22,6 @@ public class IncQueryGeneratorPlugin implements BundleActivator {
 
 	private static BundleContext context;
 	private Injector injector;
-	public static IncQueryGeneratorPlugin INSTANCE;
 
 	static BundleContext getContext() {
 		return context;
@@ -33,7 +32,6 @@ public class IncQueryGeneratorPlugin implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) {
-		INSTANCE = this;
 		IncQueryGeneratorPlugin.context = bundleContext;
 	}
 
@@ -43,7 +41,6 @@ public class IncQueryGeneratorPlugin implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) {
 		IncQueryGeneratorPlugin.context = null;
-		INSTANCE = null;
 	}
 
 	/**
