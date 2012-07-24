@@ -68,7 +68,8 @@ public interface IEiqGenmodelProvider {
 
 	
 	/**
-	 * Collects all EPackage objects available from a selected project.
+	 * Collects all EPackage objects available from a selected project, including
+	 * the ones from the EPackage Registry.
 	 * If the project features an eiqgen files, the packages referenced there
 	 * are also included.
 	 * @param project

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -21,21 +20,12 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 public class MetamodelProviderService implements IMetamodelProvider {
-
-	private final static class CastToEPackage implements
-			Function<Object, EPackage> {
-		@Override
-		public EPackage apply(Object obj) {
-			Preconditions.checkArgument(obj instanceof EPackage);
-			return (EPackage) obj;
-		}
-	}
 
 	@Inject
 	private Logger logger;
@@ -81,9 +71,13 @@ public class MetamodelProviderService implements IMetamodelProvider {
 	}
 
 	protected Map<String, EPackage> getMetamodelMap(){
-		return Maps.transformValues(EPackage.Registry.INSTANCE,
-				new CastToEPackage());
-		
+		Map<String, EPackage> packageMap = Maps.newHashMap();
+		Set<String> nsURISet = Sets.newHashSet(EPackage.Registry.INSTANCE.keySet());
+		for (String key : nsURISet) {
+			packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
+		}
+		return packageMap;
+
 	}
 	
 	/*
