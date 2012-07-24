@@ -119,13 +119,13 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
 	   	try {
+   			for (pattern : model.patterns){
+   				pattern.infer(acceptor, isPrelinkingPhase)
+   			}
 	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
    			val groupClass = model.inferPatternGroup
    			model.associatePrimary(groupClass)
    			acceptor.accept(groupClass)
-   			for (pattern : model.patterns){
-   				pattern.infer(acceptor, isPrelinkingPhase)
-   			}
    		} catch (IllegalArgumentException e){
    			errorFeedback.reportErrorNoLocation(model, e.message, GeneratorIssueCodes::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
    		} catch(Exception e) {
