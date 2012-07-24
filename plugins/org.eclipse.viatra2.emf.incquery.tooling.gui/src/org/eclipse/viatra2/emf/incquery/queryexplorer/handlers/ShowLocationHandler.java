@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -35,7 +36,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -47,6 +47,8 @@ public class ShowLocationHandler extends AbstractHandler {
 	
 	@Inject
 	private ILocationInFileProvider locationProvider;
+	@Inject
+	private Logger logger;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -116,10 +118,10 @@ public class ShowLocationHandler extends AbstractHandler {
 			m.invoke(editorPart, preparedSelection.toList());
 		}
 		catch (NoSuchMethodException e) {
-			IncQueryEngine.getDefaultLogger().debug("setSelectionToViewer method not found");
+			logger.debug("setSelectionToViewer method not found");
 		}
 		catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().debug("setSelectionToViewer call failed");
+			logger.debug("setSelectionToViewer call failed");
 		}
 	}
 

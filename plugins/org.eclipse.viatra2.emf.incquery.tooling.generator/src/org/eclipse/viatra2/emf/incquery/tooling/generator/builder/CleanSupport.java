@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -105,6 +106,9 @@ public class CleanSupport {
 	@Inject
 	private IErrorFeedback errorFeedback;
 	
+	@Inject
+	private Logger logger;
+	
 	/**
 	 * Performs a full clean on the currently built project and all related
 	 * fragments.
@@ -116,7 +120,7 @@ public class CleanSupport {
 		try {
 			internalFullClean(context, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().error("Exception during Full Clean!", e);
+			logger.error("Exception during Full Clean!", e);
 		} finally {
 			monitor.worked(1);
 		}
@@ -142,7 +146,7 @@ public class CleanSupport {
 			try {
 				cleanFragment(modelProject, fragment);
 			} catch (Exception e) {
-				IncQueryEngine.getDefaultLogger().error("Exception during full Clean on " + fragment.getClass().getCanonicalName(), e);
+				logger.error("Exception during full Clean on " + fragment.getClass().getCanonicalName(), e);
 			}
 		}
 	}
@@ -218,7 +222,7 @@ public class CleanSupport {
 		try {
 			internalNormalClean(context, relevantDeltas, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().error("Exception during Normal Clean!", e);
+			logger.error("Exception during Normal Clean!", e);
 		} finally {
 			monitor.worked(1);
 		}
@@ -286,7 +290,7 @@ public class CleanSupport {
 				fsa.deleteFile(classPackagePath);				
 			} catch (Exception e) {
 				String msg = String.format("Java file cannot be deleted through IFileSystemAccess: %s", classPackagePath);
-				IncQueryEngine.getDefaultLogger().warn(msg, e);
+				logger.warn(msg, e);
 				IFile classFile = modelProject.getFile(new Path(outputDir + "/" + classPackagePath));
 				if (classFile != null && classFile.exists()) {
 					classFile.delete(IResource.KEEP_HISTORY, null);
@@ -339,7 +343,7 @@ public class CleanSupport {
 				}				
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing clean for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				IncQueryEngine.getDefaultLogger().error(msg, e);
+				logger.error(msg, e);
 			}
 		}
 	}

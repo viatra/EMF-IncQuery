@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -50,6 +51,8 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	SnapshotHelper helper;
 	@Inject
 	ModelLoadHelper loader;
+	@Inject
+	private Logger logger;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -85,7 +88,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			}
 		}
 		if(engine == null) {
-			IncQueryEngine.getDefaultLogger().error("Cannot save snapshot without IncQueryEngine!");
+			logger.error("Cannot save snapshot without IncQueryEngine!");
 			return;
 		}
 		ResourceSet resourceSet = getResourceSetForNotifier(engine.getEmfRoot());

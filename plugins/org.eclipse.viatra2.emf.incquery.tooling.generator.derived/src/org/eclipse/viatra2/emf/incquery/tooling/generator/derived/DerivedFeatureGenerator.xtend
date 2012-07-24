@@ -15,6 +15,7 @@ import com.google.inject.Inject
 import java.util.HashMap
 import java.util.List
 import java.util.Map
+import org.apache.log4j.Logger
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
@@ -40,7 +41,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
@@ -61,6 +61,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	
 	@Inject IEiqGenmodelProvider provider
 	@Inject extension DerivedFeatureSourceCodeUtil
+	@Inject Logger logger
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	/* usage: @DerivedFeature(
@@ -185,7 +186,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 			} catch(IllegalArgumentException e){
 			  if(generate){
-				  IncQueryEngine::defaultLogger.error(e.message,e);
+				  logger.error(e.message,e);
 				}
 			}
 			
@@ -552,7 +553,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				return wellbehaving
 			} catch(IllegalArgumentException e){
-				IncQueryEngine::defaultLogger.error(e.message)
+				logger.error(e.message)
 				return newArrayList
 			}
 

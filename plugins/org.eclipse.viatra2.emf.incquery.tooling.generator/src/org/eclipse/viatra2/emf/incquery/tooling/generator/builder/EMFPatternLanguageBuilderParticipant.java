@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +26,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.xmi.XmiModelSupport;
@@ -81,6 +81,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	
 	@Inject
 	private IEiqGenmodelProvider genmodelProvider;
+	
+	@Inject
+	private Logger logger;
 	
 	@Override
 	public void build(final IBuildContext context, IProgressMonitor monitor)
@@ -202,7 +205,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				executeGeneratorFragment(fragment, modelProject, pattern);
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing generation for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				IncQueryEngine.getDefaultLogger().error(msg, e);
+				logger.error(msg, e);
 			}
 		}
 	}

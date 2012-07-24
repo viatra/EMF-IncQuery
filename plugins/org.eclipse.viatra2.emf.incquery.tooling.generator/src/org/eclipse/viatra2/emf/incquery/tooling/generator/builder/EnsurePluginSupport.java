@@ -13,12 +13,12 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.xtext.xbase.lib.Functions;
@@ -43,6 +43,9 @@ public class EnsurePluginSupport {
 	
 	@Inject
 	private IGenerationFragmentProvider fragmentProvider;
+	
+	@Inject
+	private Logger logger;
 	
 	private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
 	private Multimap<IProject, IPluginExtension> appendableExtensionMap = ArrayListMultimap.create();
@@ -99,7 +102,7 @@ public class EnsurePluginSupport {
 		try {
 			internalEnsure(modelProject, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().error("Exception during Extension/Package ensure Phase", e);
+			logger.error("Exception during Extension/Package ensure Phase", e);
 		} finally {
 			monitor.worked(1);
 		}
