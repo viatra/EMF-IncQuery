@@ -76,17 +76,14 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 	 */
 	private Object[] getElements(ListDialogField<EPackage> field) {
 		List<EPackage> result = new ArrayList<EPackage>();
-		Set<String> keys = new HashSet<String>(EPackage.Registry.INSTANCE.keySet());
-		for (String key : keys) {
-			EPackage _package = EPackage.Registry.INSTANCE.getEPackage(key);
-			if (!field.getElements().contains(_package)) {
-				result.add(_package);
-			}
-		}
 		
 		try {
 			Collection<EPackage> packages = metamodelProviderService.getAllMetamodelObjects(firstPage.getProject());
-			result.addAll(packages);
+			for (EPackage ePackage : packages) {
+				if (!field.getElements().contains(ePackage)) {
+					result.add(ePackage);
+				}
+			}
 		} 
 		catch (CoreException e) {
 			e.printStackTrace();
