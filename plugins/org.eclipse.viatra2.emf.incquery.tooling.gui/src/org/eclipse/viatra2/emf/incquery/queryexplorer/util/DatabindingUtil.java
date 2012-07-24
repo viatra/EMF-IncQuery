@@ -76,7 +76,6 @@ public class DatabindingUtil {
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
 	private static List<Pattern> generatedPatterns;
 	private static Map<Pattern, IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>>> generatedMatcherFactories;
-	
 	public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
@@ -84,7 +83,7 @@ public class DatabindingUtil {
 	
 	@Inject
 	private IResourceSetProvider resSetProvider;
-	
+
 	/**
 	 * Creates a marker with a warning for the given pattern. 
 	 * The marker's message will be set to the given message parameter.
@@ -471,7 +470,7 @@ public class DatabindingUtil {
 	 * @return the PatternMatcherRoot element
 	 */
 	public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
-		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
+		ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);	
 		List<Pattern> activePatterns = PatternRegistry.getInstance().getActivePatterns();
 		//runtime & generated matchers
 		root.registerPattern(activePatterns.toArray(new Pattern[activePatterns.size()]));

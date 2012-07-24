@@ -34,6 +34,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -46,7 +47,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @author Tamas Szabo
  *
  */
-public class ObservablePatternMatcherRoot {
+public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
 	private Map<String, ObservablePatternMatcher> matchers;
 	private List<ObservablePatternMatcher> sortedMatchers;
@@ -58,6 +59,21 @@ public class ObservablePatternMatcherRoot {
 		matchers = new HashMap<String, ObservablePatternMatcher>();
 		sortedMatchers = new LinkedList<ObservablePatternMatcher>();
 		this.key = key;
+		
+		IncQueryEngine engine = getEngine();
+		if (engine != null) {
+			engine.getLogger().addAppender(this);
+		}
+	}
+	
+	private IncQueryEngine getEngine() {
+		try {
+			IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(key.getNotifier());
+			return engine;
+		} catch (IncQueryException e) {
+			logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "+key.getNotifier(), e));
+			return null;
+		}
 	}
 	
 	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated, String exceptionMessage) {
@@ -102,6 +118,15 @@ public class ObservablePatternMatcherRoot {
 		for (ObservablePatternMatcher pm : this.matchers.values()) {
 			pm.dispose();
 		}
+		IncQueryEngine engine = getEngine();
+		if (engine != null) {
+			engine.getLogger().removeAppender(this);
+		}
+	}
+	
+	public boolean isTainted() {
+		IncQueryEngine engine = getEngine();
+		return (engine == null) ? true : engine.isTainted();
 	}
 	
 	public MatcherTreeViewerRootKey getKey() {
@@ -115,7 +140,14 @@ public class ObservablePatternMatcherRoot {
 	public Notifier getNotifier() {
 		return this.key.getNotifier();
 	}
-		
+	
+	@Override
+	public void engineBecameTainted() {
+		for (ObservablePatternMatcher matcher : this.matchers.values()) {
+			matcher.stopMonitoring();
+		}
+	}
+
 	public void registerPattern(final Pattern... patterns) {
 		boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.WILDCARD_MODE);
 		IncQueryEngine engine;
