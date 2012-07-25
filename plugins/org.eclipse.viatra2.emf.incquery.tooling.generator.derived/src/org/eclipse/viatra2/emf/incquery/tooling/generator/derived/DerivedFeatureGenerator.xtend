@@ -142,7 +142,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	def private processJavaFiles(Pattern pattern, boolean generate) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
 			try{
-				val parameters = pattern.processDerivedFeatureAnnotation
+				val parameters = pattern.processDerivedFeatureAnnotation(generate)
 							
 				val pckg = parameters.get("package") as GenPackage
 				val source =  parameters.get("source") as EClass
@@ -545,7 +545,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
 			// create wellbehaving extension using nsUri, classifier name and feature name
 			try{
-				val parameters = pattern.processDerivedFeatureAnnotation
+				val parameters = pattern.processDerivedFeatureAnnotation(false)
 				val wellbehaving = newArrayList(
 				exGen.contribExtension(pattern.derivedContributionId, DERIVED_EXTENSION_POINT) [
 					exGen.contribElement(it, "wellbehaving-derived-feature") [
@@ -594,7 +594,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 	
 	
-	def private processDerivedFeatureAnnotation(Pattern pattern){
+	def private processDerivedFeatureAnnotation(Pattern pattern, boolean feedback){
 		val parameters = new HashMap<String,Object>
 		var sourceTmp = ""
 		var targetTmp = ""
@@ -603,7 +603,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		var keepCacheTmp = true
 		
 		if(pattern.parameters.size < 2){
-		  errorFeedback.reportError(pattern,"Pattern has less than 2 parameters!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+		  if(feedback)
+  		  errorFeedback.reportError(pattern,"Pattern has less than 2 parameters!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+" has less than 2 parameters!")
 		}
 		
@@ -636,14 +637,16 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			sourceTmp = pattern.parameters.get(0).name
 		}
 		if(!pattern.parameterPositionsByName.keySet.contains(sourceTmp)){
-		  errorFeedback.reportError(annotation,"No parameter for source " + sourceTmp +" !", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+		  if(feedback)
+		    errorFeedback.reportError(annotation,"No parameter for source " + sourceTmp +" !", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": No parameter for source " + sourceTmp +" !")
 		}
 		
 		val sourcevar = pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp))
 		val sourceType = sourcevar.type
 		if(!(sourceType instanceof ClassType) || !((sourceType as ClassType).classname instanceof EClass)){
-			errorFeedback.reportError(sourcevar,"Source " + sourceTmp +" is not EClass!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+			if(feedback)
+        errorFeedback.reportError(sourcevar,"Source " + sourceTmp +" is not EClass!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source " + sourceTmp +" is not EClass!")
 		}
 		var source = (sourceType as ClassType).classname as EClass
@@ -653,12 +656,14 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		//parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
 		
 		if(source == null || source.EPackage == null){
-		  errorFeedback.reportError(sourcevar,"Source EClass or EPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+		  if(feedback)
+        errorFeedback.reportError(sourcevar,"Source EClass or EPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
 		  throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
 		}
 		val pckg = provider.findGenPackage(pattern, source.EPackage)
 		if(pckg == null){
-			errorFeedback.reportError(sourcevar,"GenPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+			if(feedback)
+        errorFeedback.reportError(sourcevar,"GenPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
 		}
 		parameters.put("package", pckg)
@@ -666,12 +671,14 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		val featureString = featureTmp
 		val features = source.EAllStructuralFeatures.filter[it.name == featureString]
 		if(features.size != 1){
-			errorFeedback.reportError(annotation,"Feature " + featureTmp +" not found in class " + source.name +"!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+			if(feedback)
+        errorFeedback.reportError(annotation,"Feature " + featureTmp +" not found in class " + source.name +"!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" not found in class " + source.name +"!")
 		}
 		val feature = features.iterator.next
 		if(!(feature.derived && feature.transient && !feature.changeable && feature.volatile)){
-			errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+			if(feedback)
+        errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!")
 		}
 		parameters.put("feature", feature)
@@ -693,7 +700,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		}
 		
 		if(!kinds.keySet.contains(kindTmp)){
-			errorFeedback.reportError(annotation,"Kind not set, or not in " + kinds.keySet + "!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+			if(feedback)
+        errorFeedback.reportError(annotation,"Kind not set, or not in " + kinds.keySet + "!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
       throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Kind not set, or not in " + kinds.keySet + "!")
 		}
 		val kind = kinds.get(kindTmp)
@@ -703,7 +711,8 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			targetTmp = pattern.parameters.get(1).name
 		} else {
 			if(!pattern.parameterPositionsByName.keySet.contains(targetTmp)){
-			  errorFeedback.reportError(annotation,"Target " + targetTmp +" not set or no such parameter!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+			  if(feedback)
+          errorFeedback.reportError(annotation,"Target " + targetTmp +" not set or no such parameter!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
 				throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Target " + targetTmp +" not set or no such parameter!")
 			}
 		}
