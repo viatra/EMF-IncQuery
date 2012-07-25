@@ -96,6 +96,9 @@ public class IncqueryDerivedFeature {
 		if(targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
 			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
 		}
+		if((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
+		  matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
+    }
 		//IPatternMatch partialMatch = matcher.newEmptyMatch();
 		//partialMatch.set(sourceParamName, source);
 		this.dm = matcher.newDeltaMonitor(true);
@@ -135,10 +138,6 @@ public class IncqueryDerivedFeature {
 	public IncqueryDerivedFeature(EStructuralFeature feature, FeatureKind kind) {
 		this(feature);
 		this.kind = kind;
-		if((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
-			IncQueryEngine.getDefaultLogger().error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
-				return;
-		}
 		if(kind == FeatureKind.SUM && !(feature instanceof EAttribute)) {
 		  IncQueryEngine.getDefaultLogger().error("[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
 		}
@@ -243,7 +242,7 @@ public class IncqueryDerivedFeature {
 		  Collection<Object> values = manyRefMemory.get(source);
 		  if(values == null) {
 		    matcher.getEngine().getLogger().error(
-            "[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
+            "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): removing from list that doesn't exist");
 		  }
 			values.remove(removed);
 		}
@@ -285,9 +284,9 @@ public class IncqueryDerivedFeature {
 	                  .add(new ENotificationImpl(source, Notification.ADD, feature, null, target));
 	              addToManyRefMemory(source, target);
 	            } else {
-	              if (updateMemory != null) {
+	              if (updateMemory.get(source) != null) {
 	                matcher.getEngine().getLogger().error(
-	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
+	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): update memory already set for given source");
 	              } else {
 	                // must handle later (either in lost matches or after that)
 	                updateMemory.put(source, target);
@@ -308,7 +307,9 @@ public class IncqueryDerivedFeature {
 	 */
 	private void increaseCounter(InternalEObject source, int delta) throws CoreException {
 		Integer value = counterMemory.get(source);
-    if(value <= Integer.MAX_VALUE-delta) {
+		if(value == null) {
+		  counterMemory.put(source, 1);
+		} else if(value <= Integer.MAX_VALUE-delta) {
 			int tempMemory = value+delta;
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,	feature, counterMemory, tempMemory));
@@ -395,7 +396,10 @@ public class IncqueryDerivedFeature {
 	 */
 	private void decreaseCounter(InternalEObject source, int delta) throws CoreException {
 	  Integer value = counterMemory.get(source);
-	  if(value >= delta) {
+	  if(value == null) {
+	    matcher.getEngine().getLogger().error(
+          "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
+    } else if(value >= delta) {
 			int tempMemory = value-delta;
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,

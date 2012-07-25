@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ public final class IncqueryFeatureHelper {
 	private static final Map<EObject, Map<EStructuralFeature,Integer>> HANDLER_REQUEST_COUNTER = new HashMap<EObject, Map<EStructuralFeature,Integer>>();
 	//private static boolean matcherInitialization = false;
 
-	private static final Map<Notifier, Map<EStructuralFeature,IncqueryDerivedFeature>> featureMap = new WeakHashMap<Notifier, Map<EStructuralFeature,IncqueryDerivedFeature>>();
+	private static final Map<Notifier, Map<EStructuralFeature,WeakReference<IncqueryDerivedFeature>>> featureMap = new WeakHashMap<Notifier, Map<EStructuralFeature,WeakReference<IncqueryDerivedFeature>>>();
 	
 	/**
 	 * 
@@ -191,6 +192,20 @@ public final class IncqueryFeatureHelper {
     }*/
     return matcher;
   }
+  
+  private static Notifier prepareNotifierForSource(EObject source) {
+    Resource eResource = source.eResource();
+    if(eResource != null) {
+      ResourceSet resourceSet = eResource.getResourceSet();
+      if(resourceSet != null) {
+        return resourceSet;
+      } else {
+        return eResource;
+      }
+    } else {
+      return source;
+    }
+  }
 
 	@SuppressWarnings("rawtypes")
   public static EList getManyReferenceValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
@@ -252,18 +267,20 @@ public final class IncqueryFeatureHelper {
 	
 	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EStructuralFeature feature, String patternFQN,
       String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache) {
-	  Map<EStructuralFeature, IncqueryDerivedFeature> features = featureMap.get(notifier);
-	  if(features != null) {
-	    features = new HashMap<EStructuralFeature, IncqueryDerivedFeature>();
+	  Map<EStructuralFeature, WeakReference<IncqueryDerivedFeature>> features = featureMap.get(notifier);
+	  if(features == null) {
+	    features = new HashMap<EStructuralFeature, WeakReference<IncqueryDerivedFeature>>();
 	    featureMap.put(notifier, features);
 	  }
-	  IncqueryDerivedFeature derivedFeature = features.get(feature);
+	  WeakReference<IncqueryDerivedFeature> weakReference = features.get(feature);
+	  
+    IncqueryDerivedFeature derivedFeature = weakReference == null?null:weakReference.get();
 	  if(derivedFeature != null) {
 	    return derivedFeature;
 	  }
 	  
 	  derivedFeature = new IncqueryDerivedFeature(feature, kind, keepCache);
-	  features.put(feature, derivedFeature);
+	  features.put(feature, new WeakReference<IncqueryDerivedFeature>(derivedFeature));
 	  
 	  IMatcherFactory<?> matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
     if(matcherFactory != null) {
@@ -280,4 +297,27 @@ public final class IncqueryFeatureHelper {
 	  return derivedFeature;
 	}
 	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind) {
+	  return getIncqueryDerivedFeature(notifier, feature, patternFQN, sourceParamName, targetParamName, kind, true);
+	}
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache, boolean useSourceAsNotifier) {
+	  Notifier notifier = source;
+	  if(!useSourceAsNotifier) {
+	    notifier = prepareNotifierForSource(source);
+	  }
+    return getIncqueryDerivedFeature(notifier, feature, patternFQN, sourceParamName, targetParamName, kind, keepCache);
+  }
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind, boolean useSourceAsNotifier) {
+	  return getIncqueryDerivedFeature(source, feature, patternFQN, sourceParamName, targetParamName, kind, true, useSourceAsNotifier);
+	}
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind) {
+    return getIncqueryDerivedFeature(source, feature, patternFQN, sourceParamName, targetParamName, kind, true, false);
+  }
 }
