@@ -22,6 +22,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.validation.PatternSetValidationDiagnostics;
+import org.eclipse.viatra2.patternlanguage.validation.PatternSetValidator;
+import org.eclipse.viatra2.patternlanguage.validation.PatternValidationStatus;
+
+import com.google.inject.Injector;
 
 /**
  * Stateful sanitizer that maintains a set of admitted patterns. 
@@ -97,16 +102,19 @@ public class PatternSanitizer {
 			} else {
 				newPatternsByName.put(fullyQualifiedName, current);
 			}
-
-			// TODO actual validation
+			
 			final boolean validationPassed = true; //validator == null || validator.validate(current, errorOnlyLogger);
 			if (!validationPassed) {
 				inadmissible.add(current);
 			}	
 			
 		}
+		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+		PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
+		PatternSetValidationDiagnostics validatorResult = validator.validate(patterns);
+		validatorResult.logErrors(logger);
 		
-		boolean ok = inadmissible.isEmpty();
+		boolean ok = inadmissible.isEmpty() && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
 		if (ok) {
 			admittedPatterns.addAll(newPatterns);
 			patternsByName.putAll(newPatternsByName);
