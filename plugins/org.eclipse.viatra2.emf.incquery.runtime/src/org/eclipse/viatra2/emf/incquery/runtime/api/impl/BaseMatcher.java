@@ -68,7 +68,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 			throw new IncQueryException(
 				String.format("Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.", 
 						CorePatternLanguageHelper.getFullyQualifiedName(pattern)), 
-				"Pattern failed a check");
+				"Pattern contains errors");
 	}
 
 	protected abstract Match tupleToMatch(Tuple t);
