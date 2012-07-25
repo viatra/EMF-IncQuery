@@ -41,7 +41,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
+import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
@@ -266,7 +266,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			importListRewrite.insertLast(handlerImportNew, null)
 		}
 		val kindImport = imports.findFirst[
-			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "." + HANDLER_NAME + "."+ FEATUREKIND_IMPORT
+			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "."+ FEATUREKIND_IMPORT
 		]
 		if(kindImport == null){
 			val kindImportNew = ast.newImportDeclaration
