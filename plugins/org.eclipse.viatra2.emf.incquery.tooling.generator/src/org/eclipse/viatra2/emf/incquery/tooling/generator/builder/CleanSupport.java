@@ -339,6 +339,8 @@ public class CleanSupport {
 					EclipseResourceFileSystemAccess2 fsa = eclipseResourceSupport.createProjectFileSystemAccess(targetProject);
 					fragment.cleanUp(pattern, fsa);
 					ensureSupport.removeAllExtension(targetProject, fragment.removeExtension(pattern));
+				  // removing all fragment-related markers
+		      errorFeedback.clearMarkers(targetProject, IErrorFeedback.FRAGMENT_ERROR_TYPE);
 				}				
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing clean for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
