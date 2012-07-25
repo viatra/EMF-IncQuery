@@ -136,7 +136,14 @@ public class IncQueryEngine {
 	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
+			  // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this reentrantly 
+				synchronized (this) { 
+          baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode, getLogger());
+        }
+				synchronized (this) {
+          baseIndex.addRoot(getEmfRoot());
+        }
+				
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryException(
 						"Could not initialize EMF-IncQuery base index", 
