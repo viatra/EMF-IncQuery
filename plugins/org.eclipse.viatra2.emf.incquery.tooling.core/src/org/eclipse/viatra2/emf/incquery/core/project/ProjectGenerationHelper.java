@@ -548,7 +548,7 @@ public abstract class ProjectGenerationHelper {
 		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
 				INVALID_PROJECT_MESSAGE);
 		
-		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
+		if (StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
 		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap
@@ -641,7 +641,7 @@ public abstract class ProjectGenerationHelper {
 	public static void removeAllExtension(IProject project, Collection<Pair<String, String>> removableExtensionIdentifiers) throws CoreException {
 		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)));
 		
-		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
+		if (StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
 		IFile pluginXml = PDEProject.getPluginXml(project);
