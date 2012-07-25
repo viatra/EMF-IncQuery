@@ -23,7 +23,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  * 
  * 
- * @Off
+ * @QueryExplorer(display = false)
  * @DerivedFeature(feature = \"derivedValue\")
  * pattern SubstitutionValue(
  * 	Substitution : MatchSubstitutionRecord,
