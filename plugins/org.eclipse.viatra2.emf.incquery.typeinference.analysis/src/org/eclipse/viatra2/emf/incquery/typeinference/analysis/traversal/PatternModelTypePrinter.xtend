@@ -17,7 +17,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstrain
 class PatternModelTypePrinter extends PatternModelTypeInference{
 
 	override writeType(PatternModel patternModel, Variable variable, EClassifier classifier) {
-		System::out.println("\t\t\tType: " + classifier.name);
+		System::out.println("\t\t\t"+variable.name+": " + classifier.name);
 		if(patternModel.importPackages.contains(classifier.EPackage))
 			System::out.println("\t\t\tWarning: The type '" + classifier.name +
 			"' of the variable '" + variable +"' is not in the domain of the imported packages.");
@@ -73,8 +73,11 @@ class PatternModelTypePrinter extends PatternModelTypeInference{
 	}
 	
 	override writeTooGeneralTypeInBody(Variable variable) {
-		System::out.println(
-			"\t\t\tWarning: The variable '"+variable.name+"' is more general type than any existing classifier.");
+		if(variable.name.startsWith("_"))
+			System::out.println("\t\t\t"+variable.name+": "+"general typed anonymous")
+		else
+			System::out.println(
+			"\t\t\tWarning: The variable '"+variable.name+"' doesn't have type because it doesn't have any type constraint.");
 	}
 	
 	override writeUnsatTypeInParameter(Variable variable) {
@@ -82,7 +85,7 @@ class PatternModelTypePrinter extends PatternModelTypeInference{
 	}
 	
 	override writeTooGeneralTypeInParameterNoConstraint(Pattern pattern, Variable variable) {
-		System::out.println("\t\t\tWarning: The parameter '"+variable.name+"' is more general type than any existing classifier.");
+		System::out.println("\t\t\tWarning: The parameter '"+variable.name+"' doesn't have type because it doesn't have any type constraint.");
 	}
 	
 	override writeTooGeneralTypeInParameter(List<TypeReason<PatternBody>> reasons, Pattern pattern, Variable variable) {

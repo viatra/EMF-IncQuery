@@ -2,168 +2,6 @@
 <plugin>
 
    <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.directSupertype"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.directSupertype"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.directsupertype.DirectSupertypeMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.supertype"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.supertype"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.supertype.SupertypeMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfParameterOfPattern"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfParameterOfPattern"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.incompatibletypeofparameterofpattern.IncompatibleTypeOfParameterOfPatternMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfParameterOfPattern"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfParameterOfPattern"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.compatibletypeofparameterofpattern.CompatibleTypeOfParameterOfPatternMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreSpecificType"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreSpecificType"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.havemorespecifictype.HaveMoreSpecificTypeMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.TypeOfParameterOfPattern"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.TypeOfParameterOfPattern"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.typeofparameterofpattern.TypeOfParameterOfPatternMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.haveSatisfiableBodyOfPatternParameter"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.haveSatisfiableBodyOfPatternParameter"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.havesatisfiablebodyofpatternparameter.HaveSatisfiableBodyOfPatternParameterMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeOfPatternParameter"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeOfPatternParameter"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeofpatternparameter.UnsatisfiableTypeOfPatternParameterMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameter"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameter"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.coherent2"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.coherent2"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.coherent2.Coherent2MatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameterReason2"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameterReason2"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameterreason2.TooGeneralTypeOfPatternParameterReason2MatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.variableOfPattern"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.variableOfPattern"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.variableofpattern.VariableOfPatternMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfVariableInBody"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfVariableInBody"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.incompatibletypeofvariableinbody.IncompatibleTypeOfVariableInBodyMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfVariableInBody"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfVariableInBody"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.compatibletypeofvariableinbody.CompatibleTypeOfVariableInBodyMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBody"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBody"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeconstraininpatternbody.UnsatisfiableTypeConstrainInPatternBodyMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreGenericType"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreGenericType"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.havemoregenerictype.HaveMoreGenericTypeMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.typeOfVariableInBody"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.typeOfVariableInBody"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.typeofvariableinbody.TypeOfVariableInBodyMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfVariableInBody"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfVariableInBody"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofvariableinbody.TooGeneralTypeOfVariableInBodyMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.simmetricCompare"
          name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
@@ -272,67 +110,230 @@
       </matcher>
    </extension>
    <extension
-         id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInParameters"
+         id="org.eclipse.viatra2.emf.incquery.typeinference.directSupertype"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstraininparameters.ClassConstrainInParametersMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInParameters">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.directSupertype"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.directsupertype.DirectSupertypeMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.supertype"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.supertype"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.supertype.SupertypeMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.coherent2"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.coherent2"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.coherent2.Coherent2MatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameterReason2"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameterReason2"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameterreason2.TooGeneralTypeOfPatternParameterReason2MatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInParameters"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInParameters"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstraininparameters.ClassConstrainInParametersMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInDirectBodyByEntities"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstrainindirectbodybyentities.ClassConstrainInDirectBodyByEntitiesMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInDirectBodyByEntities">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInDirectBodyByEntities"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstrainindirectbodybyentities.ClassConstrainInDirectBodyByEntitiesMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.getHeadOfPathConstrain"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.getheadofpathconstrain.GetHeadOfPathConstrainMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.getHeadOfPathConstrain">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.getHeadOfPathConstrain"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.getheadofpathconstrain.GetHeadOfPathConstrainMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.nextTailOfPathExpression"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.nexttailofpathexpression.NextTailOfPathExpressionMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.nextTailOfPathExpression">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.nextTailOfPathExpression"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.nexttailofpathexpression.NextTailOfPathExpressionMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.getTailOfPathConstrain"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.gettailofpathconstrain.GetTailOfPathConstrainMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.getTailOfPathConstrain">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.getTailOfPathConstrain"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.gettailofpathconstrain.GetTailOfPathConstrainMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainsInDirectBodyByRelations"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstrainsindirectbodybyrelations.ClassConstrainsInDirectBodyByRelationsMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainsInDirectBodyByRelations">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainsInDirectBodyByRelations"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstrainsindirectbodybyrelations.ClassConstrainsInDirectBodyByRelationsMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.subpatternWithVariable"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.subpatternwithvariable.SubpatternWithVariableMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.subpatternWithVariable">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.subpatternWithVariable"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.subpatternwithvariable.SubpatternWithVariableMatcherFactory$Provider">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInPatternBody"
+         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstraininpatternbody.ClassConstrainInPatternBodyMatcherFactory$Provider"
-            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInPatternBody">
+            id="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInPatternBody"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.classconstraininpatternbody.ClassConstrainInPatternBodyMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfParameterOfPattern"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfParameterOfPattern"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.incompatibletypeofparameterofpattern.IncompatibleTypeOfParameterOfPatternMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfParameterOfPattern"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfParameterOfPattern"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.compatibletypeofparameterofpattern.CompatibleTypeOfParameterOfPatternMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreSpecificType"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreSpecificType"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.havemorespecifictype.HaveMoreSpecificTypeMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.TypeOfParameterOfPattern"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.TypeOfParameterOfPattern"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.typeofparameterofpattern.TypeOfParameterOfPatternMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.haveSatisfiableBodyOfPatternParameter"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.haveSatisfiableBodyOfPatternParameter"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.havesatisfiablebodyofpatternparameter.HaveSatisfiableBodyOfPatternParameterMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeOfPatternParameter"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeOfPatternParameter"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeofpatternparameter.UnsatisfiableTypeOfPatternParameterMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameter"
+         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameter"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.variableOfPattern"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.variableofpattern.VariableOfPatternMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.variableOfPattern">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfVariableInBody"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.incompatibletypeofvariableinbody.IncompatibleTypeOfVariableInBodyMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfVariableInBody">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfVariableInBody"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.compatibletypeofvariableinbody.CompatibleTypeOfVariableInBodyMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfVariableInBody">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBody"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeconstraininpatternbody.UnsatisfiableTypeConstrainInPatternBodyMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBody">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreGenericType"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.havemoregenerictype.HaveMoreGenericTypeMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreGenericType">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.typeOfVariableInBody"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.typeofvariableinbody.TypeOfVariableInBodyMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.typeOfVariableInBody">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfVariableInBody"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofvariableinbody.TooGeneralTypeOfVariableInBodyMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfVariableInBody">
       </matcher>
    </extension>
 

@@ -33,7 +33,11 @@ public abstract class QueryAnalisys {
 		if(resultSet == null) throw new TypeAnalysisException("Matcher resulted with null value.");
 		else if(resultSet.isEmpty()) return null;
 		else if (resultSet.size() == 1) return this.getOne(resultSet);
-		else throw new TypeAnalysisException("Matcher incorrectly resulted with multiple match.", resultSet);
+		else
+		{
+			System.err.println(resourceSet);
+			throw new TypeAnalysisException("Matcher incorrectly resulted with multiple match.", resultSet);
+		}
 	}
 	
 	protected <T> Collection<T> hasMatchResult(Collection<T> resultSet) throws TypeAnalysisException

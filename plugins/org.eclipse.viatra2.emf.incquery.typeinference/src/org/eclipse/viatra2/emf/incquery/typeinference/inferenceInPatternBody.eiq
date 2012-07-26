@@ -94,7 +94,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 	find compatibleTypeOfVariableInBody(pat,body, variable, class);
 	neg find haveMoreGenericType(pat,body, variable, class);
 	//If not too general
-	//neg find tooGeneralTypeOfVariableInBody(pat,body,variable);	
+	neg find tooGeneralTypeOfVariableInBody(pat,body,variable);	
 }
 
 /**
