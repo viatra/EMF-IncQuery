@@ -11,7 +11,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The variable in the parameterlist.
  * @param class The type of the parameter.
  */
-@QueryExplorer(display = false) pattern ClassConstrainInParameters(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainInParameters(pat:Pattern, variable:Variable, class:EClassifier, type:ClassType) =
 {
 	Pattern.parameters(pat,variable);
 	Variable.type(variable,type);
@@ -27,7 +27,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The constraint references this variable.
  * @param class The type of the variable.
  */
-@QueryExplorer(display = false) pattern ClassConstrainInDirectBodyByEntities(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainInDirectBodyByEntities(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier, constraint:EClassifierConstraint) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body,constraint);
@@ -46,7 +46,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The referenced variable.
  * @param class The type of the variable.
  */
-@QueryExplorer(display = false) pattern getHeadOfPathConstrain(constraint:PathExpressionConstraint, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern getHeadOfPathConstrain(constraint:PathExpressionConstraint, variable:Variable, class:EClassifier, from:PathExpressionHead) =
 {
 	PathExpressionConstraint.head(constraint,head);
 	PathExpressionHead.type(head,type);
@@ -71,7 +71,7 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable The referenced variable.
  * @param class The type of the variable.
  */
-@QueryExplorer(display = false) pattern getTailOfPathConstrain(constraint:PathExpressionConstraint, varible:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern getTailOfPathConstrain(constraint:PathExpressionConstraint, varible:Variable, class:EClassifier, from:PathExpressionTail) =
 {
 	PathExpressionConstraint.head(constraint, head);
 	
@@ -93,18 +93,18 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable The constraint references this variable.
  * @param class The type of the variable.
  */
-@QueryExplorer(display = false) pattern ClassConstrainsInDirectBodyByRelations(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainsInDirectBodyByRelations(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier, constraint:PathExpressionConstraint, from:EObject) =
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body,constraint);
 	PathExpressionConstraint(constraint);
-	find getHeadOfPathConstrain(constraint,variable,class);
+	find getHeadOfPathConstrain(constraint,variable,class,from);
 } or
 {
 	Pattern.bodies(pat,body);
 	PatternBody.constraints(body,constraint);
 	PathExpressionConstraint(constraint);
-	find getTailOfPathConstrain(constraint,variable,class);
+	find getTailOfPathConstrain(constraint,variable,class,from);
 }
 
 /**
@@ -144,21 +144,22 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable A variable used in the pattern.
  * @param class Some constraints ensures that the variable must be this type.
  */
-@QueryExplorer(display = true) pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = true) pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier, from:EObject) =
 {
 	Pattern.bodies(pat,body);
-	find ClassConstrainInParameters(pat,variable,class);
+	find ClassConstrainInParameters(pat,variable,class,from);
 } or
 {
-	find ClassConstrainInDirectBodyByEntities(pat, body, variable, class);
+	find ClassConstrainInDirectBodyByEntities(pat, body, variable, class, from);
 } or
 {
-	find ClassConstrainsInDirectBodyByRelations(pat, body, variable, class);
+	find ClassConstrainsInDirectBodyByRelations(pat, body, variable, class, _, from);
 } or
 {
-	find ClassConstrainFromValueReference(pat, body, variable, class);
+	find ClassConstrainFromCompare(pat,body,variable,class,from);
 } or
 {
 	find subpatternWithVariable(pat,body,subpat,variable,variableas);
 	find TypeOfParameterOfPattern(subpat,variableas,class);
+	from == subpat;
 }

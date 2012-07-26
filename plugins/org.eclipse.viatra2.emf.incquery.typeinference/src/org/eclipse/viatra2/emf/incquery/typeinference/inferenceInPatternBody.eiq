@@ -31,7 +31,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  */
 @QueryExplorer(display = false) pattern incompatibleTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
-	find ClassConstrainInPatternBody(pat,body,variable,classconstrain);
+	find ClassConstrainInPatternBody(pat,body,variable,classconstrain,_);
 	neg find supertype(class,classconstrain);
 }
 
@@ -59,16 +59,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 @QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable) =
 {
 	find variableOfPattern(pat,body,variable);
-	neg find compatibleTypeOfVariableInBody(pat,body,variable,_);
-}
-
-/**
- * Test for enumerating the constrains of an unsatisfiable constrain.
- */
-@QueryExplorer(display = false) pattern UnsatisfiableTypeConstrainInPatternBodyBecauseThoseConstrainsSays(pat:Pattern, body:PatternBody, variable:Variable/*, constrainInPattern: Pattern*/, constrainSayClass:EClassifier) =
-{
-	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
-	find ClassConstrainInPatternBody(pat,body,variable,constrainSayClass);
+	neg find compatibleTypeOfVariableInBody(pat,body,variable,_class);
 }
 
 /**
@@ -103,7 +94,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 	find compatibleTypeOfVariableInBody(pat,body, variable, class);
 	neg find haveMoreGenericType(pat,body, variable, class);
 	//If not too general
-	neg find tooGeneralTypeOfVariableInBody(pat,body,variable);	
+	//neg find tooGeneralTypeOfVariableInBody(pat,body,variable);	
 }
 
 /**
@@ -116,5 +107,6 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  */
 @QueryExplorer(display = true) pattern tooGeneralTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable) =
 {
-	neg find ClassConstrainInPatternBody(pat,body,variable,_);
+	find variableOfPattern(pat,body,variable);
+	neg find ClassConstrainInPatternBody(pat,body,variable,_class,_from);
 }

@@ -1,0 +1,21 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+
+@QueryExplorer(display = false) pattern coherent2(type1:EClassifier, type2:EClassifier) =
+{
+	EClassifier(common);
+	find supertype(type1,common);
+	find supertype(type2,common);
+}
+
+@QueryExplorer(display = true) pattern tooGeneralTypeOfPatternParameterReason2(pat:Pattern, variable:Variable,
+	type1:EClassifier, type2:EClassifier, from1:PatternBody, from2:PatternBody) =
+{
+	find typeOfVariableInBody(pat,from1,variable,type1);
+	find typeOfVariableInBody(pat,from2,variable,type2);
+	type1!=type2;
+	neg find coherent2(type1,type2);
+}

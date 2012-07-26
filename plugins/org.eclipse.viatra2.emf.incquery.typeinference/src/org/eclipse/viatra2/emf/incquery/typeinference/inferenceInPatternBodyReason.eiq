@@ -1,0 +1,43 @@
+package org.eclipse.viatra2.emf.incquery.typeinference
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+
+@QueryExplorer(display = false) pattern compatible2(type1:EClassifier, type2:EClassifier) =
+{
+	EClassifier(common);
+	find supertype(common,type1);
+	find supertype(common,type2);
+}
+
+@QueryExplorer(display = false) pattern compatible3(type1:EClassifier, type2:EClassifier, type3:EClassifier) =
+{
+	EClassifier(common);
+	find supertype(common,type1);
+	find supertype(common,type2);
+	find supertype(common,type3);
+}
+
+@QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBodyReason2(pat:Pattern, body:PatternBody, variable:Variable,
+	type1:EClassifier, type2:EClassifier, from1, from2) =
+{
+	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
+	find ClassConstrainInPatternBody(pat,body,variable,type1,from1);
+	find ClassConstrainInPatternBody(pat,body,variable,type2,from2);
+	type1!=type2;
+	neg find compatible2(type1,type2);
+}
+
+@QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBodyReason3(pat:Pattern, body:PatternBody, variable:Variable,
+	type1:EClassifier, type2:EClassifier, type3:EClassifier, from1, from2, from3) =
+{
+	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
+	find ClassConstrainInPatternBody(pat,body,variable,type1,from1);
+	find ClassConstrainInPatternBody(pat,body,variable,type2,from2);
+	find ClassConstrainInPatternBody(pat,body,variable,type3,from3);
+	type1!=type2;
+	type2!=type3;
+	type3!=type1;
+	neg find compatible3(type1,type2,type3);
+}

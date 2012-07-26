@@ -54,8 +54,8 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 {
 	find compatibleTypeOfParameterOfPattern(pat, variable, class);
 	neg find haveMoreSpecificType(pat, variable, class);
-	//+satisfiable
-	neg find tooGeneralTypeOfPatternParameter(pat, variable);
+	neg find tooGeneralTypeOfVariableInBody(pat,_,variable);
+	neg find UnsatisfiableTypeConstrainInPatternBody(pat,_,variable);
 }
 
 /**
@@ -85,14 +85,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  */
 @QueryExplorer(display = true) pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
 {
-	Pattern.parameters(pat,variable);
-	Pattern.bodies(pat,body);
-	find tooGeneralTypeOfVariableInBody(pat,body,variable);
-} or
-{
-	Pattern.parameters(pat,variable);
-	Pattern.bodies(pat,body);
-	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
+	neg find TypeOfParameterOfPattern(pat,variable,_);
 }
 
 ////////////////////////////////////////////////////////////////////

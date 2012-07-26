@@ -28,19 +28,18 @@ public abstract class QueryAnalisys {
 		return null;
 	}
 	
-	protected <T> T handleMatchResult(Collection<T> resultSet) throws TypeAnalisysException
+	protected <T> T handleMatchResult(Collection<T> resultSet) throws TypeAnalysisException
 	{
-		if(resultSet == null) throw new TypeAnalisysException("Matcher resulted with null value.");
+		if(resultSet == null) throw new TypeAnalysisException("Matcher resulted with null value.");
 		else if(resultSet.isEmpty()) return null;
 		else if (resultSet.size() == 1) return this.getOne(resultSet);
-		else throw new TypeAnalisysException("Matcher incorrectly resulted with multiple match.", resultSet);
+		else throw new TypeAnalysisException("Matcher incorrectly resulted with multiple match.", resultSet);
 	}
 	
-	protected <T> boolean hasMatchResult(Collection<T> resultSet) throws TypeAnalisysException
+	protected <T> Collection<T> hasMatchResult(Collection<T> resultSet) throws TypeAnalysisException
 	{
-		if(resultSet == null) throw new TypeAnalisysException("Matcher resulted with null value.");
-		else if(resultSet.isEmpty()) return false;
-		else if (resultSet.size() == 1) return true;
-		else throw new TypeAnalisysException("Matcher incorrectly resulted with multiple match.", resultSet);
+		if(resultSet == null) throw new TypeAnalysisException("Matcher resulted with null value.");
+		else if(resultSet.isEmpty()) return null;
+		else return resultSet;
 	}
 }

@@ -116,7 +116,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param pat The pattern.
  * @param body The body of the pattern.
  * @param valref The equivalent value.
- * @param the inferred type constraint.
+ * @param class the inferred type constraint.
  */
 @QueryExplorer(display = false) pattern ClassConstrainFromValueReference(pat:Pattern, body:PatternBody, valref:ValueReference, class:EClassifier) =
 {
@@ -141,16 +141,16 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 } or
 {
 	VariableValue.value.variable(valref, variable);
-	find ClassConstrainInPatternBody(pat,body,variable,class);
+	find ClassConstrainInPatternBody(pat,body,variable,class,_);
 }
 
 /**
  * The 'pat' pattern has a PatternBody 'body' that contains a 
  * equivalency checking relation with the variable 'var' that ensures that it have to be 'class' type.
  */
-@QueryExplorer(display = false) pattern ClassConstrainFromCompare(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern ClassConstrainFromCompare(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier, constraint:CompareConstraint) =
 {
-	find simmetricCompare(pat,body,variableValue,valueFrom,_,CompareFeature::equality);
+	find simmetricCompare(pat,body,variableValue,valueFrom,constraint,CompareFeature::equality);
 	VariableValue.value.variable(variableValue,variable);
 	find ClassConstrainFromValueReference(pat,body,valueFrom,class);
 }
