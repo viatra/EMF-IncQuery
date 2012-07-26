@@ -11,7 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.base.comprehension;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
@@ -65,7 +67,7 @@ public class EMFModelComprehension {
 	
 	public static void visitResourceSet(EMFVisitor visitor, ResourceSet source) {
 		if (source == null) return;
-		final EList<Resource> resources = source.getResources();
+		final List<Resource> resources = new ArrayList<Resource>(source.getResources());
 		for (Resource resource : resources) {
 			visitResource(visitor, resource);
 		}
