@@ -387,7 +387,7 @@ public class IncqueryDerivedFeature {
 	 * 
 	 * @return the value of the feature
 	 */
-	protected Object getValueIteration(Object source) {
+	public Object getValueIteration(Object source) {
 		throw new UnsupportedOperationException("Iteration derived feature handlers must override getValueIteration");
 	}
 	

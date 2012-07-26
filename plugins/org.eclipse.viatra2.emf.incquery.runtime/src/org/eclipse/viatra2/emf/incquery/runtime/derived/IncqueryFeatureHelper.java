@@ -194,17 +194,18 @@ public final class IncqueryFeatureHelper {
   }
   
   private static Notifier prepareNotifierForSource(EObject source) {
-    Resource eResource = source.eResource();
-    if(eResource != null) {
-      ResourceSet resourceSet = eResource.getResourceSet();
-      if(resourceSet != null) {
-        return resourceSet;
-      } else {
-        return eResource;
+    if(source != null) {
+      Resource eResource = source.eResource();
+      if(eResource != null) {
+        ResourceSet resourceSet = eResource.getResourceSet();
+        if(resourceSet != null) {
+          return resourceSet;
+        } else {
+          return eResource;
+        }
       }
-    } else {
-      return source;
     }
+    return source;
   }
 
 	@SuppressWarnings("rawtypes")
@@ -267,6 +268,7 @@ public final class IncqueryFeatureHelper {
 	
 	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EStructuralFeature feature, String patternFQN,
       String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache) {
+	  
 	  Map<EStructuralFeature, WeakReference<IncqueryDerivedFeature>> features = featureMap.get(notifier);
 	  if(features == null) {
 	    features = new HashMap<EStructuralFeature, WeakReference<IncqueryDerivedFeature>>();
