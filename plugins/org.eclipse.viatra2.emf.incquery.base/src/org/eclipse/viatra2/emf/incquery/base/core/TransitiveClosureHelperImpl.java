@@ -27,8 +27,6 @@ import org.eclipse.emf.ecore.util.EObjectEList;
 import org.eclipse.viatra2.emf.incquery.base.api.TransitiveClosureHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
-import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
-import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 
 /**
@@ -43,7 +41,7 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements
 
 	private IncSCCAlg<EObject> sccAlg;
 	private Set<EReference> refToObserv;
-	private IGraphDataSource<EObject> dataSource;
+	private EMFDataSource dataSource;
 	private ArrayList<ITcObserver<EObject>> observers;
 	private Notifier notifier;
 	
@@ -152,27 +150,19 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements
 	}
 
 	private void edgeInserted(EObject source, EObject target) {
-		for (IGraphObserver<EObject> o : EMFDataSource.observers) {
-			o.edgeInserted(source, target);
-		}
+		dataSource.notifyEdgeDeleted(source, target);
 	}
 
 	private void edgeDeleted(EObject source, EObject target) {
-		for (IGraphObserver<EObject> o : EMFDataSource.observers) {
-			o.edgeDeleted(source, target);
-		}
+		dataSource.notifyEdgeDeleted(source, target);
 	}
 
 	private void nodeInserted(EObject node) {
-		for (IGraphObserver<EObject> o : EMFDataSource.observers) {
-			o.nodeInserted(node);
-		}
+		dataSource.notifyNodeInserted(node);
 	}
 
 	private void nodeDeleted(EObject node) {
-		for (IGraphObserver<EObject> o : EMFDataSource.observers) {
-			o.nodeDeleted(node);
-		}
+		dataSource.notifyNodeDeleted(node);
 	}
 
 	@Override

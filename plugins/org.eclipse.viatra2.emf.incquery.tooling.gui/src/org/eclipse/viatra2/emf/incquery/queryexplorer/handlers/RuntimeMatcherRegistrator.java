@@ -82,7 +82,9 @@ public class RuntimeMatcherRegistrator implements Runnable {
 					root.unregisterPattern(pattern);
 				}
 				final IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
-				if (engine!=null) engine.wipe();
+				if (engine!=null) {
+					engine.wipe();
+				}
 			}
 			
 			//remove labels from pattern registry for the corresponding pattern model

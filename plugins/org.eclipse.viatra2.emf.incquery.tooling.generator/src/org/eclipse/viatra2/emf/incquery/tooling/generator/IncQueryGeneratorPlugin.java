@@ -55,7 +55,6 @@ public class IncQueryGeneratorPlugin implements BundleActivator {
 			injector = createInjector();
 		}
 		return injector;
-//		return EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.viatra2.patternlanguage.EMFPatternLanguage");
 	}
 	
 	protected Injector createInjector() {

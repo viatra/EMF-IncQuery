@@ -25,7 +25,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  *  
  * 
- * @Off
+ * @QueryExplorer(display = false)
  * @DerivedFeature(feature = \"role\")
  * pattern RecordRoleValue(
  * 	Record : MatchRecord,

@@ -59,7 +59,13 @@ public class MatcherLabelProvider extends ColumnLabelProvider {
 		ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
 
 		if (element instanceof ObservablePatternMatcherRoot) {
-			return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
+			ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) element;
+			if (root.isTainted()) {
+				return imageRegistry.get(IncQueryGUIPlugin.ICON_ERROR);
+			}
+			else {
+				return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
+			}
 		}
 		else if (element instanceof ObservablePatternMatcher) {
 			if (((ObservablePatternMatcher) element).isCreated()) {

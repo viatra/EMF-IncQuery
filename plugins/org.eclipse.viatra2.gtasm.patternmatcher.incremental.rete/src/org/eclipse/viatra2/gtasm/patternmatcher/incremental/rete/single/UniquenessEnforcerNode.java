@@ -44,14 +44,13 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 	
 	private final TupleMask nullMask;
 	private final TupleMask identityMask;
-	
+		
 	public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth) {
 		super(reteContainer);
 		parents = new ArrayList<Supplier>();
 		memory = new TupleMemory();
 		this.tupleWidth = tupleWidth;
 		reteContainer.registerClearable(memory);
-		
 		nullMask = TupleMask.linear(0, tupleWidth);
 		identityMask = TupleMask.identity(tupleWidth);
 //		if (Options.employTrivialIndexers) {
@@ -77,9 +76,7 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 			} catch (java.lang.NullPointerException ex) {
 				// TODO UGLY, but will it find our problems?
 				change = false;
-				System.err
-						.println("Duplicate deletion of " + updateElement + " was detected in UniquenessEnforcer " + this);
-				ex.printStackTrace();
+				reteContainer.getNetwork().getContext().logError("[INTERNAL ERROR] Duplicate deletion of " + updateElement + " was detected in UniquenessEnforcer " + this, ex);
 			}
 		}
 		if (change) {

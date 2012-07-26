@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.builder.xmi;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -20,9 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant.IBuildContext;
 import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.IResourceDescription;
@@ -54,6 +53,8 @@ public class XmiModelSupport {
 	
 	@Inject
 	private IContainer.Manager containerManager;
+	@Inject
+	private Logger logger;
 	
 	/**
 	 * Builds a global XMI model with a {@link XmiModelBuilder} builder. Before
@@ -71,7 +72,7 @@ public class XmiModelSupport {
 			monitor.beginTask("Building XMI model", 1);
 			internalBuild(baseDelta, context, monitor);
 		} catch (Exception e) {
-			IncQueryEngine.getDefaultLogger().error("Exception during XMI Model Building Phase", e);
+			logger.error("Exception during XMI Model Building Phase", e);
 		} finally {
 			monitor.worked(1);
 		}

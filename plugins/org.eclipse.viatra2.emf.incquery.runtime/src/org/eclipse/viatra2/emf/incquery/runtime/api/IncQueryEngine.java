@@ -12,11 +12,10 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
+import java.lang.ref.WeakReference;
+
 import org.apache.log4j.Appender;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -25,6 +24,7 @@ import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
@@ -88,6 +88,18 @@ public class IncQueryEngine {
 	 * Indicates whether the engine is in a tainted, inconsistent state.
 	 */
 	private boolean tainted = false;
+	private EngineTaintListener taintListener;
+	private static class SelfTaintListener extends EngineTaintListener {
+		WeakReference<IncQueryEngine> iqEngRef;
+		public SelfTaintListener(IncQueryEngine iqEngine) {
+			this.iqEngRef = new WeakReference<IncQueryEngine>(iqEngine);
+		}
+		@Override
+		public void engineBecameTainted() {
+			final IncQueryEngine iqEngine = iqEngRef.get();
+			iqEngine.tainted = true;
+		}
+	}
 	
 	/**
 	 * EXPERIMENTAL
@@ -137,7 +149,14 @@ public class IncQueryEngine {
 	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
+			  // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this reentrantly 
+				synchronized (this) { 
+          baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode, getLogger());
+        }
+				synchronized (this) {
+          baseIndex.addRoot(getEmfRoot());
+        }
+				
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryException(
 						"Could not initialize EMF-IncQuery base index", 
@@ -244,6 +263,7 @@ public class IncQueryEngine {
 		if (baseIndex != null) {
 			baseIndex.dispose();
 		}
+		getLogger().removeAppender(taintListener);
 	}
 
 	/**
@@ -263,18 +283,8 @@ public class IncQueryEngine {
 				throw new AssertionError("Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
 			
 			// if an error is logged, the engine becomes tainted
-			logger.addAppender(new AppenderSkeleton() {			
-				@Override
-				public boolean requiresLayout() {return false;}		
-				@Override
-				public void close() {}			
-				@Override
-				protected void append(LoggingEvent event) {
-					if (event.getLevel().isGreaterOrEqual(Level.FATAL)) {
-						tainted = true;
-					}					
-				}
-			});
+			taintListener = new SelfTaintListener(this);
+			logger.addAppender(taintListener);
 		}
 		return logger;
 	}

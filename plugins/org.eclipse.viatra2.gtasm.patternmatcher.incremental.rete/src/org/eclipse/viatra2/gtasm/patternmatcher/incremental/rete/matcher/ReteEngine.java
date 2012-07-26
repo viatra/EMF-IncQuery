@@ -41,7 +41,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask
 public class ReteEngine<PatternDescription> {
 
 	protected Network reteNet;
-	protected int reteThreads;
+	protected final int reteThreads;
 	protected ReteBoundary<PatternDescription> boundary;
 	
 	protected IPatternMatcherRuntimeContext<PatternDescription> context;
@@ -56,7 +56,7 @@ public class ReteEngine<PatternDescription> {
 	
 	protected IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> builder;
 
-	protected boolean parallelExecutionEnabled; // TRUE if Viatra can go on
+	protected final boolean parallelExecutionEnabled; // TRUE if Viatra can go on
 												// while RETE does its job.
 	
 //	protected BlockingQueue<Throwable> caughtExceptions;
@@ -72,6 +72,7 @@ public class ReteEngine<PatternDescription> {
 		super();
 		this.context = context;
 		this.reteThreads = reteThreads;
+		this.parallelExecutionEnabled = reteThreads > 0;
 		// this.framework = new WeakReference<IFramework>(context.getFramework());
 
 		initEngine();
@@ -82,13 +83,12 @@ public class ReteEngine<PatternDescription> {
 	/**
 	 * initializes engine components
 	 */
-	void initEngine() {
-		this.parallelExecutionEnabled = reteThreads > 0;
+	synchronized private void initEngine() {
 		
 		this.disconnectables = new LinkedList<Disconnectable>();
 //		this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
-		this.reteNet = new Network(reteThreads);
+		this.reteNet = new Network(reteThreads, context);
 		this.boundary = new ReteBoundary<PatternDescription>(this); // prerequisite: network
 
 		
@@ -106,7 +106,7 @@ public class ReteEngine<PatternDescription> {
 	/**
 	 * deconstructs engine components
 	 */
-	void deconstructEngine() {
+	synchronized private void deconstructEngine() {
 		reteNet.kill();
 
 		for (Disconnectable disc : disconnectables) {

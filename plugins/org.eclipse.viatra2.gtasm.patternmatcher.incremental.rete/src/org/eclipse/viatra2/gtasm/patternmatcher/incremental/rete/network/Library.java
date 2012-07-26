@@ -280,18 +280,18 @@ public class Library {
 		return accessProjectionIndexer(transparent, indexer.getMask());
 	}
 
-	/**
-	 * Read-only-check for a copy of the given indexer that is an active node by itself.
-	 * (Expected convention: attached with same mask to a transparent node that is attached to parent node.) 
-	 * @return an identical but active indexer, if such exists, null otherwise
-	 */
-	private ProjectionIndexer peekActiveIndexer(Indexer indexer) {
-		TransparentNode transparent = transparentNodes.get(indexer.getParent());
-		if (transparent != null) {
-			return peekProjectionIndexer(transparent, indexer.getMask());
-		}
-		return null;
-	}
+//	/**
+//	 * Read-only-check for a copy of the given indexer that is an active node by itself.
+//	 * (Expected convention: attached with same mask to a transparent node that is attached to parent node.) 
+//	 * @return an identical but active indexer, if such exists, null otherwise
+//	 */
+//	private ProjectionIndexer peekActiveIndexer(Indexer indexer) {
+//		TransparentNode transparent = transparentNodes.get(indexer.getParent());
+//		if (transparent != null) {
+//			return peekProjectionIndexer(transparent, indexer.getMask());
+//		}
+//		return null;
+//	}
 
 	/**
 	 * If two indexers share their active node, joining them via DualInputNode is error-prone.

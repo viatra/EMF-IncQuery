@@ -21,11 +21,12 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
 
 /**
  * <!-- begin-user-doc -->
@@ -204,30 +205,24 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 	/**
 	 * EMF-IncQuery handler for derived feature derivedValue
 	 */
-	private IncqueryFeatureHandler derivedValueHandler;
+	private IncqueryDerivedFeature derivedValueHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * @derived getter created by EMF-InccQuery for derived feature derivedValue
+	 * @derived getter created by EMF-IncQuery for derived feature derivedValue
 	 */
 	public Object getDerivedValue() {
-		if (derivedValueHandler != null) {
-			return (java.lang.Object) derivedValueHandler
-					.getSingleReferenceValue();
-		} else {
+		if (derivedValueHandler == null) {
 			derivedValueHandler = IncqueryFeatureHelper
-					.createHandler(
+					.getIncqueryDerivedFeature(
 							this,
 							EIQSnapshotPackageImpl.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue",
 							"Substitution", "Value",
 							FeatureKind.SINGLE_REFERENCE, true);
-			if (derivedValueHandler != null) {
-				return (java.lang.Object) derivedValueHandler
-						.getSingleReferenceValue();
-			}
 		}
-		return null;
+		return (java.lang.Object) derivedValueHandler
+				.getSingleReferenceValue(this);
 	}
 
 } //MatchSubstitutionRecordImpl

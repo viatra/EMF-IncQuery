@@ -13,19 +13,23 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.xmi.XmiModelSupport;
@@ -42,6 +46,8 @@ import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
+import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
+import org.eclipse.xtext.util.Pair;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -81,6 +87,12 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	
 	@Inject
 	private IEiqGenmodelProvider genmodelProvider;
+	
+	@Inject
+	private Logger logger;
+	
+	@Inject
+	private IStorage2UriMapper storage2UriMapper;
 	
 	@Override
 	public void build(final IBuildContext context, IProgressMonitor monitor)
@@ -202,7 +214,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				executeGeneratorFragment(fragment, modelProject, pattern);
 			} catch (Exception e) {
 				String msg = String.format("Exception when executing generation for '%s' in fragment '%s'", CorePatternLanguageHelper.getFullyQualifiedName(pattern), fragment.getClass().getCanonicalName());
-				IncQueryEngine.getDefaultLogger().error(msg, e);
+				logger.error(msg, e);
 			}
 		}
 	}
@@ -255,5 +267,20 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			return targetProject;
 		}
 	}
-	
+
+	@Override
+	protected boolean shouldGenerate(Resource resource, IBuildContext context) {
+		try {
+			Iterable<Pair<IStorage, IProject>> storages = storage2UriMapper.getStorages(resource.getURI());
+			for (Pair<IStorage, IProject> pair : storages) {
+				if (pair.getFirst() instanceof IFile && pair.getSecond().equals(context.getBuiltProject())) {
+					IFile file = (IFile) pair.getFirst();
+					return file.findMaxProblemSeverity("org.eclipse.xtext.ui.check", true, IResource.DEPTH_INFINITE) != IMarker.SEVERITY_ERROR;
+				}
+			}
+			return false;
+		} catch (CoreException exc) {
+			throw new WrappedException(exc);
+		}
+	}
 }

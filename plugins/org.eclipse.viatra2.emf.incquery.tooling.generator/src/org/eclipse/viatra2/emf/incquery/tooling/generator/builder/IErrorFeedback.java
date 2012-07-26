@@ -22,12 +22,12 @@ public interface IErrorFeedback {
 	 * An error type for use in the JvmModelInferrer. It is differentiated from {@link #FRAGMENT_ERROR_TYPE}, as the
 	 * two builds have different lifecycles, so cleaning has to be executed at different points.
 	 */
-	public static final String JVMINFERENCE_ERROR_TYPE = "org.eclipse.viatra2.emf.incquery.tooling.generator.marker.inference";
+	static final String JVMINFERENCE_ERROR_TYPE = "org.eclipse.viatra2.emf.incquery.tooling.generator.marker.inference";
 	/**
 	 * An error type for use in the generator fragments. It is differentiated from {@link #JVMINFERENCE_ERROR_TYPE}, as the
 	 * two builds have different lifecycles, so cleaning has to be executed at different points. 
 	 */
-	public static final String FRAGMENT_ERROR_TYPE = "org.eclipse.viatra2.emf.incquery.tooling.generator.marker.fragment";
+	static final String FRAGMENT_ERROR_TYPE = "org.eclipse.viatra2.emf.incquery.tooling.generator.marker.fragment";
 	
 	/**
 	 * Clears all problem markers from the resource and all its descendants.

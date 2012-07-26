@@ -11,11 +11,13 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.BaseIndexListener;
 
 
 
@@ -33,11 +35,17 @@ public class EngineManager {
 	public static EngineManager getInstance() {
 		return instance;
 	}
-	Map<Notifier, IncQueryEngine> engines;
+	/**
+	 * Only a weak reference is kept on engine, 
+	 * so that it can be GC'ed if the model becomes unreachable.
+	 * 
+	 * <p>it will not be GC'ed before because of {@link BaseIndexListener#iqEngine}
+	 */
+	Map<Notifier, WeakReference<IncQueryEngine>> engines;
 	
 	EngineManager() {
 		super();
-		engines = new WeakHashMap<Notifier, IncQueryEngine>();
+		engines = new WeakHashMap<Notifier, WeakReference<IncQueryEngine>>();
 	}
 	
 	/**
@@ -54,7 +62,7 @@ public class EngineManager {
 		IncQueryEngine engine = getEngineInternal(emfRoot);
 		if (engine == null) {	
 			engine = new IncQueryEngine(this, emfRoot);
-			engines.put(emfRoot, engine);
+			engines.put(emfRoot, new WeakReference<IncQueryEngine>(engine));
 		}
 		return engine;
 	}
@@ -99,7 +107,8 @@ public class EngineManager {
 	 * @return
 	 */
 	private IncQueryEngine getEngineInternal(Notifier emfRoot) {
-		IncQueryEngine engine = engines.get(emfRoot);
+		final WeakReference<IncQueryEngine> engineRef = engines.get(emfRoot);
+		IncQueryEngine engine = engineRef == null ? null : engineRef.get();
 		return engine;
 	}
 	

@@ -205,7 +205,9 @@ public class QueryExplorer extends ViewPart {
 		matcherTreeViewer.setComparator(null);
 		IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
 		selection.addValueChangeListener(new MatcherTreeViewerSelectionChangeListener());
-		matcherTreeViewer.addDoubleClickListener(new DoubleClickListener());
+		DoubleClickListener listener = new DoubleClickListener();
+		injector.injectMembers(listener);
+		matcherTreeViewer.addDoubleClickListener(listener);
 		
 		//patternsViewer configuration		
 		patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER | SWT.MULTI);

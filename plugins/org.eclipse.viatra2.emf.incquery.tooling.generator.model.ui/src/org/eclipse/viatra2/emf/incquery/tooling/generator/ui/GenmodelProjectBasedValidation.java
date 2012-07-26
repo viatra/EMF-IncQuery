@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.tooling.generator.ui;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
@@ -29,6 +30,8 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 
 	@Inject
 	private IJavaProjectProvider projectProvider;
+	@Inject
+	private Logger logger;
 
 	@Check
 	public void checkGenmodelDependencies(GeneratorModelReference ref) {
@@ -38,23 +41,27 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 					res.getResourceSet()).getProject();
 			final GenModel genmodel = ref.getGenmodel();
 			if (genmodel != null) {
-				String modelPluginID = genmodel.getModelPluginID();
-				try {
-					if (modelPluginID != null
-							&& !modelPluginID.isEmpty()
-							&& !ProjectGenerationHelper.checkBundleDependency(
-									project, modelPluginID)) {
-						error(String.format(
-								"To refer elements from the Generator Model %s the bundle %s must be added as dependency",
-								genmodel.eResource().getURI().toString(),
-								modelPluginID), ref, null, GENMODEL_DEPENDENCY,
-								modelPluginID);
-					}
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				checkExistingDependency(ref, project, genmodel);
 			}
+		}
+	}
+
+	private void checkExistingDependency(final GeneratorModelReference ref,
+			IProject project, final GenModel genmodel) {
+		String modelPluginID = genmodel.getModelPluginID();
+		try {
+			if (modelPluginID != null
+					&& !modelPluginID.isEmpty()
+					&& !ProjectGenerationHelper.checkBundleDependency(project,
+							modelPluginID)) {
+				error(String
+						.format("To refer elements from the Generator Model %s the bundle %s must be added as dependency",
+								genmodel.eResource().getURI().toString(),
+								modelPluginID),
+						ref, null, GENMODEL_DEPENDENCY, modelPluginID);
+			}
+		} catch (CoreException e) {
+			logger.error("Error checking project: ", e);
 		}
 	}
 }

@@ -317,4 +317,12 @@ public class ObservablePatternMatcher {
 	public boolean isCreated() {
 		return matcher != null;
 	}
+	
+	/**
+	 * If the engine becomes tainted stop monitoring the matcher.
+	 * This way the previoud match set will remain stable and the user 
+	 */
+	public void stopMonitoring() {
+		this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+	}
 }

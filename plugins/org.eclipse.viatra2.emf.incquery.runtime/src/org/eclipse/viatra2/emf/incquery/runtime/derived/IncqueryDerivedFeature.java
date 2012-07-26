@@ -12,13 +12,16 @@ package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -26,6 +29,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
@@ -38,42 +42,52 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  * 
  */
 @SuppressWarnings("rawtypes")
-public class IncqueryFeatureHandler {
+public class IncqueryDerivedFeature {
 
-	private final IncQueryMatcher<IPatternMatch> matcher;
-	private final DeltaMonitor<IPatternMatch> dm;
-	private final Runnable processMatchesRunnable;
-	private final InternalEObject source;
+	private IncQueryMatcher<IPatternMatch> matcher;
+	private DeltaMonitor<IPatternMatch> dm;
+	private Runnable processMatchesRunnable;
+	//private final InternalEObject source;
 	private final EStructuralFeature feature;
-	private final String sourceParamName;
-	private final String targetParamName;
+	private String sourceParamName;
+	private String targetParamName;
 	private FeatureKind kind;
 	
-	private Object updateMemory;
-	private int counterMemory = 0;
-	private Object singleRefMemory = null;
+	private Map<InternalEObject,Object> updateMemory = new HashMap<InternalEObject, Object>();
+	private Map<InternalEObject,Integer> counterMemory = new HashMap<InternalEObject, Integer>();
+	private Map<InternalEObject,Object> singleRefMemory = new HashMap<InternalEObject, Object>();
 	private boolean keepCache = true;
+	private boolean initialized = false;
 	
 	private final List<ENotificationImpl> notifications = new ArrayList<ENotificationImpl>();
 	
 	/* could use EObjectEList or similar to have notifications handled by EMF,
 	 * but notification sending must be delayed in order to avoid infinite notification loop
    */ 
-	private final Collection<Object> manyRefMemory = new HashSet<Object>();
+	private final Map<InternalEObject,Collection<Object>> manyRefMemory = new HashMap<InternalEObject, Collection<Object>>();
 	
 	/**
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
-	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, final IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
-		this.source = source;
+	public IncqueryDerivedFeature(EStructuralFeature feature) {
+		//this.source = source;
 		this.feature = feature;
 		if(feature.isMany() && targetParamName != null) {
 			kind = FeatureKind.MANY_REFERENCE;
 		} else {
 			kind = FeatureKind.SINGLE_REFERENCE;
 		}
-		this.matcher = matcher;
+		//initialize(matcher, sourceParamName, targetParamName);
+	}
+
+  @SuppressWarnings("unchecked")
+	public void initialize(final IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
+    if(initialized) {
+      IncQueryEngine.getDefaultLogger().error("[IncqueryFeatureHandler] Feature already initialized!");
+      return;
+    }
+    initialized = true;
+    this.matcher = matcher;
 		this.sourceParamName = sourceParamName;
 		this.targetParamName = targetParamName;
 		if(matcher.getPositionOfParameter(sourceParamName) == null) {
@@ -82,16 +96,19 @@ public class IncqueryFeatureHandler {
 		if(targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
 			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
 		}
-		IPatternMatch partialMatch = matcher.newEmptyMatch();
-		partialMatch.set(sourceParamName, source);
-		this.dm = matcher.newFilteredDeltaMonitor(true, partialMatch);
+		if((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
+		  matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
+    }
+		//IPatternMatch partialMatch = matcher.newEmptyMatch();
+		//partialMatch.set(sourceParamName, source);
+		this.dm = matcher.newDeltaMonitor(true);
 		this.processMatchesRunnable = new Runnable() {		
 			@Override
 			public void run() {
 				// after each model update, check the delta monitor
 				// FIXME should be: after each complete transaction, check the delta monitor
 				try {
-					updateMemory = null;
+					updateMemory.clear();
 					dm.matchFoundEvents.removeAll( processNewMatches(dm.matchFoundEvents) );
 					dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );	
 					checkUnhandledNewMatch();
@@ -99,16 +116,15 @@ public class IncqueryFeatureHandler {
 				} catch (CoreException e) {
 					matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
 				}
-				
 			}
 		};
-	}
+  }
 	
 	private void sendNextNotfication() {
 		while(!notifications.isEmpty()) {
 			ENotificationImpl remove = notifications.remove(0);
 			//matcher.getEngine().getLogger().logError(this + " : " +remove.toString());
-			source.eNotify(remove);
+			((Notifier) remove.getNotifier()).eNotify(remove);
 		}
 	}
 	
@@ -119,23 +135,19 @@ public class IncqueryFeatureHandler {
 	 * @param matcher
 	 * @param sourceParamName
 	 */
-	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, final IncQueryMatcher matcher, String sourceParamName, String targetParamName, FeatureKind kind) {
-		this(source, feature, matcher, sourceParamName, targetParamName);
+	public IncqueryDerivedFeature(EStructuralFeature feature, FeatureKind kind) {
+		this(feature);
 		this.kind = kind;
-		if((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
-			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
-				return;
-		}
 		if(kind == FeatureKind.SUM && !(feature instanceof EAttribute)) {
-			matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
+		  IncQueryEngine.getDefaultLogger().error("[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
 		}
 	}
 	
 	/**
 	 * 
 	 */
-	public IncqueryFeatureHandler(InternalEObject source, EStructuralFeature feature, IncQueryMatcher matcher, String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache) {
-		this(source, feature, matcher, sourceParamName, targetParamName,kind);
+	public IncqueryDerivedFeature(EStructuralFeature feature, FeatureKind kind, boolean keepCache) {
+		this(feature,kind);
 		this.keepCache = keepCache;
 	}
 
@@ -148,29 +160,32 @@ public class IncqueryFeatureHandler {
 		processMatchesRunnable.run();
 	}
 	
-	public Object getValue() {
+	public Object getValue(Object source) {
 		switch(kind) {
 			case SUM:  // fall-through
 			case COUNTER:
-				return getIntValue();
+				return getIntValue(source);
 			case SINGLE_REFERENCE:
-				return getSingleReferenceValue();
+				return getSingleReferenceValue(source);
 			case MANY_REFERENCE:
-				return getManyReferenceValue();
+				return getManyReferenceValue(source);
 			case ITERATION:
-				return getValueIteration();
+				return getValueIteration(source);
 		}
 		return null;
 	}
 	
-	public int getIntValue() {
-		return counterMemory;			
+	public int getIntValue(Object source) {
+		return counterMemory.get(source);		
 	}
 	
-	public Object getSingleReferenceValue() {
+	public Object getSingleReferenceValue(Object source) {
 		if(keepCache) {
-			return singleRefMemory;
+			return singleRefMemory.get(source);
 		} else {
+		  if(!initialized) {
+		    return null;
+		  }
 			IPatternMatch match = matcher.newEmptyMatch();
 			match.set(sourceParamName, source);
 			if(matcher.countMatches(match) > 1) {
@@ -185,10 +200,17 @@ public class IncqueryFeatureHandler {
 		}
 	}
 	
-	public Collection<Object> getManyReferenceValue(){
+	public Collection<Object> getManyReferenceValue(Object source){
 		if(keepCache) {
-			return manyRefMemory;
+			Collection<Object> values = manyRefMemory.get(source);
+			if(values == null) {
+			  values = new HashSet<Object>();
+			}
+      return values;
 		} else {
+		  if(!initialized) {
+        return new HashSet<Object>();
+      }
 			IPatternMatch match = matcher.newEmptyMatch();
 			match.set(sourceParamName, source);
 			return matcher.getAllValues(targetParamName, match);
@@ -198,34 +220,44 @@ public class IncqueryFeatureHandler {
 	/**
 	 * @param singleRefMemory the singleRefMemory to set
 	 */
-	private void setSingleRefMemory(Object singleRefMemory) {
+	private void setSingleRefMemory(InternalEObject source, Object singleRefMemory) {
 		if(keepCache) {
-			this.singleRefMemory = singleRefMemory;
+			this.singleRefMemory.put(source, singleRefMemory);
 		}
 	}
 	
-	private void addToManyRefMemory(Object added) {
+	private void addToManyRefMemory(InternalEObject source, Object added) {
 		if(keepCache) {
-			manyRefMemory.add(added);
+		  Collection<Object> values = manyRefMemory.get(source);
+		  if(values == null) {
+		    values = new ArrayList<Object>();
+		    manyRefMemory.put(source, values);
+		  }
+      values.add(added);
 		}
 	}
 	
-	private void removeFromManyRefMemory(Object removed) {
+	private void removeFromManyRefMemory(InternalEObject source, Object removed) {
 		if(keepCache) {
-			manyRefMemory.remove(removed);
+		  Collection<Object> values = manyRefMemory.get(source);
+		  if(values == null) {
+		    matcher.getEngine().getLogger().error(
+            "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): removing from list that doesn't exist");
+		  }
+			values.remove(removed);
 		}
 	}
 
-	public EList getManyReferenceValueAsEList() {
-		Collection<Object> values = getManyReferenceValue();
+	public EList getManyReferenceValueAsEList(Object source) {
+		Collection<Object> values = getManyReferenceValue(source);
 		if (values.size() > 0) {
-			return new EcoreEList.UnmodifiableEList(source,
+			return new EcoreEList.UnmodifiableEList((InternalEObject) source,
 					feature,
 					values.size(),
 					values.toArray());
 		}
 		else {
-			return new EcoreEList.UnmodifiableEList(source,
+			return new EcoreEList.UnmodifiableEList((InternalEObject) source,
 					feature,
 					0,
 					null);
@@ -242,26 +274,27 @@ public class IncqueryFeatureHandler {
 	        }
 	      } else {
 	        Object target = signature.get(targetParamName);
+	        InternalEObject source = (InternalEObject) signature.get(sourceParamName);
 	        if (target != null) {
 	          if (kind == FeatureKind.SUM) {
-	            increaseCounter((Integer) target);
+	            increaseCounter(source, (Integer) target);
 	          } else {
 	            if (feature.isMany()) {
 	              notifications
 	                  .add(new ENotificationImpl(source, Notification.ADD, feature, null, target));
-	              addToManyRefMemory(target);
+	              addToManyRefMemory(source, target);
 	            } else {
-	              if (updateMemory != null) {
+	              if (updateMemory.get(source) != null) {
 	                matcher.getEngine().getLogger().error(
-	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen)");
+	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): update memory already set for given source");
 	              } else {
 	                // must handle later (either in lost matches or after that)
-	                updateMemory = target;
+	                updateMemory.put(source, target);
 	              }
 	            }
 	          }
 	        } else if (kind == FeatureKind.COUNTER) {
-	          increaseCounter(1);
+	          increaseCounter(source, 1);
 	        }
 	      }
 	      processed.add(signature);
@@ -272,12 +305,15 @@ public class IncqueryFeatureHandler {
 	/**
 	 * @throws CoreException
 	 */
-	private void increaseCounter(int delta) throws CoreException {
-		if(counterMemory <= Integer.MAX_VALUE-delta) {
-			int tempMemory = counterMemory+delta;
+	private void increaseCounter(InternalEObject source, int delta) throws CoreException {
+		Integer value = counterMemory.get(source);
+		if(value == null) {
+		  counterMemory.put(source, 1);
+		} else if(value <= Integer.MAX_VALUE-delta) {
+			int tempMemory = value+delta;
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,	feature, counterMemory, tempMemory));
-			counterMemory = tempMemory;
+			counterMemory.put(source, tempMemory);
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, null, "Counter reached maximum value of Long"));
 		}
@@ -293,30 +329,32 @@ public class IncqueryFeatureHandler {
         }
       } else {
         Object target = signature.get(targetParamName);
+        InternalEObject source = (InternalEObject) signature.get(sourceParamName);
         if (target != null) {
           if (kind == FeatureKind.SUM) {
-            decreaseCounter((Integer) target);
+            decreaseCounter(source, (Integer) target);
           } else {
             if (feature.isMany()) {
               notifications.add(new ENotificationImpl(source, Notification.REMOVE, feature, target,
                   null));
-              removeFromManyRefMemory(target);
+              removeFromManyRefMemory(source, target);
             } else {
-              if (updateMemory != null) {
+              Object updateValue = updateMemory.get(source);
+              if (updateValue != null) {
                 notifications.add(new ENotificationImpl(source, Notification.SET, feature, target,
-                    updateMemory));
-                setSingleRefMemory(updateMemory);
-                updateMemory = null;
+                    updateValue));
+                setSingleRefMemory(source, updateValue);
+                updateMemory.remove(source);
               } else {
                 notifications.add(new ENotificationImpl(source, Notification.SET, feature, target,
                     null));
-                setSingleRefMemory(null);
+                setSingleRefMemory(source, null);
               }
             }
           }
         } else {
           if (kind == FeatureKind.COUNTER) {
-            decreaseCounter(1);
+            decreaseCounter(source, 1);
           }
         }
       }
@@ -349,31 +387,37 @@ public class IncqueryFeatureHandler {
 	 * 
 	 * @return the value of the feature
 	 */
-	protected Object getValueIteration() {
+	public Object getValueIteration(Object source) {
 		throw new UnsupportedOperationException("Iteration derived feature handlers must override getValueIteration");
 	}
 	
 	/**
 	 * @throws CoreException
 	 */
-	private void decreaseCounter(int delta) throws CoreException {
-		if(counterMemory >= delta) {
-			int tempMemory = counterMemory-delta;
+	private void decreaseCounter(InternalEObject source, int delta) throws CoreException {
+	  Integer value = counterMemory.get(source);
+	  if(value == null) {
+	    matcher.getEngine().getLogger().error(
+          "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
+    } else if(value >= delta) {
+			int tempMemory = value-delta;
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,
-					feature, counterMemory, tempMemory));
-			counterMemory = tempMemory;
+					feature, value, tempMemory));
+			counterMemory.put(source, tempMemory);
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, null, "Counter cannot go below zero"));
 		}
 	}
 	
 	private void checkUnhandledNewMatch() {
-		if(updateMemory != null) {
-			notifications.add(
-					new ENotificationImpl(source, Notification.SET,
-					feature, null, updateMemory));
-			setSingleRefMemory(updateMemory);
+		if(!updateMemory.isEmpty()) {
+			for (InternalEObject source : updateMemory.keySet()) {
+			  notifications.add(
+			      new ENotificationImpl(source, Notification.SET,
+			          feature, null, updateMemory.get(source)));
+			  setSingleRefMemory(source, updateMemory.get(source));
+      }
 		}
 	}
 }
