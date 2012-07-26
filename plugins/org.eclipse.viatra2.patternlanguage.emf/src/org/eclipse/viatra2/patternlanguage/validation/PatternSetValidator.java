@@ -11,15 +11,11 @@
 package org.eclipse.viatra2.patternlanguage.validation;
 
 import java.util.Collection;
-import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
