@@ -33,6 +33,7 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
 
 /**
  * <!-- begin-user-doc -->
@@ -192,7 +193,7 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 	/**
 	 * EMF-IncQuery handler for derived feature role
 	 */
-	private IncqueryFeatureHandler roleHandler;
+	private IncqueryDerivedFeature roleHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -201,16 +202,15 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 	public RecordRole getRole() {
 		if (roleHandler == null) {
 			roleHandler = IncqueryFeatureHelper
-					.createHandler(
+					.getIncqueryDerivedFeature(
 							this,
 							EIQSnapshotPackageImpl.Literals.MATCH_RECORD__ROLE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue",
 							"Record", "Role", FeatureKind.SINGLE_REFERENCE,
 							true);
 		}
-		return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) IncqueryFeatureHelper
-				.getSingleReferenceValueForHandler(roleHandler, this,
-						EIQSnapshotPackageImpl.Literals.MATCH_RECORD__ROLE);
+		return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) roleHandler
+				.getSingleReferenceValue(this);
 	}
 
 } //MatchRecordImpl
