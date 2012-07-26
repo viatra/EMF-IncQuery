@@ -222,7 +222,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		Object result = null;
 		try {
 			result = evaluator.evaluate(ps);
-		} catch (Throwable e) {
+		} catch (Throwable e) { //NOPMD
+			if (e instanceof Error) throw (Error)e;
 			engine.getContext().logWarning( 
 					"The incremental pattern matcher encountered an error during check() evaluation over variables "
 					+ prettyPrintTuple(ps) 
