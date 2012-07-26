@@ -386,15 +386,4 @@ public class IncQueryEngine {
 //		return engine;
 //	}	
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#finalize()
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			dispose();
-		} finally {
-			super.finalize();
-		}
-	}
 }
