@@ -21,5 +21,8 @@
    <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.gmf.feature" version="0.6.0.qualifier">
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
+   <feature url="features/org.eclipse.viatra2.emf.incquery.testing.sdk_0.6.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.testing.sdk" version="0.6.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
    <category-def name="org.eclipse.viatra2.patternlanguage" label="EMF-IncQuery"/>
 </site>
