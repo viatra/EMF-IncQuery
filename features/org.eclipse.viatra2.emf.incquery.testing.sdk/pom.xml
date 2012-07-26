@@ -9,7 +9,7 @@
 		<version>0.6.0-SNAPSHOT</version>
 		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
 	</parent>
-	<artifactId>org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</artifactId>
+	<artifactId>org.eclipse.viatra2.emf.incquery.testing.sdk</artifactId>
 	<packaging>eclipse-feature</packaging>
 	<build>
 		<plugins>
