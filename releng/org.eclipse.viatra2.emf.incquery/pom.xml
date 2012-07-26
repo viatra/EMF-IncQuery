@@ -34,10 +34,17 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base.itc</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.base.itc.test</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot.edit</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot.editor</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.core</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.queries</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.ui</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.testing.sdk</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
