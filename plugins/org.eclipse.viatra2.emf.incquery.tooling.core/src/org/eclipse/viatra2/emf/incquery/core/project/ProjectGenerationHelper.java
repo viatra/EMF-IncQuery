@@ -754,13 +754,13 @@ public abstract class ProjectGenerationHelper {
 	 * @return
 	 */
 	private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath, final IBundleProjectService service) {
-		Collection<IBundleClasspathEntry> classPathList = Collections2.filter(Lists.newArrayList(oldClasspath), new Predicate<IBundleClasspathEntry>() {
+		Collection<IBundleClasspathEntry> classPathSourceList = Collections2.filter(Lists.newArrayList(oldClasspath), new Predicate<IBundleClasspathEntry>() {
 			@Override
 			public boolean apply(IBundleClasspathEntry entry) {
 				return entry.getSourcePath() != null && !entry.getSourcePath().isEmpty();
 			}
 		});
-		final Collection<String> existingSourceEntries = Collections2.transform(classPathList, new Function<IBundleClasspathEntry, String>() {
+		final Collection<String> existingSourceEntries = Collections2.transform(classPathSourceList, new Function<IBundleClasspathEntry, String>() {
 			@Override
 			public String apply(IBundleClasspathEntry entry) {
 				return entry.getSourcePath().toString();
@@ -780,8 +780,10 @@ public abstract class ProjectGenerationHelper {
 								null, null);
 					}
 				});
-		classPathList.addAll(newClasspathEntries);
-		return classPathList.toArray(new IBundleClasspathEntry[classPathList.size()]);
+		
+		List<IBundleClasspathEntry> modifiedClasspathEntries = Lists.newArrayList(oldClasspath);
+		modifiedClasspathEntries.addAll(newClasspathEntries);
+		return modifiedClasspathEntries.toArray(new IBundleClasspathEntry[modifiedClasspathEntries.size()]);
 	}
 	
 	public static String getBundleSymbolicName(IProject project) {
