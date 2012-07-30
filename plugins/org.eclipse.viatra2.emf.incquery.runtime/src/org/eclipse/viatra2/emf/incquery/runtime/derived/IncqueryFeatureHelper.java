@@ -299,7 +299,7 @@ public final class IncqueryFeatureHelper {
 	  return derivedFeature;
 	}
 	
-	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EStructuralFeature feature, String patternFQN,
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EObject source, EStructuralFeature feature, String patternFQN,
       String sourceParamName, String targetParamName, FeatureKind kind) {
 	  return getIncqueryDerivedFeature(notifier, feature, patternFQN, sourceParamName, targetParamName, kind, true);
 	}
@@ -313,10 +313,10 @@ public final class IncqueryFeatureHelper {
     return getIncqueryDerivedFeature(notifier, feature, patternFQN, sourceParamName, targetParamName, kind, keepCache);
   }
 	
-	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+	/*public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
       String sourceParamName, String targetParamName, FeatureKind kind, boolean useSourceAsNotifier) {
 	  return getIncqueryDerivedFeature(source, feature, patternFQN, sourceParamName, targetParamName, kind, true, useSourceAsNotifier);
-	}
+	}*/
 	
 	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
       String sourceParamName, String targetParamName, FeatureKind kind) {
