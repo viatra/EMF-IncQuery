@@ -271,7 +271,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		]
 		if(kindImport == null){
 			val kindImportNew = ast.newImportDeclaration
-			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER + "." + HANDLER_NAME),ast.newSimpleName(FEATUREKIND_IMPORT)))
+			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER),ast.newSimpleName(FEATUREKIND_IMPORT)))
 			importListRewrite.insertLast(kindImportNew, null)
 		}
 		val helperImport = imports.findFirst[
