@@ -176,7 +176,11 @@ public class IncqueryDerivedFeature {
 	}
 	
 	public int getIntValue(Object source) {
-		return counterMemory.get(source);		
+		Integer result = counterMemory.get(source);
+		if(result == null) {
+		  result = 0;
+		}
+    return result;		
 	}
 	
 	public Object getSingleReferenceValue(Object source) {
@@ -306,10 +310,8 @@ public class IncqueryDerivedFeature {
 	 * @throws CoreException
 	 */
 	private void increaseCounter(InternalEObject source, int delta) throws CoreException {
-		Integer value = counterMemory.get(source);
-		if(value == null) {
-		  counterMemory.put(source, 1);
-		} else if(value <= Integer.MAX_VALUE-delta) {
+		Integer value = getIntValue(source);
+		if(value <= Integer.MAX_VALUE-delta) {
 			int tempMemory = value+delta;
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,	feature, counterMemory, tempMemory));
