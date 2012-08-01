@@ -18,6 +18,16 @@
            feature-name="variables"
            package-nsUri="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage">
      </wellbehaving-derived-feature>
+     <wellbehaving-derived-feature
+           classifier-name="Variable"
+           feature-name="references"
+           package-nsUri="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage">
+     </wellbehaving-derived-feature>
+     <wellbehaving-derived-feature
+           classifier-name="VariableReference"
+           feature-name="variable"
+           package-nsUri="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage">
+     </wellbehaving-derived-feature>
   </extension>
 
 
