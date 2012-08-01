@@ -47,25 +47,27 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends
 		IProject project = projectProvider.getJavaProject(
 					res.getResourceSet()).getProject();
 		GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, importDecl.getEPackage());
-		final GenModel genmodel = genPackage.getGenModel();
-		if (genmodel != null) {
-			String modelPluginID = genmodel.getModelPluginID();
-			try {
-				if (modelPluginID != null
-						&& !modelPluginID.isEmpty()
-						&& !ProjectGenerationHelper.checkBundleDependency(
-								project, modelPluginID)) {
-					error(String
-							.format("To refer elements from the Package %s the bundle %s must be added as dependency",
-									importDecl.getEPackage().getNsURI(),
-									modelPluginID),
-							importDecl,
-							EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
-							EMFIssueCodes.IMPORT_DEPENDENCY_MISSING,
-							modelPluginID);
+		if (genPackage != null) {
+			final GenModel genmodel = genPackage.getGenModel();
+			if (genmodel != null) {
+				String modelPluginID = genmodel.getModelPluginID();
+				try {
+					if (modelPluginID != null
+							&& !modelPluginID.isEmpty()
+							&& !ProjectGenerationHelper.checkBundleDependency(
+									project, modelPluginID)) {
+						error(String
+								.format("To refer elements from the Package %s the bundle %s must be added as dependency",
+										importDecl.getEPackage().getNsURI(),
+										modelPluginID),
+								importDecl,
+								EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
+								EMFIssueCodes.IMPORT_DEPENDENCY_MISSING,
+								modelPluginID);
+					}
+				} catch (CoreException e) {
+					logger.error("Error while checking the dependencies of the import declaration", e);
 				}
-			} catch (CoreException e) {
-				logger.error("Error while checking the dependencies of the import declaration", e);
 			}
 		}
 	}
