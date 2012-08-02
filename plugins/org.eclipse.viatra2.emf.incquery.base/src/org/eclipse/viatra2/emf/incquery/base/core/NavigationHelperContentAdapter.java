@@ -598,6 +598,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	    		target.eClass().getEAllReferences();
 	    for (EReference feature : features) {
 	    	if (!feature.isContainment()) continue;
+	    	if (!EMFModelComprehension.representable(feature)) continue;
 			if (feature.isMany()) {
 				Collection<?> values = (Collection<?>) target.eGet(feature);
 				for (Object value : values) {

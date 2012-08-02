@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 
@@ -40,6 +41,10 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
  */
 public class EMFModelComprehension {
 
+	/**
+	 * Should not traverse this feature directly. 
+	 * It is still possible that it can be represented in IQBase if {@link #representable(EStructuralFeature)} is true.
+	 */
 	public static boolean unvisitableDirectly(EStructuralFeature feature) {
 		boolean suspect = feature.isDerived() || feature.isVolatile();
 		if(suspect) {
@@ -50,6 +55,30 @@ public class EMFModelComprehension {
 			// TODO add warning about not visited subtree (containment, FeatureMap and annotation didn't define otherwise)
 		}
 		return suspect;
+	}
+	
+	/**
+	 * This feature can be represented in IQBase.
+	 */
+	public static boolean representable(EStructuralFeature feature) {
+		if (!unvisitableDirectly(feature)) return true; 
+		
+		if (feature instanceof EReference) {
+			final EReference reference = (EReference) feature;
+			if (reference.isContainer() && representable(reference.getEOpposite())) return true;
+		}
+
+        boolean isMixed = "mixed".equals(EcoreUtil.getAnnotation(feature.getEContainingClass(), ExtendedMetaData.ANNOTATION_URI, "kind"));
+        if (isMixed) return true; // TODO maybe check the "name"=":mixed" or ":group" feature for representability?
+		
+		final String groupAnnotation = EcoreUtil.getAnnotation(feature, ExtendedMetaData.ANNOTATION_URI, "group");
+		if (groupAnnotation != null && groupAnnotation.length()>1 && '#' == groupAnnotation.charAt(0)) {
+			final String groupFeatureName = groupAnnotation.substring(1);
+			final EStructuralFeature groupFeature = feature.getEContainingClass().getEStructuralFeature(groupFeatureName);
+			return representable(groupFeature);
+		}
+			
+		return false;
 	}
 	
 	public static void visitModel(EMFVisitor visitor, Notifier source) {
@@ -86,6 +115,11 @@ public class EMFModelComprehension {
 	
 	public static void visitObject(EMFVisitor visitor, EObject source) {
 		if (source == null) return;
+		if(source.eIsProxy()) {
+			source = EcoreUtil.resolve(source, source);
+			if (source.eIsProxy()) return;
+		}
+
 		visitor.visitElement(source);
 		for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
 			if (unvisitableDirectly(feature)) continue;
@@ -138,6 +172,9 @@ public class EMFModelComprehension {
 		visitFeatureInternal(visitor, source, feature, target, visitorPrunes);
 	}
 	
+	/**
+	 * @pre target != null
+	 */
 	private static void visitFeatureInternal(
 			EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target, boolean visitorPrunes) 
 	{
@@ -153,8 +190,9 @@ public class EMFModelComprehension {
 		} else if (feature instanceof EReference) {
 			EReference reference = (EReference)feature;
 			EObject targetObject = (EObject)target;
-			if(targetObject != null && targetObject.eIsProxy()) {
+			if(targetObject.eIsProxy()) {
 				targetObject = EcoreUtil.resolve(targetObject,source);
+				if (targetObject.eIsProxy()) return;
 				//source.eGet(feature, true);
 			}
 			if (reference.isContainment()) {
@@ -177,6 +215,7 @@ public class EMFModelComprehension {
 
 	/**
 	 * Emulates a derived edge, if it is not visited otherwise
+	 * @pre target != null
 	 */
 	private static void emulateUnvisitableFeature(EMFVisitor visitor,
 			EObject source, final EStructuralFeature emulated, final Object target) 
