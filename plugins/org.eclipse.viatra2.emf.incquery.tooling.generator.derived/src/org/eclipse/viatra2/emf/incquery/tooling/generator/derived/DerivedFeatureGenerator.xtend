@@ -219,7 +219,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
 		//val project = ProjectLocator::locateProject(projectDir)
-		ProjectLocator::locateProject(projectDir)
+		ProjectLocator::locateProject(projectDir,logger)
 		//ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
 		//JavaCore::create(project)
 	}
@@ -271,7 +271,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		]
 		if(kindImport == null){
 			val kindImportNew = ast.newImportDeclaration
-			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER + "." + HANDLER_NAME),ast.newSimpleName(FEATUREKIND_IMPORT)))
+			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER),ast.newSimpleName(FEATUREKIND_IMPORT)))
 			importListRewrite.insertLast(kindImportNew, null)
 		}
 		val helperImport = imports.findFirst[

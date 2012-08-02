@@ -51,7 +51,7 @@ class DerivedFeatureSourceCodeUtil {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.SINGLE_REFERENCE,«keepCache»);
+						FeatureKind.SINGLE_REFERENCE,«keepCache», false);
 				}
 				return («feature.getType(source)») «feature.name»Handler.getSingleReferenceValue(this);
 			}
@@ -84,7 +84,7 @@ class DerivedFeatureSourceCodeUtil {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.MANY_REFERENCE,«keepCache»);
+						FeatureKind.MANY_REFERENCE,«keepCache», false);
 				}
 				return «feature.name»Handler.getManyReferenceValueAsEList(this);
 			}
@@ -105,7 +105,7 @@ class DerivedFeatureSourceCodeUtil {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", null,
-						FeatureKind.COUNTER);
+						FeatureKind.COUNTER, true, false);
 				}
 				return «feature.name»Handler.getIntValue(this);
 			}
@@ -126,7 +126,7 @@ class DerivedFeatureSourceCodeUtil {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.SUM);
+						FeatureKind.SUM, true, false);
 				}
 				return «feature.name»Handler.getIntValue(this);
 			}
@@ -147,7 +147,7 @@ class DerivedFeatureSourceCodeUtil {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.ITERATION);
+						FeatureKind.ITERATION, true, false);
 				}
 				return («feature.getType(source)») «feature.name»Handler.getValueIteration(this);
 			}

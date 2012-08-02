@@ -34,10 +34,17 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base.itc</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.base.itc.test</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot.edit</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot.editor</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.core</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.queries</module>
+		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.ui</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.testing.sdk</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
@@ -50,6 +57,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.5.8.201207111220</jacoco.version>
+		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.3.0</xtend.compiler.version>
 		<!-- Sonar -->
 		<sonar.version>2.14</sonar.version>
@@ -110,7 +118,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.version}</version>
 				<configuration>
-					<destFile>${project.basedir}/../../target/jacoco.exec</destFile>
+					<destFile>${jacoco.targetdir}/jacoco.exec</destFile>
 					
 				</configuration>
 				<executions>
@@ -126,8 +134,8 @@
 							<goal>report</goal>
 						</goals>
 						<configuration>
-							<dataFile>${project.basedir}/../../target/jacoco.exec</dataFile>
-							<outputDirectory>${project.basedir}/../../target/jacoco/${project.artifactId}</outputDirectory>
+							<dataFile>${jacoco.targetdir}/jacoco.exec</dataFile>
+							<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

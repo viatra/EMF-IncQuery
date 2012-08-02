@@ -246,8 +246,8 @@ public class ObservablePatternMatcher {
 	}
 	
 	public void setFilter(Object[] parameterFilter) {
-		this.parameterFilter = parameterFilter;
-		this.filter = this.matcher.arrayToMatch(parameterFilter);
+		this.parameterFilter = parameterFilter.clone();
+		this.filter = this.matcher.arrayToMatch(this.parameterFilter);
 		
 		Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(sigMap.keySet());
 		

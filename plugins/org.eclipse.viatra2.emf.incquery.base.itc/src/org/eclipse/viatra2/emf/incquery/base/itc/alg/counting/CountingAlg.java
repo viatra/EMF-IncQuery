@@ -276,10 +276,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	@Override
 	public void dispose() {
 		tc.clear();
-		tc = null;
 		dtc.clear();
-		dtc = null;
-		gds = null;
-		observers = null;
+		this.gds.detachObserver(this);
 	}
 }

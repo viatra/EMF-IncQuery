@@ -10,9 +10,11 @@ import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -573,4 +575,50 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}    
 		} else super.notifyChanged(notification);
 	}
+	
+	// WORKAROUND (TMP) for eContents vs. derived features bug
+	@Override
+	protected void setTarget(EObject target) {
+	    basicSetTarget(target);
+	    spreadToChildren(target, true);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.emf.ecore.util.EContentAdapter#unsetTarget(org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	protected void unsetTarget(EObject target) {
+	    basicUnsetTarget(target);
+	    spreadToChildren(target, false);
+	}
+	/**
+	 * @param target
+	 */
+	protected void spreadToChildren(EObject target, boolean add) {
+		final EList<EReference> features = 
+	    		target.eClass().getEAllReferences();
+	    for (EReference feature : features) {
+	    	if (!feature.isContainment()) continue;
+			if (feature.isMany()) {
+				Collection<?> values = (Collection<?>) target.eGet(feature);
+				for (Object value : values) {
+					final Notifier notifier = (Notifier)value;
+					if (add)
+						addAdapter(notifier);
+					else
+						removeAdapter(notifier);
+				}
+			} else {
+				Object value = target.eGet(feature);
+				if (value != null) {
+					final Notifier notifier = (Notifier)value;
+					if (add)
+						addAdapter(notifier);
+					else
+						removeAdapter(notifier);
+				}
+			}
+		}
+	}
+	
+	
 }
