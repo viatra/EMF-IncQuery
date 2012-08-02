@@ -1,5 +1,361 @@
 <?xml version="1.0" encoding="ASCII"?>
 <eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage" xmlns:types="http://www.eclipse.org/xtext/common/JavaVMTypes" xmlns:xbase="http://www.eclipse.org/xtext/xbase/Xbase">
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfParameterOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="class">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.12">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="classfrombody"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="classfrombody"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="class"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfParameterOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="class">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern/parameters"/>
+            </type>
+          </tail>
+          <src var="pat"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.0">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="class"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreSpecificType" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="class">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="class"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="otherClass"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="otherClass"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="class"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="otherClass"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="class"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.TypeOfParameterOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="class">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="class"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.2">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="class"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.13">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.haveSatisfiableBodyOfPatternParameter" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern/bodies"/>
+            </type>
+          </tail>
+          <src var="pat"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeOfPatternParameter" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.4">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameter" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.3">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.variableOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBody.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
@@ -118,7 +474,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
+        <call patternRef="//@patterns.29">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -137,7 +493,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.16">
+        <call patternRef="//@patterns.15">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="class"/>
           </parameters>
@@ -176,7 +532,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.0">
+        <call patternRef="//@patterns.7">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -189,7 +545,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.1">
+        <call patternRef="//@patterns.8">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -209,7 +565,7 @@
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBody" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBody.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
+        <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
     <parameters name="pat">
@@ -229,7 +585,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.0">
+        <call patternRef="//@patterns.7">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -242,7 +598,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.2">
+        <call patternRef="//@patterns.9">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -287,7 +643,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.2">
+        <call patternRef="//@patterns.9">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -303,7 +659,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.2">
+        <call patternRef="//@patterns.9">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -327,7 +683,7 @@
         </rightOperand>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
+        <call patternRef="//@patterns.15">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="class"/>
           </parameters>
@@ -341,7 +697,7 @@
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.typeOfVariableInBody" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBody.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
+        <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
     <parameters name="pat">
@@ -366,7 +722,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.0">
+        <call patternRef="//@patterns.7">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -379,7 +735,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.2">
+        <call patternRef="//@patterns.9">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -395,7 +751,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.4">
+        <call patternRef="//@patterns.11">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -411,7 +767,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.6">
+        <call patternRef="//@patterns.13">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -428,7 +784,7 @@
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfVariableInBody" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBody.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
+        <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
     <parameters name="pat">
@@ -448,7 +804,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.0">
+        <call patternRef="//@patterns.7">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -461,7 +817,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.14">
+        <call patternRef="//@patterns.29">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -476,6 +832,601 @@
           </parameters>
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="_from"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.directSupertype" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/type.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="type">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="supertype"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EClass/eAllSuperTypes"/>
+            </type>
+          </tail>
+          <src var="type"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="supertype"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.supertype" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/type.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="type">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="supertype">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.14" transitive="true">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="supertype"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="supertype"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+        </type>
+        <var var="type"/>
+      </constraints>
+      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+        </type>
+        <var var="supertype"/>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CheckConstraint">
+        <expression xsi:type="xbase:XBinaryOperation">
+          <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_equals(int,int)"/>
+          <leftOperand xsi:type="xbase:XFeatureCall">
+            <feature xsi:type="types:JvmField" href="java:/Objects/org.eclipse.emf.ecore.EcorePackage#org.eclipse.emf.ecore.EcorePackage.EOBJECT"/>
+            <declaringType xsi:type="types:JvmGenericType" href="java:/Objects/org.eclipse.emf.ecore.EcorePackage#org.eclipse.emf.ecore.EcorePackage"/>
+          </leftOperand>
+          <rightOperand xsi:type="xbase:XMemberFeatureCall">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.emf.ecore.EClassifier#org.eclipse.emf.ecore.EClassifier.getClassifierID()"/>
+            <memberCallTarget xsi:type="xbase:XCastedExpression">
+              <type xsi:type="types:JvmParameterizedTypeReference">
+                <type xsi:type="types:JvmGenericType" href="java:/Objects/org.eclipse.emf.ecore.EClass#org.eclipse.emf.ecore.EClass"/>
+              </type>
+              <target xsi:type="xbase:XFeatureCall" feature="//@patterns.15/@parameters.1"/>
+            </memberCallTarget>
+          </rightOperand>
+        </expression>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.coherent2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternReason.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="type1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+        </type>
+        <var var="common"/>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameterReason2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternReason.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="type1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="from1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
+      </type>
+    </parameters>
+    <parameters name="from2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.12">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.12">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from2"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type1"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type2"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.16">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.compatible2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="type1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+        </type>
+        <var var="common"/>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.compatible3" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="type1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type3">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+        </type>
+        <var var="common"/>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="common"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type3"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBodyReason2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="body">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="type1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="from1"/>
+    <parameters name="from2"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.29">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from1"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.29">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from2"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type1"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type2"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.18">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBodyReason3" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
+    <annotations name="QueryExplorer">
+      <parameters name="display">
+        <value xsi:type="patternLanguage:BoolValue"/>
+      </parameters>
+    </annotations>
+    <parameters name="pat">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
+      </type>
+    </parameters>
+    <parameters name="body">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
+      </type>
+    </parameters>
+    <parameters name="variable">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
+      </type>
+    </parameters>
+    <parameters name="type1">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type2">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="type3">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <parameters name="from1"/>
+    <parameters name="from2"/>
+    <parameters name="from3"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.29">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from1"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.29">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from2"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.29">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="pat"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="body"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="variable"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type3"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="from3"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type1"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type2"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type2"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type3"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type3"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="type1"/>
+        </rightOperand>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.19">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type1"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type2"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="type3"/>
           </parameters>
         </call>
       </constraints>
@@ -902,7 +1853,7 @@
         </head>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.10" transitive="true">
+        <call patternRef="//@patterns.25" transitive="true">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="head"/>
           </parameters>
@@ -912,7 +1863,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.10">
+        <call patternRef="//@patterns.25">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="tail"/>
           </parameters>
@@ -1036,7 +1987,7 @@
         <var var="constraint"/>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.9">
+        <call patternRef="//@patterns.24">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="constraint"/>
           </parameters>
@@ -1092,7 +2043,7 @@
         <var var="constraint"/>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.11">
+        <call patternRef="//@patterns.26">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="constraint"/>
           </parameters>
@@ -1270,20 +2221,20 @@
       <constraints xsi:type="patternLanguage:CheckConstraint">
         <expression xsi:type="xbase:XBinaryOperation">
           <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.ObjectExtensions#org.eclipse.xtext.xbase.lib.ObjectExtensions.operator_equals(java.lang.Object,java.lang.Object)"/>
-          <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.13/@parameters.4"/>
+          <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.28/@parameters.4"/>
           <rightOperand xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
             <feature xsi:type="types:JvmOperation" href="java:/Objects/java.util.List#java.util.List.get(int)"/>
             <memberCallTarget xsi:type="xbase:XMemberFeatureCall">
               <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern#org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern.getParameters()"/>
-              <memberCallTarget xsi:type="xbase:XFeatureCall" feature="//@patterns.13/@parameters.2"/>
+              <memberCallTarget xsi:type="xbase:XFeatureCall" feature="//@patterns.28/@parameters.2"/>
             </memberCallTarget>
             <memberCallArguments xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
               <feature xsi:type="types:JvmOperation" href="java:/Objects/java.util.List#java.util.List.indexOf(java.lang.Object)"/>
               <memberCallTarget xsi:type="xbase:XMemberFeatureCall">
                 <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall#org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall.getParameters()"/>
-                <memberCallTarget xsi:type="xbase:XFeatureCall" feature="//@patterns.13/@bodies.0/@variables.0"/>
+                <memberCallTarget xsi:type="xbase:XFeatureCall" feature="//@patterns.28/@bodies.0/@variables.0"/>
               </memberCallTarget>
-              <memberCallArguments xsi:type="xbase:XFeatureCall" feature="//@patterns.13/@bodies.0/@variables.2"/>
+              <memberCallArguments xsi:type="xbase:XFeatureCall" feature="//@patterns.28/@bodies.0/@variables.2"/>
             </memberCallArguments>
           </rightOperand>
         </expression>
@@ -1293,7 +2244,7 @@
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.ClassConstrainInPatternBody" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/constraints.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
+        <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
     <parameters name="pat">
@@ -1316,11 +2267,7 @@
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
       </type>
     </parameters>
-    <parameters name="from">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
-      </type>
-    </parameters>
+    <parameters name="from"/>
     <bodies>
       <constraints xsi:type="patternLanguage:PathExpressionConstraint">
         <head>
@@ -1339,7 +2286,7 @@
         </head>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.7">
+        <call patternRef="//@patterns.22">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -1357,7 +2304,7 @@
     </bodies>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.8">
+        <call patternRef="//@patterns.23">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -1378,7 +2325,7 @@
     </bodies>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.12">
+        <call patternRef="//@patterns.27">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -1423,7 +2370,7 @@
     </bodies>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.13">
+        <call patternRef="//@patterns.28">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -1442,7 +2389,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.26">
+        <call patternRef="//@patterns.3">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="subpat"/>
           </parameters>
@@ -1461,957 +2408,6 @@
         <rightOperand xsi:type="patternLanguage:VariableValue">
           <value var="subpat"/>
         </rightOperand>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.directSupertype" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/type.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="type">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
-      </type>
-    </parameters>
-    <parameters name="supertype"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EClass/eAllSuperTypes"/>
-            </type>
-          </tail>
-          <src var="type"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="supertype"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.supertype" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/type.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="type">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="supertype">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.15" transitive="true">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="supertype"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-    <bodies>
-      <constraints xsi:type="patternLanguage:CompareConstraint">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="supertype"/>
-        </rightOperand>
-      </constraints>
-    </bodies>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
-        </type>
-        <var var="type"/>
-      </constraints>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
-        </type>
-        <var var="supertype"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CheckConstraint">
-        <expression xsi:type="xbase:XBinaryOperation">
-          <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_equals(int,int)"/>
-          <leftOperand xsi:type="xbase:XFeatureCall">
-            <feature xsi:type="types:JvmField" href="java:/Objects/org.eclipse.emf.ecore.EcorePackage#org.eclipse.emf.ecore.EcorePackage.EOBJECT"/>
-            <declaringType xsi:type="types:JvmGenericType" href="java:/Objects/org.eclipse.emf.ecore.EcorePackage#org.eclipse.emf.ecore.EcorePackage"/>
-          </leftOperand>
-          <rightOperand xsi:type="xbase:XMemberFeatureCall">
-            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.emf.ecore.EClassifier#org.eclipse.emf.ecore.EClassifier.getClassifierID()"/>
-            <memberCallTarget xsi:type="xbase:XCastedExpression">
-              <type xsi:type="types:JvmParameterizedTypeReference">
-                <type xsi:type="types:JvmGenericType" href="java:/Objects/org.eclipse.emf.ecore.EClass#org.eclipse.emf.ecore.EClass"/>
-              </type>
-              <target xsi:type="xbase:XFeatureCall" feature="//@patterns.16/@parameters.1"/>
-            </memberCallTarget>
-          </rightOperand>
-        </expression>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.coherent2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternReason.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="type1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-        </type>
-        <var var="common"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameterReason2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternReason.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="type1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="from1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
-      </type>
-    </parameters>
-    <parameters name="from2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.5">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.5">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from2"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type1"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type2"/>
-        </rightOperand>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.17">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.compatible2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="type1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-        </type>
-        <var var="common"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.compatible3" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="type1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type3">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-        </type>
-        <var var="common"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="common"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type3"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBodyReason2" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="body">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="type1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="from1"/>
-    <parameters name="from2"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.3">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from1"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from2"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type1"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type2"/>
-        </rightOperand>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.19">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeConstrainInPatternBodyReason3" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPatternBodyReason.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="body">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//PatternBody"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="type1">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type2">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="type3">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <parameters name="from1"/>
-    <parameters name="from2"/>
-    <parameters name="from3"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.3">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from1"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from2"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type3"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="from3"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type1"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type2"/>
-        </rightOperand>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type2"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type3"/>
-        </rightOperand>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type3"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="type1"/>
-        </rightOperand>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.20">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type1"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type2"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="type3"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.incompatibleTypeOfParameterOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="class">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.5">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="_"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="classfrombody"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="classfrombody"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="class"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.compatibleTypeOfParameterOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="class">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern/parameters"/>
-            </type>
-          </tail>
-          <src var="pat"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.23">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="class"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.haveMoreSpecificType" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="class">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.24">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="class"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.24">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="otherClass"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="otherClass"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="class"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
-        <leftOperand xsi:type="patternLanguage:VariableValue">
-          <value var="otherClass"/>
-        </leftOperand>
-        <rightOperand xsi:type="patternLanguage:VariableValue">
-          <value var="class"/>
-        </rightOperand>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.TypeOfParameterOfPattern" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <parameters name="class">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.24">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="class"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.25">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="class"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.6">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="_"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.3">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="_"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.haveSatisfiableBodyOfPatternParameter" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern/bodies"/>
-            </type>
-          </tail>
-          <src var="pat"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.3">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="body"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.UnsatisfiableTypeOfPatternParameter" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.27">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.tooGeneralTypeOfPatternParameter" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/inferenceInPattern.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
-      </parameters>
-    </annotations>
-    <parameters name="pat">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Pattern"/>
-      </type>
-    </parameters>
-    <parameters name="variable">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#//Variable"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.26">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="pat"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="variable"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="_"/>
-          </parameters>
-        </call>
       </constraints>
     </bodies>
   </patterns>
@@ -2780,7 +2776,7 @@
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiableCompare" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/compare.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
+        <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
     <parameters name="constraint">
@@ -2856,7 +2852,7 @@
     </parameters>
     <bodies>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
+        <call patternRef="//@patterns.15">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="common"/>
           </parameters>
@@ -2866,7 +2862,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.16">
+        <call patternRef="//@patterns.15">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="common"/>
           </parameters>
@@ -2880,7 +2876,7 @@
   <patterns name="org.eclipse.viatra2.emf.incquery.typeinference.tautologycCompare" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.typeinference/src/org/eclipse/viatra2/emf/incquery/typeinference/compare.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue" value="true"/>
+        <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
     <parameters name="constraint">
@@ -3018,7 +3014,7 @@
         </head>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.5">
+        <call patternRef="//@patterns.12">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -3034,7 +3030,7 @@
         </call>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.5">
+        <call patternRef="//@patterns.12">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -3240,7 +3236,7 @@
         </head>
       </constraints>
       <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.14">
+        <call patternRef="//@patterns.29">
           <parameters xsi:type="patternLanguage:VariableValue">
             <value var="pat"/>
           </parameters>
@@ -3355,10 +3351,10 @@
     </bodies>
   </patterns>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#/"/>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   </importPackages>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    <ePackage href="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage#/"/>
   </importPackages>
   <importPackages>
     <ePackage href="http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage#/"/>

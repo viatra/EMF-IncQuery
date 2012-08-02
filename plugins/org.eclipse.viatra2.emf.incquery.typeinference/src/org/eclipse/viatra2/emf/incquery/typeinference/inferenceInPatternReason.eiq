@@ -11,7 +11,7 @@ import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
 	find supertype(type2,common);
 }
 
-@QueryExplorer(display = true) pattern tooGeneralTypeOfPatternParameterReason2(pat:Pattern, variable:Variable,
+@QueryExplorer(display = false) pattern tooGeneralTypeOfPatternParameterReason2(pat:Pattern, variable:Variable,
 	type1:EClassifier, type2:EClassifier, from1:PatternBody, from2:PatternBody) =
 {
 	find typeOfVariableInBody(pat,from1,variable,type1);

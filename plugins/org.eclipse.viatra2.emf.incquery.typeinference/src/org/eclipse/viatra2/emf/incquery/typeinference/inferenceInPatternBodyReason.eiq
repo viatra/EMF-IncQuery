@@ -19,7 +19,7 @@ import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
 	find supertype(common,type3);
 }
 
-@QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBodyReason2(pat:Pattern, body:PatternBody, variable:Variable,
+@QueryExplorer(display = false) pattern UnsatisfiableTypeConstrainInPatternBodyReason2(pat:Pattern, body:PatternBody, variable:Variable,
 	type1:EClassifier, type2:EClassifier, from1, from2) =
 {
 	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);
@@ -29,7 +29,7 @@ import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
 	neg find compatible2(type1,type2);
 }
 
-@QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBodyReason3(pat:Pattern, body:PatternBody, variable:Variable,
+@QueryExplorer(display = false) pattern UnsatisfiableTypeConstrainInPatternBodyReason3(pat:Pattern, body:PatternBody, variable:Variable,
 	type1:EClassifier, type2:EClassifier, type3:EClassifier, from1, from2, from3) =
 {
 	find UnsatisfiableTypeConstrainInPatternBody(pat,body,variable);

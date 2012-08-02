@@ -21,6 +21,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverProvider;
 
 import com.google.inject.Inject;
@@ -31,6 +34,9 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 	@Inject
 	IEiqGenmodelProvider genmodelProvider;
 	
+	@Inject
+	ITypeProvider typeProvider;
+	
 	private PatternBody getBody(VariableReference variableReference)
 	{
 		EObject object = variableReference;
@@ -40,6 +46,24 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 		}
 		while(!(object instanceof PatternBody));
 		return (PatternBody) object;
+	}
+	
+	protected JvmTypeReference getType(Variable parameter)
+	{
+		if(this.typeProvider instanceof EMFPatternTypeProvider)
+		{
+			return ((EMFPatternTypeProvider)(this.typeProvider)).resolve(parameter);
+		}
+		else return null;
+	}
+	
+	protected JvmTypeReference getType(PatternBody body, Variable variable)
+	{
+		if(this.typeProvider instanceof EMFPatternTypeProvider)
+		{
+			return ((EMFPatternTypeProvider)(this.typeProvider)).resolve(body,variable);
+		}
+		else return null;
 	}
 	
 	@Override
@@ -57,22 +81,37 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 		else if(objectToView instanceof Variable)
 		{
 			Variable variable = (Variable) objectToView;
-			return String.format("Parameter <b>%s: ez egy variable</b>",variable.getName());
+			JvmTypeReference type = this.getType(variable);
+			String typeString =
+				type!=null ?
+					String.format("%s -<br/>%s",
+							type.getSimpleName(),
+							type.getQualifiedName()) :
+					"unknown";
+			return String.format(this.typeProvider.getClass().getSimpleName()+" say: "+"parameter <b>%s: %s</b>",
+				variable.getName(),
+				typeString);
 		}
 		else if(objectToView instanceof VariableReference)
 		{
 			VariableReference variableReference = (VariableReference) objectToView;
-
 			PatternBody body = getBody(variableReference);
+			// To evaluate the variable references
 			body.getVariables();
 			Pattern pat = (Pattern) body.eContainer();
-			int bodyCount = pat.getBodies().indexOf(body);
+			int bodyCount = pat.getBodies().indexOf(body) + 1;
 			Variable variable = variableReference.getVariable();
-			if(variable!=null)
-			{
-				return String.format("Variable <b>%s: van variable a #%s body-ban</b>",variable.getName(),bodyCount);
-			}
-			else return String.format("Variable <b>%s: nincs varable a  #%s body-ban</b>",variableReference.getVar(),bodyCount);
+			JvmTypeReference type = this.getType(body,variable);
+			String typeString =
+					type!=null ?
+						String.format("%s -<br/>%s",
+							type.getSimpleName(),
+							type.getQualifiedName()) :
+						"unknown";
+			return String.format(this.typeProvider.getClass().getSimpleName()+" say: " +"variable in #%s body <b>%s: %s</b>",
+				bodyCount,
+				variable.getName(),
+				typeString);
 		}
 		return super.getHoverInfoAsHtml(call, objectToView, hoverRegion);
 	}

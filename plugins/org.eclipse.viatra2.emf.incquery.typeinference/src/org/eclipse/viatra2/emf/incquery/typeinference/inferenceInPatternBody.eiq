@@ -56,7 +56,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param body A body of the pattern.
  * @param variable The referred variable.
  */
-@QueryExplorer(display = true) pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable) =
+@QueryExplorer(display = false) pattern UnsatisfiableTypeConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable) =
 {
 	find variableOfPattern(pat,body,variable);
 	neg find compatibleTypeOfVariableInBody(pat,body,variable,_class);
@@ -88,7 +88,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable The referred variable.
  * @param class The most generic type that satisfies every constraints.
  */
-@QueryExplorer(display = true) pattern typeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = false) pattern typeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier) =
 {
 	find variableOfPattern(pat,body,variable);
 	find compatibleTypeOfVariableInBody(pat,body, variable, class);
@@ -105,7 +105,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param body A body of the pattern.
  * @param variable The referred variable.
  */
-@QueryExplorer(display = true) pattern tooGeneralTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable) =
+@QueryExplorer(display = false) pattern tooGeneralTypeOfVariableInBody(pat:Pattern, body:PatternBody, variable:Variable) =
 {
 	find variableOfPattern(pat,body,variable);
 	neg find ClassConstrainInPatternBody(pat,body,variable,_class,_from);

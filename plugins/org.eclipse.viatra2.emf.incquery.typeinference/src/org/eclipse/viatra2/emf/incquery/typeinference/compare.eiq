@@ -68,7 +68,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * It don't work on variable, instead of this it makes the variable unsatisfiable.
  * @param The unsatisfiable compare.
  */
-@QueryExplorer(display = true) pattern unsatisfiableCompare(constraint:CompareConstraint) =
+@QueryExplorer(display = false) pattern unsatisfiableCompare(constraint:CompareConstraint) =
 {
 	find simmetricCompare(_,_,variable,valueFrom,constraint,CompareFeature::equality);
 	find supportedValueReference(variable);
@@ -92,7 +92,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * It works on two variables that hasn't got any common subtype.
  * @param The always true compare.
  */
-@QueryExplorer(display = true) pattern tautologycCompare(constraint:CompareConstraint) =
+@QueryExplorer(display = false) pattern tautologycCompare(constraint:CompareConstraint) =
 {
 	find simmetricCompare(_,_,variable,valueFrom,constraint,CompareFeature::inequality);
 	find supportedValueReference(variable);

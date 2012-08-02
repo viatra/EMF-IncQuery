@@ -19,6 +19,8 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 public class TypeAnalysis extends QueryAnalisys{
 	
+	public static int instances = 0;
+	
 	TypeOfVariableInBodyMatcher typeOfVariableInBodyMatcher;
 	UnsatisfiableTypeConstrainInPatternBodyMatcher unsatisfiableTypeConstrainInPatternBodyMatcher;
 	TooGeneralTypeOfVariableInBodyMatcher tooGeneralTypeOfVariableInBodyMatcher;
@@ -29,7 +31,6 @@ public class TypeAnalysis extends QueryAnalisys{
 	
 	public TypeAnalysis(PatternModel patternModel) throws TypeAnalysisException {
 		super(patternModel);
-		
 		try {
 			this.typeOfVariableInBodyMatcher = new TypeOfVariableInBodyMatcher(resourceSet);
 			this.unsatisfiableTypeConstrainInPatternBodyMatcher = new UnsatisfiableTypeConstrainInPatternBodyMatcher(resourceSet);
@@ -41,6 +42,9 @@ public class TypeAnalysis extends QueryAnalisys{
 		} catch (IncQueryException e) {
 			throw new TypeAnalysisException("The matchers can not be created");
 		}
+		
+		
+		instances++;
 	}
 	
 	public EClassifier getTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException {
