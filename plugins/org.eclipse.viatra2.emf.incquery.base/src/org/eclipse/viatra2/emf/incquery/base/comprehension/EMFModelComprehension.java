@@ -115,6 +115,11 @@ public class EMFModelComprehension {
 	
 	public static void visitObject(EMFVisitor visitor, EObject source) {
 		if (source == null) return;
+		if(source.eIsProxy()) {
+			source = EcoreUtil.resolve(source, source);
+			if (source.eIsProxy()) return;
+		}
+
 		visitor.visitElement(source);
 		for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
 			if (unvisitableDirectly(feature)) continue;
@@ -167,6 +172,9 @@ public class EMFModelComprehension {
 		visitFeatureInternal(visitor, source, feature, target, visitorPrunes);
 	}
 	
+	/**
+	 * @pre target != null
+	 */
 	private static void visitFeatureInternal(
 			EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target, boolean visitorPrunes) 
 	{
@@ -182,8 +190,9 @@ public class EMFModelComprehension {
 		} else if (feature instanceof EReference) {
 			EReference reference = (EReference)feature;
 			EObject targetObject = (EObject)target;
-			if(targetObject != null && targetObject.eIsProxy()) {
+			if(targetObject.eIsProxy()) {
 				targetObject = EcoreUtil.resolve(targetObject,source);
+				if (targetObject.eIsProxy()) return;
 				//source.eGet(feature, true);
 			}
 			if (reference.isContainment()) {
@@ -206,6 +215,7 @@ public class EMFModelComprehension {
 
 	/**
 	 * Emulates a derived edge, if it is not visited otherwise
+	 * @pre target != null
 	 */
 	private static void emulateUnvisitableFeature(EMFVisitor visitor,
 			EObject source, final EStructuralFeature emulated, final Object target) 
