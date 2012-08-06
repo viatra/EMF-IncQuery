@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Testing
+Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.typeinference.analysis.testing
+Bundle-Version: 0.6.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.viatra2.patternlanguage.core;bundle-version="0.6.0",
+ org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0",
+ org.eclipse.xtext.xbase.lib,
+ com.google.guava;bundle-version="10.0.1",
+ org.eclipse.xtend.lib;bundle-version="2.3.0",
+ org.eclipse.xtext.xbase;bundle-version="2.3.0",
+ org.eclipse.viatra2.emf.incquery.testing.core;bundle-version="0.6.0",
+ org.eclipse.viatra2.emf.incquery.typeinference;bundle-version="0.6.0",
+ org.eclipse.viatra2.emf.incquery.typeinference.analysis;bundle-version="0.6.0",
+ org.junit4;bundle-version="4.8.1",
+ org.eclipse.xtext.junit4;bundle-version="2.3.0"
+
