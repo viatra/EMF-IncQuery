@@ -148,7 +148,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 		this.notifier = emfRoot;
 		this.modelRoots = new HashSet<Notifier>();
-		this.expansionAllowed = notifier instanceof ResourceSet;
+		this.expansionAllowed = false;
 		this.inWildcardMode = wildcardMode;
 
 //		if (this.navigationHelperType == NavigationHelperType.ALL) {
@@ -464,6 +464,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	protected void expandToAdditionalRoot(Notifier root) {
 		if (modelRoots.add(root)) {
+			if (root instanceof ResourceSet) expansionAllowed = true;
 			contentAdapter.addAdapter(root);
 		}
 	}
@@ -695,7 +696,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	 */
 	@Override
 	public void addRoot(Notifier emfRoot) throws IncQueryBaseException {
-    addRootInternal(emfRoot);
+		addRootInternal(emfRoot);
 	}
   /**
    * @param emfRoot
