@@ -86,4 +86,7 @@ public class EMFVisitor {
 	 */
 	public boolean pruneSubtrees(Resource source) { return false;}
 
+	public void visitUnresolvableProxyObject(EObject source) {}
+	public void visitUnresolvableProxyFeature(EObject source, EReference feature, EObject target) {}
+
 }
