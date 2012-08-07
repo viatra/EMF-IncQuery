@@ -116,7 +116,8 @@ public class EMFModelComprehension {
 	public static void traverseObject(EMFVisitor visitor, EObject source) {
 		if (source == null) return;
 		if(source.eIsProxy()) {
-			source = EcoreUtil.resolve(source, source);
+			if (visitor.forceProxyResolution()) 
+				source = EcoreUtil.resolve(source, source);
 			if (source.eIsProxy()) {
 				visitor.visitUnresolvableProxyObject(source);
 				return;
@@ -194,7 +195,8 @@ public class EMFModelComprehension {
 			EReference reference = (EReference)feature;
 			EObject targetObject = (EObject)target;
 			if(targetObject.eIsProxy()) {
-				targetObject = EcoreUtil.resolve(targetObject,source);
+				if (visitor.forceProxyResolution()) 
+					targetObject = EcoreUtil.resolve(targetObject,source);
 				if (targetObject.eIsProxy()) {
 					visitor.visitUnresolvableProxyFeature(source, reference, targetObject);
 					return;

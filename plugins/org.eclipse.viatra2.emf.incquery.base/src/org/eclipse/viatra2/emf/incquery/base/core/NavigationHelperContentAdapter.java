@@ -664,17 +664,25 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 	
 	
-	public void suspendVisitorOnUnresolvableFeature(EMFVisitor visitor, EObject source, EReference reference, EObject target) {
+	public void suspendVisitorOnUnresolvableFeature(EMFVisitor visitor, EObject source, EReference reference, EObject target, boolean isInsertion) {
 		ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
 		if (targetToVisitor == null) {
 			targetToVisitor = ArrayListMultimap.create();
 			unresolvableProxyFeaturesMap.put(source, reference, targetToVisitor);
 		}
-		targetToVisitor.put(target, visitor);
+		if (isInsertion) 
+			targetToVisitor.put(target, visitor);
+		else
+			targetToVisitor.remove(target, visitor);
+		if (targetToVisitor.isEmpty()) 
+			unresolvableProxyFeaturesMap.remove(source, reference);
 	}
 
-	public void suspendVisitorOnUnresolvableObject(EMFVisitor visitor, EObject source) {
-		unresolvableProxyObjectsMap.put(source, visitor);
+	public void suspendVisitorOnUnresolvableObject(EMFVisitor visitor, EObject source, boolean isInsertion) {
+		if (isInsertion) 
+			unresolvableProxyObjectsMap.put(source, visitor);
+		else
+			unresolvableProxyObjectsMap.remove(source, visitor);
 	}
 	
 	List<EMFVisitor> popVisitorsSuspendedOnFeature(EObject source, EReference reference, EObject target) {

@@ -89,4 +89,9 @@ public class EMFVisitor {
 	public void visitUnresolvableProxyObject(EObject source) {}
 	public void visitUnresolvableProxyFeature(EObject source, EReference feature, EObject target) {}
 
+	/**
+	 * @return
+	 */
+	public boolean forceProxyResolution() {return true;}
+
 }
