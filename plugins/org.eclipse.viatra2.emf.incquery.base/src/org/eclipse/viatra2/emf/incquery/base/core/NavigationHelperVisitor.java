@@ -236,13 +236,17 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 	
 	@Override
 	public void visitUnresolvableProxyFeature(EObject source, EReference reference, EObject target) {
-		store.suspendVisitorOnUnresolvableFeature(this, source, reference, target);
+		store.suspendVisitorOnUnresolvableFeature(this, source, reference, target, isInsertion);
 	}
 
 	@Override
 	public void visitUnresolvableProxyObject(EObject source) {
-		store.suspendVisitorOnUnresolvableObject(this, source);
+		store.suspendVisitorOnUnresolvableObject(this, source, isInsertion);
 	}	
+	@Override
+	public boolean forceProxyResolution() {
+		return isInsertion;
+	}
 
 //	private void visitObject(EObject obj, Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType> dataTypes) {
 //		if (obj != null) {
