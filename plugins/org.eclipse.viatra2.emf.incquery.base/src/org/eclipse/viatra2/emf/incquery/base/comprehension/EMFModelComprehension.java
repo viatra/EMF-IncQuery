@@ -45,7 +45,7 @@ public class EMFModelComprehension {
 	 * Should not traverse this feature directly. 
 	 * It is still possible that it can be represented in IQBase if {@link #representable(EStructuralFeature)} is true.
 	 */
-	public static boolean unvisitableDirectly(EStructuralFeature feature) {
+	public static boolean untraversableDirectly(EStructuralFeature feature) {
 		boolean suspect = feature.isDerived() || feature.isVolatile();
 		if(suspect) {
 			// override support here 
@@ -61,7 +61,7 @@ public class EMFModelComprehension {
 	 * This feature can be represented in IQBase.
 	 */
 	public static boolean representable(EStructuralFeature feature) {
-		if (!unvisitableDirectly(feature)) return true; 
+		if (!untraversableDirectly(feature)) return true; 
 		
 		if (feature instanceof EReference) {
 			final EReference reference = (EReference) feature;
@@ -81,59 +81,62 @@ public class EMFModelComprehension {
 		return false;
 	}
 	
-	public static void visitModel(EMFVisitor visitor, Notifier source) {
+	public static void traverseModel(EMFVisitor visitor, Notifier source) {
 		if (source == null) return;
 		if (source instanceof EObject) {
-			visitObject(visitor, (EObject) source);
+			traverseObject(visitor, (EObject) source);
 		}
 		else if (source instanceof Resource) {
-			visitResource(visitor, (Resource) source);
+			traverseResource(visitor, (Resource) source);
 		}
 		else if (source instanceof ResourceSet) {
-			visitResourceSet(visitor, (ResourceSet) source);
+			traverseResourceSet(visitor, (ResourceSet) source);
 		}
 	}		
 	
-	public static void visitResourceSet(EMFVisitor visitor, ResourceSet source) {
+	public static void traverseResourceSet(EMFVisitor visitor, ResourceSet source) {
 		if (source == null) return;
 		final List<Resource> resources = new ArrayList<Resource>(source.getResources());
 		for (Resource resource : resources) {
-			visitResource(visitor, resource);
+			traverseResource(visitor, resource);
 		}
 	}
 	
-	public static void visitResource(EMFVisitor visitor, Resource source) {
+	public static void traverseResource(EMFVisitor visitor, Resource source) {
 		if (source == null) return;
 		if(visitor.pruneSubtrees(source))
 			return;
 		final EList<EObject> contents = source.getContents();
 		for (EObject eObject : contents) {
-			visitObject(visitor, eObject);
+			traverseObject(visitor, eObject);
 		}
 	}
 
 	
-	public static void visitObject(EMFVisitor visitor, EObject source) {
+	public static void traverseObject(EMFVisitor visitor, EObject source) {
 		if (source == null) return;
 		if(source.eIsProxy()) {
 			source = EcoreUtil.resolve(source, source);
-			if (source.eIsProxy()) return;
+			if (source.eIsProxy()) {
+				visitor.visitUnresolvableProxyObject(source);
+				return;
+			}
 		}
 
 		visitor.visitElement(source);
 		for (EStructuralFeature feature: source.eClass().getEAllStructuralFeatures()) {
-			if (unvisitableDirectly(feature)) continue;
+			if (untraversableDirectly(feature)) continue;
 			final boolean visitorPrunes = visitor.pruneFeature(feature);
 			if (visitorPrunes && !unprunableFeature(visitor, source, feature)) continue;
 		
 			if (feature.isMany()) {
 				Collection<?> targets = (Collection<?>) source.eGet(feature);
 				for (Object target : targets) {
-					visitFeatureInternal(visitor, source, feature, target, visitorPrunes);	
+					traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);	
 				}
 			} else {
 				Object target = source.eGet(feature);
-				if (target != null) visitFeatureInternal(visitor, source, feature, target, visitorPrunes);
+				if (target != null) traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);
 			}
 		}
 	}
@@ -154,28 +157,28 @@ public class EMFModelComprehension {
 
 
 
-	public static void visitFeature(
+	public static void traverseFeature(
 			EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) 
 	{
 		if (target == null) return;
-		if (unvisitableDirectly(feature)) return;	
-		visitFeatureInternalSimple(visitor, source, feature, target);
+		if (untraversableDirectly(feature)) return;	
+		traverseFeatureInternalSimple(visitor, source, feature, target);
 	}
 
 
-	private static void visitFeatureInternalSimple(EMFVisitor visitor,
+	private static void traverseFeatureInternalSimple(EMFVisitor visitor,
 			EObject source, EStructuralFeature feature, Object target) 
 	{
 		final boolean visitorPrunes = visitor.pruneFeature(feature);
 		if (visitorPrunes && !unprunableFeature(visitor, source, feature)) return;
 		
-		visitFeatureInternal(visitor, source, feature, target, visitorPrunes);
+		traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);
 	}
 	
 	/**
 	 * @pre target != null
 	 */
-	private static void visitFeatureInternal(
+	private static void traverseFeatureInternal(
 			EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target, boolean visitorPrunes) 
 	{
 		if (feature instanceof EAttribute) {
@@ -185,23 +188,25 @@ public class EMFModelComprehension {
 				final EStructuralFeature emulated = entry.getEStructuralFeature();
 				final Object emulatedTarget = entry.getValue();
 				
-				emulateUnvisitableFeature(visitor, source, emulated, emulatedTarget);
+				emulateUntraversableFeature(visitor, source, emulated, emulatedTarget);
 			}
 		} else if (feature instanceof EReference) {
 			EReference reference = (EReference)feature;
 			EObject targetObject = (EObject)target;
 			if(targetObject.eIsProxy()) {
 				targetObject = EcoreUtil.resolve(targetObject,source);
-				if (targetObject.eIsProxy()) return;
-				//source.eGet(feature, true);
+				if (targetObject.eIsProxy()) {
+					visitor.visitUnresolvableProxyFeature(source, reference, targetObject);
+					return;
+				}
 			}
 			if (reference.isContainment()) {
 				if (!visitorPrunes) visitor.visitInternalContainment(source, reference, targetObject);
-				if (!visitor.pruneSubtrees(source)) visitObject(visitor, targetObject);
+				if (!visitor.pruneSubtrees(source)) traverseObject(visitor, targetObject);
 				
 				final EReference opposite = reference.getEOpposite();
 				if (opposite != null) { // emulated derived edge based on container opposite					
-					emulateUnvisitableFeature(visitor, targetObject, opposite, source);
+					emulateUntraversableFeature(visitor, targetObject, opposite, source);
 				}
 			} else {
 //			if (containedElements.contains(target)) 
@@ -217,11 +222,11 @@ public class EMFModelComprehension {
 	 * Emulates a derived edge, if it is not visited otherwise
 	 * @pre target != null
 	 */
-	private static void emulateUnvisitableFeature(EMFVisitor visitor,
+	private static void emulateUntraversableFeature(EMFVisitor visitor,
 			EObject source, final EStructuralFeature emulated, final Object target) 
 	{
-		if (unvisitableDirectly(emulated)) 
-			visitFeatureInternalSimple(visitor, source, emulated, target);
+		if (untraversableDirectly(emulated)) 
+			traverseFeatureInternalSimple(visitor, source, emulated, target);
 	}
 
 }

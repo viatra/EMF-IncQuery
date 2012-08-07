@@ -680,7 +680,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	private void traverse(final NavigationHelperVisitor visitor) {
 		for (Notifier root : modelRoots) {
-			EMFModelComprehension.visitModel(visitor, root);		
+			EMFModelComprehension.traverseModel(visitor, root);		
 		}
 		runAfterUpdateCallbacks();
 	}

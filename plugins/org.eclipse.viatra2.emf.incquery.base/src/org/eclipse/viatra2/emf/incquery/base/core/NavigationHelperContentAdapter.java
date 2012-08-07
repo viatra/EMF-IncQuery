@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,11 @@ import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Table;
+
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	public static final EClass eObjectClass = EcorePackage.eINSTANCE
@@ -53,11 +59,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	// edatatype -> multiset of value(s)
 	protected Map<EDataType, Map<Object, Integer>> dataTypeMap;
+	
+	// source -> feature -> proxy target -> delayed visitors
+	protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
+	
+	// proxy source -> delayed visitors
+	protected ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
+
 
 	// static for all eClasses whose instances were encountered at least once
 	private static Set<EClass> knownClasses = new HashSet<EClass>();
 	// static for eclass -> all subtypes in knownClasses
 	protected static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
+	
 
 	private NavigationHelperImpl navigationHelper;
 
@@ -69,6 +83,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
 		this.instanceMap = new HashMap<EClass, Set<EObject>>();
 		this.dataTypeMap = new HashMap<EDataType, Map<Object, Integer>>();
+		this.unresolvableProxyFeaturesMap = HashBasedTable.create();
+		this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
 	}
 
 	public Map<EStructuralFeature, Set<EObject>> getReversedFeatureMap() {
@@ -112,16 +128,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 					for (Object oldElement : (Collection<?>) oldValue)
 						featureUpdate(false, notifier, feature, oldElement);
 					break;
-				// case Notification.REMOVING_ADAPTER: break;
-				case Notification.RESOLVE: // TODO is it safe to ignore all of
-											// them?
+				case Notification.REMOVING_ADAPTER: break;
+				case Notification.RESOLVE:
+					featureResolve(notifier, feature, oldValue, newValue);
 					break;
-				case Notification.UNSET: // TODO Fallthrough?
+				case Notification.UNSET:
 				case Notification.SET:
 					featureUpdate(false, notifier, feature, oldValue);
 					featureUpdate(true, notifier, feature, newValue);
-					break;
-				case Notification.REMOVING_ADAPTER:
 					break;
 				}
 			}
@@ -149,9 +163,26 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	}
 
+
+	private void featureResolve(EObject source, EStructuralFeature feature, Object oldValue, Object newValue) {
+		EReference reference = (EReference) feature;
+		EObject proxy = (EObject) oldValue;
+		EObject resolved = (EObject) newValue;
+		
+		final List<EMFVisitor> objectVisitors = popVisitorsSuspendedOnObject(proxy);
+		for (EMFVisitor visitor : objectVisitors) {
+			EMFModelComprehension.traverseObject(visitor, resolved);
+		}
+		
+		final List<EMFVisitor> featureVisitors = popVisitorsSuspendedOnFeature(source, reference, proxy);
+		for (EMFVisitor visitor : featureVisitors) {
+			EMFModelComprehension.traverseFeature(visitor, source, reference, resolved);
+		}
+	}
+
 	private void featureUpdate(boolean isInsertion, EObject notifier,
 			EStructuralFeature feature, Object value) {
-		EMFModelComprehension.visitFeature(visitor(isInsertion), notifier,
+		EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier,
 				feature, value);
 	}
 
@@ -159,7 +190,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected void addAdapter(Notifier notifier) {
 		try {
 			if (notifier instanceof EObject) {
-				EMFModelComprehension.visitObject(visitor(true),
+				EMFModelComprehension.traverseObject(visitor(true),
 						(EObject) notifier);
 			}
 			super.addAdapter(notifier);
@@ -178,7 +209,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected void removeAdapter(Notifier notifier) {
 		try {
 			if (notifier instanceof EObject) {
-				EMFModelComprehension.visitObject(visitor(false),
+				EMFModelComprehension.traverseObject(visitor(false),
 						(EObject) notifier);
 			}
 			super.removeAdapter(notifier);
@@ -632,5 +663,30 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 	}
 	
+	
+	public void suspendVisitorOnUnresolvableFeature(EMFVisitor visitor, EObject source, EReference reference, EObject target) {
+		ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
+		if (targetToVisitor == null) {
+			targetToVisitor = ArrayListMultimap.create();
+			unresolvableProxyFeaturesMap.put(source, reference, targetToVisitor);
+		}
+		targetToVisitor.put(target, visitor);
+	}
+
+	public void suspendVisitorOnUnresolvableObject(EMFVisitor visitor, EObject source) {
+		unresolvableProxyObjectsMap.put(source, visitor);
+	}
+	
+	List<EMFVisitor> popVisitorsSuspendedOnFeature(EObject source, EReference reference, EObject target) {
+		ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
+		if (targetToVisitor == null) return Collections.emptyList();
+		final List<EMFVisitor> result = targetToVisitor.removeAll(target);
+		if (targetToVisitor.isEmpty()) unresolvableProxyFeaturesMap.remove(source, reference);
+		return result;
+	}
+	List<EMFVisitor> popVisitorsSuspendedOnObject(EObject source) {
+		return unresolvableProxyObjectsMap.removeAll(source);	
+	}
+
 	
 }
