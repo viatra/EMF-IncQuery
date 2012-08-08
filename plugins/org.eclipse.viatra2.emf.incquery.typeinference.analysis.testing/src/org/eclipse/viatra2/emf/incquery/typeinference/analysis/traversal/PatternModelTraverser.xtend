@@ -10,6 +10,7 @@ abstract class PatternModelTraverser {
 	def traverse(PatternModel patternModel) {
 		initPatternModel(patternModel)
 		for(pattern : patternModel.patterns) {
+			
 			for(body:pattern.bodies)body.variables
 						
 			traversePattern(patternModel, pattern);

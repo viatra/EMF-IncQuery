@@ -29,14 +29,14 @@ abstract class PatternModelTypeInference extends PatternModelTraverser{
 		}
 		else{
 			val isUnsat = this.typeAnalysis.isUnsatisfiableTypeOfVariableInBody(body,variable);
-			if(isUnsat != null)
+			if(isUnsat)
 			{
 				writeUnsatTypeInBody(body,variable)
 			}
 			else
 			{
 				val isTooGeneral = typeAnalysis.isTooGeneralTypeOfVariableInBody(body,variable);
-				if(isTooGeneral != null)
+				if(isTooGeneral)
 				{
 					writeTooGeneralTypeInBody(variable);
 				}
@@ -82,14 +82,14 @@ abstract class PatternModelTypeInference extends PatternModelTraverser{
 		}
 		else{
 			val isUnsat = typeAnalysis.isUnsatisfiableTypeOfParameter(parameter)
-			if(isUnsat != null)
+			if(isUnsat)
 			{
 				writeUnsatTypeInParameter(parameter)
 			}
 			else
 			{
 				val isTooGeneral = typeAnalysis.isTooGeneralTypeOfParameter(parameter)
-				if(isTooGeneral != null)
+				if(isTooGeneral)
 				{
 					writeTooGeneralTypeInParameter(pattern, parameter);
 				}

@@ -29,4 +29,22 @@ public class TypeAnalisysInCompare extends QueryAnalisys{
 	public boolean isTautologycCompare(CompareConstraint compareConstraint) throws TypeAnalysisException {
 		return this.handleMatchResult(this.tautologycCompareMatcher.getAllMatches(compareConstraint)) != null;
 	}
+
+	@Override
+	protected void initMatchers() throws TypeAnalysisException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void getMaches() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void releaseMatchers() {
+		// TODO Auto-generated method stub
+		
+	}
 }

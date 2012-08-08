@@ -1,8 +1,10 @@
 package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,8 +28,18 @@ public class TypeAnalysisErrorReason extends QueryAnalisys{
 	ClassConstrainInPatternBodyMatcher classConstrainInPatternBodyMatcher;
 	TooGeneralTypeOfPatternParameterReason2Matcher tooGeneralTypeOfPatternParameterReason2Matcher;
 	
+	Map<VariableInBody,List<TypeReason<Object>>> unsatisfiableTypeConstrainInPatternBodyReason2 = new HashMap<VariableInBody, List<TypeReason<Object>>>();
+	Map<VariableInBody,List<TypeReason<Object>>> unsatisfiableTypeConstrainInPatternBodyReason3 = new HashMap<VariableInBody, List<TypeReason<Object>>>();
+	Map<VariableInBody,Set<TypeReason<Object>>> classConstrainInPatternBody = new HashMap<VariableInBody, Set<TypeReason<Object>>>();
+	Map<Variable,List<TypeReason<PatternBody>>> tooGeneralTypeOfPatternParameterReason2 = new HashMap<Variable, List<TypeReason<PatternBody>>>();
+	
 	public TypeAnalysisErrorReason(PatternModel patternModel) throws TypeAnalysisException {
 		super(patternModel);
+		
+	}
+	
+	@Override
+	protected void initMatchers() throws TypeAnalysisException {
 		try {
 			this.unsatisfiableTypeConstrainInPatternBodyReason2Matcher = new UnsatisfiableTypeConstrainInPatternBodyReason2Matcher(resourceSet);
 			this.unsatisfiableTypeConstrainInPatternBodyReason3Matcher = new UnsatisfiableTypeConstrainInPatternBodyReason3Matcher(resourceSet);
@@ -36,6 +48,54 @@ public class TypeAnalysisErrorReason extends QueryAnalisys{
 		} catch (IncQueryException e) {
 			throw new TypeAnalysisException("The matchers can not be created.");
 		}
+	}
+
+	@Override
+	protected void getMaches() {
+		this.unsatisfiableTypeConstrainInPatternBodyReason2.clear();
+		this.unsatisfiableTypeConstrainInPatternBodyReason3.clear();
+		this.classConstrainInPatternBody.clear();
+		this.tooGeneralTypeOfPatternParameterReason2.clear();
+		
+		UnsatisfiableTypeConstrainInPatternBodyReason2Match result2 = this.unsatisfiableTypeConstrainInPatternBodyReason2Matcher.getOneArbitraryMatch();
+		LinkedList<TypeReason<Object>> reasons2 = new LinkedList<TypeReason<Object>>();
+		reasons2.add(new TypeReason<Object>(result2.getFrom1(), result2.getType1()));
+		reasons2.add(new TypeReason<Object>(result2.getFrom2(), result2.getType2()));
+		this.unsatisfiableTypeConstrainInPatternBodyReason2.put(
+			new VariableInBody(result2.getVariable(), result2.getBody()),reasons2);
+
+		UnsatisfiableTypeConstrainInPatternBodyReason3Match result3 = this.unsatisfiableTypeConstrainInPatternBodyReason3Matcher.getOneArbitraryMatch();
+		LinkedList<TypeReason<Object>> reasons3 = new LinkedList<TypeReason<Object>>();
+		reasons3.add(new TypeReason<Object>(result3.getFrom1(), result3.getType1()));
+		reasons3.add(new TypeReason<Object>(result3.getFrom2(), result3.getType2()));
+		reasons3.add(new TypeReason<Object>(result3.getFrom3(), result3.getType3()));
+		this.unsatisfiableTypeConstrainInPatternBodyReason3.put(
+			new VariableInBody(result3.getVariable(), result3.getBody()),reasons3);
+		
+		for(ClassConstrainInPatternBodyMatch result : this.classConstrainInPatternBodyMatcher.getAllMatches())
+		{
+			VariableInBody v = new VariableInBody(result.getVariable(), result.getBody());
+			Set<TypeReason<Object>> reasonSet;
+			if(this.classConstrainInPatternBody.containsKey(v))
+				reasonSet = this.classConstrainInPatternBody.get(v);
+			else
+			{
+				reasonSet = new TreeSet<TypeReason<Object>>(new TypeReasonCompare<Object>());
+				classConstrainInPatternBody.put(v, reasonSet);
+			}
+			reasonSet.add(new TypeReason<Object>(result.getFrom(), result.getValueOfClass()));
+		}
+
+		//+getReason
+		//+minden változóhoz max 1-et kell bechace-elni
+	}
+
+	@Override
+	protected void releaseMatchers() {
+		this.unsatisfiableTypeConstrainInPatternBodyReason2Matcher.getEngine().dispose();
+		this.unsatisfiableTypeConstrainInPatternBodyReason3Matcher.getEngine().dispose();
+		this.classConstrainInPatternBodyMatcher.getEngine().dispose();
+		this.tooGeneralTypeOfPatternParameterReason2Matcher.getEngine().dispose();
 	}
 	
 	public List<TypeReason<Object>> get2ReasonOftUnsatisfiabilityOfVariableInBody(PatternBody body, Variable variable) {
