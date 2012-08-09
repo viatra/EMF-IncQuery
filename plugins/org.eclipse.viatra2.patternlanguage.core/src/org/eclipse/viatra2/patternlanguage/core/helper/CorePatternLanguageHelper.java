@@ -29,6 +29,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageF
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.VariableReferenceImpl;
 import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.collect.HashMultimap;
@@ -143,7 +144,9 @@ public final class CorePatternLanguageHelper {
 				variables.add(decl);
 			}
 			for (VariableReference ref : varRefs.get(varName)) {
-				ref.setVariable(decl);
+			  if(!decl.equals(((VariableReferenceImpl) ref).basicGetVariable())) {
+			    ref.setVariable(decl);
+			  }
 			}
 		}
 
