@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IInjectorProvider;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
 import org.osgi.framework.BundleContext;
@@ -44,7 +43,7 @@ public class IncQueryRuntimePlugin extends Plugin {
 		// TODO Builder registry may be used later
 		//BuilderRegistry.initRegistry();
 		XtextInjectorProvider.INSTANCE.setInjector(createInjector());
-		MatcherFactoryRegistry.initRegistry();
+		//MatcherFactoryRegistry.initRegistry();
 	}
 
 	/*

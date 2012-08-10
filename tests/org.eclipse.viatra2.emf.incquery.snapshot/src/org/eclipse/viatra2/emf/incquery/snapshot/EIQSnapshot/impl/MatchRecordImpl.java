@@ -207,7 +207,7 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 							EIQSnapshotPackageImpl.Literals.MATCH_RECORD__ROLE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue",
 							"Record", "Role", FeatureKind.SINGLE_REFERENCE,
-							true);
+							true, false);
 		}
 		return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) roleHandler
 				.getSingleReferenceValue(this);

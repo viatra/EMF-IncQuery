@@ -13,14 +13,9 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.XtextEditor;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.inject.Inject;
 
@@ -32,7 +27,16 @@ public class LoadEiqModelHandler extends LoadModelHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-	  final ExecutionEvent myEvent = event;
+	  try {
+      IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
+      if (file != null) {
+        loadModel(event, HandlerUtil.getActiveEditor(event), dbUtil.parseEPM(file));
+      }
+    } catch (Exception e) {
+      throw new ExecutionException("Cannot load pattern model", e);
+    }
+	  
+	  /*final ExecutionEvent myEvent = event;
 	  
     try {
       IEditorPart editor = HandlerUtil.getActiveEditor(event);
@@ -44,13 +48,12 @@ public class LoadEiqModelHandler extends LoadModelHandler {
           if (parseResult == null)
             return;
           EObject rootASTElement = parseResult.getRootASTElement();
-          // TODO resourceSet throws strange exceptions
-          loadModel(myEvent, HandlerUtil.getActiveEditor(myEvent), rootASTElement.eResource());//.getResourceSet());
+          loadModel(myEvent, HandlerUtil.getActiveEditor(myEvent), rootASTElement.eResource().getResourceSet());
         }
       });
     } catch (Exception e) {
       e.printStackTrace();
-    }
+    }*/
 	  
 		return null;
 	}

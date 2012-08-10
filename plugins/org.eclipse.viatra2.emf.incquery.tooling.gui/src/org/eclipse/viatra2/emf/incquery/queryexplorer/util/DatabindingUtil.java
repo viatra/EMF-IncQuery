@@ -324,7 +324,7 @@ public class DatabindingUtil {
 			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 				pattern = p;
 				for (Annotation a : p.getAnnotations()) {
-					if (a.getName().matches("PatternUI")) {							
+					if (a.getName().matches(PATTERNUI_ANNOTATION)) {							
 						for (AnnotationParameter ap : a.getParameters()) {
 							if (ap.getName().matches("message")) {
 								ValueReference valRef = ap.getValue();
@@ -414,7 +414,7 @@ public class DatabindingUtil {
 				pattern = p;
 
 				for (Annotation a : p.getAnnotations()) {
-					if (a.getName().matches("ObservableValue")) {
+					if (a.getName().matches(OBSERVABLEVALUE_ANNOTATION)) {
 						annotationFound = true;
 						String key = null, value = null;
 
