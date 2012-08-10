@@ -12,10 +12,12 @@
 
 package org.eclipse.viatra2.patternlanguage.ui.labeling;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra2.emf.incquery.typeinference.analysis.EMFPatternTypeProviderByInference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -48,6 +50,12 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 		return (PatternBody) object;
 	}
 	
+	protected boolean getTypeFast(Variable parameter)
+	{
+		if(this.typeProvider instanceof EMFPatternTypeProvider) return ((EMFPatternTypeProvider)(this.typeProvider)).canResolveEasily(parameter);
+		else return true;
+	}
+	
 	protected JvmTypeReference getType(Variable parameter)
 	{
 		if(this.typeProvider instanceof EMFPatternTypeProvider)
@@ -55,6 +63,12 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 			return ((EMFPatternTypeProvider)(this.typeProvider)).resolve(parameter);
 		}
 		else return null;
+	}
+	
+	protected boolean getTypeFast(PatternBody body, Variable parameter)
+	{
+		if(this.typeProvider instanceof EMFPatternTypeProvider) return ((EMFPatternTypeProvider)(this.typeProvider)).canResolveEasily(body,parameter);
+		else return true;
 	}
 	
 	protected JvmTypeReference getType(PatternBody body, Variable variable)
@@ -68,6 +82,7 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 	
 	@Override
 	protected String getHoverInfoAsHtml(EObject call, EObject objectToView, IRegion hoverRegion) {
+		System.out.println("HOVER");
 		if (objectToView instanceof PackageImport) {
 			PackageImport packageImport = (PackageImport) objectToView;
 			GenPackage genPackage = genmodelProvider.findGenPackage(packageImport, packageImport.getEPackage());
@@ -81,37 +96,43 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 		else if(objectToView instanceof Variable)
 		{
 			Variable variable = (Variable) objectToView;
-			JvmTypeReference type = this.getType(variable);
-			String typeString =
-				type!=null ?
-					String.format("%s -<br/>%s",
-							type.getSimpleName(),
-							type.getQualifiedName()) :
-					"unknown";
-			return String.format(this.typeProvider.getClass().getSimpleName()+" say: "+"parameter <b>%s: %s</b>",
-				variable.getName(),
-				typeString);
+			if(this.getTypeFast(variable))
+			{
+				JvmTypeReference type = this.getType(variable);
+				String typeString =
+					type!=null ?
+						String.format("%s -<br/>%s",
+								type.getSimpleName(),
+								type.getQualifiedName()) :
+						"unknown";
+				return String.format("parameter <b>%s: %s</b>",
+					variable.getName(),
+					typeString);
+			}
+			else return String.format("Infering type of parameter <b>%s</b>...",variable.getName());
 		}
 		else if(objectToView instanceof VariableReference)
 		{
 			VariableReference variableReference = (VariableReference) objectToView;
 			PatternBody body = getBody(variableReference);
-			// To evaluate the variable references
-			body.getVariables();
 			Pattern pat = (Pattern) body.eContainer();
 			int bodyCount = pat.getBodies().indexOf(body) + 1;
 			Variable variable = variableReference.getVariable();
-			JvmTypeReference type = this.getType(body,variable);
-			String typeString =
-					type!=null ?
-						String.format("%s -<br/>%s",
-							type.getSimpleName(),
-							type.getQualifiedName()) :
-						"unknown";
-			return String.format(this.typeProvider.getClass().getSimpleName()+" say: " +"variable in #%s body <b>%s: %s</b>",
-				bodyCount,
-				variable.getName(),
-				typeString);
+			if(this.getTypeFast(body, variable))
+			{
+				JvmTypeReference type = this.getType(body,variable);
+				String typeString =
+						type!=null ?
+							String.format("%s -<br/>%s",
+								type.getSimpleName(),
+								type.getQualifiedName()) :
+							"unknown";
+				return String.format("variable in #%s body <b>%s: %s</b>",
+					bodyCount,
+					variable.getName(),
+					typeString);
+			}
+			else return String.format("Infering type of variable <b>%s</b> in body #%s...",variable.getName(),bodyCount);
 		}
 		return super.getHoverInfoAsHtml(call, objectToView, hoverRegion);
 	}

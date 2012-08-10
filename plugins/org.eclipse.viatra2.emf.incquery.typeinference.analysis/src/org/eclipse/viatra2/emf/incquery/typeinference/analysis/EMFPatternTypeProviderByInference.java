@@ -1,7 +1,8 @@
 package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -18,7 +19,21 @@ import com.google.inject.Singleton;
 public class EMFPatternTypeProviderByInference extends
 		GenModelBasedTypeProvider {
 
-	private static Map<String, TypeAnalysis> map = new HashMap<String, TypeAnalysis>();
+	private static ConcurrentMap<String, TypeAnalysis> map = new ConcurrentHashMap<String, TypeAnalysis>();
+	
+	public static PatternModel getPatternModel(EObject object)
+	{
+		do {
+			object = object.eContainer();
+		} while (!(object instanceof PatternModel));
+		//test
+		Resource resource = ((PatternModel) object).eResource();
+		System.out.println("PM: "+object +"\n\t"+resource);
+		for(EObject element : resource.getContents())
+			System.out.println("\t\t"+element);
+		//test
+		return (PatternModel) object;
+	}
 	
 	private String getUri(PatternModel patternModel)
 	{
@@ -26,10 +41,9 @@ public class EMFPatternTypeProviderByInference extends
 	}
 	
 	private synchronized TypeAnalysis getTypeAnalysis(EObject object) {
-		do {
-			object = object.eContainer();
-		} while (!(object instanceof PatternModel));
-		PatternModel patternModel = (PatternModel) object;
+		PatternModel patternModel = getPatternModel(object);
+		
+		System.out.println("Thread: " + Thread.currentThread().getId());
 		
 		if (map.get(getUri(patternModel)) != null) {
 			TypeAnalysis typeAnalysis = map.get(getUri(patternModel));
@@ -54,6 +68,11 @@ public class EMFPatternTypeProviderByInference extends
 		}
 		 
 	}
+	
+	@Override
+	public synchronized boolean canResolveEasily(Variable variable) {
+		return getTypeAnalysis(variable).isCacheValid();
+	}
 
 	@Override
 	public synchronized JvmTypeReference resolve(PatternBody body, Variable variable) {
@@ -68,10 +87,16 @@ public class EMFPatternTypeProviderByInference extends
 
 		System.out.println(">>> Inferred: body #"
 				+ (((Pattern) (body.eContainer())).getBodies().indexOf(body) +1)
-				+ " variable " + variable.getName() + " > " + (type!=null?type.getName():"null"));
+				+ " variable " + variable + " > " + (type!=null?type.getName():"null"));
 
-		if (type == null) return null;
+		if (type == null)
+			return null;
 		else return this.typeReference(type.getInstanceClass(), variable);
+	}
+	
+	@Override
+	public synchronized boolean canResolveEasily(PatternBody body, Variable variable) {
+		return getTypeAnalysis(variable).isCacheValid();
 	}
 
 	@Override
@@ -85,7 +110,7 @@ public class EMFPatternTypeProviderByInference extends
 			e.printStackTrace();
 		}
 
-		System.out.println(">>> Inferred: parameter " + variable.getName() + " > " + (type!=null?type.getName():"null"));
+		System.out.println(">>> Inferred: parameter " + variable + " > " + (type!=null?type.getName():"null"));
 
 		if (type == null)
 			return null;

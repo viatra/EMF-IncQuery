@@ -3,9 +3,11 @@ package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatch;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatcher;
@@ -26,12 +28,12 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 public class TypeAnalysis extends QueryAnalisys{
 	
-	Map<VariableInBody,EClassifier> typeOfVariableInBody = new HashMap<VariableInBody, EClassifier>();
-	Set<VariableInBody> unsatisfiableTypeConstrainInPatternBody = new HashSet<VariableInBody>();
-	Set<VariableInBody> tooGeneralTypeOfVariableInBody = new HashSet<VariableInBody>();
-	Map<Variable,EClassifier> typeOfParameterOfPattern = new HashMap<Variable, EClassifier>();
-	Set<Variable> unsatisfiableTypeOfPatternParameter = new HashSet<Variable>();
-	Set<Variable> tooGeneralTypeOfPatternParameter = new HashSet<Variable>();
+	Map<String,EClassifier> typeOfVariableInBody = new HashMap<String, EClassifier>();
+	Set<String> unsatisfiableTypeConstrainInPatternBody = new HashSet<String>();
+	Set<String> tooGeneralTypeOfVariableInBody = new HashSet<String>();
+	Map<String,EClassifier> typeOfParameterOfPattern = new HashMap<String, EClassifier>();
+	Set<String> unsatisfiableTypeOfPatternParameter = new HashSet<String>();
+	Set<String> tooGeneralTypeOfPatternParameter = new HashSet<String>();
 	
 	TypeOfVariableInBodyMatcher typeOfVariableInBodyMatcher;
 	UnsatisfiableTypeConstrainInPatternBodyMatcher unsatisfiableTypeConstrainInPatternBodyMatcher;
@@ -42,16 +44,25 @@ public class TypeAnalysis extends QueryAnalisys{
 
 	public TypeAnalysis(PatternModel patternModel) throws TypeAnalysisException {
 		super(patternModel);
-		//this.bugHunter(patternModel);
 	}
 	
-	private void bugHunter(PatternModel patternModel)
+	private String getParameterID(Variable parameter)
 	{
-		for(Pattern pattern : patternModel.getPatterns())
-			for(PatternBody body : pattern.getBodies())
-				body.getVariables();
+		Pattern p = (Pattern) parameter.eContainer();
+		PatternModel pm = (PatternModel) p.eContainer();
+		Resource r = pm.eResource();
+		return r.getURI()+"/"+pm.getPackageName()+"."+p.getName()+parameter.getName();
 	}
-
+	
+	private String getVariableInBodyID(Variable variable,PatternBody body)
+	{
+		Pattern p = (Pattern) body.eContainer();
+		int bodyCout = p.getBodies().indexOf(body)+1;
+		PatternModel pm = (PatternModel) p.eContainer();
+		Resource r = pm.eResource();
+		return r.getURI()+"/"+pm.getPackageName()+"."+p.getName()+bodyCout+variable.getName();
+	}
+	
 	@Override
 	protected void initMatchers() throws TypeAnalysisException {
 		try {
@@ -76,17 +87,17 @@ public class TypeAnalysis extends QueryAnalisys{
 		this.tooGeneralTypeOfPatternParameter.clear();
 		
 		for(TypeOfVariableInBodyMatch result : typeOfVariableInBodyMatcher.getAllMatches())
-			this.typeOfVariableInBody.put(new VariableInBody(result.getVariable(), result.getBody()), result.getValueOfClass());
+			this.typeOfVariableInBody.put(getVariableInBodyID(result.getVariable(), result.getBody()), result.getValueOfClass());
 		for(UnsatisfiableTypeConstrainInPatternBodyMatch result : unsatisfiableTypeConstrainInPatternBodyMatcher.getAllMatches())
-			this.unsatisfiableTypeConstrainInPatternBody.add(new VariableInBody(result.getVariable(), result.getBody()));
+			this.unsatisfiableTypeConstrainInPatternBody.add(getVariableInBodyID(result.getVariable(), result.getBody()));
 		for(TooGeneralTypeOfVariableInBodyMatch result : tooGeneralTypeOfVariableInBodyMatcher.getAllMatches())
-			this.tooGeneralTypeOfVariableInBody.add(new VariableInBody(result.getVariable(), result.getBody()));
+			this.tooGeneralTypeOfVariableInBody.add(getVariableInBodyID(result.getVariable(), result.getBody()));
 		for(TypeOfParameterOfPatternMatch result : typeOfParameterOfPatternMatcher.getAllMatches())
-			this.typeOfParameterOfPattern.put(result.getVariable(), result.getValueOfClass());
+			this.typeOfParameterOfPattern.put(getParameterID(result.getVariable()), result.getValueOfClass());
 		for(UnsatisfiableTypeOfPatternParameterMatch result : unsatisfiableTypeOfPatternParameterMatcher.getAllMatches())
-			this.unsatisfiableTypeOfPatternParameter.add(result.getVariable());
+			this.unsatisfiableTypeOfPatternParameter.add(getParameterID(result.getVariable()));
 		for(TooGeneralTypeOfPatternParameterMatch result : tooGeneralTypeOfPatternParameterMatcher.getAllMatches())
-			this.tooGeneralTypeOfPatternParameter.add(result.getVariable());
+			this.tooGeneralTypeOfPatternParameter.add(getParameterID(result.getVariable()));
 	}
 
 	@Override
@@ -99,33 +110,35 @@ public class TypeAnalysis extends QueryAnalisys{
 		tooGeneralTypeOfPatternParameterMatcher.getEngine().dispose();
 	}
 	
-	public EClassifier getTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
+	public synchronized EClassifier getTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
 		this.validateCache();
-		return this.typeOfVariableInBody.get(new VariableInBody(variable, body));
+		return this.typeOfVariableInBody.get(getVariableInBodyID(variable, body));
 	}
 	
-	public boolean isUnsatisfiableTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
+	public synchronized boolean isUnsatisfiableTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
 		this.validateCache();
-		return this.unsatisfiableTypeConstrainInPatternBody.contains(new VariableInBody(variable, body));
+		return this.unsatisfiableTypeConstrainInPatternBody.contains(getVariableInBodyID(variable, body));
 	}
 	
-	public boolean isTooGeneralTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
+	public synchronized boolean isTooGeneralTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
 		this.validateCache();
-		return this.tooGeneralTypeOfVariableInBody.contains((new VariableInBody(variable, body)));
+		return this.tooGeneralTypeOfVariableInBody.contains(getVariableInBodyID(variable, body));
 	}
 	
-	public EClassifier getTypeOfParameter(Variable parameter) throws TypeAnalysisException{
+	public synchronized EClassifier getTypeOfParameter(Variable parameter) throws TypeAnalysisException{
 		this.validateCache();
-		return this.typeOfParameterOfPattern.get(parameter);
+		for(Entry<String, EClassifier> entry : this.typeOfParameterOfPattern.entrySet())
+			System.out.println("\tentry: " + entry.getKey() + " > " +entry.getValue());
+		return this.typeOfParameterOfPattern.get(getParameterID(parameter));
 	}
 	
-	public boolean isUnsatisfiableTypeOfParameter(Variable parameter) throws TypeAnalysisException {
+	public synchronized boolean isUnsatisfiableTypeOfParameter(Variable parameter) throws TypeAnalysisException {
 		this.validateCache();
-		return this.unsatisfiableTypeOfPatternParameter.contains(parameter);
+		return this.unsatisfiableTypeOfPatternParameter.contains(getParameterID(parameter));
 	}
 	
-	public boolean isTooGeneralTypeOfParameter(Variable parameter) throws TypeAnalysisException {
+	public synchronized boolean isTooGeneralTypeOfParameter(Variable parameter) throws TypeAnalysisException {
 		this.validateCache();
-		return this.tooGeneralTypeOfPatternParameter.contains(parameter);
+		return this.tooGeneralTypeOfPatternParameter.contains(getParameterID(parameter));
 	}
 }

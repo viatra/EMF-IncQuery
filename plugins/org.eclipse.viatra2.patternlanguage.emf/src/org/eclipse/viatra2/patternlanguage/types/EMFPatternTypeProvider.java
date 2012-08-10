@@ -88,7 +88,11 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		}
 		return typeRef;
 	}
-
+	
+	public boolean canResolveEasily(Variable variable) {
+		return true;
+	}
+	
 	/**
 	 * Resolves the variable with various methods. If the resolution fails, then
 	 * null is returned.
@@ -148,6 +152,10 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			return typeReference(classifier.getInstanceClass(), variable);
 		}
 		return null;
+	}
+	
+	public boolean canResolveEasily(PatternBody body, Variable variable) {
+		return true;
 	}
 
 	/**

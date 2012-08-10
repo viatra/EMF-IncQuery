@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 public abstract class QueryAnalisys extends EContentAdapter{
@@ -23,6 +25,7 @@ public abstract class QueryAnalisys extends EContentAdapter{
 		resourceSet = this.createResourceOfQuery(patternModel);
 		this.setTarget(patternModel.eResource().getResourceSet());
 		this.cacheValid = false;
+		//this.bugHunter(patternModel);
 	}
 	
 	protected <T> T getOne(Collection<T> collection)
@@ -56,7 +59,7 @@ public abstract class QueryAnalisys extends EContentAdapter{
 	@Override
 	public synchronized void notifyChanged(Notification notification) {
 		//System.out.println("Notification: " + notification);
-		if(notification.getOldValue() != notification.getNewValue())
+		if(notification.getOldValue() != notification.getNewValue() && this.cacheValid)
 		{
 			System.out.println("Nonidempotent");
 			this.cacheValid=false;	
@@ -68,15 +71,27 @@ public abstract class QueryAnalisys extends EContentAdapter{
 	protected abstract void getMaches();
 	protected abstract void releaseMatchers();
 	
+	private void bugHunter(PatternModel patternModel)
+	{
+		for(Pattern pattern : patternModel.getPatterns())
+			for(PatternBody body : pattern.getBodies())
+				body.getVariables();
+	}
+	
 	protected synchronized void validateCache() throws TypeAnalysisException
 	{
-		if(!cacheValid)
-		{
-			initMatchers();
-			getMaches();
-			releaseMatchers();
-			this.cacheValid=true;
-			System.out.println("Matches are recalculated!!!");
+		if (!cacheValid) {
+			synchronized (resourceSet) {
+				initMatchers();
+				getMaches();
+				releaseMatchers();
+				this.cacheValid = true;
+				System.out.println("Matches are recalculated!!!");
+			}
 		}
+	}
+
+	public boolean isCacheValid() {
+		return cacheValid;
 	}
 }
