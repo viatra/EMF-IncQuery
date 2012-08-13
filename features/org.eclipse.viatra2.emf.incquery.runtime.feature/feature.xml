@@ -14,6 +14,10 @@
       [Enter Copyright Description here.]
    </copyright>
 
+   <url>
+      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+   </url>
+
    <plugin
          id="org.eclipse.viatra2.emf.incquery.runtime"
          download-size="0"
