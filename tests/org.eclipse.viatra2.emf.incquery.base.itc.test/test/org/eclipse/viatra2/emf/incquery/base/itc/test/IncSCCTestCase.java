@@ -12,7 +12,6 @@
 package org.eclipse.viatra2.emf.incquery.base.itc.test;
 
 import static org.junit.Assert.assertTrue;
-import junit.framework.TestCase;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
