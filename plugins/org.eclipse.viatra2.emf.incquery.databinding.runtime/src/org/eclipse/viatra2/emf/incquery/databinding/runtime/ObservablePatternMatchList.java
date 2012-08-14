@@ -22,7 +22,10 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  * <br>
  * This implementation registers a {@link DeltaMonitor} for the matcher
  * and updates its contents when the matcher's results change. This observable
- * list shall be disposed in order to unregister the delta monitor.
+ * list shall be disposed in order to unregister the delta monitor.<br>
+ * <br>
+ * This class can be used as-is, but clients may subclass it to override the
+ * protected method "createCacheList".<br>
  * 
  * @author balazs.grill
  */
@@ -30,7 +33,7 @@ public class ObservablePatternMatchList extends AbstractObservableList {
 
 	private final DeltaMonitor<? extends IPatternMatch> deltaMonitor;
 	private final IncQueryMatcher<? extends IPatternMatch> matcher;
-	private final List<IPatternMatch> cache = new ArrayList<IPatternMatch>();
+	private final List<IPatternMatch> cache;
 	
 	private final Runnable updateCallback = new Runnable() {
 		
@@ -72,6 +75,7 @@ public class ObservablePatternMatchList extends AbstractObservableList {
 	 */
 	public ObservablePatternMatchList(IncQueryMatcher<? extends IPatternMatch> matcher) {
 		this.matcher = matcher;
+		cache = createCacheList();
 		deltaMonitor = matcher.newDeltaMonitor(true);
 		matcher.addCallbackAfterUpdates(updateCallback);
 		updateCallback.run();
@@ -111,4 +115,15 @@ public class ObservablePatternMatchList extends AbstractObservableList {
 		}
 	}
 
+	/**
+	 * Create a list instance for caching the current value set. Clients may
+	 * override this method to provide the best performance for their use cases.
+	 * The default implementation creates an {@link ArrayList}.
+	 * 
+	 * @return a list instance
+	 */
+	protected List<IPatternMatch> createCacheList(){
+		return new ArrayList<IPatternMatch>();
+	}
+	
 }
