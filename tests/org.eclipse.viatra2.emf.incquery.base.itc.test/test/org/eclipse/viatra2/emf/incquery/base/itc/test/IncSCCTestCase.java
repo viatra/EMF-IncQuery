@@ -20,6 +20,7 @@ import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph1;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph2;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph3;
+import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph4;
 import org.junit.Test;
 
 public class IncSCCTestCase extends TestCase {
@@ -34,19 +35,25 @@ public class IncSCCTestCase extends TestCase {
     	FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(g1);
     	IncSCCAlg<Integer> isa = new IncSCCAlg<Integer>(g1);
 		g1.modify();	
-		assertEquals(true, isa.checkTcRelation(fwa.getTcRelation()));
+		assertTrue(isa.checkTcRelation(fwa.getTcRelation()));
         
         Graph2 g2 = new Graph2();
     	fwa = new FloydWarshallAlg<Integer>(g2);
     	isa = new IncSCCAlg<Integer>(g2);
 		g2.modify();	
-		assertEquals(true, isa.checkTcRelation(fwa.getTcRelation()));
+		assertTrue(isa.checkTcRelation(fwa.getTcRelation()));
         
         Graph3 g3 = new Graph3();
     	fwa = new FloydWarshallAlg<Integer>(g3);
     	isa = new IncSCCAlg<Integer>(g3);
 		g3.modify();	
-		assertEquals(true, isa.checkTcRelation(fwa.getTcRelation()));
+		assertTrue(isa.checkTcRelation(fwa.getTcRelation()));
+		
+		Graph4 g4 = new Graph4();
+    	fwa = new FloydWarshallAlg<Integer>(g4);
+    	isa = new IncSCCAlg<Integer>(g4);
+		g4.modify();	
+		assertTrue(isa.checkTcRelation(fwa.getTcRelation()));
 		
 		int nodeCount = 10;
 		Graph<Integer> g = new Graph<Integer>();
@@ -57,22 +64,20 @@ public class IncSCCTestCase extends TestCase {
 			g.insertNode(i);
 		}
 
-		//System.out.println("insert");
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i != j) {
 					g.insertEdge(i, j);
-					assertEquals(true, isa.checkTcRelation(da.getTcRelation()));
+					assertTrue(isa.checkTcRelation(da.getTcRelation()));
 				}
 			}
 		}
 
-		//System.out.println("delete");
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i != j) {
 					g.deleteEdge(i, j);
-					assertEquals(true, isa.checkTcRelation(da.getTcRelation()));
+					assertTrue(isa.checkTcRelation(da.getTcRelation()));
 				}
 			}
 		}
