@@ -11,22 +11,13 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
+@RunWith(Suite.class)
+@SuiteClasses({ DRedTestCase.class, DFSTestCase.class, CountingTestCase.class,
+		Counting2TestCase.class, KingOptTestCase.class, IncSCCTestCase.class })
 public class CheckTcRelations {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CheckTcRelations.class.getName());
-
-		suite.addTestSuite(DRedTestCase.class);
-		suite.addTestSuite(DFSTestCase.class);
-		suite.addTestSuite(CountingTestCase.class);
-		suite.addTestSuite(Counting2TestCase.class);
-		suite.addTestSuite(KingOptTestCase.class);
-		suite.addTestSuite(IncSCCTestCase.class);
-		
-		return suite;
-	}
 
 }

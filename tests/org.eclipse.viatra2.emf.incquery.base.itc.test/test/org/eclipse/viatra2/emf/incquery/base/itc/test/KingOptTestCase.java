@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.kingopt.KingOptAlg;
@@ -22,10 +22,7 @@ import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph2;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph3;
 import org.junit.Test;
 
-public class KingOptTestCase extends TestCase {
-
-	public KingOptTestCase() {
-	}
+public class KingOptTestCase {
 
 	@Test
 	public void testResult() {
@@ -88,9 +85,5 @@ public class KingOptTestCase extends TestCase {
 				}
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(KingOptTestCase.class);
 	}
 }

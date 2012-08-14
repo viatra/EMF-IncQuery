@@ -11,17 +11,14 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.counting.CountingAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.TcRelationGenerator;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.junit.Test;
 
-public class CountingTestCase extends TestCase {
-	
-    public CountingTestCase () {
-    }
+public class CountingTestCase {
     
     @Test
     public void testResult() {
@@ -60,8 +57,5 @@ public class CountingTestCase extends TestCase {
 			}
 		} 
     }
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(CountingTestCase.class);
-    }
+
 }
