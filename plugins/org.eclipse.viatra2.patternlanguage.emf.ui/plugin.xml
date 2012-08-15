@@ -372,12 +372,6 @@
       </viewerContribution>
    </extension>
    <extension
-         point="org.eclipse.xtext.builder.participant">
-      <participant
-            class="org.eclipse.viatra2.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
-      </participant>
-   </extension>
-   <extension
             point="org.eclipse.ui.preferencePages">
         <page
             category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"

@@ -24,5 +24,44 @@
             value="true">
       </persistent>
    </extension>
-
+   <extension 
+   		id="org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.app"
+	 	point="org.eclipse.core.runtime.applications">
+	 <application 
+	 		cardinality="singleton-global" 
+	 		thread="main" 
+	 		visible="true">
+	  <run class="org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.BuilderApplication">
+	  </run>
+	 </application>
+	</extension>
+	<extension 
+		id="incquery" 
+		point="org.eclipse.core.runtime.products">
+	 <product 
+	 	application="org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.app" 
+		name="IncQuery Application">
+	  <property name="appName" value="IncQuery Application">
+	  </property>
+	 </product>
+	</extension>
+	<extension
+         point="org.eclipse.xtext.builder.participant">
+      <participant
+            class="org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.MavenBuilderExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+      </participant>
+   </extension>
+	<extension
+		point="org.eclipse.emf.ecore.extension_parser">
+		<parser
+			class="org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.MavenBuilderExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			type="eiq">
+		</parser>
+	</extension>
+		<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
+        <resourceServiceProvider
+            class="org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.MavenBuilderExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            uriExtension="eiq">
+        </resourceServiceProvider>
+    </extension>
 </plugin>

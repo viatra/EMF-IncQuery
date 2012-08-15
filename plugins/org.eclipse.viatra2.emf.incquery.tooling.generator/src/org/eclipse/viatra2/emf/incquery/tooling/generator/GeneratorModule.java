@@ -13,11 +13,13 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.ExtensionBasedGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.mavenbuilder.LoggerFeedback;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageRuntimeModule;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
@@ -58,5 +60,9 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 	@Override
 	public Class<? extends ITypeProvider> bindITypeProvider() {
 		return GenModelBasedTypeProvider.class;
+	}
+	
+	public Class<? extends IErrorFeedback> bindIErrorFeedback() {
+		return LoggerFeedback.class;
 	}
 }
