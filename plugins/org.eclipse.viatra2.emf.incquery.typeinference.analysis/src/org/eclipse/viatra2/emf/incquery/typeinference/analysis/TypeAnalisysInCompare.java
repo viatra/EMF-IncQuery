@@ -6,7 +6,7 @@ import org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiablecompare.Unsat
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
-public class TypeAnalisysInCompare extends QueryAnalisys{
+public class TypeAnalisysInCompare extends QueryAnalysisOnPattern{
 	
 	TautologycCompareMatcher tautologycCompareMatcher;
 	UnsatisfiableCompareMatcher unsatisfiableCompareMatcher;
@@ -20,14 +20,6 @@ public class TypeAnalisysInCompare extends QueryAnalisys{
 		} catch (IncQueryException e) {
 			throw new TypeAnalysisException("The matchers can not be created.");
 		}
-	}
-	
-	public boolean isUnsatisfiableCompare(CompareConstraint compareConstraint) throws TypeAnalysisException {
-		return this.handleMatchResult(this.unsatisfiableCompareMatcher.getAllMatches(compareConstraint)) != null;
-	}
-	
-	public boolean isTautologycCompare(CompareConstraint compareConstraint) throws TypeAnalysisException {
-		return this.handleMatchResult(this.tautologycCompareMatcher.getAllMatches(compareConstraint)) != null;
 	}
 
 	@Override
@@ -46,5 +38,13 @@ public class TypeAnalisysInCompare extends QueryAnalisys{
 	protected void releaseMatchers() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public boolean isUnsatisfiableCompare(CompareConstraint compareConstraint) throws TypeAnalysisException {
+		return false;//this.handleMatchResult(this.unsatisfiableCompareMatcher.getAllMatches(compareConstraint)) != null;
+	}
+	
+	public boolean isTautologycCompare(CompareConstraint compareConstraint) throws TypeAnalysisException {
+		return false;//this.handleMatchResult(this.tautologycCompareMatcher.getAllMatches(compareConstraint)) != null;
 	}
 }

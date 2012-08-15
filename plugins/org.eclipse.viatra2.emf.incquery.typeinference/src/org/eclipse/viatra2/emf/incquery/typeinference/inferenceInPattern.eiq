@@ -50,11 +50,11 @@ import "http://www.eclipse.org/emf/2002/Ecore"
  * @param variable A variable that supposed to be a parameter.
  * @param class The type of the parameter.
  */
-@QueryExplorer(display = false) pattern TypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
+@QueryExplorer(display = true) pattern TypeOfParameterOfPattern(pat:Pattern, variable:Variable, class:EClassifier) =
 {
 	find compatibleTypeOfParameterOfPattern(pat, variable, class);
 	neg find haveMoreSpecificType(pat, variable, class);
-	neg find tooGeneralTypeOfVariableInBody(pat,_,variable);
+	//neg find tooGeneralTypeOfVariableInBody(pat,_,variable);
 	neg find UnsatisfiableTypeConstrainInPatternBody(pat,_,variable);
 }
 
@@ -83,9 +83,11 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 /**
  * There isn't any type that defines the values of the variable.
  */
-@QueryExplorer(display = false) pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
+@QueryExplorer(display = true) pattern tooGeneralTypeOfPatternParameter(pat:Pattern, variable:Variable) =
 {
+	Pattern.parameters(pat,variable);
 	neg find TypeOfParameterOfPattern(pat,variable,_);
+	neg find UnsatisfiableTypeOfPatternParameter(pat,variable);
 }
 
 ////////////////////////////////////////////////////////////////////

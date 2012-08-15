@@ -103,7 +103,7 @@ abstract class PatternModelTypeInference extends PatternModelTraverser{
 	
 	def void writeTooGeneralTypeInParameter(Pattern pattern, Variable variable)
 	{
-		val result = this.typeErrorReason.getReasonOfTooGeneralParameter(pattern, variable)
+		val result = this.typeErrorReason.getReasonOfTooGeneralParameter(variable)
 		if(result!=null) writeTooGeneralTypeInParameter(result,pattern,variable)
 		else writeTooGeneralTypeInParameterNoConstraint(pattern, variable)
 	}

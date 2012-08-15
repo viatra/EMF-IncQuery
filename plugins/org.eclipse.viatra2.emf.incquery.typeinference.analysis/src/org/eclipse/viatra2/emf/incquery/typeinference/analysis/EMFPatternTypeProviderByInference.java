@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
@@ -26,13 +25,18 @@ public class EMFPatternTypeProviderByInference extends
 		do {
 			object = object.eContainer();
 		} while (!(object instanceof PatternModel));
-		//test
-		Resource resource = ((PatternModel) object).eResource();
-		System.out.println("PM: "+object +"\n\t"+resource);
-		for(EObject element : resource.getContents())
-			System.out.println("\t\t"+element);
-		//test
 		return (PatternModel) object;
+	}
+	
+	public static PatternBody getPatternBody(EObject object)
+	{
+		while(!(object instanceof PatternBody))
+		{
+			EObject object2 = object.eContainer();
+			if(object2 == null) return null;
+			else object = object2;
+		}
+		return (PatternBody) object;
 	}
 	
 	private String getUri(PatternModel patternModel)
@@ -43,34 +47,29 @@ public class EMFPatternTypeProviderByInference extends
 	private synchronized TypeAnalysis getTypeAnalysis(EObject object) {
 		PatternModel patternModel = getPatternModel(object);
 		
-		System.out.println("Thread: " + Thread.currentThread().getId());
-		
 		if (map.get(getUri(patternModel)) != null) {
 			TypeAnalysis typeAnalysis = map.get(getUri(patternModel));
-			System.out.println("----- Giving: existing TypeAnalysis("
-					+ typeAnalysis.hashCode() + ") for "
-					+ patternModel.getPackageName());
 			return typeAnalysis;
 		} else {
-			System.out.println("----- Trying to create new TypeAnalysis...");
 			TypeAnalysis typeAnalysis = null;
 			try {
 				typeAnalysis = new TypeAnalysis(patternModel);
 			} catch (TypeAnalysisException e) {
-				System.out.println("----- But it failed.");
-				return null;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			map.put(getUri(patternModel), typeAnalysis);
-			System.out.println("----- Created and giving: TypeAnalysis("
-					+ typeAnalysis.hashCode() + ") for "
-					+ patternModel.getPackageName());
 			return typeAnalysis;
 		}
-		 
 	}
 	
 	@Override
 	public synchronized boolean canResolveEasily(Variable variable) {
+		return getTypeAnalysis(variable).isCacheValid();
+	}
+	
+	@Override
+	public synchronized boolean canResolveEasily(PatternBody body, Variable variable) {
 		return getTypeAnalysis(variable).isCacheValid();
 	}
 
@@ -93,18 +92,17 @@ public class EMFPatternTypeProviderByInference extends
 			return null;
 		else return this.typeReference(type.getInstanceClass(), variable);
 	}
-	
-	@Override
-	public synchronized boolean canResolveEasily(PatternBody body, Variable variable) {
-		return getTypeAnalysis(variable).isCacheValid();
-	}
 
 	@Override
 	public synchronized JvmTypeReference resolve(Variable variable) {
 		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
 		EClassifier type = null;
+		PatternBody possibleBody = getPatternBody(variable); 
 		try {
-			type = typeAnalysis.getTypeOfParameter(variable);
+			if(possibleBody!=null)
+				type = typeAnalysis.getTypeOfVariableInBody(possibleBody, variable);
+			else
+				type = typeAnalysis.getTypeOfParameter(variable);
 		} catch (TypeAnalysisException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

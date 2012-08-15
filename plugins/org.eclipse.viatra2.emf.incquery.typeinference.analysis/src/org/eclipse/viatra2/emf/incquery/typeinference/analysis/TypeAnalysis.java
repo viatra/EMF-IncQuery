@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatch;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatcher;
@@ -15,6 +14,7 @@ import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofvariablein
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofvariableinbody.TooGeneralTypeOfVariableInBodyMatcher;
 import org.eclipse.viatra2.emf.incquery.typeinference.typeofparameterofpattern.TypeOfParameterOfPatternMatch;
 import org.eclipse.viatra2.emf.incquery.typeinference.typeofparameterofpattern.TypeOfParameterOfPatternMatcher;
+import org.eclipse.viatra2.emf.incquery.typeinference.typeofparameterofpattern.TypeOfParameterOfPatternProcessor;
 import org.eclipse.viatra2.emf.incquery.typeinference.typeofvariableinbody.TypeOfVariableInBodyMatch;
 import org.eclipse.viatra2.emf.incquery.typeinference.typeofvariableinbody.TypeOfVariableInBodyMatcher;
 import org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeconstraininpatternbody.UnsatisfiableTypeConstrainInPatternBodyMatch;
@@ -26,7 +26,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
-public class TypeAnalysis extends QueryAnalisys{
+public class TypeAnalysis extends QueryAnalysisOnPattern{
 	
 	Map<String,EClassifier> typeOfVariableInBody = new HashMap<String, EClassifier>();
 	Set<String> unsatisfiableTypeConstrainInPatternBody = new HashSet<String>();
@@ -46,23 +46,6 @@ public class TypeAnalysis extends QueryAnalisys{
 		super(patternModel);
 	}
 	
-	private String getParameterID(Variable parameter)
-	{
-		Pattern p = (Pattern) parameter.eContainer();
-		PatternModel pm = (PatternModel) p.eContainer();
-		Resource r = pm.eResource();
-		return r.getURI()+"/"+pm.getPackageName()+"."+p.getName()+parameter.getName();
-	}
-	
-	private String getVariableInBodyID(Variable variable,PatternBody body)
-	{
-		Pattern p = (Pattern) body.eContainer();
-		int bodyCout = p.getBodies().indexOf(body)+1;
-		PatternModel pm = (PatternModel) p.eContainer();
-		Resource r = pm.eResource();
-		return r.getURI()+"/"+pm.getPackageName()+"."+p.getName()+bodyCout+variable.getName();
-	}
-	
 	@Override
 	protected void initMatchers() throws TypeAnalysisException {
 		try {
@@ -71,7 +54,7 @@ public class TypeAnalysis extends QueryAnalisys{
 			tooGeneralTypeOfVariableInBodyMatcher = new TooGeneralTypeOfVariableInBodyMatcher(resourceSet);
 			typeOfParameterOfPatternMatcher = new TypeOfParameterOfPatternMatcher(resourceSet);
 			unsatisfiableTypeOfPatternParameterMatcher = new UnsatisfiableTypeOfPatternParameterMatcher(resourceSet);
-			tooGeneralTypeOfPatternParameterMatcher = new TooGeneralTypeOfPatternParameterMatcher(resourceSet);
+			tooGeneralTypeOfPatternParameterMatcher = new TooGeneralTypeOfPatternParameterMatcher(resourceSet);	
 		} catch (IncQueryException e) {
 			throw new TypeAnalysisException("The matchers can not be created");
 		}
@@ -127,8 +110,6 @@ public class TypeAnalysis extends QueryAnalisys{
 	
 	public synchronized EClassifier getTypeOfParameter(Variable parameter) throws TypeAnalysisException{
 		this.validateCache();
-		for(Entry<String, EClassifier> entry : this.typeOfParameterOfPattern.entrySet())
-			System.out.println("\tentry: " + entry.getKey() + " > " +entry.getValue());
 		return this.typeOfParameterOfPattern.get(getParameterID(parameter));
 	}
 	

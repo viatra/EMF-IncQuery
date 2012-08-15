@@ -143,7 +143,7 @@ pattern nextTailOfPathExpression(a:PathExpressionElement, b:PathExpressionElemen
  * @param variable A variable used in the pattern.
  * @param class Some constraints ensures that the variable must be this type.
  */
-@QueryExplorer(display = false) pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier, from) =
+@QueryExplorer(display = true) pattern ClassConstrainInPatternBody(pat:Pattern, body:PatternBody, variable:Variable, class:EClassifier, from) =
 {
 	Pattern.bodies(pat,body);
 	find ClassConstrainInParameters(pat,variable,class,from);

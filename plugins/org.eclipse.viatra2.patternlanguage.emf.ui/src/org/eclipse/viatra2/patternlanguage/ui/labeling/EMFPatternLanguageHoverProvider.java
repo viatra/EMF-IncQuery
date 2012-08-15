@@ -39,17 +39,6 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 	@Inject
 	ITypeProvider typeProvider;
 	
-	private PatternBody getBody(VariableReference variableReference)
-	{
-		EObject object = variableReference;
-		do
-		{
-			object = object.eContainer();
-		}
-		while(!(object instanceof PatternBody));
-		return (PatternBody) object;
-	}
-	
 	protected boolean getTypeFast(Variable parameter)
 	{
 		if(this.typeProvider instanceof EMFPatternTypeProvider) return ((EMFPatternTypeProvider)(this.typeProvider)).canResolveEasily(parameter);
@@ -93,46 +82,44 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 							.getEcorePackage().eResource().getURI().toString());
 			} 
 		}
-		else if(objectToView instanceof Variable)
+		boolean isVariable = objectToView instanceof Variable;
+		boolean isVariableRefence = objectToView instanceof VariableReference;
+		if(isVariable || isVariableRefence)
 		{
-			Variable variable = (Variable) objectToView;
-			if(this.getTypeFast(variable))
+			Variable variable;
+			if(isVariable)
+				variable = (Variable) objectToView;
+			else
 			{
+				VariableReference variableReference = (VariableReference) objectToView;
+				variable = variableReference.getVariable();
+			}
+			PatternBody body = EMFPatternTypeProviderByInference.getPatternBody(objectToView);
+			if(body == null)
+			{
+				if(!this.getTypeFast(variable))
+					return String.format("Infering type of parameter <b>%s</b>...",variable.getName());
 				JvmTypeReference type = this.getType(variable);
 				String typeString =
 					type!=null ?
-						String.format("%s -<br/>%s",
-								type.getSimpleName(),
-								type.getQualifiedName()) :
+						String.format("%s -<br/>%s",type.getSimpleName(),type.getQualifiedName()) :
 						"unknown";
 				return String.format("parameter <b>%s: %s</b>",
-					variable.getName(),
-					typeString);
+					variable.getName(),	typeString);
 			}
-			else return String.format("Infering type of parameter <b>%s</b>...",variable.getName());
-		}
-		else if(objectToView instanceof VariableReference)
-		{
-			VariableReference variableReference = (VariableReference) objectToView;
-			PatternBody body = getBody(variableReference);
-			Pattern pat = (Pattern) body.eContainer();
-			int bodyCount = pat.getBodies().indexOf(body) + 1;
-			Variable variable = variableReference.getVariable();
-			if(this.getTypeFast(body, variable))
+			else
 			{
+				Pattern pat = (Pattern) body.eContainer();
+				int bodyCount = pat.getBodies().indexOf(body) + 1;
+				if(!this.getTypeFast(body, variable))
+					String.format("Infering type of variable <b>%s</b> in body #%s...",variable.getName(),bodyCount);
 				JvmTypeReference type = this.getType(body,variable);
-				String typeString =
-						type!=null ?
-							String.format("%s -<br/>%s",
-								type.getSimpleName(),
-								type.getQualifiedName()) :
-							"unknown";
+				String typeString =	type!=null ?
+						String.format("%s -<br/>%s", type.getSimpleName(),	type.getQualifiedName()) :
+						"unknown";
 				return String.format("variable in #%s body <b>%s: %s</b>",
-					bodyCount,
-					variable.getName(),
-					typeString);
+					bodyCount,	variable.getName(),	typeString);
 			}
-			else return String.format("Infering type of variable <b>%s</b> in body #%s...",variable.getName(),bodyCount);
 		}
 		return super.getHoverInfoAsHtml(call, objectToView, hoverRegion);
 	}
