@@ -9,7 +9,7 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.base.itc.test;
+package org.eclipse.viatra2.emf.incquery.base.itc.test.counting;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,13 +18,12 @@ import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.TcRelationGenerator;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.junit.Test;
 
-public class CountingTestCase {
+public class CountingCompleteGraphTestCase {
     
     @Test
     public void testResult() {
-    	
     	TcRelationGenerator<Integer> gen = null;
-		int nodeCount = 4;
+		int nodeCount = 10;
 		Graph<Integer> g = new Graph<Integer>();
 		CountingAlg<Integer> ca = new CountingAlg<Integer>(g);
 		
@@ -37,9 +36,7 @@ public class CountingTestCase {
 			for (int j = 0;j<nodeCount;j++) {
 				if (i < j) {
 					g.insertEdge(i, j);
-					
-					gen = new TcRelationGenerator<Integer>(g);
-					
+					gen = new TcRelationGenerator<Integer>(g);				
 					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
@@ -48,10 +45,8 @@ public class CountingTestCase {
 		for (int i = 0;i<nodeCount;i++) {
 			for (int j = 0;j<nodeCount;j++) {
 				if (i < j) {
-					g.deleteEdge(i, j);
-					
-					gen = new TcRelationGenerator<Integer>(g);
-					
+					g.deleteEdge(i, j);					
+					gen = new TcRelationGenerator<Integer>(g);				
 					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
