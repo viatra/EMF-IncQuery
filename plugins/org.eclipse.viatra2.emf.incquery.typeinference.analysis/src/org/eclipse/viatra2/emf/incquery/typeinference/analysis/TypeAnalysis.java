@@ -94,32 +94,32 @@ public class TypeAnalysis extends QueryAnalysisOnPattern{
 	}
 	
 	public synchronized EClassifier getTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
-		this.validateCache();
+		this.validateCache(variable);
 		return this.typeOfVariableInBody.get(getVariableInBodyID(variable, body));
 	}
 	
 	public synchronized boolean isUnsatisfiableTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
-		this.validateCache();
+		this.validateCache(variable);
 		return this.unsatisfiableTypeConstrainInPatternBody.contains(getVariableInBodyID(variable, body));
 	}
 	
 	public synchronized boolean isTooGeneralTypeOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException{
-		this.validateCache();
+		this.validateCache(variable);
 		return this.tooGeneralTypeOfVariableInBody.contains(getVariableInBodyID(variable, body));
 	}
 	
 	public synchronized EClassifier getTypeOfParameter(Variable parameter) throws TypeAnalysisException{
-		this.validateCache();
+		this.validateCache(parameter);
 		return this.typeOfParameterOfPattern.get(getParameterID(parameter));
 	}
 	
 	public synchronized boolean isUnsatisfiableTypeOfParameter(Variable parameter) throws TypeAnalysisException {
-		this.validateCache();
+		this.validateCache(parameter);
 		return this.unsatisfiableTypeOfPatternParameter.contains(getParameterID(parameter));
 	}
 	
 	public synchronized boolean isTooGeneralTypeOfParameter(Variable parameter) throws TypeAnalysisException {
-		this.validateCache();
+		this.validateCache(parameter);
 		return this.tooGeneralTypeOfPatternParameter.contains(getParameterID(parameter));
 	}
 }

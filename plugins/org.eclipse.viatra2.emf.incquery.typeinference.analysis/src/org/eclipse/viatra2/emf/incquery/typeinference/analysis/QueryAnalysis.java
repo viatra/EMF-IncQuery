@@ -40,46 +40,52 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 	public synchronized void notifyChanged(Notification notification) {
 		if(this.cacheValid && notification.getOldValue() != notification.getNewValue() && notification.getEventType()!=Notification.RESOLVE)
 		{
-			System.out.println("Notification to invalidate: " + notification);
+			System.out.println("[x] ("+Thread.currentThread().getId()+") invalidate: " + notification);
 			this.cacheValid=false;	
 		}
 		else
-			System.out.println("Notification not interesting: " + notification);
+			System.out.println("["+(this.isCacheValid()?" ":".")+"] ("+Thread.currentThread().getId()+") not interesting: " + notification);
 		super.notifyChanged(notification);
 	}
-	
-	
 	
 	protected abstract void initMatchers() throws TypeAnalysisException;
 	protected abstract void getMaches();
 	protected abstract void releaseMatchers();
 	
-	protected void beforeValidation() {};
+	protected void beforeValidation(ResourceSet resourceSet2) {};
 	
-	boolean computing = false;
+	//boolean computing = false;
 	int validationRequests = 0;
 	
-	protected synchronized void validateCache() throws TypeAnalysisException
+	protected synchronized void validateCache(EObject object) throws TypeAnalysisException
 	{
-		synchronized (resourceSet) {
-			int thisRequest = ++validationRequests;
-			System.out.println(thisRequest+" Thread asks to validate: "
-					+ Thread.currentThread().getId()
-					+ " where tha cache is valid: " + this.cacheValid);
-			this.beforeValidation();
-			if (!cacheValid && !computing) {
-				computing = true;
+		//ResourceSet resourceSet = object.eResource().getResourceSet();
+		int thisRequest = ++validationRequests;
+		System.out.println("Call " + thisRequest+": Thread asks to validate: "
+			+ Thread.currentThread().getId()
+			+ " where tha cache is valid: " + this.cacheValid);
+		
+		if (!cacheValid/* && !computing*/) {
+			this.beforeValidation(resourceSet);
+			if (!cacheValid/* && !computing*/) {
+				System.out.println("Getting matches!!!");
+				this.cacheValid=true;
 				initMatchers();
-				computing = false;
 				getMaches();
 				releaseMatchers();
-				this.cacheValid = true;
 				System.out.println("Matches are recalculated!!!");
+				if(!this.cacheValid)
+				{
+					System.out.println("!!! Inefficiency");
+					this.validateCache(object);
+				}
 			}
-			System.out.println(thisRequest+" Thread is answered: "
-					+ Thread.currentThread().getId()
-					+ " where tha cache is valid: " + this.cacheValid);
 		}
+		
+		
+		System.out.println("Call " + thisRequest+": Thread got answer to the validation requivest: "
+				+ Thread.currentThread().getId()
+				+ " where tha cache is valid: " + this.cacheValid);
 	}
 
 	public boolean isCacheValid() {

@@ -100,19 +100,48 @@ public class EMFPatternTypeProviderByInference extends
 		PatternBody possibleBody = getPatternBody(variable); 
 		try {
 			if(possibleBody!=null)
-				type = typeAnalysis.getTypeOfVariableInBody(possibleBody, variable);
+			{
+				return resolve(possibleBody,variable);
+			}
 			else
+			{
 				type = typeAnalysis.getTypeOfParameter(variable);
+				System.out.println(">>> Inferred: parameter " + variable + " > " + (type!=null?type.getName():"null"));
+				if (type == null)
+					return null;
+				else
+					return this.typeReference(type.getInstanceClass(), variable);
+			}
+		} catch (TypeAnalysisException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public Boolean isUnsatisfiableVariable(PatternBody body, Variable variable)
+	{
+		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
+		Boolean ret = null;
+		try {
+			ret = typeAnalysis.isUnsatisfiableTypeOfVariableInBody(body, variable);
 		} catch (TypeAnalysisException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		System.out.println(">>> Inferred: parameter " + variable + " > " + (type!=null?type.getName():"null"));
-
-		if (type == null)
-			return null;
-		else
-			return this.typeReference(type.getInstanceClass(), variable);
+		return ret;
+	}
+	
+	public Boolean isTooGeneralVariable(PatternBody body, Variable variable)
+	{
+		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
+		Boolean ret = null;
+		try {
+			ret = typeAnalysis.isTooGeneralTypeOfVariableInBody(body, variable);
+		} catch (TypeAnalysisException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }

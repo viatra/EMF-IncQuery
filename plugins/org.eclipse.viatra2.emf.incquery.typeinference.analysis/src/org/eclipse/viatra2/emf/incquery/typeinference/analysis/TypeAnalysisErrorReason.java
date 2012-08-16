@@ -114,23 +114,23 @@ public class TypeAnalysisErrorReason extends QueryAnalysisOnPattern{
 	}
 	
 	public synchronized List<TypeReason<Object>> get2ReasonOftUnsatisfiabilityOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException {
-		this.validateCache();
+		this.validateCache(variable);
 		return this.unsatisfiableTypeConstrainInPatternBodyReason2.get(this.getVariableInBodyID(variable, body));
 	}
 	
 	public synchronized List<TypeReason<Object>> get3ReasonOftUnsatisfiabilityOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException {
-		this.validateCache();
+		this.validateCache(variable);
 		return this.unsatisfiableTypeConstrainInPatternBodyReason3.get(this.getVariableInBodyID(variable, body));
 	}
 	
 	public synchronized Set<TypeReason<Object>> getNReasonOftUnsatisfiabilityOfVariableInBody(PatternBody body, Variable variable) throws TypeAnalysisException {
-		this.validateCache();
+		this.validateCache(variable);
 		return this.classConstrainInPatternBody.get(this.getVariableInBodyID(variable, body));
 	}
 	
 	public synchronized List<TypeReason<PatternBody>> getReasonOfTooGeneralParameter(Variable parameter) throws TypeAnalysisException
 	{
-		this.validateCache();
+		this.validateCache(parameter);
 		return this.tooGeneralTypeOfPatternParameterReason2.get(this.getParameterID(parameter));
 	}
 }
