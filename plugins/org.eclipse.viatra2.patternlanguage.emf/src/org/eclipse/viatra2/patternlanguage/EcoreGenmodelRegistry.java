@@ -12,6 +12,7 @@ package org.eclipse.viatra2.patternlanguage;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
@@ -31,8 +32,11 @@ public class EcoreGenmodelRegistry {
 	private static final String URI_ATTRIBUTE = "uri";
 	private Map<String, String> genmodelUriMap = Maps.newHashMap();
 	private Map<String, GenPackage> genpackageMap = Maps.newHashMap();
-
-	public EcoreGenmodelRegistry() {
+	private Logger logger;
+	
+	public EcoreGenmodelRegistry(Logger logger) {
+		this.logger = logger;
+		
 		if (Platform.getExtensionRegistry() == null) {
 			return;
 		}
@@ -71,21 +75,27 @@ public class EcoreGenmodelRegistry {
 	}
 	
 	private GenPackage loadGenPackage(String nsURI, String genmodelUri, ResourceSet set) {
-		URI uri = URI.createURI(genmodelUri);
-		if (uri.isRelative()) {
-			uri = URI.createPlatformPluginURI(genmodelUri, true);
-		}
-		Resource resource = set.getResource(uri, true);
-		TreeIterator<EObject> it =  resource.getAllContents();
-		while (it.hasNext()) {
-			EObject object = it.next();
-			if (object instanceof GenPackage) {
-				if (((GenPackage) object).getNSURI().equals(nsURI)) {
-					return (GenPackage) object;
-				} else if (object instanceof GenModel) {
-					it.prune();
+		try {
+			URI uri = URI.createURI(genmodelUri);
+			if (uri.isRelative()) {
+				uri = URI.createPlatformPluginURI(genmodelUri, true);
+			}
+			Resource resource = set.getResource(uri, true);
+			TreeIterator<EObject> it =  resource.getAllContents();
+			while (it.hasNext()) {
+				EObject object = it.next();
+				if (object instanceof GenPackage) {
+					if (((GenPackage) object).getNSURI().equals(nsURI)) {
+						return (GenPackage) object;
+					} else if (object instanceof GenModel) {
+						it.prune();
+					}
 				}
 			}
+		} catch (RuntimeException ex) {
+			logger.error(
+					"Error while retrieving genmodel of EPackage " + nsURI
+					+ " from location: " + genmodelUri, ex);
 		}
 		return null;
 	}

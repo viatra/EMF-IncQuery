@@ -29,7 +29,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 
  *         Mutexes: externalMessageLock - enlisting messages into and retrieving from the external message queue
  */
-public class ReteContainer {
+public final class ReteContainer {
 
 	protected Thread consumerThread = null;
 	protected boolean killed = false;
@@ -613,5 +613,6 @@ public class ReteContainer {
 		sb.append("]]] of " + network);		
 		return sb.toString();
 	}
+
 
 }

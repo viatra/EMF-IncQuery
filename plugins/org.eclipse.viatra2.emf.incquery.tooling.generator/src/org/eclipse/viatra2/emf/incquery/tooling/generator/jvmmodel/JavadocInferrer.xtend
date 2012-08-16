@@ -42,7 +42,10 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
+		<p>Original source:
+		<code><pre>
 		«pattern.serializeToJavadoc»
+		</pre></code>
 		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»

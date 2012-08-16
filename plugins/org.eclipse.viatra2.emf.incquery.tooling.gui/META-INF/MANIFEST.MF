@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graphical User Interface of the EMF-IncQuery project
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.tooling.gui;singleton:=true
-Bundle-Version: 0.6.0.qualifier
+Bundle-Version: 0.6.5.qualifier
 Bundle-Vendor: Zoltan Ujhelyi/FTSRG
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui,

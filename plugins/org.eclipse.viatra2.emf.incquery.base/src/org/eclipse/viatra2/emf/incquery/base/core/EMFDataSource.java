@@ -28,12 +28,10 @@ import org.eclipse.emf.ecore.util.EObjectEList;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphObserver;
 
-public abstract class EMFDataSource {
+public abstract class EMFDataSource implements IGraphDataSource<EObject> {
 
-	public static ArrayList<IGraphObserver<EObject>> observers = new ArrayList<IGraphObserver<EObject>>();;
-	public static Set<EReference> refToObserv;
-	
-	private static abstract class ForNotifier implements IGraphDataSource<EObject> {
+
+	private static abstract class ForNotifier extends EMFDataSource {
 		
 		private static final long serialVersionUID = -1156614160439765303L;
 		protected Notifier root;
@@ -41,29 +39,8 @@ public abstract class EMFDataSource {
 		public ForNotifier(Notifier root, Set<EReference> _refToObserv) {
 			this.root = root;
 			refToObserv = _refToObserv;
-		}
+		}		
 		
-		@Override
-		public void attachObserver(IGraphObserver<EObject> go) {
-			observers.add(go);
-		}
-
-		@Override
-		public void detachObserver(IGraphObserver<EObject> go) {
-			observers.remove(go);
-		}
-		
-		@Override
-		public ArrayList<EObject> getTargetNodes(EObject source) {
-			ArrayList<EObject> targetNodes = new ArrayList<EObject>();
-			
-			for (EReference ref : source.eClass().getEAllReferences()) {
-				if (refToObserv.contains(ref)) {
-					collectContents(source.eGet(ref), targetNodes);
-				}
-			}
-			return targetNodes;
-		}
 	}
 	
 	public static class ForEObject extends ForNotifier {
@@ -147,4 +124,53 @@ public abstract class EMFDataSource {
 			contents.add((EObject) obj);
 		}
 	}
+	
+	ArrayList<IGraphObserver<EObject>> observers = new ArrayList<IGraphObserver<EObject>>();;
+	Set<EReference> refToObserv;
+	
+	@Override
+	public void attachObserver(IGraphObserver<EObject> go) {
+		observers.add(go);
+	}
+
+	@Override
+	public void detachObserver(IGraphObserver<EObject> go) {
+		observers.remove(go);
+	}		
+	
+	public void notifyEdgeInserted(EObject source, EObject target) {
+		for (IGraphObserver<EObject> o : observers) {
+			o.edgeInserted(source, target);
+		}
+	}
+
+	public void notifyEdgeDeleted(EObject source, EObject target) {
+		for (IGraphObserver<EObject> o : observers) {
+			o.edgeDeleted(source, target);
+		}
+	}
+
+	public void notifyNodeInserted(EObject node) {
+		for (IGraphObserver<EObject> o : observers) {
+			o.nodeInserted(node);
+		}
+	}
+
+	public void notifyNodeDeleted(EObject node) {
+		for (IGraphObserver<EObject> o : observers) {
+			o.nodeDeleted(node);
+		}
+	}
+	
+	@Override
+	public ArrayList<EObject> getTargetNodes(EObject source) {
+		ArrayList<EObject> targetNodes = new ArrayList<EObject>();
+		
+		for (EReference ref : source.eClass().getEAllReferences()) {
+			if (refToObserv.contains(ref)) {
+				collectContents(source.eGet(ref), targetNodes);
+			}
+		}
+		return targetNodes;
+	}	
 }

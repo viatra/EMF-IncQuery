@@ -15,10 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
@@ -42,6 +44,9 @@ public class Network {
 	protected Lock updateLock = null; // grab during normal update operations
 	protected Lock structuralChangeLock = null; // grab if the network structure is to
 											// be changed
+	
+	protected IPatternMatcherRuntimeContext<?> context;
+
 
 	/**
 	 * @param threads the number of threads to operate the network with; 
@@ -49,12 +54,13 @@ public class Network {
 	 * 	1 starts an asynchronous thread to operate the RETE net, 
 	 * 	>1 uses multiple RETE containers.
 	 */
-	public Network(int threads) {
+	public Network(int threads, IPatternMatcherRuntimeContext<?> context) {
 		super();
 		this.threads = threads;
+		this.context = context;
 		
 		containers = new ArrayList<ReteContainer>();
-		firstContainer = (threads > 1) ? Options.firstFreeContainer : 0;
+		firstContainer = (threads > 1) ? Options.firstFreeContainer : 0; // NOPMD
 		nextContainer = firstContainer;
 
 		if (threads > 0) {
@@ -154,9 +160,12 @@ public class Network {
 			Direction direction, Tuple updateElement) {
 		if (threads > 0)
 		{
-			updateLock.lock();
-			sendUpdate(receiver, direction, updateElement);
-			updateLock.unlock();
+			try {
+				updateLock.lock();
+				sendUpdate(receiver, direction, updateElement);
+			} finally {
+				updateLock.unlock();
+			}
 		}
 		else {
 			sendUpdateSingleThreaded(receiver, direction, updateElement);
@@ -223,9 +232,12 @@ public class Network {
 	 */
 	public void connectRemoteNodes(Address<? extends Supplier> supplier,
 			Address<? extends Receiver> receiver, boolean synchronise) {
-		if (threads > 0) structuralChangeLock.lock();
-		receiver.getContainer().connectRemoteNodes(supplier, receiver, synchronise);
-		if (threads > 0) structuralChangeLock.unlock();
+		try {
+			if (threads > 0) structuralChangeLock.lock();
+			receiver.getContainer().connectRemoteNodes(supplier, receiver, synchronise);
+		} finally {
+			if (threads > 0) structuralChangeLock.unlock();
+		}
 	}
 
 	/**
@@ -241,9 +253,12 @@ public class Network {
 	 */
 	public void disconnectRemoteNodes(Address<? extends Supplier> supplier,
 			Address<? extends Receiver> receiver, boolean desynchronise) {
-		if (threads > 0) structuralChangeLock.lock();
-		receiver.getContainer().disconnectRemoteNodes(supplier, receiver, desynchronise);
-		if (threads > 0) structuralChangeLock.unlock();
+		try {
+			if (threads > 0) structuralChangeLock.lock();
+			receiver.getContainer().disconnectRemoteNodes(supplier, receiver, desynchronise);
+		} finally {
+			if (threads > 0) structuralChangeLock.unlock();
+		}
 	}
 
 	/**
@@ -264,12 +279,9 @@ public class Network {
 	void reportLocalUpdateTermination(ReteContainer reportingContainer,
 			long clock, Map<ReteContainer, Long> localTerminationCriteria) {
 		synchronized (globalTerminationCriteria) {
-			for (ReteContainer affectedContainer : localTerminationCriteria
-					.keySet()) {
-				long newCriterion = localTerminationCriteria
-						.get(affectedContainer);
-
-				terminationCriterion(affectedContainer, newCriterion);
+			for (Entry<ReteContainer,Long> criterion : 
+					localTerminationCriteria.entrySet()) {
+				terminationCriterion(criterion.getKey(), criterion.getValue());
 			}
 
 			reportedClocks.put(reportingContainer, clock);
@@ -359,5 +371,10 @@ public class Network {
 	public Lock getStructuralChangeLock() {
 		return structuralChangeLock;
 	}
+
+	public IPatternMatcherRuntimeContext<?> getContext() {
+		return context;
+	}	
+	
 
 }

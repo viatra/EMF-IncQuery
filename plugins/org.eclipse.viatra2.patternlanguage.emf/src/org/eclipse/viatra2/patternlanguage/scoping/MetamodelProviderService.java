@@ -43,9 +43,11 @@ public class MetamodelProviderService implements IMetamodelProvider {
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
 	
-	private EcoreGenmodelRegistry genmodelRegistry = new EcoreGenmodelRegistry();
+	private EcoreGenmodelRegistry genmodelRegistry; 
 
 	protected EcoreGenmodelRegistry getGenmodelRegistry() {
+		if (genmodelRegistry == null)
+			genmodelRegistry = new EcoreGenmodelRegistry(logger);
 		return genmodelRegistry;
 	}
 	
@@ -123,6 +125,6 @@ public class MetamodelProviderService implements IMetamodelProvider {
 
 	@Override
 	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-		return genmodelRegistry.findGenPackage(ePackage.getNsURI(), set) != null;
+		return getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
 	}
 }

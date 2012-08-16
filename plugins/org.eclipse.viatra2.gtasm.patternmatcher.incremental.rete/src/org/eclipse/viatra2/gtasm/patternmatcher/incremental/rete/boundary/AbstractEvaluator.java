@@ -31,7 +31,7 @@ public abstract class AbstractEvaluator {
 	
 	public abstract Object doEvaluate(Tuple tuple) throws Throwable;
 	
-	Object evaluate(Tuple tuple) throws Throwable {
+	final Object evaluate(Tuple tuple) throws Throwable {
 		traces.clear();
 		return doEvaluate(tuple);
 	}

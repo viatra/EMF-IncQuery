@@ -26,15 +26,35 @@ public class LoadEiqModelHandler extends LoadModelHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		try {
-			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
-			if (file != null) {
-				loadModel(event, HandlerUtil.getActiveEditor(event), dbUtil.parseEPM(file));
-			}
-		} catch (Exception e) {
-			throw new ExecutionException("Cannot load pattern model", e);
-		}
 		
+	  try {
+      IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
+      if (file != null) {
+        loadModel(event, HandlerUtil.getActiveEditor(event), dbUtil.parseEPM(file));
+      }
+    } catch (Exception e) {
+      throw new ExecutionException("Cannot load pattern model", e);
+    }
+	  
+	  /*final ExecutionEvent myEvent = event;
+	  
+    try {
+      IEditorPart editor = HandlerUtil.getActiveEditor(event);
+      assert editor instanceof XtextEditor;
+      XtextEditor providerEditor = (XtextEditor) editor;
+      providerEditor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+        public void process(XtextResource resource) throws Exception {
+          IParseResult parseResult = resource.getParseResult();
+          if (parseResult == null)
+            return;
+          EObject rootASTElement = parseResult.getRootASTElement();
+          loadModel(myEvent, HandlerUtil.getActiveEditor(myEvent), rootASTElement.eResource().getResourceSet());
+        }
+      });
+    } catch (Exception e) {
+      e.printStackTrace();
+    }*/
+	  
 		return null;
 	}
 }

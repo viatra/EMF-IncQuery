@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.sdk.feature"
       label="EMF-IncQuery SDK feature"
-      version="0.6.0.qualifier"
+      version="0.6.5.qualifier"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 
@@ -13,6 +13,10 @@
    <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
    </copyright>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+   </url>
 
    <includes
          id="org.eclipse.viatra2.emf.incquery.runtime.feature"
@@ -60,7 +64,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.gui.source"
          download-size="0"
@@ -74,7 +78,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator.source"
          download-size="0"
@@ -88,7 +92,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-              
+
    <plugin
          id="org.eclipse.viatra2.patternlanguage.core.ui.source"
          download-size="0"
@@ -137,13 +141,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-    <plugin
+
+   <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>     
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui"
@@ -179,7 +183,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator.derived.source"
          download-size="0"

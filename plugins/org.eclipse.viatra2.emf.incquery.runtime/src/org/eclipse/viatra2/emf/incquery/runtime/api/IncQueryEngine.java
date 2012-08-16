@@ -12,6 +12,8 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
+import java.lang.ref.WeakReference;
+
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
@@ -87,6 +89,17 @@ public class IncQueryEngine {
 	 */
 	private boolean tainted = false;
 	private EngineTaintListener taintListener;
+	private static class SelfTaintListener extends EngineTaintListener {
+		WeakReference<IncQueryEngine> iqEngRef;
+		public SelfTaintListener(IncQueryEngine iqEngine) {
+			this.iqEngRef = new WeakReference<IncQueryEngine>(iqEngine);
+		}
+		@Override
+		public void engineBecameTainted() {
+			final IncQueryEngine iqEngine = iqEngRef.get();
+			iqEngine.tainted = true;
+		}
+	}
 	
 	/**
 	 * EXPERIMENTAL
@@ -136,7 +149,14 @@ public class IncQueryEngine {
 	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) throws IncQueryException {
 		if (baseIndex == null) {
 			try {
-				baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(getEmfRoot(), wildcardMode, getLogger());
+			  // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this reentrantly 
+				synchronized (this) { 
+          baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode, getLogger());
+        }
+				synchronized (this) {
+          baseIndex.addRoot(getEmfRoot());
+        }
+				
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryException(
 						"Could not initialize EMF-IncQuery base index", 
@@ -263,12 +283,7 @@ public class IncQueryEngine {
 				throw new AssertionError("Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
 			
 			// if an error is logged, the engine becomes tainted
-			taintListener = new EngineTaintListener() {
-				@Override
-				public void engineBecameTainted() {
-					tainted = true;
-				}
-			};
+			taintListener = new SelfTaintListener(this);
 			logger.addAppender(taintListener);
 		}
 		return logger;

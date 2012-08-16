@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -26,7 +29,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
@@ -34,7 +36,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegi
 /**
  * @author Abel Hegedus
  */
-public class IncqueryFeatureHelper {
+public final class IncqueryFeatureHelper {
 
 	//private static final Map<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>> sourceMap = new HashMap<EObject, Map<EStructuralFeature, IncqueryFeatureHandler>>();
 	// temporal registry for features being built
@@ -43,6 +45,8 @@ public class IncqueryFeatureHelper {
 	private static final Map<EObject, Map<EStructuralFeature,Integer>> HANDLER_REQUEST_COUNTER = new HashMap<EObject, Map<EStructuralFeature,Integer>>();
 	//private static boolean matcherInitialization = false;
 
+	private static final Map<Notifier, Map<EStructuralFeature,WeakReference<IncqueryDerivedFeature>>> FEATURE_MAP = new WeakHashMap<Notifier, Map<EStructuralFeature,WeakReference<IncqueryDerivedFeature>>>();
+	
 	/**
 	 * 
 	 */
@@ -65,7 +69,7 @@ public class IncqueryFeatureHelper {
 
 	public static IncqueryFeatureHandler createHandler(
 			EObject source, EStructuralFeature feature,
-			IMatcherFactory matcherFactory, String sourceParamName,
+			IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory, String sourceParamName,
 			String targetParamName, FeatureKind kind) {
 
 		//Map<EStructuralFeature, IncqueryFeatureHandler> featureMap;
@@ -73,7 +77,6 @@ public class IncqueryFeatureHelper {
 		//	featureMap = sourceMap.get(source);
 			// if(featureMap.containsKey(feature)) {
 			// overwriting handler
-			// TODO !!!
 			// } else {
 			// }
 		//} else {
@@ -91,11 +94,11 @@ public class IncqueryFeatureHelper {
 	 * @param matcherFactory
 	 * @param sourceParamName
 	 * @param targetParamName
-	 * @param featureMap
+	 * @param FEATURE_MAP
 	 */
 	//private static void createFeatureHandler(EObject source, EStructuralFeature feature,
 	private static IncqueryFeatureHandler createFeatureHandler(EObject source, EStructuralFeature feature,
-			IMatcherFactory matcherFactory, String sourceParamName,
+			IMatcherFactory<?> matcherFactory, String sourceParamName,
 			String targetParamName,
 			/*Map<EStructuralFeature, IncqueryFeatureHandler> featureMap,*/ FeatureKind kind, boolean keepCache) {
 		try {
@@ -121,7 +124,7 @@ public class IncqueryFeatureHelper {
 			} else {
 				counter.put(feature, 1);
 			}
-			IncQueryMatcher<IPatternMatch> matcher = null;
+			IncQueryMatcher<?> matcher = null;
 			if (!featureList.contains(feature)){
 			//if (!featureList.containsKey(feature)){
 				featureList.add(feature);
@@ -132,28 +135,7 @@ public class IncqueryFeatureHelper {
 							String.format("EMF-IncQuery can not provide the value of derived feature %s as no matcher factory was given.", feature),
 							"No matcher factory for derived feature handler!");
 				}
-				Resource eResource = source.eResource();
-				if(eResource != null) {
-					ResourceSet resourceSet = eResource.getResourceSet();
-					if(resourceSet != null) {
-						matcher = matcherFactory.getMatcher(resourceSet);
-					} else {
-						matcher = matcherFactory.getMatcher(eResource);
-						matcher.getEngine().getLogger().debug(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
-					}
-				} else {
-					matcher = matcherFactory.getMatcher(source);
-					matcher.getEngine().getLogger().debug(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
-				}
-				if(matcher == null) {
-					throw new IncQueryException(
-							String.format("Could not create matcher for pattern %d defining feature %s.", matcherFactory.getPattern(), feature),
-							"Derived feature handler could not initiate matcher.");
-				}/* else {
-					if(!featureList.containsKey(feature)) {
-						featureList.put(feature, matcher);
-					}
-				}*/
+				matcher = prepareMatcherForSource(source, feature, matcherFactory);
 			}
 			//matcher = featureList.get(feature);
 			IncqueryFeatureHandler handler = null;
@@ -183,7 +165,51 @@ public class IncqueryFeatureHelper {
 		return null;
 	}
 
-	public static EList getManyReferenceValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
+  private static IncQueryMatcher<?> prepareMatcherForSource(EObject source, EStructuralFeature feature,
+      IMatcherFactory<?> matcherFactory) throws IncQueryException {
+    IncQueryMatcher<?> matcher;
+    Resource eResource = source.eResource();
+    if(eResource != null) {
+    	ResourceSet resourceSet = eResource.getResourceSet();
+    	if(resourceSet != null) {
+    		matcher = matcherFactory.getMatcher(resourceSet);
+    	} else {
+    		matcher = matcherFactory.getMatcher(eResource);
+    		matcher.getEngine().getLogger().debug(String.format("Matcher for derived feature %1$s of %2$s initialized on resource.", feature, source));
+    	}
+    } else {
+    	matcher = matcherFactory.getMatcher(source);
+    	matcher.getEngine().getLogger().debug(String.format("Matcher for derived feature %1$s of %2$s initialized on %2$s.", feature, source));
+    }
+    if(matcher == null) {
+    	throw new IncQueryException(
+    			String.format("Could not create matcher for pattern %s defining feature %s.", matcherFactory.getPattern(), feature),
+    			"Derived feature handler could not initiate matcher.");
+    }/* else {
+    	if(!featureList.containsKey(feature)) {
+    		featureList.put(feature, matcher);
+    	}
+    }*/
+    return matcher;
+  }
+  
+  private static Notifier prepareNotifierForSource(EObject source) {
+    if(source != null) {
+      Resource eResource = source.eResource();
+      if(eResource != null) {
+        ResourceSet resourceSet = eResource.getResourceSet();
+        if(resourceSet != null) {
+          return resourceSet;
+        } else {
+          return eResource;
+        }
+      }
+    }
+    return source;
+  }
+
+	@SuppressWarnings("rawtypes")
+  public static EList getManyReferenceValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
 		if(handler != null) {
 			return handler.getManyReferenceValueAsEList();
 		} else {
@@ -193,6 +219,29 @@ public class IncqueryFeatureHelper {
 		}
 		return null;
 	}
+	
+	public static Object getSingleReferenceValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
+    if(handler != null) {
+      return handler.getSingleReferenceValue();
+    }
+    return null;
+  }
+	
+	public static int getIntValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
+	  if(handler != null) {
+      return handler.getIntValue();
+    }
+    return 0;
+	}
+	
+	public static Object getIterationValueForHandler(IncqueryFeatureHandler handler, InternalEObject source, EStructuralFeature feature) {
+	  if(handler != null) {
+	    return handler.getValueIteration();
+	  }
+	  return null;
+	}
+	
+	
 
 	/**
 	 * @param source
@@ -210,10 +259,67 @@ public class IncqueryFeatureHelper {
 	
 	public static IncqueryFeatureHandler createHandler(EObject source, EStructuralFeature feature, String patternFQN,
 			String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache) {
-		IMatcherFactory matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+		IMatcherFactory<?> matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
 		if(matcherFactory != null) {
 			return createFeatureHandler(source, feature, matcherFactory, sourceParamName, targetParamName, kind, keepCache);
 		}
 		return null;
 	}
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache) {
+	  
+	  Map<EStructuralFeature, WeakReference<IncqueryDerivedFeature>> features = FEATURE_MAP.get(notifier);
+	  if(features == null) {
+	    features = new HashMap<EStructuralFeature, WeakReference<IncqueryDerivedFeature>>();
+	    FEATURE_MAP.put(notifier, features);
+	  }
+	  WeakReference<IncqueryDerivedFeature> weakReference = features.get(feature);
+	  
+    IncqueryDerivedFeature derivedFeature = weakReference == null?null:weakReference.get();
+	  if(derivedFeature != null) {
+	    return derivedFeature;
+	  }
+	  
+	  derivedFeature = new IncqueryDerivedFeature(feature, kind, keepCache);
+	  features.put(feature, new WeakReference<IncqueryDerivedFeature>(derivedFeature));
+	  
+	  IMatcherFactory<?> matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+    if(matcherFactory != null) {
+      try {
+        IncQueryMatcher<?> matcher = matcherFactory.getMatcher(notifier);
+        derivedFeature.initialize(matcher, sourceParamName, targetParamName);
+        derivedFeature.startMonitoring();
+      } catch (IncQueryException e) {
+        IncQueryEngine.getDefaultLogger().error("Handler initialization failed", e);
+        return null;
+      }
+    }
+	  
+	  return derivedFeature;
+	}
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(Notifier notifier, EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind) {
+	  return getIncqueryDerivedFeature(notifier, feature, patternFQN, sourceParamName, targetParamName, kind, true);
+	}
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache, boolean useSourceAsNotifier) {
+	  Notifier notifier = source;
+	  if(!useSourceAsNotifier) {
+	    notifier = prepareNotifierForSource(source);
+	  }
+    return getIncqueryDerivedFeature(notifier, feature, patternFQN, sourceParamName, targetParamName, kind, keepCache);
+  }
+	
+	/*public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind, boolean useSourceAsNotifier) {
+	  return getIncqueryDerivedFeature(source, feature, patternFQN, sourceParamName, targetParamName, kind, true, useSourceAsNotifier);
+	}*/
+	
+	public static IncqueryDerivedFeature getIncqueryDerivedFeature(EObject source, EStructuralFeature feature, String patternFQN,
+      String sourceParamName, String targetParamName, FeatureKind kind) {
+    return getIncqueryDerivedFeature(source, feature, patternFQN, sourceParamName, targetParamName, kind, true, false);
+  }
 }

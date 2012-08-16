@@ -11,9 +11,8 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.test.graphs;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 
-public class Graph2 extends Graph<Integer> {
+public class Graph2 extends TestGraph<Integer> {
 
 	private static final long serialVersionUID = -970373253476554580L;
 	

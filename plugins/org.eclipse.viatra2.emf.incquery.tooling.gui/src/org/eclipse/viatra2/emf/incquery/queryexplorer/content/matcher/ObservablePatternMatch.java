@@ -62,7 +62,9 @@ public class ObservablePatternMatch {
 	public void setText(String text) {
 		this.text = text;
 		String[] properties = new String[] {"text"};
-		QueryExplorer.getInstance().getMatcherTreeViewer().update(this, properties);
+		if (QueryExplorer.getInstance() != null) {    
+		  QueryExplorer.getInstance().getMatcherTreeViewer().update(this, properties);
+		}
 	}
 
 	public String getText() {
