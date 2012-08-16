@@ -9,18 +9,16 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.base.itc.test;
+package org.eclipse.viatra2.emf.incquery.base.itc.test.dfs;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.junit.Test;
 
-public class DFSTestCase extends TestCase {
-    public DFSTestCase () {
-    }
+public class DFSCompleteGraphTestCase {
     
     @Test
     public void testResult() {
@@ -58,10 +56,6 @@ public class DFSTestCase extends TestCase {
 				}
 			}
 		}
-    }
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(DFSTestCase.class);
     }
 }
  

@@ -9,46 +9,23 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.base.itc.test;
+package org.eclipse.viatra2.emf.incquery.base.itc.test.dred;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.dred.DRedAlg;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
-import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph1;
-import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph2;
 import org.junit.Test;
 
-public class DRedTestCase extends TestCase {
-	public DRedTestCase() {
-	}
+public class DRedCompleteGraphTestCase {
 
 	@Test
-	public void testResult() {
-
-		Graph1 g1 = new Graph1();
-    	FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(g1);
-    	DRedAlg<Integer> da = new DRedAlg<Integer>(g1);
-    	//g1.detachObserver(koa);
-		g1.modify();	
-    	
-		//koa.fullGen();
-        assertEquals(da.getTcRelation(), fwa.getTcRelation());
-        
-        Graph2 g2 = new Graph2();
-    	fwa = new FloydWarshallAlg<Integer>(g2);
-    	da = new DRedAlg<Integer>(g2);
-		g2.modify();	
-    	
-		//koa.fullGen();
-		assertEquals(da.getTcRelation(), fwa.getTcRelation());
-        		
+	public void testResult() {        		
 		int nodeCount = 10;
 		Graph<Integer> g = new Graph<Integer>();
 		DFSAlg<Integer> dfsa = new DFSAlg<Integer>(g);
-		da = new DRedAlg<Integer>(g);
+		DRedAlg<Integer> da = new DRedAlg<Integer>(g);
 
 		for (int i = 0; i < nodeCount; i++) {
 			g.insertNode(i);
@@ -72,9 +49,5 @@ public class DRedTestCase extends TestCase {
 			}
 		}
 
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(DRedTestCase.class);
 	}
 }

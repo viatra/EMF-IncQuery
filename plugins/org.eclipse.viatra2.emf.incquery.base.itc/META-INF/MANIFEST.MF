@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.viatra2.emf.incquery.base.itc
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.base.itc
-Bundle-Version: 0.6.0.qualifier
+Bundle-Version: 0.6.5.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.base.itc.main.ITCActivator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
