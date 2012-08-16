@@ -9,49 +9,45 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.base.itc.test;
+package org.eclipse.viatra2.emf.incquery.base.itc.test.incscc;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.counting2.CountingAlg2;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.TcRelationGenerator;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.junit.Test;
 
-public class Counting2TestCase {
+public class IncSCCCompleteGraphTestCase {
 
 	@Test
 	public void testResult() {
-
-		TcRelationGenerator<Integer> gen = null;
-		int nodeCount = 10;
-		Graph<Integer> g = new Graph<Integer>();
-		CountingAlg2<Integer> ca = new CountingAlg2<Integer>(g);
-
+				
+		final int nodeCount = 10;
+		Graph<Integer> graph = new Graph<Integer>();
+		DFSAlg<Integer> dfsAlg = new DFSAlg<Integer>(graph);
+		IncSCCAlg<Integer> incsccAlg = new IncSCCAlg<Integer>(graph);
+		
 		for (int i = 0; i < nodeCount; i++) {
-			g.insertNode(i);
+			graph.insertNode(i);
 		}
 
-		// inserting edges
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
-				if (i < j) {
-					g.insertEdge(i, j);
-					gen = new TcRelationGenerator<Integer>(g);
-					assertEquals(gen.getTcRelation(), ca.getTcRelation());
+				if (i != j) {
+					graph.insertEdge(i, j);
+					assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
 				}
 			}
 		}
 
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
-				if (i < j) {
-					g.deleteEdge(i, j);
-					gen = new TcRelationGenerator<Integer>(g);
-					assertEquals(gen.getTcRelation(), ca.getTcRelation());
+				if (i != j) {
+					graph.deleteEdge(i, j);
+					assertTrue(incsccAlg.checkTcRelation(dfsAlg.getTcRelation()));
 				}
 			}
 		}
 	}
-
 }

@@ -9,24 +9,24 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.base.itc.test;
+package org.eclipse.viatra2.emf.incquery.base.itc.test.counting2;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.counting2.CountingAlg2;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.TcRelationGenerator;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
 import org.junit.Test;
 
-public class DFSTestCase {
-    
-    @Test
-    public void testResult() {
-    	
-    	FloydWarshallAlg<Integer> fwa = null;
+public class Counting2CompleteGraphTestCase {
+
+	@Test
+	public void testResult() {
+
+		TcRelationGenerator<Integer> gen = null;
 		int nodeCount = 10;
 		Graph<Integer> g = new Graph<Integer>();
-		DFSAlg<Integer> da = new DFSAlg<Integer>(g);
+		CountingAlg2<Integer> ca = new CountingAlg2<Integer>(g);
 
 		for (int i = 0; i < nodeCount; i++) {
 			g.insertNode(i);
@@ -35,27 +35,23 @@ public class DFSTestCase {
 		// inserting edges
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
-				if (i != j) {
+				if (i < j) {
 					g.insertEdge(i, j);
-
-					fwa = new FloydWarshallAlg<Integer>(g);
-
-					assertEquals(da.getTcRelation(), fwa.getTcRelation());
+					gen = new TcRelationGenerator<Integer>(g);
+					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
 		}
 
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
-				if (i != j) {
+				if (i < j) {
 					g.deleteEdge(i, j);
-
-					fwa = new FloydWarshallAlg<Integer>(g);
-
-					assertEquals(da.getTcRelation(), fwa.getTcRelation());
+					gen = new TcRelationGenerator<Integer>(g);
+					assertEquals(gen.getTcRelation(), ca.getTcRelation());
 				}
 			}
 		}
-    }
+	}
+
 }
- 
