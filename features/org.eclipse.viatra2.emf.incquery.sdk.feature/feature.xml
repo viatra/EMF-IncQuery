@@ -58,13 +58,6 @@
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
-         id="org.eclipse.viatra2.patternlanguage.generator.util.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
    <plugin
          id="org.eclipse.viatra2.patternlanguage.core.source"
          download-size="0"
