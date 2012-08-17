@@ -50,7 +50,7 @@ class PackageDeclarationTest {
 	@Test
 	def hierarchicPackage() {
 		val model = parseHelper.parse('
-			package hu.bme.mit.school
+			package hu.bme.mit.school;
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
 			pattern resolutionTest(Name) = {

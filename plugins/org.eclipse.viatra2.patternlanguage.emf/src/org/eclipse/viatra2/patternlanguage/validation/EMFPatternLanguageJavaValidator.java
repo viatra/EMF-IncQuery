@@ -258,10 +258,6 @@ public class EMFPatternLanguageJavaValidator extends
 			PatternBody inBody) {
 		Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesCollection = new HashMap<Variable, ClassifiedVariableReferences>();
 
-		// NOTE: This is also a work-around to fill in connections between
-		// variables and their references.
-		inBody.getVariables();
-
 		Pattern pattern = (Pattern) inBody.eContainer();
 
 		for (Variable var : pattern.getParameters()) {
