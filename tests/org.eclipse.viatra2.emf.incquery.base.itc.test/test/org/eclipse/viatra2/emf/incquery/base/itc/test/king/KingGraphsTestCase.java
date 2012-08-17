@@ -17,13 +17,15 @@ import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.king.KingAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.BaseTransitiveClosureAlgorithmTest;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.TestGraph;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+@Ignore
 @RunWith(Parameterized.class)
 public class KingGraphsTestCase extends BaseTransitiveClosureAlgorithmTest {
-    
+
 	private TestGraph<Integer> testGraph;
 	
 	public KingGraphsTestCase(TestGraph<Integer> testGraph) {

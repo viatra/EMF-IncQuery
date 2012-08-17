@@ -16,8 +16,10 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.king.KingAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class KingCompleteGraphTestCase {
     
     @Test
