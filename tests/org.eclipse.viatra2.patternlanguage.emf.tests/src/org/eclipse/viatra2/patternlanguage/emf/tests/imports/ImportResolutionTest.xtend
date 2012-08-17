@@ -51,8 +51,8 @@ class ImportResolutionTest {
 	@Test
 	def multipleImportResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage";
+			import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage";
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);

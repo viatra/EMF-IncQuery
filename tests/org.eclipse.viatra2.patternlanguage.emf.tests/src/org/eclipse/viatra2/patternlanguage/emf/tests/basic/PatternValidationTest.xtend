@@ -54,7 +54,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 	def unusedPrivatePatternValidation() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			private pattern unusedPrivatePattern(Pattern) = {
+			private pattern unusedPrivatePattern(Pattern) {
 				Pattern(Pattern);
 			}
 		')
@@ -65,7 +65,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 	def singleUseParameterValidation() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			pattern unusedPrivatePattern(_Pattern) = {
+			pattern unusedPrivatePattern(_Pattern) {
 				Pattern(_Pattern);
 			}
 		')
