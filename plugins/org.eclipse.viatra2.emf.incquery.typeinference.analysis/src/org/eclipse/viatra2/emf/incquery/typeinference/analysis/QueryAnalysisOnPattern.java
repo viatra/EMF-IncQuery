@@ -11,6 +11,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
+import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 
 public abstract class QueryAnalysisOnPattern extends QueryAnalysis<PatternModel> {
 	
@@ -58,8 +59,12 @@ public abstract class QueryAnalysisOnPattern extends QueryAnalysis<PatternModel>
 			}
 			if(element instanceof CheckConstraint)
 			{
-				System.out.println(">:( check expression " + element);
+				System.out.println(">:( check expression " + ((CheckConstraint)element).getExpression().getClass());
 				((CheckConstraint)element).getExpression().eAllContents();
+				if(((CheckConstraint)element).getExpression() instanceof XAbstractFeatureCall)
+				{
+					((XAbstractFeatureCall)((CheckConstraint)element).getExpression()).getTypeArguments();
+				}
 			}
 		}
 		System.out.println(" :) I hope the bests...");

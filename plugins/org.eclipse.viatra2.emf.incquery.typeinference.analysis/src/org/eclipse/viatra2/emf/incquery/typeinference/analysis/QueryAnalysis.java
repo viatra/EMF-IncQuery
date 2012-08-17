@@ -12,6 +12,7 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 	protected Target target;
 	protected ResourceSet resourceSet;
 	private boolean cacheValid;
+	private boolean cacheMatching;
 	
 	private ResourceSet createResourceOfQuery(Target patternModel)
 	{
@@ -24,6 +25,7 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 		resourceSet = this.createResourceOfQuery(target);
 		this.setTarget(target.eResource().getResourceSet());
 		this.cacheValid = false;
+		this.cacheMatching = false;
 		//this.bugHunter(patternModel);
 	}
 	
@@ -38,7 +40,10 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 
 	@Override
 	public synchronized void notifyChanged(Notification notification) {
-		if(this.cacheValid && notification.getOldValue() != notification.getNewValue() && notification.getEventType()!=Notification.RESOLVE)
+		if(this.cacheValid && //If the cache is invalid, the the re-invalidation is unnecessary
+		   !this.cacheMatching && //During the matching every notification is processed.
+		   notification.getOldValue() != notification.getNewValue() && //An idempotent change shouldn't invalidate the cache.
+		   notification.getEventType() != Notification.RESOLVE) // ?
 		{
 			System.out.println("[x] ("+Thread.currentThread().getId()+") invalidate: " + notification);
 			this.cacheValid=false;	
@@ -54,7 +59,6 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 	
 	protected void beforeValidation(ResourceSet resourceSet2) {};
 	
-	//boolean computing = false;
 	int validationRequests = 0;
 	
 	protected synchronized void validateCache(EObject object) throws TypeAnalysisException
@@ -69,19 +73,27 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 			this.beforeValidation(resourceSet);
 			if (!cacheValid/* && !computing*/) {
 				System.out.println("Getting matches!!!");
-				this.cacheValid=true;
+				this.cacheMatching = true;
 				initMatchers();
-				getMaches();
-				releaseMatchers();
-				System.out.println("Matches are recalculated!!!");
-				if(!this.cacheValid)
+				this.cacheMatching = false;
+				if(!cacheValid)
 				{
-					System.out.println("!!! Inefficiency");
-					this.validateCache(object);
+					this.cacheValid=true;
+					getMaches();
+					releaseMatchers();
+					System.out.println("Matches are recalculated!!!");
+					if(!this.cacheValid)
+					{
+						System.out.println("!!! Inefficiency");
+						this.validateCache(object);
+					}
 				}
 			}
+			else
+			{
+				System.out.println("The beforevalidation catched the inefficient case :D");
+			}
 		}
-		
 		
 		System.out.println("Call " + thisRequest+": Thread got answer to the validation requivest: "
 				+ Thread.currentThread().getId()
