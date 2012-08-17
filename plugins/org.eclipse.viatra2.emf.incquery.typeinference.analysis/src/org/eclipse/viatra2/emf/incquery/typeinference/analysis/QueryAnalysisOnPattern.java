@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -12,6 +13,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
+import org.eclipse.xtext.xbase.resource.XbaseResource;
 
 public abstract class QueryAnalysisOnPattern extends QueryAnalysis<PatternModel> {
 	
@@ -34,6 +36,39 @@ public abstract class QueryAnalysisOnPattern extends QueryAnalysis<PatternModel>
 		PatternModel pm = (PatternModel) p.eContainer();
 		Resource r = pm.eResource();
 		return r.getURI()+"/"+pm.getPackageName()+"."+p.getName() + "." +bodyCout + "." +variable.getName();
+	}
+	
+	
+
+	@Override
+	protected boolean IsChanged(Notification notification) {
+		return notification.getOldValue() != notification.getNewValue() && //An idempotent change shouldn't invalidate the cache.
+			   notification.getEventType() != Notification.RESOLVE && // ?
+				   (!(notification.getNotifier() instanceof XbaseResource));
+	}
+
+	@Override
+	public synchronized void notifyChanged(Notification notification) {
+		// TODO Auto-generated method stub
+		super.notifyChanged(notification);
+	}
+
+	@Override
+	protected void initMatchers() throws TypeAnalysisException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void getMaches() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void releaseMatchers() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
