@@ -587,7 +587,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	// resources),
 	// - and once when said iteration of resources reaches the end of the
 	// resource list in the ResourceSet
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385039
 	
 	@Override
 	protected void setTarget(ResourceSet target) {
