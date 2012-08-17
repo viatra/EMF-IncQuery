@@ -119,7 +119,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	}
 	
 	/**
-	 * Genearates a variable reference (and its opposite) in the pattern body and its usages.
+	 * Generates a variable reference (and its opposite) in the pattern body and its usages.
 	 */
 	def generateReferenceToVariableDecl(EClass varClass, EClass varRefClass) {
 		val varRefs = EcoreFactory::eINSTANCE.createEReference
@@ -144,6 +144,40 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		
 		varRefs.EOpposite = variable
 		variable.EOpposite = varRefs
+		
+		val op = EcoreFactory::eINSTANCE.createEOperation
+		op.eType = varClass
+		op.name = "getVariable"
+		op.upperBound = 1
+		val body = EcoreFactory::eINSTANCE.createEAnnotation
+		body.source = GenModelPackage::eNS_URI
+		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
+	        map.key = "body"
+	        map.value = 
+	           "	if (variable == null) {
+          InternalEObject container = this.eContainer;
+          while(container != null && !(container instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody)){
+              container = container.eInternalContainer();
+          }
+          if(container != null) {
+              //The side-effect of this call initializes the variable
+              ((org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody) container).getVariables();
+          }
+      }  
+      
+      return variable;"
+	    body.details.add(map)
+	    op.EAnnotations += body
+		varRefClass.EOperations += op
+		
+		val suppressAnnotation = EcoreFactory::eINSTANCE.createEAnnotation
+		suppressAnnotation.source = GenModelPackage::eNS_URI
+		val suppressBody = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
+	        suppressBody.key = "suppressedGetVisibility"
+	        suppressBody.value = "true"
+	        suppressAnnotation.details.add(suppressBody)
+	        
+	    varRefClass.EAllReferences.findFirst[name == "variable"].EAnnotations += suppressAnnotation
 	}
 	
 	/**

@@ -183,7 +183,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @return
 	 */
 	protected Type searchForConstraintType(PatternBody body, Variable variable) {
-		body.getVariables();
 		for (Constraint constraint : body.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
 				if (equalVariable(variable, ((EClassifierConstraint) constraint).getVar())) {

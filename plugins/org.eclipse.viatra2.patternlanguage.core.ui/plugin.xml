@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+
+<!-- adding resource factories -->
+
+
+
+    <!-- marker definitions for org.eclipse.viatra2.patternlanguage.core.PatternLanguage -->
+
+	<!-- Quick Outline -->
+    <!-- quickfix marker resolution generator for org.eclipse.viatra2.patternlanguage.core.PatternLanguage -->
+   	<!-- Rename Refactoring -->
+
+<!-- Type Hierarchy  -->
+	<!-- Call Hierachy -->
+	
+
+
+</plugin>
