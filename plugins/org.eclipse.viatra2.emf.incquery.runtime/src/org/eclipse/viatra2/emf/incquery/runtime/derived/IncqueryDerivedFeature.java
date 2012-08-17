@@ -314,7 +314,7 @@ public class IncqueryDerivedFeature {
 		if(value <= Integer.MAX_VALUE-delta) {
 			int tempMemory = value+delta;
 			notifications.add(
-					new ENotificationImpl(source, Notification.SET,	feature, counterMemory, tempMemory));
+					new ENotificationImpl(source, Notification.SET,	feature, counterMemory.get(source), tempMemory));
 			counterMemory.put(source, tempMemory);
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, null, "Counter reached maximum value of Long"));
