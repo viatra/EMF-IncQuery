@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -146,14 +148,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			// handleAttributeChange(notification, (EAttribute) feature);
 			// }
 		} catch (Exception ex) {
-			navigationHelper
-					.getLogger()
-					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while handling the following update notification: "
-							+ notification, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+		  processingError(ex, "handle the following update notification: " + notification);
 		}
 
 		if (isDirty) {
@@ -187,43 +182,55 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 
 	@Override
-	protected void addAdapter(Notifier notifier) {
+	protected void addAdapter(final Notifier notifier) {
 		try {
-			if (notifier instanceof EObject) {
-				EMFModelComprehension.traverseObject(visitor(true),
-						(EObject) notifier);
-			}
-			super.addAdapter(notifier);
+		  this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          if (notifier instanceof EObject) {
+            EMFModelComprehension.traverseObject(visitor(true),
+                (EObject) notifier);
+          }
+          NavigationHelperContentAdapter.super.addAdapter(notifier);
+          return null;
+        }
+      });		  
+		} catch (InvocationTargetException ex) {
+      processingError(ex.getCause(), "add the object: " + notifier);
 		} catch (Exception ex) {
-			navigationHelper.getLogger().fatal(
-					"EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while trying to add the object: "
-							+ notifier, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+			processingError(ex, "add the object: " + notifier);
 		}
 	}
 
 	@Override
-	protected void removeAdapter(Notifier notifier) {
+	protected void removeAdapter(final Notifier notifier) {
 		try {
-			if (notifier instanceof EObject) {
-				EMFModelComprehension.traverseObject(visitor(false),
-						(EObject) notifier);
-			}
-			super.removeAdapter(notifier);
-		} catch (Exception ex) {
-			navigationHelper
-					.getLogger()
-					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while trying to remove the object: "
-							+ notifier, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+      this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          if (notifier instanceof EObject) {
+            EMFModelComprehension.traverseObject(visitor(false),
+                (EObject) notifier);
+          }
+          NavigationHelperContentAdapter.super.removeAdapter(notifier);
+          return null;
+        }
+      });     
+    } catch (InvocationTargetException ex) {
+      processingError(ex.getCause(), "remove the object: " + notifier);
+    } catch (Exception ex) {
+      processingError(ex, "remove the object: " + notifier);
 		}
 	}
+
+  private void processingError(Throwable ex, String task) {
+    navigationHelper.getLogger().fatal(
+    		"EMF-IncQuery encountered an error in processing the EMF model. "
+    				+ "This happened while trying to " + task, ex);
+    // throw new
+    // IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
+    // ex);
+  }
 
 	protected EMFVisitor visitor(final boolean isInsertion) {
 		return new NavigationHelperVisitor.ChangeVisitor(navigationHelper,
