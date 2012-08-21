@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
+package org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternGroup;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis.QueryAnalysisOnPattern;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatch;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameter.TooGeneralTypeOfPatternParameterMatcher;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofvariableinbody.TooGeneralTypeOfVariableInBodyMatch;
@@ -28,39 +29,43 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 public class TypeAnalysis extends QueryAnalysisOnPattern{
+	private Map<String,EClassifier> typeOfVariableInBody = new HashMap<String, EClassifier>();
+	private Set<String> unsatisfiableTypeConstrainInPatternBody = new HashSet<String>();
+	private Set<String> tooGeneralTypeOfVariableInBody = new HashSet<String>();
+	private Map<String,EClassifier> typeOfParameterOfPattern = new HashMap<String, EClassifier>();
+	private Set<String> unsatisfiableTypeOfPatternParameter = new HashSet<String>();
+	private Set<String> tooGeneralTypeOfPatternParameter = new HashSet<String>();
 	
-	Map<String,EClassifier> typeOfVariableInBody = new HashMap<String, EClassifier>();
-	Set<String> unsatisfiableTypeConstrainInPatternBody = new HashSet<String>();
-	Set<String> tooGeneralTypeOfVariableInBody = new HashSet<String>();
-	Map<String,EClassifier> typeOfParameterOfPattern = new HashMap<String, EClassifier>();
-	Set<String> unsatisfiableTypeOfPatternParameter = new HashSet<String>();
-	Set<String> tooGeneralTypeOfPatternParameter = new HashSet<String>();
+	private TypeOfVariableInBodyMatcher typeOfVariableInBodyMatcher;
+	private UnsatisfiableTypeConstrainInPatternBodyMatcher unsatisfiableTypeConstrainInPatternBodyMatcher;
+	private TooGeneralTypeOfVariableInBodyMatcher tooGeneralTypeOfVariableInBodyMatcher;
+	private TypeOfParameterOfPatternMatcher typeOfParameterOfPatternMatcher;
+	private UnsatisfiableTypeOfPatternParameterMatcher unsatisfiableTypeOfPatternParameterMatcher;
+	private TooGeneralTypeOfPatternParameterMatcher tooGeneralTypeOfPatternParameterMatcher;
 	
-	TypeOfVariableInBodyMatcher typeOfVariableInBodyMatcher;
-	UnsatisfiableTypeConstrainInPatternBodyMatcher unsatisfiableTypeConstrainInPatternBodyMatcher;
-	TooGeneralTypeOfVariableInBodyMatcher tooGeneralTypeOfVariableInBodyMatcher;
-	TypeOfParameterOfPatternMatcher typeOfParameterOfPatternMatcher;
-	UnsatisfiableTypeOfPatternParameterMatcher unsatisfiableTypeOfPatternParameterMatcher;
-	TooGeneralTypeOfPatternParameterMatcher tooGeneralTypeOfPatternParameterMatcher;
 	private IPatternGroup patternGroup = null;
 
 	public TypeAnalysis(PatternModel patternModel) throws TypeAnalysisException {
 		super(patternModel);
+		
+		Set<IMatcherFactory<?>> factories = new HashSet<IMatcherFactory<?>>();
+		
+		try {
+			factories.add(TypeOfVariableInBodyMatcher.factory());
+			factories.add(UnsatisfiableTypeConstrainInPatternBodyMatcher.factory());
+			factories.add(TooGeneralTypeOfVariableInBodyMatcher.factory());
+			factories.add(TypeOfParameterOfPatternMatcher.factory());
+			factories.add(UnsatisfiableTypeOfPatternParameterMatcher.factory());
+			factories.add(TooGeneralTypeOfPatternParameterMatcher.factory());
+		} catch (IncQueryException e) {
+			throw new TypeAnalysisException("The matcher factories of the inference can not be created");
+		}
+		patternGroup = GenericPatternGroup.of(factories);
 	}
 
 	@Override
 	protected void initMatchers() throws TypeAnalysisException {
 		try {
-			if(patternGroup == null){
-				Set<IMatcherFactory<?>> factories = new HashSet<IMatcherFactory<?>>();
-				factories.add(TypeOfVariableInBodyMatcher.factory());
-				factories.add(UnsatisfiableTypeConstrainInPatternBodyMatcher.factory());
-				factories.add(TooGeneralTypeOfVariableInBodyMatcher.factory());
-				factories.add(TypeOfParameterOfPatternMatcher.factory());
-				factories.add(UnsatisfiableTypeOfPatternParameterMatcher.factory());
-				factories.add(TooGeneralTypeOfPatternParameterMatcher.factory());
-				patternGroup = GenericPatternGroup.of(factories);
-			}
 			patternGroup.prepare(resourceSet);
 			typeOfVariableInBodyMatcher = new TypeOfVariableInBodyMatcher(resourceSet);
 			unsatisfiableTypeConstrainInPatternBodyMatcher = new UnsatisfiableTypeConstrainInPatternBodyMatcher(resourceSet);
@@ -68,7 +73,6 @@ public class TypeAnalysis extends QueryAnalysisOnPattern{
 			typeOfParameterOfPatternMatcher = new TypeOfParameterOfPatternMatcher(resourceSet);
 			unsatisfiableTypeOfPatternParameterMatcher = new UnsatisfiableTypeOfPatternParameterMatcher(resourceSet);
 			tooGeneralTypeOfPatternParameterMatcher = new TooGeneralTypeOfPatternParameterMatcher(resourceSet);	
-			System.out.println("Intit end");
 		} catch (IncQueryException e) {
 			throw new TypeAnalysisException("The matchers can not be created");
 		}

@@ -1,7 +1,9 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
+package org.eclipse.viatra2.emf.incquery.typeinference.typeerrors;
 
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis.QueryAnalysisOnPattern;
 import org.eclipse.viatra2.emf.incquery.typeinference.tautologyccompare.TautologycCompareMatcher;
+import org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis.TypeAnalysisException;
 import org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiablecompare.UnsatisfiableCompareMatcher;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
@@ -10,6 +12,8 @@ public class TypeAnalisysInCompare extends QueryAnalysisOnPattern{
 	
 	TautologycCompareMatcher tautologycCompareMatcher;
 	UnsatisfiableCompareMatcher unsatisfiableCompareMatcher;
+	
+	
 	
 	public TypeAnalisysInCompare(PatternModel patternModel) throws TypeAnalysisException {
 		super(patternModel);

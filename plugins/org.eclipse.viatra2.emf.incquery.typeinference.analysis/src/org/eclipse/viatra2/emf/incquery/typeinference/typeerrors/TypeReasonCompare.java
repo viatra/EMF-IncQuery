@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
+package org.eclipse.viatra2.emf.incquery.typeinference.typeerrors;
 
 public class TypeReasonCompare<ReasonType> implements java.util.Comparator<TypeReason<ReasonType>>
 {

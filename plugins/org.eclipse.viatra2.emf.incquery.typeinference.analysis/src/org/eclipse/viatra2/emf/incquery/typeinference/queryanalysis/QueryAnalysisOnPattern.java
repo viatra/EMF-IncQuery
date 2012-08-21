@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
+package org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -37,38 +37,12 @@ public abstract class QueryAnalysisOnPattern extends QueryAnalysis<PatternModel>
 		Resource r = pm.eResource();
 		return r.getURI()+"/"+pm.getPackageName()+"."+p.getName() + "." +bodyCout + "." +variable.getName();
 	}
-	
-	
 
 	@Override
 	protected boolean IsChanged(Notification notification) {
 		return notification.getOldValue() != notification.getNewValue() && //An idempotent change shouldn't invalidate the cache.
 			   notification.getEventType() != Notification.RESOLVE && // ?
 				   (!(notification.getNotifier() instanceof XbaseResource));
-	}
-
-	@Override
-	public synchronized void notifyChanged(Notification notification) {
-		// TODO Auto-generated method stub
-		super.notifyChanged(notification);
-	}
-
-	@Override
-	protected void initMatchers() throws TypeAnalysisException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void getMaches() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void releaseMatchers() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -102,6 +76,5 @@ public abstract class QueryAnalysisOnPattern extends QueryAnalysis<PatternModel>
 				}
 			}
 		}
-		System.out.println(" :) I hope the bests...");
 	}
 }

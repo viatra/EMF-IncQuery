@@ -1,11 +1,9 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+package org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
+import org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis.QueryAnalysisProviderOnPattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -18,64 +16,23 @@ import com.google.inject.Singleton;
 public class EMFPatternTypeProviderByInference extends
 		GenModelBasedTypeProvider {
 
-	private static ConcurrentMap<String, TypeAnalysis> map = new ConcurrentHashMap<String, TypeAnalysis>();
+	PatternTypeProvider typeProvider = new PatternTypeProvider();
 	
-	public static PatternModel getPatternModel(EObject object)
-	{
-		do {
-			object = object.eContainer();
-		} while (!(object instanceof PatternModel));
-		return (PatternModel) object;
-	}
 	
-	public static PatternBody getPatternBody(EObject object)
-	{
-		while(!(object instanceof PatternBody))
-		{
-			EObject object2 = object.eContainer();
-			if(object2 == null) return null;
-			else object = object2;
-		}
-		return (PatternBody) object;
-	}
-	
-	private String getUri(PatternModel patternModel)
-	{
-		return patternModel.eResource().getURI().toString();
-	}
-	
-	private synchronized TypeAnalysis getTypeAnalysis(EObject object) {
-		PatternModel patternModel = getPatternModel(object);
-		
-		if (map.get(getUri(patternModel)) != null) {
-			TypeAnalysis typeAnalysis = map.get(getUri(patternModel));
-			return typeAnalysis;
-		} else {
-			TypeAnalysis typeAnalysis = null;
-			try {
-				typeAnalysis = new TypeAnalysis(patternModel);
-			} catch (TypeAnalysisException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			map.put(getUri(patternModel), typeAnalysis);
-			return typeAnalysis;
-		}
-	}
 	
 	@Override
 	public synchronized boolean canResolveEasily(Variable variable) {
-		return getTypeAnalysis(variable).isCacheValid();
+		return this.typeProvider.getQueryAnalysis(QueryAnalysisProviderOnPattern.getPatternModel(variable)).isCacheValid();
 	}
 	
 	@Override
 	public synchronized boolean canResolveEasily(PatternBody body, Variable variable) {
-		return getTypeAnalysis(variable).isCacheValid();
+		return canResolveEasily(variable);
 	}
 
 	@Override
 	public synchronized JvmTypeReference resolve(PatternBody body, Variable variable) {
-		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
+		TypeAnalysis typeAnalysis = this.typeProvider.getQueryAnalysis(QueryAnalysisProviderOnPattern.getPatternModel(variable));
 		EClassifier type = null;
 		try {
 			type = typeAnalysis.getTypeOfVariableInBody(body, variable);
@@ -83,7 +40,6 @@ public class EMFPatternTypeProviderByInference extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		System.out.println(">>> Inferred: body #"
 				+ (((Pattern) (body.eContainer())).getBodies().indexOf(body) +1)
 				+ " variable " + variable + " > " + (type!=null?type.getName():"null"));
@@ -95,9 +51,9 @@ public class EMFPatternTypeProviderByInference extends
 
 	@Override
 	public synchronized JvmTypeReference resolve(Variable variable) {
-		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
+		TypeAnalysis typeAnalysis = this.typeProvider.getQueryAnalysis(QueryAnalysisProviderOnPattern.getPatternModel(variable));
 		EClassifier type = null;
-		PatternBody possibleBody = getPatternBody(variable); 
+		PatternBody possibleBody = QueryAnalysisProviderOnPattern.getPatternBody(variable); 
 		try {
 			if(possibleBody!=null)
 			{
@@ -121,7 +77,7 @@ public class EMFPatternTypeProviderByInference extends
 	
 	public Boolean isUnsatisfiableVariable(PatternBody body, Variable variable)
 	{
-		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
+		TypeAnalysis typeAnalysis = this.typeProvider.getQueryAnalysis(QueryAnalysisProviderOnPattern.getPatternModel(variable));
 		Boolean ret = null;
 		try {
 			ret = typeAnalysis.isUnsatisfiableTypeOfVariableInBody(body, variable);
@@ -134,7 +90,7 @@ public class EMFPatternTypeProviderByInference extends
 	
 	public Boolean isTooGeneralVariable(PatternBody body, Variable variable)
 	{
-		TypeAnalysis typeAnalysis = this.getTypeAnalysis(variable);
+		TypeAnalysis typeAnalysis = this.typeProvider.getQueryAnalysis(QueryAnalysisProviderOnPattern.getPatternModel(variable));
 		Boolean ret = null;
 		try {
 			ret = typeAnalysis.isTooGeneralTypeOfVariableInBody(body, variable);

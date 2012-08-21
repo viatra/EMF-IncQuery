@@ -1,17 +1,23 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
+package org.eclipse.viatra2.emf.incquery.typeinference.typeerrors;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternGroup;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.typeinference.classconstraininpatternbody.ClassConstrainInPatternBodyMatch;
 import org.eclipse.viatra2.emf.incquery.typeinference.classconstraininpatternbody.ClassConstrainInPatternBodyMatcher;
+import org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis.QueryAnalysisOnPattern;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameterreason2.TooGeneralTypeOfPatternParameterReason2Match;
 import org.eclipse.viatra2.emf.incquery.typeinference.toogeneraltypeofpatternparameterreason2.TooGeneralTypeOfPatternParameterReason2Matcher;
+import org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis.TypeAnalysisException;
 import org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeconstraininpatternbodyreason2.UnsatisfiableTypeConstrainInPatternBodyReason2Match;
 import org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeconstraininpatternbodyreason2.UnsatisfiableTypeConstrainInPatternBodyReason2Matcher;
 import org.eclipse.viatra2.emf.incquery.typeinference.unsatisfiabletypeconstraininpatternbodyreason3.UnsatisfiableTypeConstrainInPatternBodyReason3Match;
@@ -21,23 +27,38 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 public class TypeAnalysisErrorReason extends QueryAnalysisOnPattern{
-	UnsatisfiableTypeConstrainInPatternBodyReason2Matcher unsatisfiableTypeConstrainInPatternBodyReason2Matcher;
-	UnsatisfiableTypeConstrainInPatternBodyReason3Matcher unsatisfiableTypeConstrainInPatternBodyReason3Matcher;
-	ClassConstrainInPatternBodyMatcher classConstrainInPatternBodyMatcher;
-	TooGeneralTypeOfPatternParameterReason2Matcher tooGeneralTypeOfPatternParameterReason2Matcher;
+	private UnsatisfiableTypeConstrainInPatternBodyReason2Matcher unsatisfiableTypeConstrainInPatternBodyReason2Matcher;
+	private UnsatisfiableTypeConstrainInPatternBodyReason3Matcher unsatisfiableTypeConstrainInPatternBodyReason3Matcher;
+	private ClassConstrainInPatternBodyMatcher classConstrainInPatternBodyMatcher;
+	private TooGeneralTypeOfPatternParameterReason2Matcher tooGeneralTypeOfPatternParameterReason2Matcher;
 	
-	Map<String, List<TypeReason<Object>>> unsatisfiableTypeConstrainInPatternBodyReason2 = new HashMap<String, List<TypeReason<Object>>>();
-	Map<String, List<TypeReason<Object>>> unsatisfiableTypeConstrainInPatternBodyReason3 = new HashMap<String, List<TypeReason<Object>>>();
-	Map<String, Set<TypeReason<Object>>> classConstrainInPatternBody = new HashMap<String, Set<TypeReason<Object>>>();
-	Map<String, List<TypeReason<PatternBody>>> tooGeneralTypeOfPatternParameterReason2 = new HashMap<String, List<TypeReason<PatternBody>>>();
+	private Map<String, List<TypeReason<Object>>> unsatisfiableTypeConstrainInPatternBodyReason2 = new HashMap<String, List<TypeReason<Object>>>();
+	private Map<String, List<TypeReason<Object>>> unsatisfiableTypeConstrainInPatternBodyReason3 = new HashMap<String, List<TypeReason<Object>>>();
+	private Map<String, Set<TypeReason<Object>>> classConstrainInPatternBody = new HashMap<String, Set<TypeReason<Object>>>();
+	private Map<String, List<TypeReason<PatternBody>>> tooGeneralTypeOfPatternParameterReason2 = new HashMap<String, List<TypeReason<PatternBody>>>();
+	
+	private IPatternGroup patternGroup = null;
 	
 	public TypeAnalysisErrorReason(PatternModel patternModel) throws TypeAnalysisException {
 		super(patternModel);
+		
+		Set<IMatcherFactory<?>> factories = new HashSet<IMatcherFactory<?>>();
+		
+		try {
+			factories.add(UnsatisfiableTypeConstrainInPatternBodyReason2Matcher.factory());
+			factories.add(UnsatisfiableTypeConstrainInPatternBodyReason3Matcher.factory());
+			factories.add(ClassConstrainInPatternBodyMatcher.factory());
+			factories.add(TooGeneralTypeOfPatternParameterReason2Matcher.factory());
+		} catch (IncQueryException e) {
+			throw new TypeAnalysisException("The matcher factories of the error reason inference can not be created");
+		}
+		patternGroup = GenericPatternGroup.of(factories);
 	}
 	
 	@Override
 	protected void initMatchers() throws TypeAnalysisException {
 		try {
+			patternGroup.prepare(resourceSet);
 			this.unsatisfiableTypeConstrainInPatternBodyReason2Matcher = new UnsatisfiableTypeConstrainInPatternBodyReason2Matcher(resourceSet);
 			this.unsatisfiableTypeConstrainInPatternBodyReason3Matcher = new UnsatisfiableTypeConstrainInPatternBodyReason3Matcher(resourceSet);
 			this.classConstrainInPatternBodyMatcher = new ClassConstrainInPatternBodyMatcher(resourceSet);

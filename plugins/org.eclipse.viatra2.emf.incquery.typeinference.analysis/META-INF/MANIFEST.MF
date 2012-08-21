@@ -17,5 +17,7 @@ Require-Bundle: org.eclipse.viatra2.patternlanguage.core;bundle-version="0.6.0",
  org.eclipse.viatra2.emf.incquery.typeinference;bundle-version="0.6.0",
  org.eclipse.xtext.xbase;bundle-version="2.3.0",
  org.eclipse.viatra2.emf.incquery.base.itc;bundle-version="0.6.0"
-Export-Package: org.eclipse.viatra2.emf.incquery.typeinference.analysis
+Export-Package: org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis,
+ org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis,
+ org.eclipse.viatra2.emf.incquery.typeinference.typeerrors
 Import-Package: org.eclipse.viatra2.emf.incquery.tooling.generator.types

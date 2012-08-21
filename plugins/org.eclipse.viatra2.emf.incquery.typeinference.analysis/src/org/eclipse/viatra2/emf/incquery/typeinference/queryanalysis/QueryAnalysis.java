@@ -1,10 +1,10 @@
-package org.eclipse.viatra2.emf.incquery.typeinference.analysis;
+package org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.xtext.xbase.resource.XbaseResource;
+import org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis.TypeAnalysisException;
 
 public abstract class QueryAnalysis<Target extends EObject> extends EContentAdapter{
 	protected Target target;
@@ -24,14 +24,13 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 		this.setTarget(target.eResource().getResourceSet());
 		this.cacheValid = false;
 		this.cacheMatching = false;
-		//this.bugHunter(patternModel);
 	}
 	
 	protected abstract boolean IsChanged(Notification notification);
 	
 	@Override
 	public synchronized void notifyChanged(Notification notification) {
-		if(this.cacheValid && !this.cacheMatching && IsChanged(notification))
+		if(this.cacheValid && (!this.cacheMatching) && IsChanged(notification))
 		{
 			System.out.println("[x] ("+Thread.currentThread().getId()+") invalidate: " + notification);
 			this.cacheValid=false;	
@@ -59,9 +58,9 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 					+ Thread.currentThread().getId()
 					+ " where tha cache is valid: " + this.cacheValid);
 
-			if (!cacheValid/* && !computing */) {
-				this.beforeValidation(resourceSet);
-				if (!cacheValid/* && !computing */) {
+			/*if (!cacheValid) {
+				this.beforeValidation(resourceSet);*/
+				if (!cacheValid) {
 					System.out.println("Getting matches!!!");
 					this.cacheMatching = true;
 					initMatchers();
@@ -76,11 +75,8 @@ public abstract class QueryAnalysis<Target extends EObject> extends EContentAdap
 							this.validateCache(object);
 						}
 					}
-				} else {
-					System.out
-							.println("The beforevalidation catched the inefficient case :D");
 				}
-			}
+			//}
 
 			System.out.println("Call " + thisRequest
 					+ ": Thread got answer to the validation requivest: "

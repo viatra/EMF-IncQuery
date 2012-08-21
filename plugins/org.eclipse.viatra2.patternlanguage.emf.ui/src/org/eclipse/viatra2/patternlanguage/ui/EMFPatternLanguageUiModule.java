@@ -20,7 +20,7 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelP
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.types.GenModelBasedTypeProvider;
-import org.eclipse.viatra2.emf.incquery.typeinference.analysis.EMFPatternTypeProviderByInference;
+import org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis.EMFPatternTypeProviderByInference;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.viatra2.patternlanguage.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.viatra2.patternlanguage.ui.highlight.EMFPatternLanguageHighlightingCalculator;
