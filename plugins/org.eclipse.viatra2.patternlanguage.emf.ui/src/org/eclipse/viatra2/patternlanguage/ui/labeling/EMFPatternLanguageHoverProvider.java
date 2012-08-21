@@ -12,23 +12,14 @@
 
 package org.eclipse.viatra2.patternlanguage.ui.labeling;
 
-import java.util.Collection;
-
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
-import org.eclipse.viatra2.emf.incquery.typeinference.queryanalysis.QueryAnalysisProviderOnPattern;
-import org.eclipse.viatra2.emf.incquery.typeinference.typeanalysis.EMFPatternTypeProviderByInference;
 import org.eclipse.viatra2.emf.incquery.typeinference.typeerrors.ErrorReasonProvider;
-import org.eclipse.viatra2.emf.incquery.typeinference.typeerrors.TypeReason;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
-import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverProvider;
 
@@ -43,54 +34,7 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 	@Inject
 	ITypeProvider typeProvider;
 	
-	ErrorReasonProvider errorReasonProvider = new ErrorReasonProvider();
-	
-	protected boolean getTypeFast(Variable parameter)
-	{
-		if(this.typeProvider instanceof EMFPatternTypeProvider) return ((EMFPatternTypeProvider)(this.typeProvider)).canResolveEasily(parameter);
-		else return true;
-	}
-	
-	protected JvmTypeReference getType(Variable parameter)
-	{
-		if(this.typeProvider instanceof EMFPatternTypeProvider)
-		{
-			return ((EMFPatternTypeProvider)(this.typeProvider)).resolve(parameter);
-		}
-		else return null;
-	}
-	
-	protected boolean getTypeFast(PatternBody body, Variable parameter)
-	{
-		if(this.typeProvider instanceof EMFPatternTypeProvider) return ((EMFPatternTypeProvider)(this.typeProvider)).canResolveEasily(body,parameter);
-		else return true;
-	}
-	
-	protected JvmTypeReference getType(PatternBody body, Variable variable)
-	{
-		if(this.typeProvider instanceof EMFPatternTypeProvider)
-		{
-			return ((EMFPatternTypeProvider)(this.typeProvider)).resolve(body,variable);
-		}
-		else return null;
-	}
-	
-	protected Boolean IsUnsatisfiableVariable(PatternBody body, Variable variable)
-	{
-		if(this.typeProvider instanceof EMFPatternTypeProviderByInference)
-		{
-			return ((EMFPatternTypeProviderByInference)(this.typeProvider)).isUnsatisfiableVariable(body, variable);
-		}
-		else return null;
-	}
-	protected Boolean IsTooGeneralVariable(PatternBody body, Variable variable)
-	{
-		if(this.typeProvider instanceof EMFPatternTypeProviderByInference)
-		{
-			return ((EMFPatternTypeProviderByInference)(this.typeProvider)).isTooGeneralVariable(body, variable);
-		}
-		else return null;
-	}
+	EMFPatternLanguageTypeHover typeHover;
 	
 	@Override
 	protected String getHoverInfoAsHtml(EObject call, EObject objectToView, IRegion hoverRegion) {
@@ -105,63 +49,19 @@ public class EMFPatternLanguageHoverProvider extends XbaseHoverProvider {
 							.getEcorePackage().eResource().getURI().toString());
 			} 
 		}
-		boolean isVariable = objectToView instanceof Variable;
-		boolean isVariableRefence = objectToView instanceof VariableReference;
-		if(isVariable || isVariableRefence)
+		if(objectToView instanceof Variable || objectToView instanceof VariableReference)
 		{
+			if(this.typeHover==null)
+				this.typeHover = new EMFPatternLanguageTypeHover(typeProvider);
 			Variable variable;
-			if(isVariable)
+			if(objectToView instanceof Variable)
 				variable = (Variable) objectToView;
 			else
 			{
 				VariableReference variableReference = (VariableReference) objectToView;
 				variable = variableReference.getVariable();
 			}
-			PatternBody body = QueryAnalysisProviderOnPattern.getPatternBody(objectToView);
-			if(body == null)
-			{
-				if(!this.getTypeFast(variable))
-					return String.format("Infering type of parameter <b>%s</b>...",variable.getName());
-				JvmTypeReference type = this.getType(variable);
-				String typeString =
-					type!=null ?
-						String.format("%s -<br/>%s",type.getSimpleName(),type.getQualifiedName()) :
-						"unknown";
-				return String.format("parameter <b>%s: %s</b>",
-					variable.getName(),	typeString);
-			}
-			else
-			{
-				Pattern pat = (Pattern) body.eContainer();
-				int bodyCount = pat.getBodies().indexOf(body) + 1;
-				if(!this.getTypeFast(body, variable))
-					String.format("Infering type of variable <b>%s</b> in body #%s...",variable.getName(),bodyCount);
-				JvmTypeReference type = this.getType(body,variable);
-				String typeString = null;
-				if(type!=null) typeString =
-						String.format("%s -<br/>%s", type.getSimpleName(),	type.getQualifiedName());
-				else if(this.IsUnsatisfiableVariable(body, variable)==true)
-				{
-					typeString = "unsatisfiable";
-					Collection<TypeReason<Object>> errorReasons = this.errorReasonProvider.getReasonOfUnsat(body, variable);
-					if(errorReasons!=null)
-					{
-						typeString+="</b>, because:";
-						for(TypeReason<Object> errorReason : errorReasons)
-						{
-							typeString+="<br/>"+errorReason.getType().getName()+" - "+errorReason.getReason();
-						}
-						typeString+="<b>";
-					}
-				}
-				else if(this.IsTooGeneralVariable(body, variable)==true)
-				{
-					typeString = "too general type";
-				}
-				else typeString="unknown...";
-				return String.format("variable in #%s body <b>%s: %s</b>",
-					bodyCount,	variable.getName(),	typeString);
-			}
+			return typeHover.getVariableTypeHover(objectToView, variable);
 		}
 		return super.getHoverInfoAsHtml(call, objectToView, hoverRegion);
 	}

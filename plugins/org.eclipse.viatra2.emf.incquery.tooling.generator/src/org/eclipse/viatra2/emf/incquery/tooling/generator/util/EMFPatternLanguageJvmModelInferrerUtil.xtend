@@ -218,7 +218,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	/**
   	 * Serializes EObject to a String representation. Escapes only the double qoutes.
   	 */
-  	def private serialize(EObject eObject) {
+  	def public serialize(EObject eObject) {
   		try {
   			// This call sometimes causes ConcurrentModificationException
 //			val serializedObject = serializer.serialize(eObject)
