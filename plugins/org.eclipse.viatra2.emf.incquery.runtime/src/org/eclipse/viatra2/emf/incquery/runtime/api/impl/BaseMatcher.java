@@ -345,6 +345,22 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
   }
   
   /* (non-Javadoc)
+   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackOnWipes(java.lang.Runnable)
+   */
+  @Override
+  public boolean addCallbackAfterWipes(Runnable callback) {
+    return engine.getAfterWipeCallbacks().add(callback);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#removeCallbackOnWipes(java.lang.Runnable)
+   */
+  @Override
+  public boolean removeCallbackAfterWipes(Runnable callback) {
+    return engine.getAfterWipeCallbacks().remove(callback);
+  }
+  
+  /* (non-Javadoc)
    * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#matchToArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
    */
   @Override

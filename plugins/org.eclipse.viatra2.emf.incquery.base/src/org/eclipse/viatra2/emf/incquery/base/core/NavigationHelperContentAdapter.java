@@ -42,7 +42,9 @@ import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
@@ -54,7 +56,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
 
 	// feature -> holder(s)
-	protected Map<EStructuralFeature, Set<EObject>> reversedFeatureMap;
+	protected Map<EStructuralFeature, Multiset<EObject>> reversedFeatureMap;
 
 	// eclass -> instance(s)
 	protected Map<EClass, Set<EObject>> instanceMap;
@@ -89,9 +91,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
 	}
 
-	public Map<EStructuralFeature, Set<EObject>> getReversedFeatureMap() {
+	public Map<EStructuralFeature, Multiset<EObject>> getReversedFeatureMap() {
 		if (reversedFeatureMap == null) {
-			reversedFeatureMap = new HashMap<EStructuralFeature, Set<EObject>>();
+			reversedFeatureMap = new HashMap<EStructuralFeature, Multiset<EObject>>();
 			initReversedFeatureMap();
 		}
 		return reversedFeatureMap;
@@ -346,10 +348,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	private void addToReversedFeatureMap(EStructuralFeature feature,
 			EObject holder) {
-		Set<EObject> setVal = reversedFeatureMap.get(feature);
+	  Multiset<EObject> setVal = reversedFeatureMap.get(feature);
 
 		if (setVal == null) {
-			setVal = new HashSet<EObject>();
+			setVal = HashMultiset.create();
 		}
 		setVal.add(holder);
 		reversedFeatureMap.put(feature, setVal);

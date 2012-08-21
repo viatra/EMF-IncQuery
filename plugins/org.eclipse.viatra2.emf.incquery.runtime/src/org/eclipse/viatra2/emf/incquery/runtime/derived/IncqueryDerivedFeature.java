@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
 /**
@@ -38,13 +40,53 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  *
  * FIXME write AggregateHandler if any EDataType should be allowed 
  * TODO notifications could be static final? to ensure message ordering
- * TODO one delta monitor per matcher should be enough if only matches corresponding to the given object are removed 
  * 
  */
 @SuppressWarnings("rawtypes")
 public class IncqueryDerivedFeature {
 
-	private IncQueryMatcher<IPatternMatch> matcher;
+	/**
+   * @author Abel Hegedus
+   *
+   */
+  private final class DerivedFeatureWipeCallback implements Runnable {
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public void run() {
+      String patternName = matcher.getPatternName();
+      try {
+        matcher = (IncQueryMatcher<IPatternMatch>) MatcherFactoryRegistry.getMatcherFactory(patternName).getMatcher(matcher.getEngine());
+      } catch (IncQueryException e) {
+        matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during wipe callback: " + e.getMessage(), e);
+      }
+      dm = matcher.newDeltaMonitor(false);
+    }
+  }
+
+  /**
+   * @author Abel Hegedus
+   *
+   */
+  private final class DerivedFeatureCallback implements Runnable {
+    
+    @Override
+    public void run() {
+    	// after each model update, check the delta monitor
+    	// FIXME should be: after each complete transaction, check the delta monitor
+    	try {
+    		updateMemory.clear();
+    		dm.matchFoundEvents.removeAll( processNewMatches(dm.matchFoundEvents) );
+    		dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );	
+    		checkUnhandledNewMatch();
+    		sendNextNotfication();
+    	} catch (CoreException e) {
+    		matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
+    	}
+    }
+  }
+
+  private IncQueryMatcher<IPatternMatch> matcher;
 	private DeltaMonitor<IPatternMatch> dm;
 	private Runnable processMatchesRunnable;
 	//private final InternalEObject source;
@@ -65,6 +107,7 @@ public class IncqueryDerivedFeature {
 	 * but notification sending must be delayed in order to avoid infinite notification loop
    */ 
 	private final Map<InternalEObject,Collection<Object>> manyRefMemory = new HashMap<InternalEObject, Collection<Object>>();
+  private Runnable processWipeRunnable;
 	
 	/**
 	 * 
@@ -102,22 +145,8 @@ public class IncqueryDerivedFeature {
 		//IPatternMatch partialMatch = matcher.newEmptyMatch();
 		//partialMatch.set(sourceParamName, source);
 		this.dm = matcher.newDeltaMonitor(true);
-		this.processMatchesRunnable = new Runnable() {		
-			@Override
-			public void run() {
-				// after each model update, check the delta monitor
-				// FIXME should be: after each complete transaction, check the delta monitor
-				try {
-					updateMemory.clear();
-					dm.matchFoundEvents.removeAll( processNewMatches(dm.matchFoundEvents) );
-					dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );	
-					checkUnhandledNewMatch();
-					sendNextNotfication();
-				} catch (CoreException e) {
-					matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
-				}
-			}
-		};
+		this.processMatchesRunnable = new DerivedFeatureCallback();
+		this.processWipeRunnable = new DerivedFeatureWipeCallback();
   }
 	
 	private void sendNextNotfication() {
@@ -157,6 +186,7 @@ public class IncqueryDerivedFeature {
 	 */
 	public void startMonitoring() {
 		matcher.addCallbackAfterUpdates(processMatchesRunnable);
+		matcher.addCallbackAfterWipes(processWipeRunnable);
 		processMatchesRunnable.run();
 	}
 	
@@ -420,6 +450,7 @@ public class IncqueryDerivedFeature {
 			          feature, null, updateMemory.get(source)));
 			  setSingleRefMemory(source, updateMemory.get(source));
       }
+			updateMemory.clear();
 		}
 	}
 }

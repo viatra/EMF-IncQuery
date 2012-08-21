@@ -77,8 +77,19 @@ public class EngineManager {
 		return getEngineInternal(emfRoot);
 	}
 
-		
-
+	/**
+   * Creates an EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet) even if there is an existing one. 
+   * 
+   * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition). 
+   * The match set of any patterns will be incrementally refreshed upon updates from this scope.
+   * 
+   * @param emfRoot the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or ResourceSet.
+   * @return a new existing engine
+   * @throws IncQueryException
+   */
+	public IncQueryEngine getUnmanagedIncQueryEngine(Notifier emfRoot) throws IncQueryException {
+	  return new IncQueryEngine(null, emfRoot);
+	}
 
 	/**
 	 * Disconnects the engine that was previously attached at the given EMF model root. 
