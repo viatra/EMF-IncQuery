@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
 /**
@@ -44,21 +46,29 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
 public class IncqueryDerivedFeature {
 
 	/**
-   * @author Dustman
+   * @author Abel Hegedus
+   *
+   */
+  private final class DerivedFeatureWipeCallback implements Runnable {
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public void run() {
+      String patternName = matcher.getPatternName();
+      try {
+        matcher = (IncQueryMatcher<IPatternMatch>) MatcherFactoryRegistry.getMatcherFactory(patternName).getMatcher(matcher.getEngine());
+      } catch (IncQueryException e) {
+        matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during wipe callback: " + e.getMessage(), e);
+      }
+      dm = matcher.newDeltaMonitor(false);
+    }
+  }
+
+  /**
+   * @author Abel Hegedus
    *
    */
   private final class DerivedFeatureCallback implements Runnable {
-    /**
-     * 
-     */
-    private final IncQueryMatcher matcher;
-    
-    /**
-     * @param matcher
-     */
-    private DerivedFeatureCallback(IncQueryMatcher matcher) {
-      this.matcher = matcher;
-    }
     
     @Override
     public void run() {
@@ -97,6 +107,7 @@ public class IncqueryDerivedFeature {
 	 * but notification sending must be delayed in order to avoid infinite notification loop
    */ 
 	private final Map<InternalEObject,Collection<Object>> manyRefMemory = new HashMap<InternalEObject, Collection<Object>>();
+  private Runnable processWipeRunnable;
 	
 	/**
 	 * 
@@ -134,7 +145,8 @@ public class IncqueryDerivedFeature {
 		//IPatternMatch partialMatch = matcher.newEmptyMatch();
 		//partialMatch.set(sourceParamName, source);
 		this.dm = matcher.newDeltaMonitor(true);
-		this.processMatchesRunnable = new DerivedFeatureCallback(matcher);
+		this.processMatchesRunnable = new DerivedFeatureCallback();
+		this.processWipeRunnable = new DerivedFeatureWipeCallback();
   }
 	
 	private void sendNextNotfication() {
@@ -174,6 +186,7 @@ public class IncqueryDerivedFeature {
 	 */
 	public void startMonitoring() {
 		matcher.addCallbackAfterUpdates(processMatchesRunnable);
+		matcher.addCallbackAfterWipes(processWipeRunnable);
 		processMatchesRunnable.run();
 	}
 	
