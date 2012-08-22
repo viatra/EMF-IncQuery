@@ -165,18 +165,19 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	public boolean removeCallbackAfterUpdates(Runnable callback);
 	/**
 	 * Registers a callback that will be run each time the EMF-IncQuery engine is wiped or disposed.
-	 * Typically useful if delta monitors are used.
-	 * When the callback is issued, the wipe has already occurred and pattern matchers will continue to return stale results.
+	 * Typically useful if delta monitors are used, especially of the {@link IncQueryEngine} is managed.
+	 * 
+	 * <p>When the callback is issued, the wipe has already occurred and pattern matchers will continue to return stale results.
 	 * @param callback a Runnable to execute after each wipe.
 	 * @return false if the callback was already registered.
 	 */
-  public boolean addCallbackAfterWipes(Runnable callback);
-  /**
-   * Removes a previously registered callback. See addCallbackAfterWipes().
-   * @param callback the callback to remove.
-   * @return false if the callback was not registered.
-   */
-  public boolean removeCallbackAfterWipes(Runnable callback);
+	public boolean addCallbackAfterWipes(Runnable callback);
+	/**
+	 * Removes a previously registered callback. See {@link #addCallbackAfterWipes()}.
+	 * @param callback the callback to remove.
+	 * @return false if the callback was not registered.
+	 */
+	public boolean removeCallbackAfterWipes(Runnable callback);
 	
 	// ARRAY-BASED INTERFACE
 	

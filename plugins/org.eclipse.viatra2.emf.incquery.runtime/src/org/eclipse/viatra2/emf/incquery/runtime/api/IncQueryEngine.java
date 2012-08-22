@@ -49,7 +49,7 @@ import com.google.inject.Injector;
  * <p>Pattern matchers within this engine may be instantiated in the following ways: <ul>
  *  <li> Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
  *  <li> Use the matcher factory associated with the generated matcher class to achieve the same.
- *  <li> Use GenericMatcherFactory instead of the various generated factories.
+ *  <li> Use {@link GenericPatternMatcher} or {@link GenericMatcherFactory} instead of the various generated classes.
  *  </ul>
  * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; 
  * 	this improves the performance of pattern matcher construction, unless the engine is in wildcard mode.
@@ -62,7 +62,7 @@ import com.google.inject.Injector;
 public class IncQueryEngine {
 
 	/**
-	 * The engine manager responsible for this engine.
+	 * The engine manager responsible for this engine. Null if this engine is unmanaged.
 	 */
 	private EngineManager manager;
 	/**
@@ -113,7 +113,7 @@ public class IncQueryEngine {
   private Set<Runnable> afterWipeCallbacks;
 	
 	/**
-	 * @param manager
+	 * @param manager null if unmanaged
 	 * @param emfRoot
 	 * @throws IncQueryException if the emf root is invalid
 	 */
@@ -413,13 +413,30 @@ public class IncQueryEngine {
 	public boolean isTainted() {
 		return tainted;
 	}
+	
+	
+	/**
+	 * Indicates whether the engine is managed by {@link EngineManager}.
+	 * 
+	 * <p>If the engine is managed, there may be other clients using it. 
+	 * Care should be taken with {@link #wipe()} and {@link #dispose()}. 
+	 * Register a callback using {@link IncQueryMatcher#addCallbackAfterWipes(Runnable)} 
+	 * or directly at {@link #getAfterWipeCallbacks()} to learn when a 
+	 * client has called these dangerous methods.  
+	 * 
+	 * @return true if the engine is managed, and therefore potentially 
+	 * shared with other clients querying the same EMF model
+	 */
+	public boolean isManaged() {
+		return manager != null;
+	}	
 
-  /**
-   * @return
-   */
-  public Set<Runnable> getAfterWipeCallbacks() {
-    return afterWipeCallbacks;
-  }
+	/**
+	 * @return the set of callbacks that will be issued after a wipe
+	 */
+	public Set<Runnable> getAfterWipeCallbacks() {
+	  return afterWipeCallbacks;
+	}
 	
 	
 	
