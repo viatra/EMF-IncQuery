@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
@@ -224,9 +223,6 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 	 */
 	@Override
 	public String printPattern(Pattern pattern) {
-		if (pattern == null) {
-			return "(null)";
-		} 
 		return CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 	}
 
@@ -235,14 +231,9 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 	 */
 	@Override
 	public String printType(Object typeObject) {
-		if (typeObject == null) {
-			return "(null)";
-		} else if (typeObject instanceof EClassifier) {
+		if (typeObject instanceof EClassifier) {
 			final EClassifier eClassifier = (EClassifier) typeObject;
-			final EPackage ePackage = eClassifier.getEPackage();
-			final String nsURI = ePackage == null ? null : ePackage.getNsURI();
-			final String typeName = eClassifier.getName();
-			return ""+nsURI+"/"+typeName;
+			return eClassifier.getEPackage().getNsURI()+"/"+eClassifier.getName();
 		} else if (typeObject instanceof EStructuralFeature) {
 			final EStructuralFeature feature = (EStructuralFeature) typeObject;
 			return printType(feature.getEContainingClass())+"."+feature.getName();

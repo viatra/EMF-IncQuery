@@ -69,7 +69,9 @@ public class EclipseLogAppender extends AppenderSkeleton {
 						.getThrowable() : null;
 				IStatus status = createStatus(severity, loggerName, logString, throwable);
 				getLog().log(status);
-			} 
+			} else {
+				// nothing to do (message should be logged to stdout by default appender)
+			}
 		}
 	}
 

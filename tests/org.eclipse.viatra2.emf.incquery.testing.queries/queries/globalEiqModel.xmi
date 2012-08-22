@@ -207,11 +207,7 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
+    <annotations name="Off"/>
     <parameters name="ActualSet">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#//MatchSetRecord"/>
@@ -300,11 +296,7 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
+    <annotations name="Off"/>
     <annotations name="DerivedFeature">
       <parameters name="feature">
         <value xsi:type="patternLanguage:StringValue" value="role"/>
@@ -372,11 +364,7 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.testing.queries/src/org/eclipse/viatra2/emf/incquery/testing/queries/matchRecord.eiq">
-    <annotations name="QueryExplorer">
-      <parameters name="display">
-        <value xsi:type="patternLanguage:BoolValue"/>
-      </parameters>
-    </annotations>
+    <annotations name="Off"/>
     <annotations name="DerivedFeature">
       <parameters name="feature">
         <value xsi:type="patternLanguage:StringValue" value="derivedValue"/>
@@ -570,9 +558,9 @@
     </bodies>
   </patterns>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
   </importPackages>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   </importPackages>
 </eMFPatternLanguage:PatternModel>

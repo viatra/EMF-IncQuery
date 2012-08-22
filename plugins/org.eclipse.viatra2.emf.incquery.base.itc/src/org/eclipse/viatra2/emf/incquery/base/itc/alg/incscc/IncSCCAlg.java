@@ -48,7 +48,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	private CountingAlg<V> countingAlg;
 	private Graph<V> reducedGraph;
 	private IBiDirectionalGraphDataSource<V> reducedGraphIndexer;
-	private List<ITcObserver<V>> observers;
+	private ArrayList<ITcObserver<V>> observers;
 		
 	public IncSCCAlg(IGraphDataSource<V> gds) {
 		
@@ -540,7 +540,10 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
 	@Override
 	public void dispose() {
-		this.gds.detachObserver(this);
+		sccs = null;
+		reducedGraph = null;
+		observers = null;
+		gds = null;
 		countingAlg.dispose();
 	}
 	

@@ -23,7 +23,9 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.BooleanSubstitution;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.DateSubstitution;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.DoubleSubstitution;
@@ -41,6 +43,7 @@ import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MiscellaneousSubstitution;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordType;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.StringSubstitution;
 
 /**

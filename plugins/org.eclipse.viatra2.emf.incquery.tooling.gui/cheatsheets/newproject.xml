@@ -21,18 +21,19 @@ To create the example EMF metamodel, you may either import the domain project (<
 (5) Open the genmodel, and <b>Generate Model Code</b> since it is a requirement of IncQuery. For demonstrational purposes also <b>Generate Edit Code</b> and <b>Generate Editor Code</b>.
       </description>
    </item>
-   <item title="Initializing the EMF-IncQuery project" dialog="true">
+   <item
+         title="Initializing the EMF-IncQuery project"
+         dialog="true">
       <description>
-         From this step on, we assume that you already have the school, school.edit and school.editor projects generated and loaded inside your Eclipse instance (either by exporting them to the host, or by running as a new Eclipse Application).<br/>
-         Queries need to be specified inside special plug-in projects called <b>EMF-IncQuery projects</b>.
+         
       </description>
       <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Project">
          <command
                required="false"
                serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.newproject)"/>
       </subitem>
-      <subitem label="Give a name to the project (e.g. school.incquery), then press Finish."></subitem>
-      <!-- <subitem skip="true" label="(Optionally, only if you aren't using a new Eclipse Application:) On the second wizard page, add a reference to the school.genmodel Generator Model by pushing Add and browsing to the school.genmodel file in the school project. Click on Finish to proceed."></subitem> -->
+      <subitem label="Give a name to the project (e.g. school.incquery), then press Next."></subitem>
+      <subitem label="On the second wizard page, add a reference to the school.genmodel Generator Model by pushing Add and browsing to the school.genmodel file in the school project. Click on Finish to proceed."></subitem>
    </item>
    
 </cheatsheet>

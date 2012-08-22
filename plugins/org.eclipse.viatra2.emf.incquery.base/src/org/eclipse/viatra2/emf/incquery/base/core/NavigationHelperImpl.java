@@ -135,6 +135,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 		this.logger = logger;
 		assert(logger!=null);
 		
+		if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
+			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
+		}
 		
 		this.instanceListeners = new HashMap<InstanceListener, Collection<EClass>>();
 		this.featureListeners = new HashMap<FeatureListener, Collection<EStructuralFeature>>();
@@ -148,13 +151,13 @@ public class NavigationHelperImpl implements NavigationHelper {
 
 		this.notifier = emfRoot;
 		this.modelRoots = new HashSet<Notifier>();
-		this.expansionAllowed = false;
+		this.expansionAllowed = notifier instanceof ResourceSet;
 		this.inWildcardMode = wildcardMode;
 
 //		if (this.navigationHelperType == NavigationHelperType.ALL) {
 //			visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
 //		}
-		if (emfRoot != null) addRootInternal(emfRoot);
+		expandToAdditionalRoot(emfRoot);
 	}
 	
 	
@@ -464,7 +467,6 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	protected void expandToAdditionalRoot(Notifier root) {
 		if (modelRoots.add(root)) {
-			if (root instanceof ResourceSet) expansionAllowed = true;
 			contentAdapter.addAdapter(root);
 		}
 	}
@@ -680,7 +682,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	
 	private void traverse(final NavigationHelperVisitor visitor) {
 		for (Notifier root : modelRoots) {
-			EMFModelComprehension.traverseModel(visitor, root);		
+			EMFModelComprehension.visitModel(visitor, root);		
 		}
 		runAfterUpdateCallbacks();
 	}
@@ -690,23 +692,5 @@ public class NavigationHelperImpl implements NavigationHelper {
 	public Logger getLogger() {
 		return logger;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper#addRoot(org.eclipse.emf.common.notify.Notifier)
-	 */
-	@Override
-	public void addRoot(Notifier emfRoot) throws IncQueryBaseException {
-		addRootInternal(emfRoot);
-	}
-  /**
-   * @param emfRoot
-   * @throws IncQueryBaseException
-   */
-  private void addRootInternal(Notifier emfRoot) throws IncQueryBaseException {
-    if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
-      throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
-    }
-    expandToAdditionalRoot(emfRoot);
-  }
 
 }

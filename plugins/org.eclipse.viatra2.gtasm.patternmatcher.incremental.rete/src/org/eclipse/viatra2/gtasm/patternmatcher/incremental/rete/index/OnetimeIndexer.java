@@ -15,8 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 
 /**

@@ -1,19 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2010-2012, Tamas Szabo, Gabor Bergmann, Istvan Rath and Daniel Varro
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *   Tamas Szabo, Gabor Bergmann - initial API and implementation
- *******************************************************************************/
-
 package org.eclipse.viatra2.emf.incquery.base.core;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,31 +22,21 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 	 * A visitor for processing a single change event. Does not traverse the model. Uses all the observed types.
 	 */
 	public static class ChangeVisitor extends NavigationHelperVisitor {
-		// local copies to save actual state, in case visitor has to be saved for later due unresolvable proxies
-		private final boolean wildcardMode;
-		private final HashSet<EClass> allObservedClasses;
-		private final HashSet<EDataType> observedDataTypes;
-		private final HashSet<EStructuralFeature> observedFeatures;
-		
 		public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
 			super(navigationHelper, isInsertion, false);
-			wildcardMode = navigationHelper.isInWildcardMode();
-			allObservedClasses = new HashSet<EClass>(navigationHelper.getAllObservedClasses());
-			observedDataTypes = new HashSet<EDataType>(navigationHelper.getObservedDataTypes());
-			observedFeatures = new HashSet<EStructuralFeature>(navigationHelper.getObservedFeatures());
 		}
 		
 		@Override
 		protected boolean observesClass(EClass eClass) {
-			return wildcardMode || allObservedClasses.contains(eClass);
+			return navigationHelper.isInWildcardMode() || navigationHelper.getAllObservedClasses().contains(eClass);
 		}
 		@Override
 		protected boolean observesDataType(EDataType type) {
-			return wildcardMode || observedDataTypes.contains(type);
+			return navigationHelper.isInWildcardMode() || navigationHelper.getObservedDataTypes().contains(type);
 		}
 		@Override
 		protected boolean observesFeature(EStructuralFeature feature) {
-			return wildcardMode || observedFeatures.contains(feature);
+			return navigationHelper.isInWildcardMode() || navigationHelper.getObservedFeatures().contains(feature);
 		}
 	}	
 	
@@ -66,7 +44,6 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 	 * A visitor for a single-pass traversal of the whole model, processing only the given types and inserting them.
 	 */
 	public static class TraversingVisitor extends NavigationHelperVisitor {
-		private final boolean wildcardMode;
 		Set<EStructuralFeature> features; 
 		Set<EClass> newClasses; 
 		Set<EClass> oldClasses; // if decends from an old class, no need to add!
@@ -79,7 +56,6 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 				Set<EStructuralFeature> features, Set<EClass> newClasses, Set<EClass> oldClasses, Set<EDataType> dataTypes) 
 		{
 			super(navigationHelper, true, true);
-			wildcardMode = navigationHelper.isInWildcardMode();
 			this.features = features;
 			this.newClasses = newClasses;
 			this.oldClasses = oldClasses;
@@ -107,11 +83,11 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 		}
 		@Override
 		protected boolean observesDataType(EDataType type) {
-			return wildcardMode || dataTypes.contains(type);
+			return navigationHelper.isInWildcardMode() || dataTypes.contains(type);
 		}
 		@Override
 		protected boolean observesFeature(EStructuralFeature feature) {
-			return wildcardMode || features.contains(feature);
+			return navigationHelper.isInWildcardMode() || features.contains(feature);
 		}
 
 	}
@@ -234,19 +210,6 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 		}
 	}
 	
-	@Override
-	public void visitUnresolvableProxyFeature(EObject source, EReference reference, EObject target) {
-		store.suspendVisitorOnUnresolvableFeature(this, source, reference, target, isInsertion);
-	}
-
-	@Override
-	public void visitUnresolvableProxyObject(EObject source) {
-		store.suspendVisitorOnUnresolvableObject(this, source, isInsertion);
-	}	
-	@Override
-	public boolean forceProxyResolution() {
-		return isInsertion;
-	}
 
 //	private void visitObject(EObject obj, Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType> dataTypes) {
 //		if (obj != null) {

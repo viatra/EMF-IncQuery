@@ -211,8 +211,4 @@ Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
 
-   <url>
-      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
-   </url>
-
 </feature>

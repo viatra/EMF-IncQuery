@@ -22,8 +22,8 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receive
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.TransformerNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 
 
@@ -68,8 +68,8 @@ public class RetePatternMatcher extends TransformerNode {
 	// return productionNode;
 	// }
 
-	public Tuple matchOneRandomly(Object[] inputMapping, boolean[] fixed) {
-		ArrayList<Tuple> allMatches = matchAll(inputMapping, fixed);
+	public Tuple matchOneRandomly(Object[] inputMapping) {
+		ArrayList<Tuple> allMatches = matchAll(inputMapping, null);
 		if (allMatches == null || allMatches.isEmpty()) return null;
 		else return allMatches.get((int)(Math.random() * allMatches.size()));
 	}

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -33,25 +32,26 @@ public class SCC<V> {
 	public static long sccId = 0;
 	
 	/**
-	 * Computes the SCCs for the given graph and returns them as a multiset. 
-	 * (Iterative version of Tarjan's algorithm)
+	 * This method computes the SCCs for the given graph and returns them as a
+	 * set of sets. (Iterative Tarjan algorithm)
 	 * 
-	 * @param g the directed graph data source
+	 * Note that the implementation relies on the correct implementation of the equals method of the type paramter's class.
+	 * 
+	 * @param g the directed graph datasource
 	 * @return the set of SCCs
 	 */
 	public static <V> SCCResult<V> computeSCC(IGraphDataSource<V> g) {
 		
 		int index = 0;
 		Set<Set<V>> ret = new HashSet<Set<V>>();
-		Map<V, SCCProperty> nodeMap = new HashMap<V, SCCProperty>();
-		Map<V, ArrayList<V>> targetNodeMap = new HashMap<V, ArrayList<V>>();
-		//stores the nodes during the traversal
+		HashMap<V, SCCProperty> nodeMap = new HashMap<V, SCCProperty>();
+		HashMap<V, ArrayList<V>> targetNodeMap = new HashMap<V, ArrayList<V>>();
 		Stack<V> nodeStack = new Stack<V>();
-		//stores the nodes that are in the same strongly connected component
 		Stack<V> sccStack = new Stack<V>();
-
-		boolean sink = false, finishedTraversal = true;
 		
+		//used to stores those nodes which have not been visited at the time when the key node is visited
+		HashMap<V, HashSet<V>> notVisitedMap = new HashMap<V, HashSet<V>>();
+
 		//initialize all nodes with 0 index and 0 lowlink 
 		Set<V> allNodes = g.getAllNodes();
 		for (V n : allNodes) {
@@ -66,6 +66,8 @@ public class SCC<V> {
 				nodeMap.get(n).setIndex(index);
 				nodeMap.get(n).setLowlink(index);
 				
+				notVisitedMap.put(n, new HashSet<V>());
+				
 				List<V> targetNodes = g.getTargetNodes(n);
 				
 				if (targetNodes != null) {
@@ -77,7 +79,6 @@ public class SCC<V> {
 				while(!nodeStack.isEmpty()) {
 				
 					V _node = nodeStack.peek();
-					sink = false; finishedTraversal = false;
 					SCCProperty prop = nodeMap.get(_node);
 					
 					//if node is not visited yet
@@ -87,7 +88,9 @@ public class SCC<V> {
 						prop.setIndex(index);
 						prop.setLowlink(index);
 						
-						//storing the target nodes of the actual node
+						notVisitedMap.put(_node, new HashSet<V>());
+						
+						//storing the taret nodes of the actual node
 						if (g.getTargetNodes(_node) != null) {
 							targetNodeMap.put(_node, new ArrayList<V>(g.getTargetNodes(_node)));
 						}
@@ -104,7 +107,7 @@ public class SCC<V> {
 							List<V> targets = g.getTargetNodes(_node);
 							if (targets != null) {
 								for (V t : g.getTargetNodes(_node)) {
-									if (nodeMap.get(_node).getIndex() == 0) {
+									if (notVisitedMap.get(_node).contains(t)) {
 										prop.setLowlink(Math.min(prop.getLowlink(),	nodeMap.get(t).getLowlink()));
 									} else if (sccStack.contains(t)) {
 										prop.setLowlink(Math.min(prop.getLowlink(),	nodeMap.get(t).getIndex()));
@@ -112,34 +115,41 @@ public class SCC<V> {
 								}
 							}
 							
-							finishedTraversal = true;
+							if (prop.getLowlink() == prop.getIndex()) {
+								HashSet<V> sc = new HashSet<V>();
+								V targetNode = null;
+			
+								do {
+									targetNode = sccStack.pop();
+									sc.add(targetNode);
+								} while (!targetNode.equals(_node));
+			
+								ret.add(sc);
+							}
 						}
 						else {
-							//push next node to stack
 							V _t = targetNodeMap.get(_node).remove(0);
-							//if _t has not yet been visited
 							if (nodeMap.get(_t).getIndex() == 0) {
+								notVisitedMap.get(_node).add(_t);
 								nodeStack.add(_t);
 							}
 						}
 					}
-					//if _node has no target nodes - isolated nodes
 					else {
 						nodeStack.pop();
-						sink = true;
-					}
-					
-					//create scc if node is a sink or an scc has been found
-					if ((sink || finishedTraversal) && (prop.getLowlink() == prop.getIndex())) {
-						Set<V> sc = new HashSet<V>();
-						V targetNode = null;
-
-						do {
-							targetNode = sccStack.pop();
-							sc.add(targetNode);
-						} while (!targetNode.equals(_node));
-
-						ret.add(sc);
+						
+						if (prop.getLowlink() == prop.getIndex()) {
+							HashSet<V> sc = new HashSet<V>();
+							V targetNode = null;
+		
+							do {
+								targetNode = sccStack.pop();
+								sc.add(targetNode);
+							} while (!targetNode.equals(_node));
+		
+							ret.add(sc);
+						}
+						
 					}
 				}
 			}

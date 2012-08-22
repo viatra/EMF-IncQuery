@@ -63,7 +63,7 @@ private pattern CorrespondingRecordInMatchSetRecord(
 	find CorrespondingRecords(Record, CorrespodingRecord);
 }
 
-@QueryExplorer(display = false)
+@Off
 pattern UnexpectedMatchRecord(
 	ActualSet : MatchSetRecord,
 	ExpectedSet : MatchSetRecord,
@@ -85,7 +85,7 @@ pattern UnexpectedMatchRecord(
 	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ActualSet);
 }*/
 
-@QueryExplorer(display = false)
+@Off
 @DerivedFeature(feature = "role")
 pattern RecordRoleValue(
 	Record : MatchRecord,
@@ -98,7 +98,7 @@ pattern RecordRoleValue(
 	RecordRole::Match == Role;
 }
 
-@QueryExplorer(display = false)
+@Off
 @DerivedFeature(feature = "derivedValue")
 pattern SubstitutionValue(
 	Substitution : MatchSubstitutionRecord,

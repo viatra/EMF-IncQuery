@@ -208,7 +208,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 					//}
 					Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
 					for (Object target : targets) {
-						EMFModelComprehension.traverseFeature(visitor, source, derivedFeature, target);	
+						EMFModelComprehension.visitFeature(visitor, source, derivedFeature, target);	
 					}
 					if(currentValue instanceof Collection<?> && oldValue instanceof Collection<?>) {
 						((Collection<?>)oldValue).removeAll((Collection<?>) currentValue);
@@ -218,7 +218,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 					}
 				} else {
 					Object target = source.eGet(derivedFeature);
-					EMFModelComprehension.traverseFeature(visitor, source, derivedFeature, target);
+					EMFModelComprehension.visitFeature(visitor, source, derivedFeature, target);
 				}
 			}
 		} catch (Exception ex) {

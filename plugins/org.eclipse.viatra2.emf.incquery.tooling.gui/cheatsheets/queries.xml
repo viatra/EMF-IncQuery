@@ -8,10 +8,9 @@
       </description>
    </intro>
    
-   <item skip="true" title="(Optional, if you wish to use additional domains alongside school.ecore:) Adding an EMF-IncQuery Generator Model">
+   <item title="Adding an EMF-IncQuery Generator Model">
    		<description>
-   			Before specifying query definition patterns for domains defined in a <b>workspace project</b>, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. This file contains references to <b>.genmodel</b> files that are located in an EMF project in your workspace. <br/>
-   			Note: if you wish to specify queries for a domain defined in a project that is already installed as a plug-in (in EMF terms, registered in the Global EPackage Registry), the .eiqgen file is not necessary.
+   			Before specifying query definition patterns for domains defined in a workspace project, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. This file contains references to <b>.genmodel</b> files that are located in an EMF project in your workspace. 
    		</description>
    		<subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Generator Model">
          <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
@@ -51,13 +50,12 @@ This pattern includes a simple <b>edge type constraint</b> of type School.teache
    <item title="Executing queries on instance models with the Query Explorer">
    	<description>
    		To execute queries (i.e. invoke pattern matching) with EMF-IncQuery's development tools, the <b>Query Explorer view</b> is the tool to use. Query Explorer features a three-panel layout where the middle section shows actual query results (i.e. match sets against instance models), the collapsible left panel shows the <b>Pattern Registry</b> (a collection of registered and validated query pattern definitions, specified either in the workspace ("Runtime") or plug-ins already loaded in your Eclipse instance ("Plug-in"). <br/><br/>
-   		The (also collapsible) right panel in the Query Explorer (<b>Details/Filters</b>) may be used to inspect a detailed view of output parameter values, as well as provide input bindings using cell editors and picker dialogs. EMF-IncQuery allows the user and the programmer to determine which parameters are used as input and which are output when a query is actually being issued (instantiated), therefore the same pattern can be used to: <br/>
+   			The (also collapsible) right panel in the Query Explorer (<b>Details/Filters</b>) may be used to inspect a detailed view of output parameter values, as well as provide input bindings using cell editors and picker dialogs. EMF-IncQuery allows the user and the programmer to determine which parameters are used as input and which are output when a query is actually being issued (instantiated), therefore the same pattern can be used to: <br/>
 (a) list the Teachers of a given School (with School as an input parameter), <br/>
 (b) or to find the School that is associated to a given Teacher (Teacher is the input parameter),  <br/>
 (c) or to list all Schools with their Teachers (both are output parameters), <br/>
-(d) or to simply verify whether a given object is a Teacher, the other one is a School, and that the Teacher is indeed associated to the School instance (both are input parameters).<br/><br/>
+(d) or to simply verify whether a given object is a Teacher, the other one is a School, and that the Teacher is indeed associated to the School instance (both are input parameters).<br/>
 
-Make sure that you are experimenting with the Query Explorer in the same Eclipse instance where the school.incquery project is located (and which already contains school, school.edit and school.editor as plug-ins).
    	</description>
    	<subitem skip="true" label="Open the Query Explorer view, if not already open.">
    		<command required="true" serialization="org.eclipse.ui.views.showView(org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer)"></command>

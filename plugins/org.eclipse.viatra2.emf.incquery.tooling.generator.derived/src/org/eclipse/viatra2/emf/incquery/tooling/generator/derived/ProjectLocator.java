@@ -12,7 +12,6 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.derived;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +25,7 @@ import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
  */
 public final class ProjectLocator {
   
-  public static IJavaProject locateProject(String path, Logger logger) {
+  public static IJavaProject locateProject(String path) {
     IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
     if(project.exists()) {
       ArrayList<String> dependencies = new ArrayList<String>();
@@ -34,12 +33,10 @@ public final class ProjectLocator {
       try {
         ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
       } catch (CoreException e) {
-        logger.error("Could not add required dependencies to model project.", e);
+        e.printStackTrace();
       }
       return JavaCore.create(project);
-    } else {
-      return null;
-    }
+    } else return null;
   }
   
   private ProjectLocator() {

@@ -27,7 +27,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple
 /**
  * This class represents a transitive closure node in the rete net. 
  * 
- * @author Gabor Bergmann
+ * @author Tamas Szabo
  *
  */
 public class TransitiveClosureNode extends SingleInputNode implements Clearable, ITcObserver<Object> {

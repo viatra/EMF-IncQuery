@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
 		<groupId>org.eclipse.viatra2</groupId>
-		<version>0.6.5-SNAPSHOT</version>
+		<version>0.6.0-SNAPSHOT</version>
 		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
 	</parent>
 	<artifactId>org.eclipse.viatra2.patternlanguage.update</artifactId>
@@ -20,29 +20,6 @@
 				<configuration>
 					<repositoryName>EMF-IncQuery</repositoryName>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>emfpattern.target</file>
-									<type>target</type>
-									<classifier>emfpattern</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>

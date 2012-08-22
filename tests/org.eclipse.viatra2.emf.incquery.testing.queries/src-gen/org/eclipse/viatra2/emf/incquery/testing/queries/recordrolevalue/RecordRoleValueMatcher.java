@@ -21,10 +21,12 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * Generated pattern matcher API of the RecordRoleValue pattern, 
  * providing pattern-specific query methods.
  * 
- * <p>Original source:
- * <code><pre>
- * {@literal @}QueryExplorer(display = false)
- * {@literal @}DerivedFeature(feature = "role")
+ * 
+ * 
+ *  
+ * 
+ * @Off
+ * @DerivedFeature(feature = \"role\")
  * pattern RecordRoleValue(
  * 	Record : MatchRecord,
  * 	Role
@@ -35,7 +37,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 	MatchSetRecord.matches(_MS,Record);
  * 	RecordRole::Match == Role;
  * }
- * </pre></code>
  * 
  * @see RecordRoleValueMatch
  * @see RecordRoleValueMatcherFactory

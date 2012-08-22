@@ -11,11 +11,11 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable; import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
 
 /**

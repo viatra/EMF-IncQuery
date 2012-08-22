@@ -238,13 +238,6 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 */
 	public abstract Match newEmptyMatch();
 	/**
-	 * Returns a new (partial) Match object for the matcher. 
-   * This can be used e.g. to call the matcher with a partial match. 
-	 * @param parameters the fixed value of pattern parameters, or null if not bound.
-	 * @return the (partial) match object.
-	 */
-	public abstract Match newMatch(Object... parameters);
-	/**
 	 * Retrieve the set of values that occur in matches for the given parameterName.
 	 * 
 	 * @param parameterName name of the parameter for which values are returned

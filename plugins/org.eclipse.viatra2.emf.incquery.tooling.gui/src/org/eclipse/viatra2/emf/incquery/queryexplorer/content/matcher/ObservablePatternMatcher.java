@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
@@ -82,17 +81,9 @@ public class ObservablePatternMatcher {
 			this.processMatchesRunnable = new Runnable() {		
 				@Override
 				public void run() {
-				  if(deltaMonitor.matchFoundEvents.size() > 0 || deltaMonitor.matchLostEvents.size() > 0) {
-				    // this is required as both QueryExplorer.getInstance() and Realm.getDefault() work only in a UI thread
-  				  Display.getDefault().asyncExec(new Runnable() {
-              @Override
-              public void run() {
-                processNewMatches(deltaMonitor.matchFoundEvents);
-                processLostMatches(deltaMonitor.matchLostEvents);
-                deltaMonitor.clear();
-              }
-            });
-				  }
+					processNewMatches(deltaMonitor.matchFoundEvents);
+					processLostMatches(deltaMonitor.matchLostEvents);
+					deltaMonitor.clear();
 				}
 			};
 			
@@ -214,9 +205,8 @@ public class ObservablePatternMatcher {
 		else {
 			this.matches.add(index, pm);
 		}
-		if (QueryExplorer.getInstance() != null) {
-		  QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
-		}
+		
+		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 	}
 	
 	private void removeMatch(IPatternMatch match) {
@@ -256,8 +246,8 @@ public class ObservablePatternMatcher {
 	}
 	
 	public void setFilter(Object[] parameterFilter) {
-		this.parameterFilter = parameterFilter.clone();
-		this.filter = this.matcher.arrayToMatch(this.parameterFilter);
+		this.parameterFilter = parameterFilter;
+		this.filter = this.matcher.arrayToMatch(parameterFilter);
 		
 		Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(sigMap.keySet());
 		

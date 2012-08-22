@@ -58,7 +58,7 @@ public class IncQueryBaseFactory {
 	 * If wildcard mode is off, the client will have to manually register the interesting aspects of the model.
 	 * @see NavigationHelper
 	 *  
-	 * @param emfRoot the root of the EMF tree to be indexed. Recommended: Resource or ResourceSet. Can be null - you can add a root later using {@link NavigationHelper#addRoot(Notifier)}
+	 * @param emfRoot the root of the EMF tree to be indexed. Recommended: Resource or ResourceSet.
 	 * @param wildcardMode true if all aspects of the EMF model should be indexed automatically, false if manual registration of interesting aspects is desirable
 	 * @param logger the log output where errors will be logged if encountered during the operation of the NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
 	 * @return the NavigationHelper instance

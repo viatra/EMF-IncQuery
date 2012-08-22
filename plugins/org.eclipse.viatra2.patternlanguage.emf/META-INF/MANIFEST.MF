@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Pattern Language
 Bundle-Vendor: Zoltan Ujhelyi/FTSRG
-Bundle-Version: 0.6.5.qualifier
+Bundle-Version: 0.6.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.emf; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.1.0";visibility:=reexport,

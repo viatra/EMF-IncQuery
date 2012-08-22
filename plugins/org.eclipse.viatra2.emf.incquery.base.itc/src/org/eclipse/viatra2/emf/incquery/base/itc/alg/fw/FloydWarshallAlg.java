@@ -74,9 +74,9 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 			}
 		}
 	
-		for (k=0;k<n;k++) {
-			for (i=0;i<n;i++) {
-				for (j=0;j<n;j++) {
+		for (i=0;i<n;i++) {
+			for (j=0;j<n;j++) {
+				for (k=0;k<n;k++) {
 					P[i][j] = P[i][j] | (P[i][k] & P[k][j]);
 				}
 			}

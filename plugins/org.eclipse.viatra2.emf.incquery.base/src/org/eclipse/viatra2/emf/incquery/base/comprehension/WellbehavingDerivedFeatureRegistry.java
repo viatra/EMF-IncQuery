@@ -141,9 +141,9 @@ public class WellbehavingDerivedFeatureRegistry {
 	public static boolean isWellbehavingFeature(EStructuralFeature feature) {
 		if (contributedWellbehavingDerivedFeatures.contains(feature)) {
 			return true;
-		} else if (contributedWellbehavingDerivedClasses.contains(feature.getEContainingClass())) {
+		} else if (contributedWellbehavingDerivedClasses.contains(feature.eClass())) {
 			return true;
-		} else if (contributedWellbehavingDerivedPackages.contains(feature.getEContainingClass().getEPackage())) {
+		} else if (contributedWellbehavingDerivedPackages.contains(feature.eClass().getEPackage())) {
 			return true;
 		}
 		return false;

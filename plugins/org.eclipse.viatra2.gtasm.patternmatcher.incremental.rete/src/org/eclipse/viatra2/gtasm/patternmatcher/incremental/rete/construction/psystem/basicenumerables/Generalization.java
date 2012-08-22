@@ -11,9 +11,9 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables;
 
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable; import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem;
 
 /**
  * @author Bergmann Gábor

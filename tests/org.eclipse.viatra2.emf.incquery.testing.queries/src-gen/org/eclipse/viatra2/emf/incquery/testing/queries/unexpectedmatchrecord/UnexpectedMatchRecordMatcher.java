@@ -22,9 +22,9 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * Generated pattern matcher API of the UnexpectedMatchRecord pattern, 
  * providing pattern-specific query methods.
  * 
- * <p>Original source:
- * <code><pre>
- * {@literal @}QueryExplorer(display = false)
+ * 
+ * 
+ * @Off
  * pattern UnexpectedMatchRecord(
  * 	ActualSet : MatchSetRecord,
  * 	ExpectedSet : MatchSetRecord,
@@ -36,7 +36,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * 	ActualSet != ExpectedSet;
  * 	neg find CorrespondingRecordInMatchSetRecord(Record, _CorrespodingRecord, ExpectedSet);
  * }
- * </pre></code>
  * 
  * @see UnexpectedMatchRecordMatch
  * @see UnexpectedMatchRecordMatcherFactory

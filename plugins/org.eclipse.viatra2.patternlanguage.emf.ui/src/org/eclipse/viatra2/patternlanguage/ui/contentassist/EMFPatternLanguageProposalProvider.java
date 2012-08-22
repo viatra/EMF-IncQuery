@@ -141,7 +141,6 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
 					acceptor.accept(createCompletionProposal(var.getName(), context));
 				}
 			} catch (ResolutionException e) {
-				//If resolution fails, simply don't return anything
 			}
 		}
 	}

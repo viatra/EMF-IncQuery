@@ -41,7 +41,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
-import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler$FeatureKind
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider
@@ -82,8 +82,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	private static String IMPORT_QUALIFIER 			= "org.eclipse.viatra2.emf.incquery.runtime.derived"
 	private static String FEATUREKIND_IMPORT		= "FeatureKind"
 	private static String HELPER_IMPORT 			= "IncqueryFeatureHelper"
-	//private static String HANDLER_NAME 				= "IncqueryFeatureHandler"
-	private static String HANDLER_NAME 				= "IncqueryDerivedFeature"
+	private static String HANDLER_NAME 				= "IncqueryFeatureHandler"
 	private static String HANDLER_FIELD_SUFFIX 		= "Handler"
 	private static String DERIVED_ERROR_CODE = "org.eclipse.viatra2.emf.incquery.runtime.derived.error"
 	
@@ -219,7 +218,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
 		//val project = ProjectLocator::locateProject(projectDir)
-		ProjectLocator::locateProject(projectDir,logger)
+		ProjectLocator::locateProject(projectDir)
 		//ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
 		//JavaCore::create(project)
 	}
@@ -267,11 +266,11 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			importListRewrite.insertLast(handlerImportNew, null)
 		}
 		val kindImport = imports.findFirst[
-			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "."+ FEATUREKIND_IMPORT
+			it.name.fullyQualifiedName == IMPORT_QUALIFIER + "." + HANDLER_NAME + "."+ FEATUREKIND_IMPORT
 		]
 		if(kindImport == null){
 			val kindImportNew = ast.newImportDeclaration
-			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER),ast.newSimpleName(FEATUREKIND_IMPORT)))
+			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER + "." + HANDLER_NAME),ast.newSimpleName(FEATUREKIND_IMPORT)))
 			importListRewrite.insertLast(kindImportNew, null)
 		}
 		val helperImport = imports.findFirst[

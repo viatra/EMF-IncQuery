@@ -448,7 +448,7 @@ public class EMFPatternMatcherRuntimeContext
 	@Override
 	// TODO Transactional?
 	public IManipulationListener subscribePatternMatcherForUpdates(ReteEngine<Pattern> engine) {
-		if (listener == null) listener = new BaseIndexListener(iqEngine, engine, baseIndex);
+		if (listener == null) listener = new BaseIndexListener(engine, baseIndex);
 		return listener;
 	}
 

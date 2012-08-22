@@ -359,7 +359,7 @@ public class PatternLanguageJavaValidator extends
 	@Check
 	public void checkPackageDeclaration(PatternModel model) {
 		String packageName = model.getPackageName();
-		if (packageName!= null && !packageName.equals(packageName.toLowerCase())) {
+		if (packageName!= null && !packageName.equalsIgnoreCase(packageName)) {
 			error("Only lowercase package names supported",
 					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
 					IssueCodes.LOWERCASE_PATTERN_NAME);

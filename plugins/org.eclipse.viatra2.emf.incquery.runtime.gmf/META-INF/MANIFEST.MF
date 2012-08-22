@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery GMF extensions
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.runtime.gmf;singleton:=true
-Bundle-Version: 0.6.5.qualifier
+Bundle-Version: 0.6.0.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.Activator
 Bundle-Vendor: Gabor Bergmann, Istvan Rath
 Require-Bundle: org.eclipse.ui,
