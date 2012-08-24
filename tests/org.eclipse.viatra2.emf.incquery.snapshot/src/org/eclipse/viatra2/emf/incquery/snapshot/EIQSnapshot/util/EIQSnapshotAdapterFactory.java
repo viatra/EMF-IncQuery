@@ -19,12 +19,23 @@ package org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.*;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.BooleanSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.DateSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.DoubleSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EMFSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EnumSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.FloatSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IntSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.LongSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MiscellaneousSubstitution;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.StringSubstitution;
 
 /**
  * <!-- begin-user-doc -->

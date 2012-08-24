@@ -208,10 +208,24 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 
 	protected boolean evaluateExpression(Tuple ps) {
 		Object termResult = evaluateTerm(ps);
-		Object rightHandSide = (rhsIndex == null) ? true : ps.get(rhsIndex);
-	
-		return (termResult == null) ? rightHandSide == null : termResult
-				.equals(rightHandSide);
+		
+		if (rhsIndex != null) {
+			Object rightHandSide = ps.get(rhsIndex);
+			return rightHandSide.equals(termResult);
+		} else {
+			if (Boolean.FALSE.equals(termResult)) 
+				return false;
+			else if (Boolean.TRUE.equals(termResult))
+				return true;
+			engine.getContext().logWarning(String.format(
+					"The incremental pattern matcher encountered a type compatibility problem during check() evaluation over variables %s: expression evaluated to type %s instead of java.lang.Boolean. (Developer note: result was %s in %s)", 
+					prettyPrintTuple(ps), 
+					termResult == null? null : termResult.getClass().getName(),
+					termResult,
+					this
+					));
+			return false;
+		}				
 	}
 	
 	public Object evaluateTerm(Tuple ps) {
@@ -222,13 +236,16 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 		Object result = null;
 		try {
 			result = evaluator.evaluate(ps);
-		} catch (Throwable e) {
-			engine.getContext().logWarning( 
-					"The incremental pattern matcher encountered an error during check() evaluation over variables "
-					+ prettyPrintTuple(ps) 
-					+ " Error message: " + e.getMessage()
-					+ " (Developer note: " + e.getClass().getSimpleName() + " in " + this + ")"
-					, e);
+		} catch (Throwable e) { //NOPMD
+			if (e instanceof Error) throw (Error)e;
+			engine.getContext().logWarning(String.format(
+				"The incremental pattern matcher encountered an error during %s evaluation over variables %s. Error message: %s. (Developer note: %s in %s)", 
+				rhsIndex == null ? "check()" : "eval()",
+				prettyPrintTuple(ps), 
+				e.getMessage(),
+				e.getClass().getSimpleName(),
+				this
+				), e);
 //			engine.logEvaluatorException(e);
 			
 			result = Boolean.FALSE;

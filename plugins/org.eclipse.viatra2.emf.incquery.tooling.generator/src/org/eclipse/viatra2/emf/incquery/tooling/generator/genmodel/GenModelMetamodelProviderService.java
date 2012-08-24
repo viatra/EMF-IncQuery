@@ -220,6 +220,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public GenPackage findGenPackage(EObject ctx, final EPackage ePackage) {
+		if (ePackage == null) return null;
 		return findGenPackage(ctx, ePackage.getNsURI());
 	}
 	

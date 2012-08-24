@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Base Pattern Language UI Contribution
 Bundle-Vendor: Zoltan Ujhelyi/FTSRG
-Bundle-Version: 0.6.0.qualifier
+Bundle-Version: 0.6.5.qualifier
 Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.core.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.viatra2.patternlanguage.core;bundle-version="0.6.0";visibility:=reexport,

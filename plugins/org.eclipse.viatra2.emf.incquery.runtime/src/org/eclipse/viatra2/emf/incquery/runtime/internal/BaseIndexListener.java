@@ -23,6 +23,7 @@ import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
@@ -38,6 +39,12 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	private ReteBoundary<?> boundary;
 	private NavigationHelper baseIndex;
 	
+	/** 
+	 * This reference is vital, to avoid the premature GC of the engine while the EMF model is still reachable.
+	 * Retention path: EMF model -> IQBase -> BaseIndexListener -> IQEngine 
+	 */
+	@SuppressWarnings("unused")
+	private IncQueryEngine iqEngine;
 	
 	private Set<EClass> classes = new HashSet<EClass>();
 	private Set<EDataType> dataTypes = new HashSet<EDataType>();
@@ -46,8 +53,9 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	/**
 	 * @param boundary
 	 */
-	public BaseIndexListener(ReteEngine<?> engine, NavigationHelper baseIndex) {
+	public BaseIndexListener(IncQueryEngine iqEngine, ReteEngine<?> engine, NavigationHelper baseIndex) {
 		super();
+		this.iqEngine = iqEngine;
 		this.boundary = engine.getBoundary();
 		this.baseIndex = baseIndex;
 		engine.addDisconnectable(this);

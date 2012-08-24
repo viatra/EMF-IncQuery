@@ -263,13 +263,9 @@ public class PatternComposite extends PatternComponent {
 	@Override
 	public String getFullPatternNamePrefix() {
 		StringBuilder sb = new StringBuilder(patternNameFragment);
-		PatternsViewerInput input = QueryExplorer.getInstance().getPatternsViewerInput();
 		
-		if (parent != null && !parent.equals(input.getGeneratedPatternsRoot()) &&
-				!parent.equals(input.getGenericPatternsRoot())) {
-			if (parent.getParent() != null) {
-				sb.insert(0, ".");
-			}
+		if (parent != null && parent.getParent()!=null) {
+			sb.insert(0, ".");
 			sb.insert(0, parent.getFullPatternNamePrefix());
 		}
 		return sb.toString();

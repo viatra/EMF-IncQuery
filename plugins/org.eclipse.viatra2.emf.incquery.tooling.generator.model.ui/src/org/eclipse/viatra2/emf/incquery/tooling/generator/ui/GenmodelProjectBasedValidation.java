@@ -41,22 +41,27 @@ public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator 
 					res.getResourceSet()).getProject();
 			final GenModel genmodel = ref.getGenmodel();
 			if (genmodel != null) {
-				String modelPluginID = genmodel.getModelPluginID();
-				try {
-					if (modelPluginID != null
-							&& !modelPluginID.isEmpty()
-							&& !ProjectGenerationHelper.checkBundleDependency(
-									project, modelPluginID)) {
-						error(String.format(
-								"To refer elements from the Generator Model %s the bundle %s must be added as dependency",
-								genmodel.eResource().getURI().toString(),
-								modelPluginID), ref, null, GENMODEL_DEPENDENCY,
-								modelPluginID);
-					}
-				} catch (CoreException e) {
-					logger.error("Error checking project: ", e);
-				}
+				checkExistingDependency(ref, project, genmodel);
 			}
+		}
+	}
+
+	private void checkExistingDependency(final GeneratorModelReference ref,
+			IProject project, final GenModel genmodel) {
+		String modelPluginID = genmodel.getModelPluginID();
+		try {
+			if (modelPluginID != null
+					&& !modelPluginID.isEmpty()
+					&& !ProjectGenerationHelper.checkBundleDependency(project,
+							modelPluginID)) {
+				error(String
+						.format("To refer elements from the Generator Model %s the bundle %s must be added as dependency",
+								genmodel.eResource().getURI().toString(),
+								modelPluginID),
+						ref, null, GENMODEL_DEPENDENCY, modelPluginID);
+			}
+		} catch (CoreException e) {
+			logger.error("Error checking project: ", e);
 		}
 	}
 }

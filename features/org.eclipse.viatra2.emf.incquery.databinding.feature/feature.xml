@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.databinding.feature"
       label="EMF-IncQuery Databinding Feature"
-      version="0.6.0.qualifier"
+      version="0.6.5.qualifier"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 
@@ -13,6 +13,10 @@
    <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
    </copyright>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+   </url>
 
    <includes
          id="org.eclipse.viatra2.emf.incquery.runtime.feature"

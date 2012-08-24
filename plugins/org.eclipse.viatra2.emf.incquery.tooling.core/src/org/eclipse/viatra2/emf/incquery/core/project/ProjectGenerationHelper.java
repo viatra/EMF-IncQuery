@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -548,7 +547,7 @@ public abstract class ProjectGenerationHelper {
 		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
 				INVALID_PROJECT_MESSAGE);
 		
-		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
+		if (StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
 		Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap
@@ -641,7 +640,7 @@ public abstract class ProjectGenerationHelper {
 	public static void removeAllExtension(IProject project, Collection<Pair<String, String>> removableExtensionIdentifiers) throws CoreException {
 		Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)));
 		
-		if (project == null || StringExtensions.isNullOrEmpty(project.getName())) {
+		if (StringExtensions.isNullOrEmpty(project.getName())) {
 			return;
 		}
 		IFile pluginXml = PDEProject.getPluginXml(project);
@@ -755,13 +754,13 @@ public abstract class ProjectGenerationHelper {
 	 * @return
 	 */
 	private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath, final IBundleProjectService service) {
-		Collection<IBundleClasspathEntry> classPathList = Collections2.filter(Lists.newArrayList(oldClasspath), new Predicate<IBundleClasspathEntry>() {
+		Collection<IBundleClasspathEntry> classPathSourceList = Collections2.filter(Lists.newArrayList(oldClasspath), new Predicate<IBundleClasspathEntry>() {
 			@Override
 			public boolean apply(IBundleClasspathEntry entry) {
 				return entry.getSourcePath() != null && !entry.getSourcePath().isEmpty();
 			}
 		});
-		final Collection<String> existingSourceEntries = Collections2.transform(classPathList, new Function<IBundleClasspathEntry, String>() {
+		final Collection<String> existingSourceEntries = Collections2.transform(classPathSourceList, new Function<IBundleClasspathEntry, String>() {
 			@Override
 			public String apply(IBundleClasspathEntry entry) {
 				return entry.getSourcePath().toString();
@@ -781,8 +780,10 @@ public abstract class ProjectGenerationHelper {
 								null, null);
 					}
 				});
-		classPathList.addAll(newClasspathEntries);
-		return classPathList.toArray(new IBundleClasspathEntry[classPathList.size()]);
+		
+		List<IBundleClasspathEntry> modifiedClasspathEntries = Lists.newArrayList(oldClasspath);
+		modifiedClasspathEntries.addAll(newClasspathEntries);
+		return modifiedClasspathEntries.toArray(new IBundleClasspathEntry[modifiedClasspathEntries.size()]);
 	}
 	
 	public static String getBundleSymbolicName(IProject project) {

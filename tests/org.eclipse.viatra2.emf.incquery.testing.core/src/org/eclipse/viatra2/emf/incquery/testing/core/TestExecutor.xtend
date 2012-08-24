@@ -13,20 +13,17 @@ package org.eclipse.viatra2.emf.incquery.testing.core
 
 import com.google.inject.Inject
 import java.util.Set
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
-import junit.framework.TestListener
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
-import org.eclipse.viatra2.emf.incquery.testing.core.TestingLogAppender
 
 import static org.eclipse.viatra2.emf.incquery.testing.core.TestExecutor.*
 import static org.junit.Assert.*
-import static org.hamcrest.CoreMatchers.*
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.

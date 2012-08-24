@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -34,9 +36,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @author Abel Hegedus
  *
  */
-@SuppressWarnings("rawtypes")
-public class MatcherFactoryRegistry {
-	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = new HashMap<String, IMatcherFactory<?>>();
+public final class MatcherFactoryRegistry {
+	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = createMatcherFactories();
+
 	// NOTE pattern group management is relegated to PatternGroup classes
 	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
 	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
@@ -47,17 +49,22 @@ public class MatcherFactoryRegistry {
 	private MatcherFactoryRegistry() {
 	}
 	
-	/**
-	 * Called by Activator.
-	 */
-	public static void initRegistry()
+	private static HashMap<String, IMatcherFactory<?>> createMatcherFactories() {
+		final HashMap<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
+		initRegistry(factories);
+		return factories;
+	}
+	
+	// Does not use the field MATCHER_FACTORIES as it may still be uninitialized 
+	private static void initRegistry(Map<String, IMatcherFactory<?>> factories)
 	{
-		MATCHER_FACTORIES.clear();
+		factories.clear();
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
-		IExtensionPoint poi;
-
-		poi = reg.getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);	
+		if (reg == null) return;
+			
+		IExtensionPoint poi = 
+			reg.getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);	
 		if (poi != null) 
 		{		
 			IExtension[] exts = poi.getExtensions();
@@ -72,11 +79,12 @@ public class MatcherFactoryRegistry {
 						try
 						{
 							String id = el.getAttribute("id");
-							IMatcherFactoryProvider provider = (IMatcherFactoryProvider)el.createExecutableExtension("factoryProvider");
-							IMatcherFactory matcherFactory = provider.get();
+							@SuppressWarnings("unchecked")
+              IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>> provider = (IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>>)el.createExecutableExtension("factoryProvider");
+							IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
-							  MATCHER_FACTORIES.put(fullyQualifiedName, matcherFactory);
+								factories.put(fullyQualifiedName, matcherFactory);
 							} else {
 								throw new UnsupportedOperationException(
 										"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
@@ -96,13 +104,12 @@ public class MatcherFactoryRegistry {
 		}
 	}
 
-
 	/**
 	 * Puts the factory in the registry, unless it already contains a factory for the given pattern FQN 
 	 * 
 	 * @param factory
 	 */
-	public static void registerMatcherFactory(IMatcherFactory factory) {
+	public static void registerMatcherFactory(IMatcherFactory<?> factory) {
 	
 		String qualifiedName = factory.getPatternFullyQualifiedName();
 		if(!MATCHER_FACTORIES.containsKey(qualifiedName)) {
@@ -124,8 +131,8 @@ public class MatcherFactoryRegistry {
 	/**
 	 * @return a copy of the set of contributed matcher factories
 	 */
-	public static Set<IMatcherFactory> getContributedMatcherFactories() {
-		return new HashSet<IMatcherFactory>(MATCHER_FACTORIES.values());
+	public static Set<IMatcherFactory<?>> getContributedMatcherFactories() {
+		return new HashSet<IMatcherFactory<?>>(MATCHER_FACTORIES.values());
 	}
 	
 	/**
@@ -133,7 +140,7 @@ public class MatcherFactoryRegistry {
 	 * @param patternFqn
 	 * @return
 	 */
-	public static IMatcherFactory getMatcherFactory(String patternFqn) {
+	public static IMatcherFactory<?> getMatcherFactory(String patternFqn) {
 		if(MATCHER_FACTORIES.containsKey(patternFqn)) {
 			return MATCHER_FACTORIES.get(patternFqn);
 		}
@@ -146,7 +153,7 @@ public class MatcherFactoryRegistry {
 	 * @param pattern
 	 * @return
 	 */
-	public static IMatcherFactory getMatcherFactory(Pattern pattern) {
+	public static IMatcherFactory<?> getMatcherFactory(Pattern pattern) {
 		String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 		if(MATCHER_FACTORIES.containsKey(fullyQualifiedName)) {
 			return MATCHER_FACTORIES.get(fullyQualifiedName);
@@ -159,7 +166,7 @@ public class MatcherFactoryRegistry {
 	 * @param pattern
 	 * @return
 	 */
-	public static IMatcherFactory getOrCreateMatcherFactory(Pattern pattern) {
+	public static IMatcherFactory<?> getOrCreateMatcherFactory(Pattern pattern) {
 		String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 		if(MATCHER_FACTORIES.containsKey(fullyQualifiedName)) {
 			return MATCHER_FACTORIES.get(fullyQualifiedName);

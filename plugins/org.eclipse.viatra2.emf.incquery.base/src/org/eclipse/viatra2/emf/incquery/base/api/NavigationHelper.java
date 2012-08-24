@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -24,6 +25,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 
 /**
  * 
@@ -307,6 +309,12 @@ public interface NavigationHelper {
 	 * 
 	 */
 	public Set<Runnable> getAfterUpdateCallbacks();
+
+  /**
+   * Adds an additional EMF model root.
+   * @param emfRoot
+   */
+  public void addRoot(Notifier emfRoot) throws IncQueryBaseException;
 	
 
 }

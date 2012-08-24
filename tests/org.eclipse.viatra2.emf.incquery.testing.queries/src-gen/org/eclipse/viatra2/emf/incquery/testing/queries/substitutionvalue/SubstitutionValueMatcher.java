@@ -21,10 +21,10 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * Generated pattern matcher API of the SubstitutionValue pattern, 
  * providing pattern-specific query methods.
  * 
- * 
- * 
- * @Off
- * @DerivedFeature(feature = \"derivedValue\")
+ * <p>Original source:
+ * <code><pre>
+ * {@literal @}QueryExplorer(display = false)
+ * {@literal @}DerivedFeature(feature = "derivedValue")
  * pattern SubstitutionValue(
  * 	Substitution : MatchSubstitutionRecord,
  * 	Value
@@ -49,6 +49,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * } or {
  * 	EnumSubstitution.valueLiteral(Substitution,Value);
  * }
+ * </pre></code>
  * 
  * @see SubstitutionValueMatch
  * @see SubstitutionValueMatcherFactory

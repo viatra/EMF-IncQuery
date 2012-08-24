@@ -163,6 +163,21 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @return false if the callback was not registered.
 	 */
 	public boolean removeCallbackAfterUpdates(Runnable callback);
+	/**
+	 * Registers a callback that will be run each time the EMF-IncQuery engine is wiped or disposed.
+	 * Typically useful if delta monitors are used, especially of the {@link IncQueryEngine} is managed.
+	 * 
+	 * <p>When the callback is issued, the wipe has already occurred and pattern matchers will continue to return stale results.
+	 * @param callback a Runnable to execute after each wipe.
+	 * @return false if the callback was already registered.
+	 */
+	public boolean addCallbackAfterWipes(Runnable callback);
+	/**
+	 * Removes a previously registered callback. See {@link #addCallbackAfterWipes()}.
+	 * @param callback the callback to remove.
+	 * @return false if the callback was not registered.
+	 */
+	public boolean removeCallbackAfterWipes(Runnable callback);
 	
 	// ARRAY-BASED INTERFACE
 	
@@ -237,6 +252,13 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @return the empty match
 	 */
 	public abstract Match newEmptyMatch();
+	/**
+	 * Returns a new (partial) Match object for the matcher. 
+   * This can be used e.g. to call the matcher with a partial match. 
+	 * @param parameters the fixed value of pattern parameters, or null if not bound.
+	 * @return the (partial) match object.
+	 */
+	public abstract Match newMatch(Object... parameters);
 	/**
 	 * Retrieve the set of values that occur in matches for the given parameterName.
 	 * 

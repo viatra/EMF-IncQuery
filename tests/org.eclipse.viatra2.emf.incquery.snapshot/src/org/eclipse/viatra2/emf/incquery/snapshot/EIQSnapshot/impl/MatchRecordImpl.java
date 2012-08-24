@@ -26,13 +26,14 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler.FeatureKind;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
 
 /**
  * <!-- begin-user-doc -->
@@ -192,30 +193,24 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 	/**
 	 * EMF-IncQuery handler for derived feature role
 	 */
-	private IncqueryFeatureHandler roleHandler;
+	private IncqueryDerivedFeature roleHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * @derived getter created by EMF-InccQuery for derived feature role
+	 * @derived getter created by EMF-IncQuery for derived feature role
 	 */
 	public RecordRole getRole() {
-		if (roleHandler != null) {
-			return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) roleHandler
-					.getSingleReferenceValue();
-		} else {
+		if (roleHandler == null) {
 			roleHandler = IncqueryFeatureHelper
-					.createHandler(
+					.getIncqueryDerivedFeature(
 							this,
 							EIQSnapshotPackageImpl.Literals.MATCH_RECORD__ROLE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue",
 							"Record", "Role", FeatureKind.SINGLE_REFERENCE,
-							true);
-			if (roleHandler != null) {
-				return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) roleHandler
-						.getSingleReferenceValue();
-			}
+							true, false);
 		}
-		return null;
+		return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) roleHandler
+				.getSingleReferenceValue(this);
 	}
 
 } //MatchRecordImpl

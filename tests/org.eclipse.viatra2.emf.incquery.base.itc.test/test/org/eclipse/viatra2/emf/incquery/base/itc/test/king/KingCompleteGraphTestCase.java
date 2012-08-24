@@ -9,40 +9,35 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.base.itc.test;
+package org.eclipse.viatra2.emf.incquery.base.itc.test.king;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.king.KingAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class DFSTestCase extends TestCase {
-    public DFSTestCase () {
-    }
+@Ignore
+public class KingCompleteGraphTestCase {
     
     @Test
-    public void testResult() {
-    	
-    	FloydWarshallAlg<Integer> fwa = null;
+    public void testResult() {		   	
 		int nodeCount = 10;
 		Graph<Integer> g = new Graph<Integer>();
 		DFSAlg<Integer> da = new DFSAlg<Integer>(g);
+		KingAlg<Integer> ka = new KingAlg<Integer>(g);
 
 		for (int i = 0; i < nodeCount; i++) {
 			g.insertNode(i);
 		}
 
-		// inserting edges
 		for (int i = 0; i < nodeCount; i++) {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i != j) {
 					g.insertEdge(i, j);
-
-					fwa = new FloydWarshallAlg<Integer>(g);
-
-					assertEquals(da.getTcRelation(), fwa.getTcRelation());
+					assertEquals(da.getTcRelation(), ka.getMergedRelation());
 				}
 			}
 		}
@@ -51,17 +46,10 @@ public class DFSTestCase extends TestCase {
 			for (int j = 0; j < nodeCount; j++) {
 				if (i != j) {
 					g.deleteEdge(i, j);
-
-					fwa = new FloydWarshallAlg<Integer>(g);
-
-					assertEquals(da.getTcRelation(), fwa.getTcRelation());
+					assertEquals(da.getTcRelation(), ka.getMergedRelation());
 				}
 			}
 		}
-    }
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(DFSTestCase.class);
     }
 }
  

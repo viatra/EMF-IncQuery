@@ -13,18 +13,15 @@ package org.eclipse.viatra2.emf.incquery.testing.core
 
 import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
-import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.emf.ecore.resource.URIConverter
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
+import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericMatcherFactory
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
 
 /**
  * Helper methods for loading models from files or URIs.

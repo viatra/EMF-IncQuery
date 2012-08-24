@@ -61,10 +61,6 @@ public class IncqueryFeatureHandler {
    */ 
 	private final Collection<Object> manyRefMemory = new HashSet<Object>();
 	
-	public enum FeatureKind{
-		SUM, COUNTER, SINGLE_REFERENCE, MANY_REFERENCE, ITERATION
-	}
-	
 	/**
 	 * 
 	 */
