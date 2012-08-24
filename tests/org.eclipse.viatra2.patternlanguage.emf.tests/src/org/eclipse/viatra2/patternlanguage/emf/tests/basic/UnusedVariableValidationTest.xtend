@@ -23,7 +23,8 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.runner.RunWith
+import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
@@ -161,7 +162,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(p);
 			}'
 		)
@@ -176,7 +178,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			pattern helper(P) = {
 				Pattern(P);
 			}
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				neg find helper(p);
 			}'
 		)
@@ -187,7 +190,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				neg Pattern.name(_p, "");
 			}'
 		)
@@ -203,7 +207,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(h);
 				h == count find helper(p);
 			}'
@@ -216,7 +221,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(p);
 				Pattern.name(p, "");
 			}'
@@ -232,7 +238,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			pattern helper(p) = {
 				Pattern(p);
 			}
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(p);
 				neg find helper(p);
 			}'
@@ -249,7 +256,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(p);
 				Pattern(h);
 				h == count find helper(p);
@@ -262,7 +270,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(_p);
 				Pattern(_p);
 			}'
@@ -274,7 +283,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(P);
 				P != Q;
 			}'
@@ -295,7 +305,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				neg find helper2(p);
 				neg find helper(p);
 			}'
@@ -312,7 +323,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				neg find helper(p);
 				Pattern(h);
 				h == count find helper(p);
@@ -330,7 +342,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}
 
-			pattern testPattern() = {
+			pattern testPattern(c) = {
+				Pattern(c);
 				Pattern(h);
 				Pattern(i);
 				h == count find helper(p);

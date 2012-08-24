@@ -110,7 +110,8 @@ class EnumValidationTest extends AbstractValidatorTest {
 				GenRuntimeVersion(Version);
 			}
 
-			pattern call() = {
+			pattern call(c) = {
+				GenModel(c);
 				find runtimeVersion(GenRuntimeVersion::EMF24);
 			}
 		') as PatternModel
