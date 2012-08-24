@@ -23,6 +23,7 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
@@ -37,7 +38,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.TypesFactory;
+import org.eclipse.xtext.common.types.TypesPackage;
+import org.eclipse.xtext.common.types.util.Primitives;
+import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
+
 import com.google.inject.Inject;
 
 /**
@@ -73,6 +81,10 @@ public class PatternLanguageJavaValidator extends
 	
 	@Inject
 	private PatternAnnotationProvider annotationProvider;
+	@Inject
+	private ITypeProvider provider;
+	@Inject
+	private Primitives primitives;
 	
 	@Check
 	public void checkPatternParameters(Pattern pattern) {
@@ -370,5 +382,18 @@ public class PatternLanguageJavaValidator extends
 					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
 					IssueCodes.LOWERCASE_PATTERN_NAME);
 		}
+	}
+	
+	@Check
+	public void checkCheckConstraint(CheckConstraint constraint) {
+		JvmTypeReference type = provider.getType(constraint.getExpression());
+		if (!primitives.asPrimitiveIfWrapperType(type).getSimpleName()
+				.equals("boolean")) {
+			error("Check expressions must return boolean.",
+					constraint,
+					PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
+					IssueCodes.CHECK_MUST_BE_BOOLEAN);
+		}
+
 	}
 }

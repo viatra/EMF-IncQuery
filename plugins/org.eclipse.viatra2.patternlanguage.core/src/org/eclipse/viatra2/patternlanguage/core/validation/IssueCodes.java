@@ -38,4 +38,6 @@ public final class IssueCodes {
 	public static final String UNUSED_PRIVATE_PATTERN = ISSUE_CODE_PREFIX + "unused_private_pattern";
 	public static final String MISSING_PATTERN_PARAMETERS = ISSUE_CODE_PREFIX + "missing_pattern_parameters";
 	
+	public static final String CHECK_MUST_BE_BOOLEAN = ISSUE_CODE_PREFIX + "check_boolean";
+	
 }
