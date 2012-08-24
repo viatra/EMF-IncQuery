@@ -8,7 +8,7 @@
     <package 
        uri = "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage" 
        class = "org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage"
-       genModel = "org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel" /> 
+       genModel = "bin/org/eclipse/viatra2/patternlanguage/core/PatternLanguage.genmodel" /> 
 	
   </extension>
   <extension
