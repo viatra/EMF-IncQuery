@@ -23,6 +23,7 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
@@ -37,7 +38,10 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
+import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
+
 import com.google.inject.Inject;
 
 /**
@@ -73,6 +77,9 @@ public class PatternLanguageJavaValidator extends
 	
 	@Inject
 	private PatternAnnotationProvider annotationProvider;
+	
+	@Inject
+	private ITypeProvider typeProvider;
 	
 	@Check
 	public void checkPatternParameters(Pattern pattern) {
@@ -273,6 +280,15 @@ public class PatternLanguageJavaValidator extends
 						PatternLanguagePackage.Literals.COMPARE_CONSTRAINT__RIGHT_OPERAND,
 						IssueCodes.SELF_COMPARE_CONSTRAINT);
 			}
+		}
+	}
+	
+	@Check
+	public void checkCheckConstraintReturnValue(CheckConstraint checkConstraint) { 
+		JvmTypeReference jvmTypeReference = typeProvider.getType(checkConstraint.getExpression());
+		if (!"boolean".equals(jvmTypeReference.getSimpleName()) && !"Boolean".equals(jvmTypeReference.getSimpleName())) {
+			error("The check constraint expression must return a boolean value!", checkConstraint, 
+					PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION, IssueCodes.WRONG_CHECK_CONSTRAINT_RETURN);
 		}
 	}
 

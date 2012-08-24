@@ -15,18 +15,17 @@ import com.google.inject.Inject
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.xtext.common.types.JvmIdentifiableElement
-import org.eclipse.xtext.common.types.JvmType
+import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
-import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmType
+import org.eclipse.xtext.common.types.JvmIdentifiableElement
 
 class GenerateMatcherFactoryExtension {
 	
-	@Inject
-	IJvmModelAssociations associations
+	@Inject	IJvmModelAssociations associations
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil 
 	
 	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
@@ -39,6 +38,7 @@ class GenerateMatcherFactoryExtension {
 				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.matcherFactoryClassName)] as JvmDeclaredType 
 				val providerClass = matcherFactoryClass.members.
 				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.matcherFactoryProviderClassName)]) as JvmIdentifiableElement
+				  
 				exGen.contribAttribute(it, "factoryProvider", providerClass.qualifiedName)
 			]
 		]

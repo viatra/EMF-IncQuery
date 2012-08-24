@@ -36,6 +36,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
+import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateXExpressionEvaluatorExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil;
@@ -130,7 +131,10 @@ public class CleanSupport {
 		// clean all fragments
 		cleanAllFragment(modelProject);
 		// clean current model project
-		ProjectGenerationHelper.removeAllExtension(modelProject, GenerateMatcherFactoryExtension.getRemovableExtensionIdentifiers());
+		List<Pair<String,String>> removableExtensions = new ArrayList<Pair<String,String>>();
+		removableExtensions.addAll(GenerateMatcherFactoryExtension.getRemovableExtensionIdentifiers());
+		removableExtensions.addAll(GenerateXExpressionEvaluatorExtension.getRemovableExtensionIdentifiers());
+		ProjectGenerationHelper.removeAllExtension(modelProject, removableExtensions);
 		removeExportedPackages(modelProject);
 		removeXmiModel(modelProject);
 	}
@@ -299,6 +303,7 @@ public class CleanSupport {
 		// only the extension id and point name is needed for removal
 		String extensionId = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 		ensureSupport.removeExtension(modelProject, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+		ensureSupport.removeExtension(modelProject, Pair.of(extensionId, IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
 	}
 	
 	private List<String> getPathsForJvmInferredClasses(Pattern pattern) {

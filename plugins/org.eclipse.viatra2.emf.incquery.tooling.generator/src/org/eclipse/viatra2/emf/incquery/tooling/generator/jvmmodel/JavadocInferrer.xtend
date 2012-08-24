@@ -64,6 +64,15 @@ class JavadocInferrer {
 		
 		Clients should derive an (anonymous) class that implements the abstract process().
 	'''
+	
+	def javadocEvaluatorClass(Pattern pattern) '''
+		A xbase xexpression evaluator tailored for the «pattern.fullyQualifiedName» pattern.'''
+		
+	def javadocEvaluatorClassGeneratedMethod(Pattern pattern) '''
+		The raw java code generated from the xbase xexpression by xtext.'''
+		
+	def javadocEvaluatorClassWrapperMethod(Pattern pattern) '''
+		A wrapper method for calling the generated java method with the correct attributes.'''
    	
    	def javadocMatcherConstructorNotifier(Pattern pattern) '''
 		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
