@@ -7,7 +7,7 @@
     <package 
        uri = "http://www.eclipse.org/viatra2/emf/incquery/tooling/generator/IQGenModel" 
        class = "org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelPackage"
-       genModel = "bin/org/eclipse/viatra2/emf/incquery/tooling/generator/GeneratorModel.genmodel" /> 
+       genModel = "org/eclipse/viatra2/emf/incquery/tooling/generator/GeneratorModel.genmodel" /> 
 	
   </extension>
 
