@@ -50,9 +50,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-            name="GeneratorModel">
+              category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
+              class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
+              name="GeneratorModel">
             <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
         </page>
         <page
@@ -73,9 +74,10 @@
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-            name="GeneratorModel">
+              category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
+              class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
+              name="GeneratorModel">
             <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
