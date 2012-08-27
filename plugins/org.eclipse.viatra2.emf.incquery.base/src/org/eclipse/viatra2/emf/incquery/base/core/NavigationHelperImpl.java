@@ -340,7 +340,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 			return Collections.emptySet();
 		}
 		else {
-			return Collections.unmodifiableSet(contentAdapter.getReversedFeatureMap().get(feature));
+			return Collections.unmodifiableSet(contentAdapter.getReversedFeatureMap().get(feature).elementSet());
 		}
 	}
 

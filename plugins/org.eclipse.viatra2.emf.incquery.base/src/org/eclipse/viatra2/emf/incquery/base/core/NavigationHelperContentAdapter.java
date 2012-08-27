@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
@@ -40,7 +42,9 @@ import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
@@ -52,7 +56,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
 
 	// feature -> holder(s)
-	protected Map<EStructuralFeature, Set<EObject>> reversedFeatureMap;
+	protected Map<EStructuralFeature, Multiset<EObject>> reversedFeatureMap;
 
 	// eclass -> instance(s)
 	protected Map<EClass, Set<EObject>> instanceMap;
@@ -87,9 +91,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
 	}
 
-	public Map<EStructuralFeature, Set<EObject>> getReversedFeatureMap() {
+	public Map<EStructuralFeature, Multiset<EObject>> getReversedFeatureMap() {
 		if (reversedFeatureMap == null) {
-			reversedFeatureMap = new HashMap<EStructuralFeature, Set<EObject>>();
+			reversedFeatureMap = new HashMap<EStructuralFeature, Multiset<EObject>>();
 			initReversedFeatureMap();
 		}
 		return reversedFeatureMap;
@@ -146,14 +150,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			// handleAttributeChange(notification, (EAttribute) feature);
 			// }
 		} catch (Exception ex) {
-			navigationHelper
-					.getLogger()
-					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while handling the following update notification: "
-							+ notification, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+		  processingError(ex, "handle the following update notification: " + notification);
 		}
 
 		if (isDirty) {
@@ -187,43 +184,55 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	}
 
 	@Override
-	protected void addAdapter(Notifier notifier) {
+	protected void addAdapter(final Notifier notifier) {
 		try {
-			if (notifier instanceof EObject) {
-				EMFModelComprehension.traverseObject(visitor(true),
-						(EObject) notifier);
-			}
-			super.addAdapter(notifier);
+		  this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          if (notifier instanceof EObject) {
+            EMFModelComprehension.traverseObject(visitor(true),
+                (EObject) notifier);
+          }
+          NavigationHelperContentAdapter.super.addAdapter(notifier);
+          return null;
+        }
+      });		  
+		} catch (InvocationTargetException ex) {
+      processingError(ex.getCause(), "add the object: " + notifier);
 		} catch (Exception ex) {
-			navigationHelper.getLogger().fatal(
-					"EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while trying to add the object: "
-							+ notifier, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+			processingError(ex, "add the object: " + notifier);
 		}
 	}
 
 	@Override
-	protected void removeAdapter(Notifier notifier) {
+	protected void removeAdapter(final Notifier notifier) {
 		try {
-			if (notifier instanceof EObject) {
-				EMFModelComprehension.traverseObject(visitor(false),
-						(EObject) notifier);
-			}
-			super.removeAdapter(notifier);
-		} catch (Exception ex) {
-			navigationHelper
-					.getLogger()
-					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while trying to remove the object: "
-							+ notifier, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+      this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          if (notifier instanceof EObject) {
+            EMFModelComprehension.traverseObject(visitor(false),
+                (EObject) notifier);
+          }
+          NavigationHelperContentAdapter.super.removeAdapter(notifier);
+          return null;
+        }
+      });     
+    } catch (InvocationTargetException ex) {
+      processingError(ex.getCause(), "remove the object: " + notifier);
+    } catch (Exception ex) {
+      processingError(ex, "remove the object: " + notifier);
 		}
 	}
+
+  private void processingError(Throwable ex, String task) {
+    navigationHelper.getLogger().fatal(
+    		"EMF-IncQuery encountered an error in processing the EMF model. "
+    				+ "This happened while trying to " + task, ex);
+    // throw new
+    // IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
+    // ex);
+  }
 
 	protected EMFVisitor visitor(final boolean isInsertion) {
 		return new NavigationHelperVisitor.ChangeVisitor(navigationHelper,
@@ -339,10 +348,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	private void addToReversedFeatureMap(EStructuralFeature feature,
 			EObject holder) {
-		Set<EObject> setVal = reversedFeatureMap.get(feature);
+	  Multiset<EObject> setVal = reversedFeatureMap.get(feature);
 
 		if (setVal == null) {
-			setVal = new HashSet<EObject>();
+			setVal = HashMultiset.create();
 		}
 		setVal.add(holder);
 		reversedFeatureMap.put(feature, setVal);
@@ -587,7 +596,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	// resources),
 	// - and once when said iteration of resources reaches the end of the
 	// resource list in the ResourceSet
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385039
 	
 	@Override
 	protected void setTarget(ResourceSet target) {

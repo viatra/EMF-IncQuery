@@ -130,7 +130,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}
 
-			pattern callerPattern() = {
+			pattern callerPattern(c) = {
+				Pattern(c);
 				Pattern(p);
 				neg find calledPattern(p);
 			}'

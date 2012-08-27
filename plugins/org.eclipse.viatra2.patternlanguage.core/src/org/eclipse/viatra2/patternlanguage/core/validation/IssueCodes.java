@@ -36,6 +36,9 @@ public final class IssueCodes {
 	
 	public static final String LOWERCASE_PATTERN_NAME = ISSUE_CODE_PREFIX + "lowercase_pattern_name";
 	public static final String UNUSED_PRIVATE_PATTERN = ISSUE_CODE_PREFIX + "unused_private_pattern";
+	public static final String MISSING_PATTERN_PARAMETERS = ISSUE_CODE_PREFIX + "missing_pattern_parameters";
+	
+	public static final String CHECK_MUST_BE_BOOLEAN = ISSUE_CODE_PREFIX + "check_boolean";
 	
 	public static final String WRONG_CHECK_CONSTRAINT_RETURN = ISSUE_CODE_PREFIX + "not_boolean_check_return_values";
 	

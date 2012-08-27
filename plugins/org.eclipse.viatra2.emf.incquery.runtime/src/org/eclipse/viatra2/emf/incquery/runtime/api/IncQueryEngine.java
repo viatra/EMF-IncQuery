@@ -13,6 +13,9 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
@@ -46,7 +49,7 @@ import com.google.inject.Injector;
  * <p>Pattern matchers within this engine may be instantiated in the following ways: <ul>
  *  <li> Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
  *  <li> Use the matcher factory associated with the generated matcher class to achieve the same.
- *  <li> Use GenericMatcherFactory instead of the various generated factories.
+ *  <li> Use {@link GenericPatternMatcher} or {@link GenericMatcherFactory} instead of the various generated classes.
  *  </ul>
  * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; 
  * 	this improves the performance of pattern matcher construction, unless the engine is in wildcard mode.
@@ -59,7 +62,7 @@ import com.google.inject.Injector;
 public class IncQueryEngine {
 
 	/**
-	 * The engine manager responsible for this engine.
+	 * The engine manager responsible for this engine. Null if this engine is unmanaged.
 	 */
 	private EngineManager manager;
 	/**
@@ -107,9 +110,10 @@ public class IncQueryEngine {
 	private int reteThreads = 0;
 	
 	private Logger logger;
+  private Set<Runnable> afterWipeCallbacks;
 	
 	/**
-	 * @param manager
+	 * @param manager null if unmanaged
 	 * @param emfRoot
 	 * @throws IncQueryException if the emf root is invalid
 	 */
@@ -117,7 +121,7 @@ public class IncQueryEngine {
 		super();
 		this.manager = manager;
 		this.emfRoot = emfRoot;
-		
+	  this.afterWipeCallbacks = new HashSet<Runnable>();
 		if (! (emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet)) 
 			throw new IncQueryException(
 					IncQueryException.INVALID_EMFROOT + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()), 
@@ -137,7 +141,7 @@ public class IncQueryEngine {
 	 * @throws IncQueryException if the base index could not be constructed
 	 */
 	protected NavigationHelper getBaseIndexInternal() throws IncQueryException {
-		return getBaseIndexInternal(WILDCARD_MODE_DEFAULT);
+		return getBaseIndexInternal(WILDCARD_MODE_DEFAULT, true);
 	}
 	
 	/**
@@ -146,26 +150,41 @@ public class IncQueryEngine {
 	 * @throws IncQueryException if the base index could not be initialized
 	 * @throws IncQueryBaseException if the base index could not be constructed
 	 */
-	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode) throws IncQueryException {
+	protected NavigationHelper getBaseIndexInternal(boolean wildcardMode, boolean initNow) throws IncQueryException {
 		if (baseIndex == null) {
 			try {
 			  // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this reentrantly 
 				synchronized (this) { 
           baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode, getLogger());
         }
-				synchronized (this) {
-          baseIndex.addRoot(getEmfRoot());
-        }
-				
 			} catch (IncQueryBaseException e) {
 				throw new IncQueryException(
-						"Could not initialize EMF-IncQuery base index", 
-						"Could not initialize base index", 
+						"Could not create EMF-IncQuery base index", 
+						"Could not create base index", 
 						e);
 			}
+				
+				if (initNow) {
+  				initBaseIndex();
+				}
+				
 		}
 		return baseIndex;
 	}
+
+  /**
+   * @throws IncQueryException
+   */
+  private synchronized void initBaseIndex() throws IncQueryException {
+    try {
+      baseIndex.addRoot(getEmfRoot());
+    } catch (IncQueryBaseException e) {
+      throw new IncQueryException(
+          "Could not initialize EMF-IncQuery base index", 
+          "Could not initialize base index", 
+          e);
+    }
+  }
 		
 	/**
 	 * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF contents of the model.
@@ -184,7 +203,10 @@ public class IncQueryEngine {
 	 */
 	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
 		if (reteEngine == null) {
-			EMFPatternMatcherRuntimeContext context = new EMFPatternMatcherRuntimeContext(this, getBaseIndexInternal());
+		  // if uninitialized, don't initialize yet  
+			getBaseIndexInternal(WILDCARD_MODE_DEFAULT, false);
+			
+      EMFPatternMatcherRuntimeContext context = new EMFPatternMatcherRuntimeContext(this, baseIndex);
 //			if (emfRoot instanceof EObject) 
 //				context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
 //			else if (emfRoot instanceof Resource) 
@@ -193,7 +215,13 @@ public class IncQueryEngine {
 //				context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
 //			else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
 			
-			reteEngine = buildReteEngineInternal(context);
+      synchronized (this) {
+        reteEngine = buildReteEngineInternal(context);
+      }
+			
+			// lazy initialization now, 
+			initBaseIndex();
+			
 			//if (reteEngine != null) engines.put(emfRoot, new WeakReference<ReteEngine<String>>(engine));
 		}
 		return reteEngine;
@@ -208,7 +236,9 @@ public class IncQueryEngine {
 	 * <p>Cannot be reversed.
 	 */
 	public void dispose() {
-		manager.killInternal(emfRoot);
+	  if(manager != null) {
+	    manager.killInternal(emfRoot);
+	  }
 		killInternal();
 	}
 	
@@ -229,7 +259,26 @@ public class IncQueryEngine {
 			reteEngine = null;
 		}
 		sanitizer = null;
+		runAfterWipeCallbacks();
 	}
+	
+	 /**
+   * This will run before wipes.
+   */
+	//   * If there are any such, updates are settled before they are run. 
+  public void runAfterWipeCallbacks() {
+    try {
+      if (!afterWipeCallbacks.isEmpty()) {
+        //settle();
+        for (Runnable runnable : new ArrayList<Runnable>(afterWipeCallbacks)) {
+          runnable.run();
+        }
+      }
+    } catch (Exception ex) {
+      logger.fatal(
+          "EMF-IncQuery encountered an error in delivering notifications about wipe. " , ex);
+    }
+  }
 	
 	private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) 
 	{
@@ -348,7 +397,7 @@ public class IncQueryEngine {
 			throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
 			
 		if (wildcardMode != WILDCARD_MODE_DEFAULT) 
-			getBaseIndexInternal(wildcardMode);		
+			getBaseIndexInternal(wildcardMode, true);		
 	}
 
 	/**
@@ -363,6 +412,30 @@ public class IncQueryEngine {
 	 */
 	public boolean isTainted() {
 		return tainted;
+	}
+	
+	
+	/**
+	 * Indicates whether the engine is managed by {@link EngineManager}.
+	 * 
+	 * <p>If the engine is managed, there may be other clients using it. 
+	 * Care should be taken with {@link #wipe()} and {@link #dispose()}. 
+	 * Register a callback using {@link IncQueryMatcher#addCallbackAfterWipes(Runnable)} 
+	 * or directly at {@link #getAfterWipeCallbacks()} to learn when a 
+	 * client has called these dangerous methods.  
+	 * 
+	 * @return true if the engine is managed, and therefore potentially 
+	 * shared with other clients querying the same EMF model
+	 */
+	public boolean isManaged() {
+		return manager != null;
+	}	
+
+	/**
+	 * @return the set of callbacks that will be issued after a wipe
+	 */
+	public Set<Runnable> getAfterWipeCallbacks() {
+	  return afterWipeCallbacks;
 	}
 	
 	
