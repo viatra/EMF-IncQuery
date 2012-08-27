@@ -40,6 +40,4 @@ public final class IssueCodes {
 	
 	public static final String CHECK_MUST_BE_BOOLEAN = ISSUE_CODE_PREFIX + "check_boolean";
 	
-	public static final String WRONG_CHECK_CONSTRAINT_RETURN = ISSUE_CODE_PREFIX + "not_boolean_check_return_values";
-	
 }
