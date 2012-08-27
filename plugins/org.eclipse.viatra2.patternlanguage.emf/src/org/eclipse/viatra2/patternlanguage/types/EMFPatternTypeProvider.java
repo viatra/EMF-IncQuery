@@ -96,7 +96,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference resolve(Variable variable) {
+	public JvmTypeReference resolve(Variable variable) {
 		EcoreUtil2.resolveAll(variable);
 		JvmTypeReference typeRef = resolve(variable, variable);
 		if (typeRef == null) {
@@ -158,7 +158,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference resolve(PatternBody body, Variable variable) {
+	public JvmTypeReference resolve(PatternBody body, Variable variable) {
 		final Type constraintType = searchForConstraintType(body, variable);
 		if (constraintType != null) {
 			return resolve(constraintType, variable);			
