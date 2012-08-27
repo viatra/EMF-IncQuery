@@ -15,6 +15,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 /**
  * the class is used to join an IEditorPart instance and a ResourceSet instance.
@@ -27,6 +28,7 @@ public class MatcherTreeViewerRootKey {
 
 	private IEditorPart editor;
 	private Notifier notifier;
+	private IncQueryEngine engine;
 
 	public MatcherTreeViewerRootKey(IEditorPart editor, Notifier notifier) {
 		super();
@@ -94,5 +96,19 @@ public class MatcherTreeViewerRootKey {
 		
 		return editor.getEditorSite().getId() + sb.toString();
 	}
+
+  /**
+   * @return the engine
+   */
+  public IncQueryEngine getEngine() {
+    return engine;
+  }
+
+  /**
+   * @param engine the engine to set
+   */
+  public void setEngine(IncQueryEngine engine) {
+    this.engine = engine;
+  }
 
 }

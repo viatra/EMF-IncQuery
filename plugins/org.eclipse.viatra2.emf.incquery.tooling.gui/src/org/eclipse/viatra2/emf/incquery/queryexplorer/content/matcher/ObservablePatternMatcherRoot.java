@@ -60,15 +60,18 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 		sortedMatchers = new LinkedList<ObservablePatternMatcher>();
 		this.key = key;
 		
-		IncQueryEngine engine = getEngine();
+		IncQueryEngine engine = key.getEngine();
+		if(engine == null) {
+		  key.setEngine(createEngine());
+		}
 		if (engine != null) {
 			engine.getLogger().addAppender(this);
 		}
 	}
 	
-	private IncQueryEngine getEngine() {
+	private IncQueryEngine createEngine() {
 		try {
-			IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(key.getNotifier());
+			IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(key.getNotifier());
 			return engine;
 		} catch (IncQueryException e) {
 			logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "+key.getNotifier(), e));
@@ -118,14 +121,14 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 		for (ObservablePatternMatcher pm : this.matchers.values()) {
 			pm.dispose();
 		}
-		IncQueryEngine engine = getEngine();
+		IncQueryEngine engine = createEngine();
 		if (engine != null) {
 			engine.getLogger().removeAppender(this);
 		}
 	}
 	
 	public boolean isTainted() {
-		IncQueryEngine engine = getEngine();
+		IncQueryEngine engine = createEngine();
 		return (engine == null) ? true : engine.isTainted();
 	}
 	
@@ -152,7 +155,8 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 		boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.WILDCARD_MODE);
 		IncQueryEngine engine;
 		try {
-			engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
+			//engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
+		  engine = key.getEngine();
 			try {
 				engine.setWildcardMode(wildcardMode);
 			} catch (IllegalStateException ex) {
@@ -189,10 +193,10 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 			String message = null;
 			try {
 				if (isGenerated) {
-					matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(getNotifier());
+					matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(key.getEngine());
 				}
 				else {
-					matcher = new GenericPatternMatcher(pattern, getNotifier());
+					matcher = new GenericPatternMatcher(pattern, key.getEngine());
 				}
 			} catch (Exception e) {
 				logger.log(new Status(IStatus.ERROR,
