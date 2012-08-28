@@ -39,10 +39,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.TypesFactory;
-import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.common.types.util.Primitives;
-import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
@@ -65,6 +62,7 @@ import com.google.inject.Inject;
  * @author Mark Czotter
  * 
  */
+@SuppressWarnings("restriction")
 public class PatternLanguageJavaValidator extends
 		AbstractPatternLanguageJavaValidator {
 
