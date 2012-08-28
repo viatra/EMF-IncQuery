@@ -25,6 +25,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -53,6 +54,40 @@ class CheckConstraintTest {
 			pattern name(C) = {
 				EClass(C);
 				check(C.name.empty);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def booleanBlockExpressionCheck() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(C) = {
+				EClass(C);
+				check({
+					val name = C.name;
+					name.empty;
+				});
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test@Ignore("Test case fails because of the return statement")
+	def booleanBlockExpressionWithReturnCheck() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(C) = {
+				EClass(C);
+				check({
+					val name = C.name;
+					return name.empty
+				});
 			}
 		') as PatternModel
 		model.assertNoErrors
