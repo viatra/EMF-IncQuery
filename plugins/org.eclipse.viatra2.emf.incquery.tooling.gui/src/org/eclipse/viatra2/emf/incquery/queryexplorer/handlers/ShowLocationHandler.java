@@ -131,7 +131,7 @@ public class ShowLocationHandler extends AbstractHandler {
 	 * @param locationObjects
 	 * @return
 	 */
-	private TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
+	protected TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
 		List<TreePath> paths = new ArrayList<TreePath>(); //[locationObjects.length]
 		for (Object o: locationObjects) {
 			if(o instanceof EObject) {

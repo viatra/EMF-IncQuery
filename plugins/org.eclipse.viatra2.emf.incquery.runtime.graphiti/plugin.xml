@@ -39,6 +39,24 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers.GraphitiShowLocationHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <test
+                        property="org.eclipse.viatra2.emf.incquery.runtime.graphiti.matchEditor">
+                  </test>
+                  <instanceof
+                        value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
+                  </instanceof>
+               </iterate>
+            </with></activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -50,6 +68,16 @@
             </equals>
          </with>
       </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.viatra2.emf.incquery.runtime.graphiti.util.MatchEditorTester"
+            id="org.eclipse.viatra2.emf.incquery.runtime.graphiti.matchEditor"
+            namespace="org.eclipse.viatra2.emf.incquery.runtime.graphiti"
+            properties="matchEditor"
+            type="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
+      </propertyTester>
    </extension>
 
 </plugin>
