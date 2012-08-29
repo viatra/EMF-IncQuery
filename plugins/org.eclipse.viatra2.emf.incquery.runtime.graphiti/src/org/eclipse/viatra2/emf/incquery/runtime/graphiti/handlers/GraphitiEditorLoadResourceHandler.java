@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -30,8 +31,10 @@ public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 			DiagramEditor providerEditor = (DiagramEditor) editorPart;
 			
 			PictogramElement[] selectedElements = providerEditor.getSelectedPictogramElements();
+			
 			if (selectedElements.length > 0) {
-				loadModel(editorPart, selectedElements[0].eResource());
+				PictogramElement element = selectedElements[0];			
+				loadModel(editorPart, Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource());
 			}
 		}
 		return null;

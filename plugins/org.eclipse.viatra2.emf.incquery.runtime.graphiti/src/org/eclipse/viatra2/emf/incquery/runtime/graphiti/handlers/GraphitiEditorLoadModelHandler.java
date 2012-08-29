@@ -29,7 +29,7 @@ public class GraphitiEditorLoadModelHandler extends LoadModelHandler {
 		if (editorPart instanceof DiagramEditor) {
 			DiagramEditor providerEditor = (DiagramEditor) editorPart;
 			
-			ResourceSet resourceSet = providerEditor.getResourceSet();
+			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 			if (resourceSet.getResources().size() > 0) {
 				loadModel(providerEditor, resourceSet);
 			}
