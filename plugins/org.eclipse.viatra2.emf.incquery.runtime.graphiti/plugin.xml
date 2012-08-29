@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers.GraphitiEditorUnloadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.runtime.graphiti.editorDefinition">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers.GraphitiEditorLoadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.runtime.graphiti.editorDefinition">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers.GraphitiEditorLoadResourceHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresource">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.runtime.graphiti.editorDefinition">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers.GraphitiEditorLoadModelHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadresourceset">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.runtime.graphiti.editorDefinition">
+            </reference>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.runtime.graphiti.editorDefinition">
+         <with variable="activeEditorId">
+            <equals
+                  value="org.eclipse.graphiti.ui.editor.DiagramEditor">
+            </equals>
+         </with>
+      </definition>
+   </extension>
+
+</plugin>
