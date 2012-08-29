@@ -51,13 +51,15 @@
          <activeWhen>
             <with
                   variable="selection">
-                <iterate>
+                <iterate
+                      ifEmpty="false"
+                      operator="and">
+                   <test
+                         property="org.eclipse.viatra2.emf.incquery.runtime.gmf.matchEditor">
+                   </test>
                     <instanceof
                           value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
                     </instanceof>
-                    <test
-                          property="org.eclipse.viatra2.emf.incquery.runtime.gmf.matchEditor">
-                    </test>
                  </iterate>
             </with>
          </activeWhen>
