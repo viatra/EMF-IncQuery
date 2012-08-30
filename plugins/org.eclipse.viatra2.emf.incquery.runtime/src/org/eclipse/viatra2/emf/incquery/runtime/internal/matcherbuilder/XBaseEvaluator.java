@@ -36,6 +36,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchChecker;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
+import org.eclipse.viatra2.emf.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.util.ClassLoaderUtil;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
@@ -90,7 +91,8 @@ public class XBaseEvaluator extends AbstractEvaluator {
 						IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
 		for (IConfigurationElement configurationElement : configurationElements) {
 			String id = configurationElement.getAttribute("id");
-			if (id.equals(getExpressionID(pattern, xExpression))) {
+			if (id.equals(CheckExpressionUtil.getExpressionUniqueID(pattern,
+					xExpression))) {
 				Object object = null;
 				try {
 					object = configurationElement
@@ -110,8 +112,13 @@ public class XBaseEvaluator extends AbstractEvaluator {
 			interpreter = (XbaseInterpreter) injector
 					.getInstance(IExpressionInterpreter.class);
 			try {
-				interpreter.setClassLoader(ClassLoaderUtil
-						.getClassLoader(getIFile(pattern)));
+				ClassLoader classLoader = ClassLoaderUtil
+						.getClassLoader(CheckExpressionUtil.getIFile(pattern));
+				if (classLoader != null) {
+					interpreter.setClassLoader(ClassLoaderUtil
+							.getClassLoader(CheckExpressionUtil
+									.getIFile(pattern)));
+				}
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -121,49 +128,6 @@ public class XBaseEvaluator extends AbstractEvaluator {
 			}
 			contextProvider = injector.getProvider(IEvaluationContext.class);
 		}
-	}
-
-	private static IFile getIFile(Pattern pattern) {
-		Resource resource = pattern.eResource();
-		if (resource != null) {
-			URI uri = resource.getURI();
-			uri = resource.getResourceSet().getURIConverter().normalize(uri);
-			String scheme = uri.scheme();
-			if ("platform".equals(scheme) && uri.segmentCount() > 1
-					&& "resource".equals(uri.segment(0))) {
-				StringBuffer platformResourcePath = new StringBuffer();
-				for (int j = 1, size = uri.segmentCount(); j < size; ++j) {
-					platformResourcePath.append('/');
-					platformResourcePath.append(uri.segment(j));
-				}
-				return ResourcesPlugin.getWorkspace().getRoot()
-						.getFile(new Path(platformResourcePath.toString()));
-			}
-		}
-		return null;
-	}
-
-	private static String getExpressionID(Pattern pattern,
-			XExpression xExpression) {
-		// FIXME do it, share it with the xtend plugin.xml generator!!
-		int patternBodyNumber = 0;
-		for (PatternBody patternBody : pattern.getBodies()) {
-			patternBodyNumber++;
-			int checkConstraintNumber = 0;
-			for (Constraint constraint : patternBody.getConstraints()) {
-				if (constraint instanceof CheckConstraint) {
-					CheckConstraint checkConstraint = (CheckConstraint) constraint;
-					checkConstraintNumber++;
-					String postFix = patternBodyNumber + "_"
-							+ checkConstraintNumber;
-					if (xExpression.equals(checkConstraint.getExpression())) {
-						return CorePatternLanguageHelper
-								.getFullyQualifiedName(pattern) + "_" + postFix;
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	/*

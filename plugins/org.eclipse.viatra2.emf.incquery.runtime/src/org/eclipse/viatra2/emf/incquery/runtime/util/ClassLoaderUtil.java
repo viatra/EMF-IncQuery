@@ -43,15 +43,18 @@ public class ClassLoaderUtil {
 	 */
 	public static ClassLoader getClassLoader(IFile file) throws CoreException,
 			MalformedURLException {
-		IProject project = file.getProject();
-		IJavaProject jp = JavaCore.create(project);
-		String[] classPathEntries = JavaRuntime
-				.computeDefaultRuntimeClassPath(jp);
-		List<URL> classURLs = getClassesAsURLs(classPathEntries);
-		URL[] urls = (URL[]) classURLs.toArray(new URL[classURLs.size()]);
-		URLClassLoader loader = URLClassLoader.newInstance(urls, jp.getClass()
-				.getClassLoader());
-		return loader;
+		if (file != null) {
+			IProject project = file.getProject();
+			IJavaProject jp = JavaCore.create(project);
+			String[] classPathEntries = JavaRuntime
+					.computeDefaultRuntimeClassPath(jp);
+			List<URL> classURLs = getClassesAsURLs(classPathEntries);
+			URL[] urls = (URL[]) classURLs.toArray(new URL[classURLs.size()]);
+			URLClassLoader loader = URLClassLoader.newInstance(urls, jp
+					.getClass().getClassLoader());
+			return loader;
+		}
+		return null;
 	}
 
 	private static List<URL> getClassesAsURLs(String[] classPathEntries)

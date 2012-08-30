@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateXExpressionEvaluatorExtension;
@@ -52,6 +53,7 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
 import org.eclipse.xtext.util.Pair;
+import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -195,17 +197,17 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 				ensureSupport.appendAllExtension(project,
 						matcherFactoryExtensionContribution);
 
-				int patternBodyNumber = 0;
+
 				for (PatternBody patternBody : pattern.getBodies()) {
-					patternBodyNumber++;
-					int checkConstraintNumber = 0;
 					for (Constraint constraint : patternBody.getConstraints()) {
 						if (constraint instanceof CheckConstraint) {
-							checkConstraintNumber++;
-							String postFix = patternBodyNumber + "_"
-									+ checkConstraintNumber;
+							CheckConstraint checkConstraint = (CheckConstraint) constraint;
+							XExpression xExpression = checkConstraint.getExpression();
+							String expressionID = CheckExpressionUtil
+									.getExpressionUniqueID(pattern, xExpression);
+							String expressionUniqueNameInPattern = CheckExpressionUtil.getExpressionUniqueNameInPattern(pattern, xExpression);
 							Iterable<IPluginExtension> xExpressionEvaluatorExtensionContribution = xExpressionEvaluatorExtensionGenerator
-									.extensionContribution(pattern, postFix,
+									.extensionContribution(pattern, expressionID, expressionUniqueNameInPattern,
 											extGenerator);
 							ensureSupport.appendAllExtension(project,
 									xExpressionEvaluatorExtensionContribution);

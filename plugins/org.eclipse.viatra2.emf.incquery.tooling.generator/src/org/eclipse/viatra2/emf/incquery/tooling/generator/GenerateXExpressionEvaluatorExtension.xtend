@@ -23,12 +23,12 @@ class GenerateXExpressionEvaluatorExtension {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
-	def extensionContribution(Pattern pattern, String postFix, ExtensionGenerator exGen) {
+	def extensionContribution(Pattern pattern, String expressionUniqueID, String expressionUniqueNameInPattern, ExtensionGenerator exGen) {
 		newArrayList(
 			exGen.contribExtension(pattern.fullyQualifiedName, IExtensions::XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID) [
 				exGen.contribElement(it, "evaluator") [
-					exGen.contribAttribute(it, "id", pattern.fullyQualifiedName + "_" + postFix)
-					exGen.contribAttribute(it, "evaluatorClass", pattern.packageName + "." + pattern.evaluatorClassName + postFix)
+					exGen.contribAttribute(it, "id", expressionUniqueID)
+					exGen.contribAttribute(it, "evaluatorClass", pattern.packageName + "." + pattern.evaluatorClassName + expressionUniqueNameInPattern)
 				]
 			]
 		)

@@ -1,0 +1,89 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Okrosa, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Okrosa - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra2.emf.incquery.runtime.util;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.xtext.xbase.XExpression;
+
+public class CheckExpressionUtil {
+
+	/**
+	 * @param pattern
+	 * @param xExpression
+	 * @return
+	 */
+	public static String getExpressionUniqueID(Pattern pattern,
+			XExpression xExpression) {
+		return CorePatternLanguageHelper.getFullyQualifiedName(pattern) + "_"
+				+ getExpressionUniqueNameInPattern(pattern, xExpression);
+	}
+
+	/**
+	 * @param pattern
+	 * @param xExpression
+	 * @return
+	 */
+	public static String getExpressionUniqueNameInPattern(Pattern pattern,
+			XExpression xExpression) {
+		int patternBodyNumber = 0;
+		for (PatternBody patternBody : pattern.getBodies()) {
+			patternBodyNumber++;
+			int checkConstraintNumber = 0;
+			for (Constraint constraint : patternBody.getConstraints()) {
+				if (constraint instanceof CheckConstraint) {
+					CheckConstraint checkConstraint = (CheckConstraint) constraint;
+					checkConstraintNumber++;
+					if (xExpression.equals(checkConstraint.getExpression())) {
+						return patternBodyNumber + "_" + checkConstraintNumber;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param pattern
+	 * @return
+	 */
+	public static IFile getIFile(Pattern pattern) {
+		if (pattern != null) {
+			Resource resource = pattern.eResource();
+			if (resource != null) {
+				URI uri = resource.getURI();
+				uri = resource.getResourceSet().getURIConverter()
+						.normalize(uri);
+				String scheme = uri.scheme();
+				if ("platform".equals(scheme) && uri.segmentCount() > 1
+						&& "resource".equals(uri.segment(0))) {
+					StringBuffer platformResourcePath = new StringBuffer();
+					for (int j = 1, size = uri.segmentCount(); j < size; ++j) {
+						platformResourcePath.append('/');
+						platformResourcePath.append(uri.segment(j));
+					}
+					return ResourcesPlugin.getWorkspace().getRoot()
+							.getFile(new Path(platformResourcePath.toString()));
+				}
+			}
+		}
+		return null;
+	}
+
+}
