@@ -11,17 +11,32 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchChecker;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
+import org.eclipse.viatra2.emf.incquery.runtime.util.ClassLoaderUtil;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
@@ -29,13 +44,13 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
-import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationContext;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationResult;
 import org.eclipse.xtext.xbase.interpreter.IExpressionInterpreter;
+import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter;
 
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -44,7 +59,6 @@ import com.google.inject.Provider;
  * Evaluates an XBase XExpression inside Rete.
  * 
  * @author Bergmann Gábor
- * 
  */
 public class XBaseEvaluator extends AbstractEvaluator {
 	private final XExpression xExpression;
@@ -53,9 +67,8 @@ public class XBaseEvaluator extends AbstractEvaluator {
 
 	private IMatchChecker matchChecker;
 
-	private IExpressionInterpreter interpreter;
+	private XbaseInterpreter interpreter;
 	private Provider<IEvaluationContext> contextProvider;
-	private Map<QualifiedName, Integer> qualifiedMapping;
 
 	/**
 	 * @param xExpression
@@ -90,22 +103,49 @@ public class XBaseEvaluator extends AbstractEvaluator {
 				}
 			}
 		}
-		
+
 		// Second option, setup the attributes for the interpreted approach
 		if (matchChecker == null) {
 			Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-			interpreter = injector.getInstance(IExpressionInterpreter.class);
+			interpreter = (XbaseInterpreter) injector
+					.getInstance(IExpressionInterpreter.class);
+			try {
+				interpreter.setClassLoader(ClassLoaderUtil
+						.getClassLoader(getIFile(pattern)));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			contextProvider = injector.getProvider(IEvaluationContext.class);
-			qualifiedMapping = new HashMap<QualifiedName, Integer>();
-			for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
-				qualifiedMapping.put(QualifiedName.create(entry.getKey()),
-						entry.getValue());
+		}
+	}
+
+	private static IFile getIFile(Pattern pattern) {
+		Resource resource = pattern.eResource();
+		if (resource != null) {
+			URI uri = resource.getURI();
+			uri = resource.getResourceSet().getURIConverter().normalize(uri);
+			String scheme = uri.scheme();
+			if ("platform".equals(scheme) && uri.segmentCount() > 1
+					&& "resource".equals(uri.segment(0))) {
+				StringBuffer platformResourcePath = new StringBuffer();
+				for (int j = 1, size = uri.segmentCount(); j < size; ++j) {
+					platformResourcePath.append('/');
+					platformResourcePath.append(uri.segment(j));
+				}
+				return ResourcesPlugin.getWorkspace().getRoot()
+						.getFile(new Path(platformResourcePath.toString()));
 			}
 		}
+		return null;
 	}
 
 	private static String getExpressionID(Pattern pattern,
 			XExpression xExpression) {
+		// FIXME do it, share it with the xtend plugin.xml generator!!
 		int patternBodyNumber = 0;
 		for (PatternBody patternBody : pattern.getBodies()) {
 			patternBodyNumber++;
@@ -143,10 +183,9 @@ public class XBaseEvaluator extends AbstractEvaluator {
 
 		// Second option: try to evaluate with the interpreted approach
 		IEvaluationContext context = contextProvider.get();
-		for (Entry<QualifiedName, Integer> varPosition : qualifiedMapping
-				.entrySet()) {
-			context.newValue(varPosition.getKey(),
-					tuple.get(varPosition.getValue()));
+		for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
+			context.newValue(QualifiedName.create(entry.getKey()),
+					tuple.get(entry.getValue()));
 		}
 		IEvaluationResult result = interpreter.evaluate(xExpression, context,
 				CancelIndicator.NullImpl);
