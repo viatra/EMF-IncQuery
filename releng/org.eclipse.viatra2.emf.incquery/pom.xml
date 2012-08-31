@@ -65,7 +65,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath>
-		<sonar.skippedModules>org.eclipse.viatra2.emf.incquery.runtime.feature,org.eclipse.viatra2.emf.incquery.databinding.feature,org.eclipse.viatra2.emf.incquery.databinding.tooling.feature,org.eclipse.viatra2.emf.incquery.sdk.feature,org.eclipse.viatra2.emf.incquery.validation.feature,org.eclipse.viatra2.emf.incquery.validation.gmf.feature,org.eclipse.viatra2.emf.incquery.validation.tooling.feature,org.eclipse.viatra2.emf.incquery.licence.feature,org.eclipse.viatra2.patternlanguage.update</sonar.skippedModules>
+		<sonar.skippedModules>org.eclipse.viatra2.emf.incquery.runtime.feature,org.eclipse.viatra2.emf.incquery.databinding.feature,org.eclipse.viatra2.emf.incquery.databinding.tooling.feature,org.eclipse.viatra2.emf.incquery.sdk.feature,org.eclipse.viatra2.emf.incquery.validation.feature,org.eclipse.viatra2.emf.incquery.validation.gmf.feature,org.eclipse.viatra2.emf.incquery.validation.tooling.feature,org.eclipse.viatra2.emf.incquery.licence.feature,org.eclipse.viatra2.patternlanguage.update,school,school.edit,school.editor,org.eclipse.viatra2.emf.incquery.snapshot,org.eclipse.viatra2.emf.incquery.snapshot.edit,org.eclipse.viatra2.emf.incquery.snapshot.editor</sonar.skippedModules>
 	</properties>
 	<build>
 		<plugins>
