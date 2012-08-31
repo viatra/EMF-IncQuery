@@ -238,4 +238,18 @@
 		<url>https://github.com/ujhelyiz/EMF-IncQuery/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
+	<profiles>
+	<profile>
+      <id>examples</id>
+      <activation>
+        <file>
+        	<exists>../../../examples/README.markdown</exists>
+        </file>
+      </activation>
+      <modules>
+        <module>../../../examples/school/org.eclipse.viatra2.emf.incquery.tests.school.parent</module>
+        <module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>        
+      </modules>
+    </profile>
+	</profiles>
 </project>
