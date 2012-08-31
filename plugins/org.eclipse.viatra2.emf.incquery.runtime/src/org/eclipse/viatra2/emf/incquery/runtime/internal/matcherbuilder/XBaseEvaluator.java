@@ -12,26 +12,12 @@
 package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 
 import java.net.MalformedURLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchChecker;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
@@ -40,11 +26,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.util.ClassLoaderUtil;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.AbstractEvaluator;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.xbase.XExpression;

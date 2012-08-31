@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
@@ -26,10 +25,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.xbase.XExpression;
-
-import com.google.inject.Injector;
 
 /**
  * XExpression check constraint: the given XExpression formed over the variables

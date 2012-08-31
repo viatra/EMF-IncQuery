@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;

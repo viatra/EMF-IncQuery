@@ -32,7 +32,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @see GenericMatcherFactory
  * @see GenericMatchProcessor
  */
-@SuppressWarnings("unused")
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements IncQueryMatcher<GenericPatternMatch> {
 
 	Pattern pattern;

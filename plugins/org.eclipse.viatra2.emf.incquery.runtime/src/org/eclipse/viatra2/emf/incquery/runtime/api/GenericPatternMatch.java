@@ -25,7 +25,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @author Bergmann Gábor
  *
  */
-@SuppressWarnings("unused")
 public class GenericPatternMatch extends BasePatternMatch implements IPatternMatch {
 
 	private GenericPatternMatcher matcher;

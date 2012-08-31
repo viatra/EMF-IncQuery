@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Arrays
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
