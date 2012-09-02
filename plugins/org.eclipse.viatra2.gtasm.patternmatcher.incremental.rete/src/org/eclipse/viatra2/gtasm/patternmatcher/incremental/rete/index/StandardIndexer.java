@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
@@ -67,6 +68,10 @@ public abstract class StandardIndexer implements Indexer {
 
 	public void detachListener(IndexerListener listener) {
 		listeners.remove(listener);
+	}
+	
+	public Collection<IndexerListener> getListeners() {
+		return listeners;
 	}
 
 	public ReteContainer getContainer() {

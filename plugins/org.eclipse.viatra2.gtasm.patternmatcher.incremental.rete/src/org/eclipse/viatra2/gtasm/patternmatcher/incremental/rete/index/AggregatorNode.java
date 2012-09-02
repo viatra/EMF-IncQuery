@@ -53,7 +53,7 @@ public abstract class AggregatorNode extends StandardNode {
 		for (Tuple signature : projection.getSignatures()) {
 			mainAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
 		}
-		projection.attachListener(new IndexerListener(){		
+		projection.attachListener(new DefaultIndexerListener(this){		
 			public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
 				aggregateUpdate(direction, updateElement, signature, change);
 			}

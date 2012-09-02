@@ -49,5 +49,9 @@ public interface Supplier extends Node {
 	 */
 	ProjectionIndexer constructIndex(TupleMask mask);
 
+	/**
+	 * lists receivers
+	 */
+	Collection<Receiver> getReceivers();
 
 }
