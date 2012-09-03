@@ -64,5 +64,8 @@ public class Options {
 			}
 		}
 	}
-	public final static BuilderMethod builderMethod = BuilderMethod.PSYSTEM_BASIC_LINEAR;
+	public final static BuilderMethod builderMethod = 
+			//BuilderMethod.PSYSTEM_BASIC_LINEAR;
+			BuilderMethod.PSYSTEM_QUASITREE;
+
 }

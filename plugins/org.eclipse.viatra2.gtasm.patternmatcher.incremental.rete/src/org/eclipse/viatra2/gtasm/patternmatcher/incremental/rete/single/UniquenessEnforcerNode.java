@@ -38,6 +38,10 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 
 	protected Collection<Supplier> parents;
 	protected TupleMemory memory;
+	public TupleMemory getMemory() {
+		return memory;
+	}
+
 	protected MemoryNullIndexer memoryNullIndexer;
 	protected MemoryIdentityIndexer memoryIdentityIndexer;
 	protected final int tupleWidth;
@@ -134,6 +138,14 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 	@Override
 	public void removeParent(Supplier supplier) {
 		parents.remove(supplier);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#getParents()
+	 */
+	@Override
+	public Collection<Supplier> getParents() {
+		return parents;
 	}	
 	
 	
@@ -158,5 +170,6 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 	// public void setDirty(boolean dirty) {
 	// this.dirty = dirty;
 	// }
+	
 
 }

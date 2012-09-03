@@ -63,9 +63,9 @@
 		<sonar.version>2.14</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath>
-		<sonar.skippedModules>org.eclipse.viatra2.emf.incquery.runtime.feature,org.eclipse.viatra2.emf.incquery.databinding.feature,org.eclipse.viatra2.emf.incquery.databinding.tooling.feature,org.eclipse.viatra2.emf.incquery.sdk.feature,org.eclipse.viatra2.emf.incquery.validation.feature,org.eclipse.viatra2.emf.incquery.validation.gmf.feature,org.eclipse.viatra2.emf.incquery.validation.tooling.feature,org.eclipse.viatra2.emf.incquery.licence.feature,org.eclipse.viatra2.patternlanguage.update</sonar.skippedModules>
+		<sonar.skippedModules>org.eclipse.viatra2.emf.incquery.runtime.feature,org.eclipse.viatra2.emf.incquery.databinding.feature,org.eclipse.viatra2.emf.incquery.databinding.tooling.feature,org.eclipse.viatra2.emf.incquery.sdk.feature,org.eclipse.viatra2.emf.incquery.validation.feature,org.eclipse.viatra2.emf.incquery.validation.gmf.feature,org.eclipse.viatra2.emf.incquery.validation.tooling.feature,org.eclipse.viatra2.emf.incquery.licence.feature,org.eclipse.viatra2.patternlanguage.update,school,school.edit,school.editor,org.eclipse.viatra2.emf.incquery.snapshot,org.eclipse.viatra2.emf.incquery.snapshot.edit,org.eclipse.viatra2.emf.incquery.snapshot.editor</sonar.skippedModules>
 	</properties>
 	<build>
 		<plugins>
@@ -127,7 +127,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<execution>
+					<!-- <execution>
 						<id>report</id>
 						<phase>prepare-package</phase>
 						<goals>
@@ -137,7 +137,7 @@
 							<dataFile>${jacoco.targetdir}/jacoco.exec</dataFile>
 							<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory>
 						</configuration>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
 		</plugins>
@@ -238,4 +238,18 @@
 		<url>https://github.com/ujhelyiz/EMF-IncQuery/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
+	<profiles>
+	<profile>
+      <id>examples</id>
+      <activation>
+        <file>
+        	<exists>../../../examples/README.markdown</exists>
+        </file>
+      </activation>
+      <modules>
+        <module>../../../examples/school/org.eclipse.viatra2.emf.incquery.tests.school.parent</module>
+        <module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>        
+      </modules>
+    </profile>
+	</profiles>
 </project>

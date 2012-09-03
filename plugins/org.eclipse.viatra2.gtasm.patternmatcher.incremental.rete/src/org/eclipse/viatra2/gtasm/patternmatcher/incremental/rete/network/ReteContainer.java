@@ -613,6 +613,14 @@ public final class ReteContainer {
 		sb.append("]]] of " + network);		
 		return sb.toString();
 	}
+	
+	/**
+	 * Access all the Rete nodes inside this container.
+	 * @return the collection of {@link Node} instances
+	 */
+	public Collection<Node> getAllNodes() {
+		return nodesById.values();
+	}
 
 
 }

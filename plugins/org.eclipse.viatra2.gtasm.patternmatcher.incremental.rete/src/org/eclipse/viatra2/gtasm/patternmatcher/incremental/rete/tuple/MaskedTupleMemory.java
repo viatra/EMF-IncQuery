@@ -174,6 +174,8 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
 		return "MTM<"+mask+"|"+matchings+">";
 	}
 
-
+	public int getSize() {
+		return matchings.values().size();
+	}
 
 }

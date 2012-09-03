@@ -19,9 +19,9 @@ import com.google.inject.Injector;
  * @author Zoltan Ujhelyi
  *
  */
-public class XtextInjectorProvider {
+public final class XtextInjectorProvider {
 
-	public static XtextInjectorProvider INSTANCE = new XtextInjectorProvider();
+	public final static XtextInjectorProvider INSTANCE = new XtextInjectorProvider();
 	private Injector injector;
 	
 	

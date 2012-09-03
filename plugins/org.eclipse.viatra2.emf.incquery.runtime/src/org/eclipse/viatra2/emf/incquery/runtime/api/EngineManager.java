@@ -17,7 +17,6 @@ import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.BaseIndexListener;
 
 
 

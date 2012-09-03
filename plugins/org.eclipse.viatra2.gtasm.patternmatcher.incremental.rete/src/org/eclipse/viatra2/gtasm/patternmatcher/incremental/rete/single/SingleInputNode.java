@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single;
 
 import java.util.Collection;
+import java.util.Vector;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode;
@@ -67,6 +68,16 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
 	 */
 	public void propagatePullInto(Collection<Tuple> collector) {
 		if (parent != null) parent.pullInto(collector);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#getParents()
+	 */
+	@Override
+	public Collection<Supplier> getParents() {
+		Vector<Supplier> v = new Vector<Supplier>();
+		v.add(parent);
+		return v;
 	}
 
 }

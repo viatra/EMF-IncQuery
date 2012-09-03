@@ -55,6 +55,10 @@ public class ReteBoundary<PatternDescription> {
 	protected Network network;
 	protected ReteContainer headContainer;
 	
+	public ReteContainer getHeadContainer() {
+		return headContainer;
+	}
+	
 	protected IPatternMatcherRuntimeContext<PatternDescription> context;
 	IPatternMatcherContext.GeneralizationQueryDirection generalizationQueryDirection;
 
@@ -173,6 +177,10 @@ public class ReteBoundary<PatternDescription> {
 	public Address<? extends Tunnel> getUnaryRoot(Object label) {
 		return unaryRoots.get(label);
 	}
+	
+	public Collection<Address<? extends Tunnel>> getAllUnaryRoots() {
+		return unaryRoots.values();
+	}
 
 	/**
 	 * fetches the relation Root node under specified label; returns null if it
@@ -180,6 +188,14 @@ public class ReteBoundary<PatternDescription> {
 	 */
 	public Address<? extends Tunnel> getTernaryEdgeRoot(Object label) {
 		return ternaryEdgeRoots.get(label);
+	}
+	
+	public Collection<Address<? extends Tunnel>> getAllTernaryEdgeRoots() {
+		return ternaryEdgeRoots.values();
+	}
+	
+	public Collection<Address<? extends Production>> getAllProductionNodes() {
+		return productions.values();
 	}
 
 	/**
