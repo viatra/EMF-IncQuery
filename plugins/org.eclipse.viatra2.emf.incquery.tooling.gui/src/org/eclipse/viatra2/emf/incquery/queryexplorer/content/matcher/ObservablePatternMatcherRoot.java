@@ -121,14 +121,14 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 		for (ObservablePatternMatcher pm : this.matchers.values()) {
 			pm.dispose();
 		}
-		IncQueryEngine engine = createEngine();
+		IncQueryEngine engine = key.getEngine();//createEngine();
 		if (engine != null) {
 			engine.getLogger().removeAppender(this);
 		}
 	}
 	
 	public boolean isTainted() {
-		IncQueryEngine engine = createEngine();
+		IncQueryEngine engine = key.getEngine();//createEngine();
 		return (engine == null) ? true : engine.isTainted();
 	}
 	
