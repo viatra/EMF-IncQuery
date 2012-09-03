@@ -24,6 +24,7 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -198,9 +199,18 @@ class PatternMatchClassInferrer {
 					return true;
 				if (obj == null)
 					return false;
-				if (!(obj instanceof IPatternMatch))
+				if (!(obj instanceof ''')
+				referClass(pattern, typeof(IPatternMatch))
+				append('''
+				))
 					return false;
-				IPatternMatch otherSig  = (IPatternMatch) obj;
+				''')
+				referClass(pattern, typeof(IPatternMatch))
+				append(" ") append('''
+				otherSig  = (''')
+				referClass(pattern, typeof(IPatternMatch))
+				append('''
+				) obj;
 				if (!pattern().equals(otherSig.pattern()))
 					return false;
 				if (!«pattern.matchClassName».class.equals(obj.getClass()))
