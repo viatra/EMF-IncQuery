@@ -25,9 +25,12 @@ import org.eclipse.xtext.xbase.XExpression;
 public class CheckExpressionUtil {
 
 	/**
-	 * @param pattern
-	 * @param xExpression
-	 * @return
+	 * Returns a unique string name for the given xexpression + pattern combination.
+	 * The format is FQN_(pattern body number)_(expression number).
+	 * 
+	 * @param pattern {@link Pattern}
+	 * @param xExpression {@link XExpression}
+	 * @return {@link String}
 	 */
 	public static String getExpressionUniqueID(Pattern pattern,
 			XExpression xExpression) {
@@ -36,9 +39,12 @@ public class CheckExpressionUtil {
 	}
 
 	/**
-	 * @param pattern
-	 * @param xExpression
-	 * @return
+	 * Returns a unique string tag for the given xexpression + pattern combination.
+	 * The format is (pattern body number)_(expression number).
+	 * 
+	 * @param pattern {@link Pattern}
+	 * @param xExpression {@link XExpression}
+	 * @return {@link String}
 	 */
 	public static String getExpressionUniqueNameInPattern(Pattern pattern,
 			XExpression xExpression) {
@@ -60,8 +66,10 @@ public class CheckExpressionUtil {
 	}
 
 	/**
-	 * @param pattern
-	 * @return
+	 * Returns the containing IFile, if the pattern has a valid resource.
+	 * 
+	 * @param pattern {@link Pattern}
+	 * @return {@link IFile}
 	 */
 	public static IFile getIFile(Pattern pattern) {
 		if (pattern != null) {
