@@ -17,9 +17,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 
 /**
- * The PartListener is used to observe EditorPart close actions.
+ * The PartListener is used to observe EditorPart close actions on Graphiti editors.
  * 
  * @author Tamas Szabo
  *
@@ -57,12 +58,10 @@ public class GraphitiEditorPartListener implements IPartListener {
 			IEditorPart closedEditor = (IEditorPart) part;
 			if (closedEditor instanceof DiagramEditor) {
 				DiagramEditor providerEditor = (DiagramEditor) closedEditor;
-				
 				ResourceSet resourceSet = providerEditor.getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					if (QueryExplorer.getInstance() != null) {
-						QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(closedEditor, resourceSet);
-					}
+					MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
+					QueryExplorer.contentModelMap.get(key).unloadModel();
 				}
 			}
 		}

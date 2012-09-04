@@ -17,7 +17,10 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
 
 public class GraphitiEditorLoadModelHandler extends LoadModelHandler {
 
@@ -28,10 +31,12 @@ public class GraphitiEditorLoadModelHandler extends LoadModelHandler {
 		
 		if (editorPart instanceof DiagramEditor) {
 			DiagramEditor providerEditor = (DiagramEditor) editorPart;
-			
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 			if (resourceSet.getResources().size() > 0) {
-				loadModel(providerEditor, resourceSet);
+				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resourceSet);
+				ContentModel contentModel = new GraphitiContentModel(key);
+				QueryExplorer.contentModelMap.put(key, contentModel);
+				contentModel.loadModel();
 			}
 		}
 		return null;
