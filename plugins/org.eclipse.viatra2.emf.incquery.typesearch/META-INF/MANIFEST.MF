@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TypeSearch
+Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.typesearch
+Bundle-Version: 0.6.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.xtext.xbase;bundle-version="2.3.0",
+ org.eclipse.viatra2.patternlanguage.emf;bundle-version="0.6.0",
+ org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0"
+Export-Package: org.eclipse.viatra2.emf.incquery.typesearch
