@@ -28,6 +28,7 @@ import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.jdt.core.JavaConventions
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.core.runtime.IStatus
+import java.util.regex.Matcher
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -129,6 +130,17 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	}
    	
    	/**
+	 * Returns the EvaluatorClass name based on the Pattern's name
+	 */   	
+   	def evaluatorClassName(Pattern pattern) {
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Evaluator"
+   	}
+   	
+   	/**
    	 * Returns field name for Variable
    	 */
    	def fieldName(Variable variable) {
@@ -203,11 +215,15 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	 * Serializes the input for Javadoc
   	 */
   	def serializeToJavadoc(Pattern pattern) {
-  		val javadocString = pattern.serialize
+  		var javadocString = pattern.serialize
   		if (javadocString.nullOrEmpty) {
   			return "Serialization error, check Log"
   		}
-  		return javadocString
+  		javadocString = javadocString.replaceAll(java::util::regex::Pattern::quote("\\\""),Matcher::quoteReplacement("\""))
+  		javadocString = javadocString.replaceAll("@","{@literal @}")
+  		javadocString = javadocString.replaceAll("<","{@literal <}")
+  		javadocString = javadocString.replaceAll(">","{@literal >}")
+  		return javadocString.trim
   	}
   	
   	/**

@@ -16,6 +16,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
@@ -28,13 +29,16 @@ public class UnloadModelHandler extends AbstractHandler {
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		if (selection instanceof TreeSelection) {
 			TreeSelection ts = (TreeSelection) selection;
-			ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ts.getFirstElement();
-			root.getEditorPart().getSite().getPage().removePartListener(QueryExplorer.getInstance().getModelPartListener());
-			QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(root.getKey());
+			unloadModel((ObservablePatternMatcherRoot) ts.getFirstElement(), QueryExplorer.getInstance().getModelPartListener());
 		}
 		
 		QueryExplorer.getInstance().clearTableViewer();
 		
 		return null;
+	}
+	
+	protected void unloadModel(ObservablePatternMatcherRoot root, IPartListener partListener) {
+		root.getEditorPart().getSite().getPage().removePartListener(partListener);
+		QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(root.getKey());
 	}
 }

@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
-import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
@@ -183,7 +182,6 @@ public class EMFPatternMatcherRuntimeContext
 	/**
 	 * Notifier must be EObject, Resource or ResourceSet
 	 * @param notifier
-	 * @throws IncQueryBaseException 
 	 */
 	public EMFPatternMatcherRuntimeContext(IncQueryEngine iqEngine, NavigationHelper baseIndex) {
 		super(iqEngine);

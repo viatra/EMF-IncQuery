@@ -1,18 +1,34 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Tamas Szabo, Gabor Bergmann, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Szabo, Gabor Bergmann - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.viatra2.emf.incquery.base.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -24,6 +40,13 @@ import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Table;
+
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	public static final EClass eObjectClass = EcorePackage.eINSTANCE
@@ -33,18 +56,26 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
 
 	// feature -> holder(s)
-	protected Map<EStructuralFeature, Set<EObject>> reversedFeatureMap;
+	protected Map<EStructuralFeature, Multiset<EObject>> reversedFeatureMap;
 
 	// eclass -> instance(s)
 	protected Map<EClass, Set<EObject>> instanceMap;
 
 	// edatatype -> multiset of value(s)
 	protected Map<EDataType, Map<Object, Integer>> dataTypeMap;
+	
+	// source -> feature -> proxy target -> delayed visitors
+	protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
+	
+	// proxy source -> delayed visitors
+	protected ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
+
 
 	// static for all eClasses whose instances were encountered at least once
 	private static Set<EClass> knownClasses = new HashSet<EClass>();
 	// static for eclass -> all subtypes in knownClasses
 	protected static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
+	
 
 	private NavigationHelperImpl navigationHelper;
 
@@ -56,11 +87,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
 		this.instanceMap = new HashMap<EClass, Set<EObject>>();
 		this.dataTypeMap = new HashMap<EDataType, Map<Object, Integer>>();
+		this.unresolvableProxyFeaturesMap = HashBasedTable.create();
+		this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
 	}
 
-	public Map<EStructuralFeature, Set<EObject>> getReversedFeatureMap() {
+	public Map<EStructuralFeature, Multiset<EObject>> getReversedFeatureMap() {
 		if (reversedFeatureMap == null) {
-			reversedFeatureMap = new HashMap<EStructuralFeature, Set<EObject>>();
+			reversedFeatureMap = new HashMap<EStructuralFeature, Multiset<EObject>>();
 			initReversedFeatureMap();
 		}
 		return reversedFeatureMap;
@@ -99,16 +132,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 					for (Object oldElement : (Collection<?>) oldValue)
 						featureUpdate(false, notifier, feature, oldElement);
 					break;
-				// case Notification.REMOVING_ADAPTER: break;
-				case Notification.RESOLVE: // TODO is it safe to ignore all of
-											// them?
+				case Notification.REMOVING_ADAPTER: break;
+				case Notification.RESOLVE:
+					featureResolve(notifier, feature, oldValue, newValue);
 					break;
-				case Notification.UNSET: // TODO Fallthrough?
+				case Notification.UNSET:
 				case Notification.SET:
 					featureUpdate(false, notifier, feature, oldValue);
 					featureUpdate(true, notifier, feature, newValue);
-					break;
-				case Notification.REMOVING_ADAPTER:
 					break;
 				}
 			}
@@ -119,14 +150,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			// handleAttributeChange(notification, (EAttribute) feature);
 			// }
 		} catch (Exception ex) {
-			navigationHelper
-					.getLogger()
-					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while handling the following update notification: "
-							+ notification, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+		  processingError(ex, "handle the following update notification: " + notification);
 		}
 
 		if (isDirty) {
@@ -136,50 +160,79 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	}
 
+
+	private void featureResolve(EObject source, EStructuralFeature feature, Object oldValue, Object newValue) {
+		EReference reference = (EReference) feature;
+		EObject proxy = (EObject) oldValue;
+		EObject resolved = (EObject) newValue;
+		
+		final List<EMFVisitor> objectVisitors = popVisitorsSuspendedOnObject(proxy);
+		for (EMFVisitor visitor : objectVisitors) {
+			EMFModelComprehension.traverseObject(visitor, resolved);
+		}
+		
+		final List<EMFVisitor> featureVisitors = popVisitorsSuspendedOnFeature(source, reference, proxy);
+		for (EMFVisitor visitor : featureVisitors) {
+			EMFModelComprehension.traverseFeature(visitor, source, reference, resolved);
+		}
+	}
+
 	private void featureUpdate(boolean isInsertion, EObject notifier,
 			EStructuralFeature feature, Object value) {
-		EMFModelComprehension.visitFeature(visitor(isInsertion), notifier,
+		EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier,
 				feature, value);
 	}
 
 	@Override
-	protected void addAdapter(Notifier notifier) {
+	protected void addAdapter(final Notifier notifier) {
 		try {
-			if (notifier instanceof EObject) {
-				EMFModelComprehension.visitObject(visitor(true),
-						(EObject) notifier);
-			}
-			super.addAdapter(notifier);
+		  this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          if (notifier instanceof EObject) {
+            EMFModelComprehension.traverseObject(visitor(true),
+                (EObject) notifier);
+          }
+          NavigationHelperContentAdapter.super.addAdapter(notifier);
+          return null;
+        }
+      });		  
+		} catch (InvocationTargetException ex) {
+      processingError(ex.getCause(), "add the object: " + notifier);
 		} catch (Exception ex) {
-			navigationHelper.getLogger().fatal(
-					"EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while trying to add the object: "
-							+ notifier, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+			processingError(ex, "add the object: " + notifier);
 		}
 	}
 
 	@Override
-	protected void removeAdapter(Notifier notifier) {
+	protected void removeAdapter(final Notifier notifier) {
 		try {
-			if (notifier instanceof EObject) {
-				EMFModelComprehension.visitObject(visitor(false),
-						(EObject) notifier);
-			}
-			super.removeAdapter(notifier);
-		} catch (Exception ex) {
-			navigationHelper
-					.getLogger()
-					.fatal("EMF-IncQuery encountered an error in processing the EMF model. "
-							+ "This happened while trying to remove the object: "
-							+ notifier, ex);
-			// throw new
-			// IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-			// ex);
+      this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          if (notifier instanceof EObject) {
+            EMFModelComprehension.traverseObject(visitor(false),
+                (EObject) notifier);
+          }
+          NavigationHelperContentAdapter.super.removeAdapter(notifier);
+          return null;
+        }
+      });     
+    } catch (InvocationTargetException ex) {
+      processingError(ex.getCause(), "remove the object: " + notifier);
+    } catch (Exception ex) {
+      processingError(ex, "remove the object: " + notifier);
 		}
 	}
+
+  private void processingError(Throwable ex, String task) {
+    navigationHelper.getLogger().fatal(
+    		"EMF-IncQuery encountered an error in processing the EMF model. "
+    				+ "This happened while trying to " + task, ex);
+    // throw new
+    // IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
+    // ex);
+  }
 
 	protected EMFVisitor visitor(final boolean isInsertion) {
 		return new NavigationHelperVisitor.ChangeVisitor(navigationHelper,
@@ -295,10 +348,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
 	private void addToReversedFeatureMap(EStructuralFeature feature,
 			EObject holder) {
-		Set<EObject> setVal = reversedFeatureMap.get(feature);
+	  Multiset<EObject> setVal = reversedFeatureMap.get(feature);
 
 		if (setVal == null) {
-			setVal = new HashSet<EObject>();
+			setVal = HashMultiset.create();
 		}
 		setVal.add(holder);
 		reversedFeatureMap.put(feature, setVal);
@@ -543,7 +596,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	// resources),
 	// - and once when said iteration of resources reaches the end of the
 	// resource list in the ResourceSet
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385039
 	
 	@Override
 	protected void setTarget(ResourceSet target) {
@@ -573,4 +626,84 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}    
 		} else super.notifyChanged(notification);
 	}
+	
+	// WORKAROUND (TMP) for eContents vs. derived features bug
+	@Override
+	protected void setTarget(EObject target) {
+	    basicSetTarget(target);
+	    spreadToChildren(target, true);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.emf.ecore.util.EContentAdapter#unsetTarget(org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	protected void unsetTarget(EObject target) {
+	    basicUnsetTarget(target);
+	    spreadToChildren(target, false);
+	}
+	/**
+	 * @param target
+	 */
+	protected void spreadToChildren(EObject target, boolean add) {
+		final EList<EReference> features = 
+	    		target.eClass().getEAllReferences();
+	    for (EReference feature : features) {
+	    	if (!feature.isContainment()) continue;
+	    	if (!EMFModelComprehension.representable(feature)) continue;
+			if (feature.isMany()) {
+				Collection<?> values = (Collection<?>) target.eGet(feature);
+				for (Object value : values) {
+					final Notifier notifier = (Notifier)value;
+					if (add)
+						addAdapter(notifier);
+					else
+						removeAdapter(notifier);
+				}
+			} else {
+				Object value = target.eGet(feature);
+				if (value != null) {
+					final Notifier notifier = (Notifier)value;
+					if (add)
+						addAdapter(notifier);
+					else
+						removeAdapter(notifier);
+				}
+			}
+		}
+	}
+	
+	
+	public void suspendVisitorOnUnresolvableFeature(EMFVisitor visitor, EObject source, EReference reference, EObject target, boolean isInsertion) {
+		ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
+		if (targetToVisitor == null) {
+			targetToVisitor = ArrayListMultimap.create();
+			unresolvableProxyFeaturesMap.put(source, reference, targetToVisitor);
+		}
+		if (isInsertion) 
+			targetToVisitor.put(target, visitor);
+		else
+			targetToVisitor.remove(target, visitor);
+		if (targetToVisitor.isEmpty()) 
+			unresolvableProxyFeaturesMap.remove(source, reference);
+	}
+
+	public void suspendVisitorOnUnresolvableObject(EMFVisitor visitor, EObject source, boolean isInsertion) {
+		if (isInsertion) 
+			unresolvableProxyObjectsMap.put(source, visitor);
+		else
+			unresolvableProxyObjectsMap.remove(source, visitor);
+	}
+	
+	List<EMFVisitor> popVisitorsSuspendedOnFeature(EObject source, EReference reference, EObject target) {
+		ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
+		if (targetToVisitor == null) return Collections.emptyList();
+		final List<EMFVisitor> result = targetToVisitor.removeAll(target);
+		if (targetToVisitor.isEmpty()) unresolvableProxyFeaturesMap.remove(source, reference);
+		return result;
+	}
+	List<EMFVisitor> popVisitorsSuspendedOnObject(EObject source) {
+		return unresolvableProxyObjectsMap.removeAll(source);	
+	}
+
+	
 }

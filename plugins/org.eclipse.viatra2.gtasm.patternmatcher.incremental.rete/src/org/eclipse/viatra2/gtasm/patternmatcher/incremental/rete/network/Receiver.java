@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
 
+import java.util.Collection;
+
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
@@ -36,5 +38,10 @@ public interface Receiver extends Node {
 	 * removes a parent
 	 */
 	void removeParent(Supplier supplier);
+	
+	/**
+	 * access active parent
+	 */
+	Collection<Supplier> getParents();
 
 }

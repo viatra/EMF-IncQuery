@@ -24,5 +24,7 @@ public interface IExtensions {
 	// The extension point ID
 	//public static final String EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.patternmatcher.builder";
 	public static final String MATCHERFACTORY_EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.matcherfactory";
-
+	
+	// Extension point for registering the generated java codes from the xbase xexpressions
+	public static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = "org.eclipse.viatra2.emf.incquery.xexpressionevaluator";
 }

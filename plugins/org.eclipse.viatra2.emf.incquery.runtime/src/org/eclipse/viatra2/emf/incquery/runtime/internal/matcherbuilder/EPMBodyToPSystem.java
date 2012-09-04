@@ -93,7 +93,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		this.context = context;
 		this.buildable = buildable;
 		
-		patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern).toString();
+		patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 	}
 	
 	public PSystem<Pattern, StubHandle, Collector> toPSystem() throws RetePatternBuildException {
@@ -202,8 +202,6 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 	}
 	private void gatherBodyConstraints() throws RetePatternBuildException {
 		EList<Constraint> constraints = body.getConstraints();
-		//XXX Making sure all variables are resolved
-		body.getVariables();
 		for (Constraint constraint : constraints) {
 			gatherConstraint(constraint);
 		}

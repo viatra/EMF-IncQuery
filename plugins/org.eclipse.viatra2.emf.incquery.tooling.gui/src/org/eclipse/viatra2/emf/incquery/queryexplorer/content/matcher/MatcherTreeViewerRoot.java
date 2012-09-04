@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 public class MatcherTreeViewerRoot {
 private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
@@ -46,10 +46,15 @@ private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 	
 	public void removePatternMatcherRoot(MatcherTreeViewerRootKey key) {
 		if (roots.containsKey(key)) {
-			Notifier notifier = key.getNotifier();
+			//Notifier notifier = key.getNotifier();
 			//disposing IncQueryEngine instance associated to the given Notifier
-			EngineManager.getInstance().disposeEngine(notifier);
-			this.roots.get(key).dispose();
+			//EngineManager.getInstance().disposeEngine(notifier);
+		  ObservablePatternMatcherRoot root = this.roots.get(key);
+		  IncQueryEngine engine = root.getKey().getEngine();
+			if(engine != null) {
+			  engine.dispose();
+			}
+      root.dispose();
 			this.roots.remove(key);
 			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
 		}

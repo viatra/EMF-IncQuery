@@ -23,6 +23,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 public class DatabindingAdapterUtil {
 	
+	private DatabindingAdapterUtil() {}
+	
 	/**
 	 * Returns an IObservableValue for the given match based on the given expression.
 	 * If an attribute is not present in the expression than it tries with the 'name' attribute.
@@ -95,7 +97,7 @@ public class DatabindingAdapterUtil {
 	 */
 	public static List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
 		List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
-		if (object != null && object instanceof EObject) {
+		if (object instanceof EObject) {
 			for (EStructuralFeature feature : ((EObject) object).eClass().getEAllStructuralFeatures()) {
 				IObservableValue val = EMFProperties.value(feature).observe(object);
 				affectedValues.add(val);
@@ -113,7 +115,7 @@ public class DatabindingAdapterUtil {
 	 * @return the EStructuralFeature of the object or null if it can not be found
 	 */
 	public static EStructuralFeature getFeature(Object o, String featureName) {
-		if (o != null && o instanceof EObject) {
+		if (o instanceof EObject) {
 			EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(featureName);
 			return feature;
 		}

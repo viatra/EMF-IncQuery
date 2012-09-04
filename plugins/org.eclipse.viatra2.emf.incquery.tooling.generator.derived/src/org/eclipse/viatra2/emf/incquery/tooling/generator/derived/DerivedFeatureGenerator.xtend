@@ -59,6 +59,10 @@ import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatt
 import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
+import org.eclipse.emf.ecore.EcoreFactory
+import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl
+import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.emf.common.util.BasicEMap
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
@@ -178,9 +182,30 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					ast.ensureImports(rewrite, astNode, type)
 					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature.name)
 					ast.ensureGetterMethod(document, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature, pattern, parameters)
+					var annotation = feature.EAnnotations.findFirst[
+					  source == "org.eclipse.viatra2.emf.incquery.derived.feature"
+					]
+					if(annotation == null){
+					  annotation = EcoreFactory::eINSTANCE.createEAnnotation
+					  annotation.source = "org.eclipse.viatra2.emf.incquery.derived.feature"
+            feature.EAnnotations.add(annotation)
+					} else {
+  			    annotation.details.clear()
+			    }
+				  // add entry ("patternFQN", pattern.fullyQualifiedName)
+			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
+			    entry.key = "patternFQN"
+			    entry.value = pattern.fullyQualifiedName
+			    annotation.details.add(entry)
+			    feature.EContainingClass.eResource.save(null)
 				} else {
 					ast.removeHandlerField(bodyDeclListRewrite, type, genFeature.name)
 					ast.restoreGetterMethod(document, compunit, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature)
+					val annotation = feature.EAnnotations.findFirst[
+            source == "org.eclipse.viatra2.emf.incquery.derived.feature"
+          ]
+          feature.EAnnotations.remove(annotation)
+          feature.EContainingClass.eResource.save(null)
 				}
 
 				val edits = rewrite.rewriteAST(document, javaProject.getOptions(true));
@@ -219,7 +244,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
 		//val project = ProjectLocator::locateProject(projectDir)
-		ProjectLocator::locateProject(projectDir)
+		ProjectLocator::locateProject(projectDir,logger)
 		//ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
 		//JavaCore::create(project)
 	}
@@ -271,7 +296,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		]
 		if(kindImport == null){
 			val kindImportNew = ast.newImportDeclaration
-			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER + "." + HANDLER_NAME),ast.newSimpleName(FEATUREKIND_IMPORT)))
+			kindImportNew.setName(ast.newQualifiedName(ast.newName(IMPORT_QUALIFIER),ast.newSimpleName(FEATUREKIND_IMPORT)))
 			importListRewrite.insertLast(kindImportNew, null)
 		}
 		val helperImport = imports.findFirst[
@@ -677,10 +702,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
       throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" not found in class " + source.name +"!")
 		}
 		val feature = features.iterator.next
-		if(!(feature.derived && feature.transient && !feature.changeable && feature.volatile)){
+		if(!(feature.derived && feature.transient && feature.volatile)){ //&& !feature.changeable
 			if(feedback)
         errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!")
+      throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile!")
 		}
 		parameters.put("feature", feature)
 		

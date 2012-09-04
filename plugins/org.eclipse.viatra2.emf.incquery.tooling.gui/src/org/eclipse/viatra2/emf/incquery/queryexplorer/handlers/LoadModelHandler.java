@@ -21,6 +21,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 
+/**
+ * Default 'Load model' handler, default ResourceSet loader. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class LoadModelHandler extends AbstractHandler {
 
 	@Override
@@ -34,15 +40,15 @@ public class LoadModelHandler extends AbstractHandler {
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 			
 			if (resourceSet.getResources().size() > 0) {
-				loadModel(event, editorPart, resourceSet);
+				loadModel(editorPart, resourceSet);
 			}
 		}
 
 		return null;
 	}
 	
-	protected void loadModel(ExecutionEvent event, IEditorPart editorPart, Notifier notifier) {
-		HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(QueryExplorer.getInstance().getModelPartListener());
+	protected void loadModel(IEditorPart editorPart, Notifier notifier) {
+		editorPart.getSite().getPage().addPartListener(QueryExplorer.getInstance().getModelPartListener());
 		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(editorPart, notifier);
 	}
 }

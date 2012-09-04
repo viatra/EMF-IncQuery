@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Rete Visualizer"
+            icon="platform:/plugin/org.eclipse.viatra2.emf.incquery.tooling.gui/icons/logo2.png"
+            category="org.eclipse.viatra2.emf.incquery.tooling.gui"
+            class="org.eclipse.viatra2.emf.incquery.tooling.retevis.views.ReteVisView"
+            id="org.eclipse.viatra2.emf.incquery.tooling.retevis.views.ReteVisView">
+      </view>
+   </extension>
+
+</plugin>

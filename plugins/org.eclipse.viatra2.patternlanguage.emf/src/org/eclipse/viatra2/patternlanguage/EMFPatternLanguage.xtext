@@ -19,12 +19,12 @@ generate eMFPatternLanguage "http://www.eclipse.org/viatra2/patternlanguage/EMFP
 
 EMFPatternModel returns core::PatternModel:
 	{PatternModel}
-	('package' packageName = QualifiedName)?
+	('package' packageName = QualifiedName ';'?)?
 	importPackages+=PackageImport*
 	patterns+=Pattern*;
 	
 PackageImport:
-	'import' ePackage=[ecore::EPackage|STRING]// ('as' alias=ID)?
+	'import' ePackage=[ecore::EPackage|STRING] ';'?// ('as' alias=ID)?
 ;
 
 Constraint returns core::Constraint:

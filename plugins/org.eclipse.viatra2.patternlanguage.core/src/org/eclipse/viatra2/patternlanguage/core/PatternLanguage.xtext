@@ -27,7 +27,7 @@ Pattern:
 	'('
 	(parameters+=Parameter (',' parameters+=Parameter)*)?
 	')'
-	'='
+	'='?
 	bodies+=PatternBody ('or' bodies+=PatternBody)*;
 
 Annotation:
@@ -41,9 +41,6 @@ AnnotationParameter:
 Modifiers:
 //injective?='injective' &
 	private?='private';
-
-	//terminal ID:
-// ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 
 Variable returns types::JvmIdentifiableElement:
 	{Variable}

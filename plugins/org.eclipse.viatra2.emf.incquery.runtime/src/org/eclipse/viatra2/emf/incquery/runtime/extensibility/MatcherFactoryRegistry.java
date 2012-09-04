@@ -37,7 +37,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  *
  */
 public final class MatcherFactoryRegistry {
-	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = new HashMap<String, IMatcherFactory<?>>();
+	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = createMatcherFactories();
+
 	// NOTE pattern group management is relegated to PatternGroup classes
 	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
 	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
@@ -48,17 +49,22 @@ public final class MatcherFactoryRegistry {
 	private MatcherFactoryRegistry() {
 	}
 	
-	/**
-	 * Called by Activator.
-	 */
-	public static void initRegistry()
+	private static HashMap<String, IMatcherFactory<?>> createMatcherFactories() {
+		final HashMap<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
+		initRegistry(factories);
+		return factories;
+	}
+	
+	// Does not use the field MATCHER_FACTORIES as it may still be uninitialized 
+	private static void initRegistry(Map<String, IMatcherFactory<?>> factories)
 	{
-		MATCHER_FACTORIES.clear();
+		factories.clear();
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
-		IExtensionPoint poi;
-
-		poi = reg.getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);	
+		if (reg == null) return;
+			
+		IExtensionPoint poi = 
+			reg.getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);	
 		if (poi != null) 
 		{		
 			IExtension[] exts = poi.getExtensions();
@@ -78,7 +84,7 @@ public final class MatcherFactoryRegistry {
 							IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
-							  MATCHER_FACTORIES.put(fullyQualifiedName, matcherFactory);
+								factories.put(fullyQualifiedName, matcherFactory);
 							} else {
 								throw new UnsupportedOperationException(
 										"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
@@ -97,7 +103,6 @@ public final class MatcherFactoryRegistry {
 			}
 		}
 	}
-
 
 	/**
 	 * Puts the factory in the registry, unless it already contains a factory for the given pattern FQN 

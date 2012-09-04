@@ -23,6 +23,7 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
@@ -37,7 +38,11 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
+
 import com.google.inject.Inject;
 
 /**
@@ -57,6 +62,7 @@ import com.google.inject.Inject;
  * @author Mark Czotter
  * 
  */
+@SuppressWarnings("restriction")
 public class PatternLanguageJavaValidator extends
 		AbstractPatternLanguageJavaValidator {
 
@@ -73,9 +79,19 @@ public class PatternLanguageJavaValidator extends
 	
 	@Inject
 	private PatternAnnotationProvider annotationProvider;
+	@Inject
+	private ITypeProvider provider;
+	@Inject
+	private Primitives primitives;
 	
 	@Check
 	public void checkPatternParameters(Pattern pattern) {
+		if (pattern.getParameters().size() == 0) {
+			warning("Parameterless patterns can only be used to check for existence of a condition.",
+					PATTERN__NAME, IssueCodes.MISSING_PATTERN_PARAMETERS);
+			//As no duplicate parameters are available, returning now
+			return;
+		}
 		for (int i = 0; i < pattern.getParameters().size(); ++i) {
 			String leftParameterName = pattern.getParameters().get(i).getName();
 			for (int j = i + 1; j < pattern.getParameters().size(); ++j) {
@@ -275,7 +291,7 @@ public class PatternLanguageJavaValidator extends
 			}
 		}
 	}
-
+	
 	private String getName(PatternBody body) {
 		if (body.getName() != null && !body.getName().isEmpty()) {
 			return "'" + body.getName() + "'";
@@ -359,10 +375,23 @@ public class PatternLanguageJavaValidator extends
 	@Check
 	public void checkPackageDeclaration(PatternModel model) {
 		String packageName = model.getPackageName();
-		if (packageName!= null && !packageName.equalsIgnoreCase(packageName)) {
+		if (packageName!= null && !packageName.equals(packageName.toLowerCase())) {
 			error("Only lowercase package names supported",
 					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
 					IssueCodes.LOWERCASE_PATTERN_NAME);
 		}
+	}
+	
+	@Check
+	public void checkCheckConstraint(CheckConstraint constraint) {
+		JvmTypeReference type = provider.getType(constraint.getExpression());
+		if (!primitives.asPrimitiveIfWrapperType(type).getSimpleName()
+				.equals("boolean")) {
+			error("Check expressions must return boolean.",
+					constraint,
+					PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
+					IssueCodes.CHECK_MUST_BE_BOOLEAN);
+		}
+
 	}
 }

@@ -29,6 +29,15 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
  */
 public abstract class DualInputNode extends StandardNode /* implements Pullable */{
 
+	public IterableIndexer getPrimarySlot() {
+		return primarySlot;
+	}
+
+
+	public Indexer getSecondarySlot() {
+		return secondarySlot;
+	}
+
 	/**
 	 * @author Gabor Bergmann
 	 * 
@@ -82,7 +91,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 		coincidence = primarySlot.equals(secondarySlot);
 		final DualInputNode me = this;
 		if (!coincidence) {
-			primarySlot.attachListener(new IndexerListener() {
+			primarySlot.attachListener(new DefaultIndexerListener(this) {
 				public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
 					notifyUpdate(Side.PRIMARY, direction, updateElement, signature, change);
 				}	
@@ -91,7 +100,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 					return "primary@"+me;
 				}
 			});
-			secondarySlot.attachListener(new IndexerListener() {
+			secondarySlot.attachListener(new DefaultIndexerListener(this) {
 				public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
 					notifyUpdate(Side.SECONDARY, direction, updateElement, signature, change);
 				}	
@@ -101,7 +110,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 				}
 			});	
 		} else {
-			primarySlot.attachListener(new IndexerListener() {
+			primarySlot.attachListener(new DefaultIndexerListener(this) {
 				public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
 					notifyUpdate(Side.BOTH, direction, updateElement, signature, change);
 				}	

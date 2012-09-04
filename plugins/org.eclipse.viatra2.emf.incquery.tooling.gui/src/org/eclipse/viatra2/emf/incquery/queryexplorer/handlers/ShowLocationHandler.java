@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -130,7 +131,7 @@ public class ShowLocationHandler extends AbstractHandler {
 	 * @param locationObjects
 	 * @return
 	 */
-	private TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
+	protected TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
 		List<TreePath> paths = new ArrayList<TreePath>(); //[locationObjects.length]
 		for (Object o: locationObjects) {
 			if(o instanceof EObject) {
@@ -153,7 +154,7 @@ public class ShowLocationHandler extends AbstractHandler {
 	}
 	
 	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
-		List<Object> nodes = new ArrayList<Object>();
+		List<Object> nodes = new LinkedList<Object>();
 		nodes.add(obj);
 		EObject tmp = obj.eContainer();
 			

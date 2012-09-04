@@ -69,7 +69,7 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
 	protected Pattern parsePattern() throws IncQueryException {
 		if (!Platform.isRunning()) {
 			throw new IncQueryException(
-					"Generated EMF-IncQuery patterns can only be used if the Eclipse Platform is running", 
+					"Generated EMF-IncQuery patterns cannot be used in standalone Java applications, for now we need the Eclipse Platform running", 
 					"Eclipse Platform not running");
 		}
 		PatternModel model = getModelRoot(getBundleName());

@@ -38,8 +38,6 @@ public class ModelEditorPartListener implements IPartListener {
 
 	@Override
 	public void partClosed(IWorkbenchPart part) {
-		//IEditorPart closedEditorPart = part.getSite().getPage().getActiveEditor();
-
 		if (part != null && part instanceof IEditorPart) {
 			IEditorPart closedEditor = (IEditorPart) part;
 			

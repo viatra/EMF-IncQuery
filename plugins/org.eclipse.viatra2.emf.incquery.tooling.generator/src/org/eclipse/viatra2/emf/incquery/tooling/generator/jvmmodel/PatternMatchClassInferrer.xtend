@@ -13,17 +13,18 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Arrays
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -36,6 +37,7 @@ class PatternMatchClassInferrer {
 	@Inject extension IQualifiedNameProvider
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
+	@Inject TypeReferences typeReference
 	
 	/**
 	 * Infers the {@link IPatternMatch} implementation class from {@link Pattern} parameters.
@@ -46,7 +48,7 @@ class PatternMatchClassInferrer {
    			it.documentation = pattern.javadocMatchClass.toString
    			it.final = true
    			it.superTypes += pattern.newTypeRef(typeof (BasePatternMatch))
-   			it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
+   			//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
    		]
    		matchClass.inferMatchClassFields(pattern)
    		matchClass.inferMatchClassConstructors(pattern)
@@ -122,8 +124,10 @@ class PatternMatchClassInferrer {
    			it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
    			it.setBody([append('''
    				«FOR variable : pattern.parameters»
-   				if ("«variable.name»".equals(parameterName) && newValue instanceof «variable.calculateType.qualifiedName») {
-   					this.«variable.fieldName» = («variable.calculateType.qualifiedName») newValue;
+   				«val type = variable.calculateType»
+   				«val typeName = type.qualifiedName»
+   				if ("«variable.name»".equals(parameterName) «IF typeReference.is(type, typeof(Object))»&& newValue instanceof «typeName»«ENDIF») {
+   					this.«variable.fieldName» = («typeName») newValue;
    					return true;
    				}
    				«ENDFOR»
@@ -195,9 +199,18 @@ class PatternMatchClassInferrer {
 					return true;
 				if (obj == null)
 					return false;
-				if (!(obj instanceof IPatternMatch))
+				if (!(obj instanceof ''')
+				referClass(pattern, typeof(IPatternMatch))
+				append('''
+				))
 					return false;
-				IPatternMatch otherSig  = (IPatternMatch) obj;
+				''')
+				referClass(pattern, typeof(IPatternMatch))
+				append(" ") append('''
+				otherSig  = (''')
+				referClass(pattern, typeof(IPatternMatch))
+				append('''
+				) obj;
 				if (!pattern().equals(otherSig.pattern()))
 					return false;
 				if (!«pattern.matchClassName».class.equals(obj.getClass()))
@@ -226,7 +239,6 @@ class PatternMatchClassInferrer {
 				append(''' 
 				ex) {
 				 	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
-				 	ex.printStackTrace();
 				 	throw new ''')
 				referClass(pattern, typeof (IllegalStateException))
 				append('''

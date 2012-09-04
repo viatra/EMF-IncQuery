@@ -46,7 +46,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def intConstantCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest() = {
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern constantCompareTest(A) = {
+				Pattern(A);
 				1 == 2;
 			}
 		') as PatternModel
@@ -55,7 +57,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def stringDoubleConstantCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest() = {
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern constantCompareTest(A) = {
+				Pattern(A);
 				1.2 == "String";
 			}
 		') as PatternModel
@@ -64,7 +68,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def enumIntConstantCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest() = {
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern constantCompareTest(A) = {
+				Pattern(A);
 				false == 2;
 			}
 		') as PatternModel
@@ -84,7 +90,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightNewVariableCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest() = {
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern constantCompareTest(A) = {
+				Pattern(A);
 				1 == Name2;
 				IntValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
 				IntValue(Name3);				// Then this line can be deleted.
@@ -106,7 +114,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftNewVariableCompareValidation() {
 		val model = parseHelper.parse('
-			pattern constantCompareTest() = {
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			pattern constantCompareTest(A) = {
+				Pattern(A);
 				Name2 == "Test";
 				StringValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
 				StringValue(Name3);					// Then this line can be deleted.

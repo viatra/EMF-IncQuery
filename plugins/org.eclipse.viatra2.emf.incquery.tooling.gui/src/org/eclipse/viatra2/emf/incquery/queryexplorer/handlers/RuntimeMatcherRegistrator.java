@@ -24,7 +24,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -81,7 +80,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
 				for (Pattern pattern : allActivePatterns) {
 					root.unregisterPattern(pattern);
 				}
-				final IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
+				//final IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
+				final IncQueryEngine engine = root.getKey().getEngine();
 				if (engine!=null) {
 					engine.wipe();
 				}

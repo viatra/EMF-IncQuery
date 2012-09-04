@@ -42,7 +42,10 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
+		<p>Original source:
+		<code><pre>
 		«pattern.serializeToJavadoc»
+		</pre></code>
 		
 		@see «pattern.matchClassName»
 		@see «pattern.matcherFactoryClassName»
@@ -61,12 +64,23 @@ class JavadocInferrer {
 		
 		Clients should derive an (anonymous) class that implements the abstract process().
 	'''
+	
+	def javadocEvaluatorClass(Pattern pattern) '''
+		A xbase xexpression evaluator tailored for the «pattern.fullyQualifiedName» pattern.'''
+		
+	def javadocEvaluatorClassGeneratedMethod(Pattern pattern) '''
+		The raw java code generated from the xbase xexpression by xtext.'''
+		
+	def javadocEvaluatorClassWrapperMethod(Pattern pattern) '''
+		A wrapper method for calling the generated java method with the correct attributes.'''
    	
    	def javadocMatcherConstructorNotifier(Pattern pattern) '''
 		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
 		If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
 		The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
 		The match set will be incrementally refreshed upon updates from this scope.
+		<p>The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so 
+		multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
 		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
 		@throws IncQueryException if an error occurs during pattern matcher creation
 	'''

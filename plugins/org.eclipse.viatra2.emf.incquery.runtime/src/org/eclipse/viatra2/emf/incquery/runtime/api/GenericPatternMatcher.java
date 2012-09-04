@@ -32,7 +32,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @see GenericMatcherFactory
  * @see GenericMatchProcessor
  */
-@SuppressWarnings("unused")
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements IncQueryMatcher<GenericPatternMatch> {
 
 	Pattern pattern;
@@ -44,6 +43,9 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 	 * 
 	 * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
 	 * The match set will be incrementally refreshed upon updates from this scope.
+	 * 
+	 * <p>The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so 
+	 *   multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
 	 * 
 	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
 	 * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.

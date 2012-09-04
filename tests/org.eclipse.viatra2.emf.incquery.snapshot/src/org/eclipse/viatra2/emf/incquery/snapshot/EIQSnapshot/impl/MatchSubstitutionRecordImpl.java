@@ -219,7 +219,7 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 							EIQSnapshotPackageImpl.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue",
 							"Substitution", "Value",
-							FeatureKind.SINGLE_REFERENCE, true);
+							FeatureKind.SINGLE_REFERENCE, true, false);
 		}
 		return (java.lang.Object) derivedValueHandler
 				.getSingleReferenceValue(this);
