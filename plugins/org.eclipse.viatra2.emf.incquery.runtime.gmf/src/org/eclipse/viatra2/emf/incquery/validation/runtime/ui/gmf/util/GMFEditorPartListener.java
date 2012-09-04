@@ -17,16 +17,28 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 
 /**
- * The PartListener is used to observe EditorPart close actions.
+ * The PartListener is used to observe EditorPart close actions on GMF editors.
  * 
  * @author Tamas Szabo
  *
  */
 public class GMFEditorPartListener implements IPartListener {
 	
-	public static GMFEditorPartListener instance = new GMFEditorPartListener();
+	private static GMFEditorPartListener instance;
+	
+	protected GMFEditorPartListener() {
+		
+	}
+	
+	public synchronized static GMFEditorPartListener getInstance() {
+		if (instance == null) {
+			instance = new GMFEditorPartListener();
+		}
+		return instance;
+	}
 	
 	@Override
 	public void partActivated(IWorkbenchPart part) {
@@ -40,17 +52,15 @@ public class GMFEditorPartListener implements IPartListener {
 
 	@Override
 	public void partClosed(IWorkbenchPart part) {
-		//IEditorPart closedEditorPart = part.getSite().getPage().getActiveEditor();
-
 		if (part != null && part instanceof IEditorPart) {
 			IEditorPart closedEditor = (IEditorPart) part;
 			if (closedEditor instanceof DiagramDocumentEditor) {
 				DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) closedEditor;
-				
 				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					if (QueryExplorer.getInstance() != null) {
-						QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(closedEditor, resourceSet);
+					if (resourceSet.getResources().size() > 0) {
+						MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
+						QueryExplorer.contentModelMap.get(key).unloadModel();
 					}
 				}
 			}

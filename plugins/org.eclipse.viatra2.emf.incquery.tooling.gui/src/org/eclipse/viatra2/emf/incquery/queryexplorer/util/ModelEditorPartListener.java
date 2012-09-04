@@ -17,6 +17,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 
 /**
  * The PartListener is used to observe EditorPart close actions.
@@ -25,6 +26,19 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
  *
  */
 public class ModelEditorPartListener implements IPartListener {
+	
+	private static ModelEditorPartListener instance;
+	
+	protected ModelEditorPartListener() {
+		
+	}
+	
+	public synchronized static ModelEditorPartListener getInstance() {
+		if (instance == null) {
+			instance = new ModelEditorPartListener();
+		}
+		return instance;
+	}
 	
 	@Override
 	public void partActivated(IWorkbenchPart part) {
@@ -44,9 +58,8 @@ public class ModelEditorPartListener implements IPartListener {
 			if (closedEditor instanceof IEditingDomainProvider) {
 				ResourceSet resourceSet = ((IEditingDomainProvider) closedEditor).getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
-					if (QueryExplorer.getInstance() != null) {
-						QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(closedEditor, resourceSet);
-					}
+					MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(closedEditor, resourceSet);
+					QueryExplorer.contentModelMap.get(key).unloadModel();
 				}
 			}
 		}

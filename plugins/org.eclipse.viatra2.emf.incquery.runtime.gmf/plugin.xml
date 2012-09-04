@@ -45,46 +45,5 @@
             </with>
          </activeWhen>
       </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.GMFShowLocationHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation">
-         <activeWhen>
-            <with
-                  variable="selection">
-                <iterate
-                      ifEmpty="false"
-                      operator="and">
-                   <test
-                         property="org.eclipse.viatra2.emf.incquery.runtime.gmf.matchEditor">
-                   </test>
-                    <instanceof
-                          value="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
-                    </instanceof>
-                 </iterate>
-            </with>
-         </activeWhen>
-      </handler>
-      <handler
-            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.GMFUnloadModelHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.unmodel">
-         <activeWhen>
-            <with
-                  variable="activeEditor">
-               <instanceof
-                     value="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor">
-               </instanceof>
-            </with>
-         </activeWhen>
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util.MatchEditorTester"
-            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.matchEditor"
-            namespace="org.eclipse.viatra2.emf.incquery.runtime.gmf"
-            properties="matchEditor"
-            type="org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch">
-      </propertyTester>
    </extension>
 </plugin>

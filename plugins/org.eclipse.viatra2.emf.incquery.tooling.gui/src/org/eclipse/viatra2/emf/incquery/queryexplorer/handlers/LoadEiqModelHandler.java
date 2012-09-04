@@ -15,6 +15,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
 import com.google.inject.Inject;
@@ -28,31 +32,16 @@ public class LoadEiqModelHandler extends LoadModelHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		try {
-			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event)
-					.getAdapter(IFile.class);
+			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
 			if (file != null) {
-				loadModel(HandlerUtil.getActiveEditor(event),
-						dbUtil.parseEPM(file));
+				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(HandlerUtil.getActiveEditor(event),	dbUtil.parseEPM(file));
+				ContentModel contentModel = new EMFContentModel(key);
+				QueryExplorer.contentModelMap.put(key, contentModel);
+				contentModel.loadModel();
 			}
 		} catch (Exception e) {
 			throw new ExecutionException("Cannot load pattern model", e);
 		}
-
-		/*
-		 * final ExecutionEvent myEvent = event;
-		 * 
-		 * try { IEditorPart editor = HandlerUtil.getActiveEditor(event); assert
-		 * editor instanceof XtextEditor; XtextEditor providerEditor =
-		 * (XtextEditor) editor; providerEditor.getDocument().readOnly(new
-		 * IUnitOfWork.Void<XtextResource>() { public void process(XtextResource
-		 * resource) throws Exception { IParseResult parseResult =
-		 * resource.getParseResult(); if (parseResult == null) return; EObject
-		 * rootASTElement = parseResult.getRootASTElement(); loadModel(myEvent,
-		 * HandlerUtil.getActiveEditor(myEvent),
-		 * rootASTElement.eResource().getResourceSet()); } }); } catch
-		 * (Exception e) { e.printStackTrace(); }
-		 */
-
 		return null;
 	}
 }

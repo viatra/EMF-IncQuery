@@ -11,7 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -49,6 +51,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.flyout.IFlyoutPref
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
@@ -57,11 +60,11 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DoubleClickListener;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
@@ -84,6 +87,8 @@ public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	
+	public static Map<MatcherTreeViewerRootKey, ContentModel> contentModelMap = new HashMap<MatcherTreeViewerRootKey, ContentModel>();
+	
 	private TableViewer detailsTableViewer;
 	private CheckboxTreeViewer patternsTreeViewer;
 	private TreeViewer matcherTreeViewer;
@@ -91,8 +96,7 @@ public class QueryExplorer extends ViewPart {
 	private MatcherContentProvider matcherContentProvider;
 	private MatcherLabelProvider matcherLabelProvider;
 	private MatcherTreeViewerRoot matcherTreeViewerRoot;
-	
-	private ModelEditorPartListener modelPartListener;
+
 	public static PatternsViewerInput patternsViewerInput = new PatternsViewerInput();
 	
 	private FlyoutControlComposite patternsViewerFlyout;
@@ -118,7 +122,6 @@ public class QueryExplorer extends ViewPart {
 		matcherContentProvider = new MatcherContentProvider();
 		matcherLabelProvider = new MatcherLabelProvider();
 		matcherTreeViewerRoot = new MatcherTreeViewerRoot();
-		modelPartListener = new ModelEditorPartListener();
 		flatCP = new PatternsViewerFlatContentProvider();
 		hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
 		hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
@@ -327,10 +330,6 @@ public class QueryExplorer extends ViewPart {
 	private void initFileListener() {
 		IResourceChangeListener listener = new ResourceChangeListener(injector);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
-	}
-	
-	public ModelEditorPartListener getModelPartListener() {
-		return modelPartListener;
 	}
 	
 	public PatternsViewerInput getPatternsViewerInput() {

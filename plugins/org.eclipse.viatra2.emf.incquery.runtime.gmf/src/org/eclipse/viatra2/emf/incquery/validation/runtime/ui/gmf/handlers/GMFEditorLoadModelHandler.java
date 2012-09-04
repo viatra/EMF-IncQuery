@@ -20,7 +20,8 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util.GMFEditorPartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
 
 public class GMFEditorLoadModelHandler extends AbstractHandler implements
 		IHandler {
@@ -31,14 +32,14 @@ public class GMFEditorLoadModelHandler extends AbstractHandler implements
 		
 		if (editorPart instanceof DiagramDocumentEditor) {
 			DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editorPart;
-			
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 			if (resourceSet.getResources().size() > 0) {
-				HandlerUtil.getActivePart(event).getSite().getPage().addPartListener(GMFEditorPartListener.instance);
-				QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(editorPart, resourceSet);
+				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
+				ContentModel contentModel = new GMFContentModel(key);
+				QueryExplorer.contentModelMap.put(key, contentModel);
+				contentModel.loadModel();
 			}
 		}
 		return null;
 	}
-
 }

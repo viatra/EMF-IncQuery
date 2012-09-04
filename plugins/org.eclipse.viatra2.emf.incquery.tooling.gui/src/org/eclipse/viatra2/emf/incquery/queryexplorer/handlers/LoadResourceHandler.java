@@ -19,6 +19,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
 
 /**
  * Default Resource and EObject loader. 
@@ -30,18 +34,23 @@ public class LoadResourceHandler extends LoadModelHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEditorPart editor = HandlerUtil.getActiveEditor(event);
+		IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
 		
-		if (editor instanceof ISelectionProvider) {
-			ISelectionProvider selectionProvider = (ISelectionProvider) editor;
+		if (editorPart instanceof ISelectionProvider) {
+			ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
 			if (selectionProvider.getSelection() instanceof TreeSelection) {
 				Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
+				Resource resource = null;
 				if (object instanceof Resource) {
-					loadModel(editor, (Resource) object);
+					resource = (Resource) object;
 				}
 				else if (object instanceof EObject) {
-					loadModel(editor, ((EObject) object).eResource());
+					resource = ((EObject) object).eResource();
 				}
+				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resource);
+				ContentModel contentModel = new EMFContentModel(key);
+				QueryExplorer.contentModelMap.put(key, contentModel);
+				contentModel.loadModel();
 			}
 		}
 		
