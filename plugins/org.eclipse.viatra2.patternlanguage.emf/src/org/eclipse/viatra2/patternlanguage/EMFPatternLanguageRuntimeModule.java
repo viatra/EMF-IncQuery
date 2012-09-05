@@ -22,6 +22,7 @@ import org.eclipse.viatra2.patternlanguage.serializer.EMFPatternLanguageCrossRef
 import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
 import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.scoping.IScopeProvider;
@@ -81,5 +82,10 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	
 	public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
 		return EMFPatternLanguageSyntaxErrorMessageProvider.class;
+	}
+
+	@Override
+	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+		return EMFPatternLanguageQualifiedNameProvider.class;
 	}
 }
