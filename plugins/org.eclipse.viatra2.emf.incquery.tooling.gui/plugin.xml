@@ -266,6 +266,10 @@
             class="org.eclipse.viatra2.emf.incquery.gui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.PatternRegitryShowLocationHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation_patternreg">
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ResetUIHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.resetui">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -311,6 +315,7 @@
             locationURI="popup:org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation"
+               icon="icons/forward_nav.gif"
                label="Show location"
                style="push">
             <visibleWhen
@@ -370,6 +375,7 @@
          </command>
          <command
                commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation_patternreg"
+               icon="icons/forward_nav.gif"
                label="Show location"
                style="push">
          </command>
@@ -392,6 +398,12 @@
                   style="push">
             </command>
          </menu>
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.resetui"
+               icon="icons/reset.gif"
+               label="Reset UI"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -498,6 +510,11 @@
             categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
             id="org.eclipse.viatra2.emf.incquery.tooling.gui.showlocation_patternreg"
             name="Show location">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra2.emf.incquery.tooling.category"
+            id="org.eclipse.viatra2.emf.incquery.tooling.gui.resetui"
+            name="Reset UI">
       </command>
    </extension>
    <extension
