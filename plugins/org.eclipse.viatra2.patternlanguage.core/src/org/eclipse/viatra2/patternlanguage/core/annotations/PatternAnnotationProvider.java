@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationValidator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
@@ -57,14 +58,16 @@ public class PatternAnnotationProvider {
 				.getConfigurationElementsFor(EXTENSIONID);
 		for (IConfigurationElement e : config) {
 			final String annotationName = e.getAttribute("name");
+			final String description = e.getAttribute("description"); 
 
 			final IConfigurationElement[] parameters = e
 					.getChildren("annotationparameter");
+			
 			final Iterable<ExtensionBasedPatternAnnotationParameter> parameterIterable = Iterables
 					.transform(
 							Arrays.asList(parameters),
 							new ExtensionConverter());
-			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, parameterIterable);
+			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, description, parameterIterable);
 			annotationValidators.put(annotationName, annotationValidator);
 		}
 	}
@@ -124,5 +127,29 @@ public class PatternAnnotationProvider {
 		}
 		return annotationValidators.get(annotationName)
 				.getAllAvailableParameterNames();
+	}
+	
+	public String getDescription(Annotation annotation) {
+		return getDescription(annotation.getName());
+	}
+
+	public String getDescription(String annotationName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName).getDescription();
+	}
+
+	public String getDescription(AnnotationParameter parameter) {
+		Annotation annotation = (Annotation) parameter.eContainer();
+		return getDescription(annotation.getName(), parameter.getName());
+	}
+
+	public String getDescription(String annotationName, String parameterName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName).getDescription(
+				parameterName);
 	}
 }

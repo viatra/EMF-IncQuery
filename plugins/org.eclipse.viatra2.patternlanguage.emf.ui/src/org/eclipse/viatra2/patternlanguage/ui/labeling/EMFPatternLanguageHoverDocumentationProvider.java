@@ -30,10 +30,16 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 
 	@Inject
 	private IEiqGenmodelProvider genmodelProvider;
+	@Inject
+	private PatternAnnotationProvider annotationProvider;
 	
 	@Override
 	public String computeDocumentation(EObject object) {
-		if (object instanceof PackageImport) {
+		if (object instanceof Annotation) {
+			return annotationProvider.getDescription((Annotation) object);
+		} else if (object instanceof AnnotationParameter) {
+			return annotationProvider.getDescription((AnnotationParameter)object);
+		} else if (object instanceof PackageImport) {
 			PackageImport packageImport = (PackageImport) object;
 			GenPackage genPackage = genmodelProvider.findGenPackage(
 					packageImport, packageImport.getEPackage());
