@@ -25,6 +25,7 @@ import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
+import org.eclipse.xtext.resource.IGlobalServiceProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
@@ -87,5 +88,9 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return EMFPatternLanguageQualifiedNameProvider.class;
+	}
+	
+	public Class<? extends IGlobalServiceProvider> bindIGlobalServiceProvider() {
+		return EMFPatternLanguageServiceProvider.class;
 	}
 }

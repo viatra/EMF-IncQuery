@@ -11,6 +11,8 @@
 package org.eclipse.viatra2.patternlanguage;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -32,6 +34,12 @@ public class EMFPatternLanguageQualifiedNameProvider extends
 	public QualifiedName getFullyQualifiedName(EObject obj) {
 		if (obj instanceof PackageImport) {
 			return nameConverter.toQualifiedName("import.nsUri." + ((PackageImport)obj).getEPackage().getNsURI());
+		} else if (obj instanceof Annotation) {
+			return nameConverter.toQualifiedName("annotation." + ((Annotation) obj).getName());
+		} else if (obj instanceof AnnotationParameter) {
+			AnnotationParameter parameter = (AnnotationParameter) obj;
+			Annotation annotation = (Annotation) parameter.eContainer();
+			getFullyQualifiedName(annotation).append(parameter.getName());
 		}
 		return super.getFullyQualifiedName(obj);
 	}
