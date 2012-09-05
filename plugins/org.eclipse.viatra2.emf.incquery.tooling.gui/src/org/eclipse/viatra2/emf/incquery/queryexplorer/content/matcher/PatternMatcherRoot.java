@@ -80,7 +80,7 @@ public class PatternMatcherRoot {
 	}
 	
 	public IEditorPart getEditorPart() {
-		return this.key.getEditor();
+		return this.key.getEditorPart();
 	}
 	
 //	public void registerPatternModelFromFile(IFile file, PatternModel pm) {	

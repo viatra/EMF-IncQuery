@@ -26,22 +26,22 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
  */
 public class MatcherTreeViewerRootKey {
 
-	private IEditorPart editor;
+	private IEditorPart editorPart;
 	private Notifier notifier;
 	private IncQueryEngine engine;
 
 	public MatcherTreeViewerRootKey(IEditorPart editor, Notifier notifier) {
 		super();
-		this.editor = editor;
+		this.editorPart = editor;
 		this.notifier = notifier;
 	}
 
-	public IEditorPart getEditor() {
-		return editor;
+	public IEditorPart getEditorPart() {
+		return editorPart;
 	}
 
-	public void setEditor(IEditorPart editor) {
-		this.editor = editor;
+	public void setEditorPart(IEditorPart editor) {
+		this.editorPart = editor;
 	}
 
 	public Notifier getNotifier() {
@@ -54,18 +54,29 @@ public class MatcherTreeViewerRootKey {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MatcherTreeViewerRootKey) {
-			MatcherTreeViewerRootKey key = (MatcherTreeViewerRootKey) obj;
-			if (key.getEditor().equals(editor)
-					&& key.getNotifier().equals(notifier))
-				return true;
+		if (obj == this) {
+			return true;
 		}
-		return false;
+		else if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		else {
+			MatcherTreeViewerRootKey key = (MatcherTreeViewerRootKey) obj;
+			if (key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifier)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 	}
 
 	@Override
 	public int hashCode() {
-		return editor.hashCode() + notifier.hashCode();
+		int hash = 1;
+        hash = hash * 17 + editorPart.hashCode();
+        hash = hash * 17 + notifier.hashCode();
+        return hash;
 	}
 
 	@Override
@@ -94,7 +105,7 @@ public class MatcherTreeViewerRootKey {
 		
 		sb.append(")");
 		
-		return editor.getEditorSite().getId() + sb.toString();
+		return editorPart.getEditorSite().getId() + sb.toString();
 	}
 
   /**

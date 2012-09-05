@@ -14,18 +14,17 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 
 /**
- * The PartListener is used to observe EditorPart close actions.
+ * The PartListener is used to observe {@link IEditorPart} close actions.
  * 
  * @author Tamas Szabo
  *
  */
-public class ModelEditorPartListener implements IPartListener {
+public class ModelEditorPartListener extends BasePartListener {
 	
 	private static ModelEditorPartListener instance;
 	
@@ -40,16 +39,6 @@ public class ModelEditorPartListener implements IPartListener {
 		return instance;
 	}
 	
-	@Override
-	public void partActivated(IWorkbenchPart part) {
-
-	}
-
-	@Override
-	public void partBroughtToTop(IWorkbenchPart part) {
-
-	}
-
 	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part != null && part instanceof IEditorPart) {
@@ -66,13 +55,4 @@ public class ModelEditorPartListener implements IPartListener {
 
 	}
 
-	@Override
-	public void partDeactivated(IWorkbenchPart part) {
-
-	}
-
-	@Override
-	public void partOpened(IWorkbenchPart part) {
-
-	}
 }

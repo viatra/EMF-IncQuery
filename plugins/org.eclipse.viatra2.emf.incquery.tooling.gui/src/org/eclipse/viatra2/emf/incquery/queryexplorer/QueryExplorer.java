@@ -60,7 +60,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.Pat
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternsViewerInput;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.CheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
@@ -87,7 +87,7 @@ public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	
-	public static Map<MatcherTreeViewerRootKey, ContentModel> contentModelMap = new HashMap<MatcherTreeViewerRootKey, ContentModel>();
+	public static Map<MatcherTreeViewerRootKey, ModelConnector> contentModelMap = new HashMap<MatcherTreeViewerRootKey, ModelConnector>();
 	
 	private TableViewer detailsTableViewer;
 	private CheckboxTreeViewer patternsTreeViewer;

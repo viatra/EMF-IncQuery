@@ -137,7 +137,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 	}
 	
 	public IEditorPart getEditorPart() {
-		return this.key.getEditor();
+		return this.key.getEditorPart();
 	}
 	
 	public Notifier getNotifier() {

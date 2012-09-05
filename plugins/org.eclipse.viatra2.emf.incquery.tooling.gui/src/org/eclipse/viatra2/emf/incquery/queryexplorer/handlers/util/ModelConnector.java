@@ -11,26 +11,47 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util;
 
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 
-public abstract class ContentModel {
+/**
+ * 
+ * The class represents an instance model registered in the Query Explorer along with its source {@link IEditorPart}. 
+ * Subclasses of this class must implement the editor specific handling of load/unload/showLocation actions. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
+public abstract class ModelConnector {
 
 	protected MatcherTreeViewerRootKey key;
 	protected IWorkbenchPage workbenchPage;
 	protected ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	
-	public ContentModel(MatcherTreeViewerRootKey key) {
+	public ModelConnector(MatcherTreeViewerRootKey key) {
 		this.key = key;
 		this.logger = IncQueryGUIPlugin.getDefault().getLog(); 
-		this.workbenchPage = key.getEditor().getSite().getPage();
+		this.workbenchPage = key.getEditorPart().getSite().getPage();
 	}
 	
+	/**
+	 * Loads the instance model into the {@link QueryExplorer}
+	 */
 	public abstract void loadModel();
 	
+	/**
+	 * Unloads the instance model from the {@link QueryExplorer}
+	 */
 	public abstract void unloadModel();
 	
+	/**
+	 * Shows the location of the given objects inside the specific editor
+	 * 
+	 * @param locationObjects the objects whose location will be shown
+	 */
 	public abstract void showLocation(Object[] locationObjects);
 	
 }

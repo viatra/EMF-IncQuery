@@ -22,7 +22,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.runtime.graphiti.util.GraphitiModelConnector;
 
 public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 
@@ -40,7 +41,7 @@ public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 				PictogramElement element = selectedElements[0];	
 				Resource resource = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource();
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resource);
-				ContentModel contentModel = new GraphitiContentModel(key);
+				ModelConnector contentModel = new GraphitiModelConnector(key);
 				QueryExplorer.contentModelMap.put(key, contentModel);
 				contentModel.loadModel();
 			}

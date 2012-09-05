@@ -20,8 +20,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
 /**
  * Default 'Load model' handler, default ResourceSet loader. 
@@ -41,7 +41,7 @@ public class LoadModelHandler extends AbstractHandler {
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 			if (resourceSet.getResources().size() > 0) {
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resourceSet);
-				ContentModel contentModel = new EMFContentModel(key);
+				ModelConnector contentModel = new EMFModelConnector(key);
 				QueryExplorer.contentModelMap.put(key, contentModel);
 				contentModel.loadModel();
 			}

@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers;
+package org.eclipse.viatra2.emf.incquery.runtime.graphiti.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +15,15 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
-import org.eclipse.viatra2.emf.incquery.runtime.graphiti.util.GraphitiEditorPartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
-public class GraphitiContentModel extends EMFContentModel {
+public class GraphitiModelConnector extends EMFModelConnector {
 
 	private IWorkbenchPage workbenchPage;
 	
-	public GraphitiContentModel(MatcherTreeViewerRootKey key) {
+	public GraphitiModelConnector(MatcherTreeViewerRootKey key) {
 		super(key);
-		this.workbenchPage = key.getEditor().getSite().getPage();
+		this.workbenchPage = key.getEditorPart().getSite().getPage();
 	}
 
 	@Override
@@ -43,8 +42,8 @@ public class GraphitiContentModel extends EMFContentModel {
 	public void showLocation(Object[] locationObjects) {
 		//reflective set selection is not needed
 		IStructuredSelection preparedSelection = prepareSelection(locationObjects);
-		navigateToElements(key.getEditor(), preparedSelection);
-		workbenchPage.bringToTop(key.getEditor());
+		navigateToElements(key.getEditorPart(), preparedSelection);
+		workbenchPage.bringToTop(key.getEditorPart());
 	}
 	
 	@SuppressWarnings("restriction")

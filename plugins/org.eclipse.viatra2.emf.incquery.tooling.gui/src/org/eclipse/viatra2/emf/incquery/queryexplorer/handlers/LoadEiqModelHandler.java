@@ -17,8 +17,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 
 import com.google.inject.Inject;
@@ -35,7 +35,7 @@ public class LoadEiqModelHandler extends LoadModelHandler {
 			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
 			if (file != null) {
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(HandlerUtil.getActiveEditor(event),	dbUtil.parseEPM(file));
-				ContentModel contentModel = new EMFContentModel(key);
+				ModelConnector contentModel = new EMFModelConnector(key);
 				QueryExplorer.contentModelMap.put(key, contentModel);
 				contentModel.loadModel();
 			}

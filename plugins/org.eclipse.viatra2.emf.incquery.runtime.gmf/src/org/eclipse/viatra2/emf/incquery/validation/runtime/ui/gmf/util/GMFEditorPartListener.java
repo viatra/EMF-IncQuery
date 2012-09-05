@@ -14,10 +14,10 @@ package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.BasePartListener;
 
 /**
  * The PartListener is used to observe EditorPart close actions on GMF editors.
@@ -25,7 +25,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTre
  * @author Tamas Szabo
  *
  */
-public class GMFEditorPartListener implements IPartListener {
+public class GMFEditorPartListener extends BasePartListener {
 	
 	private static GMFEditorPartListener instance;
 	
@@ -38,16 +38,6 @@ public class GMFEditorPartListener implements IPartListener {
 			instance = new GMFEditorPartListener();
 		}
 		return instance;
-	}
-	
-	@Override
-	public void partActivated(IWorkbenchPart part) {
-
-	}
-
-	@Override
-	public void partBroughtToTop(IWorkbenchPart part) {
-
 	}
 
 	@Override
@@ -65,16 +55,6 @@ public class GMFEditorPartListener implements IPartListener {
 				}
 			}
 		}
-
-	}
-
-	@Override
-	public void partDeactivated(IWorkbenchPart part) {
-
-	}
-
-	@Override
-	public void partOpened(IWorkbenchPart part) {
 
 	}
 }

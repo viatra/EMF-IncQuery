@@ -29,9 +29,9 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.ModelEditorPartListener;
 
-public class EMFContentModel extends ContentModel {
+public class EMFModelConnector extends ModelConnector {
 	
-	public EMFContentModel(MatcherTreeViewerRootKey key) {
+	public EMFModelConnector(MatcherTreeViewerRootKey key) {
 		super(key);
 	}
 
@@ -50,9 +50,9 @@ public class EMFContentModel extends ContentModel {
 	@Override
 	public void showLocation(Object[] locationObjects) {
 		IStructuredSelection preparedSelection = prepareSelection(locationObjects);
-		navigateToElements(key.getEditor(), preparedSelection);
-		workbenchPage.bringToTop(key.getEditor());
-		reflectiveSetSelection(key.getEditor(), preparedSelection); 
+		navigateToElements(key.getEditorPart(), preparedSelection);
+		workbenchPage.bringToTop(key.getEditorPart());
+		reflectiveSetSelection(key.getEditorPart(), preparedSelection); 
 	}
 	
 	private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
@@ -72,7 +72,7 @@ public class EMFContentModel extends ContentModel {
 		List<TreePath> paths = new ArrayList<TreePath>();
 		for (Object o: locationObjects) {
 			if(o instanceof EObject) {
-				TreePath path = createTreePath(key.getEditor(), (EObject) o);
+				TreePath path = createTreePath(key.getEditorPart(), (EObject) o);
 				if(path != null) {
 					paths.add(path);
 				}

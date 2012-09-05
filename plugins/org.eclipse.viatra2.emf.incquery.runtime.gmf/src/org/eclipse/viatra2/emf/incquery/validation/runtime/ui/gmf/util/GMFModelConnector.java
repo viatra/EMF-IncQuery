@@ -8,7 +8,7 @@
  * Contributors:
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers;
+package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +23,15 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util.GMFEditorPartListener;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
 /**
  * @author Tamas Szabo
  *
  */
-public class GMFContentModel extends EMFContentModel {
+public class GMFModelConnector extends EMFModelConnector {
 
-	public GMFContentModel(MatcherTreeViewerRootKey key) {
+	public GMFModelConnector(MatcherTreeViewerRootKey key) {
 		super(key);
 	}
 	

@@ -21,8 +21,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ContentModel;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFContentModel;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
 /**
  * Default Resource and EObject loader. 
@@ -48,7 +48,7 @@ public class LoadResourceHandler extends LoadModelHandler {
 					resource = ((EObject) object).eResource();
 				}
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resource);
-				ContentModel contentModel = new EMFContentModel(key);
+				ModelConnector contentModel = new EMFModelConnector(key);
 				QueryExplorer.contentModelMap.put(key, contentModel);
 				contentModel.loadModel();
 			}
