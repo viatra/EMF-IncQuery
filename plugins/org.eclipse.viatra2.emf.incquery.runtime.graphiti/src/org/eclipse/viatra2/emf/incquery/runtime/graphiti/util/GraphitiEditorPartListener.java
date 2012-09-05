@@ -51,7 +51,7 @@ public class GraphitiEditorPartListener extends BasePartListener {
 				ResourceSet resourceSet = providerEditor.getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
 					MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
-					QueryExplorer.contentModelMap.get(key).unloadModel();
+					QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
 				}
 			}
 		}

@@ -42,7 +42,7 @@ public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 				Resource resource = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource();
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resource);
 				ModelConnector contentModel = new GraphitiModelConnector(key);
-				QueryExplorer.contentModelMap.put(key, contentModel);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
 				contentModel.loadModel();
 			}
 		}

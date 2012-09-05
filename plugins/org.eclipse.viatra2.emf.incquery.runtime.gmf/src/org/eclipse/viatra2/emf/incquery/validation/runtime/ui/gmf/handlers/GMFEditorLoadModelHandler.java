@@ -37,7 +37,7 @@ public class GMFEditorLoadModelHandler extends AbstractHandler implements
 			if (resourceSet.getResources().size() > 0) {
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
 				ModelConnector contentModel = new GMFModelConnector(key);
-				QueryExplorer.contentModelMap.put(key, contentModel);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
 				contentModel.loadModel();
 			}
 		}

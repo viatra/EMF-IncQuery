@@ -36,7 +36,7 @@ public class LoadEiqModelHandler extends LoadModelHandler {
 			if (file != null) {
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(HandlerUtil.getActiveEditor(event),	dbUtil.parseEPM(file));
 				ModelConnector contentModel = new EMFModelConnector(key);
-				QueryExplorer.contentModelMap.put(key, contentModel);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
 				contentModel.loadModel();
 			}
 		} catch (Exception e) {

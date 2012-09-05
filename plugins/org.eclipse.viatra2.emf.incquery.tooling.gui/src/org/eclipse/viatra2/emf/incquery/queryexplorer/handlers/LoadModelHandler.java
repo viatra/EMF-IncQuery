@@ -42,7 +42,7 @@ public class LoadModelHandler extends AbstractHandler {
 			if (resourceSet.getResources().size() > 0) {
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resourceSet);
 				ModelConnector contentModel = new EMFModelConnector(key);
-				QueryExplorer.contentModelMap.put(key, contentModel);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
 				contentModel.loadModel();
 			}
 		}

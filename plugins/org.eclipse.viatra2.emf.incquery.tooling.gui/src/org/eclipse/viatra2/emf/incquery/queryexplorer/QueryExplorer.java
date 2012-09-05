@@ -87,7 +87,7 @@ public class QueryExplorer extends ViewPart {
 
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer";
 	
-	public static Map<MatcherTreeViewerRootKey, ModelConnector> contentModelMap = new HashMap<MatcherTreeViewerRootKey, ModelConnector>();
+	private Map<MatcherTreeViewerRootKey, ModelConnector> modelConnectorMap = new HashMap<MatcherTreeViewerRootKey, ModelConnector>();
 	
 	private TableViewer detailsTableViewer;
 	private CheckboxTreeViewer patternsTreeViewer;
@@ -130,6 +130,10 @@ public class QueryExplorer extends ViewPart {
 	
 	public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
 		return matcherTreeViewerRoot;
+	}
+	
+	public Map<MatcherTreeViewerRootKey, ModelConnector> getModelConnectorMap() {
+		return modelConnectorMap;
 	}
 	
 	public static QueryExplorer getInstance() {

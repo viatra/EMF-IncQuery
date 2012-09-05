@@ -36,7 +36,7 @@ public class GraphitiEditorLoadModelHandler extends LoadModelHandler {
 			if (resourceSet.getResources().size() > 0) {
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resourceSet);
 				ModelConnector contentModel = new GraphitiModelConnector(key);
-				QueryExplorer.contentModelMap.put(key, contentModel);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
 				contentModel.loadModel();
 			}
 		}

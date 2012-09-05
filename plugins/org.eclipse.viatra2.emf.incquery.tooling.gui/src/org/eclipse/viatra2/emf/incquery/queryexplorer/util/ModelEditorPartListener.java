@@ -48,11 +48,9 @@ public class ModelEditorPartListener extends BasePartListener {
 				ResourceSet resourceSet = ((IEditingDomainProvider) closedEditor).getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
 					MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(closedEditor, resourceSet);
-					QueryExplorer.contentModelMap.get(key).unloadModel();
+					QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
 				}
 			}
 		}
-
 	}
-
 }

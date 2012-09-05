@@ -28,7 +28,7 @@ public class UnloadModelHandler extends AbstractHandler {
 		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 		if (selection instanceof TreeSelection) {
 			ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ((TreeSelection) selection).getFirstElement();
-			QueryExplorer.contentModelMap.get(root.getKey()).unloadModel();
+			QueryExplorer.getInstance().getModelConnectorMap().get(root.getKey()).unloadModel();
 		}
 
 		QueryExplorer.getInstance().clearTableViewer();

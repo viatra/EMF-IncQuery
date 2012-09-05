@@ -50,7 +50,7 @@ public class ShowLocationHandler extends AbstractHandler {
 			if (obj instanceof ObservablePatternMatch) {
 				ObservablePatternMatch pm = (ObservablePatternMatch) obj;
 				MatcherTreeViewerRootKey key = pm.getParent().getParent().getKey();
-				QueryExplorer.contentModelMap.get(key).showLocation(pm.getLocationObjects());
+				QueryExplorer.getInstance().getModelConnectorMap().get(key).showLocation(pm.getLocationObjects());
 			} 
 			else if (obj instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;

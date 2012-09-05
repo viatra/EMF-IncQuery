@@ -49,7 +49,7 @@ public class LoadResourceHandler extends LoadModelHandler {
 				}
 				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resource);
 				ModelConnector contentModel = new EMFModelConnector(key);
-				QueryExplorer.contentModelMap.put(key, contentModel);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
 				contentModel.loadModel();
 			}
 		}
