@@ -63,7 +63,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			if (typeReference == null) {
 				typeReference = typeReferences.getTypeForName(Object.class, variable);
 			}
-			System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
+			// System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
 			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
