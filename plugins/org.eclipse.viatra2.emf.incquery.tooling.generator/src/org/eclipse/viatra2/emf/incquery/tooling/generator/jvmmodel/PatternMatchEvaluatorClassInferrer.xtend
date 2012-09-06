@@ -28,6 +28,7 @@ import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.common.types.JvmPrimitiveType
 
 /**
  * {@link IMatchChecker} implementation inferer.
@@ -59,7 +60,10 @@ class PatternMatchEvaluatorClassInferrer {
   						it.documentation = pattern.javadocEvaluatorClass.toString
   						it.superTypes += pattern.newTypeRef(typeof(IMatchChecker))
   					]
-  					checkerClass.inferEvaluatorClassMethods(pattern, xExpression)
+  					//Forcing a boolean return type for check expression
+  					//Results in less misleading error messages
+  					//checkerClass.inferEvaluatorClassMethods(pattern, xExpression)
+  					checkerClass.inferEvaluatorClassMethods(pattern, xExpression, pattern.newTypeRef(typeof(Boolean)))
   					result.add(checkerClass)
   				}
   			}
@@ -71,7 +75,15 @@ class PatternMatchEvaluatorClassInferrer {
    	 * Infers methods for checker class based on the input 'pattern'.
    	 */  	
   	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, XExpression xExpression) {
-  		checkerClass.members += pattern.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(getType(xExpression))) [
+  		val type = getType(xExpression)
+  		inferEvaluatorClassMethods(checkerClass, pattern, xExpression, type)
+  	}
+  	
+	/**
+   	 * Infers methods for checker class based on the input 'pattern'.
+   	 */  	
+  	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, XExpression xExpression, JvmTypeReference type) {
+  		checkerClass.members += pattern.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(type)) [
   			it.visibility = JvmVisibility::PRIVATE
 			for (variable : CorePatternLanguageHelper::getReferencedPatternVariablesOfXExpression(xExpression)){
 				it.parameters += variable.toParameter(variable.name, variable.calculateType)
