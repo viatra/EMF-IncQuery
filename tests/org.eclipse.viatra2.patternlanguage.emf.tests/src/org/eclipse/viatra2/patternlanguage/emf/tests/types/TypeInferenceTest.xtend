@@ -24,6 +24,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -61,7 +62,7 @@ class TypeInferenceTest {
 		tester.validate(model).assertOK
 	}
 	
-	@Test
+	@Test @Ignore
 	def firstLevelFindType() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
@@ -80,7 +81,7 @@ class TypeInferenceTest {
 		tester.validate(model).assertOK
 	}
 	
-	@Test
+	@Test @Ignore
 	def secondLevelFindType() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
@@ -118,7 +119,7 @@ class TypeInferenceTest {
 		tester.validate(model).assertOK
 	}
 	
-	@Test
+	@Test @Ignore
 	def firstLevelPathType() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
