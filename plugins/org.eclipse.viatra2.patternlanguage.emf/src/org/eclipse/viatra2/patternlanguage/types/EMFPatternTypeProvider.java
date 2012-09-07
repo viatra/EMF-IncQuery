@@ -14,7 +14,9 @@ package org.eclipse.viatra2.patternlanguage.types;
 import static com.google.common.base.Objects.equal;
 
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -204,11 +206,18 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		final EStructuralFeature feature = type.getRefname();
 		if (feature instanceof EAttribute) {
 			EAttribute attribute = (EAttribute) feature;
-			return getTypeReferenceForVariableWithEClassifier(attribute.getEAttributeType(), variable);
-		}
-		if (feature instanceof EReference) {
+			EDataType attributeType = attribute.getEAttributeType();
+			if (attributeType != null) {
+				return getTypeReferenceForVariableWithEClassifier(
+						attributeType, variable);
+			}
+		} else if (feature instanceof EReference) {
 			EReference reference = (EReference) feature;
-			return getTypeReferenceForVariableWithEClassifier(reference.getEReferenceType(), variable);
+			EClass referenceType = reference.getEReferenceType();
+			if (referenceType != null) {
+				return getTypeReferenceForVariableWithEClassifier(
+						referenceType, variable);
+			}
 		}
 		return null;
 	}
