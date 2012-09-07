@@ -255,15 +255,13 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			EAttribute attribute = (EAttribute) feature;
 			EDataType eAttributeType = attribute.getEAttributeType();
 			if (eAttributeType != null) {
-				return getTypeReferenceForVariableWithEClassifier(
-						eAttributeType, variable);
+				return getTypeReferenceForVariableWithEClassifier(eAttributeType, variable);
 			}
 		} else if (feature instanceof EReference) {
 			EReference reference = (EReference) feature;
 			EClass eReferenceType = reference.getEReferenceType();
 			if (eReferenceType != null) {
-				return getTypeReferenceForVariableWithEClassifier(
-						eReferenceType, variable);
+				return getTypeReferenceForVariableWithEClassifier(eReferenceType, variable);
 			}
 		}
 		return null;

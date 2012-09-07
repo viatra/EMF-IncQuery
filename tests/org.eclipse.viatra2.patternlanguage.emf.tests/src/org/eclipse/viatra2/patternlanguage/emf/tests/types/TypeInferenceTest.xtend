@@ -24,7 +24,6 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -53,52 +52,52 @@ class TypeInferenceTest {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern first(class) = {
-				EClass(class);
-				check (class.abstract != false);
+			pattern first(class1) = {
+				EClass(class1);
+				check (class1.abstract != false);
 			}
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
 	
-	@Test @Ignore
+	@Test
 	def firstLevelFindType() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern first(class) = {
-				EClass(class);
-				check (class.abstract != false);
+			pattern first(class1) = {
+				EClass(class1);
+				check (class1.abstract != false);
 			}
 
-			pattern second(class) = {
-				find first(class);
-				check (class.abstract != false);
+			pattern second(class2) = {
+				find first(class2);
+				check (class2.abstract != false);
 			}
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
 	
-	@Test @Ignore
+	@Test
 	def secondLevelFindType() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern first(class) = {
-				EClass(class);
-				check (class.abstract != false);
+			pattern first(class1) = {
+				EClass(class1);
+				check (class1.abstract != false);
 			}
 
-			pattern second(class) = {
-				find first(class);
-				check (class.abstract != false);
+			pattern second(class2) = {
+				find first(class2);
+				check (class2.abstract != false);
 			}
 
-			pattern third(class) = {
-				find second(class);
-				check (class.abstract != false);
+			pattern third(class3) = {
+				find second(class3);
+				check (class3.abstract != false);
 			}
 		') as PatternModel
 		model.assertNoErrors
@@ -110,29 +109,43 @@ class TypeInferenceTest {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern firstPath(class, attribute) = {
-				EClass.eAttributes(class, attribute);
-				check (class.abstract != false);
+			pattern firstPath(class1, attribute1) = {
+				EClass.eAttributes(class1, attribute1);
+				check (class1.abstract != false);
 			}
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
 	
-	@Test @Ignore
+	@Test
 	def firstLevelPathType() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern firstPath(class, attribute) = {
-				EClass.eAttributes(class, attribute);
-				check (class.abstract != false);
+			pattern firstPath(class1, attribute1) = {
+				EClass.eAttributes(class1, attribute1);
+				check (class1.abstract != false);
 			}
 
-			pattern secondPath(class, attribute) = {
-				find firstPath(class, attribute);
-				check (class.abstract != false);
+			pattern secondPath(class2, attribute2) = {
+				find firstPath(class2, attribute2);
+				check (class2.abstract != false);
 			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def injectivityConstraintTest() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern injectivity1(class1, class2) = {
+				EClass(class1);
+				class1 == class2;
+			check (class2.abstract != false);
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
