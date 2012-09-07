@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,6 +48,14 @@ public abstract class StandardNode implements Supplier {
 
 	public void removeChild(Receiver receiver) {
 		children.remove(receiver);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#getReceivers()
+	 */
+	@Override
+	public Collection<Receiver> getReceivers() {
+		return children;
 	}
 
 	/* (non-Javadoc)

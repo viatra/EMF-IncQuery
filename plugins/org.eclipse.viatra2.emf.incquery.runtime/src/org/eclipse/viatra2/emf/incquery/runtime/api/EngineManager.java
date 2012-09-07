@@ -17,7 +17,6 @@ import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.runtime.internal.BaseIndexListener;
 
 
 
@@ -121,7 +120,9 @@ public class EngineManager {
 	 * <p>The engine will not impose on the model its update overhead anymore. 
 	 * If no references are retained to the matchers or the engine, GC'ing the engine and its caches is 
 	 *  presumably made easier, although (due to weak references) a dispose() call is not strictly necessary. 
-	 * 
+	 * <p>If the engine is managed (see {@link IncQueryEngine#isManaged()}), there may be other clients using it. 
+   * Care should be taken with disposing such engines. 
+   * 
 	 * @return true is an engine was found and disconnected, false if no engine was found for the given root.
 	 */
 	public boolean disposeEngine(Notifier emfRoot) {

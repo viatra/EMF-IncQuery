@@ -11,21 +11,12 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -33,6 +24,8 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
@@ -47,39 +40,26 @@ public class ShowLocationHandler extends AbstractHandler {
 	
 	@Inject
 	private ILocationInFileProvider locationProvider;
-	@Inject
-	private Logger logger;
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof TreeSelection) {
-			showLocation((TreeSelection) selection);
-		}
-		return null;
-	}
-	
-	public void showLocation(TreeSelection selection) {
-		Object obj = selection.getFirstElement();
-		
-		if (obj instanceof ObservablePatternMatch) {
-			ObservablePatternMatch pm = (ObservablePatternMatch) obj;
+			Object obj = selection.getFirstElement();
 			
-			IEditorPart editorPart = pm.getParent().getParent().getEditorPart();
-			
-			Object[] locationObjects = pm.getLocationObjects();
-			IStructuredSelection preparedSelection = prepareSelection(editorPart, locationObjects);
-			navigateToElements(editorPart, preparedSelection);
-
-			editorPart.getSite().getPage().bringToTop(editorPart);
-			
-			reflectiveSetSelection(editorPart, preparedSelection); 
-		} else if(obj instanceof ObservablePatternMatcher) {
-			ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
-			if (matcher.getMatcher() != null) {
-				setSelectionToXTextEditor(matcher.getMatcher().getPattern());
+			if (obj instanceof ObservablePatternMatch) {
+				ObservablePatternMatch pm = (ObservablePatternMatch) obj;
+				MatcherTreeViewerRootKey key = pm.getParent().getParent().getKey();
+				QueryExplorer.getInstance().getModelConnectorMap().get(key).showLocation(pm.getLocationObjects());
+			} 
+			else if (obj instanceof ObservablePatternMatcher) {
+				ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
+				if (matcher.getMatcher() != null) {
+					setSelectionToXTextEditor(matcher.getMatcher().getPattern());
+				}
 			}
 		}
+		return null;
 	}
 	
 	protected void setSelectionToXTextEditor(Pattern pattern) {
@@ -110,59 +90,4 @@ public class ShowLocationHandler extends AbstractHandler {
 			}
 		}
 	}
-
-	private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
-		//Reflection API is used here!!!
-		try {
-			Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
-			m.invoke(editorPart, preparedSelection.toList());
-		}
-		catch (NoSuchMethodException e) {
-			logger.debug("setSelectionToViewer method not found");
-		}
-		catch (Exception e) {
-			logger.debug("setSelectionToViewer call failed");
-		}
-	}
-
-	/**
-	 * @param editorPart
-	 * @param locationObjects
-	 * @return
-	 */
-	private TreeSelection prepareSelection(IEditorPart editorPart, Object[] locationObjects) {
-		List<TreePath> paths = new ArrayList<TreePath>(); //[locationObjects.length]
-		for (Object o: locationObjects) {
-			if(o instanceof EObject) {
-				TreePath path = createTreePath(editorPart, (EObject) o);
-				if(path != null) {
-					paths.add(path);
-				}
-			}
-		}
-
-		if(paths.size() > 0) {
-			return new TreeSelection(paths.toArray(new TreePath[1]));
-		}
-		return new TreeSelection();
-	}
-	
-	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
-		ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
-		selectionProvider.setSelection(selection);
-	}
-	
-	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
-		List<Object> nodes = new ArrayList<Object>();
-		nodes.add(obj);
-		EObject tmp = obj.eContainer();
-			
-		while (tmp != null) {
-			nodes.add(0, tmp);
-			tmp = tmp.eContainer();
-		}
-		
-		return new TreePath(nodes.toArray());
-	}
-	
 }

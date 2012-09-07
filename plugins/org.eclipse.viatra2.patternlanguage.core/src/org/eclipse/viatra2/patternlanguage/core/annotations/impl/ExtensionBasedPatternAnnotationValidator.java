@@ -41,6 +41,7 @@ public class ExtensionBasedPatternAnnotationValidator implements
 
 	private Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
 	private final String name;
+	private final String description;
 	
 	private final static ImmutableMap<String, Class<? extends ValueReference>> typeMapping = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
 			.put(ExtensionBasedPatternAnnotationParameter.INT, IntValue.class)
@@ -54,10 +55,11 @@ public class ExtensionBasedPatternAnnotationValidator implements
 			.put(ExtensionBasedPatternAnnotationParameter.VARIABLEREFERENCE,
 					VariableValue.class).build();
 
-	public ExtensionBasedPatternAnnotationValidator(String name,
+	public ExtensionBasedPatternAnnotationValidator(String name, String description,
 			Iterable<ExtensionBasedPatternAnnotationParameter> parameters) {
 		super();
 		this.name = name;
+		this.description = description;
 		this.definedAttributes = parameters;
 	}
 	
@@ -139,6 +141,21 @@ public class ExtensionBasedPatternAnnotationValidator implements
 	@Override
 	public String getAnnotationName() {
 		return name;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public String getDescription(String parameterName) {
+		for (ExtensionBasedPatternAnnotationParameter param : definedAttributes) {
+			if (param.getName().equals(parameterName)) {
+				return param.getDescription();
+			}
+		}
+		return "";
 	}
 
 }

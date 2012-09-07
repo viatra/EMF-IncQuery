@@ -17,8 +17,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationValidator;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -39,8 +43,9 @@ public class PatternAnnotationProvider {
 			final boolean multiple = Boolean.parseBoolean(input
 					.getAttribute("multiple"));
 			final String type = input.getAttribute("type");
+			final String description = input.getAttribute("description");
 			return new ExtensionBasedPatternAnnotationParameter(parameterName,
-					type, multiple, mandatory);
+					type, description, multiple, mandatory);
 		}
 	}
 
@@ -53,14 +58,16 @@ public class PatternAnnotationProvider {
 				.getConfigurationElementsFor(EXTENSIONID);
 		for (IConfigurationElement e : config) {
 			final String annotationName = e.getAttribute("name");
+			final String description = e.getAttribute("description"); 
 
 			final IConfigurationElement[] parameters = e
 					.getChildren("annotationparameter");
+			
 			final Iterable<ExtensionBasedPatternAnnotationParameter> parameterIterable = Iterables
 					.transform(
 							Arrays.asList(parameters),
 							new ExtensionConverter());
-			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, parameterIterable);
+			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, description, parameterIterable);
 			annotationValidators.put(annotationName, annotationValidator);
 		}
 	}
@@ -77,7 +84,23 @@ public class PatternAnnotationProvider {
 		}
 		return annotationValidators.get(annotationName);
 	}
-
+	public Annotation getAnnotationObject(String annotationName) {
+		Annotation annotation = PatternLanguageFactory.eINSTANCE.createAnnotation();
+		annotation.setName(annotationName);
+		return annotation;
+		
+	}
+	public AnnotationParameter getAnnotationParameter(String annotationName, String parameterName) {
+		Annotation annotation = getAnnotationObject(annotationName);
+		return getAnnotationParameter(annotation, parameterName);
+	}
+	
+	public AnnotationParameter getAnnotationParameter(Annotation annotation, String parameterName) {
+		AnnotationParameter parameter = PatternLanguageFactory.eINSTANCE.createAnnotationParameter();
+		parameter.setName(parameterName);
+		annotation.getParameters().add(parameter);
+		return parameter;
+	}
 	/**
 	 * Decides whether a validator is defined for the selected annotation name.
 	 * 
@@ -104,5 +127,29 @@ public class PatternAnnotationProvider {
 		}
 		return annotationValidators.get(annotationName)
 				.getAllAvailableParameterNames();
+	}
+	
+	public String getDescription(Annotation annotation) {
+		return getDescription(annotation.getName());
+	}
+
+	public String getDescription(String annotationName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName).getDescription();
+	}
+
+	public String getDescription(AnnotationParameter parameter) {
+		Annotation annotation = (Annotation) parameter.eContainer();
+		return getDescription(annotation.getName(), parameter.getName());
+	}
+
+	public String getDescription(String annotationName, String parameterName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName).getDescription(
+				parameterName);
 	}
 }

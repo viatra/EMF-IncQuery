@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Zoltan Ujhelyi, Abel Hegedus, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2012, Tamas Szabo, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Zoltan Ujhelyi, Abel Hegedus - initial API and implementation
+ *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers;
+package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +21,32 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
-public class GMFShowLocationHandler extends ShowLocationHandler {
+/**
+ * @author Tamas Szabo
+ *
+ */
+public class GMFModelConnector extends EMFModelConnector {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler#createTreePath(java.lang.Object)
-	 */
+	public GMFModelConnector(MatcherTreeViewerRootKey key) {
+		super(key);
+	}
+	
+	@Override
+	public void loadModel() {
+		workbenchPage.addPartListener(GMFEditorPartListener.getInstance());
+		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+	}
+
+	@Override
+	public void unloadModel() {
+		workbenchPage.removePartListener(GMFEditorPartListener.getInstance());
+		QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+	}
+
 	@Override
 	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
 		if (editor instanceof DiagramDocumentEditor) {
@@ -46,9 +64,6 @@ public class GMFShowLocationHandler extends ShowLocationHandler {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.ShowLocationHandler#navigateToElements(org.eclipse.ui.IEditorPart, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
 		super.navigateToElements(editorPart, selection);
@@ -61,5 +76,4 @@ public class GMFShowLocationHandler extends ShowLocationHandler {
 				}
 		}
 	}
-
 }

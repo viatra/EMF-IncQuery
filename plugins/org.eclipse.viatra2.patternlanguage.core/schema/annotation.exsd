@@ -66,6 +66,20 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deprecated" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -109,6 +123,20 @@
             </annotation>
          </attribute>
          <attribute name="mandatory" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deprecated" type="boolean">
             <annotation>
                <documentation>
                   

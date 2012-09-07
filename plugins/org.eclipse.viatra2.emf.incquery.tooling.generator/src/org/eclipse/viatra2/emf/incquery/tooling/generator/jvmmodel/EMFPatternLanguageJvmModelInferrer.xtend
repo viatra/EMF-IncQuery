@@ -27,6 +27,8 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import org.eclipse.xtext.common.types.JvmDeclaredType
+import java.util.List
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -51,6 +53,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension PatternMatcherClassInferrer
 	@Inject extension PatternMatcherFactoryClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
+	@Inject extension PatternMatchEvaluatorClassInferrer
 	@Inject extension PatternGroupClassInferrer
 	@Inject extension JavadocInferrer	
 	@Inject extension TypeReferences types
@@ -85,6 +88,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		   	/*val matcherFactoryProviderClass = matcherFactoryClass.members.findFirst([it instanceof JvmDeclaredType]) as JvmDeclaredType*/
 		   	// infer Processor class
 		   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
+		   	// infer Evaluator classes
+		   	val List<JvmDeclaredType> evaluatorClassList = pattern.inferEvaluatorClass(isPrelinkingPhase, packageName, matchClassRef)
 		   	// add Factory field to Matcher class
 		   	matcherClass.members += pattern.toMethod("factory", pattern.newTypeRef(typeof(IMatcherFactory), cloneWithProxies(matcherClassRef))) [
 		   		it.visibility = JvmVisibility::PUBLIC
@@ -102,6 +107,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		   	acceptor.accept(matcherClass)
 		   	acceptor.accept(matcherFactoryClass)
 		   	acceptor.accept(processorClass)
+		   	for (JvmDeclaredType evaluatorClass : evaluatorClassList) {
+		   		acceptor.accept(evaluatorClass)
+		   	}
 		   	/*acceptor.accept(matcherFactoryProviderClass)*/
 	   	} catch(Exception e) {
 	   		logger.error("Exception during Jvm Model Infer for: " + pattern, e)

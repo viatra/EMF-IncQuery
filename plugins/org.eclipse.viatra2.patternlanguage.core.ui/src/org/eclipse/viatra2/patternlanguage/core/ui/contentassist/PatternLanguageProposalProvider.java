@@ -12,6 +12,7 @@ package org.eclipse.viatra2.patternlanguage.core.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
@@ -20,6 +21,7 @@ import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
@@ -61,8 +63,16 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 					prefixedName = annotationName;
 				}
 			}
-			acceptor.accept(createCompletionProposal(prefixedName,
-					prefixedName, null, modifiedContext));
+			ICompletionProposal proposal = createCompletionProposal(
+					prefixedName, prefixedName, null, modifiedContext);
+			if (proposal instanceof ConfigurableCompletionProposal) {
+				((ConfigurableCompletionProposal) proposal)
+						.setAdditionalProposalInfo(annotationProvider
+								.getAnnotationObject(annotationName));
+				((ConfigurableCompletionProposal) proposal)
+						.setHover(getHover());
+			}
+			acceptor.accept(proposal);
 		}
 	}
 
@@ -71,7 +81,16 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
 			Annotation annotation = (Annotation) model;
 			for (String paramName : annotationProvider.getAnnotationParameters(annotation.getName())){
 				String outputName = String.format("%s = ", paramName);
-				acceptor.accept(createCompletionProposal(outputName, paramName, null, context));
+				ICompletionProposal proposal = createCompletionProposal(outputName, paramName, null, context);
+				if (proposal instanceof ConfigurableCompletionProposal) {
+					((ConfigurableCompletionProposal) proposal)
+							.setAdditionalProposalInfo(annotationProvider
+									.getAnnotationParameter(
+											annotation.getName(), paramName));
+					((ConfigurableCompletionProposal) proposal)
+							.setHover(getHover());
+				}
+				acceptor.accept(proposal);
 			}
 		}
 	}

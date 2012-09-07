@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
@@ -29,4 +30,6 @@ public interface IndexerListener {
 	 * @param change whether this was the first inserted / last revoked update element with this particular signature. 
 	 */
 	void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change);
+	
+	Node getOwner();
 }

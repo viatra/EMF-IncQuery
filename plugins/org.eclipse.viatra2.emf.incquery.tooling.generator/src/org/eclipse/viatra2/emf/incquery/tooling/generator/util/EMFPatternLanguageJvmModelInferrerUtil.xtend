@@ -130,6 +130,17 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	}
    	
    	/**
+	 * Returns the EvaluatorClass name based on the Pattern's name
+	 */   	
+   	def evaluatorClassName(Pattern pattern) {
+   		var name = pattern.name
+		if (name.contains(".")) {
+			name = pattern.realPatternName
+		}
+   		name.toFirstUpper+"Evaluator"
+   	}
+   	
+   	/**
    	 * Returns field name for Variable
    	 */
    	def fieldName(Variable variable) {

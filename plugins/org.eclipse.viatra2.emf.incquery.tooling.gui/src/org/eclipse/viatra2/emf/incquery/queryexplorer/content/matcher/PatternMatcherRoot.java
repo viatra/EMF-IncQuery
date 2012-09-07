@@ -80,7 +80,7 @@ public class PatternMatcherRoot {
 	}
 	
 	public IEditorPart getEditorPart() {
-		return this.key.getEditor();
+		return this.key.getEditorPart();
 	}
 	
 //	public void registerPatternModelFromFile(IFile file, PatternModel pm) {	
@@ -112,7 +112,7 @@ public class PatternMatcherRoot {
 		IncQueryMatcher<GenericPatternMatch> matcher = null;
 
 		try {
-			matcher = new GenericPatternMatcher(pattern, key.getNotifier());
+			matcher = new GenericPatternMatcher(pattern, key.getEngine());
 		}
 		catch (IncQueryException e) {
 			logger.log(new Status(IStatus.ERROR,

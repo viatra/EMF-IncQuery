@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
@@ -234,6 +233,8 @@ public class IncQueryEngine {
 	 * 	and they won't block the EMF model from being GC'ed anymore. 
 	 * 
 	 * <p>Cannot be reversed.
+	 * <p>If the engine is managed (see {@link #isManaged()}), there may be other clients using it. 
+   * Care should be taken with disposing such engines. 
 	 */
 	public void dispose() {
 	  if(manager != null) {
@@ -250,7 +251,8 @@ public class IncQueryEngine {
 	 * 
 	 * <p>Matcher objects will continue to return stale results. 
 	 * If no references are retained to the matchers, they can eventually be GC'ed. 
-	 * 
+	 * <p>If the engine is managed (see {@link #isManaged()}), there may be other clients using it. 
+   * Care should be taken with wiping such engines. 
 	 * 
 	 */
 	public void wipe() {

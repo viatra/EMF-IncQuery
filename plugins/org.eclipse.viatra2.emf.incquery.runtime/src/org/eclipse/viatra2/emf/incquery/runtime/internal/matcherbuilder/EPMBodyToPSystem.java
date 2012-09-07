@@ -93,7 +93,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		this.context = context;
 		this.buildable = buildable;
 		
-		patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern).toString();
+		patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 	}
 	
 	public PSystem<Pattern, StubHandle, Collector> toPSystem() throws RetePatternBuildException {
