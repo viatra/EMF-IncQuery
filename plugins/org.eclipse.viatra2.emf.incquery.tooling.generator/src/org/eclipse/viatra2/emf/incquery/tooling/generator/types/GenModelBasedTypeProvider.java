@@ -52,7 +52,7 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 	@Override
 	protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
 		JvmTypeReference typeRef = super.getTypeReferenceForVariableWithEClassifier(classifier, variable);
-		if (typeRef == null) {
+		if (typeRef == null && classifier != null) {
 			EPackage ePackage = classifier.getEPackage();
 			if (ePackage != null) {
 				GenPackage genPackage = genModelProvider.findGenPackage(variable, ePackage);

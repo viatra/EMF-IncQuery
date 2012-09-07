@@ -77,7 +77,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			Variable variable = (Variable) identifiable;
 			JvmTypeReference typeReference = getTypeReferenceForVariable(variable);
 			// FIXME remove this from commit
-			System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
+			// System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
 			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
