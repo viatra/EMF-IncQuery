@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
@@ -77,7 +79,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			Variable variable = (Variable) identifiable;
 			JvmTypeReference typeReference = getTypeReferenceForVariable(variable);
 			// FIXME remove this from commit
-			// System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
+			// System.out.println(variable.getName() + "--" +
+			// typeReference.getSimpleName());
 			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
@@ -128,6 +131,11 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
 	private Set<JvmTypeReference> getTypeReferenceForVariableWithPatternBody(PatternBody patternBody, Variable variable,
 			int recursionCallingLevel) {
+		return getTypeReferenceForVariableWithPatternBody(patternBody, variable, recursionCallingLevel, null);
+	}
+
+	private Set<JvmTypeReference> getTypeReferenceForVariableWithPatternBody(PatternBody patternBody, Variable variable,
+			int recursionCallingLevel, Variable injectiveVariablePair) {
 		Set<JvmTypeReference> resultList = new HashSet<JvmTypeReference>();
 		for (Constraint constraint : patternBody.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
@@ -162,6 +170,29 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 						JvmTypeReference typeReference = getTypeReferenceForVariableWithType(type, variable);
 						if (typeReference != null) {
 							resultList.add(typeReference);
+						}
+					}
+				}
+			} else if (constraint instanceof CompareConstraint) {
+				CompareConstraint compareConstraint = (CompareConstraint) constraint;
+				if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
+					ValueReference leftValueReference = compareConstraint.getLeftOperand();
+					ValueReference rightValueReference = compareConstraint.getRightOperand();
+					if (leftValueReference instanceof VariableValue && rightValueReference instanceof VariableValue) {
+						VariableValue leftVariableValue = (VariableValue) leftValueReference;
+						VariableValue rightVariableValue = (VariableValue) rightValueReference;
+						if (isEqualVariables(variable, leftVariableValue.getValue())) {
+							Variable newPossibleInjectPair = rightVariableValue.getValue().getVariable();
+							if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
+								resultList.addAll(getTypeReferenceForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+										recursionCallingLevel, variable));
+							}
+						} else if (isEqualVariables(variable, rightVariableValue.getValue())) {
+							Variable newPossibleInjectPair = leftVariableValue.getValue().getVariable();
+							if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
+								resultList.addAll(getTypeReferenceForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+										recursionCallingLevel, variable));
+							}
 						}
 					}
 				}
