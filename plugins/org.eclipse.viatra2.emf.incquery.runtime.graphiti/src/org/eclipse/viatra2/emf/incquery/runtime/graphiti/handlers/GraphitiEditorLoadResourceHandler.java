@@ -13,12 +13,17 @@ package org.eclipse.viatra2.emf.incquery.runtime.graphiti.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.runtime.graphiti.util.GraphitiModelConnector;
 
 public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 
@@ -33,8 +38,12 @@ public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 			PictogramElement[] selectedElements = providerEditor.getSelectedPictogramElements();
 			
 			if (selectedElements.length > 0) {
-				PictogramElement element = selectedElements[0];			
-				loadModel(editorPart, Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource());
+				PictogramElement element = selectedElements[0];	
+				Resource resource = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource();
+				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resource);
+				ModelConnector contentModel = new GraphitiModelConnector(key);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
+				contentModel.loadModel();
 			}
 		}
 		return null;

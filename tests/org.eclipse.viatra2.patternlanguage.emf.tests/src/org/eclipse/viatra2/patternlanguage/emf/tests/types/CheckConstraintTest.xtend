@@ -25,7 +25,6 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -77,7 +76,7 @@ class CheckConstraintTest {
 		tester.validate(model).assertOK
 	}
 	
-	@Test@Ignore("Test case fails because of the return statement")
+	@Test
 	def booleanBlockExpressionWithReturnCheck() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"

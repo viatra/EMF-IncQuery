@@ -14,24 +14,17 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
 
-public class UnloadModelHandler extends AbstractHandler {
-	
+public class ResetUIHandler extends AbstractHandler {
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		if (selection instanceof TreeSelection) {
-			ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ((TreeSelection) selection).getFirstElement();
-			QueryExplorer.getInstance().getModelConnectorMap().get(root.getKey()).unloadModel();
+		for (ModelConnector connector : QueryExplorer.getInstance().getModelConnectorMap().values()) {
+			connector.unloadModel();
 		}
-
-		QueryExplorer.getInstance().clearTableViewer();
+		
 		return null;
 	}
 }

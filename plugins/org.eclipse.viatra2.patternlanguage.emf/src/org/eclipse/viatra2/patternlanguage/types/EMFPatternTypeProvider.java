@@ -13,18 +13,26 @@ package org.eclipse.viatra2.patternlanguage.types;
 
 import static com.google.common.base.Objects.equal;
 
-import org.apache.log4j.Logger;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
@@ -44,297 +52,284 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
- * 
- * @author Mark Czotter
- *
+ * FIXME do it, write something meaningful here
  */
 @Singleton
 @SuppressWarnings("restriction")
 public class EMFPatternTypeProvider extends XbaseTypeProvider {
 
 	@Inject
-	private Logger logger;
-	
-	@Inject
 	private TypeReferences typeReferences;
+
 	@Inject
 	private Primitives primitives;
 
+	private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.xtext.xbase.typing.XbaseTypeProvider#typeForIdentifiable(
+	 * org.eclipse.xtext.common.types.JvmIdentifiableElement, boolean)
+	 */
 	@Override
-	protected JvmTypeReference typeForIdentifiable(
-			JvmIdentifiableElement identifiable, boolean rawType) {
+	protected JvmTypeReference typeForIdentifiable(JvmIdentifiableElement identifiable, boolean rawType) {
 		if (identifiable instanceof Variable) {
-			return _typeForIdentifiable((Variable) identifiable, rawType);
+			Variable variable = (Variable) identifiable;
+			JvmTypeReference typeReference = getTypeReferenceForVariable(variable);
+			// FIXME remove this from commit
+			// System.out.println(variable.getName() + "--" +
+			// typeReference.getSimpleName());
+			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
 	}
 
-	/**
-	 * Returns a type for a variable. If the variable type resolution fails,
-	 * default Object type is returned.
-	 * 
-	 * @param variable
-	 * @param rawType
-	 * @return
-	 */
-	protected JvmTypeReference _typeForIdentifiable(Variable variable,
-			boolean rawType) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(String.format("Calculating type for: %s, type: %s, eContainer: %s.", variable.getName(), variable.getType(), variable.eContainer()));			
-		}
-		JvmTypeReference typeRef = resolve(variable);
-		if (typeRef == null) {
-			typeRef = typeReferences.getTypeForName(Object.class, variable);
-		}
-		return typeRef;
-	}
-
-	/**
-	 * Resolves the variable with various methods. If the resolution fails, then
-	 * null is returned.
-	 * 
-	 * @param variable
-	 * @return
-	 */
-	protected JvmTypeReference resolve(Variable variable) {
+	private JvmTypeReference getTypeReferenceForVariable(Variable variable) {
+		Set<JvmTypeReference> possibleResults = new HashSet<JvmTypeReference>();
 		EcoreUtil2.resolveAll(variable);
-		JvmTypeReference typeRef = resolve(variable, variable);
-		if (typeRef == null) {
-			typeRef = resolve(variable.eContainer(), variable);
+
+		// Calculate it with just the variable only
+		JvmTypeReference typeRefeference = getTypeReferenceForVariableWithType(variable.getType(), variable);
+		if (typeRefeference != null) {
+			possibleResults.add(typeRefeference);
 		}
-		return typeRef;
+
+		// Calculate it in it's pattern context
+
+		EObject container = variable.eContainer();
+		if (container instanceof Pattern) {
+			possibleResults.addAll(getTypeReferenceForVariableWithPattern((Pattern) container, variable, 0));
+		} else if (container instanceof PatternBody) {
+			possibleResults.addAll(getTypeReferenceForVariableWithPatternBody((PatternBody) container, variable, 0));
+		}
+
+		return getTypeReferenceFromPossibleTypesList(possibleResults, variable);
 	}
 
-	/**
-	 * Resolves the variable from different contexts. (Possible context:
-	 * {@link Variable}, {@link Pattern}, {@link PatternBody}). If the
-	 * resolution fails null is returned.
-	 * 
-	 * @param context
-	 * @param variable
-	 * @return a {@link JvmTypeReference} if the type successfully resolved,
-	 *         otherwise returns null.
-	 */
-	protected JvmTypeReference resolve(EObject context, Variable variable) {
-		if (context instanceof Variable && context.equals(variable)) {
-			return resolve(variable.getType(), variable);
-		}
-		if (context instanceof Pattern) {
-			final Pattern pattern = (Pattern) context;
-			for (PatternBody body : pattern.getBodies()) {
-				JvmTypeReference typeRef = resolve(body, variable);
-				if (typeRef != null) {
-					return typeRef;
-				}
+	private JvmTypeReference getTypeReferenceFromPossibleTypesList(Set<JvmTypeReference> possibleTypes, Variable variable) {
+		if (possibleTypes.isEmpty()) {
+			return typeReferences.getTypeForName(Object.class, variable);
+		} else {
+			if (possibleTypes.size() == 1) {
+				return (JvmTypeReference) possibleTypes.toArray()[0];
+			} else {
+				// FIXME do it
+				return typeReferences.getTypeForName(Object.class, variable);
 			}
 		}
-		if (context instanceof PatternBody) {
-			return resolve((PatternBody) context, variable);
-		}
-		return null;
-	}
-	
-	/**
-	 * Resolves the variable's type using the information available in the
-	 * classifier.
-	 * 
-	 * @param classifier
-	 * @param variable
-	 * @return
-	 */
-	protected JvmTypeReference resolve(EClassifier classifier,
-			Variable variable) {
-		if (classifier.getInstanceClass() != null) {
-			return typeReference(classifier.getInstanceClass(), variable);
-		}
-		return null;
 	}
 
-	/**
-	 * Resolves the variable using information retrievable only from the body.
-	 * If the type resolution fails, null is returned.
-	 * 
-	 * @param context
-	 * @param variable
-	 * @return
-	 */
-	protected JvmTypeReference resolve(PatternBody body, Variable variable) {
-		final Type constraintType = searchForConstraintType(body, variable);
-		if (constraintType != null) {
-			return resolve(constraintType, variable);			
+	private Set<JvmTypeReference> getTypeReferenceForVariableWithPattern(Pattern pattern, Variable variable, int recursionCallingLevel) {
+		Set<JvmTypeReference> resultList = new HashSet<JvmTypeReference>();
+		for (PatternBody body : pattern.getBodies()) {
+			resultList.addAll(getTypeReferenceForVariableWithPatternBody(body, variable, recursionCallingLevel));
 		}
-		return null;
+		return resultList;
 	}
 
-	/**
-	 * Searches the {@link PatternBody} and tries to find one of the {@link Constraint}'s {@link Type},
-	 * which is using the variable. If none found, null is returned.
-	 * 
-	 * @param body
-	 * @param variable
-	 * @return
-	 */
-	protected Type searchForConstraintType(PatternBody body, Variable variable) {
-		for (Constraint constraint : body.getConstraints()) {
+	private Set<JvmTypeReference> getTypeReferenceForVariableWithPatternBody(PatternBody patternBody, Variable variable,
+			int recursionCallingLevel) {
+		return getTypeReferenceForVariableWithPatternBody(patternBody, variable, recursionCallingLevel, null);
+	}
+
+	private Set<JvmTypeReference> getTypeReferenceForVariableWithPatternBody(PatternBody patternBody, Variable variable,
+			int recursionCallingLevel, Variable injectiveVariablePair) {
+		Set<JvmTypeReference> resultList = new HashSet<JvmTypeReference>();
+		for (Constraint constraint : patternBody.getConstraints()) {
 			if (constraint instanceof EClassifierConstraint) {
-				if (equalVariable(variable, ((EClassifierConstraint) constraint).getVar())) {
-					return ((EClassifierConstraint) constraint).getType();
+				EClassifierConstraint eClassifierConstraint = (EClassifierConstraint) constraint;
+				if (isEqualVariables(variable, eClassifierConstraint.getVar())) {
+					Type type = eClassifierConstraint.getType();
+					JvmTypeReference typeReference = getTypeReferenceForVariableWithType(type, variable);
+					if (typeReference != null) {
+						resultList.add(typeReference);
+					}
 				}
-			}
-			if (constraint instanceof PathExpressionConstraint) {
-				final PathExpressionHead head = ((PathExpressionConstraint) constraint).getHead();
-				// src is the first parameter (example: EClass.name(E, N)), src is E
-				final VariableReference varRef = head.getSrc();
-				final ValueReference valueRef = head.getDst();
+			} else if (constraint instanceof PathExpressionConstraint) {
+				final PathExpressionHead pathExpressionHead = ((PathExpressionConstraint) constraint).getHead();
+				// src is the first parameter (example: EClass.name(E, N)), src
+				// is E
+				final VariableReference variableReference = pathExpressionHead.getSrc();
+				final ValueReference valueReference = pathExpressionHead.getDst();
 				// test if the current variable is referenced by the varRef
-				if (equalVariable(variable, varRef)) {
-					return head.getType();
+				if (isEqualVariables(variable, variableReference)) {
+					Type type = pathExpressionHead.getType();
+					JvmTypeReference typeReference = getTypeReferenceForVariableWithType(type, variable);
+					if (typeReference != null) {
+						resultList.add(typeReference);
+					}
 				}
-				// first variable is not the right one, so next target is the second
-				if (valueRef instanceof VariableValue) {
-					final VariableReference secondVarRef = ((VariableValue) valueRef).getValue();
-					if (equalVariable(variable, secondVarRef)) {
-						return computeTypeFromTail(head.getTail());
+				// first variable is not the right one, so next target is the
+				// second
+				if (valueReference instanceof VariableValue) {
+					final VariableReference secondVariableReference = ((VariableValue) valueReference).getValue();
+					if (isEqualVariables(variable, secondVariableReference)) {
+						Type type = computeTypeFromPathExpressionTail(pathExpressionHead.getTail());
+						JvmTypeReference typeReference = getTypeReferenceForVariableWithType(type, variable);
+						if (typeReference != null) {
+							resultList.add(typeReference);
+						}
+					}
+				}
+			} else if (constraint instanceof CompareConstraint) {
+				CompareConstraint compareConstraint = (CompareConstraint) constraint;
+				if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
+					ValueReference leftValueReference = compareConstraint.getLeftOperand();
+					ValueReference rightValueReference = compareConstraint.getRightOperand();
+					if (leftValueReference instanceof VariableValue && rightValueReference instanceof VariableValue) {
+						VariableValue leftVariableValue = (VariableValue) leftValueReference;
+						VariableValue rightVariableValue = (VariableValue) rightValueReference;
+						if (isEqualVariables(variable, leftVariableValue.getValue())) {
+							Variable newPossibleInjectPair = rightVariableValue.getValue().getVariable();
+							if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
+								resultList.addAll(getTypeReferenceForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+										recursionCallingLevel, variable));
+							}
+						} else if (isEqualVariables(variable, rightVariableValue.getValue())) {
+							Variable newPossibleInjectPair = leftVariableValue.getValue().getVariable();
+							if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
+								resultList.addAll(getTypeReferenceForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+										recursionCallingLevel, variable));
+							}
+						}
+					}
+				}
+			} else if (constraint instanceof PatternCompositionConstraint && recursionCallingLevel < RECURSION_CALLING_LEVEL_LIMIT) {
+				PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
+				boolean isNegative = patternCompositionConstraint.isNegative();
+				if (!isNegative) {
+					PatternCall patternCall = patternCompositionConstraint.getCall();
+					int parameterIndex = 0;
+					for (ValueReference valueReference : patternCall.getParameters()) {
+						if (valueReference instanceof VariableValue) {
+							VariableValue variableValue = (VariableValue) valueReference;
+							VariableReference variableReference = variableValue.getValue();
+							if (isEqualVariables(variable, variableReference)) {
+								Pattern pattern = patternCall.getPatternRef();
+								Variable variableInCalledPattern = pattern.getParameters().get(parameterIndex);
+								resultList.addAll(getTypeReferenceForVariableWithPattern(pattern, variableInCalledPattern,
+										recursionCallingLevel + 1));
+							}
+						}
+						parameterIndex++;
 					}
 				}
 			}
 		}
-		return null;
+		return resultList;
 	}
 
 	/**
-	 * Computes the type from linked tails. The last tail's type is returned. 
-	 * @param tail
+	 * Computes the {@link Type} from linked {@link PathExpressionTail}-s. The
+	 * last tail's type is returned.
+	 * 
+	 * @param pathExpressionTail
 	 * @return
 	 */
-	private Type computeTypeFromTail(PathExpressionTail tail) {
-		if (tail == null) return null;
-		if (tail.getTail() != null) {
-			return computeTypeFromTail(tail.getTail());
+	private Type computeTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
+		if (pathExpressionTail == null) {
+			return null;
 		}
-		return tail.getType();
+		if (pathExpressionTail.getTail() != null) {
+			return computeTypeFromPathExpressionTail(pathExpressionTail.getTail());
+		}
+		return pathExpressionTail.getType();
 	}
 
 	/**
-	 * Resolves the variable's type from a {@link Constraint}'s {@link Type}.
-	 * If the resolution fails, null is returned.
+	 * Resolves the variable's type from a {@link Type}. If the resolution
+	 * fails, null is returned.
+	 * 
 	 * @param type
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference resolve(Type type, Variable variable) {
-		if (type instanceof ClassType) {
-			return resolve((ClassType)type, variable);
+	private JvmTypeReference getTypeReferenceForVariableWithType(Type type, Variable variable) {
+		JvmTypeReference result = null;
+		if (type != null) {
+			if (type instanceof ClassType) {
+				result = getTypeReferenceForVariableWithClassType((ClassType) type, variable);
+			} else if (type instanceof ReferenceType) {
+				result = getTypeReferenceForVariableWithReferenceType((ReferenceType) type, variable);
+			}
 		}
-		if (type instanceof ReferenceType) {
-			return resolve((ReferenceType) type, variable);				
-		}
-		return null;
+		return result;
 	}
-	
+
 	/**
 	 * Resolves the variable type from a {@link ClassType}.
+	 * 
 	 * @param type
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference resolve(ClassType type, Variable variable) {
+	private JvmTypeReference getTypeReferenceForVariableWithClassType(ClassType type, Variable variable) {
 		final EClassifier classifier = type.getClassname();
 		if (classifier != null) {
-			return resolve(classifier, variable);
+			return getTypeReferenceForVariableWithEClassifier(classifier, variable);
 		}
 		return null;
 	}
 
 	/**
 	 * Resolves the variable type from a {@link ReferenceType}.
-	 * @param type
+	 * 
+	 * @param referenceType
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference resolve(ReferenceType type,
-			Variable variable) {
-		final EStructuralFeature feature = type.getRefname();
+	private JvmTypeReference getTypeReferenceForVariableWithReferenceType(ReferenceType referenceType, Variable variable) {
+		final EStructuralFeature feature = referenceType.getRefname();
 		if (feature instanceof EAttribute) {
-			return resolve((EAttribute) feature, variable);
-		}
-		if (feature instanceof EReference) {
-			return resolve((EReference)feature, variable);
-		}
-		return null;
-	}
-
-	/**
-	 * Resolves the variable's type from an {@link EReference}.
-	 * @param feature
-	 * @param variable
-	 * @return
-	 */
-	protected JvmTypeReference resolve(EReference feature,
-			Variable variable) {
-		if (feature.getEReferenceType() != null) {
-			return resolve(feature.getEReferenceType(), variable);
+			EAttribute attribute = (EAttribute) feature;
+			EDataType eAttributeType = attribute.getEAttributeType();
+			if (eAttributeType != null) {
+				return getTypeReferenceForVariableWithEClassifier(eAttributeType, variable);
+			}
+		} else if (feature instanceof EReference) {
+			EReference reference = (EReference) feature;
+			EClass eReferenceType = reference.getEReferenceType();
+			if (eReferenceType != null) {
+				return getTypeReferenceForVariableWithEClassifier(eReferenceType, variable);
+			}
 		}
 		return null;
 	}
 
 	/**
-	 * Resolves the variable's type from an {@link EAttribute}.
-	 * @param feature
-	 * @param variable
-	 * @return
-	 */
-	protected JvmTypeReference resolve(EAttribute feature,
-			Variable variable) {
-		if (feature.getEAttributeType() != null) {
-			return resolve(feature.getEAttributeType(), variable);
-		}
-		return null;
-	}
-
-	/**
-	 * Returns a {@link JvmTypeReference} for the parameter clazz. If the clazz
-	 * is a primitive class, the corresponding wrapper class is returned.
+	 * FIXME DO IT
 	 * 
-	 * @param clazz
+	 * @param classifier
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference typeReference(Class<?> clazz,
-			Variable variable) {
-		JvmTypeReference typeRef = typeReferences.getTypeForName(clazz, variable);
-		return primitives.asWrapperTypeIfPrimitive(typeRef);
+	protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
+		// FIXME do it!!! this is overriden in the genmodel one!!!
+		if (classifier != null && classifier.getInstanceClass() != null) {
+			JvmTypeReference typeReference = typeReferences.getTypeForName(classifier.getInstanceClass(), variable);
+			return primitives.asWrapperTypeIfPrimitive(typeReference);
+		}
+		return null;
 	}
-	
+
 	/**
-	 * Returns a {@link JvmTypeReference} for the typeName parameter.
+	 * Returns true if the variable equals to the variable referenced by the
+	 * variableReference.
 	 * 
-	 * @param typeName
-	 * @param variable
-	 * @return
-	 */
-	protected JvmTypeReference typeReference(
-			String typeName, Variable variable) {
-		JvmTypeReference typeRef = typeReferences.getTypeForName(typeName, variable);
-		return primitives.asWrapperTypeIfPrimitive(typeRef);
-	}
-	
-	/**
-	 * Returns true if the variable referenced by the variableReference.
 	 * @param variable
 	 * @param variableReference
 	 * @return
 	 */
-	public static boolean equalVariable(Variable variable, VariableReference variableReference) {
-		if (variable == null || variableReference == null) {
-			return false;
-		}
-		final Variable variableReferenceVariable = variableReference.getVariable();
-		final String variableName = variableReference.getVariable().getName();
-		if (equal(variable, variableReferenceVariable) || equal(variableName, variable.getName())) {
-			return true;
+	private static boolean isEqualVariables(Variable variable, VariableReference variableReference) {
+		if (variable != null && variableReference != null) {
+			final Variable variableReferenceVariable = variableReference.getVariable();
+			if (equal(variable, variableReferenceVariable) || equal(variable.getName(), variableReferenceVariable.getName())) {
+				return true;
+			}
 		}
 		return false;
 	}
-	
+
 }

@@ -39,4 +39,8 @@ public interface IPatternAnnotationValidator {
 	Iterable<String> getAllAvailableParameterNames();
 	
 	String getAnnotationName();
+	
+	String getDescription();
+	
+	String getDescription(String parameterName);
 }

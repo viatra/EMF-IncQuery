@@ -14,12 +14,14 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
 /**
  * Default 'Load model' handler, default ResourceSet loader. 
@@ -36,19 +38,15 @@ public class LoadModelHandler extends AbstractHandler {
 		
 		if (editorPart instanceof IEditingDomainProvider) {
 			IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
-
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
-			
 			if (resourceSet.getResources().size() > 0) {
-				loadModel(editorPart, resourceSet);
+				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resourceSet);
+				ModelConnector contentModel = new EMFModelConnector(key);
+				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
+				contentModel.loadModel();
 			}
 		}
 
 		return null;
-	}
-	
-	protected void loadModel(IEditorPart editorPart, Notifier notifier) {
-		editorPart.getSite().getPage().addPartListener(QueryExplorer.getInstance().getModelPartListener());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(editorPart, notifier);
 	}
 }

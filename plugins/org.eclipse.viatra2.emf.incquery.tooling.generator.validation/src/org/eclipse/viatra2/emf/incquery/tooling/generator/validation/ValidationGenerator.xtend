@@ -38,6 +38,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
+	private static String UI_VALIDATION_MENU_URI = "popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions"
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
@@ -108,21 +109,20 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 					if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
 						val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
 							exGen.contribElement(it, "menuContribution") [
-								exGen.contribAttribute(it, "locationURI", String::format("popup:%s", editorId))
-								exGen.contribElement(it, "menu") [
-									exGen.contribAttribute(it, "label", "EMF-IncQuery")
+								exGen.contribAttribute(it, "locationURI", UI_VALIDATION_MENU_URI)
 									exGen.contribElement(it, "command") [
 										exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor")
 										exGen.contribAttribute(it, "style", "push")
-										exGen.contribAttribute(it, "label", "Initialize EMF-IncQuery Validators")
 										exGen.contribElement(it, "visibleWhen") [
 											exGen.contribAttribute(it, "checkEnabled", "false")
-											exGen.contribElement(it, "reference") [
-												exGen.contribAttribute(it, "definitionId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef")	
+											exGen.contribElement(it, "with")[
+											  exGen.contribAttribute(it, "variable", "activeEditorId")
+											  exGen.contribElement(it, "equals")[
+											    exGen.contribAttribute(it, "value", editorId)
+											  ]
 											]
 										]
 									]
-								]
 							]	
 						]
 						extensionList.add(editorMenuContribution)

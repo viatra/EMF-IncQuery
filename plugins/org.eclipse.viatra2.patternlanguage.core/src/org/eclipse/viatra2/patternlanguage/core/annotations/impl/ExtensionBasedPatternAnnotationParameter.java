@@ -21,11 +21,13 @@ public class ExtensionBasedPatternAnnotationParameter {
 	private String type;
 	private boolean multiple;
 	private boolean mandatory;
+	private String description;
 	public ExtensionBasedPatternAnnotationParameter(String name,
-			String type, boolean multiple, boolean mandatory) {
+			String type, String description, boolean multiple, boolean mandatory) {
 		super();
 		this.name = name;
 		this.type = type;
+		this.description = description;
 		this.multiple = multiple;
 		this.mandatory = mandatory;
 	}
@@ -34,6 +36,9 @@ public class ExtensionBasedPatternAnnotationParameter {
 	}
 	public String getType() {
 		return type;
+	}
+	public String getDescription() {
+		return description;
 	}
 	public boolean isMultiple() {
 		return multiple;

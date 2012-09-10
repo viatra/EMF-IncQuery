@@ -49,5 +49,6 @@ Export-Package: org.eclipse.viatra2.emf.incquery.gui.dialog,
  org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher,
  org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer,
  org.eclipse.viatra2.emf.incquery.queryexplorer.handlers,
+ org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util,
  org.eclipse.viatra2.emf.incquery.queryexplorer.util
 

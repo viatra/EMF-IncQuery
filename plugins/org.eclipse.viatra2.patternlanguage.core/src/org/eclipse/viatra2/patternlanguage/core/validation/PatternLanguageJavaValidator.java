@@ -384,14 +384,16 @@ public class PatternLanguageJavaValidator extends
 	
 	@Check
 	public void checkCheckConstraint(CheckConstraint constraint) {
-		JvmTypeReference type = provider.getType(constraint.getExpression());
-		if (!primitives.asPrimitiveIfWrapperType(type).getSimpleName()
-				.equals("boolean")) {
-			error("Check expressions must return boolean.",
+		JvmTypeReference type = provider.getCommonReturnType(
+				constraint.getExpression(), true);
+		String simpleName = primitives.asPrimitiveIfWrapperType(type)
+				.getSimpleName();
+		if (!simpleName.equals("boolean")) {
+			error("Check expressions must return boolean instead of "
+					+ type.getSimpleName(),
 					constraint,
 					PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
 					IssueCodes.CHECK_MUST_BE_BOOLEAN);
 		}
-
 	}
 }
