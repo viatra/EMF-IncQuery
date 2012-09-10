@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.runtime.derived;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
@@ -95,7 +95,7 @@ public class IncqueryDerivedFeature {
 	private String targetParamName;
 	private FeatureKind kind;
 	
-	private Map<InternalEObject,Object> updateMemory = new HashMap<InternalEObject, Object>();
+  private Map<InternalEObject, Object> updateMemory = new HashMap<InternalEObject, Object>();
 	private Map<InternalEObject,Integer> counterMemory = new HashMap<InternalEObject, Integer>();
 	private Map<InternalEObject,Object> singleRefMemory = new HashMap<InternalEObject, Object>();
 	private boolean keepCache = true;
@@ -106,7 +106,7 @@ public class IncqueryDerivedFeature {
 	/* could use EObjectEList or similar to have notifications handled by EMF,
 	 * but notification sending must be delayed in order to avoid infinite notification loop
    */ 
-	private final Map<InternalEObject,Collection<Object>> manyRefMemory = new HashMap<InternalEObject, Collection<Object>>();
+	private final Map<InternalEObject,List<Object>> manyRefMemory = new HashMap<InternalEObject, List<Object>>();
   private Runnable processWipeRunnable;
 	
 	/**
@@ -234,20 +234,31 @@ public class IncqueryDerivedFeature {
 		}
 	}
 	
-	public Collection<Object> getManyReferenceValue(Object source){
+	public List<?> getManyReferenceValue(Object source){
 		if(keepCache) {
-			Collection<Object> values = manyRefMemory.get(source);
+		  List<Object> values = manyRefMemory.get(source);
 			if(values == null) {
-			  values = new HashSet<Object>();
+			  values = new ArrayList<Object>();
 			}
       return values;
 		} else {
+		  final List<Object> values = new ArrayList<Object>();
 		  if(!initialized) {
-        return new HashSet<Object>();
+        return values;
       }
 			IPatternMatch match = matcher.newEmptyMatch();
 			match.set(sourceParamName, source);
-			return matcher.getAllValues(targetParamName, match);
+			matcher.forEachMatch(match, new IMatchProcessor<IPatternMatch>() {
+			  /* (non-Javadoc)
+			   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+			   */
+			  @Override
+			  public void process(IPatternMatch match) {
+			    // TODO Auto-generated method stub
+			    values.add(match.get(targetParamName));
+			  }
+      });
+			return values;//matcher.getAllValues(targetParamName, match);
 		}
 	}
 
@@ -262,7 +273,7 @@ public class IncqueryDerivedFeature {
 	
 	private void addToManyRefMemory(InternalEObject source, Object added) {
 		if(keepCache) {
-		  Collection<Object> values = manyRefMemory.get(source);
+		  List<Object> values = manyRefMemory.get(source);
 		  if(values == null) {
 		    values = new ArrayList<Object>();
 		    manyRefMemory.put(source, values);
@@ -273,7 +284,7 @@ public class IncqueryDerivedFeature {
 	
 	private void removeFromManyRefMemory(InternalEObject source, Object removed) {
 		if(keepCache) {
-		  Collection<Object> values = manyRefMemory.get(source);
+		  List<Object> values = manyRefMemory.get(source);
 		  if(values == null) {
 		    matcher.getEngine().getLogger().error(
             "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): removing from list that doesn't exist");
@@ -283,7 +294,7 @@ public class IncqueryDerivedFeature {
 	}
 
 	public EList getManyReferenceValueAsEList(Object source) {
-		Collection<Object> values = getManyReferenceValue(source);
+		Collection<?> values = getManyReferenceValue(source);
 		if (values.size() > 0) {
 			return new EcoreEList.UnmodifiableEList((InternalEObject) source,
 					feature,
@@ -316,14 +327,14 @@ public class IncqueryDerivedFeature {
 	            if (feature.isMany()) {
 	              notifications
 	                  .add(new ENotificationImpl(source, Notification.ADD, feature, null, target));
-	              addToManyRefMemory(source, target);
+	              addToManyRefMemory(source, (Object) target);
 	            } else {
 	              if (updateMemory.get(source) != null) {
 	                matcher.getEngine().getLogger().error(
 	                    "[IncqueryFeatureHandler] Space-time continuum breached (should never happen): update memory already set for given source");
 	              } else {
 	                // must handle later (either in lost matches or after that)
-	                updateMemory.put(source, target);
+	                updateMemory.put(source, (Object) target);
 	              }
 	            }
 	          }
@@ -369,13 +380,13 @@ public class IncqueryDerivedFeature {
             if (feature.isMany()) {
               notifications.add(new ENotificationImpl(source, Notification.REMOVE, feature, target,
                   null));
-              removeFromManyRefMemory(source, target);
+              removeFromManyRefMemory(source, (Object) target);
             } else {
               Object updateValue = updateMemory.get(source);
               if (updateValue != null) {
                 notifications.add(new ENotificationImpl(source, Notification.SET, feature, target,
                     updateValue));
-                setSingleRefMemory(source, updateValue);
+                setSingleRefMemory(source, (Object) updateValue);
                 updateMemory.remove(source);
               } else {
                 notifications.add(new ENotificationImpl(source, Notification.SET, feature, target,

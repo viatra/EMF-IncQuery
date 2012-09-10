@@ -31,6 +31,7 @@ public final class ProjectLocator {
     if(project.exists()) {
       ArrayList<String> dependencies = new ArrayList<String>();
       dependencies.add("org.eclipse.viatra2.emf.incquery.runtime");
+      dependencies.add("org.eclipse.viatra2.emf.incquery.derived");
       try {
         ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
       } catch (CoreException e) {
