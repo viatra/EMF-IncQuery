@@ -28,6 +28,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -204,16 +205,23 @@ public class EMFPatternLanguageJavaValidator extends
 							.getLeftOperand()).getValue();
 					VariableReference rightVarRef = ((VariableValue) constraint
 							.getRightOperand()).getValue();
-					if (leftVarRef.getVariable() != rightVarRef.getVariable()) { // not
-																					// the
-																					// same
-																					// variable
+					Variable leftVariable = leftVarRef.getVariable();
+					if (leftVariable instanceof ParameterRef) {
+						leftVariable = ((ParameterRef) leftVariable)
+								.getReferredParam();
+					}
+					Variable rightVariable = rightVarRef
+							.getVariable();
+					if (rightVariable instanceof ParameterRef) {
+						rightVariable = ((ParameterRef) rightVariable)
+								.getReferredParam();
+					}
+					if (leftVariable != rightVariable) { // not the same
+															// variable
 						if (leftVarRef == varRef) {
-							classifiedReferences.addEqualsVariable(rightVarRef
-									.getVariable());
+							classifiedReferences.addEqualsVariable(rightVariable);
 						} else if (rightVarRef == varRef) {
-							classifiedReferences.addEqualsVariable(leftVarRef
-									.getVariable());
+							classifiedReferences.addEqualsVariable(leftVariable);
 						} else {
 							throw new UnsupportedOperationException(
 									"The variable reference in neither the left, nor the right value of the compare constraint.");
@@ -274,11 +282,16 @@ public class EMFPatternLanguageJavaValidator extends
 			EObject obj = iter.next();
 			if (obj instanceof VariableReference) {
 				VariableReference varRef = (VariableReference) obj;
+				Variable variable = varRef.getVariable();
+				// Replacing parameter references with real parameter counting
+				if (variable instanceof ParameterRef) {
+					variable = ((ParameterRef) variable).getReferredParam();
+				}
 				ClassifiedVariableReferences classifiedVariableReferences = classifiedVariableReferencesCollection
-						.get(varRef.getVariable());
+						.get(variable);
 				if (classifiedVariableReferences == null) {
 					classifiedVariableReferences = new ClassifiedVariableReferences(
-							varRef.getVariable(), true); // All symbolic
+							variable, true); // All symbolic
 															// variables are
 															// already added.
 					classifiedVariableReferencesCollection.put(
@@ -291,11 +304,13 @@ public class EMFPatternLanguageJavaValidator extends
 						.getReferencedPatternVariablesOfXExpression(((CheckConstraint) obj)
 								.getExpression());
 				for (Variable var : vars) {
+					Variable variable = (var instanceof ParameterRef) ? ((ParameterRef) var)
+							.getReferredParam() : var;
 					ClassifiedVariableReferences classifiedVariableReferences = classifiedVariableReferencesCollection
-							.get(var);
+							.get(variable);
 					if (classifiedVariableReferences == null) {
 						classifiedVariableReferences = new ClassifiedVariableReferences(
-								var, true); // All symbolic variables are
+								variable, true); // All symbolic variables are
 											// already added.
 						classifiedVariableReferencesCollection.put(
 								classifiedVariableReferences
@@ -347,6 +362,9 @@ public class EMFPatternLanguageJavaValidator extends
 		for (ClassifiedVariableReferences classifiedVariableReferences : classifiedVariableReferencesMap
 				.values()) {
 			Variable referredVariable = classifiedVariableReferences.getReferredVariable();
+			if (referredVariable instanceof ParameterRef) {
+				continue;
+			}
 			if (classifiedVariableReferences.isVariableLocal()) {
 				if (classifiedVariableReferences
 						.getReferenceCount(VariableReferenceClass.PositiveExistential) == 1
