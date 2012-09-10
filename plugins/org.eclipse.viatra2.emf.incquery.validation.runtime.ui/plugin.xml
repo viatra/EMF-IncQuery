@@ -25,6 +25,17 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any">
+         <menu
+               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu"
+               label="EMF-IncQuery Validation">
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+      </menuContribution>
       <!--<menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.emf.ecore.presentation.EcoreEditorID">
@@ -97,7 +108,7 @@
             </command>
          </menu>
       </menuContribution>-->
-      <menuContribution
+      <!--<menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.emf.ecore.presentation.EcoreEditorID">
          <menu
@@ -108,42 +119,57 @@
                   style="push">
             </command>
          </menu>
+      </menuContribution>-->
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.xmlReflectiveEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
-                  style="push">
-            </command>
-         </menu>
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="org.eclipse.emf.ecore.presentation.ReflectiveEditorID">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.emf.genericEditor">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.genericEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.emf.ecore.presentation.ReflectiveEditorID">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.reflectiveEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
-                  style="push">
-            </command>
-         </menu>
+            locationURI="popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions">
+         <command
+               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+                  <with
+                     variable="activeEditorId">
+                  <equals
+                        value="org.eclipse.emf.genericEditor">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
