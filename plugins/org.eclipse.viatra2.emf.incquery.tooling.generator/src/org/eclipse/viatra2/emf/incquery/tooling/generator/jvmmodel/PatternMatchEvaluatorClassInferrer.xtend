@@ -92,7 +92,8 @@ class PatternMatchEvaluatorClassInferrer {
 			it.setBody(xExpression)
 		]
 
-		checkerClass.members += pattern.toMethod("evaluateXExpression", asWrapperTypeIfPrimitive(getType(xExpression))) [
+		checkerClass.members += pattern.toMethod("evaluateXExpression", asWrapperTypeIfPrimitive(type)) [
+			it.annotations += pattern.toAnnotation(typeof(Override))
 			it.parameters += pattern.toParameter("tuple", pattern.newTypeRef(typeof (Tuple)))
 			it.parameters += pattern.toParameter("tupleNameMap", pattern.newTypeRef(typeof (Map), pattern.newTypeRef(typeof (String)), pattern.newTypeRef(typeof (Integer))))
 			it.documentation = pattern.javadocEvaluatorClassWrapperMethod.toString
