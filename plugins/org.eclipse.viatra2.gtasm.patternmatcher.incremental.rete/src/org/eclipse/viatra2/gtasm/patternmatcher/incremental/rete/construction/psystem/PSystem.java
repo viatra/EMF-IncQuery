@@ -31,7 +31,7 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 
 	private Set<PVariable> allVariables;
 	private Set<PVariable> uniqueVariables;
-	private Map<String, PVariable> variablesByName;
+	private Map<Object, PVariable> variablesByName;
 	private Set<PConstraint> constraints;
 	private int nextVirtualNodeID;
 	
@@ -49,14 +49,14 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 		this.buildable = buildable;
 		allVariables = new HashSet<PVariable>();
 		uniqueVariables = new HashSet<PVariable>();
-		variablesByName = new HashMap<String, PVariable>();
+		variablesByName = new HashMap<Object, PVariable>();
 		constraints = new HashSet<PConstraint>();
 	}
 	/**
 	 * @return whether the submission of the new variable was successful
 	 */
 	private boolean addVariable(PVariable var) {
-		String name = var.getName();
+		Object name = var.getName();
 		if (!variablesByName.containsKey(name)) {
 			allVariables.add(var);
 			if (var.isUnique()) uniqueVariables.add(var);
@@ -135,13 +135,13 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 	/**
 	 * @return the variable by name
 	 */
-	private PVariable getVariableByName(String name) {
+	private PVariable getVariableByName(Object name) {
 		return variablesByName.get(name).getUnifiedIntoRoot();
 	}	
 	/**
 	 * @return the variable by name
 	 */
-	public PVariable getOrCreateVariableByName(String name) {
+	public PVariable getOrCreateVariableByName(Object name) {
 		if (!variablesByName.containsKey(name)) addVariable(new PVariable(this, name));
 		return getVariableByName(name);
 	}		

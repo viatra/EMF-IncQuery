@@ -28,7 +28,7 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 	VariableDeferredPConstraint<PatternDescription, StubHandle>  
 {
 	PVariable parameterVariable;
-	String parameterName;
+	Object parameterName;
 	
 
 	/**
@@ -58,9 +58,9 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 	 */
 	@Override
 	protected String toStringRest() {
-		String varName = parameterVariable.getName();
+		Object varName = parameterVariable.getName();
 		return parameterName.equals(varName) ? 
-				parameterName :
+				parameterName.toString() :
 				parameterName + "(" + varName + ")"	;
 	}
 
@@ -75,7 +75,7 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 	/**
 	 * @return the parameterName
 	 */
-	public String getParameterName() {
+	public Object getParameterName() {
 		return parameterName;
 	}
 
@@ -109,7 +109,7 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 	public void checkSanity() throws RetePatternBuildException {
 		super.checkSanity();
 		if (!parameterVariable.isDeducable()){
-			String[] args = {parameterName};
+			String[] args = {parameterName.toString()};
 			String msg = "Impossible to match pattern: "
 				+ "exported pattern variable {1} can not be determined based on the pattern constraints. "
 				+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
@@ -125,7 +125,7 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 	@Override
 	public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException 
 	{
-			String[] args = {parameterName};
+			String[] args = {parameterName.toString()};
 			String msg = "Pattern Graph Search terminated incompletely: "
 				+ "exported pattern variable {1} could not be determined based on the pattern constraints. "
 				+ "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
