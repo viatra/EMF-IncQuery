@@ -24,7 +24,6 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -138,7 +137,7 @@ class TypeInferenceTest {
 		tester.validate(model).assertOK
 	}
 	
-	@Test @Ignore
+	@Test
 	def injectivityConstraintTest() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
@@ -146,7 +145,8 @@ class TypeInferenceTest {
 			pattern injectivity1(class1, class2) = {
 				EClass(class1);
 				class1 == class2;
-			check (class2.abstract != false);
+				check (class2.abstract != false);
+			}
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
