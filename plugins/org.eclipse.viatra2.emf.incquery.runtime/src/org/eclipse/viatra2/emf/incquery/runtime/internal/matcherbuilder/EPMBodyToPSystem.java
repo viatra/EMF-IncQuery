@@ -122,17 +122,17 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		for (int i=0; i<arity; ++i) result[i] = getPNode(symParameters.get(i));
 		return result;
 	}
-	protected PVariable getPNode(String name) {
-		return pSystem.getOrCreateVariableByName(name);
-	}
+//	protected PVariable getPNode(String name) {
+//		return pSystem.getOrCreateVariableByName(name);
+//	}
 
 	protected PVariable getPNode(Variable variable) {
-		return getPNode(variable.getName());
+		return pSystem.getOrCreateVariableByName(variable);
 	}
 	protected PVariable getPNode(VariableReference variable) {
 		// Warning! variable.getVar() does not differentiate between 
 		// multiple anonymous variables ('_')
-		return getPNode(variable.getVariable().getName());
+		return getPNode(variable.getVariable());
 	}
 	protected Tuple getPNodeTuple(List<? extends ValueReference> variables) throws RetePatternBuildException {
 		PVariable[] pNodeArray = getPNodeArray(variables);
