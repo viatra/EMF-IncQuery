@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="service"
+    nsURI="http://viatra.inf.mit.bme.hu/service/" nsPrefix="service">
+  <eClassifiers xsi:type="ecore:EClass" name="Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" eType="#//ServiceState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="serviceReference" lowerBound="1"
+        eType="#//Service"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Empty" eSuperTypes="#//Node"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="ServiceState">
+    <eLiterals name="UP"/>
+    <eLiterals name="DOWN" value="1" literal="DOWN"/>
+    <eLiterals name="STANDBY" value="2"/>
+    <eLiterals name="ACTIVE" value="3"/>
+    <eLiterals name="BACKUP" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
+        eType="#//Node" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
