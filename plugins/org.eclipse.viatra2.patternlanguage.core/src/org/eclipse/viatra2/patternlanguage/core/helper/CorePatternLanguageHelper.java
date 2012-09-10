@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
@@ -128,7 +129,13 @@ public final class CorePatternLanguageHelper {
 			}
 		}
 		for (Variable var : parameters) {
-			parameterMap.put(var.getName(), var);
+			// Creating a new paramater ref variable
+			ParameterRef refVar = PatternLanguageFactory.eINSTANCE
+					.createParameterRef();
+			refVar.setName(var.getName());
+			refVar.setType(var.getType());
+			refVar.setReferredParam(var);
+			parameterMap.put(var.getName(), refVar);
 		}
 		for(Variable var : variables) {
 			parameterMap.put(var.getName(), var);
@@ -141,8 +148,8 @@ public final class CorePatternLanguageHelper {
 				decl = PatternLanguageFactory.eINSTANCE
 						.createVariable();
 				decl.setName(varName);
-				variables.add(decl);
 			}
+			variables.add(decl);
 			for (VariableReference ref : varRefs.get(varName)) {
 			  if(!decl.equals(((VariableReferenceImpl) ref).basicGetVariable())) {
 			    ref.setVariable(decl);
