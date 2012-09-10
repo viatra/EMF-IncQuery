@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
@@ -80,7 +77,7 @@ public class IncqueryDerivedFeature {
     		dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );	
     		checkUnhandledNewMatch();
     		sendNextNotfication();
-    	} catch (CoreException e) {
+    	} catch (IncQueryException e) {
     		matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
     	}
     }
@@ -309,7 +306,7 @@ public class IncqueryDerivedFeature {
 		}
 	}
 	
-	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws CoreException {
+	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws IncQueryException {
 		List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
 	    for (IPatternMatch signature : signatures) {
 	      if (kind == FeatureKind.ITERATION) {
@@ -350,7 +347,7 @@ public class IncqueryDerivedFeature {
 	/**
 	 * @throws CoreException
 	 */
-	private void increaseCounter(InternalEObject source, int delta) throws CoreException {
+	private void increaseCounter(InternalEObject source, int delta) throws IncQueryException {
 		Integer value = getIntValue(source);
 		if(value <= Integer.MAX_VALUE-delta) {
 			int tempMemory = value+delta;
@@ -358,11 +355,11 @@ public class IncqueryDerivedFeature {
 					new ENotificationImpl(source, Notification.SET,	feature, counterMemory.get(source), tempMemory));
 			counterMemory.put(source, tempMemory);
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, null, "Counter reached maximum value of Long"));
+			throw new IncQueryException(String.format("The counter of %s for feature %s reached the maximum value of int!",source, feature),"Counter reached maximum value of int");
 		}
 	}
 
-  private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws CoreException {
+  private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws IncQueryException {
     List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
     for (IPatternMatch signature : signatures) {
       if (kind == FeatureKind.ITERATION) {
@@ -437,7 +434,7 @@ public class IncqueryDerivedFeature {
 	/**
 	 * @throws CoreException
 	 */
-	private void decreaseCounter(InternalEObject source, int delta) throws CoreException {
+	private void decreaseCounter(InternalEObject source, int delta) throws IncQueryException {
 	  Integer value = counterMemory.get(source);
 	  if(value == null) {
 	    matcher.getEngine().getLogger().error(
@@ -449,7 +446,7 @@ public class IncqueryDerivedFeature {
 					feature, value, tempMemory));
 			counterMemory.put(source, tempMemory);
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, null, "Counter cannot go below zero"));
+			throw new IncQueryException(String.format("The counter of %s for feature %s cannot go below zero!",source, feature), "Counter cannot go below zero");
 		}
 	}
 	
