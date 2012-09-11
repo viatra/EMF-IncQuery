@@ -30,11 +30,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageF
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.VariableReferenceImpl;
 import org.eclipse.xtext.xbase.XExpression;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 public final class CorePatternLanguageHelper {
 	
@@ -107,57 +103,71 @@ public final class CorePatternLanguageHelper {
 			EList<Variable> previous) {
 		EList<Variable> variables = previous;
 
+		HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
+
 		EList<Variable> parameters = ((Pattern) body.eContainer())
 				.getParameters();
-		Multimap<String, VariableReference> varRefs = HashMultimap.create();
-		HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
+		for (Variable var : variables) {
+			parameterMap.put(var.getName(), var);
+		}
+		for (Variable var : parameters) {
+			if (!parameterMap.containsKey(var.getName())) {
+				// Creating a new paramater ref variable
+				ParameterRef refVar = initializeParameterRef(var);
+				parameterMap.put(var.getName(), refVar);
+				variables.add(refVar);
+			}
+		}
 		int unnamedCounter = 0;
 		for (Constraint constraint : body.getConstraints()){
 			Iterator<EObject> it = constraint.eAllContents();			
 			while (it.hasNext()) {
 				EObject obj = it.next();
 				if (obj instanceof VariableReference) {
-					VariableReference variable = (VariableReference) obj;
-					String varName = variable.getVar();
+					VariableReference varRef = (VariableReference) obj;
+					String varName = varRef.getVar();
 					if ("_".equals(varName)) {
-						varRefs.put(String.format("_<%d>", unnamedCounter), variable);
+						varName = String.format("_<%d>", unnamedCounter);
 						unnamedCounter++;
-					} else {
-						varRefs.put(varName, variable);
 					}
+					Variable var;
+					if (parameterMap.containsKey(varName)) {
+						var = parameterMap.get(varName);
+					} else {
+						var = initializeLocalVariable(varName);
+						variables.add(var);
+						parameterMap.put(varName, var);
+					}
+					varRef.setVariable(var);
 				}
-			}
-		}
-		for (Variable var : parameters) {
-			// Creating a new paramater ref variable
-			ParameterRef refVar = PatternLanguageFactory.eINSTANCE
-					.createParameterRef();
-			refVar.setName(var.getName());
-			refVar.setType(var.getType());
-			refVar.setReferredParam(var);
-			parameterMap.put(var.getName(), refVar);
-		}
-		for(Variable var : variables) {
-			parameterMap.put(var.getName(), var);
-		}
-		for (String varName : varRefs.keySet()) {
-			Variable decl;
-			if (parameterMap.containsKey(varName)) {
-				decl = parameterMap.get(varName);
-			} else {
-				decl = PatternLanguageFactory.eINSTANCE
-						.createVariable();
-				decl.setName(varName);
-			}
-			variables.add(decl);
-			for (VariableReference ref : varRefs.get(varName)) {
-			  if(!decl.equals(((VariableReferenceImpl) ref).basicGetVariable())) {
-			    ref.setVariable(decl);
-			  }
 			}
 		}
 
 		return variables;
+	}
+
+	/**
+	 * @param varName
+	 * @return
+	 */
+	private static Variable initializeLocalVariable(String varName) {
+		Variable decl;
+		decl = PatternLanguageFactory.eINSTANCE.createVariable();
+		decl.setName(varName);
+		return decl;
+	}
+
+	/**
+	 * @param var
+	 * @return
+	 */
+	private static ParameterRef initializeParameterRef(Variable var) {
+		ParameterRef refVar = PatternLanguageFactory.eINSTANCE
+				.createParameterRef();
+		refVar.setName(var.getName());
+		refVar.setType(var.getType());
+		refVar.setReferredParam(var);
+		return refVar;
 	}
 	
 	/** Finds all patterns referenced from the given pattern. */
