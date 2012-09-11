@@ -44,7 +44,7 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 			}
 		} else if (object instanceof AnnotationParameter) {
 			String description = annotationProvider.getDescription((AnnotationParameter)object);
-			if (annotationProvider.isDeprecated((Annotation) object)) {
+			if (annotationProvider.isDeprecated((AnnotationParameter) object)) {
 				return "<b>@deprecated</b></p></p>" + description;
 			} else {
 				return description;

@@ -165,8 +165,9 @@ public class PatternAnnotationProvider {
 		if (annotationValidators == null) {
 			initializeValidators();
 		}
-		return annotationValidators.get(annotationName).isDeprecated();
-	}
+    return !annotationValidators.containsKey(annotationName) 
+        || annotationValidators.get(annotationName).isDeprecated();
+  }
 
 	public boolean isDeprecated(AnnotationParameter parameter) {
 		Annotation annotation = (Annotation) parameter.eContainer();
@@ -176,7 +177,8 @@ public class PatternAnnotationProvider {
 		if (annotationValidators == null) {
 			initializeValidators();
 		}
-		return annotationValidators.get(annotationName).isDeprecated(
+		return !annotationValidators.containsKey(annotationName) 
+		    || annotationValidators.get(annotationName).isDeprecated(
 				parameterName);
 	}
 

@@ -73,7 +73,18 @@ public class EMFPatternLanguageHighlightingCalculator extends
 			} else if (object instanceof AnnotationParameter
 					&& annotationProvider
 							.isDeprecated((AnnotationParameter) object)) {
-				INode node = NodeModelUtils.getNode(object).getFirstChild();
+			  ICompositeNode compositeNode = NodeModelUtils
+            .findActualNodeFor(object);
+        INode node = null;
+        for (ILeafNode leafNode : compositeNode.getLeafNodes()) {
+          if (leafNode.getText().equals(((AnnotationParameter)object).getName())) {
+            node = leafNode;
+            break;
+          }
+        }
+        node = (node == null) ? compositeNode : node;
+				
+				
 				highlightNode(node,
 						XbaseHighlightingConfiguration.DEPRECATED_MEMBERS,
 						acceptor);
