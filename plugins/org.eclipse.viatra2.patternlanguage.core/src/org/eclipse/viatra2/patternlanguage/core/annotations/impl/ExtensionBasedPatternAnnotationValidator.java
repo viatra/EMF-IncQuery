@@ -42,6 +42,7 @@ public class ExtensionBasedPatternAnnotationValidator implements
 	private Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
 	private final String name;
 	private final String description;
+	private boolean deprecated;
 	
 	private final static ImmutableMap<String, Class<? extends ValueReference>> typeMapping = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
 			.put(ExtensionBasedPatternAnnotationParameter.INT, IntValue.class)
@@ -55,11 +56,13 @@ public class ExtensionBasedPatternAnnotationValidator implements
 			.put(ExtensionBasedPatternAnnotationParameter.VARIABLEREFERENCE,
 					VariableValue.class).build();
 
-	public ExtensionBasedPatternAnnotationValidator(String name, String description,
+	public ExtensionBasedPatternAnnotationValidator(String name,
+			String description, boolean deprecated,
 			Iterable<ExtensionBasedPatternAnnotationParameter> parameters) {
 		super();
 		this.name = name;
 		this.description = description;
+		this.deprecated = deprecated;
 		this.definedAttributes = parameters;
 	}
 	
@@ -156,6 +159,33 @@ public class ExtensionBasedPatternAnnotationValidator implements
 			}
 		}
 		return "";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.viatra2.patternlanguage.core.annotations.
+	 * IPatternAnnotationValidator#isDeprecated()
+	 */
+	@Override
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.viatra2.patternlanguage.core.annotations.
+	 * IPatternAnnotationValidator#isDeprecated(java.lang.String)
+	 */
+	@Override
+	public boolean isDeprecated(String parameterName) {
+		for (ExtensionBasedPatternAnnotationParameter param : definedAttributes) {
+			if (param.getName().equals(parameterName)) {
+				return param.isDeprecated();
+			}
+		}
+		return false;
 	}
 
 }

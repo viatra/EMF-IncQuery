@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.annotations.impl.ExtensionBasedPatternAnnotationValidator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
@@ -42,10 +41,12 @@ public class PatternAnnotationProvider {
 					.getAttribute("mandatory"));
 			final boolean multiple = Boolean.parseBoolean(input
 					.getAttribute("multiple"));
+			final String deprecatedString = input.getAttribute("deprecated");
+			final boolean deprecated = Boolean.parseBoolean(deprecatedString);
 			final String type = input.getAttribute("type");
 			final String description = input.getAttribute("description");
 			return new ExtensionBasedPatternAnnotationParameter(parameterName,
-					type, description, multiple, mandatory);
+					type, description, multiple, mandatory, deprecated);
 		}
 	}
 
@@ -59,6 +60,8 @@ public class PatternAnnotationProvider {
 		for (IConfigurationElement e : config) {
 			final String annotationName = e.getAttribute("name");
 			final String description = e.getAttribute("description"); 
+			final String deprecatedString = e.getAttribute("deprecated");
+			final boolean deprecated = Boolean.parseBoolean(deprecatedString);
 
 			final IConfigurationElement[] parameters = e
 					.getChildren("annotationparameter");
@@ -67,7 +70,8 @@ public class PatternAnnotationProvider {
 					.transform(
 							Arrays.asList(parameters),
 							new ExtensionConverter());
-			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(annotationName, description, parameterIterable);
+			final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(
+					annotationName, description, deprecated, parameterIterable);
 			annotationValidators.put(annotationName, annotationValidator);
 		}
 	}
@@ -152,4 +156,28 @@ public class PatternAnnotationProvider {
 		return annotationValidators.get(annotationName).getDescription(
 				parameterName);
 	}
+
+	public boolean isDeprecated(Annotation annotation) {
+		return isDeprecated(annotation.getName());
+	}
+
+	public boolean isDeprecated(String annotationName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName).isDeprecated();
+	}
+
+	public boolean isDeprecated(AnnotationParameter parameter) {
+		Annotation annotation = (Annotation) parameter.eContainer();
+		return isDeprecated(annotation.getName(), parameter.getName());
+	}
+	public boolean isDeprecated(String annotationName, String parameterName) {
+		if (annotationValidators == null) {
+			initializeValidators();
+		}
+		return annotationValidators.get(annotationName).isDeprecated(
+				parameterName);
+	}
+
 }
