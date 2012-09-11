@@ -165,7 +165,7 @@ public final class CorePatternLanguageHelper {
 		ParameterRef refVar = PatternLanguageFactory.eINSTANCE
 				.createParameterRef();
 		refVar.setName(var.getName());
-		refVar.setType(var.getType());
+		// refVar.setType(var.getType());
 		refVar.setReferredParam(var);
 		return refVar;
 	}
