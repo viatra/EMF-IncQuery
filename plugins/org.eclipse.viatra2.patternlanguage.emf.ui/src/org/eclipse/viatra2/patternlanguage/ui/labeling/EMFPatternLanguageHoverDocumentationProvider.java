@@ -36,9 +36,19 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 	@Override
 	public String computeDocumentation(EObject object) {
 		if (object instanceof Annotation) {
-			return annotationProvider.getDescription((Annotation) object);
+			String description = annotationProvider.getDescription((Annotation) object);
+			if (annotationProvider.isDeprecated((Annotation) object)) {
+				return "<b>@deprecated</b></p></p>" + description;
+			} else {
+				return description;
+			}
 		} else if (object instanceof AnnotationParameter) {
-			return annotationProvider.getDescription((AnnotationParameter)object);
+			String description = annotationProvider.getDescription((AnnotationParameter)object);
+			if (annotationProvider.isDeprecated((Annotation) object)) {
+				return "<b>@deprecated</b></p></p>" + description;
+			} else {
+				return description;
+			}
 		} else if (object instanceof PackageImport) {
 			PackageImport packageImport = (PackageImport) object;
 			GenPackage genPackage = genmodelProvider.findGenPackage(
