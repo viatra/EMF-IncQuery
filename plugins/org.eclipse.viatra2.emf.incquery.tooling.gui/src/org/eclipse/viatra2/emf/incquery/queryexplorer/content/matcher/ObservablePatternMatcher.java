@@ -265,7 +265,9 @@ public class ObservablePatternMatcher {
 			removeMatch(match);
 		}
 		
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 		this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
 		this.processMatchesRunnable.run();
  	}

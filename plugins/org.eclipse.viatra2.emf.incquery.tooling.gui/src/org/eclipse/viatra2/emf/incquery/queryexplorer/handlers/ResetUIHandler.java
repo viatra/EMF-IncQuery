@@ -16,6 +16,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class ResetUIHandler extends AbstractHandler {
 
@@ -24,6 +27,13 @@ public class ResetUIHandler extends AbstractHandler {
 		for (ModelConnector connector : QueryExplorer.getInstance().getModelConnectorMap().values()) {
 			connector.unloadModel();
 		}
+		for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
+			String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+			PatternRegistry.getInstance().unregisterPattern(patternFqn);
+			QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
+		}
+		
+		QueryExplorer.getInstance().getPatternsViewer().refresh();
 		
 		return null;
 	}

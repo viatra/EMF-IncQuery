@@ -38,13 +38,17 @@ public class GMFModelConnector extends EMFModelConnector {
 	@Override
 	public void loadModel() {
 		workbenchPage.addPartListener(GMFEditorPartListener.getInstance());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+		}
 	}
 
 	@Override
 	public void unloadModel() {
 		workbenchPage.removePartListener(GMFEditorPartListener.getInstance());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+		}
 	}
 
 	@Override
