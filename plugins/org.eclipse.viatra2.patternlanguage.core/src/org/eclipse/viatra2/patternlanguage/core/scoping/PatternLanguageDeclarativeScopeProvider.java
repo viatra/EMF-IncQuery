@@ -97,13 +97,9 @@ public class PatternLanguageDeclarativeScopeProvider extends
 		if (it == null || body == null) {
 			return IScope.NULLSCOPE;
 		}
-		Pattern pattern = (Pattern) it;
 		UndefinedVariable variableFilter = new UndefinedVariable();
 		CreateObjectDescFunction createObjectDescFunction = new CreateObjectDescFunction();
-		IScope parameterScope = new SimpleScope(IScope.NULLSCOPE,
-				Iterables.transform(Iterables.filter(pattern.getParameters(),
-						variableFilter), createObjectDescFunction));
-		IScope localScope = new SimpleScope(parameterScope,
+		IScope localScope = new SimpleScope(IScope.NULLSCOPE,
 				Iterables.transform(
 						Iterables.filter(body.getVariables(), variableFilter),
 						createObjectDescFunction));
