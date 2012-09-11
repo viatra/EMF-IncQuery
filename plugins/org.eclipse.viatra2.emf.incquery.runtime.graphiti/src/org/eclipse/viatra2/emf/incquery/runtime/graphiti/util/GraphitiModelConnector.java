@@ -29,13 +29,17 @@ public class GraphitiModelConnector extends EMFModelConnector {
 	@Override
 	public void loadModel() {
 		workbenchPage.addPartListener(GraphitiEditorPartListener.getInstance());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+		}
 	}
 
 	@Override
 	public void unloadModel() {
 		workbenchPage.removePartListener(GraphitiEditorPartListener.getInstance());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+		}
 	}
 
 	@Override
@@ -46,7 +50,6 @@ public class GraphitiModelConnector extends EMFModelConnector {
 		workbenchPage.bringToTop(key.getEditorPart());
 	}
 	
-	@SuppressWarnings("restriction")
 	@Override
 	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
 		if (editor instanceof DiagramEditor) {			
@@ -66,7 +69,6 @@ public class GraphitiModelConnector extends EMFModelConnector {
 		return null;
 	}
 	
-	@SuppressWarnings("restriction")
 	@Override
 	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
 		if (editorPart instanceof DiagramEditor) {

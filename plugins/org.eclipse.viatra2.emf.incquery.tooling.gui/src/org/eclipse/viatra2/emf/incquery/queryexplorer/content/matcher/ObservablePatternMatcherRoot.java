@@ -93,7 +93,9 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 		else {
 			this.sortedMatchers.add(pm);
 		}
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 	
 	public void removeMatcher(String patternFqn) {
@@ -103,7 +105,9 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 			this.sortedMatchers.remove(matcher);
 			matcher.dispose();
 			this.matchers.remove(patternFqn);
-			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+			if (QueryExplorer.getInstance() != null) {
+				QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+			}
 		}
 	}
 	
