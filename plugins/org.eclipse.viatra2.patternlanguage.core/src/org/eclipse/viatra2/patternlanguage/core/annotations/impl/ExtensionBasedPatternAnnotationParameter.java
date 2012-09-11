@@ -22,14 +22,18 @@ public class ExtensionBasedPatternAnnotationParameter {
 	private boolean multiple;
 	private boolean mandatory;
 	private String description;
-	public ExtensionBasedPatternAnnotationParameter(String name,
-			String type, String description, boolean multiple, boolean mandatory) {
+	private boolean deprecated;
+
+	public ExtensionBasedPatternAnnotationParameter(String name, String type,
+			String description, boolean multiple, boolean mandatory,
+			boolean deprecated) {
 		super();
 		this.name = name;
 		this.type = type;
 		this.description = description;
 		this.multiple = multiple;
 		this.mandatory = mandatory;
+		this.deprecated = deprecated;
 	}
 	public String getName() {
 		return name;
@@ -45,5 +49,8 @@ public class ExtensionBasedPatternAnnotationParameter {
 	}
 	public boolean isMandatory() {
 		return mandatory;
+	}
+	public boolean isDeprecated() {
+		return deprecated;
 	}
 }

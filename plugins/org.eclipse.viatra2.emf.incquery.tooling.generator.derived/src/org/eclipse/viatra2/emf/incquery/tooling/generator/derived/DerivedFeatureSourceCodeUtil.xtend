@@ -36,17 +36,21 @@ class DerivedFeatureSourceCodeUtil {
 				iterationGetMethod(source,feature,pattern,sourceParamName,targetParamName)
 		}
 	}
+	
+	def dummyCompUnitHeader()'''
+	  import org.eclipse.emf.common.util.EList;
+	  import org.eclipse.emf.ecore.EClass;
+	  import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
+	  import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
+	  import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
+	  
+	  public class DummyClass {
+	   public void DummyMethod() {
+	'''
 
 	def singleRefGetMethod(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName, boolean keepCache)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -72,14 +76,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def manyRefGetMethod(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName, boolean keepCache)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if(«feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -93,14 +90,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def counterGetMethod(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -114,14 +104,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def sumGetMethod(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -135,14 +118,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def iterationGetMethod(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -156,14 +132,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def manyRefGetMethodOld(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName, boolean keepCache)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if(«feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -178,14 +147,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def counterGetMethodOld(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -200,14 +162,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def sumGetMethodOld(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -222,14 +177,7 @@ class DerivedFeatureSourceCodeUtil {
 	
 	def iterationGetMethodOld(GenClass source, GenFeature feature,
 		Pattern pattern, String sourceParamName, String targetParamName)'''
-		import org.eclipse.emf.common.util.EList;
-		import org.eclipse.emf.ecore.EClass;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-		import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
-		
-		public class DummyClass {
-			public void DummyMethod() {
+		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
 					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
@@ -242,7 +190,14 @@ class DerivedFeatureSourceCodeUtil {
 		}
 	'''
 	
-	
+	def singleRefSetMethod(GenFeature feature, Pattern pattern, String parameter, String setMethod, String setExpression)'''
+    «dummyCompUnitHeader»
+        if(«parameter» != null){
+          «setMethod»(«setExpression»);
+        }  else {
+          «setMethod»(null);
+        }
+    '''
 	
 	def defaultMethod(boolean manyFeature){
 		if(manyFeature){

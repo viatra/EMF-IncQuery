@@ -570,9 +570,9 @@
     </bodies>
   </patterns>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
   </importPackages>
   <importPackages>
-    <ePackage href="http://www.eclipse.org/viatra2/emf/incquery/snapshot#/"/>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   </importPackages>
 </eMFPatternLanguage:PatternModel>

@@ -60,9 +60,9 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 import org.eclipse.emf.ecore.EcoreFactory
-import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.common.util.BasicEMap
+import java.util.ArrayList
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
@@ -83,6 +83,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 */
 	private static String annotationLiteral 		= "DerivedFeature"
 	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features"
+	private static String ANNOTATION_NAME 	= "org.eclipse.viatra2.emf.incquery.derived.feature"
 	private static String IMPORT_QUALIFIER 			= "org.eclipse.viatra2.emf.incquery.runtime.derived"
 	private static String FEATUREKIND_IMPORT		= "FeatureKind"
 	private static String HELPER_IMPORT 			= "IncqueryFeatureHelper"
@@ -180,18 +181,19 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				if(generate){
 					ast.ensureImports(rewrite, astNode, type)
-					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature.name)
+					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature)
 					ast.ensureGetterMethod(document, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature, pattern, parameters)
-					var annotation = feature.EAnnotations.findFirst[
-					  source == "org.eclipse.viatra2.emf.incquery.derived.feature"
-					]
-					if(annotation == null){
-					  annotation = EcoreFactory::eINSTANCE.createEAnnotation
-					  annotation.source = "org.eclipse.viatra2.emf.incquery.derived.feature"
-            feature.EAnnotations.add(annotation)
-					} else {
-  			    annotation.details.clear()
-			    }
+					
+					val annotations = new ArrayList(feature.EAnnotations)
+          annotations.forEach[
+            if(it.source == ANNOTATION_NAME){
+              feature.EAnnotations.remove(it)
+            }
+          ]
+					val annotation = EcoreFactory::eINSTANCE.createEAnnotation
+					annotation.source = ANNOTATION_NAME
+          feature.EAnnotations.add(annotation)
+					
 				  // add entry ("patternFQN", pattern.fullyQualifiedName)
 			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
 			    entry.key = "patternFQN"
@@ -201,10 +203,12 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				} else {
 					ast.removeHandlerField(bodyDeclListRewrite, type, genFeature.name)
 					ast.restoreGetterMethod(document, compunit, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature)
-					val annotation = feature.EAnnotations.findFirst[
-            source == "org.eclipse.viatra2.emf.incquery.derived.feature"
+					val annotations = new ArrayList(feature.EAnnotations)
+					annotations.forEach[
+            if(it.source == ANNOTATION_NAME){
+              feature.EAnnotations.remove(it)
+            }
           ]
-          feature.EAnnotations.remove(annotation)
           feature.EContainingClass.eResource.save(null)
 				}
 
@@ -309,24 +313,28 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		}
 	}
 	
-	def private ensureHandlerField(AST ast, ListRewrite bodyDeclListRewrite, TypeDeclaration type, String featureName){
+	def private ensureHandlerField(AST ast, ListRewrite bodyDeclListRewrite, TypeDeclaration type, GenFeature feature){
 		val handler = type.fields.findFirst[
 			val fragments = it.fragments as List<VariableDeclarationFragment>
 			fragments.exists()[
-				it.name.identifier == featureName+HANDLER_FIELD_SUFFIX
+				it.name.identifier == feature.name+HANDLER_FIELD_SUFFIX
 			]
 		]
 		
 		if(handler == null){
 			// insert handler
 			val handlerFragment = ast.newVariableDeclarationFragment
-			handlerFragment.setName(ast.newSimpleName(featureName+HANDLER_FIELD_SUFFIX))
+			handlerFragment.setName(ast.newSimpleName(feature.name+HANDLER_FIELD_SUFFIX))
 			val handlerField = ast.newFieldDeclaration(handlerFragment)
-			handlerField.setType(ast.newSimpleType(ast.newSimpleName(HANDLER_NAME)))
+			val handlerType = ast.newSimpleType(ast.newSimpleName(HANDLER_NAME))
+			// NOTE code for parameterized feature, ensure proper imports...
+			//val handlerType = ast.newParameterizedType(ast.newSimpleType(ast.newSimpleName(HANDLER_NAME)))
+			//handlerType.typeArguments.add(ast.newSimpleType(ast.newSimpleName(feature.ecoreFeature.EType.name)))
+			handlerField.setType(handlerType)
 			handlerField.modifiers.add(ast.newModifier(Modifier$ModifierKeyword::PRIVATE_KEYWORD))
 			val handlerTag = ast.newTagElement
 			val tagText = ast.newTextElement
-			tagText.text = "EMF-IncQuery handler for derived feature "+featureName 
+			tagText.text = "EMF-IncQuery handler for derived feature "+feature.name 
 			handlerTag.fragments.add(tagText)
 			val javaDoc = ast.newJavadoc
 			javaDoc.tags.add(handlerTag)

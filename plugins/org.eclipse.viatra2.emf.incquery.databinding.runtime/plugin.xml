@@ -5,8 +5,10 @@
    <extension
          point="org.eclipse.viatra2.patternlanguage.core.annotation">
       <annotation
+            description="Defines the label that will be used in the Query Explorer for the pattern&apos;s matches."
             name="PatternUI">
          <annotationparameter
+               description="This message will appear for each match of the pattern. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.&quot;"
                mandatory="true"
                multiple="false"
                name="message"
@@ -14,14 +16,17 @@
          </annotationparameter>
       </annotation>
       <annotation
+            description="Defines observable values for the pattern&apos;s parameters; the code generator will create accessors for such values to use in databinding contexts."
             name="ObservableValue">
          <annotationparameter
+               description="The name of the observable value."
                mandatory="false"
                multiple="false"
                name="name"
                type="string">
          </annotationparameter>
          <annotationparameter
+               description="This expression defines the attribute of a pattern parameter for which the IObservableValue will be created."
                mandatory="false"
                multiple="false"
                name="expression"
@@ -29,8 +34,10 @@
          </annotationparameter>
       </annotation>
       <annotation
+            description="The annotation defines whether the pattern should appear in the Query Explorer&apos;s Pattern Registry."
             name="QueryExplorer">
          <annotationparameter
+               description="Possible values: &amp;quot;true&amp;quot; to display and &amp;quot;false&amp;quot; to not display."
                mandatory="false"
                multiple="false"
                name="display"
@@ -38,14 +45,17 @@
          </annotationparameter>
       </annotation>
       <annotation
+            description="Annotate a pattern with OrderBy to define ordering between matches displayed in the Query Explorer."
             name="OrderBy">
          <annotationparameter
+               description="The ordering will be evaluated based on the given key with the form of &quot;Key.someAttribute&quot;."
                mandatory="true"
                multiple="false"
                name="key"
                type="string">
          </annotationparameter>
          <annotationparameter
+               description="Possible values: &amp;quot;asc&amp;quot; for ascending order and &amp;quot;desc&amp;quot; for descending order."
                mandatory="true"
                multiple="false"
                name="direction"

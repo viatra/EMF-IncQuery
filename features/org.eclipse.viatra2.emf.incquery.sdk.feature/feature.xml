@@ -29,6 +29,10 @@
    <includes
          id="org.eclipse.viatra2.emf.incquery.validation.tooling.feature"
          version="0.0.0"/>
+         
+   <includes
+         id="org.eclipse.viatra2.emf.incquery.derived.tooling.feature"
+         version="0.0.0"/>
    
   <plugin
          id="org.eclipse.viatra2.emf.incquery.base.source"
@@ -53,6 +57,13 @@
    
    <plugin
          id="org.eclipse.viatra2.emf.incquery.runtime.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.derived.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -193,13 +204,6 @@
 
    <plugin
          id="org.eclipse.viatra2.emf.incquery.tooling.generator.model.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.derived"
          download-size="0"
          install-size="0"
          version="0.0.0"

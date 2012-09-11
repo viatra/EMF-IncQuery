@@ -15,9 +15,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
@@ -27,6 +24,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
 /**
@@ -96,7 +94,7 @@ public class IncqueryFeatureHandler {
 					dm.matchLostEvents.removeAll( processLostMatches(dm.matchLostEvents) );	
 					checkUnhandledNewMatch();
 					sendNextNotfication();
-				} catch (CoreException e) {
+				} catch (IncQueryException e) {
 					matcher.getEngine().getLogger().error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
 				}
 				
@@ -232,7 +230,7 @@ public class IncqueryFeatureHandler {
 		}
 	}
 	
-	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws CoreException {
+	private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws IncQueryException {
 		List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
 	    for (IPatternMatch signature : signatures) {
 	      if (kind == FeatureKind.ITERATION) {
@@ -272,18 +270,18 @@ public class IncqueryFeatureHandler {
 	/**
 	 * @throws CoreException
 	 */
-	private void increaseCounter(int delta) throws CoreException {
+	private void increaseCounter(int delta) throws IncQueryException {
 		if(counterMemory <= Integer.MAX_VALUE-delta) {
 			int tempMemory = counterMemory+delta;
 			notifications.add(
 					new ENotificationImpl(source, Notification.SET,	feature, counterMemory, tempMemory));
 			counterMemory = tempMemory;
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, null, "Counter reached maximum value of Long"));
+		  throw new IncQueryException(String.format("The counter of %s for feature %s reached the maximum value of int!",source, feature),"Counter reached maximum value of int");
 		}
 	}
 
-  private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws CoreException {
+  private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws IncQueryException {
     List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
     for (IPatternMatch signature : signatures) {
       if (kind == FeatureKind.ITERATION) {
@@ -356,7 +354,7 @@ public class IncqueryFeatureHandler {
 	/**
 	 * @throws CoreException
 	 */
-	private void decreaseCounter(int delta) throws CoreException {
+	private void decreaseCounter(int delta) throws IncQueryException {
 		if(counterMemory >= delta) {
 			int tempMemory = counterMemory-delta;
 			notifications.add(
@@ -364,7 +362,7 @@ public class IncqueryFeatureHandler {
 					feature, counterMemory, tempMemory));
 			counterMemory = tempMemory;
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, null, "Counter cannot go below zero"));
+		  throw new IncQueryException(String.format("The counter of %s for feature %s cannot go below zero!",source, feature), "Counter cannot go below zero");
 		}
 	}
 	
