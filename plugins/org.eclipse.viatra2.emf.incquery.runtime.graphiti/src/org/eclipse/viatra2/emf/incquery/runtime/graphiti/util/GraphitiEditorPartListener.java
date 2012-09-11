@@ -40,7 +40,6 @@ public class GraphitiEditorPartListener extends BasePartListener {
 		return instance;
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void partClosed(IWorkbenchPart part) {
 

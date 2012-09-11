@@ -93,12 +93,16 @@ public class PatternMatcher {
 		PatternMatch pm = new PatternMatch(this, match);
 		this.sigMap.put(match, pm);
 		this.matches.add(pm);
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 	
 	private void removeMatch(IPatternMatch match) {
 		this.matches.remove(this.sigMap.remove(match));
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 
 	public PatternMatcherRoot getParent() {

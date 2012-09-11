@@ -54,13 +54,17 @@ public class PatternMatcherRoot {
 	public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, String patternFqn, boolean generated) {
 		PatternMatcher pm = new PatternMatcher(this, matcher, patternFqn, generated);
 		this.matchers.put(patternFqn, pm);
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 	
 	public void removeMatcher(String patternFqn) {
 		this.matchers.get(patternFqn).dispose();
-		this.matchers.remove(patternFqn);		
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		this.matchers.remove(patternFqn);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 	}
 	
 	public static final String MATCHERS_ID = "matchers";

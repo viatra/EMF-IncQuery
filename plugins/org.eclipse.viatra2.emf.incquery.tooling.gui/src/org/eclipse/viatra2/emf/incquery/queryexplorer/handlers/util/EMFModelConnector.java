@@ -38,13 +38,17 @@ public class EMFModelConnector extends ModelConnector {
 	@Override
 	public void loadModel() {
 		workbenchPage.addPartListener(ModelEditorPartListener.getInstance());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+		}
 	}
 
 	@Override
 	public void unloadModel() {
 		workbenchPage.removePartListener(ModelEditorPartListener.getInstance());
-		QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+		}
 	}
 
 	@Override
