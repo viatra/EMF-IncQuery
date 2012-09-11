@@ -96,7 +96,7 @@ public class EMFPatternLanguageJavaValidator extends
 				&& !metamodelProvider.isGeneratedCodeAvailable(packageImport
 				.getEPackage(), packageImport.eResource().getResourceSet())) {
 			warning(String
-					.format("The generated code of the Ecore model %s cannot be found. Consider setting up a generator model for the generated code to work.",
+					.format("The generated code of the Ecore model %s cannot be found. Check the org.eclipse.emf.ecore.generated_package extension in the model project or consider setting up a generator model for the generated code to work.",
 							packageImport.getEPackage().getNsURI()),
 					EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
 					EMFIssueCodes.IMPORT_WITH_GENERATEDCODE);
