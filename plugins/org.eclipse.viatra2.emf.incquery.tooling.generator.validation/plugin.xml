@@ -34,7 +34,7 @@
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="An Eclipse editor ID where the validation framework should register itself to the context menu."
+               description="An Eclipse editor ID where the validation framework should register itself to the context menu. Use &quot;*&quot; as a wildcard if the constraint should be used always when validation is started."
                mandatory="false"
                multiple="true"
                name="targetEditorId"
