@@ -579,7 +579,7 @@
             description="Annotate a pattern with OrderBy to define ordering between matches displayed in the Query Explorer."
             name="OrderBy">
          <annotationparameter
-               description="The ordering will be evaluated based on the given key with the form of &quot;Key.someAttribute&quot;."
+               description="The ordering will be evaluated based on the given key with the form of &quot;Key.someAttribute&quot;. Note that the given attribute must implement the Comparable interface, otherwise no ordering will be maintained."
                mandatory="true"
                multiple="false"
                name="key"
