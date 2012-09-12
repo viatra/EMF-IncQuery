@@ -31,6 +31,20 @@
          <menu
                id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu"
                label="EMF-IncQuery Validation">
+            <command
+                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeEditorId">
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.hasConstraint">
+                     </test>
+                  </with>
+               </visibleWhen>
+            </command>
             <separator
                   name="additions">
             </separator>
@@ -187,5 +201,15 @@
             </iterate>
          </with>
       </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.EditorReferenceTester"
+            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.editorReference"
+            namespace="org.eclipse.viatra2.emf.incquery.validation.runtime.ui"
+            properties="hasConstraint"
+            type="java.lang.String">
+      </propertyTester>
    </extension>
 </plugin>

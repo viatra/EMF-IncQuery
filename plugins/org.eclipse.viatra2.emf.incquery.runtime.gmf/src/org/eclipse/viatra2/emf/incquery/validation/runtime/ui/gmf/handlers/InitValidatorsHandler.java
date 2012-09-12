@@ -60,7 +60,7 @@ public class InitValidatorsHandler extends AbstractHandler {
 		if (notifier==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
 	
 		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
-		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
+		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraintsForEditorId(HandlerUtil.getActiveEditorId(event))) {
 			try {
 				adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
 			} catch (IncQueryException ex) {
