@@ -562,4 +562,36 @@
          </keywordReference>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+      <annotation
+            description="The annotation defines whether the pattern should appear in the Query Explorer&apos;s Pattern Registry."
+            name="QueryExplorer">
+         <annotationparameter
+               description="Possible values: &amp;quot;true&amp;quot; to display and &amp;quot;false&amp;quot; to not display."
+               mandatory="false"
+               multiple="false"
+               name="display"
+               type="boolean">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            description="Annotate a pattern with OrderBy to define ordering between matches displayed in the Query Explorer."
+            name="OrderBy">
+         <annotationparameter
+               description="The ordering will be evaluated based on the given key with the form of &quot;Key.someAttribute&quot;."
+               mandatory="true"
+               multiple="false"
+               name="key"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="Possible values: &amp;quot;asc&amp;quot; for ascending order and &amp;quot;desc&amp;quot; for descending order."
+               mandatory="true"
+               multiple="false"
+               name="direction"
+               type="string">
+         </annotationparameter>
+      </annotation>
+   </extension>
 </plugin>
