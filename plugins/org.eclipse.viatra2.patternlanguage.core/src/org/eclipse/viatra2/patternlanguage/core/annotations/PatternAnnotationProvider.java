@@ -153,6 +153,9 @@ public class PatternAnnotationProvider {
 		if (annotationValidators == null) {
 			initializeValidators();
 		}
+		if(!annotationValidators.containsKey(annotationName)) {
+		  return "";
+		}
 		return annotationValidators.get(annotationName).getDescription(
 				parameterName);
 	}
@@ -165,8 +168,8 @@ public class PatternAnnotationProvider {
 		if (annotationValidators == null) {
 			initializeValidators();
 		}
-    return !annotationValidators.containsKey(annotationName) 
-        || annotationValidators.get(annotationName).isDeprecated();
+    return annotationValidators.containsKey(annotationName) 
+        && annotationValidators.get(annotationName).isDeprecated();
   }
 
 	public boolean isDeprecated(AnnotationParameter parameter) {
@@ -177,8 +180,8 @@ public class PatternAnnotationProvider {
 		if (annotationValidators == null) {
 			initializeValidators();
 		}
-		return !annotationValidators.containsKey(annotationName) 
-		    || annotationValidators.get(annotationName).isDeprecated(
+		return annotationValidators.containsKey(annotationName) 
+		    && annotationValidators.get(annotationName).isDeprecated(
 				parameterName);
 	}
 
