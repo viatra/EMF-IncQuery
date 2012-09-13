@@ -158,30 +158,31 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			}
 		}
 
-		Set<EClassifier> resultSuperTypes = null;
-		for (EClassifier classifier : intermediateResultList) {
-			if (classifier instanceof EClass) {
-				if (resultSuperTypes == null) {
-					resultSuperTypes = new LinkedHashSet<EClassifier>();
-					resultSuperTypes.addAll(((EClass) classifier).getEAllSuperTypes());
-					resultSuperTypes.add(classifier);
+		if (!intermediateResultList.isEmpty()) {
+			Set<EClassifier> resultSuperTypes = null;
+			for (EClassifier classifier : intermediateResultList) {
+				if (classifier instanceof EClass) {
+					if (resultSuperTypes == null) {
+						resultSuperTypes = new LinkedHashSet<EClassifier>();
+						resultSuperTypes.addAll(((EClass) classifier).getEAllSuperTypes());
+						resultSuperTypes.add(classifier);
+					} else {
+						Set<EClassifier> nextSet = new LinkedHashSet<EClassifier>();
+						nextSet.addAll(((EClass) classifier).getEAllSuperTypes());
+						nextSet.add(classifier);
+						resultSuperTypes.retainAll(nextSet);
+					}
 				} else {
-					Set<EClassifier> nextSet = new LinkedHashSet<EClassifier>();
-					nextSet.addAll(((EClass) classifier).getEAllSuperTypes());
-					nextSet.add(classifier);
-					resultSuperTypes.retainAll(nextSet);
+					return null;
 				}
-			} else {
-				return null;
+			}
+
+			if (!resultSuperTypes.isEmpty()) {
+				Object[] result = resultSuperTypes.toArray();
+				return (EClassifier) result[result.length - 1];
 			}
 		}
-
-		if (!resultSuperTypes.isEmpty()) {
-			Object[] result = resultSuperTypes.toArray();
-			return (EClassifier) result[result.length - 1];
-		} else {
-			return null;
-		}
+		return null;
 	}
 
 	private EClassifier getClassifiersForVariableWithPatternBody(PatternBody patternBody, Variable variable, int recursionCallingLevel,
