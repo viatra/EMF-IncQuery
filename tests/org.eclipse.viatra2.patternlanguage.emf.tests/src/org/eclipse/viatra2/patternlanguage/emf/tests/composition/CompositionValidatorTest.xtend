@@ -25,6 +25,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 
 
 @RunWith(typeof(XtextRunner))
@@ -74,8 +75,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)/*,
-			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)*/
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
 		)
 	}	
 	@Test
