@@ -138,14 +138,16 @@ public class EnsurePluginSupport {
 				if (!removableExtensions.isEmpty()) {
 					removeSameExtensions(removableExtensions, extensions);	
 				}
-				ensureExtensions(proj, extensions, removableExtensions);
+				ProjectGenerationHelper.ensureExtensions(proj, extensions,
+						removableExtensions);
 			}
 			// iterate over the remaining removables, remove all prev. extension from the projects
 			for (IProject proj : removableExtensionMap.keySet()) {
 				if (!appendableExtensionMap.containsKey(proj)) {
 					Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
 					Iterable<IPluginExtension> extensions = Lists.newArrayList();
-					ensureExtensions(proj, extensions, removableExtensions);
+					ProjectGenerationHelper.ensureExtensions(proj, extensions,
+							removableExtensions);
 				}
 			}
 		} else {
@@ -154,13 +156,10 @@ public class EnsurePluginSupport {
 			for (IProject proj : removableExtensionMap.keySet()) {
 				Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
 				Iterable<IPluginExtension> extensions = Lists.newArrayList();
-				ensureExtensions(proj, extensions, removableExtensions);
+				ProjectGenerationHelper.ensureExtensions(proj, extensions,
+						removableExtensions);
 			}
 		}
-	}
-	
-	private void ensureExtensions(IProject project, Iterable<IPluginExtension> appendableExtensions, Iterable<Pair<String, String>> removableExtensions) throws CoreException {
-		ProjectGenerationHelper.ensureExtensions(project, appendableExtensions, removableExtensions);
 	}
 
 	private void removeSameExtensions(Collection<Pair<String, String>> removeFrom,
