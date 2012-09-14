@@ -590,7 +590,7 @@ public abstract class ProjectGenerationHelper {
 						return p.getKey().equals(extensionId) && 
 								p.getValue().equals(extension.getPoint());
 					}
-				}); 
+						}, null);
 
 				if (removable == null) {
 					// XXX cloning extensions to remove project name prefixes
