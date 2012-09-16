@@ -11,13 +11,14 @@
 package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -41,29 +42,26 @@ import org.eclipse.ui.internal.misc.StringMatcher;
 public class ElementSelectionDialog extends SelectionStatusDialog {
 
 	private ILabelProvider labelProvider;
+	private IStructuredContentProvider contentProvider;
 	private TableViewer tableViewer;
-	private Map<Object, TableItem> elementMap;
+	//private Map<Object, TableItem> elementMap;
 	private List<Object> elements;
     private String filter = "";
-    private Map<String, Object> labelMap;
     private Text filterText;
     private String header;
     
 	public ElementSelectionDialog(Shell parent, ILabelProvider labelProvider, String header) {
 		super(parent);
 		this.labelProvider = labelProvider;
-		this.elementMap = new HashMap<Object, TableItem>();
-		this.labelMap = new HashMap<String, Object>();
+		this.contentProvider = new ElementSelectionDialogContentProvider();
 		this.elements = new ArrayList<Object>();
 		this.header = header;
 	}
 
 	public void setElements(Object[] elements) {	
 		this.elements.clear();
-		this.labelMap.clear();
 		for (Object element : elements) {
 			this.elements.add(element);
-			this.labelMap.put(this.labelProvider.getText(element), element);
 		}
 	}
 
@@ -83,20 +81,29 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
         createMessageArea(contents);
         createFilterText(contents);
         createElementTable(contents);
-        setSelection(getInitialElementSelections().toArray());
         return contents;
 	}
 	
 	private void createElementTable(Composite parent) {
 		this.tableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		TableViewerColumn col = new TableViewerColumn(this.tableViewer, SWT.NONE);
-		col.getColumn().setWidth(400);
-		col.getColumn().setText(this.header);
+		this.tableViewer.setLabelProvider(this.labelProvider);
+		this.tableViewer.setContentProvider(this.contentProvider);
+		
+		TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
+		column.getColumn().setWidth(400);
+		column.getColumn().setText(this.header);
+		column.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(labelProvider.getText(cell.getElement()));
+				cell.setImage(labelProvider.getImage(cell.getElement()));
+			}
+		});
 		
 		Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
 		filterElements("");
 	}
 	
@@ -146,24 +153,13 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
     	StringMatcher matcher = new StringMatcher(filter+"*", true, false);
     	this.tableViewer.getTable().removeAll();
     	
+    	List<Object> matchedElements = new ArrayList<Object>();
 		for (Object element : elements) {
-			String label = this.labelProvider.getText(element);
-			if (matcher.match(label)) {
-				TableItem item = new TableItem(tableViewer.getTable(), SWT.NONE);
-				item.setData(element);
-				item.setText(label);
-				item.setImage(this.labelProvider.getImage(element));
-				elementMap.put(element, item);
+			if (matcher.match(this.labelProvider.getText(element))) {
+				matchedElements.add(element);
 			}
 		}
+		
+		this.tableViewer.setInput(matchedElements);
     }
-
-	private void setSelection(Object[] selection) {
-		TableItem[] itemSelection = new TableItem[selection.length];
-		int i = 0;
-		for (Object label : selection) {
-			itemSelection[i++] = elementMap.get(labelMap.get(label));
-		}
-		this.tableViewer.getTable().setSelection(itemSelection);
-	}
 }
