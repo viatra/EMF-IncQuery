@@ -13,12 +13,13 @@ package org.eclipse.viatra2.emf.incquery.gui.wizards.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -41,7 +42,7 @@ import org.eclipse.ui.internal.misc.StringMatcher;
 @SuppressWarnings("restriction")
 public class ElementSelectionDialog extends SelectionStatusDialog {
 
-	private ILabelProvider labelProvider;
+	private StyledCellLabelProvider labelProvider;
 	private IStructuredContentProvider contentProvider;
 	private TableViewer tableViewer;
 	//private Map<Object, TableItem> elementMap;
@@ -49,8 +50,35 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
     private String filter = "";
     private Text filterText;
     private String header;
+	private ImportFilter importFilter;
     
-	public ElementSelectionDialog(Shell parent, ILabelProvider labelProvider, String header) {
+	private class ImportFilter extends ViewerFilter {
+
+		private String filterString = "";
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers
+		 * .Viewer, java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			StringMatcher matcher = new StringMatcher("*" + filterString + "*",
+					true,
+					false);
+			if (element instanceof EPackage) {
+				return matcher.match(((EPackage) element).getNsURI());
+			}
+			return true;
+		}
+
+	}
+
+	public ElementSelectionDialog(Shell parent,
+			StyledCellLabelProvider labelProvider, String header) {
 		super(parent);
 		this.labelProvider = labelProvider;
 		this.contentProvider = new ElementSelectionDialogContentProvider();
@@ -86,25 +114,20 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 	
 	private void createElementTable(Composite parent) {
 		this.tableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		this.tableViewer.setLabelProvider(this.labelProvider);
 		this.tableViewer.setContentProvider(this.contentProvider);
+		importFilter = new ImportFilter();
+		this.tableViewer.addFilter(importFilter);
 		
 		TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
 		column.getColumn().setWidth(400);
 		column.getColumn().setText(this.header);
-		column.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				cell.setText(labelProvider.getText(cell.getElement()));
-				cell.setImage(labelProvider.getImage(cell.getElement()));
-			}
-		});
+		column.setLabelProvider(labelProvider);
 		
 		Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		filterElements("");
+		tableViewer.setInput(elements);
 	}
 	
     protected Text createFilterText(Composite parent) {
@@ -122,7 +145,9 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 
         Listener listener = new Listener() {
             public void handleEvent(Event e) {
-                filterElements(filterText.getText());
+				importFilter.filterString = filterText.getText();
+				tableViewer.refresh();
+				// filterElements(filterText.getText());
             }
         };
         text.addListener(SWT.Modify, listener);
@@ -148,18 +173,5 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
         super.open();
         return getReturnCode();
     }
-    
-	private void filterElements(String filter) {
-    	StringMatcher matcher = new StringMatcher(filter+"*", true, false);
-    	this.tableViewer.getTable().removeAll();
-    	
-    	List<Object> matchedElements = new ArrayList<Object>();
-		for (Object element : elements) {
-			if (matcher.match(this.labelProvider.getText(element))) {
-				matchedElements.add(element);
-			}
-		}
-		
-		this.tableViewer.setInput(matchedElements);
-    }
+
 }
