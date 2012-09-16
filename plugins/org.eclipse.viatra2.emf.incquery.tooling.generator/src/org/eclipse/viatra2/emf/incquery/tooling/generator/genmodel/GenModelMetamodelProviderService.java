@@ -14,9 +14,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -126,7 +124,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	@Override
 	public Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException {
 		Preconditions.checkArgument(project.exists() && project.hasNature(IncQueryNature.NATURE_ID), "Only works for EMF-IncQuery projects");
-		Set<EPackage> referencedPackages = Sets.newHashSet();
+		Set<EPackage> referencedPackages = Sets.newLinkedHashSet();
 		IncQueryGeneratorModel generatorModel = getGeneratorModel(project);
 		for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
 			referencedPackages.addAll(Lists.transform(ref.getGenmodel().getGenPackages(), new Function<GenPackage, EPackage>() {
@@ -138,9 +136,8 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 			}));
 		}
 		
-		List<EPackage> allPackages = Lists.newArrayList(referencedPackages);
-		allPackages.addAll(Sets.difference(new HashSet<EPackage>(getMetamodelMap().values()), referencedPackages));
-		return allPackages;
+		referencedPackages.addAll(getMetamodelMap().values());
+		return referencedPackages;
 	}
 
 	@Override
