@@ -37,12 +37,7 @@ public class ElementSelectionDialogContentProvider implements IStructuredContent
 			return (Object[]) inputElement;
 		}
 		else if (inputElement instanceof Collection<?>) {
-			Object[] result = new Object[((Collection<?>) inputElement).size()];
-			int i = 0;
-			for (Object element : (Collection<?>) inputElement) {
-				result[i++] = element;
-			}
-			return result;
+			return ((Collection<?>) inputElement).toArray();
 		}
 		return null;
 	}
