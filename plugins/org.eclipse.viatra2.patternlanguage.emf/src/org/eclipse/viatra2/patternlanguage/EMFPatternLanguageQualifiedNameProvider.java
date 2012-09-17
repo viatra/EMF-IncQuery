@@ -13,6 +13,7 @@ package org.eclipse.viatra2.patternlanguage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -40,6 +41,15 @@ public class EMFPatternLanguageQualifiedNameProvider extends
 			AnnotationParameter parameter = (AnnotationParameter) obj;
 			Annotation annotation = (Annotation) parameter.eContainer();
 			getFullyQualifiedName(annotation).append(parameter.getName());
+		} else if (obj instanceof VariableReference) {
+			VariableReference variableRef = (VariableReference) obj;
+			QualifiedName containerName = getFullyQualifiedName(variableRef.eContainer());
+			String name = variableRef.getVariable().getName();
+			if (containerName == null) {
+				return nameConverter.toQualifiedName(name);
+			} else {
+				return containerName.append(name);
+			}
 		}
 		return super.getFullyQualifiedName(obj);
 	}

@@ -11,12 +11,17 @@
 package org.eclipse.viatra2.patternlanguage.ui.labeling;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverDocumentationProvider;
 
 import com.google.inject.Inject;
@@ -25,6 +30,7 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  *
  */
+@SuppressWarnings("restriction")
 public class EMFPatternLanguageHoverDocumentationProvider extends
 		XbaseHoverDocumentationProvider {
 
@@ -32,6 +38,8 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 	private IEiqGenmodelProvider genmodelProvider;
 	@Inject
 	private PatternAnnotationProvider annotationProvider;
+	@Inject
+	private ITypeProvider typeProvider;
 	
 	@Override
 	public String computeDocumentation(EObject object) {
@@ -60,8 +68,34 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 								.getEcorePackage().eResource().getURI()
 								.toString());
 			}
+		} else if (object instanceof Variable) {
+			Variable variable = (Variable) object;
+			return calculateVariableHover(variable);
+		} else if (object instanceof VariableReference) {
+			VariableReference reference = (VariableReference) object;
+			return calculateVariableHover(reference.getVariable());
 		}
 		return super.computeDocumentation(object);
+	}
+
+	/**
+	 * @param variable
+	 * @return
+	 */
+	private String calculateVariableHover(Variable variable) {
+		JvmTypeReference type = typeProvider.getTypeForIdentifiable(variable);
+		// TODO load emf type here
+		EClassifier emfType = null;
+		String javaTypeString = type.getQualifiedName();
+		String emfTypeString;
+		if (emfType == null) {
+			emfTypeString = "Not applicable";
+		} else {
+			emfTypeString = String.format("%s (%s)", emfType.getName(), emfType
+					.getEPackage().getNsURI());
+		}
+		return String.format("<b>EMF Type</b>: %s</p><p><b>Java Type</b>: %s",
+				emfTypeString, javaTypeString);
 	}
 
 }
