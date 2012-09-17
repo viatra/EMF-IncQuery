@@ -60,7 +60,7 @@ import com.google.inject.Singleton;
  */
 @Singleton
 @SuppressWarnings("restriction")
-public class EMFPatternTypeProvider extends XbaseTypeProvider {
+public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTypeProvider {
 
 	@Inject
 	private TypeReferences typeReferences;
@@ -85,12 +85,14 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			JvmTypeReference typeReference = null;
 			if (classifier != null) {
 				typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
-			} 
+			}
 			if (typeReference == null) {
 				typeReference = typeReferences.getTypeForName(Object.class, variable);
 			}
 			// XXX remove this from commit
-			// System.out.println(variable.getName() + "--" + typeReference.getSimpleName() + "----container:" + variable.eContainer());
+			// System.out.println(variable.getName() + "--" +
+			// typeReference.getSimpleName() + "----container:" +
+			// variable.eContainer());
 			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
@@ -112,7 +114,14 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		return null;
 	}
 
-	private EClassifier getClassifierForVariable(Variable variable) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#
+	 * getClassifierForVariable
+	 * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
+	 */
+	public EClassifier getClassifierForVariable(Variable variable) {
 		EcoreUtil2.resolveAll(variable);
 		EObject container = variable.eContainer();
 		if (container instanceof Pattern) {
