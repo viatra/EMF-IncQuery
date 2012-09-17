@@ -179,15 +179,20 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    	}
    	
 	/**
-	 * Calls the typeProvider. 
-	 * See the XBaseUsageCrossReferencer class, possible solution for local variable usage
-	 * TODO: improve type calculation 
-	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
+	 * <p>Calls the typeProvider. 
+	 * See the XBaseUsageCrossReferencer class, possible solution for local variable usage </p>
+	 * <p><b>Important note</b>: Returns an {@link Object} reference in case of typing error (instead of null)</p> 
+	 * @return JvmTypeReference pointing the EClass that defines the Variable's type or java.lang.Object
 	 * @see ITypeProvider
 	 * @see EMFPatternTypeProvider
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
-   		typeProvider.getTypeForIdentifiable(variable)
+   		val type = typeProvider.getTypeForIdentifiable(variable)
+   		if(type != null){
+   		  type
+   		} else {
+   		  variable.newTypeRef(typeof(Object))
+   		}
    	}
    	
    	/**
