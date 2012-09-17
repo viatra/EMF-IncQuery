@@ -34,9 +34,15 @@ public class EMFPatternLanguageQualifiedNameProvider extends
 	@Override
 	public QualifiedName getFullyQualifiedName(EObject obj) {
 		if (obj instanceof PackageImport) {
-			return nameConverter.toQualifiedName("import.nsUri." + ((PackageImport)obj).getEPackage().getNsURI());
+			PackageImport packageImport = (PackageImport) obj;
+			String nsURI = (packageImport.getEPackage() != null) ? packageImport
+					.getEPackage().getNsURI() : "<none>";
+			return nameConverter.toQualifiedName("import.nsUri." + nsURI);
 		} else if (obj instanceof Annotation) {
-			return nameConverter.toQualifiedName("annotation." + ((Annotation) obj).getName());
+			Annotation annotation = (Annotation) obj;
+			String name = (annotation != null) ? annotation.getName()
+					: "<none>";
+			return nameConverter.toQualifiedName("annotation." + name);
 		} else if (obj instanceof AnnotationParameter) {
 			AnnotationParameter parameter = (AnnotationParameter) obj;
 			Annotation annotation = (Annotation) parameter.eContainer();
