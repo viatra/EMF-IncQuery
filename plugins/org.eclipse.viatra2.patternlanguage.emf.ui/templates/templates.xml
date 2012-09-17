@@ -5,7 +5,7 @@
 		context="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.Pattern"
 		deleted="false" description="template for a Pattern"
 		enabled="true" name="Pattern"
-		>pattern ${name}(${paramName} : ${paramType}) = {
+		>pattern ${name}(${paramName} : ${paramType}) {
 	${cursor}
 }</template>
 </templates>
