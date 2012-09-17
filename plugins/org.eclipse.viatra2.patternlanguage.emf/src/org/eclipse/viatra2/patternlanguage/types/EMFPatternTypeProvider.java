@@ -85,7 +85,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 			JvmTypeReference typeReference = null;
 			if (classifier != null) {
 				typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
-			} else {
+			} 
+			if (typeReference == null) {
 				typeReference = typeReferences.getTypeForName(Object.class, variable);
 			}
 			// XXX remove this from commit
