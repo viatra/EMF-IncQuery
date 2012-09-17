@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
@@ -88,8 +89,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 				typeReference = typeReferences.getTypeForName(Object.class, variable);
 			}
 			// XXX remove this from commit
-			// System.out.println(variable.getName() + "--" +
-			// typeReference.getSimpleName());
+			// System.out.println(variable.getName() + "--" + typeReference.getSimpleName() + "----container:" + variable.eContainer());
 			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
@@ -159,27 +159,30 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		}
 
 		if (!intermediateResultList.isEmpty()) {
-			Set<EClassifier> resultSuperTypes = null;
-			for (EClassifier classifier : intermediateResultList) {
-				if (classifier instanceof EClass) {
-					if (resultSuperTypes == null) {
-						resultSuperTypes = new LinkedHashSet<EClassifier>();
-						resultSuperTypes.addAll(((EClass) classifier).getEAllSuperTypes());
-						resultSuperTypes.add(classifier);
+			if (intermediateResultList.size() == 1) {
+				return (EClassifier) intermediateResultList.toArray()[0];
+			} else {
+				Set<EClassifier> resultSuperTypes = null;
+				for (EClassifier classifier : intermediateResultList) {
+					if (classifier instanceof EClass) {
+						if (resultSuperTypes == null) {
+							resultSuperTypes = new LinkedHashSet<EClassifier>();
+							resultSuperTypes.addAll(((EClass) classifier).getEAllSuperTypes());
+							resultSuperTypes.add(classifier);
+						} else {
+							Set<EClassifier> nextSet = new LinkedHashSet<EClassifier>();
+							nextSet.addAll(((EClass) classifier).getEAllSuperTypes());
+							nextSet.add(classifier);
+							resultSuperTypes.retainAll(nextSet);
+						}
 					} else {
-						Set<EClassifier> nextSet = new LinkedHashSet<EClassifier>();
-						nextSet.addAll(((EClass) classifier).getEAllSuperTypes());
-						nextSet.add(classifier);
-						resultSuperTypes.retainAll(nextSet);
+						return null;
 					}
-				} else {
-					return null;
 				}
-			}
-
-			if (!resultSuperTypes.isEmpty()) {
-				Object[] result = resultSuperTypes.toArray();
-				return (EClassifier) result[result.length - 1];
+				if (!resultSuperTypes.isEmpty()) {
+					Object[] result = resultSuperTypes.toArray();
+					return (EClassifier) result[result.length - 1];
+				}
 			}
 		}
 		return null;
@@ -191,9 +194,17 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider {
 		EClassifier classifier = null;
 
 		// Calculate it with just the variable only (works only for parameters)
-		classifier = getClassifierForVariableWithType(variable.getType(), variable);
-		if (classifier != null) {
-			possibleClassifiersList.add(classifier);
+		if (variable instanceof ParameterRef) {
+			Variable referredParameter = ((ParameterRef) variable).getReferredParam();
+			classifier = getClassifierForVariableWithType(referredParameter.getType(), referredParameter);
+			if (classifier != null) {
+				possibleClassifiersList.add(classifier);
+			}
+		} else {
+			classifier = getClassifierForVariableWithType(variable.getType(), variable);
+			if (classifier != null) {
+				possibleClassifiersList.add(classifier);
+			}
 		}
 
 		// Calculate it from the constraints
