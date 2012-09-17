@@ -565,7 +565,7 @@
    <extension
          point="org.eclipse.viatra2.patternlanguage.core.annotation">
       <annotation
-            description="The annotation defines whether the pattern should appear in the Query Explorer&apos;s Pattern Registry."
+            description="The annotation can be used to define the way to present the pattern and its match set in the Query Explorer. "
             name="QueryExplorer">
          <annotationparameter
                description="Possible values: &amp;quot;true&amp;quot; to display and &amp;quot;false&amp;quot; to not display."
@@ -573,6 +573,13 @@
                multiple="false"
                name="display"
                type="boolean">
+         </annotationparameter>
+         <annotationparameter
+               description="This message will appear for each match of the pattern. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.&quot;"
+               mandatory="true"
+               multiple="false"
+               name="message"
+               type="string">
          </annotationparameter>
       </annotation>
       <annotation
