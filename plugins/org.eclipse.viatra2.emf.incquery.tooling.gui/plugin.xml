@@ -576,7 +576,7 @@
          </annotationparameter>
          <annotationparameter
                description="This message will appear for each match of the pattern. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.&quot;"
-               mandatory="true"
+               mandatory="false"
                multiple="false"
                name="message"
                type="string">
