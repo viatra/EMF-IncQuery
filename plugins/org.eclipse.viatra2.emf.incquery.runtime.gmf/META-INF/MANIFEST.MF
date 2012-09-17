@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery GMF extensions
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.runtime.gmf;singleton:=true
 Bundle-Version: 0.6.5.qualifier
-Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.Activator
+Bundle-Activator: org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.Activator
 Bundle-Vendor: Gabor Bergmann, Istvan Rath
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -16,4 +16,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions;bundle-version="3.4.300"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers
+Export-Package: org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers

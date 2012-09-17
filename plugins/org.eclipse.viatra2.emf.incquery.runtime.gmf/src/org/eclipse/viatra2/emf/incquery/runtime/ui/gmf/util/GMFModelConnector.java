@@ -8,7 +8,7 @@
  * Contributors:
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util;
+package org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.util;
 
 import java.util.ArrayList;
 import java.util.List;

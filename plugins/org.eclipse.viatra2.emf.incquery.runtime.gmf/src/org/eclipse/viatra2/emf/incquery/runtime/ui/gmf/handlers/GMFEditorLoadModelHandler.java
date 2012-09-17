@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers;
+package org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -22,7 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util.GMFModelConnector;
+import org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.util.GMFModelConnector;
 
 public class GMFEditorLoadModelHandler extends AbstractHandler implements
 		IHandler {

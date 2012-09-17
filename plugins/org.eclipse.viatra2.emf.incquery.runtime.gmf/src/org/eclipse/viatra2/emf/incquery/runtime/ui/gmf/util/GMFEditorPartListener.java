@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.util;
+package org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.util;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;

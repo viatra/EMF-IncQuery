@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers;
+package org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers;
 
 import java.util.HashSet;
 import java.util.Set;
