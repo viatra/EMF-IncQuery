@@ -20,6 +20,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParame
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
+import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverDocumentationProvider;
@@ -40,6 +41,8 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 	private PatternAnnotationProvider annotationProvider;
 	@Inject
 	private ITypeProvider typeProvider;
+	@Inject
+	private IEMFTypeProvider emfTypeProvider;
 	
 	@Override
 	public String computeDocumentation(EObject object) {
@@ -84,17 +87,17 @@ public class EMFPatternLanguageHoverDocumentationProvider extends
 	 */
 	private String calculateVariableHover(Variable variable) {
 		JvmTypeReference type = typeProvider.getTypeForIdentifiable(variable);
-		// TODO load emf type here
-		EClassifier emfType = null;
+		EClassifier emfType = emfTypeProvider
+				.getClassifierForVariable(variable);
 		String javaTypeString = type.getQualifiedName();
 		String emfTypeString;
 		if (emfType == null) {
 			emfTypeString = "Not applicable";
 		} else {
-			emfTypeString = String.format("%s (%s)", emfType.getName(), emfType
-					.getEPackage().getNsURI());
+			emfTypeString = String.format("%s (<i>%s</i>)", emfType.getName(),
+					emfType.getEPackage().getNsURI());
 		}
-		return String.format("<b>EMF Type</b>: %s</p><p><b>Java Type</b>: %s",
+		return String.format("<b>EMF Type</b>: %s<br /><b>Java Type</b>: %s",
 				emfTypeString, javaTypeString);
 	}
 
