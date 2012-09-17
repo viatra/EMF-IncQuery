@@ -323,14 +323,18 @@ public class DatabindingUtil {
 		for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
 			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 				pattern = p;
-				for (Annotation a : p.getAnnotations()) {
-					if (a.getName().matches(PATTERNUI_ANNOTATION)) {							
-						for (AnnotationParameter ap : a.getParameters()) {
-							if (ap.getName().matches("message")) {
-								ValueReference valRef = ap.getValue();
-								if (valRef instanceof StringValueImpl) {
-									return ((StringValueImpl) valRef).getValue();
-								}
+				
+				Annotation annotation = getAnnotation(p, QUERY_EXPLORER_ANNOTATION);
+				if (annotation == null) {
+					// Try with deprecated PatternUI annotation
+					annotation = getAnnotation(p, PATTERNUI_ANNOTATION);
+				}
+				if (annotation != null) {
+					for (AnnotationParameter ap : annotation.getParameters()) {
+						if (ap.getName().matches("message")) {
+							ValueReference valRef = ap.getValue();
+							if (valRef instanceof StringValueImpl) {
+								return ((StringValueImpl) valRef).getValue();
 							}
 						}
 					}
@@ -413,31 +417,30 @@ public class DatabindingUtil {
 			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 				pattern = p;
 
-				for (Annotation a : p.getAnnotations()) {
-					if (a.getName().matches(OBSERVABLEVALUE_ANNOTATION)) {
-						annotationFound = true;
-						String key = null, value = null;
+				Annotation annotation = getAnnotation(p, OBSERVABLEVALUE_ANNOTATION);
+				annotationFound = true;
+				String key = null, value = null;
 
-						for (AnnotationParameter ap : a.getParameters()) {
-							if (ap.getName().matches("name")) {
-								ValueReference valRef = ap.getValue();
-								if (valRef instanceof StringValueImpl) {
-									key = ((StringValueImpl) valRef).getValue();
-								}
-							}
-
-							if (ap.getName().matches("expression")) {
-								ValueReference valRef = ap.getValue();
-								if (valRef instanceof StringValueImpl) {
-									value = ((StringValueImpl) valRef).getValue();
-								}
+				if (annotation != null) {
+					for (AnnotationParameter ap : annotation.getParameters()) {
+						if (ap.getName().matches("name")) {
+							ValueReference valRef = ap.getValue();
+							if (valRef instanceof StringValueImpl) {
+								key = ((StringValueImpl) valRef).getValue();
 							}
 						}
-
-						if (key != null && value != null) {
-							adapter.putToParameterMap(key, value);
+	
+						if (ap.getName().matches("expression")) {
+							ValueReference valRef = ap.getValue();
+							if (valRef instanceof StringValueImpl) {
+								value = ((StringValueImpl) valRef).getValue();
+							}
 						}
 					}
+				}
+
+				if (key != null && value != null) {
+					adapter.putToParameterMap(key, value);
 				}
 			}
 		}
