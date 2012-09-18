@@ -31,6 +31,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	   var EClass patternClass
 	   var EClass bodyClass
 	   var EClass varClass 
+	   var EClass paramRefClass
 	   var EClass varRefClass
 	   var EClass pathExpressionConstraint
 	   var EClass pathExpressionElement
@@ -42,6 +43,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
            	 case "Pattern": patternClass = c
            	 case "PatternBody": bodyClass = c
            	 case "Variable": varClass = c
+           	 case "ParameterRef": paramRefClass = c
            	 case "VariableReference": varRefClass = c
            	 case "PathExpressionConstraint": pathExpressionConstraint = c
            	 case "PathExpressionElement": pathExpressionElement = c
@@ -61,10 +63,12 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        
        varClass.addJvmIdentifiableOperations
        
+       paramRefClass.setTransientReference
        varRefClass.addWarningComment
        
        type.updateTypeClass
 	}
+
 	
 	def addJvmIdentifiableOperations(EClass varClass) {
 		val getSimpleNameOp = EcoreFactory::eINSTANCE.createEOperation
@@ -249,5 +253,10 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 
 		This is significant when using anonymous variables (named '_').</p>"); 
 		varFeature.EAnnotations += annotation
+	}
+	
+	def setTransientReference(EClass paramRefClass) { 
+		val ref = paramRefClass.EAllReferences.findFirst(r | r.name == "referredParam")
+		ref.transient = true
 	}
 }
