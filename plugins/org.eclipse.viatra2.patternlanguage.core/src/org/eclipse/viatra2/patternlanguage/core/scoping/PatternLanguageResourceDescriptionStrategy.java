@@ -14,7 +14,10 @@ import java.util.Collections;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -39,6 +42,16 @@ public class PatternLanguageResourceDescriptionStrategy extends DefaultResourceD
 				acceptor.accept(EObjectDescription.create(qualifiedName, eObject, Collections.singletonMap("private", String.valueOf(isPrivate))));
 			}
 			return true;
+		} else if (eObject instanceof Variable
+				&& !(eObject.eContainer() instanceof Pattern)) {
+			// Internal variable - not usable from outside
+			return false;
+		} else if (eObject instanceof Constraint) {
+			// Constraints are not needed in the index
+			return false;
+		} else if (eObject instanceof PatternBody) {
+			// Pattern bodies are not needed in the index
+			return false;
 		}
 		return super.createEObjectDescriptions(eObject, acceptor);
 	}
