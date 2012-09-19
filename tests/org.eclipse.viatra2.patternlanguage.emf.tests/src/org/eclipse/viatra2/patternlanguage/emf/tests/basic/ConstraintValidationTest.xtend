@@ -79,6 +79,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightVariableCompareValidation() {
 		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 			pattern constantCompareTest(Name) = {
 				1 == Name;
 				IntValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
@@ -103,6 +104,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftVariableCompareValidation() {
 		val model = parseHelper.parse('
+			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
 			pattern constantCompareTest(Name) = {
 				Name == "Test";
 				StringValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
