@@ -30,6 +30,8 @@ public final class EMFIssueCodes {
 	public static final String LOCAL_VARIABLE_NO_POSITIVE_REFERENCE = ISSUE_CODE_PREFIX + "local_variable_no_positive_reference";
 	public static final String ANONYM_VARIABLE_MULTIPLE_REFERENCE = ISSUE_CODE_PREFIX + "anonym_variable_multiple_reference";
 	public static final String SINGLEUSE_PARAMETER = ISSUE_CODE_PREFIX + "singleuse_parameter";
+	public static final String PARAMETER_TYPE_INVALID = ISSUE_CODE_PREFIX + "parameter_type_invalid";
+	public static final String VARIABLE_TYPE_INVALID = ISSUE_CODE_PREFIX + "variable_type_invalid";
 	
 	public static final String IDENTIFIER_AS_KEYWORD = ISSUE_CODE_PREFIX + "identifier_as_keyword";
 
