@@ -17,6 +17,7 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.derived</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime.gmf</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime.graphiti</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator</module>
@@ -50,6 +51,7 @@
 		<module>../../features/org.eclipse.viatra2.emf.incquery.testing.sdk</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
 		<module>../../releng/org.eclipse.viatra2.emf.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
