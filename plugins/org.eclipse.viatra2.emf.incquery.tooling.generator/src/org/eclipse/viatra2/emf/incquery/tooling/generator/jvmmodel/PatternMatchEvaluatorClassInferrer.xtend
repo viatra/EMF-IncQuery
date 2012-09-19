@@ -83,6 +83,7 @@ class PatternMatchEvaluatorClassInferrer {
    	 * Infers methods for checker class based on the input 'pattern'.
    	 */  	
   	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, XExpression xExpression, JvmTypeReference type) {
+  		if (xExpression == null) return
   		checkerClass.members += pattern.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(type)) [
   			it.visibility = JvmVisibility::PRIVATE
 			for (variable : CorePatternLanguageHelper::getReferencedPatternVariablesOfXExpression(xExpression)){
