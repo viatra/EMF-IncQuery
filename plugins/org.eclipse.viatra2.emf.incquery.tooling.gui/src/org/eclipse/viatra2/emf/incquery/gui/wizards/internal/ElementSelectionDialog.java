@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -123,10 +125,27 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 		column.getColumn().setText(this.header);
 		column.setLabelProvider(labelProvider);
 		
-		Table table = tableViewer.getTable();
+        final Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+
+        table.addMouseListener(new MouseAdapter() {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+             */
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                if (table.getSelectionCount() > 0) {
+                    okPressed();
+                }
+            }
+
+        });
+
 		tableViewer.setInput(elements);
 	}
 	
