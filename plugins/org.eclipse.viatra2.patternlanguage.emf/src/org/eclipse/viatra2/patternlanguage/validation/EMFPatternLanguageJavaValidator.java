@@ -436,9 +436,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 		for (Variable variable : pattern.getParameters()) {
 			EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
 			EClassifier classifierDefined = emfTypeProvider.getClassifierForType(variable.getType());
-			if (classifierDefined.equals(classifierCorrect)) {
-				// Correct they are the same
-				return;
+            if (classifierCorrect == null || classifierDefined == null || classifierDefined.equals(classifierCorrect)) {
+                // Either correct - they are the same, or other validator returns the type error
+                return;
 			} else {
 				if (classifierCorrect instanceof EClass && classifierDefined instanceof EClass) {
 					if (((EClass) classifierDefined).getEAllSuperTypes().contains(classifierCorrect)) {
