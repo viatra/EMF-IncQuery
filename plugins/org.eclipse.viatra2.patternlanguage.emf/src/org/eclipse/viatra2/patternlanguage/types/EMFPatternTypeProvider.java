@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -197,10 +198,12 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
             return true;
         } else {
             if (possibleClassifiersList.size() == 1) {
+                //TODO could this branch be merged with the previous one?
                 return true;
             } else {
                 possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
-                return false;
+                //TODO check whether this solution is correct or not 
+                return possibleClassifiersList.size() <= 1;
             }
         }
     }
@@ -321,9 +324,13 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                             VariableReference variableReference = variableValue.getValue();
                             if (isEqualVariables(variable, variableReference)) {
                                 Pattern pattern = patternCall.getPatternRef();
-                                Variable variableInCalledPattern = pattern.getParameters().get(parameterIndex);
-                                possibleClassifiersList.add(getClassifierForVariableWithPattern(pattern,
-                                        variableInCalledPattern, recursionCallingLevel + 1));
+                                EList<Variable> parameters = pattern.getParameters();
+                                // In case of incorrect number of parameters we might check for non-existing parameters
+                                if (parameters.size() > parameterIndex) {
+                                    Variable variableInCalledPattern = parameters.get(parameterIndex);
+                                    possibleClassifiersList.add(getClassifierForVariableWithPattern(pattern,
+                                            variableInCalledPattern, recursionCallingLevel + 1));
+                                }
                             }
                         }
                         parameterIndex++;
