@@ -51,7 +51,9 @@ public class EMFPatternLanguageQualifiedNameProvider extends
 			VariableReference variableRef = (VariableReference) obj;
 			QualifiedName containerName = getFullyQualifiedName(variableRef.eContainer());
 			String name = variableRef.getVariable().getName();
-			if (containerName == null) {
+			if (name == null) {
+				return nameConverter.toQualifiedName("<none>");
+			} else if (containerName == null) {
 				return nameConverter.toQualifiedName(name);
 			} else {
 				return containerName.append(name);
