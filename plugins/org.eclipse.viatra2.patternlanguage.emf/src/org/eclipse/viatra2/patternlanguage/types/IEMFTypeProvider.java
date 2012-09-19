@@ -11,11 +11,15 @@
 package org.eclipse.viatra2.patternlanguage.types;
 
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 /**
  * A small interface extending the {@link ITypeProvider} capabilities.
  */
+@SuppressWarnings("restriction")
 public interface IEMFTypeProvider {
 
 	/**
@@ -24,5 +28,20 @@ public interface IEMFTypeProvider {
 	 *         null, if it fails.
 	 */
 	public EClassifier getClassifierForVariable(Variable variable);
+
+	/**
+	 * @param type
+	 * @return the {@link EClassifier} for the given {@link Type}. Returns null,
+	 *         if it fails.
+	 */
+	public EClassifier getClassifierForType(Type type);
+
+	/**
+	 * @param patternBody
+	 * @param variable
+	 * @return true if the variable's type can be calculated correctly. False if
+	 *         it has more conflicting type constraints.
+	 */
+	public boolean isVariableProperlyDefinedInBody(PatternBody patternBody, Variable variable);
 
 }

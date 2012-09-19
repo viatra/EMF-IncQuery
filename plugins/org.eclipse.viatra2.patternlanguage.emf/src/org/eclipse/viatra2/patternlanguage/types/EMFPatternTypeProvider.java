@@ -90,9 +90,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 				typeReference = typeReferences.getTypeForName(Object.class, variable);
 			}
 			// XXX remove this from commit
-			// System.out.println(variable.getName() + "--" +
-			// typeReference.getSimpleName() + "----container:" +
-			// variable.eContainer());
+			// System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
 			return typeReference;
 		}
 		return super.typeForIdentifiable(identifiable, rawType);
@@ -121,28 +119,16 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 	 * getClassifierForVariable
 	 * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
 	 */
+	@Override
 	public EClassifier getClassifierForVariable(Variable variable) {
 		EcoreUtil2.resolveAll(variable);
 		EObject container = variable.eContainer();
 		if (container instanceof Pattern) {
-			return getClassifiersForVariableWithPattern((Pattern) container, variable, 0);
+			return getClassifierForVariableWithPattern((Pattern) container, variable, 0);
 		} else if (container instanceof PatternBody) {
-			return getClassifiersForVariableWithPatternBody((PatternBody) container, variable, 0, null);
+			return getClassifierForVariableWithPatternBody((PatternBody) container, variable, 0, null);
 		}
 		return null;
-	}
-
-	private EClassifier getClassifierFromPossibleClassifiersList(Set<EClassifier> classifierList) {
-		if (classifierList.isEmpty()) {
-			return null;
-		} else {
-			if (classifierList.size() == 1) {
-				return (EClassifier) classifierList.toArray()[0];
-			} else {
-				classifierList = minimizeClassifiersList(classifierList);
-				return (EClassifier) classifierList.toArray()[0];
-			}
-		}
 	}
 
 	private Set<EClassifier> minimizeClassifiersList(Set<EClassifier> classifierList) {
@@ -159,10 +145,10 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 		return resultList;
 	}
 
-	private EClassifier getClassifiersForVariableWithPattern(Pattern pattern, Variable variable, int recursionCallingLevel) {
+	private EClassifier getClassifierForVariableWithPattern(Pattern pattern, Variable variable, int recursionCallingLevel) {
 		Set<EClassifier> intermediateResultList = new HashSet<EClassifier>();
 		for (PatternBody body : pattern.getBodies()) {
-			EClassifier classifier = getClassifiersForVariableWithPatternBody(body, variable, recursionCallingLevel, null);
+			EClassifier classifier = getClassifierForVariableWithPatternBody(body, variable, recursionCallingLevel, null);
 			if (classifier != null) {
 				intermediateResultList.add(classifier);
 			}
@@ -198,20 +184,61 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 		return null;
 	}
 
-	private EClassifier getClassifiersForVariableWithPatternBody(PatternBody patternBody, Variable variable, int recursionCallingLevel,
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#
+	 * isVariableProperlyDefinedInBody
+	 * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody,
+	 * org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
+	 */
+	@Override
+	public boolean isVariableProperlyDefinedInBody(PatternBody patternBody, Variable variable) {
+		Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable, 0, null);
+		if (possibleClassifiersList.isEmpty()) {
+			return true;
+		} else {
+			if (possibleClassifiersList.size() == 1) {
+				return true;
+			} else {
+				possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
+				return false;
+			}
+		}
+	}
+
+	private EClassifier getClassifierForVariableWithPatternBody(PatternBody patternBody, Variable variable, int recursionCallingLevel,
 			Variable injectiveVariablePair) {
+		Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable, recursionCallingLevel,
+				injectiveVariablePair);
+		if (possibleClassifiersList.isEmpty()) {
+			return null;
+		} else {
+			if (possibleClassifiersList.size() == 1) {
+				return (EClassifier) possibleClassifiersList.toArray()[0];
+			} else {
+				possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
+				return (EClassifier) possibleClassifiersList.toArray()[0];
+			}
+		}
+	}
+
+	private Set<EClassifier> getClassifiersForVariableWithPatternBody(PatternBody patternBody, Variable variable,
+			int recursionCallingLevel, Variable injectiveVariablePair) {
 		Set<EClassifier> possibleClassifiersList = new HashSet<EClassifier>();
 		EClassifier classifier = null;
 
 		// Calculate it with just the variable only (works only for parameters)
 		if (variable instanceof ParameterRef) {
 			Variable referredParameter = ((ParameterRef) variable).getReferredParam();
-			classifier = getClassifierForVariableWithType(referredParameter.getType(), referredParameter);
+			// if (referredParameter != null) {
+			classifier = getClassifierForType(referredParameter.getType());
 			if (classifier != null) {
 				possibleClassifiersList.add(classifier);
 			}
+			// }
 		} else {
-			classifier = getClassifierForVariableWithType(variable.getType(), variable);
+			classifier = getClassifierForType(variable.getType());
 			if (classifier != null) {
 				possibleClassifiersList.add(classifier);
 			}
@@ -223,7 +250,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 				EClassifierConstraint eClassifierConstraint = (EClassifierConstraint) constraint;
 				if (isEqualVariables(variable, eClassifierConstraint.getVar())) {
 					Type type = eClassifierConstraint.getType();
-					classifier = getClassifierForVariableWithType(type, variable);
+					classifier = getClassifierForType(type);
 					if (classifier != null) {
 						possibleClassifiersList.add(classifier);
 					}
@@ -237,7 +264,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 				// test if the current variable is referenced by the varRef
 				if (isEqualVariables(variable, variableReference)) {
 					Type type = pathExpressionHead.getType();
-					classifier = getClassifierForVariableWithType(type, variable);
+					classifier = getClassifierForType(type);
 					if (classifier != null) {
 						possibleClassifiersList.add(classifier);
 					}
@@ -248,7 +275,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 					final VariableReference secondVariableReference = ((VariableValue) valueReference).getValue();
 					if (isEqualVariables(variable, secondVariableReference)) {
 						Type type = computeTypeFromPathExpressionTail(pathExpressionHead.getTail());
-						classifier = getClassifierForVariableWithType(type, variable);
+						classifier = getClassifierForType(type);
 						if (classifier != null) {
 							possibleClassifiersList.add(classifier);
 						}
@@ -265,13 +292,13 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 						if (isEqualVariables(variable, leftVariableValue.getValue())) {
 							Variable newPossibleInjectPair = rightVariableValue.getValue().getVariable();
 							if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
-								possibleClassifiersList.add(getClassifiersForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+								possibleClassifiersList.add(getClassifierForVariableWithPatternBody(patternBody, newPossibleInjectPair,
 										recursionCallingLevel, variable));
 							}
 						} else if (isEqualVariables(variable, rightVariableValue.getValue())) {
 							Variable newPossibleInjectPair = leftVariableValue.getValue().getVariable();
 							if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
-								possibleClassifiersList.add(getClassifiersForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+								possibleClassifiersList.add(getClassifierForVariableWithPatternBody(patternBody, newPossibleInjectPair,
 										recursionCallingLevel, variable));
 							}
 						}
@@ -290,7 +317,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 							if (isEqualVariables(variable, variableReference)) {
 								Pattern pattern = patternCall.getPatternRef();
 								Variable variableInCalledPattern = pattern.getParameters().get(parameterIndex);
-								possibleClassifiersList.add(getClassifiersForVariableWithPattern(pattern, variableInCalledPattern,
+								possibleClassifiersList.add(getClassifierForVariableWithPattern(pattern, variableInCalledPattern,
 										recursionCallingLevel + 1));
 							}
 						}
@@ -299,7 +326,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 				}
 			}
 		}
-		return getClassifierFromPossibleClassifiersList(possibleClassifiersList);
+
+		return possibleClassifiersList;
 	}
 
 	private Type computeTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
@@ -312,7 +340,15 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 		return pathExpressionTail.getType();
 	}
 
-	private EClassifier getClassifierForVariableWithType(Type type, Variable variable) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#
+	 * getClassifierForType
+	 * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type)
+	 */
+	@Override
+	public EClassifier getClassifierForType(Type type) {
 		EClassifier result = null;
 		if (type != null) {
 			if (type instanceof ClassType) {
