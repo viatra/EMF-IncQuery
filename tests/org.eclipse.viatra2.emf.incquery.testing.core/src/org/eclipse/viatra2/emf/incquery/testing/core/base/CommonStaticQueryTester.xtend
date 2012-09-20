@@ -19,14 +19,14 @@ abstract class CommonStaticQueryTester {
 		val sns = snapshot
 		val matcher = queryInputXMI.initializeMatcherFromModel(sns.EMFRootForSnapshot, queryFQN)
 		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryFQN))
-		assertArrayEquals(newHashSet,results)
+		assertArrayEquals(results.logDifference,newHashSet,results)
 	}
 	
 	def testQuery(IMatcherFactory queryMF){
 		val sns = snapshot
 		val matcher = queryMF.getMatcher(sns.EMFRootForSnapshot)//queryInputXMI.initializeMatcherFromModel(sns.EMFRootForSnapshot, queryFQN)
 		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryMF.patternFullyQualifiedName))
-		assertArrayEquals(newHashSet,results)
+		assertArrayEquals(results.logDifference,newHashSet,results)
 	}
 		
 	def snapshot() { // Creates new resource set
