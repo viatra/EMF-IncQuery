@@ -28,6 +28,8 @@ import org.eclipse.xtext.xbase.typing.ITypeProvider
 import static org.junit.Assert.*
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EClassifier
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -206,6 +208,33 @@ class TypeInferenceTest {
 		
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
+	}
+	
+	@Test
+	def parameterTest() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern parameterTest(parameter) = {
+				EDataType(parameter); 
+			} or { 
+				EClass(parameter);
+			} 
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		
+		val parameter1 = model.patterns.get(0).parameters.get(0)
+		val variable1 = model.patterns.get(0).bodies.get(0).variables.get(0)
+		val variable2 = model.patterns.get(0).bodies.get(1).variables.get(0)
+		
+		val type1 = typeProvider.getTypeForIdentifiable(parameter1)
+		val type2 = typeProvider.getTypeForIdentifiable(variable1)
+		val type3 = typeProvider.getTypeForIdentifiable(variable2)
+		
+		assertEquals(typeof(EClassifier).canonicalName, type1.qualifiedName)
+		assertEquals(typeof(EDataType).canonicalName, type2.qualifiedName)
+		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
 	}
 	
 }
