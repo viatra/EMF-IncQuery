@@ -186,19 +186,19 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider# isVariableProperlyDefinedInBody
-     * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody,
+     * @see
+     * org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#getPossibleClassifiersForVariableInBody(org.eclipse
+     * .viatra2.patternlanguage.core.patternLanguage.PatternBody,
      * org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
      */
     @Override
-    public boolean isVariableProperlyDefinedInBody(PatternBody patternBody, Variable variable) {
+    public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable) {
         Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable, 0,
                 null);
         if (possibleClassifiersList.size() <= 1) {
-            return true;
+            return possibleClassifiersList;
         } else {
-            possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
-            return possibleClassifiersList.size() <= 1;
+            return minimizeClassifiersList(possibleClassifiersList);
         }
     }
 

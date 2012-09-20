@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.types;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
@@ -22,26 +24,23 @@ import org.eclipse.xtext.xbase.typing.ITypeProvider;
 @SuppressWarnings("restriction")
 public interface IEMFTypeProvider {
 
-	/**
-	 * @param variable
-	 * @return the {@link EClassifier} for the given {@link Variable}. Returns
-	 *         null, if it fails.
-	 */
-	public EClassifier getClassifierForVariable(Variable variable);
+    /**
+     * @param variable
+     * @return the {@link EClassifier} for the given {@link Variable}. Returns null, if it fails.
+     */
+    public EClassifier getClassifierForVariable(Variable variable);
 
-	/**
-	 * @param type
-	 * @return the {@link EClassifier} for the given {@link Type}. Returns null,
-	 *         if it fails.
-	 */
-	public EClassifier getClassifierForType(Type type);
+    /**
+     * @param type
+     * @return the {@link EClassifier} for the given {@link Type}. Returns null, if it fails.
+     */
+    public EClassifier getClassifierForType(Type type);
 
-	/**
-	 * @param patternBody
-	 * @param variable
-	 * @return true if the variable's type can be calculated correctly. False if
-	 *         it has more conflicting type constraints.
-	 */
-	public boolean isVariableProperlyDefinedInBody(PatternBody patternBody, Variable variable);
+    /**
+     * @param patternBody
+     * @param variable
+     * @return the list of possible classifiers computed from the constraints in the patternbody.
+     */
+    public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable);
 
 }
