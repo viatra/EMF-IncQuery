@@ -5,6 +5,8 @@
    <extension
          point="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features">
       <wellbehaving-derived-feature
+            classifier-name="EGenericType"
+            feature-name="eRawType"
             package-nsUri="http://www.eclipse.org/emf/2002/Ecore">
       </wellbehaving-derived-feature>
    </extension>
