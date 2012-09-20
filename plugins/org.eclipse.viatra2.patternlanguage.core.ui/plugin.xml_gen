@@ -285,7 +285,7 @@
 		</handler>
 		<handler 
 			class="org.eclipse.viatra2.patternlanguage.core.ui.PatternLanguageExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchyHandler"
-			commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy">
+			commandId="org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchy">
 			<activeWhen>
 				<reference
 					definitionId="org.eclipse.viatra2.patternlanguage.core.PatternLanguage.Editor.opened">
@@ -306,7 +306,7 @@
 		</menuContribution>
 		<menuContribution
 			locationURI="popup:#TextEditorContext?after=group.open">
-			<command commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy"
+			<command commandId="org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchy"
 				style="push"
 				tooltip="Quick Type Hierarchy">
 				<visibleWhen checkEnabled="false">
