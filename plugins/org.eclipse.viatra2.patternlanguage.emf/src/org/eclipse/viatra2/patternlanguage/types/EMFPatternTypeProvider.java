@@ -194,17 +194,11 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     public boolean isVariableProperlyDefinedInBody(PatternBody patternBody, Variable variable) {
         Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable, 0,
                 null);
-        if (possibleClassifiersList.isEmpty()) {
+        if (possibleClassifiersList.size() <= 1) {
             return true;
         } else {
-            if (possibleClassifiersList.size() == 1) {
-                //TODO could this branch be merged with the previous one?
-                return true;
-            } else {
-                possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
-                //TODO check whether this solution is correct or not 
-                return possibleClassifiersList.size() <= 1;
-            }
+            possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
+            return possibleClassifiersList.size() <= 1;
         }
     }
 
