@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="ASCII"?>
+<eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage" xmlns:types="http://www.eclipse.org/xtext/common/JavaVMTypes" xmlns:xbase="http://www.eclipse.org/xtext/xbase/Xbase">
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eType" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement/eType"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.many" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement/upperBound"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="UpperBound"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CheckConstraint">
+        <expression xsi:type="xbase:XBinaryOperation">
+          <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.BooleanExtensions#org.eclipse.xtext.xbase.lib.BooleanExtensions.operator_equals(boolean,boolean)"/>
+          <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.1/@bodies.0/@variables.1"/>
+          <rightOperand xsi:type="xbase:XBinaryOperation">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.BooleanExtensions#org.eclipse.xtext.xbase.lib.BooleanExtensions.operator_or(boolean,boolean)"/>
+            <leftOperand xsi:type="xbase:XBinaryOperation">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_greaterThan(int,int)"/>
+              <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.1/@bodies.0/@variables.2"/>
+              <rightOperand xsi:type="xbase:XNumberLiteral" value="1"/>
+            </leftOperand>
+            <rightOperand xsi:type="xbase:XBinaryOperation">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_equals(int,int)"/>
+              <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.1/@bodies.0/@variables.2"/>
+              <rightOperand xsi:type="xbase:XUnaryOperation">
+                <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_minus(int)"/>
+                <operand xsi:type="xbase:XNumberLiteral" value="1"/>
+              </rightOperand>
+            </rightOperand>
+          </rightOperand>
+        </expression>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.required" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//ETypedElement/lowerBound"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="LowerBound"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CheckConstraint">
+        <expression xsi:type="xbase:XBinaryOperation">
+          <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.BooleanExtensions#org.eclipse.xtext.xbase.lib.BooleanExtensions.operator_equals(boolean,boolean)"/>
+          <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.2/@bodies.0/@variables.1"/>
+          <rightOperand xsi:type="xbase:XBinaryOperation">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_greaterEqualsThan(int,int)"/>
+            <leftOperand xsi:type="xbase:XFeatureCall" feature="//@patterns.2/@bodies.0/@variables.2"/>
+            <rightOperand xsi:type="xbase:XNumberLiteral" value="1"/>
+          </rightOperand>
+        </expression>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eAttributeType" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EDataType"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.0">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.container" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.5">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Opposite"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EReference/containment"/>
+            </type>
+          </tail>
+          <src var="Opposite"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.5">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_Opposite"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Target"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:BoolValue"/>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eOpposite" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="Ref">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <parameters name="Opposite">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EReference/eOpposite"/>
+            </type>
+          </tail>
+          <src var="Ref"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Opposite"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eReferenceType" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/EcoreDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.0">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eStructuralFeatures" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EClass/eStructuralFeatures"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAttributes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.7">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eReferences" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.7">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eGenericSuperTypes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EGenericType"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EClass/eGenericSuperTypes"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllGenericSuperTypes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EGenericType"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.13" transitive="true">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Type"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Type"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eRawType" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EGenericType"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EGenericType"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EGenericType/eRawType"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eSuperTypes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.10">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="GenericType"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.12">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="GenericType"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllSuperTypes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.11">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="GenericType"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.12">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="GenericType"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.thisAndAllSuperTypes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.14">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+    <bodies>
+      <constraints xsi:type="patternLanguage:CompareConstraint">
+        <leftOperand xsi:type="patternLanguage:VariableValue">
+          <value var="This"/>
+        </leftOperand>
+        <rightOperand xsi:type="patternLanguage:VariableValue">
+          <value var="Target"/>
+        </rightOperand>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllStructuralFeatures" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Type"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.7">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Type"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllAttributes" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.16">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllReferences" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.16">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllContainments" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.18">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EReference/containment"/>
+            </type>
+          </tail>
+          <src var="Target"/>
+          <dst xsi:type="patternLanguage:BoolValue" value="true"/>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eOperations" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <modifiers private="true"/>
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EOperation"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EClass/eOperations"/>
+            </type>
+          </tail>
+          <src var="This"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eAllOperations" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EOperation"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.15">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Type"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.20">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Type"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.viatra2.emf.incquery.ecore.eclass.eIDAttribute" fileName="platform:/resource/org.eclipse.viatra2.emf.incquery.ecore.derived/src/org/eclipse/viatra2/emf/incquery/ecore/eclass/EClassDerivedFeatures.eiq">
+    <parameters name="This">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      </type>
+    </parameters>
+    <parameters name="Target">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.17">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="This"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Target"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute/iD"/>
+            </type>
+          </tail>
+          <src var="Target"/>
+          <dst xsi:type="patternLanguage:BoolValue" value="true"/>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <importPackages>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+  </importPackages>
+</eMFPatternLanguage:PatternModel>

@@ -1,0 +1,79 @@
+package org.eclipse.viatra2.emf.incquery.ecore.eclass
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+private pattern eStructuralFeatures(This : EClass, Target : EStructuralFeature){
+	EClass.eStructuralFeatures(This, Target);
+}
+
+pattern eAttributes(This : EClass, Target : EAttribute){
+	find eStructuralFeatures(This, Target);
+}
+
+pattern eReferences(This : EClass, Target : EReference){
+	find eStructuralFeatures(This, Target);
+}
+
+private pattern eGenericSuperTypes(This : EClass, Target : EGenericType){
+	EClass.eGenericSuperTypes(This, Target);
+}
+
+pattern eAllGenericSuperTypes(This : EClass, Target : EGenericType){
+	find eSuperTypes+(This, Type);
+	find eGenericSuperTypes(Type, Target);
+} or {
+	find eGenericSuperTypes(This, Target);
+}
+
+private pattern eRawType(This : EGenericType, Target : EClass){
+	EGenericType.eRawType(This, Target);
+}
+
+pattern eSuperTypes(This : EClass, Target : EClass){
+	find eGenericSuperTypes(This, GenericType);
+	find eRawType(GenericType, Target);
+}
+
+pattern eAllSuperTypes(This : EClass, Target : EClass){
+	find eAllGenericSuperTypes(This, GenericType);
+	find eRawType(GenericType, Target);
+}
+
+private pattern thisAndAllSuperTypes(This : EClass, Target : EClass){
+	find eAllSuperTypes(This, Target);
+} or {
+	This == Target;
+}
+
+pattern eAllStructuralFeatures(This : EClass, Target : EStructuralFeature){
+	find thisAndAllSuperTypes(This, Type);
+	find eStructuralFeatures(Type, Target);
+}
+
+pattern eAllAttributes(This : EClass, Target : EAttribute){
+	find eAllStructuralFeatures(This, Target);
+}
+
+pattern eAllReferences(This : EClass, Target : EReference){
+	find eAllStructuralFeatures(This, Target);
+}
+
+pattern eAllContainments(This : EClass, Target : EReference){
+	find eAllReferences(This, Target);
+	EReference.containment(Target, true);
+}
+
+private pattern eOperations(This : EClass, Target : EOperation){
+	EClass.eOperations(This, Target);
+}
+
+pattern eAllOperations(This : EClass, Target : EOperation){
+	find thisAndAllSuperTypes(This, Type);
+	find eOperations(Type, Target);
+}
+
+// NOTE: EMF uses the first attribute with id = true from all supertypes...
+pattern eIDAttribute(This : EClass, Target : EAttribute){
+	find eAllAttributes(This, Target);
+	EAttribute.iD(Target, true);
+}

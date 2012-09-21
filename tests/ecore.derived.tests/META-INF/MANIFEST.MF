@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: ecore.derived.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.viatra2.emf.incquery.testing.core;bundle-version="0.6.5",
+ org.junit;bundle-version="3.8.2",
+ org.eclipse.xtext.xbase.junit;bundle-version="2.3.0",
+ org.eclipse.xtext.junit4;bundle-version="2.3.0",
+ org.eclipse.viatra2.emf.incquery.ecore.derived;bundle-version="0.0.1",
+ org.eclipse.viatra2.patternlanguage.emf;bundle-version="0.6.5",
+ org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.5"

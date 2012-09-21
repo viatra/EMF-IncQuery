@@ -1,0 +1,60 @@
+package org.eclipse.viatra2.emf.incquery.ecore
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+// ETypedElement
+private pattern eType(This : ETypedElement, Target : EClassifier){
+	ETypedElement.eType(This, Target);
+}
+
+pattern many(This : ETypedElement, Target : EBoolean){
+	ETypedElement.upperBound(This, UpperBound);
+	check(Target == (UpperBound > 1 || UpperBound == -1));
+}
+
+pattern required(This : ETypedElement, Target : EBoolean){
+	ETypedElement.lowerBound(This, LowerBound);
+	check(Target == (LowerBound >= 1));
+}
+
+//EClassifier
+// defaultValue needs eval
+/*pattern EClassifierDefaultValue(This :  EClassifier, Target){
+	EString(This);
+	Target == 
+}*/
+
+// instanceClass is Java, not EMF
+
+// EStructuralFeature
+// defaultValue needs eval
+/*pattern EStructuralFeatureDefaultValue(This : EStructuralFeature, Target){
+	find eType(This, Type);
+	neg find eAttributeType(This, Type);
+	ETypedElement.eType.defaultValue(Type, Target);
+}*/
+
+// EAttribute
+pattern eAttributeType(This : EAttribute, Target : EDataType){
+	find eType(This, Target);
+}
+
+// EReference
+pattern container(This : EReference, Target : EBoolean){
+	find eOpposite(This, Opposite);
+	EReference.containment(Opposite, Target);
+} or {
+	neg find eOpposite(This, _Opposite);
+	Target == false;
+}
+
+private pattern eOpposite(Ref : EReference, Opposite : EReference){
+	EReference.eOpposite(Ref, Opposite);
+}
+
+pattern eReferenceType(This : EReference, Target : EClass){
+	find eType(This, Target);
+}
+
+// EGenericType
+// eRawType is wellbehaving
