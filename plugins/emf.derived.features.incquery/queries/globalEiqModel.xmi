@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ASCII"?>
+<eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage">
+  <patterns name="emf.derived.features.incquery.volatileNotDerivedFeature" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <parameters name="Feature">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature/volatile"/>
+            </type>
+          </tail>
+          <src var="Feature"/>
+          <dst xsi:type="patternLanguage:BoolValue" value="true"/>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Feature"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="emf.derived.features.incquery.derivedFeature" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <parameters name="Feature">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature/derived"/>
+            </type>
+          </tail>
+          <src var="Feature"/>
+          <dst xsi:type="patternLanguage:BoolValue" value="true"/>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="emf.derived.features.incquery.ecoreAnnotation" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <parameters name="Element"/>
+    <parameters name="Annotation"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EModelElement"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EModelElement/eAnnotations"/>
+            </type>
+          </tail>
+          <src var="Element"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Annotation"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="emf.derived.features.incquery.nonTransientDerivedFeature" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <annotations name="Constraint">
+      <parameters name="location">
+        <value xsi:type="patternLanguage:StringValue" value="Feature"/>
+      </parameters>
+      <parameters name="severity">
+        <value xsi:type="patternLanguage:StringValue" value="error"/>
+      </parameters>
+      <parameters name="message">
+        <value xsi:type="patternLanguage:StringValue" value="Feature $Feature.name$ is derived, but not transient!"/>
+      </parameters>
+      <parameters name="targetEditorId">
+        <value xsi:type="patternLanguage:StringValue" value="org.eclipse.emf.ecoretools.diagram.part.EcoreDiagramEditorID"/>
+      </parameters>
+    </annotations>
+    <parameters name="Feature">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Feature"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature/transient"/>
+            </type>
+          </tail>
+          <src var="Feature"/>
+          <dst xsi:type="patternLanguage:BoolValue"/>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="emf.derived.features.incquery.nonVolatileDerivedFeature" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <annotations name="Constraint">
+      <parameters name="location">
+        <value xsi:type="patternLanguage:StringValue" value="Feature"/>
+      </parameters>
+      <parameters name="severity">
+        <value xsi:type="patternLanguage:StringValue" value="error"/>
+      </parameters>
+      <parameters name="message">
+        <value xsi:type="patternLanguage:StringValue" value="Feature $Feature.name$ is derived, but not volatile!"/>
+      </parameters>
+      <parameters name="targetEditorId">
+        <value xsi:type="patternLanguage:StringValue" value="org.eclipse.emf.ecoretools.diagram.part.EcoreDiagramEditorID"/>
+      </parameters>
+    </annotations>
+    <parameters name="Feature">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Feature"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature/volatile"/>
+            </type>
+          </tail>
+          <src var="Feature"/>
+          <dst xsi:type="patternLanguage:BoolValue"/>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="emf.derived.features.incquery.incqueryDerivedFeatureAnnotation" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <parameters name="Feature">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <parameters name="PatternFQN"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.2">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Feature"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Annotation"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAnnotation"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EAnnotation/source"/>
+            </type>
+          </tail>
+          <src var="Annotation"/>
+          <dst xsi:type="patternLanguage:StringValue" value="org.eclipse.viatra2.emf.incquery.derived.feature"/>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAnnotation"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EAnnotation/details"/>
+            </type>
+          </tail>
+          <src var="Annotation"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Details"/>
+          </dst>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry/key"/>
+            </type>
+          </tail>
+          <src var="Details"/>
+          <dst xsi:type="patternLanguage:StringValue" value="patternFQN"/>
+        </head>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry/value"/>
+            </type>
+          </tail>
+          <src var="Details"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="PatternFQN"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="emf.derived.features.incquery.undefinedDerivedFeature" fileName="platform:/resource/emf.derived.features.incquery/src/emf/derived/features/incquery/validDerivedFeatures.eiq">
+    <annotations name="Constraint">
+      <parameters name="location">
+        <value xsi:type="patternLanguage:StringValue" value="Feature"/>
+      </parameters>
+      <parameters name="severity">
+        <value xsi:type="patternLanguage:StringValue" value="error"/>
+      </parameters>
+      <parameters name="message">
+        <value xsi:type="patternLanguage:StringValue" value="Feature $Feature.name$ is derived, but has no query definition!"/>
+      </parameters>
+      <parameters name="targetEditorId">
+        <value xsi:type="patternLanguage:StringValue" value="org.eclipse.emf.ecoretools.diagram.part.EcoreDiagramEditorID"/>
+      </parameters>
+    </annotations>
+    <parameters name="Feature">
+      <type xsi:type="eMFPatternLanguage:ClassType">
+        <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      </type>
+    </parameters>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+        <call patternRef="//@patterns.1">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Feature"/>
+          </parameters>
+        </call>
+      </constraints>
+      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+        <call patternRef="//@patterns.5">
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="Feature"/>
+          </parameters>
+          <parameters xsi:type="patternLanguage:VariableValue">
+            <value var="_PatternFQN"/>
+          </parameters>
+        </call>
+      </constraints>
+    </bodies>
+  </patterns>
+  <importPackages>
+    <ePackage href="http://www.eclipse.org/emf/2002/GenModel#/"/>
+  </importPackages>
+  <importPackages>
+    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+  </importPackages>
+</eMFPatternLanguage:PatternModel>

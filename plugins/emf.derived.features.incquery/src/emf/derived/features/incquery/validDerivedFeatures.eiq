@@ -1,0 +1,56 @@
+package emf.derived.features.incquery
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.eclipse.org/emf/2002/GenModel"
+
+/**
+ * Validation rules for Query-backed features
+ */
+
+pattern volatileNotDerivedFeature(Feature : EStructuralFeature) {
+	EStructuralFeature.volatile(Feature, true);
+	neg find derivedFeature(Feature);
+}
+
+pattern derivedFeature(Feature : EStructuralFeature) {
+	EStructuralFeature.derived(Feature, true);
+}
+
+pattern ecoreAnnotation(Element, Annotation) {
+	EModelElement.eAnnotations(Element, Annotation);
+}
+
+@Constraint(location = "Feature", severity = "error",
+	message = "Feature $Feature.name$ is derived, but not transient!",
+	targetEditorId = "org.eclipse.emf.ecoretools.diagram.part.EcoreDiagramEditorID"
+)
+pattern nonTransientDerivedFeature(Feature : EStructuralFeature) {
+	find derivedFeature(Feature);
+	EStructuralFeature.transient(Feature, false);
+}
+
+@Constraint(location = "Feature", severity = "error",
+	message = "Feature $Feature.name$ is derived, but not volatile!",
+	targetEditorId = "org.eclipse.emf.ecoretools.diagram.part.EcoreDiagramEditorID"
+)
+pattern nonVolatileDerivedFeature(Feature : EStructuralFeature) {
+	find derivedFeature(Feature);
+	EStructuralFeature.volatile(Feature, false);
+}
+
+pattern incqueryDerivedFeatureAnnotation(Feature : EStructuralFeature, PatternFQN) {
+	find ecoreAnnotation(Feature, Annotation);
+	EAnnotation.source(Annotation, "org.eclipse.viatra2.emf.incquery.derived.feature");
+	EAnnotation.details(Annotation, Details);
+	EStringToStringMapEntry.key(Details, "patternFQN");
+	EStringToStringMapEntry.value(Details, PatternFQN);
+}
+
+@Constraint(location = "Feature", severity = "error",
+	message = "Feature $Feature.name$ is derived, but has no query definition!",
+	targetEditorId = "org.eclipse.emf.ecoretools.diagram.part.EcoreDiagramEditorID"
+)
+pattern undefinedDerivedFeature(Feature : EStructuralFeature) {
+	find derivedFeature(Feature);
+	neg find incqueryDerivedFeatureAnnotation(Feature, _PatternFQN);
+}

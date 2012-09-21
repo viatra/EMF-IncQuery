@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="emf.derived.features.incquery.volatileNotDerivedFeature"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.volatilenotderivedfeature.VolatileNotDerivedFeatureMatcherFactory$Provider"
+            id="emf.derived.features.incquery.volatileNotDerivedFeature">
+      </matcher>
+   </extension>
+   <extension
+         id="emf.derived.features.incquery.derivedFeature"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.derivedfeature.DerivedFeatureMatcherFactory$Provider"
+            id="emf.derived.features.incquery.derivedFeature">
+      </matcher>
+   </extension>
+   <extension
+         id="emf.derived.features.incquery.ecoreAnnotation"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.ecoreannotation.EcoreAnnotationMatcherFactory$Provider"
+            id="emf.derived.features.incquery.ecoreAnnotation">
+      </matcher>
+   </extension>
+   <extension
+         id="emf.derived.features.incquery.nonTransientDerivedFeature"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.nontransientderivedfeature.NonTransientDerivedFeatureMatcherFactory$Provider"
+            id="emf.derived.features.incquery.nonTransientDerivedFeature">
+      </matcher>
+   </extension>
+   <extension
+         id="emf.derived.features.incquery.nonVolatileDerivedFeature"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.nonvolatilederivedfeature.NonVolatileDerivedFeatureMatcherFactory$Provider"
+            id="emf.derived.features.incquery.nonVolatileDerivedFeature">
+      </matcher>
+   </extension>
+   <extension
+         id="emf.derived.features.incquery.incqueryDerivedFeatureAnnotation"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.incqueryderivedfeatureannotation.IncqueryDerivedFeatureAnnotationMatcherFactory$Provider"
+            id="emf.derived.features.incquery.incqueryDerivedFeatureAnnotation">
+      </matcher>
+   </extension>
+   <extension
+         id="emf.derived.features.incquery.undefinedDerivedFeature"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="emf.derived.features.incquery.undefinedderivedfeature.UndefinedDerivedFeatureMatcherFactory$Provider"
+            id="emf.derived.features.incquery.undefinedDerivedFeature">
+      </matcher>
+   </extension>
+
+</plugin>
