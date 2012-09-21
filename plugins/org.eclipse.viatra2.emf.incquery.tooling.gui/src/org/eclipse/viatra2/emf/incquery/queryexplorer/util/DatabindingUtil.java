@@ -418,10 +418,11 @@ public class DatabindingUtil {
 				pattern = p;
 
 				Annotation annotation = getAnnotation(p, OBSERVABLEVALUE_ANNOTATION);
-				annotationFound = true;
 				String key = null, value = null;
 
 				if (annotation != null) {
+					annotationFound = true;
+					
 					for (AnnotationParameter ap : annotation.getParameters()) {
 						if (ap.getName().matches("name")) {
 							ValueReference valRef = ap.getValue();
