@@ -50,7 +50,7 @@ public class EMFPatternLanguageQualifiedNameProvider extends
 		} else if (obj instanceof VariableReference) {
 			VariableReference variableRef = (VariableReference) obj;
 			QualifiedName containerName = getFullyQualifiedName(variableRef.eContainer());
-			String name = variableRef.getVariable().getName();
+            String name = variableRef.getVar();
 			if (name == null) {
 				return nameConverter.toQualifiedName("<none>");
 			} else if (containerName == null) {

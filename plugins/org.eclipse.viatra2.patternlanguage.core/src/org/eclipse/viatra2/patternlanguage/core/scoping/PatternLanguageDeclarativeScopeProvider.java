@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.scoping;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -94,14 +95,20 @@ public class PatternLanguageDeclarativeScopeProvider extends
 			}
 			it = it.eContainer();
 		}
-		if (it == null || body == null) {
-			return IScope.NULLSCOPE;
+        CreateObjectDescFunction createObjectDescFunction = new CreateObjectDescFunction();
+        EList<Variable> variables;
+        if (body != null) {
+            variables = body.getVariables();
+        } else if (it instanceof Pattern) {
+            Pattern pattern = (Pattern) it;
+            variables = pattern.getParameters();
+        } else {
+            return IScope.NULLSCOPE;
 		}
 		UndefinedVariable variableFilter = new UndefinedVariable();
-		CreateObjectDescFunction createObjectDescFunction = new CreateObjectDescFunction();
-		IScope localScope = new SimpleScope(IScope.NULLSCOPE,
+        IScope localScope = new SimpleScope(IScope.NULLSCOPE,
 				Iterables.transform(
-						Iterables.filter(body.getVariables(), variableFilter),
+                Iterables.filter(variables, variableFilter),
 						createObjectDescFunction));
 		return localScope;
 	}
