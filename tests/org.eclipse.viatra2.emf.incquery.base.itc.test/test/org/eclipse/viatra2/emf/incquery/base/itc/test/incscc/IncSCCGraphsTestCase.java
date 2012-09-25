@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.fw.FloydWarshallAlg;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.BaseTransitiveClosureAlgorithmTest;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.TestGraph;
 import org.junit.Test;
@@ -24,7 +25,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class IncSCCGraphsTestCase extends BaseTransitiveClosureAlgorithmTest {
 
-	private TestGraph<Integer> testGraph;
+	protected TestGraph<Integer> testGraph;
 	
 	public IncSCCGraphsTestCase(TestGraph<Integer> testGraph) {
 		this.testGraph = testGraph;
@@ -34,6 +35,18 @@ public class IncSCCGraphsTestCase extends BaseTransitiveClosureAlgorithmTest {
 	public void testResult() {
     	FloydWarshallAlg<Integer> fwa = new FloydWarshallAlg<Integer>(testGraph);
     	IncSCCAlg<Integer> isa = new IncSCCAlg<Integer>(testGraph);
+    	isa.attachObserver(new ITcObserver<Integer>() {
+            
+            @Override
+            public void tupleInserted(Integer source, Integer target) {
+                assertTrue(source != null && target != null);
+            }
+            
+            @Override
+            public void tupleDeleted(Integer source, Integer target) {
+                assertTrue(source != null && target != null);
+            }
+        });
 		testGraph.modify();	
 		assertTrue(isa.checkTcRelation(fwa.getTcRelation()));
 	}
