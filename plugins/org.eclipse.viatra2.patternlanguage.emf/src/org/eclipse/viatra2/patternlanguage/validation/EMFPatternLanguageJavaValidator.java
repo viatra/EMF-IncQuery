@@ -466,11 +466,21 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         patternBody, variable);
                 if (possibleClassifiers.size() > 1) {
                     List<String> classifierNamesList = new ArrayList<String>();
+                    List<String> classifierPackagesList = new ArrayList<String>();
                     for (Object element : possibleClassifiers.toArray()) {
-                        classifierNamesList.add(((EClassifier)element).getName());
+                        EClassifier classifier = (EClassifier) element;
+                        classifierNamesList.add(classifier.getName());
+                        classifierPackagesList.add(classifier.getEPackage().getName());
                     }
-                    error("Inconsistent variable type defintions: " + classifierNamesList, variable.getReferences()
-                            .get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID);
+                    Set<String> classifierNamesSet = new HashSet<String>(classifierNamesList);
+                    Set<String> classifierPackagesSet = new HashSet<String>(classifierPackagesList);
+                    if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
+                        error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable.getReferences()
+                                .get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
+                    } else {
+                        error("Inconsistent variable type defintions: " + classifierNamesList, variable.getReferences()
+                                .get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID);
+                    }
                 }
             }
         }
