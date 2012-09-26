@@ -80,6 +80,10 @@ public interface NavigationHelper {
 	 * Find all {@link EAttribute} and their owners for a given <code>value</code> of the attribute.
 	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}.
 	 * 
+	 * <p> <strong>Precondition:</strong> Will only find those EAttributes that have 
+	 * already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * unless running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
+	 * 
 	 * @param value the value of the attribute
 	 * @return the collection of settings
 	 */
@@ -91,6 +95,10 @@ public interface NavigationHelper {
 	 * Note that a setting will be present in the returned collection only if 
 	 * its attribute instance can be found in the given collection of <code>attributes</code>.
 	 * 
+	 * <p> <strong>Precondition:</strong> Will only find those EAttributes that have 
+	 * already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * unless running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
+	 * 
 	 * @param value the value of the attribute
 	 * @param attributes the collection of attributes
 	 * @return the collection of settings
@@ -100,6 +108,10 @@ public interface NavigationHelper {
 	/**
 	 * Find all {@link EObject}s that have an <code>attribute</code> {@link EAttribute} and its value equals to the given <code>value</code>. 
 	 * 
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the EAttribute 
+	 * has already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
+	 * 
 	 * @param value the value of the attribute
 	 * @param attribute the EAttribute instance
 	 * @return the collection of {@link EObject} instances
@@ -107,7 +119,11 @@ public interface NavigationHelper {
 	public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute);
 	
 	/**
-	 * Returns the collection of data type instances for the given {@link EDataType} instance.
+	 * Returns the collection of data type instances for the given {@link EDataType}.
+	 * 
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the EDataType 
+	 * has already been registered using {@link #registerEDataTypes(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}).  
 	 * 
 	 * @param type the data type 
 	 * @return the collection of data type instances
@@ -127,6 +143,10 @@ public interface NavigationHelper {
 	 * Find all the {@link EObject} instances that have an {@link EReference} instance with the given <code>target</code>.
 	 * The method will return these information as a collection of {@link EStructuralFeature.Setting}. 
 	 * 
+	 * <p> <strong>Precondition:</strong> Results will be returned only for those references that 
+	 * have already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * or all references if running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
+	 * 
 	 * @param target the endpoint of a reference
 	 * @return the collection of settings
 	 */
@@ -138,6 +158,10 @@ public interface NavigationHelper {
 	 * Note that a setting will be present in the returned collection only if 
 	 * its reference instance can be found in the given collection of <code>references</code>.
 	 * 
+	 * <p> <strong>Precondition:</strong> Will only find those EReferences that have 
+	 * already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * unless running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
+	 * 
 	 * @param target
 	 * @param references
 	 * @return
@@ -146,6 +170,10 @@ public interface NavigationHelper {
 	
 	/**
 	 * Find all {@link EObject}s that have a <code>reference</code> EReference instance with the given <code>target</code>. 
+	 *
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the reference 
+	 * has already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
 	 * 
 	 * @param target the endpoint of a reference
 	 * @param reference the EReference instance
@@ -155,21 +183,34 @@ public interface NavigationHelper {
 	
 	/**
 	 * Get the direct {@link EObject} instances of the given EClass instance.
+	 * 
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the EClass 
+	 * (or any superclass) has already been registered using {@link #registerEClasses(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}).  
+	 * 
 	 * @param clazz the EClass instance
 	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> getDirectInstances(EClass clazz);
 	
 	/**
-	 * Get the exact and descendant {@link EObject} instances of the given EClass instance. 
+	 * Get the exact and descendant {@link EObject} instances of the given EClass. 
 	 * 
-	 * @param clazz the EClass instance 
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the EClass 
+	 * (or any superclass) has already been registered using {@link #registerEClasses(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}).  
+	 * 
+	 * @param clazz the EClass 
 	 * @return the collection of {@link EObject} instances
 	 */
 	public Collection<EObject> getAllInstances(EClass clazz);
 	
 	/**
 	 * Returns the collection of {@link EObject} instances which have a feature with the given value.
+	 * 
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the feature 
+	 * has already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
 	 * 
 	 * @param value the value of the feature
 	 * @param feature the feature instance
@@ -180,6 +221,10 @@ public interface NavigationHelper {
 	/**
 	 * Returns the holder(s) of the given feature.
 	 * 
+	 * <p> <strong>Precondition:</strong> Results will be returned only if either (a) the feature 
+	 * has already been registered using {@link #registerEStructuralFeatures(Set)},
+	 * or (b) running in <em>wildcard mode</em> (see {@link #isInWildcardMode()}). 
+	 *  
 	 * @param feature the feature instance
 	 * @return the collection of {@link EObject} instances
 	 */
@@ -244,7 +289,7 @@ public interface NavigationHelper {
 
 	/**
 	 * Manually turns on indexing for the given features (indexing of other features are unaffected).
-	 * Note that registering new features requires to visit the whole attached model.
+	 * Note that registering new features will result in iterating through the whole attached model.
 	 * 
 	 * <pre>Not usable in <em>wildcard mode</em></pre>
 	 * @param features the set of features to observe
@@ -262,7 +307,7 @@ public interface NavigationHelper {
 	/**
 	 * Manually turns on indexing for the given classes (indexing of other classes are unaffected). 
 	 * Instances of subclasses will also be indexed. 
-	 * Note that registering new classes requires to visit the whole attached model.
+	 * Note that registering new classes will result in iterating through the whole attached model.
 	 * 
 	 * <pre>Not usable in <em>wildcard mode</em></pre>
 	 * @param classes the set of classes to observe
@@ -279,7 +324,7 @@ public interface NavigationHelper {
 	
 	/**
 	 * Manually turns on indexing for the given data types (indexing of other features are unaffected).
-	 * Note that registering new data types requires to visit the whole attached model.
+	 * Note that registering new data types will result in iterating through the whole attached model.
 	 * 
 	 * <pre>Not usable in <em>wildcard mode</em></pre>
 	 * @param dataTypes the set of data types to observe
@@ -295,7 +340,7 @@ public interface NavigationHelper {
 	public void unregisterEDataTypes(Set<EDataType> dataTypes);
 	
 	/**
-	 * The given callback will be executed, and all model traversals and feature registrations will be delayed until the execution is done.
+	 * The given callback will be executed, and all model traversals and index registrations will be delayed until the execution is done.
 	 * If there are any outstanding feature or class registrations, a single coalesced model traversal will initialize the caches and deliver the notifications.
 	 * 
 	 * @param runnable

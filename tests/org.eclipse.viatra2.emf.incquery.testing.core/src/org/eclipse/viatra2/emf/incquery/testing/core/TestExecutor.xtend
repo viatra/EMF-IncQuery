@@ -102,10 +102,10 @@ class TestExecutor {
 		
 		// 4. run matchers
 		unexpectedMatcher.forEachMatch(actual, expected, null) [
-			diff.add(UNEXPECTED_MATCH + " ("+it+")")
+			diff.add(UNEXPECTED_MATCH + " ("+it.prettyPrint+")")
 		]
 		unexpectedMatcher.forEachMatch(expected, actual, null) [
-			diff.add(EXPECTED_NOT_FOUND + " ("+it+")")
+			diff.add(EXPECTED_NOT_FOUND + " ("+it.prettyPrint+")")
 		]
 		return diff
 	}
@@ -133,13 +133,13 @@ class TestExecutor {
 			val partialMatch = 	matcher.createMatchForMachRecord(matchRecord)
 			val numMatches = matcher.countMatches(partialMatch)
 			if(numMatches == 0){
-				diff.add(EXPECTED_NOT_FOUND + " ("+matchRecord+")")
+				diff.add(EXPECTED_NOT_FOUND + " ("+matchRecord.printMatchRecord+")")
 				correctResults = false
 			} else if(numMatches == 1){
 				// partialMatch is equal to actual match
 				foundMatches.add(partialMatch)
 			} else {
-				diff.add(MULTIPLE_FOR_EXPECTED + " ("+matchRecord+")")
+				diff.add(MULTIPLE_FOR_EXPECTED + " ("+matchRecord.printMatchRecord+")")
 				correctResults = false
 			}
 		}
@@ -149,12 +149,25 @@ class TestExecutor {
 		matcher.forEachMatch(matcher.createMatchForMachRecord(expected.filter)) [
 			if(!foundMatches.contains(it)){
 				//notFoundMatches.add(it)
-				diff.add(UNEXPECTED_MATCH + " ("+it+")")
+				diff.add(UNEXPECTED_MATCH + " ("+it.prettyPrint+")")
 			}
 		]
 		return diff
 		
 	}
+	
+  def printMatchRecord(MatchRecord record){
+    val sb = new StringBuilder
+    val matchSet = record.eContainer as MatchSetRecord
+    record.substitutions.forEach[
+      if(sb.length > 0){
+        sb.append(",")
+      }
+      sb.append(it.parameterName).append("=").append(it.derivedValue)
+    ]
+    sb.insert(0,matchSet.patternQualifiedName+"(")
+    sb.append(")")
+  } 
 	
 	/**
 	 * Compares match set of each matcher initialized from the given pattern model

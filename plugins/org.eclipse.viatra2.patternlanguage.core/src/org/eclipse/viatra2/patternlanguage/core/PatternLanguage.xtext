@@ -47,9 +47,22 @@ Variable returns types::JvmIdentifiableElement:
 	name=ID
 	(':' type=Type)?;
 
+ParameterRef returns Variable:
+	{ParameterRef}
+	name=ID
+	referredParam = [Variable]
+	(':' type=Type)?
+;
+
 Parameter returns Variable:
 	name=ID
-	(':' type=Type)?;
+	(':' type=Type)?
+;
+LocalVariable returns Variable:
+	{LocalVariable}
+	name=ID
+	(':' type=Type)?
+;
 
 VariableReference:
 	var = ID;

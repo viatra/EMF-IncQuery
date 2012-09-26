@@ -44,6 +44,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CountAggregator;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
@@ -122,17 +123,20 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 		for (int i=0; i<arity; ++i) result[i] = getPNode(symParameters.get(i));
 		return result;
 	}
-	protected PVariable getPNode(String name) {
-		return pSystem.getOrCreateVariableByName(name);
-	}
+//	protected PVariable getPNode(String name) {
+//		return pSystem.getOrCreateVariableByName(name);
+//	}
 
 	protected PVariable getPNode(Variable variable) {
-		return getPNode(variable.getName());
+		if (variable instanceof ParameterRef) // handle referenced parameter variables
+			return getPNode(((ParameterRef) variable).getReferredParam()); // assumed to be non-null
+		else 
+			return pSystem.getOrCreateVariableByName(variable);
 	}
 	protected PVariable getPNode(VariableReference variable) {
 		// Warning! variable.getVar() does not differentiate between 
 		// multiple anonymous variables ('_')
-		return getPNode(variable.getVariable().getName());
+		return getPNode(variable.getVariable());
 	}
 	protected Tuple getPNodeTuple(List<? extends ValueReference> variables) throws RetePatternBuildException {
 		PVariable[] pNodeArray = getPNodeArray(variables);
@@ -199,6 +203,15 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 				new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
 			}
 		}
+		
+//		final EList<Variable> bodyVariables = body.getVariables();
+//		for (Variable bodyVariable : bodyVariables) {
+//			if (bodyVariable instanceof ParameterRef) {
+//				final Variable referredParam = ((ParameterRef) bodyVariable).getReferredParam();				
+//				new Equality<Pattern, StubHandle>(pSystem, 
+//						getPNode(referredParam), getPNode(bodyVariable));
+//			}
+//		}
 	}
 	private void gatherBodyConstraints() throws RetePatternBuildException {
 		EList<Constraint> constraints = body.getConstraints();

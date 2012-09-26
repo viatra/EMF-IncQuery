@@ -39,7 +39,9 @@ private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 		if (!roots.containsKey(key)) {
 			ObservablePatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);	
 			this.roots.put(key, root);
-			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+			if (QueryExplorer.getInstance() != null) {
+				QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+			}
 		}
 	}
 	
@@ -53,14 +55,16 @@ private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
 			//Notifier notifier = key.getNotifier();
 			//disposing IncQueryEngine instance associated to the given Notifier
 			//EngineManager.getInstance().disposeEngine(notifier);
-		  ObservablePatternMatcherRoot root = this.roots.get(key);
-		  IncQueryEngine engine = root.getKey().getEngine();
+			ObservablePatternMatcherRoot root = this.roots.get(key);
+			IncQueryEngine engine = root.getKey().getEngine();
 			if(engine != null) {
-			  engine.dispose();
+				engine.dispose();
 			}
-      root.dispose();
+			root.dispose();
 			this.roots.remove(key);
-			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+			if (QueryExplorer.getInstance() != null) {
+				QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+			}
 		}
 	}
 	

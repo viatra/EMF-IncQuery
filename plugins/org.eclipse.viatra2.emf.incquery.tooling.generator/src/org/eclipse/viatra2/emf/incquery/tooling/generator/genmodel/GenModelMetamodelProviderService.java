@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -124,29 +123,21 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 	
 	@Override
 	public Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException {
-		Preconditions
-				.checkArgument(
-						project.exists()
-								&& project.hasNature(IncQueryNature.NATURE_ID),
-						"Only works for EMF-IncQuery projects");
-
-		List<EPackage> referencedPackages = Lists.newArrayList();
+		Preconditions.checkArgument(project.exists() && project.hasNature(IncQueryNature.NATURE_ID), "Only works for EMF-IncQuery projects");
+		Set<EPackage> referencedPackages = Sets.newLinkedHashSet();
 		IncQueryGeneratorModel generatorModel = getGeneratorModel(project);
 		for (GeneratorModelReference ref : generatorModel.getGenmodels()) {
-			
-			referencedPackages.addAll(Lists.transform(ref
-					.getGenmodel().getGenPackages(), new Function<GenPackage, EPackage>() {
+			referencedPackages.addAll(Lists.transform(ref.getGenmodel().getGenPackages(), new Function<GenPackage, EPackage>() {
 				@Override
 				public EPackage apply(GenPackage desc) {
 					Preconditions.checkNotNull(desc);
 					return desc.getEcorePackage();
 				}
-					}));
-			}
-		Set<EPackage> packageSet = Sets.newHashSet();
-		packageSet.addAll(referencedPackages);
-		packageSet.addAll(getMetamodelMap().values());
-		return packageSet;
+			}));
+		}
+		
+		referencedPackages.addAll(getMetamodelMap().values());
+		return referencedPackages;
 	}
 
 	@Override

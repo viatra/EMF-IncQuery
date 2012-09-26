@@ -562,4 +562,43 @@
          </keywordReference>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+      <annotation
+            description="The annotation can be used to define the way to present the pattern and its match set in the Query Explorer. "
+            name="QueryExplorer">
+         <annotationparameter
+               description="Possible values: &amp;quot;true&amp;quot; to display and &amp;quot;false&amp;quot; to not display."
+               mandatory="false"
+               multiple="false"
+               name="display"
+               type="boolean">
+         </annotationparameter>
+         <annotationparameter
+               description="This message will appear for each match of the pattern. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.&quot;"
+               mandatory="false"
+               multiple="false"
+               name="message"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            description="Annotate a pattern with OrderBy to define ordering between matches displayed in the Query Explorer."
+            name="OrderBy">
+         <annotationparameter
+               description="The ordering will be evaluated based on the given key with the form of &quot;Key.someAttribute&quot;. Note that the given attribute must implement the Comparable interface, otherwise no ordering will be maintained."
+               mandatory="true"
+               multiple="false"
+               name="key"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="Possible values: &amp;quot;asc&amp;quot; for ascending order and &amp;quot;desc&amp;quot; for descending order."
+               mandatory="true"
+               multiple="false"
+               name="direction"
+               type="string">
+         </annotationparameter>
+      </annotation>
+   </extension>
 </plugin>

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -58,6 +59,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
@@ -571,28 +573,33 @@ public abstract class ProjectGenerationHelper {
 			nextExtension: for (final IPluginExtension extension : readExtension
 					.getExtensions()) {
 				String id = getExtensionId(extension, project);
-				if (extensionMap.containsKey(id)) {
-					String point = extension.getPoint();
-					for (IPluginExtension ex : extensionMap.get(id)) {
-						if (ex.getPoint().equals(point)) {
-							continue nextExtension;
-						}
-					}
+				boolean extensionToCreateFound = isExtensionInMap(extensionMap,
+						extension, extension.getId());
+				if (!extensionToCreateFound) {
+					extensionToCreateFound = isExtensionInMap(extensionMap,
+							extension, id);
+				}
+				if (extensionToCreateFound) {
+					continue nextExtension;
 				}
 				// remove if contained in the removables
 				final String extensionId = id;
-				Pair<String, String> removable = IterableExtensions.findFirst(removedExtensions, new Functions.Function1<Pair<String, String>, Boolean>() {
+				Pair<String, String> removable = Iterables.find(removedExtensions, new Predicate<Pair<String, String>>() {
 					@Override
-					public Boolean apply(Pair<String, String> p) {
+					public boolean apply(Pair<String, String> p) {
 						return p.getKey().equals(extensionId) && 
 								p.getValue().equals(extension.getPoint());
 					}
-				});
+						}, null);
+
 				if (removable == null) {
 					// XXX cloning extensions to remove project name prefixes
 					IPluginExtension cloneExtension = fModel.createExtension();
 					cloneExtension.setId(id);
-					cloneExtension.setName(extension.getName());
+					String name = extension.getName();
+					if (name != null && !name.isEmpty()) {
+						cloneExtension.setName(name);
+					}
 					cloneExtension.setPoint(extension.getPoint());
 					for (IPluginObject obj : extension.getChildren()) {
 						cloneExtension.add(obj);
@@ -611,6 +618,28 @@ public abstract class ProjectGenerationHelper {
 			contribExtension.setInTheModel(true);
 		}
 		fModel.save();
+	}
+
+	/**
+	 * @param extensionMap
+	 * @param extension
+	 * @param id
+	 * @return
+	 */
+	private static boolean isExtensionInMap(
+			Multimap<String, IPluginExtension> extensionMap,
+			final IPluginExtension extension, String id) {
+		boolean extensionToCreateFound = false;
+		if (extensionMap.containsKey(id)) {
+			extensionToCreateFound = Iterables.any(extensionMap.get(id),
+					new Predicate<IPluginExtension>() {
+						@Override
+						public boolean apply(IPluginExtension ex) {
+							return ex.getPoint().equals(extension.getPoint());
+						}
+					});
+		}
+		return extensionToCreateFound;
 	}
 
 	/**

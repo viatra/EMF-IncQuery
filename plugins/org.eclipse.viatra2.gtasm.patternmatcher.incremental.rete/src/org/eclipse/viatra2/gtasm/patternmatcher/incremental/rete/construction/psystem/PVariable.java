@@ -23,7 +23,7 @@ public class PVariable {
 	/**
 	 * The name of the pattern variable. This is the unique key of the pattern node.
 	 */
-	private String name;
+	private Object name;
 	/**
 	 * virtual pVariables are nodes that do not correspond to actual pattern
 	 * variables; they represent constants or Term substitutes
@@ -53,11 +53,11 @@ public class PVariable {
 	
 	
 	
-	PVariable(PSystem<?,?,?> pSystem, String name) {
+	PVariable(PSystem<?,?,?> pSystem, Object name) {
 		this(pSystem, name, false);
 	}
 
-	PVariable(PSystem<?,?,?> pSystem, String name, boolean virtual) {
+	PVariable(PSystem<?,?,?> pSystem, Object name, boolean virtual) {
 		super();
 		this.pSystem = pSystem;
 		this.name = name;
@@ -142,7 +142,7 @@ public class PVariable {
 	/**
 	 * @return the name of the pattern variable. This is the unique key of the pattern node.
 	 */
-	public String getName() {
+	public Object getName() {
 		replacementCheck();
 		return name;
 	}
@@ -195,7 +195,7 @@ public class PVariable {
 	@Override
 	public String toString() {
 		// replacementCheck();
-		return name;// + ":PatternNode";
+		return name.toString();// + ":PatternNode";
 	}
 	
 	public PVariable getDirectUnifiedInto() {

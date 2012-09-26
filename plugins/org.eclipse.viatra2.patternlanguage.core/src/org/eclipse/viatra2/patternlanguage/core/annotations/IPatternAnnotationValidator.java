@@ -43,4 +43,8 @@ public interface IPatternAnnotationValidator {
 	String getDescription();
 	
 	String getDescription(String parameterName);
+
+	boolean isDeprecated();
+
+	boolean isDeprecated(String parameterName);
 }

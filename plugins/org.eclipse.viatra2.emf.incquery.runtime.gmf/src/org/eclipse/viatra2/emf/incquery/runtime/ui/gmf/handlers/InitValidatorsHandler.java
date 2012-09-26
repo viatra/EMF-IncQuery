@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers;
+package org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,7 +60,7 @@ public class InitValidatorsHandler extends AbstractHandler {
 		if (notifier==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
 	
 		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
-		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
+		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraintsForEditorId(HandlerUtil.getActiveEditorId(event))) {
 			try {
 				adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
 			} catch (IncQueryException ex) {

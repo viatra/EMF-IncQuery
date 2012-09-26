@@ -144,7 +144,7 @@ public class LayoutHelper {
 				throw new RetePatternBuildException(
 					"Exported pattern parameter {1} could not be deduced during pattern matcher construction." + 
 					" A pattern constraint is required to positively deduce its value.", 
-					new String[]{export.getParameterName()}, 
+					new String[]{export.getParameterName().toString()}, 
 					"Could not calculate pattern parameter", null);
 			}
 		}

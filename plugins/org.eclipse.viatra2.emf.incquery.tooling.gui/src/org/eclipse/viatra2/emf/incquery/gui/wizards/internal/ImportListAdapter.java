@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.NewEiqFileWizardContainerConfigurationPage;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
@@ -52,11 +51,12 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 	public void customButtonPressed(ListDialogField<EPackage> field, int index) {
 		//if Add button is pressed
 		if (index == 0) {	
-			ElementListSelectionDialog listDialog = 
-					new ElementListSelectionDialog(
+			ElementSelectionDialog listDialog = 
+					new ElementSelectionDialog(
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-							new ImportListLabelProvider()
-							);
+							new ImportListLabelProvider(), 
+							"EPackage"
+					);
 			listDialog.setTitle("Select packages to import");
 			listDialog.setMessage("Select one or more package(s) (* = any string, ? = any char):");
 			Object[] input = getElements(field);
@@ -83,7 +83,7 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 		try {
 			Collection<EPackage> packages = metamodelProviderService.getAllMetamodelObjects(firstPage.getProject());
 			for (EPackage ePackage : packages) {
-				if (!field.getElements().contains(ePackage)) {
+				if (!fieldContains(field, ePackage)) {
 					result.add(ePackage);
 				}
 			}
@@ -95,6 +95,15 @@ public class ImportListAdapter implements IListAdapter<EPackage> {
 		}
 		
 		return result.toArray();
+	}
+	
+	private boolean fieldContains(ListDialogField<EPackage> field, EPackage _package) {
+		for (EPackage _p : field.getElements()) {
+			if (_p.getNsURI().matches(_package.getNsURI())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -20,7 +20,6 @@ import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelP
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValueImpl
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
 
@@ -28,6 +27,9 @@ import static org.eclipse.viatra2.emf.incquery.tooling.generator.validation.Vali
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
+import java.util.List
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
@@ -42,35 +44,54 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
-	private Set<String> contributedEditorIds = newHashSet(); 
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
-			fsa.generateFile(pattern.constraintClassJavaFile, pattern.patternHandler)
+		
+		for(ann : pattern.annotations){
+		  if(ann.name == annotationLiteral){
+  			fsa.generateFile(pattern.constraintClassJavaFile(ann), pattern.patternHandler(ann))
+		  }
 		}
 	}
 	
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-		if (!contributedEditorIds.empty) {
-			contributedEditorIds.clear
+		for(ann : pattern.annotations){
+		  if(ann.name == annotationLiteral){
+	     	fsa.deleteFile(pattern.constraintClassJavaFile(ann))
+  		}
 		}
-		fsa.deleteFile(pattern.constraintClassJavaFile)
 	}
 	
 	override removeExtension(Pattern pattern) {
 		val p = Pair::of(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT)
 		val extensionList = newArrayList(p)
-		val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
-		if (!editorId.nullOrEmpty) {
-			extensionList.add(Pair::of(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT))
-		}
+		
+		val patternModel = pattern.eContainer as PatternModel;
+    for (imp : patternModel.importPackages) {
+      val pack = imp.EPackage;
+      val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
+      
+      if (genPackage != null) {
+        val editorId = genPackage.qualifiedEditorClassName+"ID";
+        if (!editorId.nullOrEmpty) {
+          extensionList.add(Pair::of(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT))
+        }
+      }
+    }
+    
+    for(ann : pattern.annotations){
+      if(ann.name == annotationLiteral){
+        val editorIds = ann.getAnnotationParameterValue("targetEditorId")
+        for (id : editorIds){
+          val editorId = (id as StringValue).value
+          extensionList.add(Pair::of(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT))
+        }
+      }
+    }
 		return extensionList
 	}
 	
 	override getRemovableExtensions() {
-		if (!contributedEditorIds.empty) {
-			contributedEditorIds.clear
-		}
 		newArrayList(
 			Pair::of(VALIDATIONEXTENSION_PREFIX, VALIDATION_EXTENSION_POINT), 
 			Pair::of(UI_VALIDATION_MENUS_PREFIX, ECLIPSE_MENUS_EXTENSION_POINT)
@@ -88,65 +109,101 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
-		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
-			val extensionList = newArrayList(
-				exGen.contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
-					exGen.contribElement(it, "constraint") [
-						exGen.contribAttribute(it, "class", pattern.constraintClassName)
-						exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
-					]
-				]
-			)
+		val extensionList = newArrayList(
+      exGen.contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
+        for(ann : pattern.annotations){
+          if(ann.name == annotationLiteral){
+            exGen.contribElement(it, "constraint") [
+              exGen.contribAttribute(it, "class", pattern.constraintClassName(ann))
+              exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
+              
+              val editorIds = ann.getAnnotationParameterValue("targetEditorId")
+              for (id : editorIds){
+                val editorId = (id as StringValue).value
+                exGen.contribElement(it, "enabledForEditor")[
+                  exGen.contribAttribute(it, "editorId", editorId)
+                ]
+              }
+              
+              val patternModel = pattern.eContainer as PatternModel;
+              for (imp : patternModel.importPackages) {
+                val pack = imp.EPackage;
+                val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
+                
+                if (genPackage != null) {
+                  val editorId = genPackage.qualifiedEditorClassName+"ID";
+                  exGen.contribElement(it, "enabledForEditor")[
+                    exGen.contribAttribute(it, "editorId", editorId)
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    )
+    /*for(ann : pattern.annotations){
+      if(ann.name == annotationLiteral){
+        val editorIds = ann.getAnnotationParameterValue("targetEditorId")
+        for (id : editorIds){
+          val editorId = (id as StringValue).value
+          editorId.createExtensionContributionForEditorId(exGen,extensionList)
+        }
+      }
+    }
+		
+		if(pattern.hasAnnotationLiteral(annotationLiteral)){
+  		val patternModel = pattern.eContainer as PatternModel;
+  		for (imp : patternModel.importPackages) {
+  			val pack = imp.EPackage;
+  			val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
+  			
+  			if (genPackage != null) {
+  				val editorId = genPackage.qualifiedEditorClassName+"ID";
+  				editorId.createExtensionContributionForEditorId(exGen,extensionList)
+  			}
+  		}
+		}*/
 			
-			val patternModel = pattern.eContainer as PatternModel;
-			for (imp : patternModel.importPackages) {
-				val pack = imp.EPackage;
-				val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
-				
-				if (genPackage != null) {
-					val editorId = genPackage.qualifiedEditorClassName+"ID";
-					//val editorId = pattern.getElementOfConstraintAnnotation("targetEditorId")
-					if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
-						val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
-							exGen.contribElement(it, "menuContribution") [
-								exGen.contribAttribute(it, "locationURI", UI_VALIDATION_MENU_URI)
-									exGen.contribElement(it, "command") [
-										exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor")
-										exGen.contribAttribute(it, "style", "push")
-										exGen.contribElement(it, "visibleWhen") [
-											exGen.contribAttribute(it, "checkEnabled", "false")
-											exGen.contribElement(it, "with")[
-											  exGen.contribAttribute(it, "variable", "activeEditorId")
-											  exGen.contribElement(it, "equals")[
-											    exGen.contribAttribute(it, "value", editorId)
-											  ]
-											]
-										]
-									]
-							]	
-						]
-						extensionList.add(editorMenuContribution)
-						contributedEditorIds.add(editorId)
-					}
-				}
-			}
-			
-			return extensionList
-		} else {
-			return newArrayList()
-		}
+		return extensionList
 	}
 	
-	def constraintClassName(Pattern pattern) {
-		String::format("%s.%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, annotationLiteral)
+	/*def createExtensionContributionForEditorId(String editorId, ExtensionGenerator exGen, List extensionList){
+   
+   if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
+      val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
+      exGen.contribElement(it, "menuContribution") [
+        exGen.contribAttribute(it, "locationURI", UI_VALIDATION_MENU_URI)
+          exGen.contribElement(it, "command") [
+            exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor")
+            exGen.contribAttribute(it, "style", "push")
+            exGen.contribElement(it, "visibleWhen") [
+              exGen.contribAttribute(it, "checkEnabled", "false")
+              exGen.contribElement(it, "with")[
+                exGen.contribAttribute(it, "variable", "activeEditorId")
+                exGen.contribElement(it, "equals")[
+                  exGen.contribAttribute(it, "value", editorId)
+                ]
+              ]
+            ]
+          ]
+        ] 
+      ]
+      extensionList.add(editorMenuContribution)
+      contributedEditorIds.add(editorId)
+    }
+	}*/
+	
+	def constraintClassName(Pattern pattern, Annotation annotation) {
+		String::format("%s.%s%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, annotationLiteral,pattern.annotations.indexOf(annotation))
 	}
 	
-	def constraintClassPath(Pattern pattern) {
-		String::format("%s/%s%s", pattern.packagePath, pattern.realPatternName.toFirstUpper, annotationLiteral)
+	def constraintClassPath(Pattern pattern, Annotation annotation) {
+		String::format("%s/%s%s%s", pattern.packagePath, pattern.realPatternName.toFirstUpper, annotationLiteral,pattern.annotations.indexOf(annotation))
 	}
 	
-	def constraintClassJavaFile(Pattern pattern) {
-		pattern.constraintClassPath + ".java"
+	def constraintClassJavaFile(Pattern pattern, Annotation annotation) {
+		pattern.constraintClassPath(annotation) + ".java"
 	}
 	
 	def constraintContributionId(Pattern pattern) {
@@ -156,21 +213,27 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	def menuContributionId(String editorId) {
 		return String::format("%s%s", UI_VALIDATION_MENUS_PREFIX, editorId)
 	}
-		
-	def getElementOfConstraintAnnotation(Pattern pattern, String elementName) {
-		for (a : pattern.annotations) {
-			if (a.name.matches(annotationLiteral)) {
-				for (ap : a.parameters) {
-					if (ap.name.matches(elementName)) {
-						return (ap.value as StringValueImpl).value
-					}
-				}
-			}
-		}
-		return null
+	
+	def getElementOfConstraintAnnotation(Annotation annotation, String elementName) {
+    val ap = annotation.getAnnotationParameterValue(elementName)
+    if(ap != null && ap.size == 1){
+      return (ap.get(0) as StringValue).value
+    } else {
+      return null
+    }
+  }
+	
+	def getAnnotationParameterValue(Annotation annotation, String elementName) {
+	  val values = newArrayList()
+    for (ap : annotation.parameters) {
+      if (ap.name.matches(elementName)) {
+        values.add(ap.value)
+      }
+    }
+    return values
 	}
 	
-	override patternHandler(Pattern pattern) '''
+	def patternHandler(Pattern pattern, Annotation annotation) '''
 		package «pattern.packageName»;
 		
 		import org.eclipse.emf.ecore.EObject;
@@ -184,22 +247,22 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 
-		public class «pattern.name.toFirstUpper»«annotationLiteral» extends «annotationLiteral»<«pattern.matchClassName»> {
+		public class «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)» extends «annotationLiteral»<«pattern.matchClassName»> {
 
 			private «pattern.matcherFactoryClassName» matcherFactory;
 
-			public «pattern.name.toFirstUpper»Constraint() throws IncQueryException {
+			public «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)»() throws IncQueryException {
 				matcherFactory = «pattern.matcherFactoryClassName».instance();
 			}
 
 			@Override
 			public String getMessage() {
-				return "«getElementOfConstraintAnnotation(pattern, "message")»";
+				return "«getElementOfConstraintAnnotation(annotation, "message")»";
 			}
 
 			@Override
 			public EObject getLocationObject(«pattern.matchClassName» signature) {
-				Object location = signature.get("«getElementOfConstraintAnnotation(pattern, "location")»");
+				Object location = signature.get("«getElementOfConstraintAnnotation(annotation, "location")»");
 				if(location instanceof EObject){
 					return (EObject) location;
 				}
@@ -208,7 +271,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			
 			@Override
 			public int getSeverity() {
-				return ValidationUtil.getSeverity("«getElementOfConstraintAnnotation(pattern, "severity")»");
+				return ValidationUtil.getSeverity("«getElementOfConstraintAnnotation(annotation, "severity")»");
 			}
 			
 			@Override

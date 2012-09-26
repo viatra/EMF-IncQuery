@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra2.emf.incquery.derived.feature"
+      label="EMF-IncQuery Derived Feature Handling feature"
+      version="0.6.5.qualifier"
+      license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
+
+   <description>
+      EMF-IncQuery backed derived feature handling feature.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+   </url>
+
+   <requires>
+      <import feature="org.eclipse.viatra2.emf.incquery.runtime.feature" version="0.6.5.qualifier"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.viatra2.emf.incquery.derived"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

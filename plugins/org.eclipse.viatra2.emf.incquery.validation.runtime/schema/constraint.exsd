@@ -49,6 +49,9 @@
 
    <element name="constraint">
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="enabledForEditor"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -64,6 +67,21 @@
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enabledForEditor">
+      <complexType>
+         <attribute name="editorId" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

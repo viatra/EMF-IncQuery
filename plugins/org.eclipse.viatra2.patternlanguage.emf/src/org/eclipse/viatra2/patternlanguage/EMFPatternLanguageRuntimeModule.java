@@ -20,6 +20,7 @@ import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
 import org.eclipse.viatra2.patternlanguage.scoping.MetamodelProviderService;
 import org.eclipse.viatra2.patternlanguage.serializer.EMFPatternLanguageCrossRefSerializer;
 import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider;
+import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.viatra2.patternlanguage.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -70,6 +71,10 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
 	@Override
 	public Class<? extends ITypeProvider> bindITypeProvider() {
+		return EMFPatternTypeProvider.class;
+	}
+	
+	public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
 		return EMFPatternTypeProvider.class;
 	}
 	

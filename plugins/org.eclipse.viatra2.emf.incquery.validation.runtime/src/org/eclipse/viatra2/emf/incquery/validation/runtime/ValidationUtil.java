@@ -27,12 +27,18 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 public class ValidationUtil {
 	
 	/**
 	 * The list of registered constraints (cached at first call)
 	 */
 	private static List<Constraint<IPatternMatch>> constraints;
+	// TODO change to multimap<EditorId,Constraint>
+	private static Multimap<String, Constraint<IPatternMatch>> editorConstraintMap;
+	// TODO activate only constraints with proper id
 
 	private ValidationUtil() {}
 	
@@ -67,16 +73,39 @@ public class ValidationUtil {
 		return IMarker.SEVERITY_INFO;
 	}
 
-	public synchronized static List<Constraint<IPatternMatch>> getConstraints() {
+	/*public synchronized static List<Constraint<IPatternMatch>> getConstraints() {
 		if (constraints == null) {
 			constraints = loadConstraintsFromExtensions();
 		}
 		return constraints;
-	}
+	}*/
+	
+	public synchronized static List<Constraint<IPatternMatch>> getConstraints() {
+	  if (editorConstraintMap == null) {
+      editorConstraintMap = loadConstraintsFromExtensions();
+    }
+    return new ArrayList<Constraint<IPatternMatch>>(editorConstraintMap.values());
+  }
+	
+	public synchronized static List<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
+    if (editorConstraintMap == null) {
+      editorConstraintMap = loadConstraintsFromExtensions();
+    }
+    ArrayList<Constraint<IPatternMatch>> list = new ArrayList<Constraint<IPatternMatch>>(editorConstraintMap.get(editorId));
+    list.addAll(editorConstraintMap.get("*"));
+    return list;
+  }
+	
+	public synchronized static boolean constraintsRegisteredForEditorId(String editorId) {
+    if (editorConstraintMap == null) {
+      editorConstraintMap = loadConstraintsFromExtensions();
+    }
+    return editorConstraintMap.containsKey(editorId);
+  }
 
 	@SuppressWarnings("unchecked")
-	private static List<Constraint<IPatternMatch>> loadConstraintsFromExtensions() {
-		List<Constraint<IPatternMatch>> result = new ArrayList<Constraint<IPatternMatch>>();
+	private static Multimap<String, Constraint<IPatternMatch>> loadConstraintsFromExtensions() {
+	  Multimap<String, Constraint<IPatternMatch>> result = HashMultimap.create();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");
@@ -84,11 +113,26 @@ public class ValidationUtil {
 		for (IExtension extension : ep.getExtensions()) {
 			for (IConfigurationElement ce : extension
 					.getConfigurationElements()) {
-				if (ce.getName().matches("constraint")) {
+				if (ce.getName().equals("constraint")) {
 					try {
+					  List<String> ids = new ArrayList<String>();
+					  for (IConfigurationElement child : ce.getChildren()) {
+					    if(child.getName().equals("enabledForEditor")) {
+					      String id = child.getAttribute("editorId");
+					      if(id != null && !id.equals("")) {
+					        ids.add(id);
+					      }
+					    }
+					  }
+					  
 						Object o = ce.createExecutableExtension("class");
 						if (o instanceof Constraint<?>) {
-							result.add((Constraint<IPatternMatch>) o);
+						  if(ids.isEmpty()) {
+						    ids.add("*");
+						  }
+						  for(String id : ids) {
+						    result.put(id,(Constraint<IPatternMatch>) o);
+						  }
 						}
 					} catch (CoreException e) {
 						ValidationRuntimeActivator

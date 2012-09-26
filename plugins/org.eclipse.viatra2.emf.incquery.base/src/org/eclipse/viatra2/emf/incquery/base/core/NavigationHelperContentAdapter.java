@@ -102,7 +102,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	@Override
 	public void notifyChanged(Notification notification) {
 		try {
-			baseHandleNotification(notification);
+			//baseHandleNotification(notification);
+			super.notifyChanged(notification);
 
 			Object oFeature = notification.getFeature();
 			final Object oNotifier = notification.getNotifier();
@@ -612,20 +613,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	    }	
 	}
 	
-	private void baseHandleNotification(Notification notification) {
-		if (notification.getNotifier() instanceof ResourceSet 
-				&& notification.getEventType() == Notification.ADD_MANY
-				&& notification.getFeatureID(ResourceSet.class) == ResourceSet.RESOURCE_SET__RESOURCES) 
-		{
-			@SuppressWarnings("unchecked") 
-			Collection<Notifier> newValues = (Collection<Notifier>)notification.getNewValue();
-			for (Notifier notifier : newValues) {
-				if (!notifier.eAdapters().contains(this)) {
-					addAdapter(notifier);
-				}
-			}    
-		} else super.notifyChanged(notification);
-	}
+//	private void baseHandleNotification(Notification notification) {
+//		if (notification.getNotifier() instanceof ResourceSet 
+//				&& notification.getEventType() == Notification.ADD_MANY
+//				&& notification.getFeatureID(ResourceSet.class) == ResourceSet.RESOURCE_SET__RESOURCES) 
+//		{
+//			@SuppressWarnings("unchecked") 
+//			Collection<Notifier> newValues = (Collection<Notifier>)notification.getNewValue();
+//			for (Notifier notifier : newValues) {
+//				if (!notifier.eAdapters().contains(this)) {
+//					addAdapter(notifier);
+//				}
+//			}    
+//		} else super.notifyChanged(notification);
+//	}
 	
 	// WORKAROUND (TMP) for eContents vs. derived features bug
 	@Override

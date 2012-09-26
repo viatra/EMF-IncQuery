@@ -31,7 +31,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
- * FIXME do it, write something meaningful here
+ * An extension of the {@link EMFPatternTypeProvider}, which can use the
+ * genmodel informations as well, if it is present. The main logic for the type
+ * inference is implemented in the {@link EMFPatternTypeProvider}.
  */
 @Singleton
 @SuppressWarnings("restriction")
@@ -49,19 +51,27 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 	@Inject
 	private Primitives primitives;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider#
+	 * getTypeReferenceForVariableWithEClassifier
+	 * (org.eclipse.emf.ecore.EClassifier,
+	 * org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
+	 */
 	@Override
 	protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
-		JvmTypeReference typeRef = super.getTypeReferenceForVariableWithEClassifier(classifier, variable);
-		if (typeRef == null && classifier != null) {
+		JvmTypeReference typeReference = super.getTypeReferenceForVariableWithEClassifier(classifier, variable);
+		if (typeReference == null && classifier != null) {
 			EPackage ePackage = classifier.getEPackage();
 			if (ePackage != null) {
 				GenPackage genPackage = genModelProvider.findGenPackage(variable, ePackage);
 				if (genPackage != null) {
-					typeRef = resolve(genPackage, classifier, variable);
+					typeReference = resolveTypeReference(genPackage, classifier, variable);
 				}
 			}
 		}
-		return typeRef;
+		return typeReference;
 	}
 
 	/**
@@ -75,7 +85,7 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 	 * @param variable
 	 * @return
 	 */
-	protected JvmTypeReference resolve(GenPackage genPackage, EClassifier classifier, Variable variable) {
+	private JvmTypeReference resolveTypeReference(GenPackage genPackage, EClassifier classifier, Variable variable) {
 		GenClass genClass = findGenClass(genPackage, classifier);
 		if (genClass != null) {
 			JvmTypeReference typeReference = getTypeReferenceForTypeName(genClass.getQualifiedInterfaceName(), variable);

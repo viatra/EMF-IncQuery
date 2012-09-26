@@ -82,17 +82,17 @@ public class ObservablePatternMatcher {
 			this.processMatchesRunnable = new Runnable() {		
 				@Override
 				public void run() {
-				  if(deltaMonitor.matchFoundEvents.size() > 0 || deltaMonitor.matchLostEvents.size() > 0) {
-				    // this is required as both QueryExplorer.getInstance() and Realm.getDefault() work only in a UI thread
-  				  Display.getDefault().asyncExec(new Runnable() {
-              @Override
-              public void run() {
-                processNewMatches(deltaMonitor.matchFoundEvents);
-                processLostMatches(deltaMonitor.matchLostEvents);
-                deltaMonitor.clear();
-              }
-            });
-				  }
+					if(deltaMonitor.matchFoundEvents.size() > 0 || deltaMonitor.matchLostEvents.size() > 0) {
+						// this is required as both QueryExplorer.getInstance() and Realm.getDefault() work only in a UI thread
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								processNewMatches(deltaMonitor.matchFoundEvents);
+								processLostMatches(deltaMonitor.matchLostEvents);
+								deltaMonitor.clear();
+							}
+						});
+					}
 				}
 			};
 			
@@ -162,13 +162,13 @@ public class ObservablePatternMatcher {
 						EObject compObj = (EObject) compMatch.get(orderParameterClass);
 						EStructuralFeature compFeature = DatabindingAdapterUtil.getFeature(compObj, orderParameterAttribute);
 						Comparable compValue = (Comparable) compObj.eGet(compFeature);
-						//descending order, the place is when the new match is greater than the actual element
+						//descending order, the new position is the index where the current match param is greater than the actual element
 						if (descendingOrder) {
 							if (compValue.compareTo(value) <= 0) {
 								return i;
 							}
 						}
-						//ascending order, the place is when the new match is smaller than the actual element
+						//ascending order, the new position is the index where the current match param is smaller than the actual element
 						else {
 							if (compValue.compareTo(value) >= 0) {
 								return i;
@@ -265,7 +265,9 @@ public class ObservablePatternMatcher {
 			removeMatch(match);
 		}
 		
-		QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		if (QueryExplorer.getInstance() != null) {
+			QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+		}
 		this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
 		this.processMatchesRunnable.run();
  	}

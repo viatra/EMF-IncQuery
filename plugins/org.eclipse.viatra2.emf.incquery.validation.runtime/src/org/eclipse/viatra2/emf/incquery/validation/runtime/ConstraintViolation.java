@@ -57,23 +57,26 @@ public class ConstraintViolation<T extends IPatternMatch> {
 		URI uri = location.eResource().getURI();
 		IResource markerLoc = null;
 		String platformString = uri.toPlatformString(true);
-		markerLoc = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(platformString);
-		try {
-			marker = markerLoc
-					.createMarker(EValidator.MARKER);
-			marker.setAttribute(IMarker.SEVERITY, this.adapter.getConstraint()
-					.getSeverity());
-			marker.setAttribute(IMarker.TRANSIENT, true);
-			String locationString = String.format("%1$s %2$s", location.eClass().getName(), BasePatternMatch.prettyPrintValue(location));
-			marker.setAttribute(IMarker.LOCATION, locationString);
-			marker.setAttribute(EValidator.URI_ATTRIBUTE,
-					EcoreUtil.getURI(location).toString());
-			updateText(DatabindingAdapterUtil.getMessage(patternMatch, message));
-		} catch (CoreException e) {
-			ValidationRuntimeActivator.getDefault().logException(
-					"Cannot create EMF-IncQuery Validation Marker", e);
-		}
+    if (platformString != null) {
+      markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+      if(markerLoc != null) {
+        try {
+          marker = markerLoc
+              .createMarker(EValidator.MARKER);
+          marker.setAttribute(IMarker.SEVERITY, this.adapter.getConstraint()
+              .getSeverity());
+          marker.setAttribute(IMarker.TRANSIENT, true);
+          String locationString = String.format("%1$s %2$s", location.eClass().getName(), BasePatternMatch.prettyPrintValue(location));
+          marker.setAttribute(IMarker.LOCATION, locationString);
+          marker.setAttribute(EValidator.URI_ATTRIBUTE,
+              EcoreUtil.getURI(location).toString());
+          updateText(DatabindingAdapterUtil.getMessage(patternMatch, message));
+        } catch (CoreException e) {
+          ValidationRuntimeActivator.getDefault().logException(
+              "Cannot create EMF-IncQuery Validation Marker", e);
+        }
+      }
+    }
 	}
 
 	private class ParameterValueChangedListener implements IValueChangeListener {

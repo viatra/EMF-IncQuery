@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -329,9 +328,9 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					V newTargetRoot = sccs.find(target);
 					Set<V> reachableSourcesTmp = countingAlg.getAllReachableSources(newSourceRoot);
 					Set<V> reachableTargetsTmp = countingAlg.getAllReachableTargets(newTargetRoot);
-					Set<V> sourceRoots = (Set<V>) ((reachableSourcesTmp == null) ? Collections.emptySet() : new HashSet<V>(reachableSourcesTmp));
+					Set<V> sourceRoots = (Set<V>) ((reachableSourcesTmp == null) ? new HashSet<V>() : new HashSet<V>(reachableSourcesTmp));
 					sourceRoots.add(newSourceRoot);
-					Set<V> targetRoots = (Set<V>) ((reachableTargetsTmp == null) ? Collections.emptySet() : new HashSet<V>(reachableTargetsTmp));
+					Set<V> targetRoots = (Set<V>) ((reachableTargetsTmp == null) ? new HashSet<V>() : new HashSet<V>(reachableTargetsTmp));
 					targetRoots.add(newTargetRoot);
 					
 					for (V sRoot : sourceRoots) {						

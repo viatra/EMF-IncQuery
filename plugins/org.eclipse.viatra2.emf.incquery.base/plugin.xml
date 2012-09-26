@@ -5,8 +5,25 @@
    <extension
          point="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features">
       <wellbehaving-derived-feature
-            package-nsUri="http://www.eclipse.org/emf/2002/Ecore">
-      </wellbehaving-derived-feature>
+            classifier-name="EGenericType"
+            feature-name="eRawType"
+            package-nsUri="http://www.eclipse.org/emf/2002/Ecore"/>
+      <wellbehaving-derived-feature
+            classifier-name="ETypedElement"
+            feature-name="eGenericType"
+            package-nsUri="http://www.eclipse.org/emf/2002/Ecore"/>
+      <wellbehaving-derived-feature
+            classifier-name="ETypedElement"
+            feature-name="eType"
+            package-nsUri="http://www.eclipse.org/emf/2002/Ecore"/>
+      <wellbehaving-derived-feature
+            classifier-name="EClassifier"
+            feature-name="instanceClassName"
+            package-nsUri="http://www.eclipse.org/emf/2002/Ecore"/>
+      <wellbehaving-derived-feature
+            classifier-name="EClassifier"
+            feature-name="instanceTypeName"
+            package-nsUri="http://www.eclipse.org/emf/2002/Ecore"/>
    </extension>
 
 </plugin>

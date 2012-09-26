@@ -15,7 +15,9 @@
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.model</module>
 		<module>../../plugins/org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.derived</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime.gmf</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime.graphiti</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator</module>
@@ -41,12 +43,15 @@
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.queries</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.ui</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.derived.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.derived.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.testing.sdk</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
 		<module>../../releng/org.eclipse.viatra2.emf.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
@@ -140,6 +145,11 @@
 					</execution>-->
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -176,28 +186,9 @@
 						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
 					</configuration>
 				</plugin>
-
 			</plugins>
 		</pluginManagement>
 	</build>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.12</version>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
-
-		</plugins>
-	</reporting>
 	<repositories>
 		<repository>
 			<id>maven.eclipse.org</id>

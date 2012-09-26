@@ -1,7 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
 
 /**
@@ -17,7 +16,7 @@ public abstract class RecordRoleValueProcessor implements IMatchProcessor<Record
    * @param pRole the value of pattern parameter Role in the currently processed match 
    * 
    */
-  public abstract void process(final MatchRecord Record, final Object Role);
+  public abstract void process(final Object Record, final Object Role);
   
   @Override
   public void process(final RecordRoleValueMatch match) {

@@ -1,49 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-  <extension
-            point="org.eclipse.ui.menus">
-         <menuContribution
-               allPopups="false"
-               locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContribution">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.initValidators"
-                  label="Initialize EMF-IncQuery Validators"
-                  style="push">
-            </command>
-         </menuContribution>
-         
-         <menuContribution
-            locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu">
-         <command
-               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.initValidators"
-               label="Initialize EMF-IncQuery Validators"
-               style="push">
-         </command>
-         </menuContribution>
-         
-   </extension>
-   <extension
-            point="org.eclipse.ui.commands">
-         <command
-               defaultHandler="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.InitValidatorsHandler"
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.initValidators"
-               name="Initialize EMF-IncQuery Validators">
-         </command>
-   </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.gmf.handlers.GMFEditorLoadModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers.GMFEditorLoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
          <activeWhen>
-            <with
-                  variable="activeEditor">
-               <instanceof
-                     value="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor">
-               </instanceof>
-            </with>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.runtime.gmf.editorDefinition">
+            </reference>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers.InitValidatorsHandler"
+            commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra2.emf.incquery.runtime.gmf.editorDefinition">
+            </reference>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.viatra2.emf.incquery.runtime.gmf.editorDefinition">
+         <with variable="activeEditor">
+            <instanceof
+                   value="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor">
+            </instanceof>
+         </with>
+      </definition>
    </extension>
 </plugin>

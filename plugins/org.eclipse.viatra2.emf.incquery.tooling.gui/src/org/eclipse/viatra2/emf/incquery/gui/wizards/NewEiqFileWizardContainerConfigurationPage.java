@@ -143,7 +143,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 		
 			String fileName = fileText.getText();
 			String packageName = getPackageText().replaceAll("\\.", "/");
-			
+
 			if (root.findMember(new Path(containerPath+"/"+packageName+"/"+fileText.getText())) != null) {
 				si.setError(THE_GIVEN_FILE_ALREADY_EXISTS);
 			}
@@ -197,7 +197,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 			 return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
 		}
 		IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-		if (status.getSeverity() != ERROR && !text.equalsIgnoreCase(text)) {
+		if (!text.toLowerCase().equals(text)) {
 			return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, PACKAGE_NAME_WARNING);
 		}
 		return status;

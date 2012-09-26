@@ -43,7 +43,7 @@ public class ValidationInitUtil {
 			//adapterMap.get(activeEditor).addAll(adapters);
 //		} else {
 		if (!adapterMap.containsKey(activeEditor)) {	
-			for (Constraint<IPatternMatch> c : ValidationUtil.getConstraints()) {
+			for (Constraint<IPatternMatch> c : ValidationUtil.getConstraintsForEditorId(activeEditor.getEditorSite().getId())) {
 				adapters.add(new ConstraintAdapter<IPatternMatch>(c, root));
 			}
 			adapterMap.put(activeEditor, adapters);

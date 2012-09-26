@@ -4,7 +4,6 @@ import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -20,14 +19,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * @see SubstitutionValueProcessor
  * 
  */
-public final class SubstitutionValueMatch extends BasePatternMatch implements IPatternMatch {
-  private MatchSubstitutionRecord fSubstitution;
+public final class SubstitutionValueMatch extends BasePatternMatch {
+  private Object fSubstitution;
   
   private Object fValue;
   
   private static String[] parameterNames = {"Substitution", "Value"};
   
-  SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+  SubstitutionValueMatch(final Object pSubstitution, final Object pValue) {
     this.fSubstitution = pSubstitution;
     this.fValue = pValue;
     
@@ -41,7 +40,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
     
   }
   
-  public MatchSubstitutionRecord getSubstitution() {
+  public Object getSubstitution() {
     return this.fSubstitution;
     
   }
@@ -53,8 +52,8 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("Substitution".equals(parameterName) && newValue instanceof org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) {
-    	this.fSubstitution = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) newValue;
+    if ("Substitution".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fSubstitution = (java.lang.Object) newValue;
     	return true;
     }
     if ("Value".equals(parameterName) && newValue instanceof java.lang.Object) {
@@ -65,7 +64,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
     
   }
   
-  public void setSubstitution(final MatchSubstitutionRecord pSubstitution) {
+  public void setSubstitution(final Object pSubstitution) {
     this.fSubstitution = pSubstitution;
     
   }
@@ -139,7 +138,6 @@ public final class SubstitutionValueMatch extends BasePatternMatch implements IP
     	return SubstitutionValueMatcher.factory().getPattern();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
-     	ex.printStackTrace();
      	throw new IllegalStateException	(ex);
     }
     
