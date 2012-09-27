@@ -267,14 +267,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             if (obj instanceof VariableReference) {
                 VariableReference varRef = (VariableReference) obj;
                 Variable variable = varRef.getVariable();
+                boolean localVariable = true;
                 // Replacing parameter references with real parameter counting
                 if (variable instanceof ParameterRef) {
+                    localVariable = false;
                     variable = ((ParameterRef) variable).getReferredParam();
                 }
                 ClassifiedVariableReferences classifiedVariableReferences = classifiedVariableReferencesCollection
                         .get(variable);
                 if (classifiedVariableReferences == null) {
-                    classifiedVariableReferences = new ClassifiedVariableReferences(variable, true);
+                    classifiedVariableReferences = new ClassifiedVariableReferences(variable, localVariable);
                     // All symbolic variables are already added.
                     classifiedVariableReferencesCollection.put(classifiedVariableReferences.getReferredVariable(),
                             classifiedVariableReferences);
