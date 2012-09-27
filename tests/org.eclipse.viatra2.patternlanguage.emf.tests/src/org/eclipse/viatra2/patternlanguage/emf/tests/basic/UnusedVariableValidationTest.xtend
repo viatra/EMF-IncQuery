@@ -104,13 +104,15 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	def testSymbolicVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
 				Pattern(p);
 			}
 
 			pattern testPattern(p) = {
-				Pattern(h);
+				// Pattern(h);
+				EInt(h);
 				h == count find helper(p);
 			}'
 		)
@@ -202,6 +204,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	def testLocalVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -209,7 +212,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 
 			pattern testPattern(c) = {
 				Pattern(c);
-				Pattern(h);
+				EInt(h);
 				h == count find helper(p);
 			}'
 		)
@@ -251,6 +254,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	def testLocalVariableOnePositiveOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -259,7 +263,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			pattern testPattern(c) = {
 				Pattern(c);
 				Pattern(p);
-				Pattern(h);
+				EInt(h);
 				h == count find helper(p);
 			}'
 		)
@@ -318,6 +322,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	def testLocalVariableOneNegativeOneReadOnlyReference() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -326,7 +331,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			pattern testPattern(c) = {
 				Pattern(c);
 				neg find helper(p);
-				Pattern(h);
+				EInt(h);
 				h == count find helper(p);
 			}'
 		)
@@ -337,6 +342,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	def testLocalVariableMultipleReadOnlyReferences() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -344,8 +350,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 
 			pattern testPattern(c) = {
 				Pattern(c);
-				Pattern(h);
-				Pattern(i);
+				EInt(h);
+				EInt(i);
 				h == count find helper(p);
 				i == count find helper(p);
 			}'
