@@ -36,7 +36,7 @@ Annotation:
 	('(' parameters+=AnnotationParameter (',' parameters+=AnnotationParameter)* ')')?;
 
 AnnotationParameter:
-	name=ID '=' value=ValueReference;
+	name=ID '=' value=AnnotationValueReference;
 
 Modifiers:
 //injective?='injective' &
@@ -119,8 +119,12 @@ PathExpressionTail returns PathExpressionElement:
 ValueReference:
 	LiteralValueReference | VariableValue | ComputationValue;
 
+AnnotationValueReference returns ValueReference:
+	ValueReference | ListValue
+;
+
 LiteralValueReference returns ValueReference:
-	IntValue | StringValue | DoubleValue | BoolValue | ListValue;
+	IntValue | StringValue | DoubleValue | BoolValue;
 
 IntValue returns LiteralValueReference:
 	{IntValue} value=INTNUMBER;
