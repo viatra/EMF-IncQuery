@@ -452,8 +452,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 }
                 // OK, issue warning now
                 error(String.format(
-                        "Inconsistent parameter type defintion, should be %s based on the pattern defintion",
-                        classifierCorrect.getName()), variable.getReferences().get(0), null,
+                        "Inconsistent parameter type definition, should be %s based on the pattern definition",
+                        classifierCorrect.getName()), variable, null,
                         EMFIssueCodes.PARAMETER_TYPE_INVALID);
 
             }
