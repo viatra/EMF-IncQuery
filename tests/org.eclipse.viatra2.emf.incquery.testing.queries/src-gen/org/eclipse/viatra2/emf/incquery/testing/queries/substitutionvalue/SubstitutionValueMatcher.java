@@ -11,6 +11,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
 import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
@@ -94,7 +95,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return matches represented as a SubstitutionValueMatch object.
    * 
    */
-  public Collection<SubstitutionValueMatch> getAllMatches(final Object pSubstitution, final Object pValue) {
+  public Collection<SubstitutionValueMatch> getAllMatches(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return rawGetAllMatches(new Object[]{pSubstitution, pValue});
   }
   
@@ -106,7 +107,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return a match represented as a SubstitutionValueMatch object, or null if no match is found.
    * 
    */
-  public SubstitutionValueMatch getOneArbitraryMatch(final Object pSubstitution, final Object pValue) {
+  public SubstitutionValueMatch getOneArbitraryMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return rawGetOneArbitraryMatch(new Object[]{pSubstitution, pValue});
   }
   
@@ -118,7 +119,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final Object pSubstitution, final Object pValue) {
+  public boolean hasMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return rawHasMatch(new Object[]{pSubstitution, pValue});
   }
   
@@ -129,7 +130,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final Object pSubstitution, final Object pValue) {
+  public int countMatches(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return rawCountMatches(new Object[]{pSubstitution, pValue});
   }
   
@@ -140,7 +141,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final Object pSubstitution, final Object pValue, final IMatchProcessor<? super SubstitutionValueMatch> processor) {
+  public void forEachMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue, final IMatchProcessor<? super SubstitutionValueMatch> processor) {
     rawForEachMatch(new Object[]{pSubstitution, pValue}, processor);
   }
   
@@ -153,7 +154,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final Object pSubstitution, final Object pValue, final IMatchProcessor<? super SubstitutionValueMatch> processor) {
+  public boolean forOneArbitraryMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue, final IMatchProcessor<? super SubstitutionValueMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pSubstitution, pValue}, processor);
   }
   
@@ -169,7 +170,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the delta monitor.
    * 
    */
-  public DeltaMonitor<SubstitutionValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Object pSubstitution, final Object pValue) {
+  public DeltaMonitor<SubstitutionValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pSubstitution, pValue});
   }
   
@@ -181,7 +182,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the (partial) match object.
    * 
    */
-  public SubstitutionValueMatch newMatch(final Object pSubstitution, final Object pValue) {
+  public SubstitutionValueMatch newMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     return new SubstitutionValueMatch(pSubstitution, pValue);
     
   }
@@ -191,8 +192,8 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfSubstitution(final Object[] parameters) {
-    Set<Object> results = new HashSet<Object>();
+  public Set<MatchSubstitutionRecord> rawAccumulateAllValuesOfSubstitution(final Object[] parameters) {
+    Set<MatchSubstitutionRecord> results = new HashSet<MatchSubstitutionRecord>();
     rawAccumulateAllValues(POSITION_SUBSTITUTION, parameters, results);
     return results;
   }
@@ -202,7 +203,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfSubstitution() {
+  public Set<MatchSubstitutionRecord> getAllValuesOfSubstitution() {
     return rawAccumulateAllValuesOfSubstitution(emptyArray());
   }
   
@@ -211,7 +212,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfSubstitution(final SubstitutionValueMatch partialMatch) {
+  public Set<MatchSubstitutionRecord> getAllValuesOfSubstitution(final SubstitutionValueMatch partialMatch) {
     return rawAccumulateAllValuesOfSubstitution(partialMatch.toArray());
   }
   
@@ -220,8 +221,8 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfSubstitution(final Object pValue) {
-    Object pSubstitution = null;
+  public Set<MatchSubstitutionRecord> getAllValuesOfSubstitution(final Object pValue) {
+    MatchSubstitutionRecord pSubstitution = null;
     return rawAccumulateAllValuesOfSubstitution(new Object[]{pSubstitution, pValue});
   }
   
@@ -259,7 +260,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> getAllValuesOfValue(final Object pSubstitution) {
+  public Set<Object> getAllValuesOfValue(final MatchSubstitutionRecord pSubstitution) {
     Object pValue = null;
     return rawAccumulateAllValuesOfValue(new Object[]{pSubstitution, pValue});
   }
@@ -267,7 +268,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   @Override
   public SubstitutionValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new SubstitutionValueMatch((java.lang.Object) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));	
+    	return new SubstitutionValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));	
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -277,7 +278,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   @Override
   public SubstitutionValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new SubstitutionValueMatch((java.lang.Object) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+    	return new SubstitutionValueMatch((org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

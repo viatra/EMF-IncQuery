@@ -4,6 +4,7 @@ import java.util.Arrays;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -20,13 +21,13 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * 
  */
 public final class SubstitutionValueMatch extends BasePatternMatch {
-  private Object fSubstitution;
+  private MatchSubstitutionRecord fSubstitution;
   
   private Object fValue;
   
   private static String[] parameterNames = {"Substitution", "Value"};
   
-  SubstitutionValueMatch(final Object pSubstitution, final Object pValue) {
+  SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     this.fSubstitution = pSubstitution;
     this.fValue = pValue;
     
@@ -40,7 +41,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
     
   }
   
-  public Object getSubstitution() {
+  public MatchSubstitutionRecord getSubstitution() {
     return this.fSubstitution;
     
   }
@@ -52,8 +53,8 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
-    if ("Substitution".equals(parameterName) && newValue instanceof java.lang.Object) {
-    	this.fSubstitution = (java.lang.Object) newValue;
+    if ("Substitution".equals(parameterName) ) {
+    	this.fSubstitution = (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) newValue;
     	return true;
     }
     if ("Value".equals(parameterName) && newValue instanceof java.lang.Object) {
@@ -64,7 +65,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
     
   }
   
-  public void setSubstitution(final Object pSubstitution) {
+  public void setSubstitution(final MatchSubstitutionRecord pSubstitution) {
     this.fSubstitution = pSubstitution;
     
   }
