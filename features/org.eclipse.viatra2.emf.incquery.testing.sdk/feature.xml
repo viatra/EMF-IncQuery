@@ -15,10 +15,6 @@
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
-   </license>
-
    <url>
       <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
    </url>
