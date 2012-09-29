@@ -13,6 +13,7 @@ package org.eclipse.viatra2.patternlanguage.core.scoping;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
@@ -45,16 +46,32 @@ import com.google.common.collect.Iterables;
 public class PatternLanguageDeclarativeScopeProvider extends
 		MyAbstractDeclarativeScopeProvider {
 
-	private final class UndefinedVariable implements Predicate<Variable> {
+    private static final class PrivateDescFilter implements Predicate<IEObjectDescription> {
+        @Override
+        public boolean apply(@NonNull IEObjectDescription input) {
+        	// filter not local, private patterns (private patterns in other
+        	// resources)
+        	// this information stored in the userdata of the
+        	// EObjectDescription
+        	// EObjectDescription only created for not local eObjects, so
+        	// check for resource equality is unnecessary.
+        	if ("true".equals(input.getUserData("private"))) {
+        		return false;
+        	}
+        	return true;
+        }
+    }
+
+    private static final class UndefinedVariable implements Predicate<Variable> {
 		@Override
-		public boolean apply(Variable input) {
+        public boolean apply(@NonNull Variable input) {
 			return input.getName() != null && !input.getName().isEmpty();
 		}
 	}
 
-	private final class CreateObjectDescFunction implements
+    private static final class CreateObjectDescFunction implements
 			Function<Variable, IEObjectDescription> {
-		public IEObjectDescription apply(Variable from) {
+        public IEObjectDescription apply(@NonNull Variable from) {
 			return EObjectDescription.create(from.getName(), from);
 		}
 	}
@@ -69,21 +86,7 @@ public class PatternLanguageDeclarativeScopeProvider extends
 	 */
 	public IScope scope_PatternCall_patternRef(PatternCall ctx, EReference ref) {
 		IScope scope = delegateGetScope(ctx, ref);
-		return new FilteringScope(scope, new Predicate<IEObjectDescription>() {
-			@Override
-			public boolean apply(IEObjectDescription input) {
-				// filter not local, private patterns (private patterns in other
-				// resources)
-				// this information stored in the userdata of the
-				// EObjectDescription
-				// EObjectDescription only created for not local eObjects, so
-				// check for resource equality is unnecessary.
-				if ("true".equals(input.getUserData("private"))) {
-					return false;
-				}
-				return true;
-			}
-		});
+        return new FilteringScope(scope, new PrivateDescFilter());
 	}
 
 	public IScope scope_VariableReference_variable(EObject ctx, EReference ref) {

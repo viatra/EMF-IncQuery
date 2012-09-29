@@ -44,7 +44,7 @@ public class ExtensionBasedPatternAnnotationValidator implements
 	private final String description;
 	private boolean deprecated;
 	
-	private final static ImmutableMap<String, Class<? extends ValueReference>> typeMapping = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
+    private static final ImmutableMap<String, Class<? extends ValueReference>> TYPEMAPPING = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
 			.put(ExtensionBasedPatternAnnotationParameter.INT, IntValue.class)
 			.put(ExtensionBasedPatternAnnotationParameter.STRING,
 					StringValue.class)
@@ -131,12 +131,12 @@ public class ExtensionBasedPatternAnnotationValidator implements
 				expectedParameter = p;
 			}
 		}
-		String type;
-		if (expectedParameter == null || (type = expectedParameter.getType()) == null) {
-			return null;
+        if (expectedParameter == null) {
+            return null;
 		}
-		if (typeMapping.containsKey(type)) {
-			return typeMapping.get(type);
+        String type = expectedParameter.getType();
+        if (type != null && TYPEMAPPING.containsKey(type)) {
+			return TYPEMAPPING.get(type);
 		} 
 		return null;
 	}

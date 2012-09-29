@@ -149,16 +149,13 @@ public class PatternLanguageJavaValidator extends
 						IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);						
 				}
 			} 
-			if (eContainer != null) {
-				if(! (eContainer instanceof PatternCompositionConstraint) || 
-					((PatternCompositionConstraint)eContainer).isNegative()) 
-				{
-					error(String.format(TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION, 
-							getFormattedPattern(patternRef)),
-						PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
-						IssueCodes.TRANSITIVE_PATTERNCALL_NOT_APPLICABLE);						
-				}	
-			}
+            if (eContainer != null
+                    && (!(eContainer instanceof PatternCompositionConstraint) || ((PatternCompositionConstraint) eContainer)
+                            .isNegative())) {
+                error(String.format(TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION, getFormattedPattern(patternRef)),
+                        PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
+                        IssueCodes.TRANSITIVE_PATTERNCALL_NOT_APPLICABLE);
+            }
 		
 		}
 
