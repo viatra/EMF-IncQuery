@@ -13,7 +13,6 @@ package org.eclipse.viatra2.patternlanguage.core.scoping;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
@@ -48,7 +47,7 @@ public class PatternLanguageDeclarativeScopeProvider extends
 
     private static final class PrivateDescFilter implements Predicate<IEObjectDescription> {
         @Override
-        public boolean apply(@NonNull IEObjectDescription input) {
+        public boolean apply(IEObjectDescription input) {
         	// filter not local, private patterns (private patterns in other
         	// resources)
         	// this information stored in the userdata of the
@@ -64,14 +63,14 @@ public class PatternLanguageDeclarativeScopeProvider extends
 
     private static final class UndefinedVariable implements Predicate<Variable> {
 		@Override
-        public boolean apply(@NonNull Variable input) {
+        public boolean apply(Variable input) {
 			return input.getName() != null && !input.getName().isEmpty();
 		}
 	}
 
     private static final class CreateObjectDescFunction implements
 			Function<Variable, IEObjectDescription> {
-        public IEObjectDescription apply(@NonNull Variable from) {
+        public IEObjectDescription apply(Variable from) {
 			return EObjectDescription.create(from.getName(), from);
 		}
 	}
