@@ -32,7 +32,7 @@ public class GeneratorModelJavaValidator extends AbstractGeneratorModelJavaValid
 			EPackage ePackage = genPackage.getEcorePackage();
 			String nsURI = ePackage.getNsURI();
 			if (registry.containsKey(nsURI)) {
-				warning(String.format(OVERRIDE_MESSAGE, nsURI),
+                error(String.format(OVERRIDE_MESSAGE, nsURI),
 						GeneratorModelPackage.Literals.GENERATOR_MODEL_REFERENCE__GENMODEL,
 						GeneratorModelIssueCodes.PACKAGE_OVERRIDE_CODE);
 			}

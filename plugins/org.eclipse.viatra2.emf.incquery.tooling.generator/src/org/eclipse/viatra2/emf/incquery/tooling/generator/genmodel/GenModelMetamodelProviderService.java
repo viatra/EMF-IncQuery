@@ -142,11 +142,15 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService
 
 	@Override
 	public EPackage loadEPackage(final String packageUri, ResourceSet set) {
+        EPackage ePackage = super.loadEPackage(packageUri, set);
+        if (ePackage != null) {
+            return ePackage;
+        }
 		GenPackage loadedPackage = findGenPackage(set, packageUri, false);
 		if (loadedPackage != null) {
 			return loadedPackage.getEcorePackage();
 		}
-		return super.loadEPackage(packageUri, set);
+        return null;
 	}
 
 	@Override
