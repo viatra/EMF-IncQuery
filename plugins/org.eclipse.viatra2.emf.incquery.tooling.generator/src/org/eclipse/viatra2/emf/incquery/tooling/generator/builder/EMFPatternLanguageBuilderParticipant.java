@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -126,9 +124,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 			return;
 		}
 		if (isFullBuildNeeded(context)) {
-            // XXX Hacky solution: simply launchin a full build manually
-            context.getBuiltProject().build(IncrementalProjectBuilder.FULL_BUILD,
-                    "org.eclipse.xtext.ui.shared.xtextBuilder", new HashMap<String, String>(), monitor);
+            context.needRebuild();
 		    return;
 		}
 		final List<IResourceDescription.Delta> relevantDeltas = getRelevantDeltas(context);		    
