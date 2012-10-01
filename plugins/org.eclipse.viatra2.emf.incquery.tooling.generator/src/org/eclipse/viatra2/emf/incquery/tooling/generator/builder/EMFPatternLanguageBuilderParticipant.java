@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.tooling.generator.builder;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,16 +20,19 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
@@ -103,13 +107,31 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	@Inject
 	private IStorage2UriMapper storage2UriMapper;
 
+    protected boolean isFullBuildNeeded(final IBuildContext context) {
+        IProject project = context.getBuiltProject();
+        URI genmodelUri = URI.createPlatformResourceURI(project.getFile(IncQueryNature.IQGENMODEL).getFullPath()
+                .toString(), true);
+        for (Delta delta : context.getDeltas()) {
+            if (genmodelUri.equals(delta.getUri())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	@Override
 	public void build(final IBuildContext context, IProgressMonitor monitor)
 			throws CoreException {
 		if (!isEnabled(context)) {
 			return;
 		}
-		final List<IResourceDescription.Delta> relevantDeltas = getRelevantDeltas(context);
+		if (isFullBuildNeeded(context)) {
+            // XXX Hacky solution: simply launchin a full build manually
+            context.getBuiltProject().build(IncrementalProjectBuilder.FULL_BUILD,
+                    "org.eclipse.xtext.ui.shared.xtextBuilder", new HashMap<String, String>(), monitor);
+		    return;
+		}
+		final List<IResourceDescription.Delta> relevantDeltas = getRelevantDeltas(context);		    
 		if (relevantDeltas.isEmpty()) {
 			return;
 		}
