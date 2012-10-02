@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Databinding generator
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.tooling.generator.databinding;singleton:=true
-Bundle-Version: 0.6.5.qualifier
+Bundle-Version: 0.7.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0",

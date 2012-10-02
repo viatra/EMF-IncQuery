@@ -7,7 +7,7 @@
 	<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
 	<name>EMF-IncQuery</name>
 	<url>http://viatra.inf.mit.bme.hu/incquery</url>
-	<version>0.6.5-SNAPSHOT</version>
+	<version>0.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
