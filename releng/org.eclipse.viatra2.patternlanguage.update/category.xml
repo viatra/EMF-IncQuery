@@ -1,38 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.sdk.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.sdk.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.databinding.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.databinding.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.databinding.tooling.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.validation.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.validation.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.validation.tooling.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.gmf.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.testing.sdk_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.testing.sdk" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.derived.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.derived.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.derived.tooling.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.derived.tooling.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
-   <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature_0.6.5.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature" version="0.6.5.qualifier">
-      <category name="org.eclipse.viatra2.patternlanguage"/>
-   </feature>
    <feature url="features/org.eclipse.viatra2.emf.incquery.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.viatra2.emf.incquery.runtime.feature" version="0.7.0.qualifier">
       <category name="org.eclipse.viatra2.patternlanguage"/>
    </feature>
