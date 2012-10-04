@@ -575,16 +575,16 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		Set<Tuple<V>> retSet = new HashSet<Tuple<V>>();
 		
 		for (V sourceRoot : this.sccs.setMap.keySet()) {
-			
-			for (V nS : this.sccs.setMap.get(sourceRoot)) {
-				for (V nT : this.sccs.setMap.get(sourceRoot)) {
-					//if (!nS.equals(nT)) {  - loops are allowed
+			HashSet<V> sccMembers = this.sccs.setMap.get(sourceRoot);
+			if (sccMembers.size() > 1) {
+				for (V nS : this.sccs.setMap.get(sourceRoot)) {
+					for (V nT : this.sccs.setMap.get(sourceRoot)) {
 						retSet.add(new Tuple<V>(nS, nT));
-					//}
+					}
 				}
 			}
-			Set<V> reachableTargets = this.countingAlg.getAllReachableTargets(sourceRoot);
 			
+			Set<V> reachableTargets = this.countingAlg.getAllReachableTargets(sourceRoot);
 			if (reachableTargets != null) {
 				for (V targetRoot : reachableTargets) {
 					for (V sN : this.sccs.setMap.get(sourceRoot)) {
