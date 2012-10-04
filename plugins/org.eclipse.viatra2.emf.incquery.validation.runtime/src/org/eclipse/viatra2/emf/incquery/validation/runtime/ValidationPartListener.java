@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi, Abel Hegedus, Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.triggerengine.validation;
+package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;

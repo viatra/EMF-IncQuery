@@ -11,9 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -26,10 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ConstraintAdapter;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationPartListener;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 public class InitValidatorsHandler extends AbstractHandler {
@@ -58,20 +52,8 @@ public class InitValidatorsHandler extends AbstractHandler {
 			}
 		}
 		if (notifier==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
-	
-		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
-		for (Constraint<IPatternMatch> c : ValidationUtil.getConstraintsForEditorId(HandlerUtil.getActiveEditorId(event))) {
-			try {
-				adapters.add(new ConstraintAdapter<IPatternMatch>(c, notifier));
-			} catch (IncQueryException ex) {
-				throw new ExecutionException(
-						"Could not validate constraint " + c.getClass().getSimpleName()
-							+ " due to a pattern matcher error", 
-						ex);
-			}
-		}
-		ValidationUtil.getAdapterMap().put(activeEditor, adapters);
-		activeEditor.getEditorSite().getPage().addPartListener(ValidationUtil.editorPartListener);
+		ValidationUtil.addNotifier(activeEditor, notifier);
+		activeEditor.getEditorSite().getPage().addPartListener(ValidationPartListener.getInstance());
 		return null;
 	}
 

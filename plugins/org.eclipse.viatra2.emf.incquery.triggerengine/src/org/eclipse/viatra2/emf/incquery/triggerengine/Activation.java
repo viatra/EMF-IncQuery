@@ -9,6 +9,7 @@ public abstract class Activation<MatchType extends IPatternMatch> {
 	protected ActivationState state;
 	protected Rule<MatchType> rule;
 	protected boolean allowMultipleFiring;
+	private int cachedHash = -1;
 	
 	public Activation(Rule<MatchType> rule, MatchType patternMatch, boolean allowMultipleFiring) {
 		this.patternMatch = patternMatch;
@@ -73,11 +74,12 @@ public abstract class Activation<MatchType extends IPatternMatch> {
 	
 	@Override
 	public int hashCode() {
-		int prime = 31;
-		int result = 1;
-		result = prime * result + state.hashCode(); 
-		result = prime * result + rule.hashCode(); 
-		result = prime * result + patternMatch.hashCode(); 
-		return result; 
+		if (cachedHash == -1) {
+			final int prime = 31;
+			cachedHash = 1;
+			cachedHash = prime * cachedHash + state.hashCode(); 
+			cachedHash = prime * cachedHash + patternMatch.hashCode();
+		}
+		return cachedHash; 
 	}
 }

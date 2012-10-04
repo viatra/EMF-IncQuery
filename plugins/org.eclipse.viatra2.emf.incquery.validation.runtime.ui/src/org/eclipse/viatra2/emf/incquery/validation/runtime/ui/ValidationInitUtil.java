@@ -10,45 +10,23 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.validation.runtime.ui;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ConstraintAdapter;
+import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationPartListener;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
-/**
- * @author Abel Hegedus
- *
- */
 public class ValidationInitUtil {
-	/**
-	 * @param activeEditor
-	 * @param root
-	 * @throws IncQueryException if matchers could not be constructed
-	 */
+
 	public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {
-		Set<ConstraintAdapter<IPatternMatch>> adapters = new HashSet<ConstraintAdapter<IPatternMatch>>();
-		
-		Map<IEditorPart, Set<ConstraintAdapter<IPatternMatch>>> adapterMap = ValidationUtil.getAdapterMap();
 //		if(adapterMap.containsKey(activeEditor)) {
 			// FIXME define proper semantics for validation based on selection
 			// FIXME handle already existing violations
-			
 			//adapterMap.get(activeEditor).addAll(adapters);
 //		} else {
-		if (!adapterMap.containsKey(activeEditor)) {	
-			for (Constraint<IPatternMatch> c : ValidationUtil.getConstraintsForEditorId(activeEditor.getEditorSite().getId())) {
-				adapters.add(new ConstraintAdapter<IPatternMatch>(c, root));
-			}
-			adapterMap.put(activeEditor, adapters);
-			activeEditor.getEditorSite().getPage().addPartListener(ValidationUtil.editorPartListener);
+		if (!ValidationUtil.getAdapterMap().containsKey(activeEditor)) {
+			ValidationUtil.addNotifier(activeEditor, root);
+			activeEditor.getSite().getPage().addPartListener(ValidationPartListener.getInstance());
 		}
 	}
-
 }

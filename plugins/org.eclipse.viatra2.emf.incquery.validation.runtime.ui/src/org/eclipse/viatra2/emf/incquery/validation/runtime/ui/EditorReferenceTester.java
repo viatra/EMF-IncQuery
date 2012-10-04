@@ -15,31 +15,22 @@ import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public class EditorReferenceTester extends PropertyTester {
-  
-  /**
-   * 
-   */
-  public EditorReferenceTester() {
-    // TODO Auto-generated constructor stub
-  }
-  
-  /* (non-Javadoc)
-   * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-   */
-  @Override
-  public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-    if(receiver instanceof String) {
-      String editorId = (String) receiver;
-      
-      if(property.equals("hasConstraint")) {
-        return ValidationUtil.constraintsRegisteredForEditorId(editorId);
-      }
-      
-    }
-    return false;
-  }
-  
+
+	public EditorReferenceTester() {
+		
+	}
+
+	@Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		if (receiver instanceof String) {
+			String editorId = (String) receiver;
+			if (property.equals("hasConstraint")) {
+				return ValidationUtil.isConstraintsRegisteredForEditorId(editorId);
+			}
+		}
+		return false;
+	}
 }
