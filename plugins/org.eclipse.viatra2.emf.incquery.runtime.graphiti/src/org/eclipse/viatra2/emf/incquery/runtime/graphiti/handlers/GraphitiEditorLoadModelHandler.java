@@ -25,7 +25,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.graphiti.util.GraphitiModelConne
 
 public class GraphitiEditorLoadModelHandler extends LoadModelHandler {
 
-	@SuppressWarnings("restriction")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart editorPart = HandlerUtil.getActiveEditor(event);

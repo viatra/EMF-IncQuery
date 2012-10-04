@@ -47,7 +47,7 @@ public class GraphitiEditorPartListener extends BasePartListener {
 			IEditorPart closedEditor = (IEditorPart) part;
 			if (closedEditor instanceof DiagramEditor) {
 				DiagramEditor providerEditor = (DiagramEditor) closedEditor;
-				ResourceSet resourceSet = providerEditor.getResourceSet();
+				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
 				if (resourceSet.getResources().size() > 0) {
 					MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
 					QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
