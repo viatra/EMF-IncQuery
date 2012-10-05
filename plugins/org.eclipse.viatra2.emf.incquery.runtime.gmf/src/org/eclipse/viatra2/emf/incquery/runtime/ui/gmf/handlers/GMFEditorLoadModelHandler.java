@@ -16,6 +16,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -34,13 +35,25 @@ public class GMFEditorLoadModelHandler extends AbstractHandler implements
 		if (editorPart instanceof DiagramDocumentEditor) {
 			DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editorPart;
 			ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
-			if (resourceSet.getResources().size() > 0) {
-				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
-				ModelConnector contentModel = new GMFModelConnector(key);
-				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-				contentModel.loadModel();
-			}
+            loadModel(providerEditor, resourceSet);
+        } else if (editorPart instanceof IDiagramWorkbenchPart) {
+            IDiagramWorkbenchPart providerEditor = (IDiagramWorkbenchPart) editorPart;
+            ResourceSet resourceSet = providerEditor.getDiagramEditPart().getEditingDomain().getResourceSet();
+            loadModel(editorPart, resourceSet);
 		}
 		return null;
 	}
+
+    /**
+     * @param providerEditor
+     * @param resourceSet
+     */
+    private void loadModel(IEditorPart providerEditor, ResourceSet resourceSet) {
+        if (resourceSet.getResources().size() > 0) {
+            MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
+            ModelConnector contentModel = new GMFModelConnector(key);
+            QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
+            contentModel.loadModel();
+        }
+    }
 }

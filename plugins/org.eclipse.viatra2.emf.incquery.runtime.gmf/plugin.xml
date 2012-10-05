@@ -27,9 +27,14 @@
       <definition
             id="org.eclipse.viatra2.emf.incquery.runtime.gmf.editorDefinition">
          <with variable="activeEditor">
+            <or>
             <instanceof
                    value="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor">
             </instanceof>
+            <instanceof
+                  value="org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart">
+            </instanceof>
+            </or>
          </with>
       </definition>
    </extension>
