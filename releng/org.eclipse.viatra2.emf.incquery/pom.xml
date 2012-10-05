@@ -34,6 +34,7 @@
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base.itc</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.triggerengine</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.base.itc.test</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot</module>
