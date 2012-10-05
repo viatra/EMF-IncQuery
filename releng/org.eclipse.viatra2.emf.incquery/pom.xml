@@ -54,6 +54,7 @@
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.triggerengine.feature</module>
 		<module>../../releng/org.eclipse.viatra2.emf.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>
