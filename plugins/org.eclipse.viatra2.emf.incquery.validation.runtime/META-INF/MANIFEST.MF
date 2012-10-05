@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.1";visibility:=reexport,
  org.eclipse.viatra2.emf.incquery.databinding.runtime;bundle-version="0.6.0",
- org.eclipse.core.databinding.observable;bundle-version="1.4.0"
+ org.eclipse.core.databinding.observable;bundle-version="1.4.0",
+ org.eclipse.viatra2.emf.incquery.triggerengine;bundle-version="0.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra2.emf.incquery.validation.runtime
