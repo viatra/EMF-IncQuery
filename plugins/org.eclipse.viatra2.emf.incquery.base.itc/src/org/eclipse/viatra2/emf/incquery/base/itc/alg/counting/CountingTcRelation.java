@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.counting;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -27,12 +28,12 @@ import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
  */
 public class CountingTcRelation<V> implements ITcRelation<V> {
 	
-	private HashMap<V, HashMap<V, Integer>> tuplesForward = null;
-	private HashMap<V, HashMap<V, Integer>> tuplesBackward = null;
+	private Map<V, Map<V, Integer>> tuplesForward = null;
+	private Map<V, Map<V, Integer>> tuplesBackward = null;
 	
 	protected CountingTcRelation(boolean backwardIndexing) {
-		tuplesForward = new HashMap<V, HashMap<V,Integer>>();
-		if (backwardIndexing) tuplesBackward = new HashMap<V, HashMap<V,Integer>>();
+		tuplesForward = new HashMap<V, Map<V,Integer>>();
+		if (backwardIndexing) tuplesBackward = new HashMap<V, Map<V,Integer>>();
 	}
 	
 	protected boolean isEmpty() {
@@ -75,8 +76,8 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 	 */
 	public boolean addTuple(V source, V target, int count) {
 		
-		HashMap<V, Integer> sMap = null;
-		HashMap<V, Integer> tMap = null;
+		Map<V, Integer> sMap = null;
+		Map<V, Integer> tMap = null;
 		
 		if (tuplesBackward != null) {
 			tMap = tuplesBackward.get(target);
@@ -133,7 +134,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 		this.tuplesForward.remove(tupleEnd);
 		
 		if (tuplesForward.keySet() != null) {
-			HashSet<V> tmp = new HashSet<V>(tuplesForward.keySet());
+			Set<V> tmp = new HashSet<V>(tuplesForward.keySet());
 			
 			for (V key : tmp) {
 				this.tuplesForward.get(key).remove(tupleEnd);
@@ -146,7 +147,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 			this.tuplesBackward.remove(tupleEnd);
 			
 			if (tuplesBackward.keySet() != null) {
-				HashSet<V> tmp = new HashSet<V>(tuplesBackward.keySet());
+				Set<V> tmp = new HashSet<V>(tuplesBackward.keySet());
 				
 				for (V key : tmp) {
 					this.tuplesBackward.get(key).remove(tupleEnd);
@@ -176,7 +177,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 	
 	@Override
 	public Set<V> getTupleEnds(V source) {
-		HashMap<V, Integer> tupEnds = tuplesForward.get(source);
+		Map<V, Integer> tupEnds = tuplesForward.get(source);
 		if (tupEnds == null) return null;
 		return new HashSet<V>(tuplesForward.get(source).keySet());
 	}
@@ -189,7 +190,7 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 	 */
 	public Set<V> getTupleStarts(V target) {
 		if (tuplesBackward != null) {
-			HashMap<V, Integer> tupStarts = tuplesBackward.get(target);
+			Map<V, Integer> tupStarts = tuplesBackward.get(target);
 			if (tupStarts == null) return null;
 			return tuplesBackward.get(target).keySet();
 		}
@@ -200,9 +201,8 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 	
 	@Override
 	public Set<V> getTupleStarts() {
-		HashSet<V> nodes = new HashSet<V>();
+		Set<V> nodes = new HashSet<V>();
 		nodes.addAll(tuplesForward.keySet());
-		
 		return nodes;
 	}
 	
@@ -261,11 +261,11 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 	public int hashCode() {
 		int hash = 7;
 		
-		for (Entry<V, HashMap<V, Integer>> entry : this.tuplesForward.entrySet()) {
+		for (Entry<V, Map<V, Integer>> entry : this.tuplesForward.entrySet()) {
 			hash += 31 * hash + entry.hashCode();
 		}
 		
-		for (Entry<V, HashMap<V, Integer>> entry : this.tuplesBackward.entrySet()) {
+		for (Entry<V, Map<V, Integer>> entry : this.tuplesBackward.entrySet()) {
 			hash += 31 * hash + entry.hashCode();
 		}
 		

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalGraphDataSource;
@@ -32,10 +33,9 @@ public class BFS<V> {
 	 * @param graph the graph data source
 	 * @return true if source is reachable from target, false otherwise
 	 */
-	public static <V> boolean isReachable(V source, V target,
-			IGraphDataSource<V> graph) {
-		ArrayList<V> nodeQueue = new ArrayList<V>();
-		HashMap<V, Boolean> visited = new HashMap<V, Boolean>();
+	public static <V> boolean isReachable(V source, V target, IGraphDataSource<V> graph) {
+		List<V> nodeQueue = new ArrayList<V>();
+		Map<V, Boolean> visited = new HashMap<V, Boolean>();
 
 		nodeQueue.add(source);
 		visited.put(source, true);
@@ -44,7 +44,7 @@ public class BFS<V> {
 		return ret;
 	}
 
-	private static <V> boolean _isReachable(V target, IGraphDataSource<V> graph, ArrayList<V> nodeQueue, HashMap<V, Boolean> visited) {
+	private static <V> boolean _isReachable(V target, IGraphDataSource<V> graph, List<V> nodeQueue, Map<V, Boolean> visited) {
 
 		while (!nodeQueue.isEmpty()) {
 			V node = nodeQueue.remove(0);
@@ -66,9 +66,9 @@ public class BFS<V> {
 	}
 	
 	public static<V> Set<V> reachableSources(IBiDirectionalGraphDataSource<V> graph, V target) {
-		HashSet<V> retSet = new HashSet<V>();
+		Set<V> retSet = new HashSet<V>();
 		retSet.add(target);
-		ArrayList<V> nodeQueue = new ArrayList<V>();
+		List<V> nodeQueue = new ArrayList<V>();
 		nodeQueue.add(target);
 		
 		_reachableSources(graph, nodeQueue, retSet);
@@ -76,7 +76,7 @@ public class BFS<V> {
 		return retSet;
 	}
 	
-	private static <V> void _reachableSources(IBiDirectionalGraphDataSource<V> graph, ArrayList<V> nodeQueue, HashSet<V> retSet) {
+	private static <V> void _reachableSources(IBiDirectionalGraphDataSource<V> graph, List<V> nodeQueue, Set<V> retSet) {
 		while (!nodeQueue.isEmpty()) {
 			V node = nodeQueue.remove(0);
 			List<V> sourceNodes = graph.getSourceNodes(node);
@@ -94,9 +94,9 @@ public class BFS<V> {
 	}
 	
 	public static<V> Set<V> reachableTargets(IGraphDataSource<V> graph, V source) {
-		HashSet<V> retSet = new HashSet<V>();
+		Set<V> retSet = new HashSet<V>();
 		retSet.add(source);
-		ArrayList<V> nodeQueue = new ArrayList<V>();
+		List<V> nodeQueue = new ArrayList<V>();
 		nodeQueue.add(source);
 		
 		_reachableTargets(graph, nodeQueue, retSet);
@@ -104,7 +104,7 @@ public class BFS<V> {
 		return retSet;
 	}
 	
-	private static <V> void _reachableTargets(IGraphDataSource<V> graph, ArrayList<V> nodeQueue, HashSet<V> retSet) {
+	private static <V> void _reachableTargets(IGraphDataSource<V> graph, List<V> nodeQueue, Set<V> retSet) {
 		while (!nodeQueue.isEmpty()) {
 			V node = nodeQueue.remove(0);
 
@@ -128,12 +128,12 @@ public class BFS<V> {
 	 * @return the set of nodes along the path
 	 */
 	public static <V> Set<V> collectNodesAlongPath(V source, V target, IGraphDataSource<V> graph) {
-		HashSet<V> path = new HashSet<V>();
+		Set<V> path = new HashSet<V>();
 		_collectNodesAlongPath(source, target, graph, path);
 		return path;
 	}
 	
-	private static <V> boolean _collectNodesAlongPath(V node, V target, IGraphDataSource<V> graph, HashSet<V> path) {
+	private static <V> boolean _collectNodesAlongPath(V node, V target, IGraphDataSource<V> graph, Set<V> path) {
 		
 		boolean res = false;
 		
