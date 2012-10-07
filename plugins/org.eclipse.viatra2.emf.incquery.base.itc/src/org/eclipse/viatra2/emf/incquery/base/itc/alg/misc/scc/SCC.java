@@ -44,7 +44,7 @@ public class SCC<V> {
 		int index = 0;
 		Set<Set<V>> ret = new HashSet<Set<V>>();
 		Map<V, SCCProperty> nodeMap = new HashMap<V, SCCProperty>();
-		Map<V, ArrayList<V>> targetNodeMap = new HashMap<V, ArrayList<V>>();
+		Map<V, List<V>> targetNodeMap = new HashMap<V, List<V>>();
 		//stores the nodes during the traversal
 		Stack<V> nodeStack = new Stack<V>();
 		//stores the nodes that are in the same strongly connected component
@@ -123,7 +123,7 @@ public class SCC<V> {
 							}
 						}
 					}
-					//if _node has no target nodes - isolated nodes
+					//if _node has no target nodes
 					else {
 						nodeStack.pop();
 						sink = true;
