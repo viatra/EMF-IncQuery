@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature"
       label="EMF-IncQuery Graphiti Extensions"
-      version="0.6.5.qualifier"
+      version="0.6.6.qualifier"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 

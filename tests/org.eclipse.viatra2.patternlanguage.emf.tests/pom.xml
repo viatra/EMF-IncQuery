@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eclipse.viatra2</groupId>
-		<version>0.6.5-SNAPSHOT</version>
+		<version>0.6.6-SNAPSHOT</version>
 		<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
 		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
 	</parent>
