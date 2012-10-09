@@ -82,7 +82,7 @@ public class MatcherTreeViewerRootKey {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" (");
+		sb.append("[");
 		
 		int i = 0;
 		
@@ -92,7 +92,7 @@ public class MatcherTreeViewerRootKey {
 			for (Resource r : rs.getResources()) {
 				sb.append(r.getURI().toString());
 				if (i != rs.getResources().size()-1) {
-					sb.append(" ,");
+					sb.append(", ");
 				}
 			}
 		}
@@ -103,9 +103,11 @@ public class MatcherTreeViewerRootKey {
 			sb.append(notifier.toString());
 		}
 		
-		sb.append(")");
-		
-		return editorPart.getEditorSite().getId() + sb.toString();
+		sb.append("]");
+		sb.append("[");
+		sb.append(editorPart.getEditorSite().getId());
+		sb.append("]");
+		return sb.toString();
 	}
 
   /**
