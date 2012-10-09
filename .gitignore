@@ -1,12 +1,13 @@
 plugin.xml_gen
 bin
 target
-plugin.xml_gen
 MANIFEST.MF_gen
 .DS_Store*
-src-gen
-!tests/**/src-gen
-xtend-gen
-+keep.txt
-+.keep.txt
 
+src-gen/
+!src-gen
+!tests/**/src-gen/
+xtend-gen/
+!xtend-gen
+!keep.txt
+!.keep.txt
