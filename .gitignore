@@ -5,9 +5,9 @@ MANIFEST.MF_gen
 .DS_Store*
 
 src-gen/
-!src-gen
+#!src-gen
 !tests/**/src-gen/
 xtend-gen/
-!xtend-gen
+#!xtend-gen
 !keep.txt
 !.keep.txt
