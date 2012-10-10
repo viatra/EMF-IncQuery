@@ -84,7 +84,7 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
 		
 		for (i=0;i<n;i++) {
 			for (j=0;j<n;j++) {
-				if ((P[i][j] == 1) && (i != j)) tc.addTuple(mapBackw.get(i), mapBackw.get(j)); 
+				if (P[i][j] == 1 && i != j) tc.addTuple(mapBackw.get(i), mapBackw.get(j)); 
 			}
 		}
 	}

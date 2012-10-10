@@ -112,7 +112,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				isectRoots.add(sourceRoot);
 				isectRoots.add(targetRoot);
 				
-				//must notfiy before the actual relation modification because some sets will be deleted
+				//notifications must be issued before Union-Find modifications
 				if (observers.size() > 0) {
 					Set<V> sourceNodes = new HashSet<V>();
 					Set<V> targetNodes = new HashSet<V>();
@@ -149,8 +149,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				List<V> targets = new ArrayList<V>();
 				
 				for (V r : isectRoots) {
-					List<V> _srcList = getSourceNodesToSCC(r);
-					List<V> _trgList = getTargetNodesToSCC(r);
+					List<V> _srcList = getSourceSCCsOfSCC(r);
+					List<V> _trgList = getTargetSCCsOfSCC(r);
 					
 					for (V _source : _srcList) {
 						if (!_source.equals(r)) {
@@ -223,6 +223,12 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				}
 
 				reducedGraph.insertEdge(sourceRoot, targetRoot);
+			}
+		}
+		else {
+			//Notifications about self-loops
+			if (source.equals(target) && isSelfLoop(source)) {
+				notifyTcObservers(source, source, 1);
 			}
 		}
 	}
@@ -301,8 +307,8 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					roots.add(newRoot);
 				}
 				for (V _root : roots) {
-					List<V> sourceNodes = getSourceNodesToSCC(_root);
-					List<V> targetNodes = getTargetNodesToSCC(_root);
+					List<V> sourceNodes = getSourceSCCsOfSCC(_root);
+					List<V> targetNodes = getTargetSCCsOfSCC(_root);
 
 					for (V _s : sourceNodes) {
 						V _sR = sccs.find(_s);
@@ -358,15 +364,18 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	public void nodeDeleted(V n) {		
 		List<V> sources = gds.getSourceNodes(n);
 		List<V> targets = gds.getTargetNodes(n);
-		if (sources != null)
+		
+		if (sources != null) {
 			for (V source : sources) {
 				edgeDeleted(source, n);
 			}
+		}
 		
-		if (targets != null)
+		if (targets != null) {
 			for (V target : gds.getTargetNodes(n)) {
 				edgeDeleted(n, target);
 			}
+		}
 		
 		sccs.deleteSet(n);
 	}
@@ -384,30 +393,39 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	@Override
 	public Set<V> getAllReachableTargets(V source) {
 		V sourceRoot = sccs.find(source);
-		Set<V> targets = new HashSet<V>(sccs.setMap.get(sourceRoot));
+		Set<V> containedNodes = sccs.setMap.get(sourceRoot);
+		Set<V> targets = new HashSet<V>();
+		
+		if (containedNodes.size() > 1 || isSelfLoop(source)) {
+			targets.addAll(containedNodes);
+		}
+		
 		Set<V> rootSet = countingAlg.getAllReachableTargets(sourceRoot);
-
 		if (rootSet != null) {
 			for (V _root : rootSet) {
 				targets.addAll(sccs.setMap.get(_root));
 			}
 		}
-		//targets.remove(source);
+
 		return targets;
 	}
 
 	@Override
 	public Set<V> getAllReachableSources(V target) {
 		V targetRoot = sccs.find(target);
-		Set<V> sources = new HashSet<V>(sccs.setMap.get(targetRoot));
-		Set<V> rootSet = countingAlg.getAllReachableSources(targetRoot);
+		Set<V> containedNodes = sccs.setMap.get(targetRoot);
+		Set<V> sources = new HashSet<V>();
 		
+		if (containedNodes.size() > 1 || isSelfLoop(target)) {
+			sources.addAll(containedNodes);
+		}
+		
+		Set<V> rootSet = countingAlg.getAllReachableSources(targetRoot);
 		if (rootSet != null) {
 			for (V _root : rootSet) {
 				sources.addAll(sccs.setMap.get(_root));
 			}
 		}
-		//sources.remove(target);
 		return sources;
 	}
 
@@ -419,21 +437,35 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		if (sourceRoot.equals(targetRoot)) return true;
 		else return countingAlg.isReachable(sourceRoot, targetRoot);
 	}
+	
+	private boolean isSelfLoop(V node) {
+		if (this.gds.getTargetNodes(node) != null && this.gds.getTargetNodes(node).contains(node)) {
+			return true;
+		}
+		return false;
+	}
 
-	private List<V> getSourceNodesToSCC(V root) {
-		List<V> tmp = new ArrayList<V>();
+	/**
+	 * Return the SCCs from which the SCC represented by the root node is reachable. 
+	 * Note that an SCC can be present multiple times in the returned list (multiple edges between the two SCCs).
+	 * 
+	 * @param root
+	 * @return the list of reachable target SCCs
+	 */
+	private List<V> getSourceSCCsOfSCC(V root) {
+		List<V> sourceSCCs = new ArrayList<V>();
 		
 		for (V containedNode : sccs.setMap.get(root)) {
-			List<V> tmpNodes = gds.getSourceNodes(containedNode);
+			List<V> sourceNodes = gds.getSourceNodes(containedNode);
 			
-			if (tmpNodes != null) {
-				for (V source : tmpNodes) {
-					tmp.add(sccs.find(source));
+			if (sourceNodes != null) {
+				for (V source : sourceNodes) {
+					sourceSCCs.add(sccs.find(source));
 				}
 			}
 		}
 
-		return tmp;
+		return sourceSCCs;
 	}
 	
 	/**
@@ -443,21 +475,21 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 * @param root
 	 * @return the list of reachable target SCCs
 	 */
-	private List<V> getTargetNodesToSCC(V root) {
+	private List<V> getTargetSCCsOfSCC(V root) {
 
-		List<V> tmp = new ArrayList<V>();
+		List<V> targetSCCs = new ArrayList<V>();
 		
 		for (V containedNode : sccs.setMap.get(root)) {
-			List<V> tmpNodes = gds.getTargetNodes(containedNode);
+			List<V> targetNodes = gds.getTargetNodes(containedNode);
 			
-			if (tmpNodes != null) {		
-				for (V target : tmpNodes) {
-					tmp.add(sccs.find(target));
+			if (targetNodes != null) {		
+				for (V target : targetNodes) {
+					targetSCCs.add(sccs.find(target));
 				}
 			}
 		}
 
-		return tmp;
+		return targetSCCs;
 	}
 	
 	/**
@@ -537,7 +569,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	@Override
 	public void dispose() {
 		this.gds.detachObserver(this);
-		countingAlg.dispose();
+		this.countingAlg.dispose();
 	}
 	
 	/**
@@ -549,19 +581,23 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 * @param direction 1 if tuple insertion, -1 if tuple deletion occured
 	 */
 	private void notifyTcObservers(Set<V> sources, Set<V> targets, int direction) {
+		for (V s : sources) {
+			for (V t : targets) {
+				notifyTcObservers(s, t, direction);
+			}
+		}
+	}
+	
+	private void notifyTcObservers(V source, V target, int direction) {
 		for (ITcObserver<V> observer : observers) {
-			for (V s : sources) {
-				for (V t : targets) {
-					if (direction == 1) {
-						if (!this.isReachable(s, t)) {
-							observer.tupleInserted(s, t);
-						}
-					}
-					if (direction == -1) {
-						if (!this.isReachable(s, t)) {
-							observer.tupleDeleted(s, t);
-						}
-					}
+			if (direction == 1) {
+				if (!this.isReachable(source, target)) {
+					observer.tupleInserted(source, target);
+				}
+			}
+			if (direction == -1) {
+				if (!this.isReachable(source, target)) {
+					observer.tupleDeleted(source, target);
 				}
 			}
 		}
@@ -572,7 +608,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		
 		for (V sourceRoot : this.sccs.setMap.keySet()) {
 			HashSet<V> sccMembers = this.sccs.setMap.get(sourceRoot);
-			if (sccMembers.size() > 1) {
+			if (sccMembers.size() > 1 || isSelfLoop(sccMembers.iterator().next())) {
 				for (V nS : this.sccs.setMap.get(sourceRoot)) {
 					for (V nT : this.sccs.setMap.get(sourceRoot)) {
 						retSet.add(new Tuple<V>(nS, nT));
