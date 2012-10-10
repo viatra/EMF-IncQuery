@@ -643,21 +643,20 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		}
 		
 		var Annotation annotation = null
-		for (a : pattern.annotations) {
-			if (a.name.matches(annotationLiteral)) {
-			  annotation = a
-				for (ap : a.parameters) {
-					if (ap.name.matches("source")) {
-						sourceTmp = (ap.value as VariableValue).value.getVar
-					} else if (ap.name.matches("target")) {
-						targetTmp = (ap.value as VariableValue).value.getVar
-					} else if (ap.name.matches("feature")) {
-						featureTmp = (ap.value as StringValue).value
-					} else if (ap.name.matches("kind")) {
-						kindTmp = (ap.value as StringValue).value
-					} else if (ap.name.matches("keepCache")) {
-						keepCacheTmp = (ap.value as BoolValue).value
-					}
+		for (a : pattern.annotations.filter([name.equalsIgnoreCase(annotationLiteral)])) {
+			//TODO sanitize multiple annotation handling
+			annotation = a
+			for (ap : a.parameters) {
+				if (ap.name.matches("source")) {
+					sourceTmp = (ap.value as VariableValue).value.getVar
+				} else if (ap.name.matches("target")) {
+					targetTmp = (ap.value as VariableValue).value.getVar
+				} else if (ap.name.matches("feature")) {
+					featureTmp = (ap.value as StringValue).value
+				} else if (ap.name.matches("kind")) {
+					kindTmp = (ap.value as StringValue).value
+				} else if (ap.name.matches("keepCache")) {
+					keepCacheTmp = (ap.value as BoolValue).value
 				}
 			}	
 		}
