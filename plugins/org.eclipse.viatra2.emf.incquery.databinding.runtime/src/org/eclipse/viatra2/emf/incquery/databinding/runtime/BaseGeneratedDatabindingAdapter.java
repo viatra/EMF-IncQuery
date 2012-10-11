@@ -16,19 +16,10 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
-public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
+public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends DatabindingAdapter<T> {
 
-    private Map<String, String> parameterMap;
-	
-    public GenericDatabindingAdapter(Map<String, String> parameterMap) {
-        this.parameterMap = parameterMap;
-	}
-
-    public GenericDatabindingAdapter(Pattern pattern) {
-        this.parameterMap = DatabindingAdapterUtil.calculateObservableValues(pattern);
-    }
+    protected Map<String, String> parameterMap;
 	
 	@Override
 	public String[] getParameterNames() {
@@ -36,7 +27,7 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
 	}
 
 	@Override
-	public IObservableValue getObservableParameter(IPatternMatch match,	String parameterName) {
+	public IObservableValue getObservableParameter(T match,	String parameterName) {
 		if (parameterMap.size() > 0) {
 			String expression = parameterMap.get(parameterName);
 			return DatabindingAdapterUtil.getObservableValue(match, expression);

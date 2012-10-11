@@ -16,7 +16,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
