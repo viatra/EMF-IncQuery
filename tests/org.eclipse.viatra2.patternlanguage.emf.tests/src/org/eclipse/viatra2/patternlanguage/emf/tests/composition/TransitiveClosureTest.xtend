@@ -24,6 +24,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 
@@ -110,6 +111,6 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 				Pattern(p2);								// Then this line can be deleted.
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE));
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_NOT_APPLICABLE), getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING));
 	}	
 }
