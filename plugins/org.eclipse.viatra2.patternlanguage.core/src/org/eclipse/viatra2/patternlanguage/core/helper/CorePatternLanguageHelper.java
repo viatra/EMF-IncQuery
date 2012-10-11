@@ -20,6 +20,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
@@ -186,5 +187,22 @@ public final class CorePatternLanguageHelper {
 		}
 		return result;
 	}
+    
+    /**
+     * Returns the annotation of the given pattern, whose name is the given literal parameter.
+     * 
+     * @param pattern
+     *            the pattern instance
+     * @param literal
+     *            the name of the annotatireturn theannotation instance
+     */
+     public static Annotation getAnnotation(Pattern pattern, String literal) {
+        for (Annotation a : pattern.getAnnotations()) {
+            if (a.getName().equalsIgnoreCase(literal)) {
+                return a;
+            }
+        }
+        return null;
+    }
 
 }
