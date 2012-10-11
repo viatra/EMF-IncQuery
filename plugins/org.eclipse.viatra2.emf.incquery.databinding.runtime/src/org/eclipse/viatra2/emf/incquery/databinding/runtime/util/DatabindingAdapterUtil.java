@@ -193,25 +193,23 @@ public class DatabindingAdapterUtil {
                 propertyMap.put(v.getName(), v.getName());
             }
     
-            String key = null, value = null;
-    
             ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
                     .getAnnotationParameters(annotation);
             List<ValueReference> nameAttributes = parameterMap.get("name");
-            Preconditions.checkArgument(nameAttributes.size() == 1 && (nameAttributes.get(0) instanceof StringValue));
             List<ValueReference> expressionAttributes = parameterMap.get("expression");
-            Preconditions.checkArgument(expressionAttributes.size() == 1
-                    && (expressionAttributes.get(0) instanceof StringValue));
-    
-            StringValue name = (StringValue) nameAttributes.get(0);
-            key = name.getValue();
-            StringValue expr = (StringValue) expressionAttributes.get(0);
-            value = expr.getValue();
-    
-            if (key != null && value != null) {
-                propertyMap.put(key, value);
+            if (nameAttributes.size() == 1 && expressionAttributes.size() == 1) {
+                Preconditions.checkArgument(nameAttributes.get(0) instanceof StringValue);
+                Preconditions.checkArgument(expressionAttributes.get(0) instanceof StringValue);
+
+                StringValue name = (StringValue) nameAttributes.get(0);
+                String key = name.getValue();
+                StringValue expr = (StringValue) expressionAttributes.get(0);
+                String value = expr.getValue();
+
+                if (key != null && value != null) {
+                    propertyMap.put(key, value);
+                }
             }
-    
     	}
         return propertyMap;
     }
