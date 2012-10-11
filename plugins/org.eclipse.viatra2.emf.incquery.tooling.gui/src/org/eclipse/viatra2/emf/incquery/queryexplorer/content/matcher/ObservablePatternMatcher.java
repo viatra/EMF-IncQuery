@@ -105,7 +105,7 @@ public class ObservablePatternMatcher {
 	 * Initializes the matcher for ordering if the annotation is present. 
 	 */
 	private void initOrdering() {
-		Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
+		Annotation annotation = CorePatternLanguageHelper.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
 		if (annotation != null) {
 			for (AnnotationParameter ap : annotation.getParameters()) {
 				if (ap.getName().matches("key")) {
