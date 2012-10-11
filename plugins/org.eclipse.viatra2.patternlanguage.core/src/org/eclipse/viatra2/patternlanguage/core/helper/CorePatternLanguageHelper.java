@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
@@ -29,9 +30,13 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.xtext.xbase.XExpression;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 public final class CorePatternLanguageHelper {
 	
@@ -196,7 +201,7 @@ public final class CorePatternLanguageHelper {
      * @param literal
      *            the name of the annotatireturn theannotation instance
      */
-     public static Annotation getAnnotation(Pattern pattern, String literal) {
+    public static Annotation getAnnotation(Pattern pattern, String literal) {
         for (Annotation a : pattern.getAnnotations()) {
             if (a.getName().equalsIgnoreCase(literal)) {
                 return a;
@@ -205,4 +210,11 @@ public final class CorePatternLanguageHelper {
         return null;
     }
 
+    public static ListMultimap<String, ValueReference> getAnnotationParameters(Annotation annotation) {
+        ListMultimap<String, ValueReference> parameterMap = ArrayListMultimap.create();
+        for (AnnotationParameter param : annotation.getParameters()) {
+            parameterMap.put(param.getName(), param.getValue());
+        }
+        return parameterMap;
+    }
 }

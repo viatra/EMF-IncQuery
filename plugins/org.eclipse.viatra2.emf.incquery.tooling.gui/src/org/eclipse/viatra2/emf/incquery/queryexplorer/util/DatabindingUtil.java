@@ -52,6 +52,7 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.BoolValueImpl;
@@ -59,6 +60,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -408,44 +412,40 @@ public class DatabindingUtil {
 	}
 	
 	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(String patternName) {
-		GenericDatabindingAdapter adapter = new GenericDatabindingAdapter();
-		
-		//process annotations if present
+        Map<String, String> propertyMap = Maps.newHashMap();
 
         for (Pattern pattern : PatternRegistry.getInstance().getPatterns()) {
             if (CorePatternLanguageHelper.getFullyQualifiedName(pattern).matches(patternName)) {
                 Annotation annotation = CorePatternLanguageHelper.getAnnotation(pattern, OBSERVABLEVALUE_ANNOTATION);
 
                 for (Variable v : pattern.getParameters()) {
-                    adapter.putToParameterMap(v.getName(), v.getName());
+                    propertyMap.put(v.getName(), v.getName());
                 }
 
-				String key = null, value = null;
 				if (annotation != null) {
+                    String key = null, value = null;
 					
-					for (AnnotationParameter ap : annotation.getParameters()) {
-						if (ap.getName().matches("name")) {
-							ValueReference valRef = ap.getValue();
-							if (valRef instanceof StringValueImpl) {
-								key = ((StringValueImpl) valRef).getValue();
-							}
-						}
-	
-						if (ap.getName().matches("expression")) {
-							ValueReference valRef = ap.getValue();
-							if (valRef instanceof StringValueImpl) {
-								value = ((StringValueImpl) valRef).getValue();
-							}
-						}
-					}
+                    ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper.getAnnotationParameters(annotation);
+                    List<ValueReference> nameAttributes = parameterMap.get("name");
+                    Preconditions.checkArgument(nameAttributes.size() == 1
+                            && (nameAttributes.get(0) instanceof StringValue));
+                    List<ValueReference> expressionAttributes = parameterMap.get("expression");
+                    Preconditions.checkArgument(expressionAttributes.size() == 1
+                            && (expressionAttributes.get(0) instanceof StringValue));
+                    
+                    StringValue name = (StringValue) nameAttributes.get(0);
+                    key = name.getValue();
+                    StringValue expr = (StringValue) expressionAttributes.get(0);
+                    value = expr.getValue();
+
+                    if (key != null && value != null) {
+                        propertyMap.put(key, value);
+                    }
 				}
 
-				if (key != null && value != null) {
-					adapter.putToParameterMap(key, value);
-				}
 			}
 		}
-		
+        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(propertyMap);
 		return adapter;
 	}
 	

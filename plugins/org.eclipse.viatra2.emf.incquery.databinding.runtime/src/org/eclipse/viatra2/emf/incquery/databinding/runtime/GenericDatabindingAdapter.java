@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -21,8 +20,8 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
 
 	private Map<String, String> parameterMap;
 	
-	public GenericDatabindingAdapter() {
-		parameterMap = new HashMap<String, String>();
+    public GenericDatabindingAdapter(Map<String, String> parameterMap) {
+        this.parameterMap = parameterMap;
 	}
 	
 	@Override
@@ -39,7 +38,4 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
 		return null;
 	}
 
-	public void putToParameterMap(String key, String value) {
-		parameterMap.put(key, value);
-	}
 }
