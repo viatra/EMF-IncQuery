@@ -99,7 +99,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				IntValue(Name3);				// Then this line can be deleted.
 			}
 		') as PatternModel
-		tester.validate(model).assertOK
+		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
 	@Test
 	def leftVariableCompareValidation() {
@@ -124,7 +124,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				StringValue(Name3);					// Then this line can be deleted.
 			}
 		') as PatternModel
-		tester.validate(model).assertOK
+		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
 	@Test
 	def bothVariableCompareValidation() {

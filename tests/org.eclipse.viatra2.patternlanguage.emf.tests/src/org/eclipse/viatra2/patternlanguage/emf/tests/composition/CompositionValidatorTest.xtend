@@ -137,7 +137,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				neg find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertOK;
+		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING);
 	}
 	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 
 						   p: Pattern is a positive reference.")
