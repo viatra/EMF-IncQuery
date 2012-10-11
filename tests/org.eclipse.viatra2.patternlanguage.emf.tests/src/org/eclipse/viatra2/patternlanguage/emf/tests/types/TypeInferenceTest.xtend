@@ -30,7 +30,6 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EClassifier
-import java.util.List
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
