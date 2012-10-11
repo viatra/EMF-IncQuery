@@ -129,7 +129,7 @@ public class DatabindingUtil {
 	}
 
 	public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
-		Annotation annotation = CorePatternLanguageHelper.getAnnotation(pattern, QUERY_EXPLORER_ANNOTATION);
+		Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern, QUERY_EXPLORER_ANNOTATION);
 		if (annotation == null) {
 			return null;
 		}
@@ -329,10 +329,10 @@ public class DatabindingUtil {
 			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 				pattern = p;
 				
-				Annotation annotation = CorePatternLanguageHelper.getAnnotation(p, QUERY_EXPLORER_ANNOTATION);
+				Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p, QUERY_EXPLORER_ANNOTATION);
 				if (annotation == null) {
 					// Try with deprecated PatternUI annotation
-					annotation = CorePatternLanguageHelper.getAnnotation(p, PATTERNUI_ANNOTATION);
+					annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p, PATTERNUI_ANNOTATION);
 				}
 				if (annotation != null) {
 					for (AnnotationParameter ap : annotation.getParameters()) {
@@ -414,36 +414,33 @@ public class DatabindingUtil {
 	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(String patternName) {
         Map<String, String> propertyMap = Maps.newHashMap();
 
-        for (Pattern pattern : PatternRegistry.getInstance().getPatterns()) {
-            if (CorePatternLanguageHelper.getFullyQualifiedName(pattern).matches(patternName)) {
-                Annotation annotation = CorePatternLanguageHelper.getAnnotation(pattern, OBSERVABLEVALUE_ANNOTATION);
+        Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternName);
+        for (Annotation annotation : CorePatternLanguageHelper
+                .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
 
-                for (Variable v : pattern.getParameters()) {
-                    propertyMap.put(v.getName(), v.getName());
-                }
+            for (Variable v : pattern.getParameters()) {
+                propertyMap.put(v.getName(), v.getName());
+            }
 
-				if (annotation != null) {
-                    String key = null, value = null;
-					
-                    ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper.getAnnotationParameters(annotation);
-                    List<ValueReference> nameAttributes = parameterMap.get("name");
-                    Preconditions.checkArgument(nameAttributes.size() == 1
-                            && (nameAttributes.get(0) instanceof StringValue));
-                    List<ValueReference> expressionAttributes = parameterMap.get("expression");
-                    Preconditions.checkArgument(expressionAttributes.size() == 1
-                            && (expressionAttributes.get(0) instanceof StringValue));
-                    
-                    StringValue name = (StringValue) nameAttributes.get(0);
-                    key = name.getValue();
-                    StringValue expr = (StringValue) expressionAttributes.get(0);
-                    value = expr.getValue();
+            String key = null, value = null;
 
-                    if (key != null && value != null) {
-                        propertyMap.put(key, value);
-                    }
-				}
+            ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
+                    .getAnnotationParameters(annotation);
+            List<ValueReference> nameAttributes = parameterMap.get("name");
+            Preconditions.checkArgument(nameAttributes.size() == 1 && (nameAttributes.get(0) instanceof StringValue));
+            List<ValueReference> expressionAttributes = parameterMap.get("expression");
+            Preconditions.checkArgument(expressionAttributes.size() == 1
+                    && (expressionAttributes.get(0) instanceof StringValue));
 
-			}
+            StringValue name = (StringValue) nameAttributes.get(0);
+            key = name.getValue();
+            StringValue expr = (StringValue) expressionAttributes.get(0);
+            value = expr.getValue();
+
+            if (key != null && value != null) {
+                propertyMap.put(key, value);
+            }
+
 		}
         GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(propertyMap);
 		return adapter;
