@@ -38,6 +38,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
@@ -435,7 +436,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Check
     public void checkPatternParametersType(Pattern pattern) {
-        // This check at the moment cannot fail, due to strict rules on pattern types (checked in
+        // This check at the moment may not fail, due to strict rules on pattern types (checked in
         // checkPatternVariablesType)
         for (Variable variable : pattern.getParameters()) {
             EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
@@ -453,39 +454,202 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 // OK, issue warning now
                 error(String.format(
                         "Inconsistent parameter type definition, should be %s based on the pattern definition",
-                        classifierCorrect.getName()), variable, null,
-                        EMFIssueCodes.PARAMETER_TYPE_INVALID);
-
+                        classifierCorrect.getName()), variable, null, EMFIssueCodes.PARAMETER_TYPE_INVALID);
             }
         }
     }
 
     @Check
-    public void checkPatternVariablesType(Pattern pattern) {
-        for (PatternBody patternBody : pattern.getBodies()) {
-            for (Variable variable : patternBody.getVariables()) {
-                Set<EClassifier> possibleClassifiers = emfTypeProvider.getPossibleClassifiersForVariableInBody(
-                        patternBody, variable);
-                if (possibleClassifiers.size() > 1) {
-                    List<String> classifierNamesList = new ArrayList<String>();
-                    List<String> classifierPackagesList = new ArrayList<String>();
-                    for (Object element : possibleClassifiers.toArray()) {
-                        EClassifier classifier = (EClassifier) element;
-                        classifierNamesList.add(classifier.getName());
-                        classifierPackagesList.add(classifier.getEPackage().getName());
-                    }
-                    Set<String> classifierNamesSet = new HashSet<String>(classifierNamesList);
-                    Set<String> classifierPackagesSet = new HashSet<String>(classifierPackagesList);
-                    if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
-                        error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable.getReferences()
-                                .get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
-                    } else {
-                        error("Inconsistent variable type defintions: " + classifierNamesList, variable.getReferences()
-                                .get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID);
-                    }
+    public void checkPatternVariablesType(PatternBody patternBody) {
+        for (Variable variable : patternBody.getVariables()) {
+            Set<EClassifier> possibleClassifiers = emfTypeProvider.getPossibleClassifiersForVariableInBody(patternBody,
+                    variable);
+            if (possibleClassifiers.size() > 1) {
+                List<String> classifierNamesList = new ArrayList<String>();
+                List<String> classifierPackagesList = new ArrayList<String>();
+                for (Object element : possibleClassifiers.toArray()) {
+                    EClassifier classifier = (EClassifier) element;
+                    classifierNamesList.add(classifier.getName());
+                    classifierPackagesList.add(classifier.getEPackage().getName());
+                }
+                Set<String> classifierNamesSet = new HashSet<String>(classifierNamesList);
+                Set<String> classifierPackagesSet = new HashSet<String>(classifierPackagesList);
+                if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
+                    error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
+                            .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
+                } else {
+                    error("Inconsistent variable type defintions: " + classifierNamesList, variable.getReferences()
+                            .get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID);
                 }
             }
         }
+    }
+
+    @Check
+    public void checkForCartesianProduct(PatternBody patternBody) {
+        UnionFindForVariables justPositiveUnionFindForVariables = new UnionFindForVariables(patternBody.getVariables());
+        UnionFindForVariables generalUnionFindForVariables = new UnionFindForVariables(patternBody.getVariables());
+        boolean isSecondRunNeeded = false;
+
+        // First run
+        // Just put together the real positive connections, and all of the general connections first
+        for (Constraint constraint : patternBody.getConstraints()) {
+            Set<Variable> positiveVariables = new HashSet<Variable>();
+            Set<Variable> generalVariables = new HashSet<Variable>();
+            if (constraint instanceof CompareConstraint) {
+                CompareConstraint compareConstraint = (CompareConstraint) constraint;
+                ValueReference leftValueReference = compareConstraint.getLeftOperand();
+                ValueReference rightValueReference = compareConstraint.getRightOperand();
+                Set<Variable> leftVariables = getVariablesFromValueReference(leftValueReference);
+                Set<Variable> rightVariables = getVariablesFromValueReference(rightValueReference);
+                if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
+                    // Equality ==
+                    if (!isValueReferenceAggregated(leftValueReference)
+                            && !isValueReferenceAggregated(rightValueReference)) {
+                        positiveVariables.addAll(leftVariables);
+                        positiveVariables.addAll(rightVariables);
+                        generalVariables.addAll(leftVariables);
+                        generalVariables.addAll(rightVariables);
+                    } else {
+                        isSecondRunNeeded = true;
+                        generalVariables.addAll(leftVariables);
+                        generalVariables.addAll(rightVariables);
+                    }
+                } else if (CompareFeature.INEQUALITY.equals(compareConstraint.getFeature())) {
+                    // Inequality !=
+                    generalVariables.addAll(leftVariables);
+                    generalVariables.addAll(rightVariables);
+                }
+            } else if (constraint instanceof PatternCompositionConstraint) {
+                PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
+                if (!patternCompositionConstraint.isNegative()) {
+                    // Positive composition (find)
+                    for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                        if (!isValueReferenceAggregated(valueReference)) {
+                            positiveVariables.addAll(getVariablesFromValueReference(valueReference));
+                            generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                        } else {
+                            isSecondRunNeeded = true;
+                            generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                        }
+                    }
+                } else {
+                    // Negative composition (neg find)
+                    for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                        generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                    }
+                }
+            } else if (constraint instanceof PathExpressionConstraint) {
+                // Normal attribute-reference constraint
+                PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
+                PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
+                ValueReference valueReference = pathExpressionHead.getDst();
+                if (!isValueReferenceAggregated(valueReference)) {
+                    positiveVariables.addAll(getVariablesFromValueReference(valueReference));
+                    positiveVariables.add(pathExpressionHead.getSrc().getVariable());
+                    generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                    generalVariables.add(pathExpressionHead.getSrc().getVariable());
+                } else {
+                    isSecondRunNeeded = true;
+                    generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                    generalVariables.add(pathExpressionHead.getSrc().getVariable());
+                }
+            } else if (constraint instanceof CheckConstraint) {
+                // Variables used together in check expression, always negative
+                CheckConstraint checkConstraint = (CheckConstraint) constraint;
+                generalVariables.addAll(CorePatternLanguageHelper
+                        .getReferencedPatternVariablesOfXExpression(checkConstraint.getExpression()));
+            }
+            justPositiveUnionFindForVariables.unite(positiveVariables);
+            generalUnionFindForVariables.unite(generalVariables);
+        }
+
+        // Second run
+        // If variables in an aggregated formula (e.g.: count find Pattern(X,Y)) are in the same union in the positive
+        // case then they are considered to be in a positive relation with the respective target as well
+        // M == count find Pattern(X,Y), so M with X and Y is positive if X and Y is positive
+        if (isSecondRunNeeded) {
+            for (Constraint constraint : patternBody.getConstraints()) {
+                Set<Variable> positiveVariables = new HashSet<Variable>();
+                if (constraint instanceof CompareConstraint) {
+                    CompareConstraint compareConstraint = (CompareConstraint) constraint;
+                    if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
+                        // Equality (==), with aggregates in it
+                        ValueReference leftValueReference = compareConstraint.getLeftOperand();
+                        ValueReference rightValueReference = compareConstraint.getRightOperand();
+                        if (isValueReferenceAggregated(leftValueReference)
+                                || isValueReferenceAggregated(rightValueReference)) {
+                            Set<Variable> leftVariables = getVariablesFromValueReference(leftValueReference);
+                            Set<Variable> rightVariables = getVariablesFromValueReference(rightValueReference);
+                            if (justPositiveUnionFindForVariables.isSameUnion(leftVariables)) {
+                                positiveVariables.addAll(leftVariables);
+                            }
+                            if (justPositiveUnionFindForVariables.isSameUnion(rightVariables)) {
+                                positiveVariables.addAll(rightVariables);
+                            }
+                        }
+                    }
+                } else if (constraint instanceof PatternCompositionConstraint) {
+                    PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
+                    if (!patternCompositionConstraint.isNegative()) {
+                        // Positive composition (find), with aggregates in it
+                        for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
+                            Set<Variable> actualVariables = getVariablesFromValueReference(valueReference);
+                            if (justPositiveUnionFindForVariables.isSameUnion(actualVariables)) {
+                                positiveVariables.addAll(actualVariables);
+                            }
+                        }
+                    }
+                } else if (constraint instanceof PathExpressionConstraint) {
+                    // Normal attribute-reference constraint, with aggregates in it
+                    PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
+                    PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
+                    positiveVariables.add(pathExpressionHead.getSrc().getVariable());
+                    ValueReference valueReference = pathExpressionHead.getDst();
+                    Set<Variable> actualVariables = getVariablesFromValueReference(valueReference);
+                    if (justPositiveUnionFindForVariables.isSameUnion(actualVariables)) {
+                        positiveVariables.addAll(actualVariables);
+                    }
+                }
+                justPositiveUnionFindForVariables.unite(positiveVariables);
+            }
+        }
+
+        if (generalUnionFindForVariables.isMoreThanOneUnion()) {
+            // Giving strict warning in this case
+            warning("Warning the pattern contains fully independent parts, which can lead to excessive performance issues. The independent partitions: "
+                    + generalUnionFindForVariables.getCurrentPartitionsFormatted() + ".", patternBody, null,
+                    EMFIssueCodes.CARTESIAN_STRICT_WARNING);
+        } else if (justPositiveUnionFindForVariables.isMoreThanOneUnion()) {
+            // Giving soft warning in this case
+            warning("Warning the pattern contains parts which are only loosely connected. This may negatively impact performance, please check if it can be avoided. The weakly dependent partitions: "
+                    + justPositiveUnionFindForVariables.getCurrentPartitionsFormatted(), patternBody, null,
+                    EMFIssueCodes.CARTESIAN_SOFT_WARNING);
+        }
+    }
+
+    private Set<Variable> getVariablesFromValueReference(ValueReference valueReference) {
+        Set<Variable> resultSet = new HashSet<Variable>();
+        if (valueReference != null) {
+            if (valueReference instanceof VariableValue) {
+                resultSet.add(((VariableValue) valueReference).getValue().getVariable());
+            } else if (valueReference instanceof AggregatedValue) {
+                AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
+                for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
+                    resultSet.addAll(getVariablesFromValueReference(valueReferenceInner));
+                }
+            }
+        }
+        return resultSet;
+    }
+
+    private boolean isValueReferenceAggregated(ValueReference valueReference) {
+        if (valueReference != null) {
+            if (valueReference instanceof AggregatedValue) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

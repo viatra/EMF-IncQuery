@@ -23,8 +23,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes
+import org.junit.runner.RunWith
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
