@@ -11,8 +11,14 @@
 
 package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.databinding.property.value.ValueProperty;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+
+import com.google.common.base.Preconditions;
 
 /**
  * The class is used to observ given parameters of a pattern.
@@ -23,6 +29,39 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
  */
 public abstract class DatabindingAdapter<T extends IPatternMatch> {
 	
+    class MatcherProperty extends ValueProperty {
+
+        String expression;
+
+        public MatcherProperty(String expression) {
+            this.expression = expression;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.core.databinding.property.value.IValueProperty#getValueType()
+         */
+        @Override
+        public Object getValueType() {
+            return Object.class;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.core.databinding.property.value.IValueProperty#observe(org.eclipse.core.databinding.observable
+         * .Realm, java.lang.Object)
+         */
+        @Override
+        public IObservableValue observe(Realm realm, Object source) {
+            Preconditions.checkArgument((source instanceof IPatternMatch), "Source must be a typed Pattern Match");
+            return DatabindingAdapterUtil.getObservableValue((IPatternMatch) source, expression);
+        }
+
+    }
+
 	/**
 	 * Returns the array of observable values.
 	 * 
@@ -38,4 +77,8 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
 	 * @return an observable value
 	 */
 	public abstract IObservableValue getObservableParameter(T match, String parameterName);
+
+    public IValueProperty getProperty(String parameterName) {
+        return new MatcherProperty(parameterName);
+    }
 }
