@@ -24,9 +24,18 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ComputationValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CountAggregator;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.LiteralValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
@@ -88,8 +97,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
             if (typeReference == null) {
                 typeReference = typeReferences.getTypeForName(Object.class, variable);
             }
-            // XXX remove this from commit
-            // System.out.println(variable.getName() + "--" + typeReference.getSimpleName());
             return typeReference;
         }
         return super.typeForIdentifiable(identifiable, rawType);
@@ -281,26 +288,23 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                 if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
                     ValueReference leftValueReference = compareConstraint.getLeftOperand();
                     ValueReference rightValueReference = compareConstraint.getRightOperand();
-                    if (leftValueReference instanceof VariableValue && rightValueReference instanceof VariableValue) {
+                    if (leftValueReference instanceof VariableValue) {
                         VariableValue leftVariableValue = (VariableValue) leftValueReference;
-                        VariableValue rightVariableValue = (VariableValue) rightValueReference;
                         if (isEqualVariables(variable, leftVariableValue.getValue())) {
-                            Variable newPossibleInjectPair = rightVariableValue.getValue().getVariable();
-                            if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
-                                classifier = getClassifierForVariableWithPatternBody(patternBody,
-                                        newPossibleInjectPair, recursionCallingLevel, variable);
-                                if (classifier != null) {
-                                    possibleClassifiersList.add(classifier);
-                                }
+                            classifier = getClassifierForValueReference(rightValueReference, patternBody, variable,
+                                    recursionCallingLevel, injectiveVariablePair);
+                            if (classifier != null) {
+                                possibleClassifiersList.add(classifier);
                             }
-                        } else if (isEqualVariables(variable, rightVariableValue.getValue())) {
-                            Variable newPossibleInjectPair = leftVariableValue.getValue().getVariable();
-                            if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
-                                classifier = getClassifierForVariableWithPatternBody(patternBody,
-                                        newPossibleInjectPair, recursionCallingLevel, variable);
-                                if (classifier != null) {
-                                    possibleClassifiersList.add(classifier);
-                                }
+                        }
+                    }
+                    if (rightValueReference instanceof VariableValue) {
+                        VariableValue rightVariableValue = (VariableValue) rightValueReference;
+                        if (isEqualVariables(variable, rightVariableValue.getValue())) {
+                            classifier = getClassifierForValueReference(leftValueReference, patternBody, variable,
+                                    recursionCallingLevel, injectiveVariablePair);
+                            if (classifier != null) {
+                                possibleClassifiersList.add(classifier);
                             }
                         }
                     }
@@ -334,6 +338,38 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         }
 
         return possibleClassifiersList;
+    }
+
+    private EClassifier getClassifierForValueReference(ValueReference valueReference, PatternBody patternBody,
+            Variable variable, int recursionCallingLevel, Variable injectiveVariablePair) {
+        if (valueReference instanceof LiteralValueReference) {
+            if (valueReference instanceof IntValue) {
+                return EcorePackage.Literals.EINT;
+            } else if (valueReference instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue) {
+                return EcorePackage.Literals.ESTRING;
+            } else if (valueReference instanceof BoolValue) {
+                return EcorePackage.Literals.EBOOLEAN;
+            } else if (valueReference instanceof DoubleValue) {
+                return EcorePackage.Literals.EDOUBLE;
+            } else if (valueReference instanceof ListValue) {
+                return null;
+            }
+        } else if (valueReference instanceof ComputationValue) {
+            if (valueReference instanceof AggregatedValue) {
+                AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
+                if (aggregatedValue.getAggregator() instanceof CountAggregator) {
+                    return EcorePackage.Literals.EINT;
+                }
+            }
+        } else if (valueReference instanceof VariableValue) {
+            VariableValue variableValue = (VariableValue) valueReference;
+            Variable newPossibleInjectPair = variableValue.getValue().getVariable();
+            if (!newPossibleInjectPair.equals(injectiveVariablePair)) {
+                return getClassifierForVariableWithPatternBody(patternBody, newPossibleInjectPair,
+                        recursionCallingLevel, variable);
+            }
+        }
+        return null;
     }
 
     private Type computeTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {

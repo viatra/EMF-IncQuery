@@ -22,7 +22,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -105,7 +105,7 @@ public class ObservablePatternMatcher {
 	 * Initializes the matcher for ordering if the annotation is present. 
 	 */
 	private void initOrdering() {
-		Annotation annotation = DatabindingUtil.getAnnotation(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
+		Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(matcher.getPattern(), DatabindingUtil.ORDERBY_ANNOTATION);
 		if (annotation != null) {
 			for (AnnotationParameter ap : annotation.getParameters()) {
 				if (ap.getName().matches("key")) {

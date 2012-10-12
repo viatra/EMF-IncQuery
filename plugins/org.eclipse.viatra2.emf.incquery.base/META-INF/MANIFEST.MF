@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.viatra2.emf.incquery.base
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.base;singleton:=true
-Bundle-Version: 0.6.5.qualifier
+Bundle-Version: 0.7.0.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.base.IncQueryBasePlugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

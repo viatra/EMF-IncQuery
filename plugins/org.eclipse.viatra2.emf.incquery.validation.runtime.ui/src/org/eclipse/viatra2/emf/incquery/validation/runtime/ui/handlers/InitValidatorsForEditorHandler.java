@@ -33,14 +33,10 @@ public class InitValidatorsForEditorHandler extends InitValidatorsForSelectionHa
 				try {
 					ValidationInitUtil.initializeAdapters(activeEditor, resourceSet);
 				} catch (IncQueryException ex) {
-					throw new ExecutionException(
-							"Could not validate constraints due to a pattern matcher error", 
-							ex);
+					throw new ExecutionException("Could not validate constraints due to a pattern matcher error", ex);
 				}
 			}
 		}
-		
 		return null;
 	}
-
 }

@@ -7,7 +7,7 @@
 	<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
 	<name>EMF-IncQuery</name>
 	<url>http://viatra.inf.mit.bme.hu/incquery</url>
-	<version>0.6.5-SNAPSHOT</version>
+	<version>0.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
@@ -34,6 +34,7 @@
 		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base</module>
 		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base.itc</module>
+		<module>../../plugins/org.eclipse.viatra2.emf.incquery.triggerengine</module>
 		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.base.itc.test</module>
 		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot</module>
@@ -53,6 +54,7 @@
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature</module>
 		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
+		<module>../../features/org.eclipse.viatra2.emf.incquery.triggerengine.feature</module>
 		<module>../../releng/org.eclipse.viatra2.emf.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
 	</modules>

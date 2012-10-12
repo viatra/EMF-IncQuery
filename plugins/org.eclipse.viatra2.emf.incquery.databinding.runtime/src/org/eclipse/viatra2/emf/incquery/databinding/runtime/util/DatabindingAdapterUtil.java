@@ -9,10 +9,11 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.databinding.runtime;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -20,10 +21,22 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 
 public class DatabindingAdapterUtil {
 	
-	private DatabindingAdapterUtil() {}
+	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
+
+    private DatabindingAdapterUtil() {}
 	
 	/**
 	 * Returns an IObservableValue for the given match based on the given expression.
@@ -166,4 +179,38 @@ public class DatabindingAdapterUtil {
 		
 		return newText.toString();
 	}
+
+    /**
+     * @param pattern
+     * @return
+     */
+    public static Map<String, String> calculateObservableValues(Pattern pattern) {
+        Map<String, String> propertyMap = Maps.newHashMap();
+        for (Annotation annotation : CorePatternLanguageHelper
+                .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
+    
+            for (Variable v : pattern.getParameters()) {
+                propertyMap.put(v.getName(), v.getName());
+            }
+    
+            ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
+                    .getAnnotationParameters(annotation);
+            List<ValueReference> nameAttributes = parameterMap.get("name");
+            List<ValueReference> expressionAttributes = parameterMap.get("expression");
+            if (nameAttributes.size() == 1 && expressionAttributes.size() == 1) {
+                Preconditions.checkArgument(nameAttributes.get(0) instanceof StringValue);
+                Preconditions.checkArgument(expressionAttributes.get(0) instanceof StringValue);
+
+                StringValue name = (StringValue) nameAttributes.get(0);
+                String key = name.getValue();
+                StringValue expr = (StringValue) expressionAttributes.get(0);
+                String value = expr.getValue();
+
+                if (key != null && value != null) {
+                    propertyMap.put(key, value);
+                }
+            }
+    	}
+        return propertyMap;
+    }
 }

@@ -237,4 +237,86 @@ class TypeInferenceTest {
 		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
 	}
 	
+	@Test
+	def intLiteralType() {
+		val model = parseHelper.parse('
+			pattern literalValue(literalType) = {
+				literalType == 10;
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		
+		assertEquals(typeof(Integer).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def stringLiteralType() {
+		val model = parseHelper.parse('
+			pattern literalValue(literalType) = {
+				literalType == "helloworld";
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		
+		assertEquals(typeof(String).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def boolLiteralType() {
+		val model = parseHelper.parse('
+			pattern literalValue(literalType) = {
+				literalType == true;
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		
+		assertEquals(typeof(Boolean).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def doubleLiteralType() {
+		val model = parseHelper.parse('
+			pattern literalValue(literalType) = {
+				literalType == 3.14;
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		
+		assertEquals(typeof(Double).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def countAggregatedComputationValueType() {
+		val model = parseHelper.parse('
+			pattern literalValue(literalType) = {
+				uselessVariable == 10;
+				literalType == count find patternToFind(uselessVariable);
+			}
+
+			pattern patternToFind(uselessParameter) = {
+				uselessParameter == 10;
+				check(true);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		
+		assertEquals("literalType", param.name) 
+		assertEquals(typeof(Integer).canonicalName, type.qualifiedName) 
+	}
+	
 }

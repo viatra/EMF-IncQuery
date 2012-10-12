@@ -24,6 +24,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.core.runtime.Path
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil
 
 class DatabindingGenerator implements IGenerationFragment {
 	
@@ -124,46 +125,26 @@ class DatabindingGenerator implements IGenerationFragment {
 		package «pattern.packageName»;
 		
 		import java.util.HashMap;
-		import java.util.Map;
 
-		import org.eclipse.core.databinding.observable.value.IObservableValue;
-		import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-		import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
+		import org.eclipse.viatra2.emf.incquery.databinding.runtime.BaseGeneratedDatabindingAdapter;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
 
-		public class «pattern.name.toFirstUpper»DatabindingAdapter extends DatabindingAdapter<«pattern.matchClassName»> {
-
-			private Map<String, String> parameterMap;
+		public class «pattern.name.toFirstUpper»DatabindingAdapter extends BaseGeneratedDatabindingAdapter<«pattern.matchClassName»> {
 		
 			public «pattern.name.toFirstUpper»DatabindingAdapter() {
+				super();
 				parameterMap = new HashMap<String, String>();
-				«FOR annotation : pattern.annotations»
-				«IF annotation.name.matches("ObservableValue")»
-					«val name = getElementOfObservableValue(annotation, "name")»
-					«val expression = getElementOfObservableValue(annotation, "expression")»
-					«IF (name != null) && (expression != null)»
-						parameterMap.put("«name»","«expression»");
-					«ENDIF»
-				«ENDIF»
+				«val valueMap = DatabindingAdapterUtil::calculateObservableValues(pattern)»
+				«FOR value : valueMap.keySet »
+				    parameterMap.put("«value»", "«valueMap.get(value)»");
 				«ENDFOR»
 			}
-
-			@Override
-			public String[] getParameterNames() {
-				return parameterMap.keySet().toArray(new String[parameterMap.keySet().size()]);
-			}
-
-			@Override
-			public IObservableValue getObservableParameter(«pattern.matchClassName» match, String parameterName) {
-				if (parameterMap.size() > 0) {
-					String expression = parameterMap.get(parameterName);
-					return DatabindingAdapterUtil.getObservableValue(match, expression);
-				}
-				return null;
-			}
+			
 		}
+
 	'''
+
 	
 	override getAdditionalBinIncludes() {
 		return newArrayList(new Path("plugin.xml"))

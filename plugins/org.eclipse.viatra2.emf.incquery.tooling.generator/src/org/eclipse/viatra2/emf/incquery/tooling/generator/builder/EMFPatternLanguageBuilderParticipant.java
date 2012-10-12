@@ -25,10 +25,12 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
@@ -103,13 +105,29 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 	@Inject
 	private IStorage2UriMapper storage2UriMapper;
 
+    protected boolean isFullBuildNeeded(final IBuildContext context) {
+        IProject project = context.getBuiltProject();
+        URI genmodelUri = URI.createPlatformResourceURI(project.getFile(IncQueryNature.IQGENMODEL).getFullPath()
+                .toString(), true);
+        for (Delta delta : context.getDeltas()) {
+            if (genmodelUri.equals(delta.getUri())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	@Override
 	public void build(final IBuildContext context, IProgressMonitor monitor)
 			throws CoreException {
 		if (!isEnabled(context)) {
 			return;
 		}
-		final List<IResourceDescription.Delta> relevantDeltas = getRelevantDeltas(context);
+		if (isFullBuildNeeded(context)) {
+            context.needRebuild();
+		    return;
+		}
+		final List<IResourceDescription.Delta> relevantDeltas = getRelevantDeltas(context);		    
 		if (relevantDeltas.isEmpty()) {
 			return;
 		}

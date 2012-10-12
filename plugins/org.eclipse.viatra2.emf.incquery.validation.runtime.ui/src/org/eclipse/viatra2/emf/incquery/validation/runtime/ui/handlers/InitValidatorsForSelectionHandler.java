@@ -21,8 +21,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.ValidationInitUtil;
 
-
-
 public class InitValidatorsForSelectionHandler extends AbstractHandler {
 	
 	@Override
@@ -35,13 +33,9 @@ public class InitValidatorsForSelectionHandler extends AbstractHandler {
 			try {
 				ValidationInitUtil.initializeAdapters(activeEditor, (Notifier) selectedElement);
 			} catch (IncQueryException ex) {
-				throw new ExecutionException(
-						"Could not validate constraints due to a pattern matcher error", 
-						ex);
+				throw new ExecutionException("Could not validate constraints due to a pattern matcher error", ex);
 			}
 		}
-	
 		return null;
 	}
-
 }

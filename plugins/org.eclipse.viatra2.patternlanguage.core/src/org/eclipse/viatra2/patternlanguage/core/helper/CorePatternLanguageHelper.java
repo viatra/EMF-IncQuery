@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core.helper;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +21,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Modifiers;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
@@ -28,9 +31,16 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.xtext.xbase.XExpression;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 
 public final class CorePatternLanguageHelper {
 	
@@ -186,5 +196,55 @@ public final class CorePatternLanguageHelper {
 		}
 		return result;
 	}
+    
+    private static class AnnotationNameFilter implements Predicate<Annotation> {
 
+        private String name;
+
+        public AnnotationNameFilter(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public boolean apply(Annotation annotation) {
+            return name.equals(annotation.getName());
+        }
+    }
+
+    /**
+     * Returns the first annotation of a given name from a pattern. This method ignores multiple defined annotations by
+     * the same name. For getting a filtered collections of annotations, see
+     * {@link #getAnnotationsByName(Pattern, String)}
+     * 
+     * @param pattern
+     *            the pattern instance
+     * @param name
+     *            the name of the annotation to return
+     * @returns the first annotation or null if no such annotation exists
+     */
+    public static Annotation getFirstAnnotationByName(Pattern pattern, String name) {
+        return Iterables.find(pattern.getAnnotations(), new AnnotationNameFilter(name), null);
+    }
+
+    /**
+     * Returns the collection of annotations of a pattern by a name. For getting the first annotations by name, see
+     * {@link #getAnnotationByName(Pattern, String)}
+     * 
+     * @param pattern
+     *            the pattern instance
+     * @param name
+     *            the name of the annotation to return
+     * @returns a non-null, but possibly empty collection of annotations
+     */
+    public static Collection<Annotation> getAnnotationsByName(Pattern pattern, String name) {
+        return Collections2.filter(pattern.getAnnotations(), new AnnotationNameFilter(name));
+    }
+
+    public static ListMultimap<String, ValueReference> getAnnotationParameters(Annotation annotation) {
+        ListMultimap<String, ValueReference> parameterMap = ArrayListMultimap.create();
+        for (AnnotationParameter param : annotation.getParameters()) {
+            parameterMap.put(param.getName(), param.getValue());
+        }
+        return parameterMap;
+    }
 }

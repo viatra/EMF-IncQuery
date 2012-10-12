@@ -9,23 +9,26 @@
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
-public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
+public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
 
-	private Map<String, String> parameterMap;
+    private Map<String, String> parameterMap;
 	
-	public RuntimeDatabindingAdapter() {
-		parameterMap = new HashMap<String, String>();
+    public GenericDatabindingAdapter(Map<String, String> parameterMap) {
+        this.parameterMap = parameterMap;
 	}
+
+    public GenericDatabindingAdapter(Pattern pattern) {
+        this.parameterMap = DatabindingAdapterUtil.calculateObservableValues(pattern);
+    }
 	
 	@Override
 	public String[] getParameterNames() {
@@ -41,7 +44,4 @@ public class RuntimeDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
 		return null;
 	}
 
-	public void putToParameterMap(String key, String value) {
-		parameterMap.put(key, value);
-	}
 }

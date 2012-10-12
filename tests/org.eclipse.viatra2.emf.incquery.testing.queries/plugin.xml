@@ -4,34 +4,6 @@
 
    <extension
          id="UnexpectedMatchRecord"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="RecordRoleValue"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="SubstitutionValue"
-         name=""
-         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
-      <matcher
-            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
-            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider">
-      </matcher>
-   </extension>
-   <extension
-         id="UnexpectedMatchRecord"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
@@ -40,7 +12,6 @@
    </extension>
    <extension
          id="RecordRoleValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
@@ -49,7 +20,6 @@
    </extension>
    <extension
          id="SubstitutionValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
@@ -58,7 +28,6 @@
    </extension>
    <extension
          id="UnexpectedMatchRecord"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
@@ -67,7 +36,6 @@
    </extension>
    <extension
          id="RecordRoleValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
@@ -76,7 +44,6 @@
    </extension>
    <extension
          id="SubstitutionValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
@@ -85,7 +52,6 @@
    </extension>
    <extension
          id="UnexpectedMatchRecord"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
@@ -94,7 +60,6 @@
    </extension>
    <extension
          id="RecordRoleValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
@@ -103,7 +68,6 @@
    </extension>
    <extension
          id="SubstitutionValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
@@ -112,7 +76,6 @@
    </extension>
    <extension
          id="UnexpectedMatchRecord"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
@@ -121,7 +84,6 @@
    </extension>
    <extension
          id="RecordRoleValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
@@ -130,7 +92,6 @@
    </extension>
    <extension
          id="SubstitutionValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
@@ -139,7 +100,6 @@
    </extension>
    <extension
          id="UnexpectedMatchRecord"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
@@ -148,7 +108,6 @@
    </extension>
    <extension
          id="RecordRoleValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
@@ -157,7 +116,6 @@
    </extension>
    <extension
          id="SubstitutionValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
@@ -166,7 +124,6 @@
    </extension>
    <extension
          id="UnexpectedMatchRecord"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
@@ -175,7 +132,6 @@
    </extension>
    <extension
          id="RecordRoleValue"
-         name=""
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
@@ -184,7 +140,150 @@
    </extension>
    <extension
          id="SubstitutionValue"
-         name=""
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.UnexpectedMatchRecord"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.viatra2.emf.incquery.matcherfactory">
+      <matcher
+            id="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"
+            factoryProvider="org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
          point="org.eclipse.viatra2.emf.incquery.matcherfactory">
       <matcher
             id="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"

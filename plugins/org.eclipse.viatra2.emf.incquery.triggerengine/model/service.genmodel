@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra2.emf.incquery.triggerengine.test.model/src"
+    modelPluginID="org.eclipse.viatra2.emf.incquery.triggerengine.test.model" modelName="Service"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>service.ecore</foreignModel>
+  <genPackages prefix="Service" disposableProviderFactory="true" ecorePackage="service.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="service.ecore#//ServiceState">
+      <genEnumLiterals ecoreEnumLiteral="service.ecore#//ServiceState/UP"/>
+      <genEnumLiterals ecoreEnumLiteral="service.ecore#//ServiceState/DOWN"/>
+      <genEnumLiterals ecoreEnumLiteral="service.ecore#//ServiceState/STANDBY"/>
+      <genEnumLiterals ecoreEnumLiteral="service.ecore#//ServiceState/ACTIVE"/>
+      <genEnumLiterals ecoreEnumLiteral="service.ecore#//ServiceState/BACKUP"/>
+    </genEnums>
+    <genClasses ecoreClass="service.ecore#//Node">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute service.ecore#//Node/name"/>
+    </genClasses>
+    <genClasses ecoreClass="service.ecore#//Service">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute service.ecore#//Service/state"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference service.ecore#//Service/serviceReference"/>
+    </genClasses>
+    <genClasses ecoreClass="service.ecore#//Empty"/>
+    <genClasses ecoreClass="service.ecore#//ServiceContainer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference service.ecore#//ServiceContainer/services"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

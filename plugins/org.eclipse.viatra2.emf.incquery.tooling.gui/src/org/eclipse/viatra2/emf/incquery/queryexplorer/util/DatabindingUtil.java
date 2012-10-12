@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.GenericDatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
@@ -79,8 +80,6 @@ public class DatabindingUtil {
 	public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
-	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
-	
 	@Inject
 	private IResourceSetProvider resSetProvider;
 
@@ -124,7 +123,7 @@ public class DatabindingUtil {
 	}
 
 	public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
-		Annotation annotation = getAnnotation(pattern, QUERY_EXPLORER_ANNOTATION);
+		Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern, QUERY_EXPLORER_ANNOTATION);
 		if (annotation == null) {
 			return null;
 		}
@@ -324,10 +323,10 @@ public class DatabindingUtil {
 			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
 				pattern = p;
 				
-				Annotation annotation = getAnnotation(p, QUERY_EXPLORER_ANNOTATION);
+				Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p, QUERY_EXPLORER_ANNOTATION);
 				if (annotation == null) {
 					// Try with deprecated PatternUI annotation
-					annotation = getAnnotation(p, PATTERNUI_ANNOTATION);
+					annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p, PATTERNUI_ANNOTATION);
 				}
 				if (annotation != null) {
 					for (AnnotationParameter ap : annotation.getParameters()) {
@@ -407,62 +406,18 @@ public class DatabindingUtil {
 	}
 	
 	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(String patternName) {
-		RuntimeDatabindingAdapter adapter = new RuntimeDatabindingAdapter();
-		boolean annotationFound = false;
-		Pattern pattern = null;
-		
-		//process annotations if present
-
-		for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
-			if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
-				pattern = p;
-
-				Annotation annotation = getAnnotation(p, OBSERVABLEVALUE_ANNOTATION);
-				String key = null, value = null;
-
-				if (annotation != null) {
-					annotationFound = true;
-					
-					for (AnnotationParameter ap : annotation.getParameters()) {
-						if (ap.getName().matches("name")) {
-							ValueReference valRef = ap.getValue();
-							if (valRef instanceof StringValueImpl) {
-								key = ((StringValueImpl) valRef).getValue();
-							}
-						}
-	
-						if (ap.getName().matches("expression")) {
-							ValueReference valRef = ap.getValue();
-							if (valRef instanceof StringValueImpl) {
-								value = ((StringValueImpl) valRef).getValue();
-							}
-						}
-					}
-				}
-
-				if (key != null && value != null) {
-					adapter.putToParameterMap(key, value);
-				}
-			}
-		}
-		
-		
-		//try to show parameters with a name attribute
-		if (!annotationFound && pattern != null) {
-			for (Variable v : pattern.getParameters()) {
-				adapter.putToParameterMap(v.getName(),v.getName());
-			}
-		}
-		
+        Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternName);
+        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(pattern);
 		return adapter;
 	}
-	
-	/**
-	 * Returns the generated matcher factory for the given generated pattern.
-	 * 
-	 * @param pattern the pattern instance
-	 * @return the matcher factory for the given pattern
-	 */
+
+    /**
+     * Returns the generated matcher factory for the given generated pattern.
+     * 
+     * @param pattern
+     *            the pattern instance
+     * @return the matcher factory for the given pattern
+     */
 	public static IMatcherFactory<?> getMatcherFactoryForGeneratedPattern(Pattern pattern) {
 		return generatedMatcherFactories.get(pattern);
 	}
@@ -479,22 +434,6 @@ public class DatabindingUtil {
 		//runtime & generated matchers
 		root.registerPattern(activePatterns.toArray(new Pattern[activePatterns.size()]));
 		return root;
-	}
-	
-	/**
-	 * Returns the annotation of the given pattern, whose name is the given literal parameter. 
-	 *  
-	 * @param pattern the pattern instance
-	 * @param literal the name of the annotation
-	 * @return the annotation instance
-	 */
-	public static Annotation getAnnotation(Pattern pattern, String literal) {
-		for (Annotation a : pattern.getAnnotations()) {
-			if (a.getName().equalsIgnoreCase(literal)) {
-				return a;
-			}
-		}
-		return null;
 	}
 	
 	/**

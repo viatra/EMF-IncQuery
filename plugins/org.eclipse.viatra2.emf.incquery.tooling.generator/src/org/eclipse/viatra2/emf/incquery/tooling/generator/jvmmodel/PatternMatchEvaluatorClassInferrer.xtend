@@ -76,7 +76,9 @@ class PatternMatchEvaluatorClassInferrer {
    	 */  	
   	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, XExpression xExpression) {
   		val type = getType(xExpression)
-  		inferEvaluatorClassMethods(checkerClass, pattern, xExpression, type)
+  		if (xExpression != null) {
+  			inferEvaluatorClassMethods(checkerClass, pattern, xExpression, type)
+  		}
   	}
   	
 	/**

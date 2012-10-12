@@ -11,12 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
-import java.util.Set;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * The PartListener is used to observe EditorPart close actions.
@@ -24,7 +21,20 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
  * @author Tamas Szabo
  *
  */
-public class ModelEditorPartListener implements IPartListener {
+public class ValidationPartListener implements IPartListener {
+	
+	private static ValidationPartListener instance;
+	
+	public static ValidationPartListener getInstance() {
+		if (instance == null) {
+			instance = new ValidationPartListener();
+		}
+		return instance;
+	}
+	
+	protected ValidationPartListener() {
+		
+	}
 	
 	@Override
 	public void partActivated(IWorkbenchPart part) {
@@ -40,16 +50,8 @@ public class ModelEditorPartListener implements IPartListener {
 	public void partClosed(IWorkbenchPart part) {
 		if (part instanceof IEditorPart) {
 			IEditorPart closedEditor = (IEditorPart) part;
-			
-			Set<ConstraintAdapter<IPatternMatch>> adapters = ValidationUtil.getAdapterMap().remove(closedEditor);
-			
-			if (adapters != null) {
-				for (ConstraintAdapter<IPatternMatch> adapter : adapters) {
-					adapter.dispose();
-				}
-			}
-			
-			closedEditor.getEditorSite().getPage().removePartListener(ValidationUtil.editorPartListener);
+			ValidationUtil.getAdapterMap().remove(part).dispose();
+			closedEditor.getEditorSite().getPage().removePartListener(ValidationPartListener.getInstance());
 		}
 	}
 
