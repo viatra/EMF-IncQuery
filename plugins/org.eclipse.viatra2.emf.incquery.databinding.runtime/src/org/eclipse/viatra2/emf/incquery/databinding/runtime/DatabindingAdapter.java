@@ -13,7 +13,6 @@ package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.property.value.ValueProperty;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -77,8 +76,4 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
 	 * @return an observable value
 	 */
 	public abstract IObservableValue getObservableParameter(T match, String parameterName);
-
-    public IValueProperty getProperty(String parameterName) {
-        return new MatcherProperty(parameterName);
-    }
 }
