@@ -617,12 +617,12 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
         if (generalUnionFindForVariables.isMoreThanOneUnion()) {
             // Giving strict warning in this case
-            warning("Warning the pattern contains fully independent parts, which can lead to excessive performance issues. The independent partitions: "
+            warning("The pattern body contains isolated constraints (\"cartesian products\") that can lead to severe performance and memory footprint issues. The independent partitions are: "
                     + generalUnionFindForVariables.getCurrentPartitionsFormatted() + ".", patternBody, null,
                     EMFIssueCodes.CARTESIAN_STRICT_WARNING);
         } else if (justPositiveUnionFindForVariables.isMoreThanOneUnion()) {
             // Giving soft warning in this case
-            warning("Warning the pattern contains parts which are only loosely connected. This may negatively impact performance, please check if it can be avoided. The weakly dependent partitions: "
+            warning("The pattern body contains constraints which are only loosely connected. This may negatively impact performance. The weakly dependent partitions are: "
                     + justPositiveUnionFindForVariables.getCurrentPartitionsFormatted(), patternBody, null,
                     EMFIssueCodes.CARTESIAN_SOFT_WARNING);
         }
