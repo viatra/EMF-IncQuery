@@ -93,7 +93,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertError(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER)
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	@Test
 	def void testTooMuchParameters() {

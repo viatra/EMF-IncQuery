@@ -9,7 +9,7 @@
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.patternlanguage.emf.tests.types
+package org.eclipse.viatra2.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
@@ -153,6 +153,26 @@ class CartesianProductTest {
 				X == Y;
 				EClass(Z);
 				EClass.eAllAttributes.upperBound(Z,count find Good1(X,Y));
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testGood6() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good1(X, Y) {
+				EClass(X);
+				EClass(Y);
+				X == Y;
+			}
+
+			pattern Good6(X) {
+				EClass(X);
+				neg find Good1(X,_A);
 			}
 		') as PatternModel
 		model.assertNoErrors
