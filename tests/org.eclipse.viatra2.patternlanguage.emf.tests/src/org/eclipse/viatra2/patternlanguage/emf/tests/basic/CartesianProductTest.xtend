@@ -180,6 +180,47 @@ class CartesianProductTest {
 	}
 	
 	@Test
+	def testGood7() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good1(X, Y) {
+				EClass(X);
+				EClass(Y);
+				X == Y;
+			}
+
+			pattern Good7(X) {
+				EClass(X);
+				neg find Good1(_A,_B);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def testGood8() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good1(X, Y) {
+				EClass(X);
+				EClass(Y);
+				X == Y;
+			}
+
+			pattern Good8(X) {
+				EClass(X);
+				M == count find Good1(X,_A);
+				check(M>10);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
 	def testSoft1() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
@@ -255,6 +296,19 @@ class CartesianProductTest {
 			pattern Strict1(X, Y) {
 				EClass(X);
 				EClass(Y);
+			}
+		')
+		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+	}
+	
+	@Test
+	def testStrict2() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern Strict1(X) {
+				EClass(X);
+				EClass(_Y);
 			}
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
