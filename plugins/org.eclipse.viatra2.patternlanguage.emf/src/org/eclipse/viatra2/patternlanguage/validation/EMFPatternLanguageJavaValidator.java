@@ -487,8 +487,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Check
     public void checkForCartesianProduct(PatternBody patternBody) {
-        UnionFindForVariables justPositiveUnionFindForVariables = new UnionFindForVariables(patternBody.getVariables());
-        UnionFindForVariables generalUnionFindForVariables = new UnionFindForVariables(patternBody.getVariables());
+        List<Variable> variables = patternBody.getVariables();
+        variables.removeAll(CorePatternLanguageHelper.getUnnamedRunningVariables(patternBody));
+        UnionFindForVariables justPositiveUnionFindForVariables = new UnionFindForVariables(variables);
+        UnionFindForVariables generalUnionFindForVariables = new UnionFindForVariables(variables);
         boolean isSecondRunNeeded = false;
 
         // First run
@@ -500,8 +502,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 CompareConstraint compareConstraint = (CompareConstraint) constraint;
                 ValueReference leftValueReference = compareConstraint.getLeftOperand();
                 ValueReference rightValueReference = compareConstraint.getRightOperand();
-                Set<Variable> leftVariables = getVariablesFromValueReference(leftValueReference);
-                Set<Variable> rightVariables = getVariablesFromValueReference(rightValueReference);
+                Set<Variable> leftVariables = CorePatternLanguageHelper
+                        .getVariablesFromValueReference(leftValueReference);
+                Set<Variable> rightVariables = CorePatternLanguageHelper
+                        .getVariablesFromValueReference(rightValueReference);
                 if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
                     // Equality ==
                     if (!isValueReferenceAggregated(leftValueReference)
@@ -526,17 +530,21 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     // Positive composition (find)
                     for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
                         if (!isValueReferenceAggregated(valueReference)) {
-                            positiveVariables.addAll(getVariablesFromValueReference(valueReference));
-                            generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                            positiveVariables.addAll(CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(valueReference));
+                            generalVariables.addAll(CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(valueReference));
                         } else {
                             isSecondRunNeeded = true;
-                            generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                            generalVariables.addAll(CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(valueReference));
                         }
                     }
                 } else {
                     // Negative composition (neg find)
                     for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
-                        generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                        generalVariables.addAll(CorePatternLanguageHelper
+                                .getVariablesFromValueReference(valueReference));
                     }
                 }
             } else if (constraint instanceof PathExpressionConstraint) {
@@ -545,13 +553,13 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
                 ValueReference valueReference = pathExpressionHead.getDst();
                 if (!isValueReferenceAggregated(valueReference)) {
-                    positiveVariables.addAll(getVariablesFromValueReference(valueReference));
+                    positiveVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                     positiveVariables.add(pathExpressionHead.getSrc().getVariable());
-                    generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                    generalVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                     generalVariables.add(pathExpressionHead.getSrc().getVariable());
                 } else {
                     isSecondRunNeeded = true;
-                    generalVariables.addAll(getVariablesFromValueReference(valueReference));
+                    generalVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                     generalVariables.add(pathExpressionHead.getSrc().getVariable());
                 }
             } else if (constraint instanceof CheckConstraint) {
@@ -568,6 +576,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         // If variables in an aggregated formula (e.g.: count find Pattern(X,Y)) are in the same union in the positive
         // case then they are considered to be in a positive relation with the respective target as well
         // M == count find Pattern(X,Y), so M with X and Y is positive if X and Y is positive
+        // If the aggregated contains unnamed/running vars it should be omitted during the positive relation checking
         if (isSecondRunNeeded) {
             for (Constraint constraint : patternBody.getConstraints()) {
                 Set<Variable> positiveVariables = new HashSet<Variable>();
@@ -579,8 +588,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         ValueReference rightValueReference = compareConstraint.getRightOperand();
                         if (isValueReferenceAggregated(leftValueReference)
                                 || isValueReferenceAggregated(rightValueReference)) {
-                            Set<Variable> leftVariables = getVariablesFromValueReference(leftValueReference);
-                            Set<Variable> rightVariables = getVariablesFromValueReference(rightValueReference);
+                            Set<Variable> leftVariables = CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(leftValueReference);
+                            Set<Variable> rightVariables = CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(rightValueReference);
                             if (justPositiveUnionFindForVariables.isSameUnion(leftVariables)) {
                                 positiveVariables.addAll(leftVariables);
                             }
@@ -594,7 +605,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     if (!patternCompositionConstraint.isNegative()) {
                         // Positive composition (find), with aggregates in it
                         for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
-                            Set<Variable> actualVariables = getVariablesFromValueReference(valueReference);
+                            Set<Variable> actualVariables = CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(valueReference);
                             if (justPositiveUnionFindForVariables.isSameUnion(actualVariables)) {
                                 positiveVariables.addAll(actualVariables);
                             }
@@ -606,7 +618,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
                     positiveVariables.add(pathExpressionHead.getSrc().getVariable());
                     ValueReference valueReference = pathExpressionHead.getDst();
-                    Set<Variable> actualVariables = getVariablesFromValueReference(valueReference);
+                    Set<Variable> actualVariables = CorePatternLanguageHelper
+                            .getVariablesFromValueReference(valueReference);
                     if (justPositiveUnionFindForVariables.isSameUnion(actualVariables)) {
                         positiveVariables.addAll(actualVariables);
                     }
@@ -628,26 +641,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
-    private Set<Variable> getVariablesFromValueReference(ValueReference valueReference) {
-        Set<Variable> resultSet = new HashSet<Variable>();
-        if (valueReference != null) {
-            if (valueReference instanceof VariableValue) {
-                resultSet.add(((VariableValue) valueReference).getValue().getVariable());
-            } else if (valueReference instanceof AggregatedValue) {
-                AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-                for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
-                    resultSet.addAll(getVariablesFromValueReference(valueReferenceInner));
-                }
-            }
-        }
-        return resultSet;
-    }
-
-    private boolean isValueReferenceAggregated(ValueReference valueReference) {
-        if (valueReference != null) {
-            if (valueReference instanceof AggregatedValue) {
-                return true;
-            }
+    private static boolean isValueReferenceAggregated(ValueReference valueReference) {
+        if (valueReference != null && valueReference instanceof AggregatedValue) {
+            return true;
         }
         return false;
     }
