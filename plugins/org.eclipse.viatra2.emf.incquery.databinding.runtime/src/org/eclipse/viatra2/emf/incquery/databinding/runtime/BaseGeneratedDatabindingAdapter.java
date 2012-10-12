@@ -14,8 +14,11 @@ package org.eclipse.viatra2.emf.incquery.databinding.runtime;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+
+import com.google.common.base.Preconditions;
 
 public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends DatabindingAdapter<T> {
 
@@ -34,5 +37,10 @@ public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends Da
 		}
 		return null;
 	}
+
+    public IValueProperty getProperty(String parameterName) {
+        Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");
+        return new MatcherProperty(parameterMap.get(parameterName));
+    }
 
 }
