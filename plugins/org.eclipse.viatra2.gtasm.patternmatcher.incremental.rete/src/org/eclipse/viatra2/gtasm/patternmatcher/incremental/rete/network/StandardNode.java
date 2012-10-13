@@ -22,19 +22,15 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask
 
 
 /**
+ * Base implementation for a supplier node.
  * @author Gabor Bergmann
  * 
  */
-public abstract class StandardNode implements Supplier {
-	protected ReteContainer reteContainer;
-	protected long nodeId;
-	protected Object tag;
-	protected List<Receiver> children;
+public abstract class StandardNode extends BaseNode implements Supplier {
+	protected List<Receiver> children = new LinkedList<Receiver>();
 
 	public StandardNode(ReteContainer reteContainer) {
-		this.reteContainer = reteContainer;
-		this.nodeId = reteContainer.registerNode(this);
-		children = new LinkedList<Receiver>();
+		super(reteContainer);
 	}
 
 	protected void propagateUpdate(Direction direction, Tuple updateElement) {
@@ -66,47 +62,6 @@ public abstract class StandardNode implements Supplier {
 		final GenericProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);
 		reteContainer.connectAndSynchronize(this, indexer);
 		return indexer;
-	}
-	
-	@Override
-	public String toString() {
-		if (tag != null)
-			return "[" + nodeId+ "]" + getClass().getSimpleName() + "[[" + tag.toString() + "]]";
-		else
-			return "[" + nodeId+ "]" + getClass().getSimpleName();
-	};
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node#getNetwork()
-	 */
-	public ReteContainer getContainer() {
-		return reteContainer;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node#getNodeId()
-	 */
-	public long getNodeId() {
-		return nodeId;
-	}
-
-	/**
-	 * @return the tag
-	 */
-	public Object getTag() {
-		return tag;
-	}
-
-	/**
-	 * @param tag
-	 *            the tag to set
-	 */
-	public void setTag(Object tag) {
-		this.tag = tag;
 	}
 
 }

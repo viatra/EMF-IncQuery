@@ -16,7 +16,6 @@ import java.util.LinkedList;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.SingleInputNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 
@@ -27,7 +26,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  *         propagate updates! Optimized for small contents size OR positive
  *         updates only.
  */
-public class Bag extends SingleInputNode {
+public class Bag extends SimpleReceiver {
 
 	public Collection<Tuple> contents;
 
@@ -46,11 +45,6 @@ public class Bag extends SingleInputNode {
 			contents.add(updateElement);
 		else
 			contents.remove(updateElement);
-	}
-
-	public void pullInto(Collection<Tuple> collector) {
-		// IGNORE
-		throw new UnsupportedOperationException("Bag contents cannot be pulled");
 	}
 
 }

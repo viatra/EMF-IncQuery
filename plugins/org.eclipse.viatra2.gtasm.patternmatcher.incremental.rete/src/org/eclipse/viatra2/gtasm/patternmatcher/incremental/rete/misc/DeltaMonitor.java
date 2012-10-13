@@ -16,7 +16,6 @@ import java.util.LinkedHashSet;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.SingleInputNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Clearable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
@@ -46,7 +45,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Gabor Bergmann
  * 
  */
-public abstract class DeltaMonitor<MatchType> extends SingleInputNode implements Clearable {
+public abstract class DeltaMonitor<MatchType> extends SimpleReceiver implements Clearable {
 
 	/**
 	 * matches that are newly found
@@ -75,14 +74,6 @@ public abstract class DeltaMonitor<MatchType> extends SingleInputNode implements
 //	public DeltaMonitor(Network network) {
 //		this(network.getHeadContainer());
 //	}
-	
-	/**
-	 * Disconnects this node from the network. Can be called publicly.
-	 * @pre: child nodes, if any, must already be disconnected.
-	 */
-	public void disconnectFromNetwork() {
-		reteContainer.disconnect(parent, this);
-	}
 	
 	/**
 	 * Override this method to provide a lightweight, stateless filter on the tuples
@@ -121,12 +112,6 @@ public abstract class DeltaMonitor<MatchType> extends SingleInputNode implements
 	public void clear() {
 		matchFoundEvents.clear();
 		matchLostEvents.clear();
-	}
-
-	public void pullInto(Collection<Tuple> collector) {
-		// IGNORE
-		throw new UnsupportedOperationException(
-				"DeltaMonitor contents cannot be pulled");
 	}
 
 }
