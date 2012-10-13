@@ -24,9 +24,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
@@ -279,6 +281,34 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     }
   }
   // with input binding as pattern-specific parameters: not declared in interface
+  
+  
+  /* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackOnMatchAppearance(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+	 */
+  @Override
+  public void addCallbackOnMatchAppearance(IMatchProcessor<Match> callback) {
+	addCallbackOnMatch(callback, Direction.INSERT, false);
+  }
+  
+  /* (non-Javadoc)
+   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackOnMatchDisappearance(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+   */
+  @Override
+  public void addCallbackOnMatchDisappearance(IMatchProcessor<Match> callback) {
+		addCallbackOnMatch(callback, Direction.REVOKE, false);	  
+  };
+  
+  CallbackNode<Match> addCallbackOnMatch(IMatchProcessor<Match> callback, Direction sensitiveEdge, boolean fillAtStart) {
+	final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(), engine, callback, sensitiveEdge) {
+		@Override
+		public Match statelessConvert(Tuple t) {
+	        return tupleToMatch(t);
+		}
+	};
+    patternMatcher.connect(callbackNode, fillAtStart);
+    return callbackNode;
+  }
   
   /* (non-Javadoc)
    * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newDeltaMonitor(boolean)

@@ -125,6 +125,24 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	// CHANGE MONITORING
 	// attach delta monitor for high-level change detection
 	/** 
+	 * Registers a new match appearance callback on this pattern matcher. 
+	 * The given match processor will be invoked on each new match that appears, starting from now. 
+	 * See {@link IMatchProcessor} for details.
+	 * 
+	 * <p> Performance note: expected to be much more efficient than {@link #addCallbackAfterUpdates(Runnable)}, 
+	 *  but prone to "signal hazards", i.e. spurious match appearances that will disappear immediately afterwards.
+	 */
+	public abstract void addCallbackOnMatchAppearance(IMatchProcessor<Match> callback);
+	/** 
+	 * Registers a new match disappearance callback on this pattern matcher. 
+	 * The given match processor will be invoked on each match that disappears, starting from now. 
+	 * See {@link IMatchProcessor} for details.
+	 * 
+	 * <p> Performance note: expected to be much more efficient than {@link #addCallbackAfterUpdates(Runnable)}, 
+	 *  but prone to "signal hazards", i.e. spurious match appearances that will disappear immediately afterwards.
+	 */
+	public abstract void addCallbackOnMatchDisappearance(IMatchProcessor<Match> callback);
+	/** 
 	 * Registers a new delta monitor on this pattern matcher. 
 	 * The DeltaMonitor can be used to track changes (delta) in the set of pattern matches from now on.
 	 * It can also be reset to track changes from a later point in time, 
