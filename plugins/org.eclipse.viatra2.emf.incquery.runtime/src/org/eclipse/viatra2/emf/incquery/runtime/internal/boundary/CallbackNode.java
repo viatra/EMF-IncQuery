@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.boundary;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IncQueryCallbackHandle;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.SimpleReceiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
@@ -23,30 +24,32 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Bergmann Gabor
  *
  */
-public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleReceiver {
+public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleReceiver implements IncQueryCallbackHandle {
 
 	IncQueryEngine engine;
-	IMatchProcessor<Match> callback;
-	Direction sensitiveEdge;
+	IMatchProcessor<Match> callbackAppear;
+	IMatchProcessor<Match> callbackDisappear;
 	
     public abstract Match statelessConvert(Tuple t);
 
-    
 	public CallbackNode(ReteContainer reteContainer, IncQueryEngine engine,
-			IMatchProcessor<Match> callback, Direction sensitiveEdge) {
+			IMatchProcessor<Match> callbackAppear,
+			IMatchProcessor<Match> callbackDisappear) {
 		super(reteContainer);
 		this.engine = engine;
-		this.callback = callback;
-		this.sensitiveEdge = sensitiveEdge;
+		this.callbackAppear = callbackAppear;
+		this.callbackDisappear = callbackDisappear;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
 	 */
 	@Override
 	public void update(Direction direction, Tuple updateElement) {
-		if (direction == sensitiveEdge) {
+		IMatchProcessor<Match> callback = direction == Direction.INSERT ? 
+				callbackAppear : callbackDisappear;
+		
+		if (callback != null) {
 			Match match = statelessConvert(updateElement);
 			try {
 				callback.process(match);
@@ -65,7 +68,13 @@ public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleRe
 		}
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.extensibility.IncQueryCallbackHandle#removeCallback()
+	 */
+	@Override
+	public void removeCallback() {
+		this.disconnectFromNetwork();
+	}
 
 
 }
