@@ -64,7 +64,8 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
 	 * @pre: child nodes, if any, must already be disconnected.
 	 */
 	public void disconnectFromNetwork() {
-		reteContainer.disconnect(parent, this);
+		if (parent != null) 
+			reteContainer.disconnect(parent, this);
 	}
 
 }
