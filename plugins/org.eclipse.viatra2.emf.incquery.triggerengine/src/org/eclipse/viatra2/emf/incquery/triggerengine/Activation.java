@@ -48,7 +48,7 @@ public abstract class Activation<MatchType extends IPatternMatch> {
 		else if (this.state == ActivationState.DISAPPEARED && rule.afterDisappearanceJob != null) {
 			this.rule.afterDisappearanceJob.process(patternMatch);
 		}
-		else if (this.state == ActivationState.UPGRADED && rule.afterModificationJob != null) {
+		else if (this.state == ActivationState.UPDATED && rule.afterModificationJob != null) {
 			this.rule.afterModificationJob.process(patternMatch);	
 		}
 		if (!allowMultipleFiring) {

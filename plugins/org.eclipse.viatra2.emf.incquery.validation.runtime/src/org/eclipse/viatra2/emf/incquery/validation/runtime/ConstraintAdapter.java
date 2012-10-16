@@ -23,7 +23,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.TriggerEngine;
+import org.eclipse.viatra2.emf.incquery.triggerengine.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 public class ConstraintAdapter<T extends IPatternMatch> {
@@ -35,7 +35,7 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 	public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
 		this.markerMap = new HashMap<IPatternMatch, IMarker>();
 		
-		this.agenda = TriggerEngine.getInstance().createAgenda(notifier);
+		this.agenda = RuleEngine.getInstance().createAgenda(notifier);
 		
 		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
 			Rule<IPatternMatch> rule = (Rule<IPatternMatch>) agenda.createRule(constraint.getMatcherFactory().getPattern(), true, true);

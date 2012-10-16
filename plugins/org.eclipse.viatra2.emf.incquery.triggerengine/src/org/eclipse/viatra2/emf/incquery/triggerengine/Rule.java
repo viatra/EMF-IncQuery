@@ -33,7 +33,7 @@ public abstract class Rule<MatchType extends IPatternMatch> {
 		this.stateMap = new HashMap<ActivationState, Map<MatchType,Activation<MatchType>>>();
 		this.stateMap.put(ActivationState.APPEARED, new HashMap<MatchType, Activation<MatchType>>());
 		this.stateMap.put(ActivationState.DISAPPEARED, new HashMap<MatchType, Activation<MatchType>>());
-		this.stateMap.put(ActivationState.UPGRADED, new HashMap<MatchType, Activation<MatchType>>());
+		this.stateMap.put(ActivationState.UPDATED, new HashMap<MatchType, Activation<MatchType>>());
 		this.allowMultipleFiring = allowMultipleFiring;
 	}
 	
