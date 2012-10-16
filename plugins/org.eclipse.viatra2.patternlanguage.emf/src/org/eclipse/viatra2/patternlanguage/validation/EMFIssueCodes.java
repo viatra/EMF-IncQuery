@@ -31,7 +31,8 @@ public final class EMFIssueCodes {
 	public static final String ANONYM_VARIABLE_MULTIPLE_REFERENCE = ISSUE_CODE_PREFIX + "anonym_variable_multiple_reference";
 	public static final String SINGLEUSE_PARAMETER = ISSUE_CODE_PREFIX + "singleuse_parameter";
 	public static final String PARAMETER_TYPE_INVALID = ISSUE_CODE_PREFIX + "parameter_type_invalid";
-	public static final String VARIABLE_TYPE_INVALID = ISSUE_CODE_PREFIX + "variable_type_invalid";
+	public static final String VARIABLE_TYPE_INVALID_ERROR = ISSUE_CODE_PREFIX + "variable_type_invalid_error";
+	public static final String VARIABLE_TYPE_INVALID_WARNING = ISSUE_CODE_PREFIX + "variable_type_invalid_warning";
 	public static final String VARIABLE_TYPE_MULTIPLE_DECLARATION = ISSUE_CODE_PREFIX + "variable_type_multiple_declaration";
 	public static final String CARTESIAN_SOFT_WARNING = ISSUE_CODE_PREFIX + "cartesian_soft_warning";
 	public static final String CARTESIAN_STRICT_WARNING = ISSUE_CODE_PREFIX + "cartesian_strict_warning";

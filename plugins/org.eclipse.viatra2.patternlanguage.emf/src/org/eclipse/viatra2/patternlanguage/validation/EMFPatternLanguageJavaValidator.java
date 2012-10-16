@@ -478,8 +478,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
                             .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                 } else {
-                    error("Inconsistent variable type defintions: " + classifierNamesList, variable.getReferences()
-                            .get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID);
+                    EClassifier classifier = emfTypeProvider.getClassifierForPatternParameterVariable(variable);
+                    if (classifier != null && possibleClassifiers.contains(classifier)) {
+                        warning("Ambiguous variable type defintions: " + classifierNamesList
+                                + ", the parameter type (" + classifier.getName() + ") is used now.", variable
+                                .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
+                    } else {
+                        error("Inconsistent variable type defintions: " + classifierNamesList
+                                + ", type cannot be selected.", variable.getReferences().get(0), null,
+                                EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                    }
                 }
             }
         }
