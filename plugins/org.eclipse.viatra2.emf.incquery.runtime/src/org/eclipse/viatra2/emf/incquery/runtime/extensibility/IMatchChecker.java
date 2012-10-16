@@ -9,7 +9,7 @@
  *    Andras Okros - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.runtime.api;
+package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
 import java.util.Map;
 

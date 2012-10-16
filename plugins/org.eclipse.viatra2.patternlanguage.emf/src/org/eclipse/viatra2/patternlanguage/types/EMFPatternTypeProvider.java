@@ -209,6 +209,24 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#getClassifierForPatternParameterVariable(org.eclipse
+     * .viatra2.patternlanguage.core.patternLanguage.PatternBody,
+     * org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
+     */
+    @Override
+    public EClassifier getClassifierForPatternParameterVariable(Variable variable) {
+        if (variable instanceof ParameterRef) {
+            Variable referredParameter = ((ParameterRef) variable).getReferredParam();
+            return getClassifierForType(referredParameter.getType());
+        } else {
+            return getClassifierForType(variable.getType());
+        }
+    }
+
     private EClassifier getClassifierForVariableWithPatternBody(PatternBody patternBody, Variable variable,
             int recursionCallingLevel, Variable injectiveVariablePair) {
         Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable,
@@ -220,7 +238,12 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                 return (EClassifier) possibleClassifiersList.toArray()[0];
             } else {
                 possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
-                return (EClassifier) possibleClassifiersList.toArray()[0];
+                EClassifier classifier = getClassifierForPatternParameterVariable(variable);
+                if (classifier != null && possibleClassifiersList.contains(classifier)) {
+                    return classifier;
+                } else {
+                    return (EClassifier) possibleClassifiersList.toArray()[0];
+                }
             }
         }
     }
@@ -231,19 +254,9 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         EClassifier classifier = null;
 
         // Calculate it with just the variable only (works only for parameters)
-        if (variable instanceof ParameterRef) {
-            Variable referredParameter = ((ParameterRef) variable).getReferredParam();
-            // if (referredParameter != null) {
-            classifier = getClassifierForType(referredParameter.getType());
-            if (classifier != null) {
-                possibleClassifiersList.add(classifier);
-            }
-            // }
-        } else {
-            classifier = getClassifierForType(variable.getType());
-            if (classifier != null) {
-                possibleClassifiersList.add(classifier);
-            }
+        classifier = getClassifierForPatternParameterVariable(variable);
+        if (classifier != null) {
+            possibleClassifiersList.add(classifier);
         }
 
         // Calculate it from the constraints

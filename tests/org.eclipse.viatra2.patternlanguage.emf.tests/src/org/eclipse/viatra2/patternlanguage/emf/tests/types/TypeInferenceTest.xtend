@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -67,9 +68,9 @@ class TypeInferenceTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
-		
 		assertEquals(typeof(EClass).canonicalName, type.qualifiedName) 
 	}
 	
@@ -93,7 +94,6 @@ class TypeInferenceTest {
 		val param2 = model.patterns.get(1).parameters.get(0)
 		val type1 = typeProvider.getTypeForIdentifiable(param1)
 		val type2 = typeProvider.getTypeForIdentifiable(param2)
-		
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
 	}
@@ -127,7 +127,6 @@ class TypeInferenceTest {
 		val type1 = typeProvider.getTypeForIdentifiable(param1)
 		val type2 = typeProvider.getTypeForIdentifiable(param2)
 		val type3 = typeProvider.getTypeForIdentifiable(param3)
-		
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
@@ -147,10 +146,8 @@ class TypeInferenceTest {
 		
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(0).parameters.get(1)
-		
 		val type1 = typeProvider.getTypeForIdentifiable(param1)
 		val type2 = typeProvider.getTypeForIdentifiable(param2)
-		
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EAttribute).canonicalName, type2.qualifiedName)
 	}
@@ -175,12 +172,10 @@ class TypeInferenceTest {
 		val param21 = model.patterns.get(0).parameters.get(1)
 		val param12 = model.patterns.get(1).parameters.get(0)
 		val param22 = model.patterns.get(1).parameters.get(1)
-		
 		val type11 = typeProvider.getTypeForIdentifiable(param11)
 		val type21 = typeProvider.getTypeForIdentifiable(param21)
 		val type12 = typeProvider.getTypeForIdentifiable(param12)
 		val type22 = typeProvider.getTypeForIdentifiable(param22)
-		
 		assertEquals(typeof(EClass).canonicalName, type11.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type12.qualifiedName)
 		assertEquals(typeof(EAttribute).canonicalName, type21.qualifiedName)
@@ -202,10 +197,8 @@ class TypeInferenceTest {
 		
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(0).parameters.get(1)
-		
 		val type1 = typeProvider.getTypeForIdentifiable(param1)
 		val type2 = typeProvider.getTypeForIdentifiable(param2)
-		
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
 	}
@@ -227,11 +220,9 @@ class TypeInferenceTest {
 		val parameter1 = model.patterns.get(0).parameters.get(0)
 		val variable1 = model.patterns.get(0).bodies.get(0).variables.get(0)
 		val variable2 = model.patterns.get(0).bodies.get(1).variables.get(0)
-		
 		val type1 = typeProvider.getTypeForIdentifiable(parameter1)
 		val type2 = typeProvider.getTypeForIdentifiable(variable1)
 		val type3 = typeProvider.getTypeForIdentifiable(variable2)
-		
 		assertEquals(typeof(EClassifier).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EDataType).canonicalName, type2.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
@@ -246,9 +237,9 @@ class TypeInferenceTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
-		
 		assertEquals(typeof(Integer).canonicalName, type.qualifiedName) 
 	}
 	
@@ -261,9 +252,9 @@ class TypeInferenceTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
-		
 		assertEquals(typeof(String).canonicalName, type.qualifiedName) 
 	}
 	
@@ -276,9 +267,9 @@ class TypeInferenceTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
-		
 		assertEquals(typeof(Boolean).canonicalName, type.qualifiedName) 
 	}
 	
@@ -291,9 +282,9 @@ class TypeInferenceTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
-		
 		assertEquals(typeof(Double).canonicalName, type.qualifiedName) 
 	}
 	
@@ -312,11 +303,58 @@ class TypeInferenceTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
-		
 		assertEquals("literalType", param.name) 
 		assertEquals(typeof(Integer).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def errorTypeTest() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern errorTypeTest(parameter) = {
+				EClass(parameter);
+				EDataType(parameter);
+			} 
+		') as PatternModel
+		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+	}
+	
+	@Test
+	def warningTypeTest1() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern warningTypeTest1(parameter : EClass) = {
+				EDataType(parameter);
+			} 
+		') as PatternModel
+		tester.validate(model).assertWarning(EMFIssueCodes::VARIABLE_TYPE_INVALID_WARNING)
+		
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		assertEquals("parameter", param.name) 
+		assertEquals(typeof(EClass).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def warningTypeTest2() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern warningTypeTest2(parameter : EDataType) = {
+				EClass(parameter);
+			} 
+		') as PatternModel
+		tester.validate(model).assertWarning(EMFIssueCodes::VARIABLE_TYPE_INVALID_WARNING)
+		
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		assertEquals("parameter", param.name) 
+		assertEquals(typeof(EDataType).canonicalName, type.qualifiedName) 
 	}
 	
 }

@@ -15,7 +15,6 @@ import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.List
 import java.util.Map
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchChecker
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFJvmTypesBuilder
 import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
@@ -28,7 +27,7 @@ import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.common.types.JvmPrimitiveType
+import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IMatchChecker
 
 /**
  * {@link IMatchChecker} implementation inferer.
