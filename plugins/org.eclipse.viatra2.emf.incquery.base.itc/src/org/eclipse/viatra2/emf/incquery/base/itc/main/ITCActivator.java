@@ -34,15 +34,36 @@ public class ITCActivator implements BundleActivator {
 		Integer n2 = Integer.valueOf(2);
 		Integer n3 = Integer.valueOf(3);
 		Integer n4 = Integer.valueOf(4);
+		Integer n5 = Integer.valueOf(5);
+		Integer n6 = Integer.valueOf(6);
+		Integer n7 = Integer.valueOf(7);
+		Integer n8 = Integer.valueOf(8);
 		
 		g.insertNode(n1);
 		g.insertNode(n2);
 		g.insertNode(n3);
 		g.insertNode(n4);
+		g.insertNode(n5);
+		g.insertNode(n6);
+		g.insertNode(n7);
+		g.insertNode(n8);
 		
-		g.insertEdge(n1, n2);
-		g.insertEdge(n2, n3);
-		g.insertEdge(n1, n3);
-		g.insertEdge(n1, n1);
+		g.insertEdge(n1, n4);
+		g.insertEdge(n2, n4);
+		g.insertEdge(n3, n4);
+		System.out.println("--");
+		g.insertEdge(n4, n5);
+		System.out.println("--");
+		g.insertEdge(n5, n6);
+		g.insertEdge(n5, n7);
+		g.insertEdge(n5, n8);
+		
+		System.out.println("--");
+		g.insertEdge(n8, n8);
+		g.insertEdge(n8, n8);
+		g.insertEdge(n8, n8);
+		
+		System.out.println("--");
+		g.insertEdge(n8, n4);
 	}
 }

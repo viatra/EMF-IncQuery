@@ -12,6 +12,7 @@
 package org.eclipse.viatra2.emf.incquery.base.itc.alg.counting;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -251,7 +252,11 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 */
 	@Override
 	public Set<V> getAllReachableTargets(V source) {
-		return this.tc.getTupleEnds(source);
+		Set<V> targets = new HashSet<V>();
+		if (tc.getTupleEnds(source) != null) {
+			targets.addAll(tc.getTupleEnds(source));
+		}
+		return targets;
 	}
 
 	/*
@@ -261,7 +266,11 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 */
 	@Override
 	public Set<V> getAllReachableSources(V target) {
-		return this.tc.getTupleStarts(target);
+		Set<V> sources = new HashSet<V>();
+		if (tc.getTupleStarts(target) != null) {
+			sources.addAll(tc.getTupleStarts(target));
+		}
+		return sources;
 	}
 
 	private void notifyTcObservers(V source, V target, int dir) {
