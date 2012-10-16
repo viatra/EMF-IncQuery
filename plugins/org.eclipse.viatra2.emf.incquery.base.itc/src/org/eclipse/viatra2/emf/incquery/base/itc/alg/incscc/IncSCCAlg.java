@@ -127,9 +127,17 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					targetSCCs.add(targetRoot);
 					targetSCCs.addAll(successorRoots);
 					
+					//tracing back to actual nodes
 					for (V sourceSCC : sourceSCCs) {
 						for (V targetSCC : CollectionHelper.difference(targetSCCs, counting.getAllReachableTargets(sourceSCC))) {
-							notifyTcObservers(sccs.setMap.get(sourceSCC), sccs.setMap.get(targetSCC), Direction.INSERT);
+							for (V s : sccs.setMap.get(sourceSCC)) {
+								for (V t : sccs.setMap.get(targetSCC)) {
+									//if self loop is already present omit the notification
+									if (!(s.equals(t) && graphHelper.getEdgeCount(s) >= 1)) {
+										notifyTcObservers(s, t, Direction.INSERT);
+									}
+								}
+							}
 						}
 					}
 				}
@@ -196,7 +204,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		}
 		else {
 			//Notifications about self-loops
-			if (observers.size() > 0) {
+			if (observers.size() > 0 && sccs.setMap.get(sourceRoot).size() == 1 && graphHelper.getEdgeCount(source, target) == 1) {
 				notifyTcObservers(source, source, Direction.INSERT);
 			}
 		}
@@ -282,10 +290,23 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					targetSCCs.add(newTargetRoot);
 					
 					for (V sourceSCC : sourceSCCs) {						
-						for (V targetSCC : CollectionHelper.difference(targetSCCs, counting.getAllReachableTargets(sourceSCC))) {	
-							notifyTcObservers(sccs.setMap.get(sourceSCC), sccs.setMap.get(targetSCC), Direction.DELETE);
+						for (V targetSCC : CollectionHelper.difference(targetSCCs, counting.getAllReachableTargets(sourceSCC))) {
+							for (V s : sccs.setMap.get(sourceSCC)) {
+								for (V t : sccs.setMap.get(targetSCC)) {
+									//if self loop is still present omit the notification
+									if (!(s.equals(t) && graphHelper.getEdgeCount(s) >= 1)) {
+										notifyTcObservers(s, t, Direction.DELETE);
+									}
+								}
+							}
 						}
 					}
+				}
+			}
+			else {
+				//only handle self-loop notifications - sourceRoot equals to targetRoot
+				if (observers.size() > 0 && sccs.setMap.get(sourceRoot).size() == 1 && graphHelper.getEdgeCount(source, target) == 0) {
+					notifyTcObservers(source, source, Direction.DELETE);
 				}
 			}
 		}
@@ -421,9 +442,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	
 	private void notifyTcObservers(V source, V target, Direction direction) {
 		for (ITcObserver<V> observer : observers) {
-			if (direction == Direction.INSERT && graphHelper.getEdgeCount(source, target) == 1 &&
-					source.equals(target) ? 
-							(sccs.setMap.get(sccs.find(source)).size() == 1) : true) {
+			if (direction == Direction.INSERT) {
 				observer.tupleInserted(source, target);
 			}
 			if (direction == Direction.DELETE) {

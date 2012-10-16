@@ -16,18 +16,15 @@ package org.eclipse.viatra2.emf.incquery.base.itc.test.graphs;
  */
 public class SelfLoopGraph extends TestGraph<Integer> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.TestGraph#modify()
-     */
+    public SelfLoopGraph() {
+    	super(null);
+    }
+    
     @Override
     public void modify() {
         Integer n1 = Integer.valueOf(1);
-            
         this.insertNode(n1);
         this.insertEdge(n1, n1);
         this.deleteEdge(n1, n1);
