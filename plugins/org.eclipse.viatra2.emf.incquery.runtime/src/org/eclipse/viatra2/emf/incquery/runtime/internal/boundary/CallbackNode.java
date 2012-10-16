@@ -11,10 +11,9 @@
 package org.eclipse.viatra2.emf.incquery.runtime.internal.boundary;
 
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IncQueryCallbackHandle;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.SimpleReceiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
@@ -24,57 +23,45 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
  * @author Bergmann Gabor
  *
  */
-public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleReceiver implements IncQueryCallbackHandle {
+public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleReceiver {
 
 	IncQueryEngine engine;
-	IMatchProcessor<Match> callbackAppear;
-	IMatchProcessor<Match> callbackDisappear;
+	IMatchUpdateListener<Match> listener;
 	
     public abstract Match statelessConvert(Tuple t);
 
+
 	public CallbackNode(ReteContainer reteContainer, IncQueryEngine engine,
-			IMatchProcessor<Match> callbackAppear,
-			IMatchProcessor<Match> callbackDisappear) {
+			IMatchUpdateListener<Match> listener) {
 		super(reteContainer);
 		this.engine = engine;
-		this.callbackAppear = callbackAppear;
-		this.callbackDisappear = callbackDisappear;
+		this.listener = listener;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
 	 */
 	@Override
 	public void update(Direction direction, Tuple updateElement) {
-		IMatchProcessor<Match> callback = direction == Direction.INSERT ? 
-				callbackAppear : callbackDisappear;
-		
-		if (callback != null) {
-			Match match = statelessConvert(updateElement);
-			try {
-				callback.process(match);
-			} catch (Throwable e) { //NOPMD
-				if (e instanceof Error) throw (Error)e;
-				engine.getLogger().warn(String.format(
-					"The incremental pattern matcher encountered an error during executing a callback on %s of match %s of pattern %s. Error message: %s. (Developer note: %s in %s called from CallbackNode)", 
-					direction == Direction.INSERT ? "insertion" : "removal",
-					match.prettyPrint(),
-					match.patternName(),
-					e.getMessage(),
-					e.getClass().getSimpleName(),
-					callback
-					), e);
-			}
+		Match match = statelessConvert(updateElement);
+		try {
+			if (direction == Direction.INSERT)
+				listener.notifyAppearance(match);
+			else
+				listener.notifyDisappearance(match);
+		} catch (Throwable e) { //NOPMD
+			if (e instanceof Error) throw (Error)e;
+			engine.getLogger().warn(String.format(
+				"The incremental pattern matcher encountered an error during executing a callback on %s of match %s of pattern %s. Error message: %s. (Developer note: %s in %s called from CallbackNode)", 
+				direction == Direction.INSERT ? "insertion" : "removal",
+				match.prettyPrint(),
+				match.patternName(),
+				e.getMessage(),
+				e.getClass().getSimpleName(),
+				listener
+				), e);
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.extensibility.IncQueryCallbackHandle#removeCallback()
-	 */
-	@Override
-	public void removeCallback() {
-		this.disconnectFromNetwork();
-	}
-
-
 }

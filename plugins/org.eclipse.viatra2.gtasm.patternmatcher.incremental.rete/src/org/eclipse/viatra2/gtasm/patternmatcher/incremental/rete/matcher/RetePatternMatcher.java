@@ -14,6 +14,7 @@ package org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer;
@@ -37,6 +38,7 @@ public class RetePatternMatcher extends TransformerNode {
 	protected ReteBoundary<?> boundary;
 	protected Production productionNode;
 	protected HashMap<Object, Integer> posMapping;
+	protected Map<Object, Receiver> taggedChildren = new HashMap<Object, Receiver>();
 	protected boolean connected = false; // is rete-wise connected to the
 											// production node?
 
@@ -135,7 +137,45 @@ public class RetePatternMatcher extends TransformerNode {
 		else
 			reteContainer.connect(this, receiver);
 	}
+	
+	/**
+	 * Connects a new external receiver that will receive update notifications
+	 * from now on. The receiver will practically connect to the production
+	 * node, the added value is unwrapping the updates for external use.
+	 * 
+	 * The external receiver will be disconnectable later based on its tag.
+	 * 
+	 * @param tag an identifier to recognize the child node by.
+	 * 
+	 * @param synchronize
+	 *            if true, the contents of the production node will be inserted
+	 *            into the receiver after the connection is established.
+	 *                     
+	 */
+	public synchronized void connect(Receiver receiver, Object tag, boolean synchronize) {
+		taggedChildren.put(tag, receiver);
+		connect(receiver, synchronize);
+	}	
+	
+	/**
+	 * Disconnects a child node.
+	 */
+	public synchronized void disconnect(Receiver receiver) {
+		reteContainer.disconnect(this, receiver);
+	}	
 
+	/**
+	 * Disconnects the child node that was connected by specifying the given tag.
+	 * 
+	 * @return if a child node was found registered with this tag.
+	 */
+	public synchronized boolean disconnectByTag(Object tag) {
+		final Receiver receiver = taggedChildren.remove(tag);
+		final boolean found = receiver != null;
+		if (found) disconnect(receiver);
+		return found;
+	}	
+	
 	/**
 	 * @return the posMapping
 	 */

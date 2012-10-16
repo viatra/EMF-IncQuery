@@ -14,7 +14,6 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IncQueryCallbackHandle;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -132,19 +131,21 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 *  Most users should use the agenda and trigger engine instead. TODO reference 
 	 * 
 	 * <p> Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)}, 
-	 *  but prone to "signal hazards", i.e. spurious match appearances that will disappear immediately afterwards.
+	 *  but prone to "signal hazards", e.g. spurious match appearances that will disappear immediately afterwards.
 	 * 
-	 * <p> The callback can be unregistered via the handle returned by this method.
+	 * <p> The callback can be unregistered via {@link #removeCallbackOnMatchUpdate(IMatchUpdateListener)}.
 	 *  
-	 * @param appearCallback a match processor that will be invoked on each new match that appears, starting from now. 
-	 *  If null, no callback will be executed on match appearance. See {@link IMatchProcessor} for details on how to implement. 
-	 * @param disappearCallback a match processor that will be invoked on each existing match that disappears, starting from now. 
-	 *  If null, no callback will be executed on match disappearance. See {@link IMatchProcessor} for details on how to implement. 
 	 * @param fireNow if true, appearCallback will be immediately invoked on all current matches as a one-time effect. 
 	 *  See also {@link IncQueryMatcher#forEachMatch(IMatchProcessor)}.
+	 * @param listener the listener that will be notified of each new match that appears or disappears, starting from now. 
 	 * @return a handle that can be used to unregister the callback, freeing up some resources.
 	 */
-	public abstract IncQueryCallbackHandle addCallbackOnMatchUpdate(IMatchProcessor<Match> appearCallback, IMatchProcessor<Match> disappearCallback, boolean fireNow);
+	public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener, boolean fireNow);
+	/**
+	 * Unregisters a callback registered by {@link #addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)}.
+	 * @param listener the listener that will no longer be notified. 
+	 */
+	public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener);
 	/** 
 	 * Registers a new delta monitor on this pattern matcher. 
 	 * The DeltaMonitor can be used to track changes (delta) in the set of pattern matches from now on.
