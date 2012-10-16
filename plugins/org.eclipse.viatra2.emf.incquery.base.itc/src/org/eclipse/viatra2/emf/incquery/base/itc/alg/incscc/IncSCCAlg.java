@@ -130,13 +130,17 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					//tracing back to actual nodes
 					for (V sourceSCC : sourceSCCs) {
 						for (V targetSCC : CollectionHelper.difference(targetSCCs, counting.getAllReachableTargets(sourceSCC))) {
-							for (V s : sccs.setMap.get(sourceSCC)) {
-								for (V t : sccs.setMap.get(targetSCC)) {
-									//if self loop is already present omit the notification
-									if (!(s.equals(t) && graphHelper.getEdgeCount(s) >= 1)) {
-										notifyTcObservers(s, t, Direction.INSERT);
-									}
-								}
+							boolean needsNotification = false;
+
+							if (sourceSCC.equals(targetSCC) && sccs.setMap.get(sourceSCC).size() == 1 && graphHelper.getEdgeCount(sourceSCC) == 0) {
+								needsNotification = true;
+							}
+							else if (!sourceSCC.equals(targetSCC)) {
+								needsNotification = true;
+							}
+							//if self loop is already present omit the notification
+							if (needsNotification) {
+								notifyTcObservers(sccs.setMap.get(sourceSCC), sccs.setMap.get(targetSCC), Direction.INSERT);
 							}
 						}
 					}
@@ -291,13 +295,17 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 					
 					for (V sourceSCC : sourceSCCs) {						
 						for (V targetSCC : CollectionHelper.difference(targetSCCs, counting.getAllReachableTargets(sourceSCC))) {
-							for (V s : sccs.setMap.get(sourceSCC)) {
-								for (V t : sccs.setMap.get(targetSCC)) {
-									//if self loop is still present omit the notification
-									if (!(s.equals(t) && graphHelper.getEdgeCount(s) >= 1)) {
-										notifyTcObservers(s, t, Direction.DELETE);
-									}
-								}
+							boolean needsNotification = false;
+
+							if (sourceSCC.equals(targetSCC) && sccs.setMap.get(sourceSCC).size() == 1 && graphHelper.getEdgeCount(sourceSCC) == 0) {
+								needsNotification = true;
+							}
+							else if (!sourceSCC.equals(targetSCC)) {
+								needsNotification = true;
+							}
+							//if self loop is already present omit the notification
+							if (needsNotification) {
+								notifyTcObservers(sccs.setMap.get(sourceSCC), sccs.setMap.get(targetSCC), Direction.DELETE);
 							}
 						}
 					}

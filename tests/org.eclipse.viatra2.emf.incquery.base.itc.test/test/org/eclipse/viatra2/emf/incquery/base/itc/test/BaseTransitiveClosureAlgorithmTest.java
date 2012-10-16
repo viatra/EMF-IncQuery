@@ -19,6 +19,7 @@ import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph3;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph4;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph5;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph6;
+import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.Graph7;
 import org.eclipse.viatra2.emf.incquery.base.itc.test.graphs.SelfLoopGraph;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -33,7 +34,8 @@ public class BaseTransitiveClosureAlgorithmTest {
 			             { new Graph3() },
 			             { new Graph4() },
 			             { new Graph5() },
-			             { new Graph6() }
+			             { new Graph6() },
+			             { new Graph7() }
 		});
 	}
 	
