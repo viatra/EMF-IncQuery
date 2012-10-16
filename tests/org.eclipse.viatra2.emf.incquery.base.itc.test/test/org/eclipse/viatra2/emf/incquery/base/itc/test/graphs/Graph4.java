@@ -16,6 +16,10 @@ public class Graph4 extends TestGraph<Integer> {
 
 	private static final long serialVersionUID = -3807323812221410872L;
 	
+	public Graph4() {
+		super(null);
+	}
+	
 	public void modify() {
 		Integer n1 = Integer.valueOf(1);
 		Integer n2 = Integer.valueOf(2);

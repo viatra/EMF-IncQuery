@@ -11,11 +11,22 @@
 package org.eclipse.viatra2.emf.incquery.base.itc.test.graphs;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
+import org.eclipse.viatra2.emf.incquery.base.itc.test.misc.TestObserver;
 
 public abstract class TestGraph<T> extends Graph<T> {
 
 	private static final long serialVersionUID = 1L;
 
+	protected TestObserver observer;
+	
+	public TestGraph(TestObserver observer) {
+		this.observer = observer;
+	}
+	
 	public abstract void modify();
+	
+	public TestObserver getObserver() {
+		return observer;
+	}
 	
 }
