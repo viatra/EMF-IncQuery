@@ -90,7 +90,7 @@
 						<artifact>
 							<groupId>org.eclipse.viatra2</groupId>
 							<artifactId>org.eclipse.viatra2.patternlanguage.update</artifactId>
-							<version>0.6.5-SNAPSHOT</version>
+							<version>0.6.6-SNAPSHOT</version>
 							<classifier>emfpattern</classifier>
 						</artifact>
 					</target>
