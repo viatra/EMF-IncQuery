@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -41,7 +43,34 @@ import com.google.inject.Singleton;
 @Singleton
 public class TableViewerUtil {
 	
-	@Inject
+    /**
+     * Comparator for ordering the parameters first and other observables next
+     * 
+     */
+    private final class DetailComparator implements Comparator<String> {
+
+        private HashSet<String> parameters;
+
+        public DetailComparator(String[] parameterNames) {
+            parameters = new HashSet<String>();
+            for (String param : parameterNames) {
+                parameters.add(param);
+            }
+        }
+
+        @Override
+        public int compare(String key1, String key2) {
+            if (parameters.contains(key1) && !parameters.contains(key2)) {
+                return -1;
+            }
+            if (!parameters.contains(key1) && parameters.contains(key2)) {
+                return 1;
+            }
+            return key1.compareTo(key2);
+        }
+    }
+
+    @Inject
 	ITypeProvider typeProvider;
 	
 	@Inject 
@@ -67,7 +96,7 @@ public class TableViewerUtil {
 		return primitiveTypes.contains(fqn);
 	}
 
-	public void prepareTableViewerForObservableInput(ObservablePatternMatch match, TableViewer viewer) {
+    public void prepareTableViewerForObservableInput(final ObservablePatternMatch match, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
 		String[] titles = { "Parameter", "Value" };
 		createColumns(viewer, titles);
@@ -76,6 +105,7 @@ public class TableViewerUtil {
 		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.setLabelProvider(new DetailElementLabelProvider());
 		viewer.setCellModifier(new DetailElementCellModifier());
+        viewer.setComparator(new ViewerComparator(new DetailComparator(match.getPatternMatch().parameterNames())));
 		
 		DatabindingAdapter<IPatternMatch> databindableMatcher = 
 				DatabindingUtil.getDatabindingAdapter(match.getPatternMatch().patternName(), match.getParent().isGenerated());
