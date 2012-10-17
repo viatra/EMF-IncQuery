@@ -88,7 +88,7 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
 				if (((IncSCCAlg<Object>) transitiveClosureAlgorithm).isIsolated(source)) {
 					graphDataSource.deleteNode(source);
 				}
-				if (((IncSCCAlg<Object>) transitiveClosureAlgorithm).isIsolated(target)) {
+				if (!source.equals(target) && ((IncSCCAlg<Object>) transitiveClosureAlgorithm).isIsolated(target)) {
 					graphDataSource.deleteNode(target);
 				}
 			}
