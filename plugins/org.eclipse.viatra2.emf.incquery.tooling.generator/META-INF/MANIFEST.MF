@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Generator
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.tooling.generator;singleton:=true
-Bundle-Version: 0.6.6.qualifier
+Bundle-Version: 0.6.7.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.tooling.generator.IncQueryGeneratorPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0",

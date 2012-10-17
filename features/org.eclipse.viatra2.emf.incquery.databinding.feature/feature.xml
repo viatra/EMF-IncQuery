@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.databinding.feature"
       label="EMF-IncQuery Databinding Feature"
-      version="0.6.6.qualifier"
+      version="0.6.7.qualifier"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 

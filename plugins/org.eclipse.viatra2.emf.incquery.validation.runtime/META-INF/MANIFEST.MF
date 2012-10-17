@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Live Validation Engine
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.validation.runtime;singleton:=true
-Bundle-Version: 0.6.6.qualifier
+Bundle-Version: 0.6.7.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationRuntimeActivator
 Bundle-Vendor: Gabor Bergmann, Istvan Rath
 Require-Bundle: org.eclipse.ui,

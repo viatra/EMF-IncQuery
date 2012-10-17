@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sample UI Generator
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.tooling.generator.ui;singleton:=true
-Bundle-Version: 0.6.6.qualifier
+Bundle-Version: 0.6.7.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Zoltan Ujhelyi/FTSRG
 Bundle-ActivationPolicy: lazy
