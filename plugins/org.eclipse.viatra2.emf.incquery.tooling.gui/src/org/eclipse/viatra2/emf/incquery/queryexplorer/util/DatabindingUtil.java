@@ -52,7 +52,6 @@ import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.BoolValueImpl;
@@ -60,9 +59,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.impl.StringValue
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -84,8 +80,6 @@ public class DatabindingUtil {
 	public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
 	public static final String PATTERNUI_ANNOTATION = "PatternUI";
 	public static final String ORDERBY_ANNOTATION = "OrderBy";
-	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
-	
 	@Inject
 	private IResourceSetProvider resSetProvider;
 
@@ -412,46 +406,18 @@ public class DatabindingUtil {
 	}
 	
 	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(String patternName) {
-        Map<String, String> propertyMap = Maps.newHashMap();
-
         Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternName);
-        for (Annotation annotation : CorePatternLanguageHelper
-                .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
-
-            for (Variable v : pattern.getParameters()) {
-                propertyMap.put(v.getName(), v.getName());
-            }
-
-            String key = null, value = null;
-
-            ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
-                    .getAnnotationParameters(annotation);
-            List<ValueReference> nameAttributes = parameterMap.get("name");
-            Preconditions.checkArgument(nameAttributes.size() == 1 && (nameAttributes.get(0) instanceof StringValue));
-            List<ValueReference> expressionAttributes = parameterMap.get("expression");
-            Preconditions.checkArgument(expressionAttributes.size() == 1
-                    && (expressionAttributes.get(0) instanceof StringValue));
-
-            StringValue name = (StringValue) nameAttributes.get(0);
-            key = name.getValue();
-            StringValue expr = (StringValue) expressionAttributes.get(0);
-            value = expr.getValue();
-
-            if (key != null && value != null) {
-                propertyMap.put(key, value);
-            }
-
-		}
-        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(propertyMap);
+        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(pattern);
 		return adapter;
 	}
-	
-	/**
-	 * Returns the generated matcher factory for the given generated pattern.
-	 * 
-	 * @param pattern the pattern instance
-	 * @return the matcher factory for the given pattern
-	 */
+
+    /**
+     * Returns the generated matcher factory for the given generated pattern.
+     * 
+     * @param pattern
+     *            the pattern instance
+     * @return the matcher factory for the given pattern
+     */
 	public static IMatcherFactory<?> getMatcherFactoryForGeneratedPattern(Pattern pattern) {
 		return generatedMatcherFactories.get(pattern);
 	}

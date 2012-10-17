@@ -24,7 +24,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 
