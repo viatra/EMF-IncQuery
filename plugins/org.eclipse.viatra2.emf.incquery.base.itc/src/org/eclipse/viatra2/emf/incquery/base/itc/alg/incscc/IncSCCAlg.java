@@ -463,7 +463,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		Set<Tuple<V>> resultSet = new HashSet<Tuple<V>>();
 		
 		for (V sourceRoot : sccs.setMap.keySet()) {
-			HashSet<V> sccMembers = sccs.setMap.get(sourceRoot);
+			Set<V> sccMembers = sccs.setMap.get(sourceRoot);
 			if (sccMembers.size() > 1 || graphHelper.getEdgeCount(sccMembers.iterator().next()) == 1) {
 				for (V nS : sccs.setMap.get(sourceRoot)) {
 					for (V nT : sccs.setMap.get(sourceRoot)) {

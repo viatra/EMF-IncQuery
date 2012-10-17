@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Union-find data structure implementation. 
@@ -26,14 +27,14 @@ import java.util.Map;
 public class UnionFind<V> {
 	
 	public Map<V, UnionFindNodeProperty<V>> nodeMap;
-	public Map<V, HashSet<V>> setMap; 
+	public Map<V, Set<V>> setMap; 
 	
 	/**
 	 * Instantiate a new union-find data structure.
 	 */
 	public UnionFind() {
 		nodeMap = new HashMap<V, UnionFindNodeProperty<V>>();
-		setMap = new HashMap<V, HashSet<V>>();
+		setMap = new HashMap<V, Set<V>>();
 	}
 	
 	/**
@@ -64,13 +65,10 @@ public class UnionFind<V> {
 	 * @return the root element
 	 */
 	public V makeSet(V node) {
-		if (nodeMap.containsKey(node)) {
-			nodeMap.get(node).deleted = false;
-		}
-		else {
+		if (!nodeMap.containsKey(node)) {
 			UnionFindNodeProperty<V> prop = new UnionFindNodeProperty<V>(0, node);
 			nodeMap.put(node, prop);
-			HashSet<V> set = new HashSet<V>();
+			Set<V> set = new HashSet<V>();
 			set.add(node);
 			setMap.put(node, set);
 		}
