@@ -436,8 +436,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Check
     public void checkPatternParametersType(Pattern pattern) {
-        // This check at the moment may not fail, due to strict rules on pattern types (checked in
-        // checkPatternVariablesType)
+        // This check used to be an error, now it is classified as a warning only
         for (Variable variable : pattern.getParameters()) {
             EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
             EClassifier classifierDefined = emfTypeProvider.getClassifierForType(variable.getType());
@@ -452,7 +451,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     }
                 }
                 // OK, issue warning now
-                error(String.format(
+                warning(String.format(
                         "Inconsistent parameter type definition, should be %s based on the pattern definition",
                         classifierCorrect.getName()), variable, null, EMFIssueCodes.PARAMETER_TYPE_INVALID);
             }
@@ -480,9 +479,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 } else {
                     EClassifier classifier = emfTypeProvider.getClassifierForPatternParameterVariable(variable);
                     if (classifier != null && possibleClassifiers.contains(classifier)) {
-                        warning("Ambiguous variable type defintions: " + classifierNamesList
-                                + ", the parameter type (" + classifier.getName() + ") is used now.", variable
-                                .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
+                        warning("Ambiguous variable type defintions: " + classifierNamesList + ", the parameter type ("
+                                + classifier.getName() + ") is used now.", variable.getReferences().get(0), null,
+                                EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
                     } else {
                         error("Inconsistent variable type defintions: " + classifierNamesList
                                 + ", type cannot be selected.", variable.getReferences().get(0), null,

@@ -229,6 +229,31 @@ class TypeInferenceTest {
 	}
 	
 	@Test
+	def parameterTest2() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern parameterTest2(parameter : EClassifier) = {
+				EDataType(parameter); 
+			} or { 
+				EClass(parameter);
+			} 
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+		
+		val parameter1 = model.patterns.get(0).parameters.get(0)
+		val variable1 = model.patterns.get(0).bodies.get(0).variables.get(0)
+		val variable2 = model.patterns.get(0).bodies.get(1).variables.get(0)
+		val type1 = typeProvider.getTypeForIdentifiable(parameter1)
+		val type2 = typeProvider.getTypeForIdentifiable(variable1)
+		val type3 = typeProvider.getTypeForIdentifiable(variable2)
+		assertEquals(typeof(EClassifier).canonicalName, type1.qualifiedName)
+		assertEquals(typeof(EDataType).canonicalName, type2.qualifiedName)
+		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
+	}
+	
+	@Test
 	def intLiteralType() {
 		val model = parseHelper.parse('
 			pattern literalValue(literalType) = {
@@ -355,6 +380,23 @@ class TypeInferenceTest {
 		val type = typeProvider.getTypeForIdentifiable(param)
 		assertEquals("parameter", param.name) 
 		assertEquals(typeof(EDataType).canonicalName, type.qualifiedName) 
+	}
+	
+	@Test
+	def warningTypeTest3() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern warningTypeTest3(parameter : EClassifier) = {
+				EClass(parameter);
+			} 
+		') as PatternModel
+		tester.validate(model).assertWarning(EMFIssueCodes::PARAMETER_TYPE_INVALID)
+		
+		val param = model.patterns.get(0).parameters.get(0)
+		val type = typeProvider.getTypeForIdentifiable(param)
+		assertEquals("parameter", param.name) 
+		assertEquals(typeof(EClass).canonicalName, type.qualifiedName) 
 	}
 	
 }
