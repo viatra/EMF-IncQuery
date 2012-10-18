@@ -13,8 +13,10 @@ package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
@@ -71,10 +73,10 @@ public class ValidationUtil {
 		return editorConstraintMap.containsKey(editorId);
 	}
 	
-	public synchronized static List<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
-		List<Constraint<IPatternMatch>> list = new ArrayList<Constraint<IPatternMatch>>(getEditorConstraintMap().get(editorId));
-		list.addAll(getEditorConstraintMap().get("*"));
-		return list;
+	public synchronized static Set<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
+		Set<Constraint<IPatternMatch>> set = new HashSet<Constraint<IPatternMatch>>(getEditorConstraintMap().get(editorId));
+		set.addAll(getEditorConstraintMap().get("*"));
+		return set;
 	}
 
 	@SuppressWarnings("unchecked")
