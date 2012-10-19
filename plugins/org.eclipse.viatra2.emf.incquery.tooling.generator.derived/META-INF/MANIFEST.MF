@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Derived Feature Code Generation
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.tooling.generator.derived;singleton:=true
-Bundle-Version: 0.6.7.qualifier
+Bundle-Version: 0.6.8.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.viatra2.emf.incquery.tooling.generator;bundle-version="0.6.0",

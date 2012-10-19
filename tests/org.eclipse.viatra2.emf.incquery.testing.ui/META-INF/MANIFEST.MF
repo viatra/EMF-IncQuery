@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Testing Framework UI
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.testing.ui;singleton:=true
-Bundle-Version: 0.6.7.qualifier
+Bundle-Version: 0.6.8.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.testing.ui.IncQueryTestingUIPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

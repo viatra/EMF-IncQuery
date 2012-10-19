@@ -186,12 +186,11 @@ public class DatabindingAdapterUtil {
      */
     public static Map<String, String> calculateObservableValues(Pattern pattern) {
         Map<String, String> propertyMap = Maps.newHashMap();
+        for (Variable v : pattern.getParameters()) {
+            propertyMap.put(v.getName(), v.getName());
+        }
         for (Annotation annotation : CorePatternLanguageHelper
                 .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
-    
-            for (Variable v : pattern.getParameters()) {
-                propertyMap.put(v.getName(), v.getName());
-            }
     
             ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
                     .getAnnotationParameters(annotation);
