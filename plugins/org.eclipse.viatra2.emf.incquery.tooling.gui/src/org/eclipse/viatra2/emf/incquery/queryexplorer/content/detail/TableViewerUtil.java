@@ -77,10 +77,10 @@ public class TableViewerUtil {
     }
 
     @Inject
-	ITypeProvider typeProvider;
+    private ITypeProvider typeProvider;
 	
 	@Inject 
-	Injector injector;
+    private Injector injector;
 	
 	private Set<String> primitiveTypes;
 	
