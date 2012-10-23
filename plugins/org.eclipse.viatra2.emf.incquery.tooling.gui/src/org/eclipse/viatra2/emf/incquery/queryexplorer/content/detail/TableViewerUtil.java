@@ -12,7 +12,9 @@
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -49,24 +51,28 @@ public class TableViewerUtil {
      */
     private final class DetailComparator implements Comparator<String> {
 
-        private HashSet<String> parameters;
+        private Map<String, Integer> parameterMap;
 
         public DetailComparator(String[] parameterNames) {
-            parameters = new HashSet<String>();
-            for (String param : parameterNames) {
-                parameters.add(param);
+            parameterMap = new HashMap<String, Integer>();
+            for (int i = 0; i < parameterNames.length; i++) {
+                parameterMap.put(parameterNames[i], Integer.valueOf(i));
             }
         }
 
         @Override
         public int compare(String key1, String key2) {
-            if (parameters.contains(key1) && !parameters.contains(key2)) {
+            boolean isParameter1 = parameterMap.containsKey(key1);
+            boolean isParameter2 = parameterMap.containsKey(key2);
+            if (isParameter1 && !isParameter2) {
                 return -1;
-            }
-            if (!parameters.contains(key1) && parameters.contains(key2)) {
+            } else if (!isParameter1 && isParameter2) {
                 return 1;
+            } else if (isParameter1 && isParameter2) {
+                parameterMap.get(key1).compareTo(parameterMap.get(key2));
             }
             return key1.compareTo(key2);
+
         }
     }
 
