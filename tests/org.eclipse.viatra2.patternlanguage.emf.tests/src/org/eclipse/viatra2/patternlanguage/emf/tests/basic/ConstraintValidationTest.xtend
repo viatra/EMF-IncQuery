@@ -63,7 +63,10 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				1.2 == "String";
 			}
 		') as PatternModel
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
+			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
+			getErrorCode(EMFIssueCodes::LITERAL_TYPE_MISMATCH)
+		)
 	}
 	@Test
 	def enumIntConstantCompareValidation() {
@@ -74,7 +77,10 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				false == 2;
 			}
 		') as PatternModel
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
+			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
+			getErrorCode(EMFIssueCodes::LITERAL_TYPE_MISMATCH)
+		)
 	}
 	@Test
 	def rightVariableCompareValidation() {
