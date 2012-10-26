@@ -30,7 +30,9 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ComputationValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.LiteralValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
@@ -48,6 +50,7 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider;
+import org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeUtil;
 import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
 import org.eclipse.xtext.validation.Check;
 
@@ -506,6 +509,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             Set<Variable> positiveVariables = new HashSet<Variable>();
             Set<Variable> generalVariables = new HashSet<Variable>();
             if (constraint instanceof CompareConstraint) {
+                // Equality and inequality (==, !=)
                 CompareConstraint compareConstraint = (CompareConstraint) constraint;
                 ValueReference leftValueReference = compareConstraint.getLeftOperand();
                 ValueReference rightValueReference = compareConstraint.getRightOperand();
@@ -532,6 +536,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     generalVariables.addAll(rightVariables);
                 }
             } else if (constraint instanceof PatternCompositionConstraint) {
+                // Find and neg-find constructs
                 PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
                 if (!patternCompositionConstraint.isNegative()) {
                     // Positive composition (find)
@@ -653,6 +658,53 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             return true;
         }
         return false;
+    }
+
+    @Check
+    public void checkForWrongLiteralValues(Constraint constraint) {
+        if (constraint instanceof CompareConstraint) {
+            // Equality and inequality (==, !=)
+            CompareConstraint compareConstraint = (CompareConstraint) constraint;
+            ValueReference leftValueReference = compareConstraint.getLeftOperand();
+            ValueReference rightValueReference = compareConstraint.getRightOperand();
+            EClassifier leftClassifier = EMFPatternTypeUtil
+                    .getClassifierForLiteralAndComputationValueReference(leftValueReference);
+            EClassifier rightClassifier = EMFPatternTypeUtil
+                    .getClassifierForLiteralAndComputationValueReference(rightValueReference);
+            if (leftClassifier != null && rightClassifier != null && !leftClassifier.equals(rightClassifier)) {
+                if (leftValueReference instanceof LiteralValueReference
+                        && rightValueReference instanceof LiteralValueReference) {
+                    error("The two literal values have different types.", constraint, null,
+                            EMFIssueCodes.LITERAL_TYPE_MISMATCH);
+                } else if (leftValueReference instanceof ComputationValue
+                        && rightValueReference instanceof ComputationValue) {
+                    // At this version (0.7) this should not fail, as the computation can only be an Integer.
+                    // After implementing the "eval" in the language it will be able to fail.
+                    error("The two computations' values have different types.", constraint, null,
+                            EMFIssueCodes.COMPUTATION_TYPE_MISMATCH);
+                } else if ((leftValueReference instanceof LiteralValueReference || rightValueReference instanceof LiteralValueReference)
+                        && (leftValueReference instanceof ComputationValue || rightValueReference instanceof ComputationValue)) {
+                    error("The literal and the computation's value have different types.", constraint, null,
+                            EMFIssueCodes.LITERAL_AND_COMPUTATION_TYPE_MISMATCH);
+                }
+            }
+        } else if (constraint instanceof PatternCompositionConstraint) {
+            // Find and neg-find constructs
+            // PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
+        } else if (constraint instanceof PathExpressionConstraint) {
+            // Normal attribute-reference constraint
+            PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
+            PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
+            ValueReference valueReference = pathExpressionHead.getDst();
+            EClassifier inputClassifier = EMFPatternTypeUtil
+                    .getClassifierForLiteralAndComputationValueReference(valueReference);
+            EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
+                    .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
+            if (inputClassifier != null && typeClassifier != null && !inputClassifier.equals(typeClassifier)) {
+                error("The type infered from the path expression is different from the input literal/computational value.",
+                        constraint, null, EMFIssueCodes.PATH_EXPRESSION_AND_LITERAL_OR_COMPUTATION_TYPE_MISMATCH);
+            }
+        }
     }
 
 }

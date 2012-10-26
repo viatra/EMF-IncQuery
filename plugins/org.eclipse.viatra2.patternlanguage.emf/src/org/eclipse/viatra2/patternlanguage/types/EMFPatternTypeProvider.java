@@ -18,28 +18,17 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.AggregatedValue;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.BoolValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CompareFeature;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ComputationValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Constraint;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CountAggregator;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.DoubleValue;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.LiteralValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
@@ -49,9 +38,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EClassifierConstraint;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ReferenceType;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -272,24 +259,20 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                 }
             } else if (constraint instanceof PathExpressionConstraint) {
                 final PathExpressionHead pathExpressionHead = ((PathExpressionConstraint) constraint).getHead();
-                // src is the first parameter (example: EClass.name(E, N)), src
-                // is E
-                final VariableReference variableReference = pathExpressionHead.getSrc();
-                final ValueReference valueReference = pathExpressionHead.getDst();
-                // test if the current variable is referenced by the varRef
-                if (isEqualVariables(variable, variableReference)) {
+                // Src is the first parameter (example: E in EClass.name(E, N))
+                final VariableReference firstvariableReference = pathExpressionHead.getSrc();
+                if (isEqualVariables(variable, firstvariableReference)) {
                     Type type = pathExpressionHead.getType();
                     classifier = getClassifierForType(type);
                     if (classifier != null) {
                         possibleClassifiersList.add(classifier);
                     }
                 }
-                // first variable is not the right one, so next target is the
-                // second
+                final ValueReference valueReference = pathExpressionHead.getDst();
                 if (valueReference instanceof VariableValue) {
                     final VariableReference secondVariableReference = ((VariableValue) valueReference).getValue();
                     if (isEqualVariables(variable, secondVariableReference)) {
-                        Type type = computeTypeFromPathExpressionTail(pathExpressionHead.getTail());
+                        Type type = EMFPatternTypeUtil.getTypeFromPathExpressionTail(pathExpressionHead.getTail());
                         classifier = getClassifierForType(type);
                         if (classifier != null) {
                             possibleClassifiersList.add(classifier);
@@ -355,25 +338,8 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     private EClassifier getClassifierForValueReference(ValueReference valueReference, PatternBody patternBody,
             Variable variable, int recursionCallingLevel, Variable injectiveVariablePair) {
-        if (valueReference instanceof LiteralValueReference) {
-            if (valueReference instanceof IntValue) {
-                return EcorePackage.Literals.EINT;
-            } else if (valueReference instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue) {
-                return EcorePackage.Literals.ESTRING;
-            } else if (valueReference instanceof BoolValue) {
-                return EcorePackage.Literals.EBOOLEAN;
-            } else if (valueReference instanceof DoubleValue) {
-                return EcorePackage.Literals.EDOUBLE;
-            } else if (valueReference instanceof ListValue) {
-                return null;
-            }
-        } else if (valueReference instanceof ComputationValue) {
-            if (valueReference instanceof AggregatedValue) {
-                AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-                if (aggregatedValue.getAggregator() instanceof CountAggregator) {
-                    return EcorePackage.Literals.EINT;
-                }
-            }
+        if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
+            return EMFPatternTypeUtil.getClassifierForLiteralAndComputationValueReference(valueReference);
         } else if (valueReference instanceof VariableValue) {
             VariableValue variableValue = (VariableValue) valueReference;
             Variable newPossibleInjectPair = variableValue.getValue().getVariable();
@@ -385,16 +351,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         return null;
     }
 
-    private Type computeTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
-        if (pathExpressionTail == null) {
-            return null;
-        }
-        if (pathExpressionTail.getTail() != null) {
-            return computeTypeFromPathExpressionTail(pathExpressionTail.getTail());
-        }
-        return pathExpressionTail.getType();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -403,22 +359,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
      */
     @Override
     public EClassifier getClassifierForType(Type type) {
-        EClassifier result = null;
-        if (type != null) {
-            if (type instanceof ClassType) {
-                result = ((ClassType) type).getClassname();
-            } else if (type instanceof ReferenceType) {
-                EStructuralFeature feature = ((ReferenceType) type).getRefname();
-                if (feature instanceof EAttribute) {
-                    EAttribute attribute = (EAttribute) feature;
-                    result = attribute.getEAttributeType();
-                } else if (feature instanceof EReference) {
-                    EReference reference = (EReference) feature;
-                    result = reference.getEReferenceType();
-                }
-            }
-        }
-        return result;
+        return EMFPatternTypeUtil.getClassifierForType(type);
     }
 
     private static boolean isEqualVariables(Variable variable, VariableReference variableReference) {
