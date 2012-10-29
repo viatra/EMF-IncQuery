@@ -66,6 +66,7 @@ public class RecordingActivation<MatchType extends IPatternMatch> extends Activa
 					fire();
 				}
 			};
+			command.setLabel("RecordingActivation");
 			domain.getCommandStack().execute(command);
 						
 			return command;
