@@ -13,11 +13,10 @@ package org.eclipse.viatra2.emf.incquery.validation.runtime.ui;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationPartListener;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 public class ValidationInitUtil {
-
+	
 	public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {
 //		if(adapterMap.containsKey(activeEditor)) {
 			// FIXME define proper semantics for validation based on selection
@@ -26,7 +25,7 @@ public class ValidationInitUtil {
 //		} else {
 		if (!ValidationUtil.getAdapterMap().containsKey(activeEditor)) {
 			ValidationUtil.addNotifier(activeEditor, root);
-			activeEditor.getSite().getPage().addPartListener(ValidationPartListener.getInstance());
+			ValidationUtil.registerEditorPart(activeEditor);
 		}
 	}
 }
