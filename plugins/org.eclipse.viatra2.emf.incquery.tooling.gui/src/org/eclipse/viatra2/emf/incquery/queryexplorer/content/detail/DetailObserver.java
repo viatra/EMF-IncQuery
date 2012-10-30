@@ -22,8 +22,12 @@ import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
+import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
@@ -50,27 +54,34 @@ public class DetailObserver extends AbstractObservableList {
 			IObservableValue oval = databindableMatcher.getObservableParameter(patternMatch.getPatternMatch(), param);
 			
 			if (oval != null) {
-				oval.addValueChangeListener(listener);
-				Object value = oval.getValue();
-				String data = "";
-				if (value == null) {
-					data = null;
-				}
-				else if (value instanceof Collection<?>) {
-					data = "Collection ["+((Collection<?>) value).size()+"]";
-				}
-				else {
-					data = value.toString();
-				}
-				
-				DetailElement de = new DetailElement(param, data);
+				oval.addValueChangeListener(listener);			
+				DetailElement de = new DetailElement(param, createValueRepresentation(oval.getValue()));
 				addDetail(oval, de, -1);
 			}
 			else {
 				Object value = patternMatch.getPatternMatch().get(param);
-				this.details.add(new DetailElement(param, (value == null) ? null : value.toString()));
+				this.details.add(new DetailElement(param, createValueRepresentation(value)));
 			}
 		}
+	}
+	
+	private String createValueRepresentation(Object value) {
+		if (value == null) {
+			return null;
+		}
+		else if (value instanceof EObject) {
+			EObject obj = (EObject) value;
+			URI uri = obj.eClass().eResource().getURI();
+			AdapterFactoryLabelProvider labelProvider = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+			if (labelProvider != null) {
+				return labelProvider.getText(obj);
+			}
+		}
+		else if (value instanceof Collection<?>) {
+			return "Collection ["+((Collection<?>) value).size()+"]";
+		}
+		
+		return value.toString();
 	}
 	
 	private void addDetail(IObservableValue ov, DetailElement de, int index) {

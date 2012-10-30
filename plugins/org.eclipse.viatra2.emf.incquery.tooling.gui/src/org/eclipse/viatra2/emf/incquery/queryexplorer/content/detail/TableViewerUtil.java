@@ -11,10 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -45,37 +42,6 @@ import com.google.inject.Singleton;
 @Singleton
 public class TableViewerUtil {
 	
-    /**
-     * Comparator for ordering the parameters first and other observables next
-     * 
-     */
-    private final class DetailComparator implements Comparator<String> {
-
-        private Map<String, Integer> parameterMap;
-
-        public DetailComparator(String[] parameterNames) {
-            parameterMap = new HashMap<String, Integer>();
-            for (int i = 0; i < parameterNames.length; i++) {
-                parameterMap.put(parameterNames[i], Integer.valueOf(i));
-            }
-        }
-
-        @Override
-        public int compare(String key1, String key2) {
-            boolean isParameter1 = parameterMap.containsKey(key1);
-            boolean isParameter2 = parameterMap.containsKey(key2);
-            if (isParameter1 && !isParameter2) {
-                return -1;
-            } else if (!isParameter1 && isParameter2) {
-                return 1;
-            } else if (isParameter1 && isParameter2) {
-                parameterMap.get(key1).compareTo(parameterMap.get(key2));
-            }
-            return key1.compareTo(key2);
-
-        }
-    }
-
     @Inject
 	ITypeProvider typeProvider;
 	
@@ -134,6 +100,7 @@ public class TableViewerUtil {
 		viewer.setContentProvider(new MatcherConfigurationContentProvider());
 		viewer.setLabelProvider(new MatcherConfigurationLabelProvider());
 		viewer.setCellModifier(new MatcherConfigurationCellModifier(viewer));
+		viewer.setComparator(new ViewerComparator(new DetailComparator(observableMatcher.getMatcher().getParameterNames())));
 		
 		Table table = viewer.getTable();
 		CellEditor[] editors = new CellEditor[titles.length];
@@ -147,15 +114,15 @@ public class TableViewerUtil {
 		viewer.setCellEditors(editors);
 		
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
-		Object[] restriction = observableMatcher.getFilter();
+		Object[] filter = observableMatcher.getFilter();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
-		if (restriction != null) {
+		if (filter != null) {
 			for (int i = 0;i<pattern.getParameters().size();i++) {
 				Variable var = pattern.getParameters().get(i);
 				String name = var.getName();
 				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
 				String clazz = (ref == null) ? "" : ref.getType().getQualifiedName();
-				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
+				input[i] = new MatcherConfiguration(name, clazz, filter[i]);
 			}	
 			viewer.setInput(input);
 		}
@@ -167,7 +134,7 @@ public class TableViewerUtil {
 			viewer.setInput(null);
 		}
 		while (viewer.getTable().getColumnCount() > 0 ) {
-			viewer.getTable().getColumns()[ 0 ].dispose();
+			viewer.getTable().getColumns()[0].dispose();
 		}
 		
 		viewer.refresh();

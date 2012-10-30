@@ -47,4 +47,10 @@ public class MatcherConfiguration {
 	public void setFilter(Object filter) {
 		this.filter = filter;
 	}
+	
+	//Used by ViewerComparator too
+	@Override
+	public String toString() {
+		return parameterName;
+	}
 }
