@@ -65,7 +65,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		') as PatternModel
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
 			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
-			getErrorCode(EMFIssueCodes::LITERAL_TYPE_MISMATCH)
+			getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
 		)
 	}
 	@Test
@@ -79,7 +79,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		') as PatternModel
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
 			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
-			getErrorCode(EMFIssueCodes::LITERAL_TYPE_MISMATCH)
+			getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
 		)
 	}
 	@Test

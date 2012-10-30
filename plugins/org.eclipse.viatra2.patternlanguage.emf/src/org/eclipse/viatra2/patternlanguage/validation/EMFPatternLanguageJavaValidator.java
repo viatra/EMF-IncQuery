@@ -38,6 +38,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionCo
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
@@ -654,48 +655,61 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     @Check
-    public void checkForWrongLiteralValues(Constraint constraint) {
-        if (constraint instanceof CompareConstraint) {
-            // Equality and inequality (==, !=)
-            CompareConstraint compareConstraint = (CompareConstraint) constraint;
-            ValueReference leftValueReference = compareConstraint.getLeftOperand();
-            ValueReference rightValueReference = compareConstraint.getRightOperand();
+    public void checkForWrongLiteralAndComputationValuesInCompareConstraints(CompareConstraint compareConstraint) {
+        // Equality and inequality (==, !=)
+        ValueReference leftValueReference = compareConstraint.getLeftOperand();
+        ValueReference rightValueReference = compareConstraint.getRightOperand();
+        if (leftValueReference instanceof LiteralValueReference || leftValueReference instanceof ComputationValue
+                || rightValueReference instanceof LiteralValueReference
+                || rightValueReference instanceof ComputationValue) {
             EClassifier leftClassifier = EMFPatternTypeUtil
                     .getClassifierForLiteralAndComputationValueReference(leftValueReference);
             EClassifier rightClassifier = EMFPatternTypeUtil
                     .getClassifierForLiteralAndComputationValueReference(rightValueReference);
             if (leftClassifier != null && rightClassifier != null && !leftClassifier.equals(rightClassifier)) {
-                if (leftValueReference instanceof LiteralValueReference
-                        && rightValueReference instanceof LiteralValueReference) {
-                    error("The two literal values have different types.", constraint, null,
-                            EMFIssueCodes.LITERAL_TYPE_MISMATCH);
-                } else if (leftValueReference instanceof ComputationValue
-                        && rightValueReference instanceof ComputationValue) {
-                    // At this version (0.7) this should not fail, as the computation can only be an Integer.
-                    // After implementing the "eval" in the language it will be able to fail.
-                    error("The two computations' values have different types.", constraint, null,
-                            EMFIssueCodes.COMPUTATION_TYPE_MISMATCH);
-                } else if ((leftValueReference instanceof LiteralValueReference || rightValueReference instanceof LiteralValueReference)
-                        && (leftValueReference instanceof ComputationValue || rightValueReference instanceof ComputationValue)) {
-                    error("The literal and the computation's value have different types.", constraint, null,
-                            EMFIssueCodes.LITERAL_AND_COMPUTATION_TYPE_MISMATCH);
-                }
+                error("The types of the literal/computational values are different: " + leftClassifier.getName() + ", "
+                        + rightClassifier.getName() + ".", compareConstraint, null,
+                        EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
             }
-        } else if (constraint instanceof PatternCompositionConstraint) {
-            // Find and neg-find constructs
-            // PatternCompositionConstraint patternCompositionConstraint = (PatternCompositionConstraint) constraint;
-        } else if (constraint instanceof PathExpressionConstraint) {
-            // Normal attribute-reference constraint
-            PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
-            PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-            ValueReference valueReference = pathExpressionHead.getDst();
+        }
+    }
+
+    @Check
+    public void checkForWrongLiteralAndComputationValuesInPathExpressionConstraints(
+            PathExpressionConstraint pathExpressionConstraint) {
+        // Normal attribute-reference constraint
+        PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
+        ValueReference valueReference = pathExpressionHead.getDst();
+        if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
             EClassifier inputClassifier = EMFPatternTypeUtil
                     .getClassifierForLiteralAndComputationValueReference(valueReference);
             EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
             if (inputClassifier != null && typeClassifier != null && !inputClassifier.equals(typeClassifier)) {
-                error("The type infered from the path expression is different from the input literal/computational value.",
-                        constraint, null, EMFIssueCodes.PATH_EXPRESSION_AND_LITERAL_OR_COMPUTATION_TYPE_MISMATCH);
+                error("The type infered from the path expression (" + typeClassifier.getName()
+                        + ") is different from the input literal/computational value (" + inputClassifier.getName()
+                        + ").", pathExpressionConstraint, null,
+                        EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION);
+            }
+        }
+    }
+
+    @Check
+    public void checkForWrongLiteralAndComputationValuesInPatternCalls(PatternCall patternCall) {
+        // Find and neg find (including count find as well)
+        for (ValueReference valueReference : patternCall.getParameters()) {
+            if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
+                Pattern pattern = patternCall.getPatternRef();
+                Variable variable = pattern.getParameters().get(patternCall.getParameters().indexOf(valueReference));
+                EClassifier typeClassifier = emfTypeProvider.getClassifierForVariable(variable);
+                EClassifier inputClassifier = EMFPatternTypeUtil
+                        .getClassifierForLiteralAndComputationValueReference(valueReference);
+                if (inputClassifier != null && typeClassifier != null && !inputClassifier.equals(typeClassifier)) {
+                    error("The type infered from the called pattern (" + typeClassifier.getName()
+                            + ") is different from the input literal/computational value (" + inputClassifier.getName()
+                            + ").", patternCall, null,
+                            EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
+                }
             }
         }
     }
