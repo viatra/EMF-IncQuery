@@ -52,12 +52,10 @@ public class GMFEditorPartListener extends BasePartListener {
                         .getResourceSet();
             }
             if (resourceSet != null && resourceSet.getResources().size() > 0) {
-                if (resourceSet.getResources().size() > 0) {
-                    MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(closedEditor, resourceSet);
-                    if (QueryExplorer.getInstance() != null) {
-                        QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
-                    }
-                }
+            	MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(closedEditor, resourceSet);
+            	if (QueryExplorer.getInstance() != null) {
+            		QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
+            	}
             }
         }
     }
