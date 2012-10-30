@@ -34,10 +34,9 @@ public final class EMFIssueCodes {
 	public static final String VARIABLE_TYPE_INVALID_ERROR = ISSUE_CODE_PREFIX + "variable_type_invalid_error";
 	public static final String VARIABLE_TYPE_INVALID_WARNING = ISSUE_CODE_PREFIX + "variable_type_invalid_warning";
 	public static final String VARIABLE_TYPE_MULTIPLE_DECLARATION = ISSUE_CODE_PREFIX + "variable_type_multiple_declaration";
-	public static final String LITERAL_TYPE_MISMATCH = ISSUE_CODE_PREFIX + "literal_type_mismatch";
-	public static final String COMPUTATION_TYPE_MISMATCH = ISSUE_CODE_PREFIX + "computation_type_mismatch";
-	public static final String LITERAL_AND_COMPUTATION_TYPE_MISMATCH = ISSUE_CODE_PREFIX + "literal_and_computation_type_mismatch";
-	public static final String PATH_EXPRESSION_AND_LITERAL_OR_COMPUTATION_TYPE_MISMATCH = ISSUE_CODE_PREFIX + "path_expression_and_literal_or_computation_type_mismatch";
+	public static final String LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE = ISSUE_CODE_PREFIX + "literal_and_computation_type_mismatch_in_compare";
+	public static final String LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION = ISSUE_CODE_PREFIX + "literal_or_computation_type_mismatch_in_path_expression";
+	public static final String LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL = ISSUE_CODE_PREFIX + "literal_or_computation_type_mismatch_in_pattern_call";
 	public static final String CARTESIAN_SOFT_WARNING = ISSUE_CODE_PREFIX + "cartesian_soft_warning";
 	public static final String CARTESIAN_STRICT_WARNING = ISSUE_CODE_PREFIX + "cartesian_strict_warning";
 	

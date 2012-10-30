@@ -51,7 +51,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
-	def literalTest1() {
+	def countFind() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -59,7 +59,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 			}
 
-			pattern Literal1(X) = {
+			pattern CountFind(X) = {
 				EClass(X);
 				10 == count find Good(X);
 			}
@@ -69,7 +69,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
-	def literalTest2() {
+	def innerCountFind() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -77,17 +77,16 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 			}
 
-			pattern Literal2(X) = {
+			pattern InnerCountFind(X) = {
 				EClass(X);
-				10 == 20;
+				10 == count find Good(count find Good(X));
 			}
 		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
+		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
 	}
 	
 	@Test
-	def literalTest3() {
+	def doubleCountFind() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -95,62 +94,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 			}
 
-			pattern Literal3(X) = {
-				EClass(X);
-				"test" == count find Good(X);
-			}
-		') as PatternModel
-		tester.validate(model).assertError(EMFIssueCodes::LITERAL_AND_COMPUTATION_TYPE_MISMATCH)
-	}
-	
-	@Test
-	def literalTest4() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern Good(X) {
-				EClass(X);
-			}
-
-			pattern Literal4(X) = {
-				EClass(X);
-				"apple" == "orange";
-			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
-	}
-	
-	@Test
-	def literalTest5() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern Good(X) {
-				EClass(X);
-			}
-
-			pattern Literal5(X) = {
-				EClass(X);
-				"apple" == 10;
-			}
-		') as PatternModel
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
-			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
-			getErrorCode(EMFIssueCodes::LITERAL_TYPE_MISMATCH)
-		)
-	}
-	
-	@Test
-	def literalTest6() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern Good(X) {
-				EClass(X);
-			}
-
-			pattern Literal6(X) = {
+			pattern DoubleCountFind(X) = {
 				EClass(X);
 				count find Good(X) == count find Good(X);
 			}
@@ -160,11 +104,119 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
-	def literalTest7() {
+	def normalFind() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Literal7(X) = {
+			pattern Good(X) {
+				EClass(X);
+			}
+
+			pattern NormalFind(X) = {
+				EClass(X);
+				find Good(X);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def normalFindError() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good(X) {
+				EClass(X);
+			}
+
+			pattern NormalFindError(X) = {
+				EClass(X);
+				find Good(10);
+			}
+		') as PatternModel
+		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
+	}
+	
+	@Test
+	def constantWarning1() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good(X) {
+				EClass(X);
+			}
+
+			pattern ConstantWarning1(X) = {
+				EClass(X);
+				10 == 20;
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
+	}
+	
+	@Test
+	def constantWarning2() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good(X) {
+				EClass(X);
+			}
+
+			pattern ConstantWarning2(X) = {
+				EClass(X);
+				"apple" == "orange";
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
+	}
+	
+	@Test
+	def constantMismatchError() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good(X) {
+				EClass(X);
+			}
+
+			pattern ConstantMismatchError(X) = {
+				EClass(X);
+				"apple" == 10;
+			}
+		') as PatternModel
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT), 
+			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
+			getErrorCode(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
+		)
+	}
+	
+	@Test
+	def constantComputationMismatchError() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good(X) {
+				EClass(X);
+			}
+
+			pattern ConstantComputationMismatchError(X) = {
+				EClass(X);
+				"test" == count find Good(X);
+			}
+		') as PatternModel
+		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
+	}
+	
+	@Test
+	def constantInPathExpressionGood() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern ConstantInPathExpressionGood(X) = {
 				EClass.name(X, "Name");
 			}
 		') as PatternModel
@@ -173,7 +225,19 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
-	def literalTest8() {
+	def constantInPathExpressionMismatch() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern ConstantInPathExpressionMismatch(X) = {
+				EClass.name(X, 10);
+			}
+		') as PatternModel
+		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
+	}
+	
+	@Test
+	def countFindInPathExpressionMismatch() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -181,11 +245,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 			}
 
-			pattern Literal8(X) = {
+			pattern CountFindInPathExpressionMismatch(X) = {
 				EClass.name(X, count find Good(_));
 			}
 		') as PatternModel
-		tester.validate(model).assertError(EMFIssueCodes::PATH_EXPRESSION_AND_LITERAL_OR_COMPUTATION_TYPE_MISMATCH)
+		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
 	}
 
 }
