@@ -105,17 +105,14 @@ class TypeInferenceTest {
 
 			pattern first(class1) = {
 				EClass(class1);
-				check (class1.abstract != false);
 			}
 
 			pattern second(class2) = {
 				find first(class2);
-				check (class2.abstract != false);
 			}
 
 			pattern third(class3) = {
 				find second(class3);
-				check (class3.abstract != false);
 			}
 		') as PatternModel
 		model.assertNoErrors

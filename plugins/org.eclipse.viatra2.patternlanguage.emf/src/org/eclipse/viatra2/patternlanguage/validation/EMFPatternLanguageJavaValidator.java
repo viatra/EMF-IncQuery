@@ -730,7 +730,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             if (!(classifier instanceof EDataType)) {
                 error("Only simple EDataTypes are allowed in check expressions. The variable " + variable.getName()
                         + "'s type is " + classifier.getName() + " now.", checkConstraint, null,
-                        EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
+                        EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
             }
         }
     }
