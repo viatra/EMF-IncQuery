@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -710,6 +711,19 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                             + ").", patternCall, null,
                             EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
                 }
+            }
+        }
+    }
+
+    @Check
+    public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
+        for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(checkConstraint
+                .getExpression())) {
+            EClassifier classifier = emfTypeProvider.getClassifierForVariable(variable);
+            if (!(classifier instanceof EDataType)) {
+                error("Only simple EDataTypes are allowed in check expressions. The variable " + variable.getName()
+                        + "'s type is " + classifier.getName() + " now.", checkConstraint, null,
+                        EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
             }
         }
     }
