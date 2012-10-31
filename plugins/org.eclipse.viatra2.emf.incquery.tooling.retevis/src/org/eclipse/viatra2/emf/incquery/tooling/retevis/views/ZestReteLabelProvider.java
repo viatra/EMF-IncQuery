@@ -16,20 +16,34 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBo
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IndexerWithMemory;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Network;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Production;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.UniquenessEnforcerNode;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 
 public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider 
 {
 	
 	ReteBoundary rb;
+    private Color indexerColor, reteMatcherColor;
+
+    /**
+     * Sets the colors of the indexer and rete matcher nodes
+     * 
+     * @param indexerColor
+     * @param reteMatcherColor
+     */
+    public void setColors(Color indexerColor, Color reteMatcherColor) {
+        this.indexerColor = indexerColor;
+        this.reteMatcherColor = reteMatcherColor;
+    }
 	
+
 	public ReteBoundary getRb() {
 		return rb;
 	}
@@ -65,9 +79,9 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 //		return s+super.getText(element);
 	}
 	
-//	@Override
+    @Override
 	public IFigure getTooltip(Object entity) {
-		if (entity instanceof Node) {
+        if (entity instanceof Node) {
 			Node n = (Node)entity;
 			String s="";
 			
@@ -82,14 +96,20 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 			TextFlow infoTf = new TextFlow();
 //			infoTf.setFont(fontRegistry.get("code"));
 			
-			//nameTf.setText(n.toString());
+            nameTf.setText(n.toString());
 			String info="";//"\n";
 			info+="Stubs:\n"+s;//+"\n";
 			infoTf.setText(info);
-//			fp.add(nameTf);
+            if (entity instanceof RetePatternMatcher) {
+                if (((Node) entity).getTag() instanceof Pattern) {
+                    Pattern pattern = (Pattern) ((Node) entity).getTag();
+                    nameTf.setText(pattern.getName());
+                    fp.add(nameTf);
+                }
+            }
 			fp.add(infoTf);
 			return fp;
-		}
+        }
 		return null;
 	}
 	
@@ -172,7 +192,11 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
 	@Override
 	public Color getBackgroundColour(Object entity) {
-		// TODO Auto-generated method stub
+        if (entity instanceof Indexer) {
+            return indexerColor;
+        } else if (entity instanceof RetePatternMatcher) {
+            return reteMatcherColor;
+        }
 		return null;
 	}
 
@@ -185,7 +209,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 	@Override
 	public boolean fisheyeNode(Object entity) {
 		// TODO Auto-generated method stub
-		return false;
+        return true;
 	}
 
 }

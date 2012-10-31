@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
@@ -16,6 +17,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBo
 import org.eclipse.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IZoomableWorkbenchPart;
+import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 /**
@@ -49,8 +51,12 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 	public void createPartControl(Composite parent) {
 		// initialize Zest viewer
 		graphViewer = new GraphViewer(parent, SWT.BORDER);
+        graphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		graphViewer.setContentProvider(new ZestReteContentProvider());
-		graphViewer.setLabelProvider(new ZestReteLabelProvider());	    
+		ZestReteLabelProvider labelProvider = new ZestReteLabelProvider();
+        Display display = parent.getDisplay();
+        labelProvider.setColors(display.getSystemColor(SWT.COLOR_WHITE), display.getSystemColor(SWT.COLOR_RED));
+        graphViewer.setLabelProvider(labelProvider);	    
 	}
 
 	@Override
@@ -69,15 +75,15 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 						try {
 							ReteBoundary rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
 							((ZestReteLabelProvider)graphViewer.getLabelProvider()).setRb( rb );
-							graphViewer.setInput( rb.getHeadContainer() );
 							//graphViewer.setInput( pm.getMatcher().getEngine().getReteEngine().getBoundary() );
-							
-							graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
+                            // graphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm());
+                            graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
 							//graphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 							//graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
 							//graphViewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
-							graphViewer.applyLayout();
-							graphViewer.refresh();
+                            graphViewer.setInput(rb.getHeadContainer());
+                            // graphViewer.applyLayout();
+                            // graphViewer.refresh();
 						} catch (IncQueryException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
