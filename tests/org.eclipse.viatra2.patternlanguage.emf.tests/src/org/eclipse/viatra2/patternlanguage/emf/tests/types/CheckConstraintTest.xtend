@@ -25,6 +25,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -51,12 +52,25 @@ class CheckConstraintTest {
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(C) = {
-				EClass(C);
-				check(C.name.empty);
+				EBoolean(C);
+				check(C);
 			}
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def accessEClassInCheck() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(C) = {
+				EClass(C);
+				check(C.name.empty);
+			}
+		') as PatternModel
+		tester.validate(model).assertError(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR)
 	}
 	
 	@Test
@@ -66,8 +80,9 @@ class CheckConstraintTest {
 
 			pattern name(C) = {
 				EClass(C);
+				EClass.name(C,S);
 				check({
-					val name = C.name;
+					val name = S;
 					name.empty;
 				});
 			}
@@ -83,8 +98,9 @@ class CheckConstraintTest {
 
 			pattern name(C) = {
 				EClass(C);
+				EClass.name(C,S);
 				check({
-					val name = C.name;
+					val name = S;
 					return name.empty
 				});
 			}
@@ -98,9 +114,9 @@ class CheckConstraintTest {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EClass(C);
-				check(C.name);
+			pattern name(S) = {
+				EString(S);
+				check(S.length);
 			}
 		') as PatternModel
 		tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)

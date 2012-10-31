@@ -155,7 +155,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				h == p;
 			}'
 		)
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR))
 	}
 	
 	@Test

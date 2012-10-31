@@ -38,6 +38,7 @@ public final class EMFIssueCodes {
 	public static final String LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL = ISSUE_CODE_PREFIX + "literal_or_computation_type_mismatch_in_pattern_call";
 	public static final String CARTESIAN_SOFT_WARNING = ISSUE_CODE_PREFIX + "cartesian_soft_warning";
 	public static final String CARTESIAN_STRICT_WARNING = ISSUE_CODE_PREFIX + "cartesian_strict_warning";
+	public static final String CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR = ISSUE_CODE_PREFIX + "check_constraint_scalar_variable_error";
 	
 	public static final String IDENTIFIER_AS_KEYWORD = ISSUE_CODE_PREFIX + "identifier_as_keyword";
 
