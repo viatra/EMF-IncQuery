@@ -108,6 +108,12 @@ public class StarWork<V> implements Comparable<V> {
 
 	@Override
 	public int compareTo(V o) {
-		return Integer.compare(this.hashCode(), o.hashCode());
+		if (this.hashCode() < o.hashCode())  {
+			return -1;
+		}
+		else if (this.hashCode() == o.hashCode()) {
+			return 0;
+		}
+		else return 1;
 	}
 }
