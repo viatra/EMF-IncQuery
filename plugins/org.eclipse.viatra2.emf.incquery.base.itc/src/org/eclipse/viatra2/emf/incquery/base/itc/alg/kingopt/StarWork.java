@@ -18,6 +18,7 @@ public class StarWork<V> implements Comparable<V> {
 	private V target;
 	private int fromIdx;
 	private int toIdx;
+	private int cachedHash = -1;
 	
 	public StarWork(StarDir sd, V source, V target, int fromIdx, int toIdx) {
 		super();
@@ -69,23 +70,44 @@ public class StarWork<V> implements Comparable<V> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o instanceof StarWork) {
-			StarWork<?> sw = (StarWork<?>) o;
-			if (sw.hashCode() == this.hashCode()) return true;
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
 		}
-		return false;
+		else if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		else {
+			StarWork<?> sw = (StarWork<?>) obj;
+			if (sw.source.equals(this.source) && 
+				sw.target.equals(this.target) && 
+				sw.fromIdx == this.fromIdx && 
+				sw.toIdx == this.toIdx && 
+				sw.sd == this.sd) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 	}
 
 	@Override
 	public int hashCode() {
-		return source.hashCode() + target.hashCode() + fromIdx + toIdx + sd.ordinal();
+		if (cachedHash == -1) {
+			int hash = 7;
+			hash = 31 * hash + source.hashCode();
+			hash = 31 * hash + target.hashCode();
+			hash = 31 * hash + fromIdx;
+			hash = 31 * hash + toIdx;
+			hash = 31 * hash + sd.ordinal();
+			cachedHash = hash;
+		}
+		return cachedHash;
 	}
 
 	@Override
 	public int compareTo(V o) {
-		if (this.hashCode() < o.hashCode()) return -1;
-		else if (this.hashCode() == o.hashCode()) return 0;
-		else return 1;
+		return Integer.compare(this.hashCode(), o.hashCode());
 	}
 }

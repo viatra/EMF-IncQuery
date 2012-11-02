@@ -90,8 +90,9 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 				V sourceRoot = sccs.find(source);
 				V targetRoot = sccs.find(target);
 				
-				if (!sourceRoot.equals(targetRoot) && !sourceRoot.equals(targetRoot))
+				if (!sourceRoot.equals(targetRoot)) {
 					reducedGraph.insertEdge(sourceRoot, targetRoot);
+				}
 			}
 		}
 
