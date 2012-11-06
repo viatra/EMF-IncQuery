@@ -21,12 +21,11 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHandler;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
 
 /**
  * <!-- begin-user-doc -->
@@ -205,7 +204,7 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 	/**
 	 * EMF-IncQuery handler for derived feature derivedValue
 	 */
-	private IncqueryDerivedFeature derivedValueHandler;
+	private QueryBasedFeatureHandler derivedValueHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -213,13 +212,13 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 	 */
 	public Object getDerivedValue() {
 		if (derivedValueHandler == null) {
-			derivedValueHandler = IncqueryFeatureHelper
-					.getIncqueryDerivedFeature(
+			derivedValueHandler = QueryBasedFeatureHelper
+					.getQueryBasedFeatureHandler(
 							this,
 							EIQSnapshotPackageImpl.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue",
 							"Substitution", "Value",
-							FeatureKind.SINGLE_REFERENCE, true, false);
+							QueryBasedFeatureKind.SINGLE_REFERENCE, true, false);
 		}
 		return (java.lang.Object) derivedValueHandler
 				.getSingleReferenceValue(this);

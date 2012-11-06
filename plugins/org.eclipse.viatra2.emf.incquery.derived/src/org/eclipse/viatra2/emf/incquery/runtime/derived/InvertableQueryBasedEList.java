@@ -21,25 +21,20 @@ import org.eclipse.emf.ecore.EObject;
  * @author Abel Hegedus
  *
  */
-public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList<Source> {
+public class InvertableQueryBasedEList<ComputedType, StorageType> extends AbstractEList<ComputedType> {
    
-  private EList<Target> targetEList;
+  private EList<StorageType> storageEList;
   private EObject sourceObject;
-  private IncqueryDerivedFeature handler;
-  private DerivedFeatureInverter<Source, Target> inverter;
-  
-  public interface DerivedFeatureInverter<Source, Target>{
-    Target invert(Source source);
-    Source validate(Source source);
-  }
+  private QueryBasedFeatureHandler handler;
+  private QueryBasedFeatureInverter<ComputedType, StorageType> inverter;
   
   /**
    * 
    */
-  public InvertableDerivedFeatureEList(EObject sourceObject, EList<Target> targetEList,
-      IncqueryDerivedFeature handler, DerivedFeatureInverter<Source, Target> inverter) {
+  public InvertableQueryBasedEList(EObject sourceObject, EList<StorageType> storageEList,
+      QueryBasedFeatureHandler handler, QueryBasedFeatureInverter<ComputedType, StorageType> inverter) {
     super();
-    this.targetEList = targetEList;
+    this.storageEList = storageEList;
     this.sourceObject = sourceObject;
     this.handler = handler;
     this.inverter = inverter;
@@ -49,8 +44,8 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#validate(int, java.lang.Object)
    */
   @Override
-  protected Source validate(int index, Source object) {
-    Source s = super.validate(index, object);
+  protected ComputedType validate(int index, ComputedType object) {
+    ComputedType s = super.validate(index, object);
     return inverter.validate(s);
   }
   
@@ -59,13 +54,13 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    */
   @SuppressWarnings("unchecked")
   @Override
-  protected Source primitiveGet(int index) {
+  protected ComputedType primitiveGet(int index) {
     // TODO efficient reversal of index
-    Target t = targetEList.get(index);
+    StorageType t = storageEList.get(index);
     List<?> values = handler.getManyReferenceValue(sourceObject);
     for (Object object : values) {
-      if(inverter.invert((Source) object).equals(t)) {
-        return (Source) object;
+      if(inverter.invert((ComputedType) object).equals(t)) {
+        return (ComputedType) object;
       }
     }
     return null;
@@ -78,10 +73,10 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#setUnique(int, java.lang.Object)
    */
   @Override
-  public Source setUnique(int index, Source object) {
-    Source source = get(index);
-    Target newTarget = inverter.invert(object);
-    targetEList.set(index, newTarget);
+  public ComputedType setUnique(int index, ComputedType object) {
+    ComputedType source = get(index);
+    StorageType newTarget = inverter.invert(object);
+    storageEList.set(index, newTarget);
     return source;
   }
 
@@ -90,9 +85,9 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#addUnique(java.lang.Object)
    */
   @Override
-  public void addUnique(Source object) {
-    Target newTarget = inverter.invert(object);
-    targetEList.add(newTarget);
+  public void addUnique(ComputedType object) {
+    StorageType newTarget = inverter.invert(object);
+    storageEList.add(newTarget);
   }
 
 
@@ -100,9 +95,9 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#addUnique(int, java.lang.Object)
    */
   @Override
-  public void addUnique(int index, Source object) {
-    Target newTarget = inverter.invert(object);
-    targetEList.add(index, newTarget);
+  public void addUnique(int index, ComputedType object) {
+    StorageType newTarget = inverter.invert(object);
+    storageEList.add(index, newTarget);
   }
 
 
@@ -110,11 +105,11 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#addAllUnique(java.util.Collection)
    */
   @Override
-  public boolean addAllUnique(Collection<? extends Source> collection) {
+  public boolean addAllUnique(Collection<? extends ComputedType> collection) {
     boolean hasChanged = false;
-    for (Source source : collection) {
-      Target newTarget = inverter.invert(source);
-      hasChanged |= targetEList.add(newTarget);
+    for (ComputedType source : collection) {
+      StorageType newTarget = inverter.invert(source);
+      hasChanged |= storageEList.add(newTarget);
     }
     return hasChanged;
   }
@@ -124,14 +119,14 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#addAllUnique(int, java.util.Collection)
    */
   @Override
-  public boolean addAllUnique(int index, Collection<? extends Source> collection) {
-    int oldSize = targetEList.size();
-    for (Source source : collection) {
-      Target newTarget = inverter.invert(source);
-      targetEList.add(index,newTarget);
+  public boolean addAllUnique(int index, Collection<? extends ComputedType> collection) {
+    int oldSize = storageEList.size();
+    for (ComputedType source : collection) {
+      StorageType newTarget = inverter.invert(source);
+      storageEList.add(index,newTarget);
       index++;
     }
-    return oldSize < targetEList.size();
+    return oldSize < storageEList.size();
   }
 
 
@@ -143,8 +138,8 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
     boolean hasChanged = false;
     for (int i = start; i <= end; i++) {
       @SuppressWarnings("unchecked")
-      Target newTarget = inverter.invert((Source) objects[i]);
-      hasChanged |= targetEList.add(newTarget);
+      StorageType newTarget = inverter.invert((ComputedType) objects[i]);
+      hasChanged |= storageEList.add(newTarget);
     }
     return hasChanged;
   }
@@ -155,14 +150,14 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    */
   @Override
   public boolean addAllUnique(int index, Object[] objects, int start, int end) {
-    int oldSize = targetEList.size();
+    int oldSize = storageEList.size();
     for (int i = start; i <= end; i++) {
       @SuppressWarnings("unchecked")
-      Target newTarget = inverter.invert((Source) objects[i]);
-      targetEList.add(index,newTarget);
+      StorageType newTarget = inverter.invert((ComputedType) objects[i]);
+      storageEList.add(index,newTarget);
       index++;
     }
-    return oldSize < targetEList.size();
+    return oldSize < storageEList.size();
   }
 
 
@@ -170,10 +165,10 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#remove(int)
    */
   @Override
-  public Source remove(int index) {
-    Source source = get(index);
-    Target target = inverter.invert(source);
-    targetEList.remove(target);
+  public ComputedType remove(int index) {
+    ComputedType source = get(index);
+    StorageType target = inverter.invert(source);
+    storageEList.remove(target);
     return source;
   }
 
@@ -182,10 +177,10 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see org.eclipse.emf.common.util.AbstractEList#move(int, int)
    */
   @Override
-  public Source move(int targetIndex, int sourceIndex) {
-    Source t_source = get(sourceIndex);
-    Target t_target = inverter.invert(t_source);
-    targetEList.move(targetIndex, t_target);
+  public ComputedType move(int targetIndex, int sourceIndex) {
+    ComputedType t_source = get(sourceIndex);
+    StorageType t_target = inverter.invert(t_source);
+    storageEList.move(targetIndex, t_target);
     return t_source;
   }
 
@@ -195,8 +190,8 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    */
   @SuppressWarnings("unchecked")
   @Override
-  protected List<Source> basicList() {
-     return (List<Source>) handler.getManyReferenceValue(sourceObject);
+  protected List<ComputedType> basicList() {
+     return (List<ComputedType>) handler.getManyReferenceValue(sourceObject);
   }
 
 
@@ -204,7 +199,7 @@ public class InvertableDerivedFeatureEList<Source, Target> extends AbstractEList
    * @see java.util.AbstractList#get(int)
    */
   @Override
-  public Source get(int index) {
+  public ComputedType get(int index) {
     return basicGet(index);
   }
 

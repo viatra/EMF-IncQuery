@@ -10,6 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.derived;
 
-public enum FeatureKind{
+public enum QueryBasedFeatureKind{
 	SUM, COUNTER, SINGLE_REFERENCE, MANY_REFERENCE, ITERATION
 }

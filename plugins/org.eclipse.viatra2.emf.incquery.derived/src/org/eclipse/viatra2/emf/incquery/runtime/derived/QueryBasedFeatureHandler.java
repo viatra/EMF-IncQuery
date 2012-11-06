@@ -40,7 +40,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  * 
  */
 @SuppressWarnings("rawtypes")
-public class IncqueryDerivedFeature {
+public class QueryBasedFeatureHandler {
 
     /**
      * @author Abel Hegedus
@@ -93,7 +93,7 @@ public class IncqueryDerivedFeature {
     private final EStructuralFeature feature;
     private String sourceParamName;
     private String targetParamName;
-    private FeatureKind kind;
+    private QueryBasedFeatureKind kind;
 
     private Map<InternalEObject, Object> updateMemory = new HashMap<InternalEObject, Object>();
     private Map<InternalEObject, Integer> counterMemory = new HashMap<InternalEObject, Integer>();
@@ -113,13 +113,13 @@ public class IncqueryDerivedFeature {
     /**
 	 * 
 	 */
-    public IncqueryDerivedFeature(EStructuralFeature feature) {
+    public QueryBasedFeatureHandler(EStructuralFeature feature) {
         // this.source = source;
         this.feature = feature;
         if (feature.isMany() && targetParamName != null) {
-            kind = FeatureKind.MANY_REFERENCE;
+            kind = QueryBasedFeatureKind.MANY_REFERENCE;
         } else {
-            kind = FeatureKind.SINGLE_REFERENCE;
+            kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
         }
         // initialize(matcher, sourceParamName, targetParamName);
     }
@@ -142,7 +142,7 @@ public class IncqueryDerivedFeature {
             matcher.getEngine().getLogger()
                     .error("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
         }
-        if ((targetParamName == null) != (kind == FeatureKind.COUNTER)) {
+        if ((targetParamName == null) != (kind == QueryBasedFeatureKind.COUNTER)) {
             matcher.getEngine().getLogger()
                     .error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
         }
@@ -168,10 +168,10 @@ public class IncqueryDerivedFeature {
      * @param matcher
      * @param sourceParamName
      */
-    public IncqueryDerivedFeature(EStructuralFeature feature, FeatureKind kind) {
+    public QueryBasedFeatureHandler(EStructuralFeature feature, QueryBasedFeatureKind kind) {
         this(feature);
         this.kind = kind;
-        if (kind == FeatureKind.SUM && !(feature instanceof EAttribute)) {
+        if (kind == QueryBasedFeatureKind.SUM && !(feature instanceof EAttribute)) {
             IncQueryEngine.getDefaultLogger().error(
                     "[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
         }
@@ -180,7 +180,7 @@ public class IncqueryDerivedFeature {
     /**
 	 * 
 	 */
-    public IncqueryDerivedFeature(EStructuralFeature feature, FeatureKind kind, boolean keepCache) {
+    public QueryBasedFeatureHandler(EStructuralFeature feature, QueryBasedFeatureKind kind, boolean keepCache) {
         this(feature, kind);
         this.keepCache = keepCache;
     }
@@ -317,7 +317,7 @@ public class IncqueryDerivedFeature {
     private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) throws IncQueryException {
         List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
         for (IPatternMatch signature : signatures) {
-            if (kind == FeatureKind.ITERATION) {
+            if (kind == QueryBasedFeatureKind.ITERATION) {
                 ENotificationImpl notification = newMatchIteration(signature);
                 if (notification != null) {
                     notifications.add(notification);
@@ -326,7 +326,7 @@ public class IncqueryDerivedFeature {
                 Object target = signature.get(targetParamName);
                 InternalEObject source = (InternalEObject) signature.get(sourceParamName);
                 if (target != null) {
-                    if (kind == FeatureKind.SUM) {
+                    if (kind == QueryBasedFeatureKind.SUM) {
                         increaseCounter(source, (Integer) target);
                     } else {
                         if (feature.isMany()) {
@@ -343,7 +343,7 @@ public class IncqueryDerivedFeature {
                             }
                         }
                     }
-                } else if (kind == FeatureKind.COUNTER) {
+                } else if (kind == QueryBasedFeatureKind.COUNTER) {
                     increaseCounter(source, 1);
                 }
             }
@@ -372,7 +372,7 @@ public class IncqueryDerivedFeature {
     private Collection<IPatternMatch> processLostMatches(Collection<IPatternMatch> signatures) throws IncQueryException {
         List<IPatternMatch> processed = new ArrayList<IPatternMatch>();
         for (IPatternMatch signature : signatures) {
-            if (kind == FeatureKind.ITERATION) {
+            if (kind == QueryBasedFeatureKind.ITERATION) {
                 ENotificationImpl notification = lostMatchIteration(signature);
                 if (notification != null) {
                     notifications.add(notification);
@@ -381,7 +381,7 @@ public class IncqueryDerivedFeature {
                 Object target = signature.get(targetParamName);
                 InternalEObject source = (InternalEObject) signature.get(sourceParamName);
                 if (target != null) {
-                    if (kind == FeatureKind.SUM) {
+                    if (kind == QueryBasedFeatureKind.SUM) {
                         decreaseCounter(source, (Integer) target);
                     } else {
                         if (feature.isMany()) {
@@ -403,7 +403,7 @@ public class IncqueryDerivedFeature {
                         }
                     }
                 } else {
-                    if (kind == FeatureKind.COUNTER) {
+                    if (kind == QueryBasedFeatureKind.COUNTER) {
                         decreaseCounter(source, 1);
                     }
                 }
