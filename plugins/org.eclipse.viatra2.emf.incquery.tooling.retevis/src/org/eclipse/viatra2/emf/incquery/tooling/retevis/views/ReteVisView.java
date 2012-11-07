@@ -18,7 +18,10 @@ import org.eclipse.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.zest.core.widgets.ZestStyles;
-import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.CompositeLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.HorizontalShiftAlgorithm;
+import org.eclipse.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 
 /**
  * 
@@ -55,7 +58,8 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 		graphViewer.setContentProvider(new ZestReteContentProvider());
 		ZestReteLabelProvider labelProvider = new ZestReteLabelProvider();
         Display display = parent.getDisplay();
-        labelProvider.setColors(display.getSystemColor(SWT.COLOR_WHITE), display.getSystemColor(SWT.COLOR_RED));
+        labelProvider.setColors(display.getSystemColor(SWT.COLOR_WHITE), display.getSystemColor(SWT.COLOR_RED),
+                display.getSystemColor(SWT.COLOR_YELLOW));
         graphViewer.setLabelProvider(labelProvider);	    
 	}
 
@@ -76,8 +80,11 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 							ReteBoundary rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
 							((ZestReteLabelProvider)graphViewer.getLabelProvider()).setRb( rb );
 							//graphViewer.setInput( pm.getMatcher().getEngine().getReteEngine().getBoundary() );
-                            // graphViewer.setLayoutAlgorithm(new SugiyamaLayoutAlgorithm());
-                            graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
+                            SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
+                            HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
+                            graphViewer.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
+                                    sugiyamaAlgorithm, shiftAlgorithm }));
+                            // graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
 							//graphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 							//graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
 							//graphViewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());

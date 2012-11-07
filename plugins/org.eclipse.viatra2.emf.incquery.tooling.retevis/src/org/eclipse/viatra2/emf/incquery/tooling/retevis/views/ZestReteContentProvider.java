@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.tooling.retevis.views;
 
+import java.lang.reflect.Field;
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -39,8 +40,40 @@ public class ZestReteContentProvider extends ArrayContentProvider implements
 	public Object[] getConnectedTo(Object entity) {
 		if (entity instanceof Node) {
 			Vector<Node> r = new Vector<Node>();
-			if (entity instanceof Supplier) {
+            if (entity instanceof Supplier) {
 				r.addAll( ((Supplier)entity).getReceivers() );
+                try {
+                    Field field = entity.getClass().getDeclaredField("memoryNullIndexer");
+                    field.setAccessible(true);
+                    Object nullIndexer = field.get(entity);
+                    if (nullIndexer instanceof Node) {
+                        r.add((Node) nullIndexer);
+                    }
+                } catch (Exception e) {
+                    // XXX this exception might come but it is no problem here
+                    System.out.println(e.getMessage());
+                }
+                try {
+                    Field field = entity.getClass().getDeclaredField("memoryIdentityIndexer");
+                    field.setAccessible(true);
+                    Object identityIndexer = field.get(entity);
+                    if (identityIndexer instanceof Node) {
+                        r.add((Node) identityIndexer);
+                    }
+                } catch (Exception e) {
+                    // XXX this exception might come but it is no problem here
+                    System.out.println(e.getMessage());
+                }
+                // if (entity instanceof UniquenessEnforcerNode) {
+                // UniquenessEnforcerNode node = (UniquenessEnforcerNode) entity;
+                // r.add(node.getIdentityIndexer());
+                // r.add(node.getNullIndexer());
+                // } else if (entity instanceof PredicateEvaluatorNode) {
+                // PredicateEvaluatorNode node = (PredicateEvaluatorNode) entity;
+                // r.add(node.getIdentityIndexer());
+                // r.add(node.getNullIndexer());
+                //
+                // }
 			}
 			if (entity instanceof Indexer) {
 				if (entity instanceof StandardIndexer) {
