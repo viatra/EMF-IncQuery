@@ -70,10 +70,16 @@ public abstract class StandardNode implements Supplier {
 	
 	@Override
 	public String toString() {
-		if (tag != null)
-			return "[" + nodeId+ "]" + getClass().getSimpleName() + "[[" + tag.toString() + "]]";
-		else
-			return "[" + nodeId+ "]" + getClass().getSimpleName();
+        Class<?> namedClass = getClass();
+        String simpleName;
+        do {
+            simpleName = namedClass.getSimpleName();
+            namedClass = namedClass.getSuperclass();
+        } while (simpleName == null || simpleName.isEmpty());
+        if (tag != null) {
+            return "[" + nodeId+ "]" + simpleName + "[[" + tag.toString() + "]]";
+        } else
+            return "[" + nodeId + "]" + simpleName;
 	};
 
 	/*
