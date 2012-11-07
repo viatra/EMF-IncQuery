@@ -32,16 +32,15 @@ public class DetailComparator implements Comparator<String> {
 
     @Override
     public int compare(String key1, String key2) {
-        boolean isParameter1 = parameterMap.containsKey(key1);
-        boolean isParameter2 = parameterMap.containsKey(key2);
-        if (isParameter1 && !isParameter2) {
+        boolean containsKey1 = parameterMap.containsKey(key1);
+        boolean containsKey2 = parameterMap.containsKey(key2);
+        if (containsKey1 && !containsKey2) {
             return -1;
-        } else if (!isParameter1 && isParameter2) {
+        } else if (!containsKey1 && containsKey2) {
             return 1;
-        } else if (isParameter1 && isParameter2) {
-            parameterMap.get(key1).compareTo(parameterMap.get(key2));
+        } else if (containsKey1 && containsKey2) {
+            return parameterMap.get(key1).compareTo(parameterMap.get(key2));
         }
         return key1.compareTo(key2);
-
     }
 }
