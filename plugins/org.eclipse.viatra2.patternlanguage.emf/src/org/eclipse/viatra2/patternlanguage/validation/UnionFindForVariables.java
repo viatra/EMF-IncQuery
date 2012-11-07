@@ -30,7 +30,7 @@ public class UnionFindForVariables {
      *            which are assumed to be disjoint at the start
      */
     public UnionFindForVariables(List<Variable> inputVariables) {
-        this.inputVariables = inputVariables;
+        this.inputVariables = new ArrayList<Variable>(inputVariables);
         unionIdArray = new int[inputVariables.size()];
         for (int i = 0; i < inputVariables.size(); i++) {
             unionIdArray[i] = i;
@@ -126,14 +126,14 @@ public class UnionFindForVariables {
     private List<Set<Variable>> getPartitions() {
         List<Set<Variable>> resultList = new ArrayList<Set<Variable>>();
         Set<Integer> previousKeys = new HashSet<Integer>();
-        for (int i = 0; i < inputVariables.size(); i++) {
-            Integer currentID = unionIdArray[i];
+        for (Variable variableOuter : inputVariables) {
+            Integer currentID = unionIdArray[inputVariables.indexOf(variableOuter)];
             if (!previousKeys.contains(currentID)) {
                 previousKeys.add(currentID);
                 Set<Variable> currentSet = new HashSet<Variable>();
-                for (Variable variable : inputVariables) {
-                    if (unionIdArray[inputVariables.indexOf(variable)] == currentID) {
-                        currentSet.add(variable);
+                for (Variable variableInner : inputVariables) {
+                    if (unionIdArray[inputVariables.indexOf(variableInner)] == currentID) {
+                        currentSet.add(variableInner);
                     }
                 }
                 resultList.add(currentSet);
