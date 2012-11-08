@@ -22,6 +22,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegi
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtilRunningOptionEnum
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -69,7 +70,7 @@ class ModelLoadHelper {
 	 * Works for both pattern and target model resource sets.
 	 */
 	def loadAdditionalResourceFromUri(ResourceSet resourceSet, String platformUri){
-		val modelURI = XmiModelUtil::resolvePlatformURI(platformUri)
+		val modelURI = XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum::BOTH, platformUri)
 		if(modelURI != null){
 			resourceSet.getResource(modelURI, true)
 		}
