@@ -84,7 +84,11 @@ public final class MatcherFactoryRegistry {
 							IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
-								factories.put(fullyQualifiedName, matcherFactory);
+							    if(factories.containsKey(fullyQualifiedName)) {
+							        IncQueryEngine.getDefaultLogger().error(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", fullyQualifiedName));
+							    } else {
+							        factories.put(fullyQualifiedName, matcherFactory);
+							    }
 							} else {
 								throw new UnsupportedOperationException(
 										"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
