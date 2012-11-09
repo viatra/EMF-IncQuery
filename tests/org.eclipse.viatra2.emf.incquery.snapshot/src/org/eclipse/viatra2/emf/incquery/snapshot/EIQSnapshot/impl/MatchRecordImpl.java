@@ -26,7 +26,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHandler;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
@@ -192,7 +192,7 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 	/**
 	 * EMF-IncQuery handler for derived feature role
 	 */
-	private QueryBasedFeatureHandler roleHandler;
+	private IQueryBasedFeatureHandler roleHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->

@@ -40,7 +40,7 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonit
  * 
  */
 @SuppressWarnings("rawtypes")
-public class QueryBasedFeatureHandler {
+public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
 
     /**
      * @author Abel Hegedus
@@ -125,7 +125,7 @@ public class QueryBasedFeatureHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public void initialize(final IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
+    protected void initialize(final IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
         if (initialized) {
             IncQueryEngine.getDefaultLogger().error("[IncqueryFeatureHandler] Feature already initialized!");
             return;
@@ -186,14 +186,18 @@ public class QueryBasedFeatureHandler {
     }
 
     /**
-     * Call this once to start monitoring validation problems.
+     * Call this once to start handling callbacks.
      */
-    public void startMonitoring() {
+    protected void startMonitoring() {
         matcher.addCallbackAfterUpdates(processMatchesRunnable);
         matcher.addCallbackAfterWipes(processWipeRunnable);
         processMatchesRunnable.run();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getValue(java.lang.Object)
+     */
+    @Override
     public Object getValue(Object source) {
         switch (kind) {
         case SUM: // fall-through
@@ -209,6 +213,10 @@ public class QueryBasedFeatureHandler {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getIntValue(java.lang.Object)
+     */
+    @Override
     public int getIntValue(Object source) {
         Integer result = counterMemory.get(source);
         if (result == null) {
@@ -217,6 +225,10 @@ public class QueryBasedFeatureHandler {
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getSingleReferenceValue(java.lang.Object)
+     */
+    @Override
     public Object getSingleReferenceValue(Object source) {
         if (keepCache) {
             return singleRefMemory.get(source);
@@ -240,6 +252,10 @@ public class QueryBasedFeatureHandler {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getManyReferenceValue(java.lang.Object)
+     */
+    @Override
     public List<?> getManyReferenceValue(Object source) {
         if (keepCache) {
             List<Object> values = manyRefMemory.get(source);
@@ -305,6 +321,10 @@ public class QueryBasedFeatureHandler {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getManyReferenceValueAsEList(java.lang.Object)
+     */
+    @Override
     public EList getManyReferenceValueAsEList(Object source) {
         Collection<?> values = getManyReferenceValue(source);
         if (values.size() > 0) {
@@ -433,11 +453,10 @@ public class QueryBasedFeatureHandler {
         throw new UnsupportedOperationException("Iteration derived feature handlers must override oldMatchIteration");
     }
 
-    /**
-     * Called when getValue method is called for Iteration kind
-     * 
-     * @return the value of the feature
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getValueIteration(java.lang.Object)
      */
+    @Override
     public Object getValueIteration(Object source) {
         throw new UnsupportedOperationException("Iteration derived feature handlers must override getValueIteration");
     }

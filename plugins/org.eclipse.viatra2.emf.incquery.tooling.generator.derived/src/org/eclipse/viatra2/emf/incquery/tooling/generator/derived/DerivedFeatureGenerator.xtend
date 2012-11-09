@@ -88,7 +88,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	private static String FEATUREKIND_IMPORT		= "QueryBasedFeatureKind"
 	private static String HELPER_IMPORT 			= "QueryBasedFeatureHelper"
 	//private static String HANDLER_NAME 				= "IncqueryFeatureHandler"
-	private static String HANDLER_NAME 				= "QueryBasedFeatureHandler"
+	private static String HANDLER_NAME 				= "IQueryBasedFeatureHandler"
 	private static String HANDLER_FIELD_SUFFIX 		= "Handler"
 	private static String DERIVED_ERROR_CODE = "org.eclipse.viatra2.emf.incquery.runtime.derived.error"
 	

@@ -86,7 +86,7 @@ pattern UnexpectedMatchRecord(
 }*/
 
 @QueryExplorer(display = false)
-@DerivedFeature(feature = "role")
+@QueryBasedFeature(feature = "role")
 pattern RecordRoleValue(
 	Record : MatchRecord,
 	Role
@@ -99,7 +99,7 @@ pattern RecordRoleValue(
 }
 
 @QueryExplorer(display = false)
-@DerivedFeature(feature = "derivedValue")
+@QueryBasedFeature(feature = "derivedValue")
 pattern SubstitutionValue(
 	Substitution : MatchSubstitutionRecord,
 	Value

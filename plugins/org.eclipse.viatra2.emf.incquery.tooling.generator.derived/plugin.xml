@@ -49,6 +49,11 @@
                type="boolean">
          </annotationparameter>
       </annotation>
+      <annotation
+            deprecated="true"
+            description="Please use @QueryBasedFeature instead."
+            name="DerivedFeature">
+      </annotation>
    </extension>
 
 </plugin>

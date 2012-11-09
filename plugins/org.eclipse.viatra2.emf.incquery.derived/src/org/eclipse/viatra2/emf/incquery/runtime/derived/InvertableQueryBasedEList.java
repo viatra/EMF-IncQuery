@@ -25,14 +25,14 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
    
   private EList<StorageType> storageEList;
   private EObject sourceObject;
-  private QueryBasedFeatureHandler handler;
+  private IQueryBasedFeatureHandler handler;
   private QueryBasedFeatureInverter<ComputedType, StorageType> inverter;
   
   /**
    * 
    */
   public InvertableQueryBasedEList(EObject sourceObject, EList<StorageType> storageEList,
-      QueryBasedFeatureHandler handler, QueryBasedFeatureInverter<ComputedType, StorageType> inverter) {
+      IQueryBasedFeatureHandler handler, QueryBasedFeatureInverter<ComputedType, StorageType> inverter) {
     super();
     this.storageEList = storageEList;
     this.sourceObject = sourceObject;

@@ -21,7 +21,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHandler;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
@@ -204,7 +204,7 @@ public abstract class MatchSubstitutionRecordImpl extends EObjectImpl implements
 	/**
 	 * EMF-IncQuery handler for derived feature derivedValue
 	 */
-	private QueryBasedFeatureHandler derivedValueHandler;
+	private IQueryBasedFeatureHandler derivedValueHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
