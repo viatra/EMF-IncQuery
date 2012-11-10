@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra2.emf.incquery.runtime.ui.gmf.handlers.GMFEditorLoadModelHandler"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.viatra2.emf.incquery.tooling.gui.loadmodel">
          <activeWhen>
             <reference

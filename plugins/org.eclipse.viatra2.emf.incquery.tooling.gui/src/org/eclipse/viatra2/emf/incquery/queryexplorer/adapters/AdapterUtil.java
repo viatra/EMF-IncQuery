@@ -12,13 +12,15 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.adapters;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 
 /**
- * A simple util class for the adapter calls. Returns typesafe objects and checks for errors as well.
+ * A simple util class for the adapter calls. Returns typesafe objects and checks for errors as well. It will load the
+ * required adapters, if they're not present in the system (due to lazy loading of plugins).
  */
 public class AdapterUtil {
 
@@ -32,6 +34,12 @@ public class AdapterUtil {
     public static ResourceSet getResourceSetFromIEditorPart(IEditorPart editorPart) {
         if (editorPart != null) {
             Object adaptedObject = editorPart.getAdapter(ResourceSet.class);
+            if (adaptedObject != null) {
+                return (ResourceSet) adaptedObject;
+            }
+
+            Platform.getAdapterManager().loadAdapter(editorPart, ResourceSet.class.getName());
+            adaptedObject = editorPart.getAdapter(ResourceSet.class);
             if (adaptedObject != null) {
                 return (ResourceSet) adaptedObject;
             } else {
