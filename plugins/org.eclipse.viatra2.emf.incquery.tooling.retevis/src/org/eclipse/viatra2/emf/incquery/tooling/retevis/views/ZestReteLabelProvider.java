@@ -14,6 +14,7 @@ import org.eclipse.draw2d.text.TextFlow;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.viatra2.emf.incquery.tooling.retevis.theme.ColorTheme;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint;
@@ -31,11 +32,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 
-public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider 
-{
+public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider {
+
+    private final int INDEXER_ID = 0;
+    private final int RETEMATCHER_ID = 1;
+    private final int INPUT_ID = 2;
 	
 	ReteBoundary rb;
-    private Color indexerColor, reteMatcherColor, inputNodeColor;
+    private ColorTheme theme;
 
     /**
      * Sets the colors of the indexer and rete matcher nodes
@@ -43,10 +47,9 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
      * @param indexerColor
      * @param reteMatcherColor
      */
-    public void setColors(Color indexerColor, Color reteMatcherColor, Color inputNodeColor) {
-        this.indexerColor = indexerColor;
-        this.reteMatcherColor = reteMatcherColor;
-        this.inputNodeColor = inputNodeColor;
+    public void setColors(ColorTheme theme) {
+        this.theme = theme;
+
     }
 	
 
@@ -241,13 +244,13 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 	@Override
 	public Color getBackgroundColour(Object entity) {
         if (entity instanceof Indexer) {
-            return indexerColor;
+            return theme.getNodeColor(INDEXER_ID);
         } else if (entity instanceof RetePatternMatcher) {
-            return reteMatcherColor;
+            return theme.getNodeColor(RETEMATCHER_ID);
         } else if (entity instanceof UniquenessEnforcerNode) {
             UniquenessEnforcerNode inputNode = (UniquenessEnforcerNode) entity;
             if (inputNode.getParents().isEmpty()) {
-                return inputNodeColor;
+                return theme.getNodeColor(INPUT_ID);
             }
         }
 		return null;
@@ -255,7 +258,16 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
 	@Override
 	public Color getForegroundColour(Object entity) {
-		// TODO Auto-generated method stub
+        if (entity instanceof Indexer) {
+            return theme.getTextColor(INDEXER_ID);
+        } else if (entity instanceof RetePatternMatcher) {
+            return theme.getTextColor(RETEMATCHER_ID);
+        } else if (entity instanceof UniquenessEnforcerNode) {
+            UniquenessEnforcerNode inputNode = (UniquenessEnforcerNode) entity;
+            if (inputNode.getParents().isEmpty()) {
+                return theme.getTextColor(INPUT_ID);
+            }
+        }
 		return null;
 	}
 

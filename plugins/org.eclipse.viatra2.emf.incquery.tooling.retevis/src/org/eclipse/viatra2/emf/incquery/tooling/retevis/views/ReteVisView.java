@@ -13,6 +13,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.tooling.retevis.theme.ColorTheme;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.zest.core.viewers.GraphViewer;
@@ -33,6 +34,7 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 	public static final String ID = "org.eclipse.viatra2.emf.incquery.tooling.retevis.views.ReteVisView";
 
 	private GraphViewer graphViewer;
+    private ColorTheme theme;
 
 	 @Override
 	  public AbstractZoomableViewer getZoomableViewer() {
@@ -55,8 +57,8 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 		graphViewer.setContentProvider(new ZestReteContentProvider());
 		ZestReteLabelProvider labelProvider = new ZestReteLabelProvider();
         Display display = parent.getDisplay();
-        labelProvider.setColors(display.getSystemColor(SWT.COLOR_WHITE), display.getSystemColor(SWT.COLOR_RED),
-                display.getSystemColor(SWT.COLOR_YELLOW));
+        theme = new ColorTheme(display);
+        labelProvider.setColors(theme);
         graphViewer.setLabelProvider(labelProvider);	    
 	}
 
@@ -105,6 +107,19 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 	public void setFocus() {
 		// treeViewer.getControl().setFocus();
 	}
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+     */
+    @Override
+    public void dispose() {
+        if (theme != null) {
+            theme.dispose();
+        }
+        super.dispose();
+    }
 	
 	
 	
