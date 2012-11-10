@@ -159,7 +159,7 @@ public class ModelElementCellEditor extends CellEditor {
                             markDirty();
                             doSetValue(newValue);
                             conf.setFilter(newValue);
-                            observableMatcher.setFilter(valuesOfTableItems(table));
+                            observableMatcher.setFilter(getFilter(table));
                         } else {
                             // try to insert the current value into the error message.
                             setErrorMessage(MessageFormat.format(getErrorMessage(),
@@ -179,7 +179,7 @@ public class ModelElementCellEditor extends CellEditor {
         		inputText.setText("");
         		value = "";
         		conf.setFilter("");
-        		observableMatcher.setFilter(valuesOfTableItems(table));
+        		observableMatcher.setFilter(getFilter(table));
         	}
 		});
 
@@ -232,7 +232,7 @@ public class ModelElementCellEditor extends CellEditor {
 						conf.setFilter(inputText.getText());
 						value = inputText.getText();
 						//set restriction for observable matcher
-						observableMatcher.setFilter(valuesOfTableItems(table));
+						observableMatcher.setFilter(getFilter(table));
 					}
 					else {
 						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -288,15 +288,25 @@ public class ModelElementCellEditor extends CellEditor {
         inputText.setText(text);
     }
     
-    private Object[] valuesOfTableItems(Table table) {
+    private Object[] getFilter(Table table) {
     	Object[] result = new Object[table.getItems().length];
     	
+    	int i = 0;
+    	for (String parameterName : observableMatcher.getMatcher().getParameterNames()) {
+    		result[i++] = getParameterFilter(table, parameterName);
+    	}
+   	
+    	return result;
+    }
+    
+    private Object getParameterFilter(Table table, String parameterName) {
     	for (int i = 0;i<table.getItems().length;i++) {
     		MatcherConfiguration mc = (MatcherConfiguration) table.getItem(i).getData();
-    		result[i] = tableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
+    		if (mc.getParameterName().equals(parameterName)) {
+    			return tableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
+    		}
     	}
-    	
-    	return result;
+    	return null;
     }
     
     private Object[] getElements(Object inputElement, String restrictionFqn) {

@@ -45,8 +45,9 @@ public class DetailElement {
 		this.value = value;
 	}
 
+	//Used by ViewerComparator too
 	@Override
 	public String toString() {
-		return "[key="+key+",value="+value+"]";
+		return key;
 	}
 }

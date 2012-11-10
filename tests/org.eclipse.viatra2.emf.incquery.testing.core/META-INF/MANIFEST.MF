@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Testing Core
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.testing.core;singleton:=true
-Bundle-Version: 0.6.8.qualifier
+Bundle-Version: 0.6.9.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.xtend.lib,
  com.google.guava,

@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,33 +42,6 @@ import com.google.inject.Singleton;
 @Singleton
 public class TableViewerUtil {
 	
-    /**
-     * Comparator for ordering the parameters first and other observables next
-     * 
-     */
-    private final class DetailComparator implements Comparator<String> {
-
-        private HashSet<String> parameters;
-
-        public DetailComparator(String[] parameterNames) {
-            parameters = new HashSet<String>();
-            for (String param : parameterNames) {
-                parameters.add(param);
-            }
-        }
-
-        @Override
-        public int compare(String key1, String key2) {
-            if (parameters.contains(key1) && !parameters.contains(key2)) {
-                return -1;
-            }
-            if (!parameters.contains(key1) && parameters.contains(key2)) {
-                return 1;
-            }
-            return key1.compareTo(key2);
-        }
-    }
-
     @Inject
 	ITypeProvider typeProvider;
 	
@@ -128,6 +100,7 @@ public class TableViewerUtil {
 		viewer.setContentProvider(new MatcherConfigurationContentProvider());
 		viewer.setLabelProvider(new MatcherConfigurationLabelProvider());
 		viewer.setCellModifier(new MatcherConfigurationCellModifier(viewer));
+		viewer.setComparator(new ViewerComparator(new DetailComparator(observableMatcher.getMatcher().getParameterNames())));
 		
 		Table table = viewer.getTable();
 		CellEditor[] editors = new CellEditor[titles.length];
@@ -141,15 +114,15 @@ public class TableViewerUtil {
 		viewer.setCellEditors(editors);
 		
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
-		Object[] restriction = observableMatcher.getFilter();
+		Object[] filter = observableMatcher.getFilter();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
-		if (restriction != null) {
+		if (filter != null) {
 			for (int i = 0;i<pattern.getParameters().size();i++) {
 				Variable var = pattern.getParameters().get(i);
 				String name = var.getName();
 				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
 				String clazz = (ref == null) ? "" : ref.getType().getQualifiedName();
-				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
+				input[i] = new MatcherConfiguration(name, clazz, filter[i]);
 			}	
 			viewer.setInput(input);
 		}
@@ -161,7 +134,7 @@ public class TableViewerUtil {
 			viewer.setInput(null);
 		}
 		while (viewer.getTable().getColumnCount() > 0 ) {
-			viewer.getTable().getColumns()[ 0 ].dispose();
+			viewer.getTable().getColumns()[0].dispose();
 		}
 		
 		viewer.refresh();

@@ -284,6 +284,9 @@ public class QueryExplorer extends ViewPart {
 		public void handleValueChange(ValueChangeEvent event) {
 			Object value = event.getObservableValue().getValue();
 			
+			tableViewerUtil.clearTableViewerColumns(detailsTableViewer);
+			clearTableViewer();
+			
 			if (value instanceof ObservablePatternMatcher) {
 				ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;	
 				if (observableMatcher.getMatcher() != null) {
@@ -311,10 +314,6 @@ public class QueryExplorer extends ViewPart {
 			else if (value instanceof ObservablePatternMatch) {
 				ObservablePatternMatch match = (ObservablePatternMatch) value;
 				tableViewerUtil.prepareTableViewerForObservableInput(match, detailsTableViewer);
-			}
-			else {
-				tableViewerUtil.clearTableViewerColumns(detailsTableViewer);
-				clearTableViewer();
 			}
 		}
 	}

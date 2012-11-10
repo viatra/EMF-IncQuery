@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.testing.sdk"
       label="EMF-IncQuery Test Framework"
-      version="0.6.8.qualifier"
+      version="0.6.9.qualifier"
       provider-name="Zoltan Ujhelyi"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
