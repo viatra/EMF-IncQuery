@@ -16,16 +16,17 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 public class ValidationInitUtil {
-	
-	public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {
-//		if(adapterMap.containsKey(activeEditor)) {
-			// FIXME define proper semantics for validation based on selection
-			// FIXME handle already existing violations
-			//adapterMap.get(activeEditor).addAll(adapters);
-//		} else {
-		if (!ValidationUtil.getAdapterMap().containsKey(activeEditor)) {
-			ValidationUtil.addNotifier(activeEditor, root);
-			ValidationUtil.registerEditorPart(activeEditor);
-		}
-	}
+
+    public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {
+        // if(adapterMap.containsKey(activeEditor)) {
+        // FIXME define proper semantics for validation based on selection
+        // FIXME handle already existing violations
+        // adapterMap.get(activeEditor).addAll(adapters);
+        // } else {
+        if (!ValidationUtil.getAdapterMap().containsKey(activeEditor)) {
+            ValidationUtil.addNotifier(activeEditor, root);
+            ValidationUtil.registerEditorPart(activeEditor);
+        }
+    }
+
 }

@@ -8,7 +8,6 @@
  * Contributors:
  *   Zoltan Ujhelyi, Abel Hegedus, Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -22,20 +21,21 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.ValidationInitUtil;
 
 public class InitValidatorsForSelectionHandler extends AbstractHandler {
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
-		IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
-		Object selectedElement = selection.getFirstElement();
-		
-		if (selectedElement instanceof Notifier) {
-			try {
-				ValidationInitUtil.initializeAdapters(activeEditor, (Notifier) selectedElement);
-			} catch (IncQueryException ex) {
-				throw new ExecutionException("Could not validate constraints due to a pattern matcher error", ex);
-			}
-		}
-		return null;
-	}
+
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+        IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
+        Object selectedElement = selection.getFirstElement();
+
+        if (selectedElement instanceof Notifier) {
+            try {
+                ValidationInitUtil.initializeAdapters(editorPart, (Notifier) selectedElement);
+            } catch (IncQueryException ex) {
+                throw new ExecutionException("Could not validate constraints due to a pattern matcher error", ex);
+            }
+        }
+        return null;
+    }
+
 }

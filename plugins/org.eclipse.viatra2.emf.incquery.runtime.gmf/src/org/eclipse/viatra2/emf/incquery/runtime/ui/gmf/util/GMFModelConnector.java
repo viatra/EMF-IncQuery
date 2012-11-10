@@ -21,7 +21,6 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.EMFModelConnector;
 
@@ -33,22 +32,6 @@ public class GMFModelConnector extends EMFModelConnector {
 
 	public GMFModelConnector(MatcherTreeViewerRootKey key) {
 		super(key);
-	}
-	
-	@Override
-	public void loadModel() {
-		workbenchPage.addPartListener(GMFEditorPartListener.getInstance());
-		if (QueryExplorer.getInstance() != null) {
-			QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
-		}
-	}
-
-	@Override
-	public void unloadModel() {
-		workbenchPage.removePartListener(GMFEditorPartListener.getInstance());
-		if (QueryExplorer.getInstance() != null) {
-			QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
-		}
 	}
 
 	@Override

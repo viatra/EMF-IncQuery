@@ -601,4 +601,14 @@
          </annotationparameter>
       </annotation>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.emf.edit.domain.IEditingDomainProvider"
+            class="org.eclipse.viatra2.emf.incquery.queryexplorer.adapters.AdapterFactoryForEcoreEditors">
+         <adapter
+               type="org.eclipse.emf.ecore.resource.ResourceSet">
+         </adapter>
+      </factory>
+   </extension>
 </plugin>

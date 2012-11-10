@@ -23,7 +23,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTre
  * Subclasses of this class must implement the editor specific handling of load/unload/showLocation actions. 
  * 
  * @author Tamas Szabo
- *
  */
 public abstract class ModelConnector {
 
