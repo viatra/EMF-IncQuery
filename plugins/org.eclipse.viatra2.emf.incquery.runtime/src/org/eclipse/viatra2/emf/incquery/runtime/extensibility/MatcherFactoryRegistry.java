@@ -83,7 +83,7 @@ public final class MatcherFactoryRegistry {
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
 							    if(factories.containsKey(fullyQualifiedName)) {
-							        IncQueryEngine.getDefaultLogger().error(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", fullyQualifiedName));
+							        IncQueryEngine.getDefaultLogger().warn(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", fullyQualifiedName));
 							    } else {
 							        factories.put(fullyQualifiedName, matcherFactory);
 							    }
@@ -112,21 +112,11 @@ public final class MatcherFactoryRegistry {
 	 * @param factory
 	 */
 	public static void registerMatcherFactory(IMatcherFactory<?> factory) {
-	
 		String qualifiedName = factory.getPatternFullyQualifiedName();
 		if(!MATCHER_FACTORIES.containsKey(qualifiedName)) {
 			MATCHER_FACTORIES.put(qualifiedName, factory);
-		  // NOTE pattern group management is relegated to PatternGroup classes
-			/*/if(matcherFactoryGroups != null) {
-				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactoryGroups.entrySet()) {
-					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, false);
-				}
-			}
-			if(matcherFactorySubTrees != null) {
-				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactorySubTrees.entrySet()) {
-					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, true);
-				}
-			}*/
+		} else {
+		    IncQueryEngine.getDefaultLogger().warn(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", qualifiedName));
 		}
 	}
 
