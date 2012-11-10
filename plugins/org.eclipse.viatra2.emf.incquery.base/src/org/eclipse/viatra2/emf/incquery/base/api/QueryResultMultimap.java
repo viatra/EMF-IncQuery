@@ -28,7 +28,13 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 
 /**
- * Unmodifiable MultiMap!!!
+ * Implementation of {@link Multimap} interface to represent query results. A query result multimap takes
+ *  a model query, with a specified key (input/source) parameter and a value (output/target) parameter.
+ *  
+ *  <p> Apart from the standard multimap behavior, it is possible to register listeners that are notified when the
+ *   contents of the multimap change.
+ *   
+ *  <p> Subclasses of the query result multimap can attach to any query evaluation engine and shoug
  * 
  * @author Abel Hegedus
  *
@@ -38,10 +44,14 @@ import com.google.common.collect.Multisets;
 public abstract class QueryResultMultimap<KeyType, ValueType> implements Multimap<KeyType, ValueType> {
 
     /**
+     * 
+     */
+    private static final String NOT_ALLOW_MODIFICATIONS = "Query result multimap does not allow modifications";
+    /**
      * This multimap contains the current key-values.
      * Implementing classes should not modify it directly
      */
-    protected Multimap<KeyType, ValueType> cache;
+    private Multimap<KeyType, ValueType> cache;
     private Logger logger;
     /**
      * The collection of listeners registered for this result multimap
@@ -50,6 +60,11 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
 
     private IQueryResultSetter<KeyType, ValueType> setter;
     
+    /**
+     * Constructor only visible to subclasses.
+     * 
+     * @param logger a logger that can be used for error reporting
+     */
     protected QueryResultMultimap(Logger logger){
         cache = HashMultimap.create();
         this.logger = logger;
@@ -168,13 +183,14 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     private void notifyListeners(Direction direction, KeyType key, ValueType value) {
         for (IQueryResultUpdateListener<KeyType, ValueType> listener : listeners) {
             try {
-                if (direction == Direction.INSERT)
+                if (direction == Direction.INSERT) {
                     listener.notifyPut(key, value);
-                else
+                } else {
                     listener.notifyRemove(key, value);
+                }
+            } catch (Error e) {
+                throw e;
             } catch (Throwable e) { // NOPMD
-                if (e instanceof Error)
-                    throw (Error) e;
                 logger.warn(
                         String.format(
                                 "The query result multimap encountered an error during executing a callback on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
@@ -228,6 +244,20 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         this.setter = setter;
     }
     
+    /**
+     * @return the cache
+     */
+    protected Multimap<KeyType, ValueType> getCache() {
+        return cache;
+    }
+    
+    /**
+     * @param cache the cache to set
+     */
+    protected void setCache(Multimap<KeyType, ValueType> cache) {
+        this.cache = cache;
+    }
+    
     // ======================= implemented Multimap methods ====================== 
     
     /* (non-Javadoc)
@@ -273,7 +303,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     /** 
      * {@inheritDoc}
      *  
-     * <p> The returned view is immutable.
+     * <p> The returned collection is immutable.
      *
      */
     @Override
@@ -284,7 +314,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     /** 
      * {@inheritDoc}
      *  
-     * <p> The returned view is immutable.
+     * <p> The returned set is immutable.
      *
      */
     @Override
@@ -295,7 +325,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     /** 
      * {@inheritDoc}
      *  
-     * <p> The returned view is immutable.
+     * <p> The returned multiset is immutable.
      *
      */
     @Override
@@ -306,7 +336,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     /** 
      * {@inheritDoc}
      *  
-     * <p> The returned view is immutable.
+     * <p> The returned collection is immutable.
      *
      */
     @Override
@@ -317,7 +347,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     /** 
      * {@inheritDoc}
      *  
-     * <p> The returned view is immutable.
+     * <p> The returned collection is immutable.
      *
      */
     @Override
@@ -328,7 +358,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     /** 
      * {@inheritDoc}
      *  
-     * <p> The returned view is immutable.
+     * <p> The returned map is immutable.
      *
      */
     @Override
@@ -336,13 +366,15 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         return Collections.unmodifiableMap(cache.asMap());
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.collect.Multimap#put(java.lang.Object, java.lang.Object)
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      */
     @Override
     public boolean put(KeyType key, ValueType value) {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         return modifyThroughQueryResultSetter(key, value, Direction.INSERT);
     }
@@ -369,7 +401,8 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     private boolean modifyThroughQueryResultSetter(KeyType key, ValueType value, Direction direction) {
         try {
             if (setter.validate(key, value)) {
-                final int size = cache.get(key).size();
+                final int size = cache.size();
+                final int expectedChange = (direction == Direction.INSERT) ? 1 : -1;
                 boolean changed = false;
                 if (direction == Direction.INSERT) {
                     changed = setter.put(key, value);
@@ -377,41 +410,56 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
                     changed = setter.remove(key, value);
                 }
                 if (changed) {
-                    if ((direction == Direction.INSERT) == cache.containsEntry(key, value)) {
-                        int expectedChange = (direction == Direction.INSERT) ? 1 : -1;
-                        if (cache.get(key).size() - expectedChange == size) {
-                            return true;
-                        }
-                    }
+                    return checkModificationThroughQueryResultSetter(key, value, direction, expectedChange, size);
                 } else {
                     logger.warn(String
                             .format("The query result multimap %s of key %s and value %s resulted in %s. (Developer note: %s called from QueryResultMultimap)",
-                                    direction == Direction.INSERT ? "insertion" : "removal", key, value, cache.get(key)
-                                            .size() - 1 > size ? "more than one new result" : "no new results", setter));
-                    return cache.get(key).size() != size;
+                                    direction == Direction.INSERT ? "insertion" : "removal", key, value, Math.abs(cache.size() - size) > 1 ? "more than one changed result" : "no changed results", setter));
                 }
             }
+        } catch (Error e) {
+            throw e;
         } catch (Throwable e) { // NOPMD
-            if (e instanceof Error)
-                throw (Error) e;
             logger.warn(
                     String.format(
                             "The query result multimap encountered an error during invoking setter on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
                             direction == Direction.INSERT ? "insertion" : "removal", key, value, e.getMessage(), e
                                     .getClass().getSimpleName(), setter), e);
         }
-        
+
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.collect.Multimap#remove(java.lang.Object, java.lang.Object)
+    /**
+     * Checks whether the model modification performed by the {@link IQueryResultSetter} resulted 
+     *  in the insertion or removal of exactly the required key-value pair. 
+     * 
+     * @param key the key for the pair that was inserted or removed
+     * @param value the value for the pair that was inserted or removed
+     * @param direction the direction of the change
+     * @param size the size of the cache before the change
+     * @return true, if the changes made by the query result setter were correct
+     */
+    private boolean checkModificationThroughQueryResultSetter(KeyType key, ValueType value, Direction direction,
+            final int expectedChange, final int size) {
+        if ((direction == Direction.INSERT) == cache.containsEntry(key, value)) {
+            if (cache.size() - expectedChange == size) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      */
     @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Object key, Object value) {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         // if it contains the entry, the types MUST be correct
         if(cache.containsEntry(key, value)) {
@@ -420,13 +468,15 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.collect.Multimap#putAll(java.lang.Object, java.lang.Iterable)
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      */
     @Override
     public boolean putAll(KeyType key, Iterable<? extends ValueType> values) {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         boolean changed = false;
         for (ValueType value : values) {
@@ -435,13 +485,15 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         return changed;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.collect.Multimap#putAll(com.google.common.collect.Multimap)
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      */
     @Override
     public boolean putAll(Multimap<? extends KeyType, ? extends ValueType> multimap) {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         boolean changed = false;
         for (Entry<? extends KeyType, ? extends ValueType> entry : multimap.entries()) {
@@ -452,13 +504,15 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
 
     /**
      * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      *
      * <p>The returned collection is immutable.
      */
     @Override
     public Collection<ValueType> replaceValues(KeyType key, Iterable<? extends ValueType> values) {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         Collection<ValueType> oldValues = removeAll(key);
         Iterator<? extends ValueType> iterator = values.iterator();
@@ -477,6 +531,8 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
 
     /**
      * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      *
      * <p>The returned collection is immutable.
      */
@@ -484,7 +540,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     @Override
     public Collection<ValueType> removeAll(Object key) {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         // if it contains the key, the type MUST be correct
         if(cache.containsKey(key)) {
@@ -505,13 +561,15 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         return Collections.EMPTY_SET;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.collect.Multimap#clear()
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>Throws {@link UnsupportedOperationException} if there is no {@link IQueryResultSetter}
      */
     @Override
     public void clear() {
         if(setter == null) {
-            throw new UnsupportedOperationException("Query result multimap does not allow modifications");
+            throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         Iterator<Entry<KeyType, ValueType>> iterator = cache.entries().iterator();
         while(iterator.hasNext()) {
