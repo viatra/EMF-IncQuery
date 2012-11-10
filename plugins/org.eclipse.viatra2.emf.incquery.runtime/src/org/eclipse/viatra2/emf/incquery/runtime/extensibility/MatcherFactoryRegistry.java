@@ -39,18 +39,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public final class MatcherFactoryRegistry {
 	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = createMatcherFactories();
 
-	// NOTE pattern group management is relegated to PatternGroup classes
-	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
-	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
-
 	/**
-	 * 
+	 * Utility class constructor hidden
 	 */
 	private MatcherFactoryRegistry() {
 	}
 	
-	private static HashMap<String, IMatcherFactory<?>> createMatcherFactories() {
-		final HashMap<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
+	private static Map<String, IMatcherFactory<?>> createMatcherFactories() {
+		final Map<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
 		initRegistry(factories);
 		return factories;
 	}
@@ -61,7 +57,9 @@ public final class MatcherFactoryRegistry {
 		factories.clear();
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
-		if (reg == null) return;
+		if (reg == null) {
+		    return;
+		}
 			
 		IExtensionPoint poi = 
 			reg.getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);	
