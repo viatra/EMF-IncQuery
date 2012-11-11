@@ -31,14 +31,13 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 	private Map<IPatternMatch, IMarker> markerMap;
 	private Agenda agenda;
 	
-	@SuppressWarnings("unchecked")
 	public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
 		this.markerMap = new HashMap<IPatternMatch, IMarker>();
 		
 		this.agenda = RuleEngine.getInstance().createAgenda(notifier);
 		
 		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
-			Rule<IPatternMatch> rule = (Rule<IPatternMatch>) agenda.createRule(constraint.getMatcherFactory().getPattern(), true, true);
+			Rule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
 			rule.afterAppearanceJob = new MarkerPlacerJob(markerMap, constraint, logger);
 			rule.afterDisappearanceJob = new MarkerEraserJob(markerMap, logger);
 			rule.afterModificationJob = new MarkerUpdaterJob(markerMap, constraint, logger);

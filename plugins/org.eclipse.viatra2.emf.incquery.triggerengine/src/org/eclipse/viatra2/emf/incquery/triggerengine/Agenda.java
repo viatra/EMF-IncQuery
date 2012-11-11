@@ -12,11 +12,10 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.ActivationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * An agenda contains rules defined for EMF-IncQuery patterns. 
@@ -28,7 +27,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public class Agenda implements ActivationNotificationProvider, Runnable {
 
 	private IncQueryEngine iqEngine;
-	private Set<Rule<IPatternMatch>> rules;
+	private Set<Rule<? extends IPatternMatch>> rules;
 	private Set<Runnable> callbacks;
 	private Set<ActivationMonitor> monitors;
 	private Notifier notifier;
@@ -41,7 +40,7 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 	
 	public Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
 		this.iqEngine = iqEngine;
-		this.rules = new HashSet<Rule<IPatternMatch>>();
+		this.rules = new HashSet<Rule<? extends IPatternMatch>>();
 		this.callbacks = new HashSet<Runnable>();
 		this.monitors = new HashSet<ActivationMonitor>();
 		this.notifier = iqEngine.getEmfRoot();
@@ -57,8 +56,8 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 		this(EngineManager.getInstance().getIncQueryEngine(notifier), allowMultipleFiring);
 	}
 
-	public Rule<? extends IPatternMatch> createRule(Pattern pattern) {
-		return createRule(pattern, false, false);
+	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Rule<Match> createRule(IMatcherFactory<Matcher> factory) {
+		return createRule(factory, false, false);
 	}
 	
 	public Notifier getNotifier() {
@@ -68,13 +67,12 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 	public TransactionalEditingDomain getEditingDomain() {
 		return editingDomain;
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Rule<? extends IPatternMatch> createRule(Pattern pattern, boolean upgradedStateUsed, boolean disappearedStateUsed) {
-		IMatcherFactory factory = MatcherFactoryRegistry.getOrCreateMatcherFactory(pattern);
-		RecordingRule<IPatternMatch> r = null;
+		
+	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
+		Rule<Match> createRule(IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed) {
+		RecordingRule<Match> r = null;
 		try {
-			r = new RecordingRule<IPatternMatch>(this, factory.getMatcher(iqEngine), upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
+			r = new RecordingRule<Match>(this, factory.getMatcher(iqEngine), upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
 			rules.add(r);
 		} catch (IncQueryException e) {
 			e.printStackTrace();
@@ -94,12 +92,12 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 		}
 	}
 	
-	public Collection<Rule<IPatternMatch>> getRules() {
+	public Collection<Rule<? extends IPatternMatch>> getRules() {
 		return rules;
 	}
 	
 	public void dispose() {
-		for (Rule<IPatternMatch> rule : rules) {
+		for (Rule<? extends IPatternMatch> rule : rules) {
 			rule.dispose();
 		}
 	}
