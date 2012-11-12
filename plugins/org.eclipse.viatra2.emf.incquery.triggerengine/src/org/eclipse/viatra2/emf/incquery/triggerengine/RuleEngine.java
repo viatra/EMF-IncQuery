@@ -1,20 +1,34 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.lang.ref.WeakReference;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.triggerengine.specific.DefaultRuleFactory;
 
-// FIXME Duplicate code: delete this or TriggerEngine
+/**
+ * The Rule engine extends the functionality of EMF-IncQuery by 
+ * providing the basic facilities to create transformation rules. 
+ * A transformation rule consists of the precondition being an EMF-IncQuery pattern 
+ * and the postcondition defined as a portion of an arbitrary Java code. 
+ * 
+ * This class can be used to instantiate and lookup Agendas for a specific 
+ * {@link Notifier} or {@link IncQueryEngine} instance. The Agenda acts as 
+ * an up-to-date collection of the fireable rule activations (similar to the 
+ * term known from the context of rule based expert systems). 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class RuleEngine {
 
 	private static RuleEngine instance;
-	// FIXME weak reference to engine to allow garbage collection?
-	private Map<IncQueryEngine, Agenda> agendaMap;
+	private Map<IncQueryEngine, WeakReference<Agenda>> agendaMap;
+	private RuleFactory defaultRuleFactory;
 	
 	public static RuleEngine getInstance() {
 		if (instance == null) {
@@ -24,30 +38,31 @@ public class RuleEngine {
 	}
 	
 	protected RuleEngine() {
-		this.agendaMap = new HashMap<IncQueryEngine, Agenda>();
+		this.agendaMap = new WeakHashMap<IncQueryEngine, WeakReference<Agenda>>();
+		this.defaultRuleFactory = new DefaultRuleFactory();
 	}
 	
-	public Agenda createAgenda(Notifier notifier) {
+	public Agenda getOrCreateAgenda(Notifier notifier) {
 		IncQueryEngine engine;
 		try {
 			engine = EngineManager.getInstance().getIncQueryEngine(notifier);
-			return createAgenda(engine);
+			return getOrCreateAgenda(engine);
 		} catch (IncQueryException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public Agenda createAgenda(IncQueryEngine iqEngine) {
-		Agenda agenda = agendaMap.get(iqEngine);
-		if (agenda == null) {
-			agenda = new Agenda(iqEngine);
-			agendaMap.put(iqEngine, agenda);
+	public Agenda getOrCreateAgenda(IncQueryEngine iqEngine) {
+		WeakReference<Agenda> agendaRef = agendaMap.get(iqEngine);
+		if (agendaRef == null || agendaRef.get() == null) {
+			Agenda agenda = new Agenda(iqEngine);
+			agenda.setRuleFactory(defaultRuleFactory);
+			agendaMap.put(iqEngine, new WeakReference<Agenda>(agenda));
+			return agenda;
 		}
-		return agenda;
-	}
-
-	public Collection<Agenda> getAgendas() {
-		return agendaMap.values();
+		else {
+			return agendaRef.get();
+		}
 	}
 }

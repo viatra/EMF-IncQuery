@@ -8,10 +8,22 @@ import java.util.Map;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
-//FIXME add documentation on the life-cycle of a Rule
-public abstract class Rule<MatchType extends IPatternMatch> {
+/**
+ * A {@link Rule} defines a transformation step in the context of Rule Engine. 
+ * Each rule is assigned a precondition (Left Hand Side - LHS) which is an EMF-IncQuery pattern and 
+ * a postcondition (Right Hand Side - RHS) which is an {@link IMatchProcessor} instance. 
+ * An {@link Activation} is a created for a {@link Rule} when the 
+ * preconditions (LHS) are fully satisfied with some domain model
+ * elements and the rule becomes eligible for execution.
+ * 
+ * @author Tamas Szabo
+ *
+ * @param <MatchType> the type of the pattern
+ */
+public abstract class Rule<MatchType extends IPatternMatch> implements EMFOperationNotificationListener {
 
 	public IMatchProcessor<MatchType> afterAppearanceJob;
 	public IMatchProcessor<MatchType> afterDisappearanceJob;
@@ -23,10 +35,11 @@ public abstract class Rule<MatchType extends IPatternMatch> {
 	protected Map<ActivationState, Map<MatchType, Activation<MatchType>>> stateMap;
 	protected boolean allowMultipleFiring;
 	
-	public Rule(Agenda agenda, IncQueryMatcher<MatchType> matcher, 
-			final boolean upgradedStateUsed, 
-			final boolean disappearedStateUsed,
-			final boolean allowMultipleFiring) {
+	public Rule(Agenda agenda, 
+				IncQueryMatcher<MatchType> matcher, 
+				boolean upgradedStateUsed, 
+				boolean disappearedStateUsed,
+				boolean allowMultipleFiring) {
 		this.agenda = agenda;
 		this.matcher = matcher;
 		this.upgradedStateUsed = upgradedStateUsed;
@@ -45,6 +58,11 @@ public abstract class Rule<MatchType extends IPatternMatch> {
 	}
 	
 	public abstract void activationFired(Activation<MatchType> activation);
+	
+	
+	public Agenda getAgenda() {
+		return agenda;
+	}
 	
 	public List<Activation<MatchType>> getActivations() {
 		List<Activation<MatchType>> activations = new ArrayList<Activation<MatchType>>();

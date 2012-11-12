@@ -5,18 +5,18 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingActivation;
 
-public class AutomaticFiringStrategy implements Runnable {
+public class AutomaticFiringStrategy implements ActivationNotificationListener {
 
 	private ActivationMonitor monitor;
 	
 	public AutomaticFiringStrategy(ActivationMonitor monitor) {
 		this.monitor = monitor;
-		run();
+		afterActivationUpdateCallback();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void run() {
+	public void afterActivationUpdateCallback() {
 		for (Activation<? extends IPatternMatch> a : monitor.getActivations()) {
 			((RecordingActivation<IPatternMatch>) a).fireWithRecording();
 		}

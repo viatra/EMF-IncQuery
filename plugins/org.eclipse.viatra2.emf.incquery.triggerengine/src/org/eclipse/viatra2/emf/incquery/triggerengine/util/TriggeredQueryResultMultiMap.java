@@ -43,7 +43,7 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
         
         ActivationMonitor monitor = agenda.newActivationMonitor(true);
         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
-        agenda.addCallbackAfterUpdates(firingStrategy);
+        agenda.addActivationNotificationListener(firingStrategy);
         
         appearanceProcessor = new IMatchProcessor<MatchType>() {
             @Override
@@ -65,11 +65,11 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
     }
     
     protected TriggeredQueryResultMultiMap(IncQueryEngine engine) {
-        this(RuleEngine.getInstance().createAgenda(engine));
+        this(RuleEngine.getInstance().getOrCreateAgenda(engine));
     }
     
     protected TriggeredQueryResultMultiMap(Notifier notifier) {
-        this(RuleEngine.getInstance().createAgenda(notifier));
+        this(RuleEngine.getInstance().getOrCreateAgenda(notifier));
     }
     
     public <Matcher extends IncQueryMatcher<MatchType>> void addMatcherToMultimapResults(IMatcherFactory<Matcher> factory) {
@@ -78,7 +78,8 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
             newRule.afterAppearanceJob = appearanceProcessor;
             newRule.afterDisappearanceJob = disappearanceProcessor;
         }
-        agenda.run();
+        //FIXME
+        //agenda.afterActivationUpdateCallback();
     }
 
     protected abstract KeyType getKeyFromMatch(MatchType match); 

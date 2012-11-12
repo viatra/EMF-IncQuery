@@ -34,19 +34,18 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 	public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
 		this.markerMap = new HashMap<IPatternMatch, IMarker>();
 		
-		this.agenda = RuleEngine.getInstance().createAgenda(notifier);
+		this.agenda = RuleEngine.getInstance().getOrCreateAgenda(notifier);
 		
 		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
 			Rule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
 			rule.afterAppearanceJob = new MarkerPlacerJob(markerMap, constraint, logger);
 			rule.afterDisappearanceJob = new MarkerEraserJob(markerMap, logger);
 			rule.afterModificationJob = new MarkerUpdaterJob(markerMap, constraint, logger);
-			
 		}
 		
 		ActivationMonitor monitor = agenda.newActivationMonitor(true);
 		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
-		agenda.addCallbackAfterUpdates(firingStrategy);
+		agenda.addActivationNotificationListener(firingStrategy);
 	}
 	
 	public void dispose() {

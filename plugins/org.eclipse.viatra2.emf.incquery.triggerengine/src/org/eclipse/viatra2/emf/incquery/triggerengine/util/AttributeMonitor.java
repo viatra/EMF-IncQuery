@@ -14,16 +14,19 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.NotificationProvider;
+import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationProvider;
 
-public class AttributeMonitor<MatchType extends IPatternMatch> extends NotificationProvider<MatchType> {
+public class AttributeMonitor<MatchType extends IPatternMatch> extends EMFOperationNotificationProvider {
 
 	private ChangeListener changeListener;
 	private Map<IObservableValue, MatchType> observableMap;
 	private Map<MatchType, List<IObservableValue>> observableMapReversed;
+	private Rule<MatchType> rule;
 	public Collection<MatchType> matchModificationEvents;
 	
-	public AttributeMonitor() {
+	public AttributeMonitor(Rule<MatchType> rule) {
+		this.rule = rule;
 		this.changeListener = new ChangeListener();
 		this.observableMap = new HashMap<IObservableValue, MatchType>();
 		this.observableMapReversed = new HashMap<MatchType, List<IObservableValue>>();
@@ -39,6 +42,7 @@ public class AttributeMonitor<MatchType extends IPatternMatch> extends Notificat
 				matchModificationEvents.add(match);
 			}
 			notfiyListeners();
+			rule.getAgenda().afterActivationUpdateCallback();
 		}
 	}
 	

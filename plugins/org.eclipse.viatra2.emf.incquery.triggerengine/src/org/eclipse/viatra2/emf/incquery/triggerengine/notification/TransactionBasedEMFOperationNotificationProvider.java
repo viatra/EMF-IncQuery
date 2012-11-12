@@ -6,18 +6,20 @@ import org.eclipse.emf.transaction.TransactionalEditingDomainEvent;
 import org.eclipse.emf.transaction.TransactionalEditingDomainListener;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.emf.workspace.impl.EMFOperationTransaction;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
 
-public class TransactionBasedNotificationProvider<T extends IPatternMatch> extends NotificationProvider<T> {
+public class TransactionBasedEMFOperationNotificationProvider extends EMFOperationNotificationProvider {
 
 	private TransactionListener transactionListener;
 	private TransactionalEditingDomain editingDomain;
 	private Lifecycle lifecycle;
+	private Agenda agenda;
 	
-	public TransactionBasedNotificationProvider(TransactionalEditingDomain editingDomain) {
+	public TransactionBasedEMFOperationNotificationProvider(Agenda agenda) {
 		super();
+		this.agenda = agenda;
 		this.transactionListener = new TransactionListener();
-		this.editingDomain = editingDomain;
+		this.editingDomain = agenda.getEditingDomain();
 		this.lifecycle = TransactionUtil.getAdapter(this.editingDomain, Lifecycle.class);
 		this.lifecycle.addTransactionalEditingDomainListener(transactionListener);
 	}
@@ -52,9 +54,8 @@ public class TransactionBasedNotificationProvider<T extends IPatternMatch> exten
 			}
 			
 			if (needsNotification) {
-				for (NotificationProviderListener<T> listener : listeners) {
-					listener.notificationCallback();
-				}
+				notfiyListeners();
+				agenda.afterActivationUpdateCallback();
 			}
 		}
 

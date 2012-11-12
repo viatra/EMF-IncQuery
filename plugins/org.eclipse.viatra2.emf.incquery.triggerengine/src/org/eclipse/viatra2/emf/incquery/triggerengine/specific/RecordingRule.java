@@ -9,16 +9,12 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.NotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.NotificationProviderListener;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ReteBasedNotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.TransactionBasedNotificationProvider;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.AttributeMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
-public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> implements NotificationProviderListener<MatchType> {
+public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> implements EMFOperationNotificationListener {
 	
-	private NotificationProvider<MatchType> notificationProvider;
 	private AttributeMonitor<MatchType> attributeMonitor;
 	private DeltaMonitor<MatchType> deltaMonitor;
 	
@@ -28,18 +24,9 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 			final boolean allowMultipleFiring) {
 		super(agenda, matcher, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
 		
-		// FIXME rethink number of notification providers needed
-		if (agenda.getEditingDomain() != null) {
-			notificationProvider = new TransactionBasedNotificationProvider<MatchType>(agenda.getEditingDomain());
-		}
-		else {
-			notificationProvider = new ReteBasedNotificationProvider<MatchType>(matcher);
-		}
 		this.deltaMonitor = matcher.newDeltaMonitor(true);
-		this.attributeMonitor = new AttributeMonitor<MatchType>();
-		this.notificationProvider.addNotificationProviderListener(this);
+		this.attributeMonitor = new AttributeMonitor<MatchType>(this);
 		this.attributeMonitor.addNotificationProviderListener(this);
-		notificationCallback();
 	}
 	
 	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher) {
@@ -148,11 +135,10 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 	public void dispose() {
 		attributeMonitor.unregisterForAll();
 		deltaMonitor.disconnectFromNetwork();
-		notificationProvider.dispose();
 	}
 
 	@Override
-	public void notificationCallback() {
+	public void afterEMFOperationListener() {
 		for (MatchType newMatch : deltaMonitor.matchFoundEvents) {
 			processMatchAppearance(newMatch);
 		}
@@ -165,7 +151,5 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 		
 		deltaMonitor.clear();
 		attributeMonitor.clear();
-		
-		this.agenda.run();
 	}
 }
