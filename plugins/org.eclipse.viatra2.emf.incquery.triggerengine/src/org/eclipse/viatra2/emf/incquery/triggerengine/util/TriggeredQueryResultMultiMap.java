@@ -78,8 +78,8 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
             newRule.afterAppearanceJob = appearanceProcessor;
             newRule.afterDisappearanceJob = disappearanceProcessor;
         }
-        //FIXME
-        //agenda.afterActivationUpdateCallback();
+
+        agenda.afterActivationUpdateCallback();
     }
 
     protected abstract KeyType getKeyFromMatch(MatchType match); 

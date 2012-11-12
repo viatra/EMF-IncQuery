@@ -15,9 +15,6 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  * A {@link Rule} defines a transformation step in the context of Rule Engine. 
  * Each rule is assigned a precondition (Left Hand Side - LHS) which is an EMF-IncQuery pattern and 
  * a postcondition (Right Hand Side - RHS) which is an {@link IMatchProcessor} instance. 
- * An {@link Activation} is a created for a {@link Rule} when the 
- * preconditions (LHS) are fully satisfied with some domain model
- * elements and the rule becomes eligible for execution.
  * 
  * @author Tamas Szabo
  *
