@@ -9,9 +9,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 
+// FIXME Duplicate code: delete this or TriggerEngine
 public class RuleEngine {
 
 	private static RuleEngine instance;
+	// FIXME weak reference to engine to allow garbage collection?
 	private Map<IncQueryEngine, Agenda> agendaMap;
 	
 	public static RuleEngine getInstance() {

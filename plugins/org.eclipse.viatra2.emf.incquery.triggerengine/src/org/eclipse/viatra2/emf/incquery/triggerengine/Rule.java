@@ -10,6 +10,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
+//FIXME add documentation on the life-cycle of a Rule
 public abstract class Rule<MatchType extends IPatternMatch> {
 
 	public IMatchProcessor<MatchType> afterAppearanceJob;

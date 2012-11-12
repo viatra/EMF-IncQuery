@@ -42,10 +42,11 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 			rule.afterDisappearanceJob = new MarkerEraserJob(markerMap, logger);
 			rule.afterModificationJob = new MarkerUpdaterJob(markerMap, constraint, logger);
 			
-			ActivationMonitor monitor = agenda.newActivationMonitor(true);
-			AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
-			agenda.addCallbackAfterUpdates(firingStrategy);
 		}
+		
+		ActivationMonitor monitor = agenda.newActivationMonitor(true);
+		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
+		agenda.addCallbackAfterUpdates(firingStrategy);
 	}
 	
 	public void dispose() {
@@ -57,7 +58,6 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 				e.printStackTrace();
 			}
 		}
-		
 		agenda.dispose();
 	}
 }

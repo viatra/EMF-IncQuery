@@ -21,9 +21,14 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
  * An agenda contains rules defined for EMF-IncQuery patterns. 
  * It keeps track of the activations of the registered rules based on a given {@link IncQueryEngine}.
  * 
+ * Future work:
+ *  - callbackAfterUpdate only called to check if there are new activations
+ *  - matchAppearance/disappearance in Rule to update activations 
+ * 
  * @author Tamas Szabo
  *
  */
+//FIXME add documentation on the life-cycle of an Agenda
 public class Agenda implements ActivationNotificationProvider, Runnable {
 
 	private IncQueryEngine iqEngine;
@@ -34,6 +39,7 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 	private TransactionalEditingDomain editingDomain;
 	private boolean allowMultipleFiring;
 	
+	// FIXME public constructor?
 	public Agenda(IncQueryEngine iqEngine) {
 		this(iqEngine, false);
 	}
@@ -72,6 +78,7 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 		Rule<Match> createRule(IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed) {
 		RecordingRule<Match> r = null;
 		try {
+		    // FIXME usage of RecordingRule burned in, how do you use other types of rules?
 			r = new RecordingRule<Match>(this, factory.getMatcher(iqEngine), upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
 			rules.add(r);
 		} catch (IncQueryException e) {
@@ -119,6 +126,8 @@ public class Agenda implements ActivationNotificationProvider, Runnable {
 		return Collections.unmodifiableCollection(activations);
 	}
 
+	// FIXME it seems strange that the Agenda.run() can be invoked by anyone
+	// FIXME Agenda should not be Runnable
 	@Override
 	public void run() {
 		Collection<Activation<? extends IPatternMatch>> activations = getActivations();

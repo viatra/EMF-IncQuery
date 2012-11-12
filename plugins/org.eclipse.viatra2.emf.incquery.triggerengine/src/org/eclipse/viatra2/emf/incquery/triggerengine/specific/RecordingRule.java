@@ -28,6 +28,7 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 			final boolean allowMultipleFiring) {
 		super(agenda, matcher, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
 		
+		// FIXME rethink number of notification providers needed
 		if (agenda.getEditingDomain() != null) {
 			notificationProvider = new TransactionBasedNotificationProvider<MatchType>(agenda.getEditingDomain());
 		}

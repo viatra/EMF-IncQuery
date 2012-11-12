@@ -44,7 +44,7 @@ import com.google.common.collect.Multisets;
 public abstract class QueryResultMultimap<KeyType, ValueType> implements Multimap<KeyType, ValueType> {
 
     /**
-     * 
+     * Error literal returned when multimap modification is attempted without a setter available
      */
     private static final String NOT_ALLOW_MODIFICATIONS = "Query result multimap does not allow modifications";
     /**
@@ -52,6 +52,9 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
      * Implementing classes should not modify it directly
      */
     private Multimap<KeyType, ValueType> cache;
+    /**
+     * Logger that can be used for reporting errors during runtime
+     */
     private Logger logger;
     /**
      * The collection of listeners registered for this result multimap
@@ -71,82 +74,6 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
     }
     
     /**
-     * Listener interface for receiving notification from {@link QueryResultMultimap}
-     *   
-     * @author Abel Hegedus
-     *
-     * @param <KeyType>
-     * @param <ValueType>
-     */
-    public interface IQueryResultUpdateListener<KeyType, ValueType>{
-        /**
-         * This method is called by the query result multimap when a new key-value pair is put into the multimap
-         * 
-         * <p> Only invoked if the contents of the multimap changed!
-         * 
-         * @param key the key of the newly inserted pair
-         * @param value the value of the newly inserted pair
-         */
-        void notifyPut(KeyType key, ValueType value);
-        
-        /**
-         * This method is called by the query result multimap when key-value pair is removed from the multimap
-         * 
-         * <p> Only invoked if the contents of the multimap changed!
-         * 
-         * @param key the key of the removed pair
-         * @param value the value of the removed pair
-         */
-        void notifyRemove(KeyType key, ValueType value);
-    }
-    
-    /**
-     * Setter interface for query result multimaps that allow modifications of the model through the multimap.
-     * 
-     * <p> The model modifications should ensure that the multimap changes exactly as required
-     *  (i.e. a put results in only one new key-value pair and remove results in only one removed pair).
-     *  
-     * <p> The input parameters of both put and remove can be validated by implementing the {@link #validate(Object, Object)} method.
-     * 
-     * @author Abel Hegedus
-     *
-     * @param <KeyType>
-     * @param <ValueType>
-     */
-    public interface IQueryResultSetter<KeyType, ValueType>{
-        /**
-         * Modify the underlying model of the query in order to have the given key-value pair
-         *  as a new result of the query.
-         *  
-         * @param key the key for which a new value is added to the query results
-         * @param value the new value that should be added to the query results for the given key
-         * @return true, if the query result changed
-         */
-        boolean put(KeyType key, ValueType value);
-        
-        /**
-         * Modify the underlying model of the query in order to remove the given key-value pair
-         *  from the results of the query.
-         *  
-         * @param key the key for which the value is removed from the query results
-         * @param value the value that should be removed from the query results for the given key
-         * @return true, if the query result changed
-         */
-        boolean remove(KeyType key, ValueType value);
-        
-        /**
-         * Validates a given key-value pair for the query result. The validation has to ensure that 
-         *  (1) if the pair does not exist in the result, it can be added safely
-         *  (2) if the pair already exists in the result, it can be removed safely
-         *   
-         * @param key the key of the pair that is validated
-         * @param value the value of the pair that is validated
-         * @return true, if the pair does not exists but can be added or the pair exists and can be removed
-         */
-        boolean validate(KeyType key, ValueType value);
-    }
-    
-    /**
      * Registers a listener for this query result multimap that is invoked every time
      *  when a key-value pair is inserted or removed from the multimap.
      *  
@@ -157,7 +84,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
      */
     public void addCallbackOnQueryResultUpdate(IQueryResultUpdateListener<KeyType, ValueType> listener, boolean fireNow) {
         if(listeners == null) {
-            listeners = new HashSet<QueryResultMultimap.IQueryResultUpdateListener<KeyType,ValueType>>();
+            listeners = new HashSet<IQueryResultUpdateListener<KeyType,ValueType>>();
         }
         listeners.add(listener);
     }
@@ -188,9 +115,9 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
                 } else {
                     listener.notifyRemove(key, value);
                 }
-            } catch (Error e) {
+            } catch (Error e) { // NOPMD
                 throw e;
-            } catch (Throwable e) { // NOPMD
+            } catch (Throwable e) {
                 logger.warn(
                         String.format(
                                 "The query result multimap encountered an error during executing a callback on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
@@ -417,9 +344,9 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
                                     direction == Direction.INSERT ? "insertion" : "removal", key, value, Math.abs(cache.size() - size) > 1 ? "more than one changed result" : "no changed results", setter));
                 }
             }
-        } catch (Error e) {
+        } catch (Error e) { // NOPMD
             throw e;
-        } catch (Throwable e) { // NOPMD
+        } catch (Throwable e) {
             logger.warn(
                     String.format(
                             "The query result multimap encountered an error during invoking setter on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
@@ -442,10 +369,8 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
      */
     private boolean checkModificationThroughQueryResultSetter(KeyType key, ValueType value, Direction direction,
             final int expectedChange, final int size) {
-        if ((direction == Direction.INSERT) == cache.containsEntry(key, value)) {
-            if (cache.size() - expectedChange == size) {
-                return true;
-            }
+        if ((direction == Direction.INSERT) == cache.containsEntry(key, value) && (cache.size() - expectedChange) == size) {
+             return true;
         }
         return false;
     }
