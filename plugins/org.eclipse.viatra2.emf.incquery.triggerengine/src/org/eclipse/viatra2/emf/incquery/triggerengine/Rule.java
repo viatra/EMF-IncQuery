@@ -12,13 +12,16 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationN
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
- * A {@link Rule} defines a transformation step in the context of Rule Engine. 
+ * A {@link Rule} defines a transformation step in the context of the Rule Engine. 
  * Each rule is assigned a precondition (Left Hand Side - LHS) which is an EMF-IncQuery pattern and 
  * a postcondition (Right Hand Side - RHS) which is an {@link IMatchProcessor} instance. 
  * 
+ * The {@link Rule} keeps track of its activations and they can be queried and executed at some 
+ * point in time. 
+ * 
  * @author Tamas Szabo
  *
- * @param <MatchType> the type of the pattern
+ * @param <MatchType> the type of the pattern match
  */
 public abstract class Rule<MatchType extends IPatternMatch> implements EMFOperationNotificationListener {
 
@@ -55,7 +58,6 @@ public abstract class Rule<MatchType extends IPatternMatch> implements EMFOperat
 	}
 	
 	public abstract void activationFired(Activation<MatchType> activation);
-	
 	
 	public Agenda getAgenda() {
 		return agenda;

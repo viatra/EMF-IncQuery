@@ -13,7 +13,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
  * {@link Rule} instantiation, one may set whether the Disappeared and 
  * Upgraded states will be used during the lifecycle of the Activation.  
  * If multiple firing is allowed for the Activation then only
- * the 'Appeared' state will be used. 
+ * the Appeared state will be used. 
  * 
  * @author Tamas Szabo
  *

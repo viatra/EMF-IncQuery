@@ -8,6 +8,15 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.emf.workspace.impl.EMFOperationTransaction;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
 
+/**
+ * The notification mechanism of this class is based on the transactions 
+ * occuring in the {@link TransactionalEditingDomain} of the associated {@link Agenda}.
+ * The {@link TransactionBasedEMFOperationNotificationProvider} listens to the 
+ * transaction closing events by registering a {@link TransactionListener}.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class TransactionBasedEMFOperationNotificationProvider extends EMFOperationNotificationProvider {
 
 	private TransactionListener transactionListener;
