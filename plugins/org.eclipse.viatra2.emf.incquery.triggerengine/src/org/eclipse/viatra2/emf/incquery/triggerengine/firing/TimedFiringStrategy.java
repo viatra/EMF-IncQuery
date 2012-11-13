@@ -4,6 +4,15 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
 
+/**
+ * A timed firing strategy is similar to the {@link AutomaticFiringStrategy} 
+ * as it also fires all the applicable activations but it does so in a 
+ * periodic manner. One must define the interval between two consecutive 
+ * firings.
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class TimedFiringStrategy implements Runnable {
 
 	private long interval;
@@ -28,7 +37,7 @@ public class TimedFiringStrategy implements Runnable {
 				for (Activation<? extends IPatternMatch> a : monitor.getActivations()) {
 					a.fire();
 				}
-				
+				monitor.clear();
 				try {
 					Thread.sleep(interval);
 				} 
