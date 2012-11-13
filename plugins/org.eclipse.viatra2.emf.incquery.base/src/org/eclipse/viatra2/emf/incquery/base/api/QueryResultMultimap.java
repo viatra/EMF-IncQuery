@@ -38,8 +38,8 @@ import com.google.common.collect.Multisets;
  * 
  * @author Abel Hegedus
  *
- * @param <KeyType>
- * @param <ValueType>
+ * @param <KeyType> the type of the keys stored in the multimap
+ * @param <ValueType> the type of the values stored in the multimap
  */
 public abstract class QueryResultMultimap<KeyType, ValueType> implements Multimap<KeyType, ValueType> {
 
@@ -61,6 +61,9 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
      */
     private Collection<IQueryResultUpdateListener<KeyType, ValueType>> listeners;
 
+    /**
+     * The setter registered for changing the contents of the multimap
+     */
     private IQueryResultSetter<KeyType, ValueType> setter;
     
     /**
