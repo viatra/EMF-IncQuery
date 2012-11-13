@@ -23,7 +23,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.TriggerEngine;
+import org.eclipse.viatra2.emf.incquery.triggerengine.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 public class ConstraintAdapter<T extends IPatternMatch> {
@@ -31,22 +31,21 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 	private Map<IPatternMatch, IMarker> markerMap;
 	private Agenda agenda;
 	
-	@SuppressWarnings("unchecked")
 	public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
 		this.markerMap = new HashMap<IPatternMatch, IMarker>();
 		
-		this.agenda = TriggerEngine.getInstance().createAgenda(notifier);
+		this.agenda = RuleEngine.getInstance().getOrCreateAgenda(notifier);
 		
 		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
-			Rule<IPatternMatch> rule = (Rule<IPatternMatch>) agenda.createRule(constraint.getMatcherFactory().getPattern(), true, true);
+			Rule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
 			rule.afterAppearanceJob = new MarkerPlacerJob(markerMap, constraint, logger);
 			rule.afterDisappearanceJob = new MarkerEraserJob(markerMap, logger);
 			rule.afterModificationJob = new MarkerUpdaterJob(markerMap, constraint, logger);
-			
-			ActivationMonitor monitor = agenda.newActivationMonitor(true);
-			AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
-			agenda.addCallbackAfterUpdates(firingStrategy);
 		}
+		
+		ActivationMonitor monitor = agenda.newActivationMonitor(true);
+		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
+		agenda.addActivationNotificationListener(firingStrategy);
 	}
 	
 	public void dispose() {
@@ -58,7 +57,6 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 				e.printStackTrace();
 			}
 		}
-		
 		agenda.dispose();
 	}
 }

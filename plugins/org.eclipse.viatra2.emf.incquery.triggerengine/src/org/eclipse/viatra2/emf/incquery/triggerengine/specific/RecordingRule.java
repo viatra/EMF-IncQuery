@@ -9,16 +9,12 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.NotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.NotificationProviderListener;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ReteBasedNotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.TransactionBasedNotificationProvider;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.AttributeMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 
-public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> implements NotificationProviderListener<MatchType> {
+public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> implements EMFOperationNotificationListener {
 	
-	private NotificationProvider<MatchType> notificationProvider;
 	private AttributeMonitor<MatchType> attributeMonitor;
 	private DeltaMonitor<MatchType> deltaMonitor;
 	
@@ -28,17 +24,9 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 			final boolean allowMultipleFiring) {
 		super(agenda, matcher, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
 		
-		if (agenda.getEditingDomain() != null) {
-			notificationProvider = new TransactionBasedNotificationProvider<MatchType>(agenda.getEditingDomain());
-		}
-		else {
-			notificationProvider = new ReteBasedNotificationProvider<MatchType>(matcher);
-		}
 		this.deltaMonitor = matcher.newDeltaMonitor(true);
-		this.attributeMonitor = new AttributeMonitor<MatchType>();
-		this.notificationProvider.addNotificationProviderListener(this);
+		this.attributeMonitor = new AttributeMonitor<MatchType>(this);
 		this.attributeMonitor.addNotificationProviderListener(this);
-		notificationCallback();
 	}
 	
 	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher) {
@@ -54,12 +42,12 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 	 * @param match
 	 */
 	private void processMatchModification(MatchType match) {
-		Map<MatchType, Activation<MatchType>> upgradedMap = stateMap.get(ActivationState.UPGRADED);
+		Map<MatchType, Activation<MatchType>> updatedMap = stateMap.get(ActivationState.UPDATED);
 		Map<MatchType, Activation<MatchType>> appearedMap = stateMap.get(ActivationState.APPEARED);
-		Activation<MatchType> activation = upgradedMap.get(match);
+		Activation<MatchType> activation = updatedMap.get(match);
 		
 		//if this method is called the activation associated to the match must be in either appeared or upgraded state
-		if (activation != null && activation.isFired()) {
+		if (activation != null) {
 			//upgraded state is not changed
 			activation.setFired(false);
 		}
@@ -69,8 +57,8 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 				//changing activation state from appeared to upgraded
 				appearedMap.remove(match);
 				activation.setFired(false);
-				activation.setState(ActivationState.UPGRADED);
-				upgradedMap.put(match, activation);
+				activation.setState(ActivationState.UPDATED);
+				updatedMap.put(match, activation);
 			}
 		}
 	}
@@ -102,13 +90,13 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 	private void processMatchDisappearance(MatchType match) {
 		Map<MatchType, Activation<MatchType>> disappearedMap = stateMap.get(ActivationState.DISAPPEARED);
 		Map<MatchType, Activation<MatchType>> appearedMap = stateMap.get(ActivationState.APPEARED);
-		Map<MatchType, Activation<MatchType>> upgradedMap = stateMap.get(ActivationState.UPGRADED);
+		Map<MatchType, Activation<MatchType>> updatedMap = stateMap.get(ActivationState.UPDATED);
 
-		//activation can be in appeared or upgraded state
+		//activation can be in appeared or updated state
 		Activation<MatchType> activation = appearedMap.get(match);
 		if (activation != null) {
 			//changing activation state from appeared to disappeared if it was fired
-			if (disappearedStateUsed) {
+			if (activation.isFired() && disappearedStateUsed) {
 				appearedMap.remove(match);
 				activation.setFired(false);
 				activation.setState(ActivationState.DISAPPEARED);
@@ -121,10 +109,10 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 			}
 		}
 		else {
-			//changing activation state from upgraded to disappeared if it was fired
-			activation = upgradedMap.get(match);
+			//changing activation state from updated to disappeared if it was fired
+			activation = updatedMap.get(match);
 			if (activation.isFired()) {
-				upgradedMap.remove(match);
+				updatedMap.remove(match);
 				activation.setFired(false);
 				activation.setState(ActivationState.DISAPPEARED);
 				disappearedMap.put(match, activation);
@@ -147,11 +135,10 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 	public void dispose() {
 		attributeMonitor.unregisterForAll();
 		deltaMonitor.disconnectFromNetwork();
-		notificationProvider.dispose();
 	}
 
 	@Override
-	public void notificationCallback() {
+	public void afterEMFOperationListener() {
 		for (MatchType newMatch : deltaMonitor.matchFoundEvents) {
 			processMatchAppearance(newMatch);
 		}
@@ -164,7 +151,5 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 		
 		deltaMonitor.clear();
 		attributeMonitor.clear();
-		
-		this.agenda.run();
 	}
 }

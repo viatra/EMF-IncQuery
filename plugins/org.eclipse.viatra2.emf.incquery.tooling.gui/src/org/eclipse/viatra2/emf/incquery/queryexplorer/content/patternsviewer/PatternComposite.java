@@ -273,7 +273,7 @@ public class PatternComposite extends PatternComponent {
 
 	@Override
 	public boolean updateSelection(CheckboxTreeViewer treeViewer) {
-		boolean allSelected = true;
+		boolean allSelected = (this.children.size() > 0);
 		
 		for (PatternComponent pc : this.children) {
 			if (!pc.updateSelection(treeViewer)) {

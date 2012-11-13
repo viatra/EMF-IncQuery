@@ -14,25 +14,25 @@ package org.eclipse.viatra2.emf.incquery.tooling.generator.derived
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind
 
 import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
-import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind
 
 class DerivedFeatureSourceCodeUtil {
 	
 	//@Inject extension JvmTypesBuilder
 	def methodBody(GenClass source, GenFeature feature,
-		Pattern pattern, String sourceParamName, String targetParamName, FeatureKind kind, boolean keepCache){
+		Pattern pattern, String sourceParamName, String targetParamName, QueryBasedFeatureKind kind, boolean keepCache){
 		switch(kind){
-			case FeatureKind::SINGLE_REFERENCE:
+			case org::eclipse::viatra2::emf::incquery::runtime::derived::QueryBasedFeatureKind::SINGLE_REFERENCE:
 				singleRefGetMethod(source,feature,pattern,sourceParamName,targetParamName,keepCache)
-			case FeatureKind::MANY_REFERENCE:
+			case org::eclipse::viatra2::emf::incquery::runtime::derived::QueryBasedFeatureKind::MANY_REFERENCE:
 				manyRefGetMethod(source,feature,pattern,sourceParamName,targetParamName,keepCache)
-			case FeatureKind::COUNTER:
+			case org::eclipse::viatra2::emf::incquery::runtime::derived::QueryBasedFeatureKind::COUNTER:
 				counterGetMethod(source,feature,pattern,sourceParamName,targetParamName)
-			case FeatureKind::SUM:
+			case org::eclipse::viatra2::emf::incquery::runtime::derived::QueryBasedFeatureKind::SUM:
 				sumGetMethod(source,feature,pattern,sourceParamName,targetParamName)			
-			case FeatureKind::ITERATION:
+			case org::eclipse::viatra2::emf::incquery::runtime::derived::QueryBasedFeatureKind::ITERATION:
 				iterationGetMethod(source,feature,pattern,sourceParamName,targetParamName)
 		}
 	}
@@ -40,9 +40,9 @@ class DerivedFeatureSourceCodeUtil {
 	def dummyCompUnitHeader()'''
 	  import org.eclipse.emf.common.util.EList;
 	  import org.eclipse.emf.ecore.EClass;
-	  import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
-	  import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-	  import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
+	  import org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler;
+	  import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
+	  import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
 	  
 	  public class DummyClass {
 	   public void DummyMethod() {
@@ -52,10 +52,10 @@ class DerivedFeatureSourceCodeUtil {
 		Pattern pattern, String sourceParamName, String targetParamName, boolean keepCache)'''
 		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
+					«feature.name»Handler = QueryBasedFeatureHelper.getQueryBasedFeatureHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.SINGLE_REFERENCE,«keepCache», false);
+						QueryBasedFeatureKind.SINGLE_REFERENCE,«keepCache», false);
 				}
 				return («feature.getType(source)») «feature.name»Handler.getSingleReferenceValue(this);
 			}
@@ -78,10 +78,10 @@ class DerivedFeatureSourceCodeUtil {
 		Pattern pattern, String sourceParamName, String targetParamName, boolean keepCache)'''
 		«dummyCompUnitHeader»
 				if(«feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
+					«feature.name»Handler = QueryBasedFeatureHelper.getQueryBasedFeatureHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.MANY_REFERENCE,«keepCache», false);
+						QueryBasedFeatureKind.MANY_REFERENCE,«keepCache», false);
 				}
 				return «feature.name»Handler.getManyReferenceValueAsEList(this);
 			}
@@ -92,10 +92,10 @@ class DerivedFeatureSourceCodeUtil {
 		Pattern pattern, String sourceParamName, String targetParamName)'''
 		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
+					«feature.name»Handler = QueryBasedFeatureHelper.getQueryBasedFeatureHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", null,
-						FeatureKind.COUNTER, true, false);
+						QueryBasedFeatureKind.COUNTER, true, false);
 				}
 				return «feature.name»Handler.getIntValue(this);
 			}
@@ -106,10 +106,10 @@ class DerivedFeatureSourceCodeUtil {
 		Pattern pattern, String sourceParamName, String targetParamName)'''
 		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
+					«feature.name»Handler = QueryBasedFeatureHelper.getQueryBasedFeatureHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.SUM, true, false);
+						QueryBasedFeatureKind.SUM, true, false);
 				}
 				return «feature.name»Handler.getIntValue(this);
 			}
@@ -120,72 +120,12 @@ class DerivedFeatureSourceCodeUtil {
 		Pattern pattern, String sourceParamName, String targetParamName)'''
 		«dummyCompUnitHeader»
 				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.getIncqueryDerivedFeature(this,
+					«feature.name»Handler = QueryBasedFeatureHelper.getQueryBasedFeatureHandler(this,
 						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
 						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.ITERATION, true, false);
+						QueryBasedFeatureKind.ITERATION, true, false);
 				}
 				return («feature.getType(source)») «feature.name»Handler.getValueIteration(this);
-			}
-		}
-	'''
-	
-	def manyRefGetMethodOld(GenClass source, GenFeature feature,
-		Pattern pattern, String sourceParamName, String targetParamName, boolean keepCache)'''
-		«dummyCompUnitHeader»
-				if(«feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
-						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
-						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.MANY_REFERENCE,«keepCache»);
-				}
-				return IncqueryFeatureHelper.getManyReferenceValueForHandler(«feature.name»Handler, this,
-				  «source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»);
-			}
-		}
-	'''
-	
-	def counterGetMethodOld(GenClass source, GenFeature feature,
-		Pattern pattern, String sourceParamName, String targetParamName)'''
-		«dummyCompUnitHeader»
-				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
-						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
-						"«pattern.fullyQualifiedName»", "«sourceParamName»", null,
-						FeatureKind.COUNTER);
-				}
-				return IncqueryFeatureHelper.getIntValueForHandler(«feature.name»Handler, this,
-				  «source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»);
-			}
-		}
-	'''
-	
-	def sumGetMethodOld(GenClass source, GenFeature feature,
-		Pattern pattern, String sourceParamName, String targetParamName)'''
-		«dummyCompUnitHeader»
-				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
-						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
-						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.SUM);
-				}
-				return IncqueryFeatureHelper.getIntValueForHandler(«feature.name»Handler, this,
-		      «source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»);
-			}
-		}
-	'''
-	
-	def iterationGetMethodOld(GenClass source, GenFeature feature,
-		Pattern pattern, String sourceParamName, String targetParamName)'''
-		«dummyCompUnitHeader»
-				if («feature.name»Handler == null) {
-					«feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
-						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
-						"«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
-						FeatureKind.ITERATION);
-				}
-				return («feature.getType(source)») IncqueryFeatureHelper.getIterationValueForHandler(«feature.name»Handler, this,
-				  «source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»);
 			}
 		}
 	'''

@@ -15,19 +15,16 @@ public class UnionFindNodeProperty<V> {
 
 	public int rank;
 	public V parent;
-	public boolean deleted;
 	
 	public UnionFindNodeProperty() {
 		this.rank = 0;
 		this.parent = null;
-		this.deleted = false;
 	}
 	
 	public UnionFindNodeProperty(int rank, V parent) {
 		super();
 		this.rank = rank;
 		this.parent = parent;
-		this.deleted = false;
 	}
 
 	@Override

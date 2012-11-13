@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -41,11 +42,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class TableViewerUtil {
 	
-	@Inject
-	ITypeProvider typeProvider;
+    @Inject
+    private ITypeProvider typeProvider;
 	
 	@Inject 
-	Injector injector;
+    private Injector injector;
 	
 	private Set<String> primitiveTypes;
 	
@@ -67,7 +68,7 @@ public class TableViewerUtil {
 		return primitiveTypes.contains(fqn);
 	}
 
-	public void prepareTableViewerForObservableInput(ObservablePatternMatch match, TableViewer viewer) {
+    public void prepareTableViewerForObservableInput(final ObservablePatternMatch match, TableViewer viewer) {
 		clearTableViewerColumns(viewer);
 		String[] titles = { "Parameter", "Value" };
 		createColumns(viewer, titles);
@@ -76,6 +77,7 @@ public class TableViewerUtil {
 		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.setLabelProvider(new DetailElementLabelProvider());
 		viewer.setCellModifier(new DetailElementCellModifier());
+        viewer.setComparator(new ViewerComparator(new DetailComparator(match.getPatternMatch().parameterNames())));
 		
 		DatabindingAdapter<IPatternMatch> databindableMatcher = 
 				DatabindingUtil.getDatabindingAdapter(match.getPatternMatch().patternName(), match.getParent().isGenerated());
@@ -98,6 +100,7 @@ public class TableViewerUtil {
 		viewer.setContentProvider(new MatcherConfigurationContentProvider());
 		viewer.setLabelProvider(new MatcherConfigurationLabelProvider());
 		viewer.setCellModifier(new MatcherConfigurationCellModifier(viewer));
+		viewer.setComparator(new ViewerComparator(new DetailComparator(observableMatcher.getMatcher().getParameterNames())));
 		
 		Table table = viewer.getTable();
 		CellEditor[] editors = new CellEditor[titles.length];
@@ -111,15 +114,15 @@ public class TableViewerUtil {
 		viewer.setCellEditors(editors);
 		
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
-		Object[] restriction = observableMatcher.getFilter();
+		Object[] filter = observableMatcher.getFilter();
 		MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
-		if (restriction != null) {
+		if (filter != null) {
 			for (int i = 0;i<pattern.getParameters().size();i++) {
 				Variable var = pattern.getParameters().get(i);
 				String name = var.getName();
 				JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
 				String clazz = (ref == null) ? "" : ref.getType().getQualifiedName();
-				input[i] = new MatcherConfiguration(name, clazz, restriction[i]);
+				input[i] = new MatcherConfiguration(name, clazz, filter[i]);
 			}	
 			viewer.setInput(input);
 		}
@@ -131,7 +134,7 @@ public class TableViewerUtil {
 			viewer.setInput(null);
 		}
 		while (viewer.getTable().getColumnCount() > 0 ) {
-			viewer.getTable().getColumns()[ 0 ].dispose();
+			viewer.getTable().getColumns()[0].dispose();
 		}
 		
 		viewer.refresh();

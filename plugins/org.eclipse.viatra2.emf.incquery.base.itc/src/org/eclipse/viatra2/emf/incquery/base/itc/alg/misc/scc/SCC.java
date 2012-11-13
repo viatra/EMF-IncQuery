@@ -40,11 +40,12 @@ public class SCC<V> {
 	 * @return the set of SCCs
 	 */
 	public static <V> SCCResult<V> computeSCC(IGraphDataSource<V> g) {
-		
 		int index = 0;
 		Set<Set<V>> ret = new HashSet<Set<V>>();
 		Map<V, SCCProperty> nodeMap = new HashMap<V, SCCProperty>();
 		Map<V, List<V>> targetNodeMap = new HashMap<V, List<V>>();
+		Map<V, Set<V>> notVisitedMap = new HashMap<V, Set<V>>();
+		
 		//stores the nodes during the traversal
 		Stack<V> nodeStack = new Stack<V>();
 		//stores the nodes that are in the same strongly connected component
@@ -66,6 +67,8 @@ public class SCC<V> {
 				nodeMap.get(n).setIndex(index);
 				nodeMap.get(n).setLowlink(index);
 				
+				notVisitedMap.put(n, new HashSet<V>());
+				
 				List<V> targetNodes = g.getTargetNodes(n);
 				
 				if (targetNodes != null) {
@@ -76,38 +79,40 @@ public class SCC<V> {
 				
 				while(!nodeStack.isEmpty()) {
 				
-					V _node = nodeStack.peek();
+					V currentNode = nodeStack.peek();
 					sink = false; finishedTraversal = false;
-					SCCProperty prop = nodeMap.get(_node);
+					SCCProperty prop = nodeMap.get(currentNode);
 					
 					//if node is not visited yet
-					if (nodeMap.get(_node).getIndex() == 0) {
+					if (nodeMap.get(currentNode).getIndex() == 0) {
 						index++;
-						sccStack.push(_node);
+						sccStack.push(currentNode);
 						prop.setIndex(index);
 						prop.setLowlink(index);
 						
+						notVisitedMap.put(currentNode, new HashSet<V>());
+						
 						//storing the target nodes of the actual node
-						if (g.getTargetNodes(_node) != null) {
-							targetNodeMap.put(_node, new ArrayList<V>(g.getTargetNodes(_node)));
+						if (g.getTargetNodes(currentNode) != null) {
+							targetNodeMap.put(currentNode, new ArrayList<V>(g.getTargetNodes(currentNode)));
 						}
 					}
 					
-					if (targetNodeMap.get(_node) != null) {
+					if (targetNodeMap.get(currentNode) != null) {
 						
-						if (targetNodeMap.get(_node).size() == 0) {
-							targetNodeMap.remove(_node);
+						if (targetNodeMap.get(currentNode).size() == 0) {
+							targetNodeMap.remove(currentNode);
 							
 							//remove node from stack, the exploration of its children has finished
 							nodeStack.pop();
 							
-							List<V> targets = g.getTargetNodes(_node);
+							List<V> targets = g.getTargetNodes(currentNode);
 							if (targets != null) {
-								for (V t : g.getTargetNodes(_node)) {
-									if (nodeMap.get(_node).getIndex() == 0) {
-										prop.setLowlink(Math.min(prop.getLowlink(),	nodeMap.get(t).getLowlink()));
-									} else if (sccStack.contains(t)) {
-										prop.setLowlink(Math.min(prop.getLowlink(),	nodeMap.get(t).getIndex()));
+								for (V targetNode : g.getTargetNodes(currentNode)) {
+									if (notVisitedMap.get(currentNode).contains(targetNode)) {
+										prop.setLowlink(Math.min(prop.getLowlink(),	nodeMap.get(targetNode).getLowlink()));
+									} else if (sccStack.contains(targetNode)) {
+										prop.setLowlink(Math.min(prop.getLowlink(),	nodeMap.get(targetNode).getIndex()));
 									}
 								}
 							}
@@ -116,10 +121,11 @@ public class SCC<V> {
 						}
 						else {
 							//push next node to stack
-							V _t = targetNodeMap.get(_node).remove(0);
+							V targetNode = targetNodeMap.get(currentNode).remove(0);
 							//if _t has not yet been visited
-							if (nodeMap.get(_t).getIndex() == 0) {
-								nodeStack.add(_t);
+							if (nodeMap.get(targetNode).getIndex() == 0) {
+								notVisitedMap.get(currentNode).add(targetNode);
+								nodeStack.add(targetNode);
 							}
 						}
 					}
@@ -137,7 +143,7 @@ public class SCC<V> {
 						do {
 							targetNode = sccStack.pop();
 							sc.add(targetNode);
-						} while (!targetNode.equals(_node));
+						} while (!targetNode.equals(currentNode));
 
 						ret.add(sc);
 					}

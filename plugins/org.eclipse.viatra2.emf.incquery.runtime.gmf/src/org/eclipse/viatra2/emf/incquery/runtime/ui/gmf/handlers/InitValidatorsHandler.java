@@ -28,33 +28,34 @@ import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 public class InitValidatorsHandler extends AbstractHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Notifier notifier = null;
-		
-		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
-		
-		ISelection selection =  HandlerUtil.getCurrentSelectionChecked(event);
-		Object firstElement = ((IStructuredSelection)selection).getFirstElement();
-		if (firstElement != null && firstElement instanceof GraphicalEditPart) {
-			GraphicalEditPart gep = (GraphicalEditPart)firstElement;
-			Object model = gep.getModel();
-			if (model != null && model instanceof View) {
-				View model2 = (View)model;
-				EObject element = model2.getElement();
-				if (element != null) {//  && element instanceof Element) {
-					Resource resource = element.eResource();
-					if (resource == null) 
-						notifier = element; 
-					else 
-						notifier = resource;
-				}
-			}
-		}
-		if (notifier==null) throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
-		ValidationUtil.addNotifier(activeEditor, notifier);
-		activeEditor.getEditorSite().getPage().addPartListener(ValidationPartListener.getInstance());
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        Notifier notifier = null;
+
+        IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
+
+        ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+        Object firstElement = ((IStructuredSelection) selection).getFirstElement();
+        if (firstElement != null && firstElement instanceof GraphicalEditPart) {
+            GraphicalEditPart gep = (GraphicalEditPart) firstElement;
+            Object model = gep.getModel();
+            if (model != null && model instanceof View) {
+                View model2 = (View) model;
+                EObject element = model2.getElement();
+                if (element != null) {// && element instanceof Element) {
+                    Resource resource = element.eResource();
+                    if (resource == null)
+                        notifier = element;
+                    else
+                        notifier = resource;
+                }
+            }
+        }
+        if (notifier == null)
+            throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
+        ValidationUtil.addNotifier(activeEditor, notifier);
+        activeEditor.getEditorSite().getPage().addPartListener(ValidationPartListener.getInstance());
+        return null;
+    }
 
 }

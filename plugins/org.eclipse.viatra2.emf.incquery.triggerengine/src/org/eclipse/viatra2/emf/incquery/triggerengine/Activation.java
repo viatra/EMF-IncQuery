@@ -2,6 +2,23 @@ package org.eclipse.viatra2.emf.incquery.triggerengine;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
+/**
+ * An {@link Activation} is a created for a {@link Rule} when the 
+ * preconditions (LHS) are fully satisfied with some domain model
+ * elements and the rule becomes eligible for execution.
+ * <br/><br/>
+ * An Activation holds a state, a pattern match, the corresponding rule 
+ * and whether it was fired yet. The state of the Activation can be 
+ * either Inactive, Appeared, Disappeared, Upgraded or Fired. Upon 
+ * {@link Rule} instantiation, one may set whether the Disappeared and 
+ * Upgraded states will be used during the lifecycle of the Activation.  
+ * If multiple firing is allowed for the Activation then only
+ * the 'Appeared' state will be used. 
+ * 
+ * @author Tamas Szabo
+ *
+ * @param <MatchType> the type of the pattern match
+ */
 public abstract class Activation<MatchType extends IPatternMatch> {
 
 	protected MatchType patternMatch;
@@ -48,7 +65,7 @@ public abstract class Activation<MatchType extends IPatternMatch> {
 		else if (this.state == ActivationState.DISAPPEARED && rule.afterDisappearanceJob != null) {
 			this.rule.afterDisappearanceJob.process(patternMatch);
 		}
-		else if (this.state == ActivationState.UPGRADED && rule.afterModificationJob != null) {
+		else if (this.state == ActivationState.UPDATED && rule.afterModificationJob != null) {
 			this.rule.afterModificationJob.process(patternMatch);	
 		}
 		if (!allowMultipleFiring) {

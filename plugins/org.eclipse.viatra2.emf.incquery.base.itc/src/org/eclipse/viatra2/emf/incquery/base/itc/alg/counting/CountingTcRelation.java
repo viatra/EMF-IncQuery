@@ -262,11 +262,11 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 		int hash = 7;
 		
 		for (Entry<V, Map<V, Integer>> entry : this.tuplesForward.entrySet()) {
-			hash += 31 * hash + entry.hashCode();
+			hash = 31 * hash + entry.hashCode();
 		}
 		
 		for (Entry<V, Map<V, Integer>> entry : this.tuplesBackward.entrySet()) {
-			hash += 31 * hash + entry.hashCode();
+			hash = 31 * hash + entry.hashCode();
 		}
 		
 		return hash;

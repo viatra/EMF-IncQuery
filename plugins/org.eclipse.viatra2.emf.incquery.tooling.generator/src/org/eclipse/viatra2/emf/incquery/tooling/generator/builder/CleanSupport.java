@@ -35,6 +35,7 @@ import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.IExtensions;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
+import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtilRunningOptionEnum;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateMatcherFactoryExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.GenerateXExpressionEvaluatorExtension;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment;
@@ -69,7 +70,7 @@ public class CleanSupport {
 	private final class PrepareResourceSetWithLoader implements
 			IResourceSetPreparer {
 		
-		private IProject project;
+		private final IProject project;
 		
 		public PrepareResourceSetWithLoader(IProject project) {
 			this.project = project;
@@ -189,7 +190,7 @@ public class CleanSupport {
 	private void removeExportedPackages(IProject project) throws CoreException, IncQueryException {
 		if (getGlobalXmiFile(project).exists()) {
 			ArrayList<String> packageNames = new ArrayList<String>();
-			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(project.getName(), new PrepareResourceSetWithLoader(project));
+			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE, project.getName(), new PrepareResourceSetWithLoader(project));
 			Iterator<EObject> iter = globalXmiModel.getAllContents();
 			while(iter.hasNext()) {
 				EObject obj = iter.next();
@@ -234,7 +235,7 @@ public class CleanSupport {
 	private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor) throws CoreException, IncQueryException {
 		IProject modelProject = context.getBuiltProject();
 		if (getGlobalXmiFile(modelProject).exists()) {
-			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(modelProject.getName(), new PrepareResourceSetWithLoader(modelProject));
+			Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE, modelProject.getName(), new PrepareResourceSetWithLoader(modelProject));
 			for (Delta delta : relevantDeltas) {
 				Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
 				if (delta.getNew() != null /*&& shouldGenerate(deltaResource, context)*/) {

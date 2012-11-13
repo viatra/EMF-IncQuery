@@ -2,26 +2,32 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.firing;
 
 import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
 
-
+/**
+ * Classes implement this interface to provide notifications about the changes in the 
+ * collection of activations within an agenda. 
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public interface ActivationNotificationProvider {
 	
 	/**
-	 * Registers a callback that will be run each time the set of activations is modified.
+	 * Registers a listener that will be called each time the set of activations is modified.
 	 * 
-	 * @param callback a Runnable to execute after each update.
+	 * @param listener a ActivationNotificationListener to be called after each update.
 	 * 
 	 * @return false if the callback was already registered.
 	 */
-	public boolean addCallbackAfterUpdates(Runnable callback);
+	public boolean addActivationNotificationListener(ActivationNotificationListener listener);
 	
 	/**
-	 * Removes a previously registered callback. See addCallbackAfterUpdates().
+	 * Removes a previously registered listener. See addActivationNotificationListener().
 	 * 
-	 * @param callback the callback to remove.
+	 * @param listener the listener to remove
 	 * 
 	 * @return false if the callback was not registered.
 	 */
-	public boolean removeCallbackAfterUpdates(Runnable callback);
+	public boolean removeActivationNotificationListener(ActivationNotificationListener listener);
 
 	/**
 	 * Instantiates a new {@link ActivationMonitor} that will keep track of the changes of activations.

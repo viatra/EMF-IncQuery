@@ -177,7 +177,9 @@ public class ReteEngine<PatternDescription> {
 								Address<? extends Production> prodNode;
 								prodNode = boundary.accessProduction(gtPattern);
 	
-								matchers.put(gtPattern, new RetePatternMatcher(ReteEngine.this, prodNode));
+								RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this, prodNode);
+                                retePatternMatcher.setTag(gtPattern);
+                                matchers.put(gtPattern, retePatternMatcher);
 								return null;
 							}
 						});

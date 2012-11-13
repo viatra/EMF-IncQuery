@@ -13,8 +13,10 @@ package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.collect.HashMultimap;
@@ -34,6 +37,8 @@ import com.google.common.collect.Multimap;
 public class ValidationUtil {
 
 	private static Logger logger = Logger.getLogger(ValidationUtil.class);
+	
+	private static Map<IWorkbenchPage, Set<IEditorPart>> pageMap = new HashMap<IWorkbenchPage, Set<IEditorPart>>();
 	
 	private static Map<IEditorPart, ConstraintAdapter<IPatternMatch>> adapterMap = new HashMap<IEditorPart, ConstraintAdapter<IPatternMatch>>();
 	public synchronized static Map<IEditorPart, ConstraintAdapter<IPatternMatch>> getAdapterMap() {
@@ -71,10 +76,10 @@ public class ValidationUtil {
 		return editorConstraintMap.containsKey(editorId);
 	}
 	
-	public synchronized static List<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
-		List<Constraint<IPatternMatch>> list = new ArrayList<Constraint<IPatternMatch>>(getEditorConstraintMap().get(editorId));
-		list.addAll(getEditorConstraintMap().get("*"));
-		return list;
+	public synchronized static Set<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
+		Set<Constraint<IPatternMatch>> set = new HashSet<Constraint<IPatternMatch>>(getEditorConstraintMap().get(editorId));
+		set.addAll(getEditorConstraintMap().get("*"));
+		return set;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,5 +123,29 @@ public class ValidationUtil {
 
 	public synchronized static void addNotifier(IEditorPart editorPart, Notifier notifier) {
 		adapterMap.put(editorPart, new ConstraintAdapter<IPatternMatch>(editorPart, notifier, logger));
+	}
+	
+	public static void registerEditorPart(IEditorPart editorPart) {
+		IWorkbenchPage page = editorPart.getSite().getPage();
+		if (pageMap.containsKey(page)) {
+			pageMap.get(page).add(editorPart);
+		}
+		else {
+			Set<IEditorPart> editorParts = new HashSet<IEditorPart>();
+			editorParts.add(editorPart);
+			pageMap.put(page, editorParts);
+			page.addPartListener(ValidationPartListener.getInstance());
+		}
+	}
+	
+	public static void unregisterEditorPart(IEditorPart editorPart) {
+		IWorkbenchPage page = editorPart.getSite().getPage();
+		if (pageMap.containsKey(page)) {
+			pageMap.get(page).remove(editorPart);
+			if (pageMap.get(page).size() == 0) {
+				pageMap.remove(page);
+				page.removePartListener(ValidationPartListener.getInstance());
+			}
+		}
 	}
 }

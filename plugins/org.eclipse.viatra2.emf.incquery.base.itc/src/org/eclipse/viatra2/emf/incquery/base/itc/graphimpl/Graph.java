@@ -67,15 +67,13 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
 			go.edgeInserted(source, target);
 		}
 	}
-	
+		
 	public void deleteEdge(V source, V target) {
 		
 		boolean containedEdge = false;
 		List<V> incomingEdges = edgeListReversed.get(target);
 		if (incomingEdges != null) {
-			if (incomingEdges.remove(source)) {
-				containedEdge = true;
-			}
+			containedEdge = incomingEdges.remove(source);
 		}
 		
 		List<V> outgoingEdges = edgeList.get(source);

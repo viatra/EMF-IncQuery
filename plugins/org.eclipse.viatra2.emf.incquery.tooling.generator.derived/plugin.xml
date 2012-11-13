@@ -4,15 +4,15 @@
    <extension
          point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
       <fragment
-            annotation="DerivedFeature"
+            annotation="QueryBasedFeature"
             fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.derived.DerivedFeatureGenerator">
       </fragment>
    </extension>
    <extension
          point="org.eclipse.viatra2.patternlanguage.core.annotation">
       <annotation
-            description="This annotation is used to mark a pattern as a backing query for a derived feature."
-            name="DerivedFeature">
+            description="This annotation is used to mark a pattern as a query definition for a query-based feature."
+            name="QueryBasedFeature">
          <annotationparameter
                description="The name of the EStructuralFeature that the query will serve."
                mandatory="false"
@@ -48,6 +48,11 @@
                name="keepCache"
                type="boolean">
          </annotationparameter>
+      </annotation>
+      <annotation
+            deprecated="true"
+            description="Please use @QueryBasedFeature instead."
+            name="DerivedFeature">
       </annotation>
    </extension>
 

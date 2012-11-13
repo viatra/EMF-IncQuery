@@ -1,5 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.tooling.retevis.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,26 +11,48 @@ import java.util.Vector;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.text.FlowPage;
 import org.eclipse.draw2d.text.TextFlow;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.viatra2.emf.incquery.tooling.retevis.theme.ColorTheme;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IndexerWithMemory;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Network;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.ConstantNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Production;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.UniquenessEnforcerNode;
+import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 
-public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider 
-{
+public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider {
+
+    private final int INDEXER_ID = 0;
+    private final int RETEMATCHER_ID = 1;
+    private final int INPUT_ID = 2;
 	
 	ReteBoundary rb;
+    private ColorTheme theme;
+
+    /**
+     * Sets the colors of the indexer and rete matcher nodes
+     * 
+     * @param indexerColor
+     * @param reteMatcherColor
+     */
+    public void setColors(ColorTheme theme) {
+        this.theme = theme;
+
+    }
 	
+
 	public ReteBoundary getRb() {
 		return rb;
 	}
@@ -51,23 +74,55 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 	public String getText(Object element) {
 		if (element instanceof Node) {
 			Node n = (Node) element;
-			String s = ""+n.getClass().getSimpleName();
+            Class<?> namedClass = n.getClass();
+            String simpleName;
+            do {
+                simpleName = namedClass.getSimpleName();
+                namedClass = namedClass.getSuperclass();
+            } while (simpleName == null || simpleName.isEmpty());
+            String s = "" + simpleName;
 			if (n instanceof UniquenessEnforcerNode) {
 				// print tuplememory statistics
-				s+="["+((UniquenessEnforcerNode)n).getMemory().size()+"]";
+                UniquenessEnforcerNode un = (UniquenessEnforcerNode) n;
+
+                if (un.getParents().isEmpty() && un.getTag() instanceof ENamedElement) {
+                    s += " : " + ((ENamedElement) un.getTag()).getName() + " : ";
+
+                }
+                s += " [" + (un).getMemory().size() + "]";
+
 			}
 			if (n instanceof IndexerWithMemory) {
 				s+="["+((IndexerWithMemory)n).getMemory().getSize()+"]";
 			}
+            if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("\n");
+                for (Stub st : getStubsForNode(n)) {
+                    sb.append("<");
+                    Tuple variablesTuple = st.getVariablesTuple();
+                    for (Object obj : variablesTuple.getElements()) {
+                        if (obj instanceof PVariable) {
+                            Object nameObj = ((PVariable) obj).getName();
+                            if (nameObj instanceof Variable) {
+                                sb.append(((Variable) nameObj).getName());
+                            }
+                        }
+                        sb.append("; ");
+                    }
+                    sb.append(">  ");
+                    s += sb.toString();
+                }
+            }
 			return s;
 		}
 		return "!";
 //		return s+super.getText(element);
 	}
 	
-//	@Override
+    @Override
 	public IFigure getTooltip(Object entity) {
-		if (entity instanceof Node) {
+        if (entity instanceof Node) {
 			Node n = (Node)entity;
 			String s="";
 			
@@ -82,14 +137,30 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 			TextFlow infoTf = new TextFlow();
 //			infoTf.setFont(fontRegistry.get("code"));
 			
-			//nameTf.setText(n.toString());
+            nameTf.setText(n.toString());
 			String info="";//"\n";
 			info+="Stubs:\n"+s;//+"\n";
 			infoTf.setText(info);
-//			fp.add(nameTf);
+            if (entity instanceof RetePatternMatcher) {
+                if (((Node) entity).getTag() instanceof Pattern) {
+                    Pattern pattern = (Pattern) ((Node) entity).getTag();
+                    nameTf.setText(pattern.getName());
+                    fp.add(nameTf);
+                }
+            } else if (entity instanceof ConstantNode) {
+                ConstantNode node = (ConstantNode) entity;
+                ArrayList<Tuple> arrayList = new ArrayList<Tuple>();
+                node.pullInto(arrayList);
+                StringBuilder sb = new StringBuilder();
+                for (Tuple tuple : arrayList) {
+                    sb.append(tuple.toString() + "\n");
+                }
+                nameTf.setText(sb.toString());
+                fp.add(nameTf);
+            }
 			fp.add(infoTf);
 			return fp;
-		}
+        }
 		return null;
 	}
 	
@@ -172,20 +243,38 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
 	@Override
 	public Color getBackgroundColour(Object entity) {
-		// TODO Auto-generated method stub
+        if (entity instanceof Indexer) {
+            return theme.getNodeColor(INDEXER_ID);
+        } else if (entity instanceof RetePatternMatcher) {
+            return theme.getNodeColor(RETEMATCHER_ID);
+        } else if (entity instanceof UniquenessEnforcerNode) {
+            UniquenessEnforcerNode inputNode = (UniquenessEnforcerNode) entity;
+            if (inputNode.getParents().isEmpty()) {
+                return theme.getNodeColor(INPUT_ID);
+            }
+        }
 		return null;
 	}
 
 	@Override
 	public Color getForegroundColour(Object entity) {
-		// TODO Auto-generated method stub
+        if (entity instanceof Indexer) {
+            return theme.getTextColor(INDEXER_ID);
+        } else if (entity instanceof RetePatternMatcher) {
+            return theme.getTextColor(RETEMATCHER_ID);
+        } else if (entity instanceof UniquenessEnforcerNode) {
+            UniquenessEnforcerNode inputNode = (UniquenessEnforcerNode) entity;
+            if (inputNode.getParents().isEmpty()) {
+                return theme.getTextColor(INPUT_ID);
+            }
+        }
 		return null;
 	}
 
 	@Override
 	public boolean fisheyeNode(Object entity) {
 		// TODO Auto-generated method stub
-		return false;
+        return true;
 	}
 
 }

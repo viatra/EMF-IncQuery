@@ -26,14 +26,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.FeatureKind;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHandler;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryFeatureHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
+import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IncqueryDerivedFeature;
 
 /**
  * <!-- begin-user-doc -->
@@ -193,7 +192,7 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 	/**
 	 * EMF-IncQuery handler for derived feature role
 	 */
-	private IncqueryDerivedFeature roleHandler;
+	private IQueryBasedFeatureHandler roleHandler;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -201,12 +200,12 @@ public class MatchRecordImpl extends EObjectImpl implements MatchRecord {
 	 */
 	public RecordRole getRole() {
 		if (roleHandler == null) {
-			roleHandler = IncqueryFeatureHelper
-					.getIncqueryDerivedFeature(
+			roleHandler = QueryBasedFeatureHelper
+					.getQueryBasedFeatureHandler(
 							this,
 							EIQSnapshotPackageImpl.Literals.MATCH_RECORD__ROLE,
 							"org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue",
-							"Record", "Role", FeatureKind.SINGLE_REFERENCE,
+							"Record", "Role", QueryBasedFeatureKind.SINGLE_REFERENCE,
 							true, false);
 		}
 		return (org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.RecordRole) roleHandler

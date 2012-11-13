@@ -6,39 +6,66 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   szabo.tamas.ext - initial API and implementation
+ *   Szabo Tamas - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 
+/**
+ * An empty implementation of the {@link IPartListener} interface.
+ */
 public class BasePartListener implements IPartListener {
 
-	@Override
-	public void partActivated(IWorkbenchPart part) {
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+     */
+    @Override
+    public void partActivated(IWorkbenchPart part) {
+        // empty method
+    }
 
-	@Override
-	public void partBroughtToTop(IWorkbenchPart part) {
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+     */
+    @Override
+    public void partBroughtToTop(IWorkbenchPart part) {
+        // empty method
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+     */
+    @Override
+    public void partClosed(IWorkbenchPart part) {
+        // empty method
+    }
 
-	@Override
-	public void partClosed(IWorkbenchPart part) {
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+     */
+    @Override
+    public void partDeactivated(IWorkbenchPart part) {
+        // empty method
+    }
 
-	@Override
-	public void partDeactivated(IWorkbenchPart part) {
-		
-	}
-
-	@Override
-	public void partOpened(IWorkbenchPart part) {
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+     */
+    @Override
+    public void partOpened(IWorkbenchPart part) {
+        // empty method
+    }
 
 }

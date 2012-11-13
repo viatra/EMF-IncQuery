@@ -22,17 +22,17 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
  */
 public class UnionFindForVariables {
 
-    private final List<Variable> variables;
+    private final List<Variable> inputVariables;
     private final int[] unionIdArray;
 
     /**
-     * @param variables
+     * @param inputVariables
      *            which are assumed to be disjoint at the start
      */
-    public UnionFindForVariables(List<Variable> variables) {
-        this.variables = variables;
-        unionIdArray = new int[variables.size()];
-        for (int i = 0; i < variables.size(); i++) {
+    public UnionFindForVariables(List<Variable> inputVariables) {
+        this.inputVariables = new ArrayList<Variable>(inputVariables);
+        unionIdArray = new int[inputVariables.size()];
+        for (int i = 0; i < inputVariables.size(); i++) {
             unionIdArray[i] = i;
         }
     }
@@ -46,12 +46,13 @@ public class UnionFindForVariables {
             Variable current = null;
             for (Variable variable : variables) {
                 if (current != null) {
-                    if (!isSameUnion(current, variable)) {
+                    if (inputVariables.contains(variable) && !isSameUnion(current, variable)) {
                         return false;
                     }
-                    current = variable;
                 } else {
-                    current = variable;
+                    if (inputVariables.contains(variable)) {
+                        current = variable;
+                    }
                 }
             }
         }
@@ -67,10 +68,13 @@ public class UnionFindForVariables {
             Variable current = null;
             for (Variable variable : variables) {
                 if (current != null) {
-                    unite(current, variable);
-                    current = variable;
+                    if (inputVariables.contains(variable)) {
+                        unite(current, variable);
+                    }
                 } else {
-                    current = variable;
+                    if (inputVariables.contains(variable)) {
+                        current = variable;
+                    }
                 }
             }
         }
@@ -102,20 +106,15 @@ public class UnionFindForVariables {
     }
 
     private boolean isSameUnion(Variable variable1, Variable variable2) {
-        // We need to check the indexes, as it might be called with variables out of our scope.
-        if (variables.contains(variable1) && variables.contains(variable2)) {
-            return unionIdArray[variables.indexOf(variable1)] == unionIdArray[variables.indexOf(variable2)];
-        } else {
-            // We return true if one or both variables are out of scope.
-            // If it would be false it would be weird, because it would stay false even after a unite call.
-            return true;
-        }
+        // Should not be called with out of the scope variables!
+        return unionIdArray[inputVariables.indexOf(variable1)] == unionIdArray[inputVariables.indexOf(variable2)];
     }
 
     private void unite(Variable variable1, Variable variable2) {
-        if (!isSameUnion(variable1, variable2) && variables.contains(variable1) && variables.contains(variable2)) {
-            int variable1ID = unionIdArray[variables.indexOf(variable1)];
-            int variable2ID = unionIdArray[variables.indexOf(variable2)];
+        // Should not be called with out of the scope variables!
+        if (!isSameUnion(variable1, variable2)) {
+            int variable1ID = unionIdArray[inputVariables.indexOf(variable1)];
+            int variable2ID = unionIdArray[inputVariables.indexOf(variable2)];
             for (int i = 0; i < unionIdArray.length; i++) {
                 if (unionIdArray[i] == variable1ID) {
                     unionIdArray[i] = variable2ID;
@@ -127,14 +126,14 @@ public class UnionFindForVariables {
     private List<Set<Variable>> getPartitions() {
         List<Set<Variable>> resultList = new ArrayList<Set<Variable>>();
         Set<Integer> previousKeys = new HashSet<Integer>();
-        for (int i = 0; i < variables.size(); i++) {
-            Integer currentID = unionIdArray[i];
+        for (Variable variableOuter : inputVariables) {
+            Integer currentID = unionIdArray[inputVariables.indexOf(variableOuter)];
             if (!previousKeys.contains(currentID)) {
                 previousKeys.add(currentID);
                 Set<Variable> currentSet = new HashSet<Variable>();
-                for (Variable variable : variables) {
-                    if (unionIdArray[variables.indexOf(variable)] == currentID) {
-                        currentSet.add(variable);
+                for (Variable variableInner : inputVariables) {
+                    if (unionIdArray[inputVariables.indexOf(variableInner)] == currentID) {
+                        currentSet.add(variableInner);
                     }
                 }
                 resultList.add(currentSet);

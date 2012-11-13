@@ -226,9 +226,9 @@ class CartesianProductTest {
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Soft1(X, Y) {
-				EClass(X);
-				EClass(Y);
-				check(X.abstract == Y.abstract);
+				EInt(X);
+				EInt(Y);
+				check(X == Y);
 			}
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)

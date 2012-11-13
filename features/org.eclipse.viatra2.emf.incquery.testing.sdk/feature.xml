@@ -27,21 +27,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.emf.incquery.snapshot.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra2.emf.incquery.snapshot.edit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.snapshot.edit.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -55,21 +41,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.emf.incquery.snapshot.editor.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra2.emf.incquery.testing.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.testing.core.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -83,21 +55,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra2.emf.incquery.testing.queries.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra2.emf.incquery.testing.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra2.emf.incquery.testing.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

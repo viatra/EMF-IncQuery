@@ -39,18 +39,14 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 public final class MatcherFactoryRegistry {
 	private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = createMatcherFactories();
 
-	// NOTE pattern group management is relegated to PatternGroup classes
-	//private static Map<String, Set<IMatcherFactory>> matcherFactoryGroups = null;
-	//private static Map<String, Set<IMatcherFactory>> matcherFactorySubTrees = null;
-
 	/**
-	 * 
+	 * Utility class constructor hidden
 	 */
 	private MatcherFactoryRegistry() {
 	}
 	
-	private static HashMap<String, IMatcherFactory<?>> createMatcherFactories() {
-		final HashMap<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
+	private static Map<String, IMatcherFactory<?>> createMatcherFactories() {
+		final Map<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
 		initRegistry(factories);
 		return factories;
 	}
@@ -61,7 +57,9 @@ public final class MatcherFactoryRegistry {
 		factories.clear();
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();	
-		if (reg == null) return;
+		if (reg == null) {
+		    return;
+		}
 			
 		IExtensionPoint poi = 
 			reg.getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);	
@@ -84,7 +82,11 @@ public final class MatcherFactoryRegistry {
 							IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
-								factories.put(fullyQualifiedName, matcherFactory);
+							    if(factories.containsKey(fullyQualifiedName)) {
+							        IncQueryEngine.getDefaultLogger().warn(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", fullyQualifiedName));
+							    } else {
+							        factories.put(fullyQualifiedName, matcherFactory);
+							    }
 							} else {
 								throw new UnsupportedOperationException(
 										"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
@@ -110,21 +112,11 @@ public final class MatcherFactoryRegistry {
 	 * @param factory
 	 */
 	public static void registerMatcherFactory(IMatcherFactory<?> factory) {
-	
 		String qualifiedName = factory.getPatternFullyQualifiedName();
 		if(!MATCHER_FACTORIES.containsKey(qualifiedName)) {
 			MATCHER_FACTORIES.put(qualifiedName, factory);
-		  // NOTE pattern group management is relegated to PatternGroup classes
-			/*/if(matcherFactoryGroups != null) {
-				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactoryGroups.entrySet()) {
-					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, false);
-				}
-			}
-			if(matcherFactorySubTrees != null) {
-				for (Entry<String, Set<IMatcherFactory>> groupEntry : matcherFactorySubTrees.entrySet()) {
-					addPatternToGroup(groupEntry.getKey(), groupEntry.getValue(), qualifiedName, factory, true);
-				}
-			}*/
+		} else {
+		    IncQueryEngine.getDefaultLogger().warn(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", qualifiedName));
 		}
 	}
 
