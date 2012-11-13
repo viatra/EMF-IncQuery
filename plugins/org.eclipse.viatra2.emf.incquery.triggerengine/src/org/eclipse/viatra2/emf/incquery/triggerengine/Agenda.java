@@ -79,7 +79,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @param iqEngine the {@link IncQueryEngine} instance
 	 * @param allowMultipleFiring indicates whether multiple firing is allowed
 	 */
-	public Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
+	protected Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
 		this.iqEngine = iqEngine;
 		this.rules = new HashSet<Rule<? extends IPatternMatch>>();
 		this.listeners = new HashSet<ActivationNotificationListener>();
@@ -104,7 +104,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @param notifier the {@link Notifier} instance
 	 * @throws IncQueryException
 	 */
-	public Agenda(Notifier notifier) throws IncQueryException {
+	protected Agenda(Notifier notifier) throws IncQueryException {
 		this(EngineManager.getInstance().getIncQueryEngine(notifier));
 	}
 	
@@ -116,7 +116,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @param allowMultipleFiring indicates whether multiple firing is allowed
 	 * @throws IncQueryException
 	 */
-	public Agenda(Notifier notifier, boolean allowMultipleFiring) throws IncQueryException {
+	protected Agenda(Notifier notifier, boolean allowMultipleFiring) throws IncQueryException {
 		this(EngineManager.getInstance().getIncQueryEngine(notifier), allowMultipleFiring);
 	}
 	

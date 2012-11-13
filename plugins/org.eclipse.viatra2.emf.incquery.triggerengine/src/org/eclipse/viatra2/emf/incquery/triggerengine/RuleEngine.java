@@ -43,26 +43,41 @@ public class RuleEngine {
 	}
 	
 	public Agenda getOrCreateAgenda(Notifier notifier) {
+		return getOrCreateAgenda(notifier, false);
+	}
+	
+	public Agenda getOrCreateAgenda(Notifier notifier, boolean allowMultipleFiring) {
 		IncQueryEngine engine;
 		try {
 			engine = EngineManager.getInstance().getIncQueryEngine(notifier);
-			return getOrCreateAgenda(engine);
+			return getOrCreateAgenda(engine, allowMultipleFiring);
 		} catch (IncQueryException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+		
+	public Agenda getOrCreateAgenda(IncQueryEngine engine) {
+		return getOrCreateAgenda(engine, false);
+	}
 	
-	public Agenda getOrCreateAgenda(IncQueryEngine iqEngine) {
-		WeakReference<Agenda> agendaRef = agendaMap.get(iqEngine);
-		if (agendaRef == null || agendaRef.get() == null) {
-			Agenda agenda = new Agenda(iqEngine);
+	public Agenda getOrCreateAgenda(IncQueryEngine engine, boolean allowMultipleFiring) {
+		Agenda agenda = getAgenda(engine);
+		if (agenda == null) {
+			agenda = new Agenda(engine, allowMultipleFiring);
 			agenda.setRuleFactory(defaultRuleFactory);
-			agendaMap.put(iqEngine, new WeakReference<Agenda>(agenda));
-			return agenda;
+			agendaMap.put(engine, new WeakReference<Agenda>(agenda));
+		}
+		return agenda;
+	}
+	
+	private Agenda getAgenda(IncQueryEngine iqEngine) {
+		WeakReference<Agenda> agendaRef = agendaMap.get(iqEngine);
+		if (agendaRef != null) {
+			return agendaRef.get();
 		}
 		else {
-			return agendaRef.get();
+			return null;
 		}
 	}
 }
