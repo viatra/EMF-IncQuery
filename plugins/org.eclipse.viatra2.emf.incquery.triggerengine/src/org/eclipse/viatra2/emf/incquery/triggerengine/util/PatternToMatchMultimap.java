@@ -56,7 +56,6 @@ public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends Tri
      */
     @Override
     protected MatchType getValueFromMatch(MatchType match) {
-        // TODO Auto-generated method stub
         return match;
     }
 
