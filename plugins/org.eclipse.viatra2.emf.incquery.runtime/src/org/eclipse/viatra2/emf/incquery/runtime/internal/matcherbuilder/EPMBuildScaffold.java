@@ -14,7 +14,6 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.basiclinear.BasicLinearLayout;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
@@ -57,7 +56,7 @@ public class EPMBuildScaffold<StubHandle, Collector> {
 				EPMBodyToPSystem<StubHandle, Collector> converter = 
 					new EPMBodyToPSystem<StubHandle, Collector>(pattern, body, context, currentBuildable);
 				Stub<StubHandle> bodyFinal = 
-					new BasicLinearLayout<Pattern, StubHandle, Collector>().layout(converter.toPSystem());
+						Options.builderMethod.<Pattern,StubHandle,Collector>layoutStrategy().layout(converter.toPSystem());
 				BuildHelper.projectIntoCollector(currentBuildable, bodyFinal, production, converter.symbolicParameterArray());
 			}
 
@@ -66,5 +65,5 @@ public class EPMBuildScaffold<StubHandle, Collector> {
 		
 		return null;
 	}
-
+	
 }
