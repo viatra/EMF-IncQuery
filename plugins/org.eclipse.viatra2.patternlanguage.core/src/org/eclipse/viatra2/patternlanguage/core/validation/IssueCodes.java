@@ -39,5 +39,6 @@ public final class IssueCodes {
 	public static final String MISSING_PATTERN_PARAMETERS = ISSUE_CODE_PREFIX + "missing_pattern_parameters";
 	
 	public static final String CHECK_MUST_BE_BOOLEAN = ISSUE_CODE_PREFIX + "check_boolean";
+	public static final String CHECK_WITH_IMPURE_JAVA_CALLS = ISSUE_CODE_PREFIX + "check_with_impure_java_calls";
 	
 }

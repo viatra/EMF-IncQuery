@@ -102,13 +102,15 @@ public final class CorePatternLanguageHelper {
     /** Finds all pattern variables referenced from the given XExpression. */
     public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression) {
         Set<Variable> result = new HashSet<Variable>();
-        TreeIterator<EObject> eAllContents = xExpression.eAllContents();
-        while (eAllContents.hasNext()) {
-            EObject expression = eAllContents.next();
-            EList<EObject> eCrossReferences = expression.eCrossReferences();
-            for (EObject eObject : eCrossReferences) {
-                if (eObject instanceof Variable && !EcoreUtil.isAncestor(xExpression, eObject)) {
-                    result.add((Variable) eObject);
+        if (xExpression != null) {
+            TreeIterator<EObject> eAllContents = xExpression.eAllContents();
+            while (eAllContents.hasNext()) {
+                EObject expression = eAllContents.next();
+                EList<EObject> eCrossReferences = expression.eCrossReferences();
+                for (EObject eObject : eCrossReferences) {
+                    if (eObject instanceof Variable && !EcoreUtil.isAncestor(xExpression, eObject)) {
+                        result.add((Variable) eObject);
+                    }
                 }
             }
         }
@@ -317,8 +319,7 @@ public final class CorePatternLanguageHelper {
             } else if (valueReference instanceof AggregatedValue) {
                 AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
                 for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
-                    for (Variable variable : getUnnamedVariablesFromValueReference(valueReferenceInner,
-                            false)) {
+                    for (Variable variable : getUnnamedVariablesFromValueReference(valueReferenceInner, false)) {
                         if (variable.getName().startsWith("_")) {
                             resultSet.add(variable);
                         }
