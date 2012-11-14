@@ -14,8 +14,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 /**
  * A "lambda" action that can be executed on each match of a pattern.
  * 
- * Clients should derive an (anonymous) class that implements process(). 
- * Alternatively, extend GenericMatchProcessor or the user-friendly generated match processor classes.
+ * Clients can manually implement process() in an (anonymous) class, or alternatively, 
+ *  extend either {@link GenericMatchProcessor} or the user-friendly pattern-specific generated match processor classes.
  * 
  * @author Bergmann Gábor
  *

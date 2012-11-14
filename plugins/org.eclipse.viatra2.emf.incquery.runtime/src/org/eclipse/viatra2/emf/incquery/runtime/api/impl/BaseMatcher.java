@@ -20,10 +20,12 @@ import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra2.emf.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
@@ -279,7 +281,29 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     }
   }
   // with input binding as pattern-specific parameters: not declared in interface
-  
+  	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackOnMatchUpdate(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener, boolean)
+	 */
+	@Override
+	public void addCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener, boolean fireNow) {
+		final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(), engine, listener) {
+			@Override
+			public Match statelessConvert(Tuple t) {
+		        return tupleToMatch(t);
+			}
+		};
+	    patternMatcher.connect(callbackNode, listener, fireNow);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#removeCallbackOnMatchUpdate(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener)
+	 */
+	@Override
+	public void removeCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener) {
+		patternMatcher.disconnectByTag(listener);
+	}
+    
   /* (non-Javadoc)
    * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newDeltaMonitor(boolean)
    */

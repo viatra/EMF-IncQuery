@@ -125,6 +125,27 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	// CHANGE MONITORING
 	// attach delta monitor for high-level change detection
 	/** 
+	 * Registers low-level callbacks for match appearance and disappearance on this pattern matcher. 
+	 * 
+	 * <p> This is a low-level callback that is invoked when the pattern matcher is not necessarily in a consistent state yet. 
+	 *  Most users should use the agenda and trigger engine instead. TODO reference 
+	 * 
+	 * <p> Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)}, 
+	 *  but prone to "signal hazards", e.g. spurious match appearances that will disappear immediately afterwards.
+	 * 
+	 * <p> The callback can be unregistered via {@link #removeCallbackOnMatchUpdate(IMatchUpdateListener)}.
+	 *  
+	 * @param fireNow if true, appearCallback will be immediately invoked on all current matches as a one-time effect. 
+	 *  See also {@link IncQueryMatcher#forEachMatch(IMatchProcessor)}.
+	 * @param listener the listener that will be notified of each new match that appears or disappears, starting from now. 
+	 */
+	public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener, boolean fireNow);
+	/**
+	 * Unregisters a callback registered by {@link #addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)}.
+	 * @param listener the listener that will no longer be notified. 
+	 */
+	public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener);
+	/** 
 	 * Registers a new delta monitor on this pattern matcher. 
 	 * The DeltaMonitor can be used to track changes (delta) in the set of pattern matches from now on.
 	 * It can also be reset to track changes from a later point in time, 
