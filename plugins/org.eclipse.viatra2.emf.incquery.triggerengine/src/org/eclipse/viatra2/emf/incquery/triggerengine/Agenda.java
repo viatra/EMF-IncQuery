@@ -14,10 +14,10 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.triggerengine.firing.ActivationNotificationListener;
-import org.eclipse.viatra2.emf.incquery.triggerengine.firing.ActivationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.TimedFiringStrategy;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationListener;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ReteBasedEMFOperationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.TransactionBasedEMFOperationNotificationProvider;
@@ -25,12 +25,12 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
 
 /**
  * An Agenda is associated to each EMF instance model (more precisely {@link IncQueryEngine}
- * or equivalently {@link Notifier}) and it is 
- * responsible for creating, managing and disposing rules in the context of the Rule Engine. 
- * It provides an unmodifiable view for the collection of activations.
+ * or equivalently {@link Notifier} in the context of EMF-IncQuery) and it is 
+ * responsible for creating, managing and disposing rules in the Rule Engine. 
+ * It provides an unmodifiable view for the collection of applicable activations.
  * <br/><br/>
  * One must register an {@link ActivationNotificationListener} in order to receive 
- * notifications automatically about the changes in the collection of applicable activations.
+ * notifications automatically about the changes in the collection of activations.
  * <br/><br/>
  * The Trigger Engine is a collection of strategies which can be used to 
  * fire these activations with pre-defined timings. Such strategies include 
@@ -41,8 +41,10 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
  * process the activations on an individual basis, because the Agenda always reflects 
  * the most up-to-date state of the activations. 
  * 
- * One may define whether multiple firing of the same activation is possible. 
- * It is used for example in Design Space Exploration scenarios. 
+ * One may define whether multiple firing of the same activation; that is only 
+ * the Appeared state will be used from the lifecycle of activations. For more 
+ * information on the lifecycle see {@link Activation}. Multiple firing is used 
+ * for example in Design Space Exploration scenarios. 
  * 
  * @author Tamas Szabo
  *
@@ -58,6 +60,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	private boolean allowMultipleFiring;
 	private RuleFactory ruleFactory;
 	private EMFOperationNotificationProvider notificationProvider;
+	private Collection<Activation<? extends IPatternMatch>> activations;
 	
 	/**
 	 * Instantiates a new Agenda instance with the given {@link IncQueryEngine}.
@@ -76,7 +79,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @param iqEngine the {@link IncQueryEngine} instance
 	 * @param allowMultipleFiring indicates whether multiple firing is allowed
 	 */
-	public Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
+	protected Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
 		this.iqEngine = iqEngine;
 		this.rules = new HashSet<Rule<? extends IPatternMatch>>();
 		this.listeners = new HashSet<ActivationNotificationListener>();
@@ -84,6 +87,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 		this.notifier = iqEngine.getEmfRoot();
 		this.editingDomain = TransactionUtil.getEditingDomain(notifier);
 		this.allowMultipleFiring = allowMultipleFiring;
+		this.activations = new HashSet<Activation<? extends IPatternMatch>>();
 		
 		if (this.editingDomain != null) {
 			notificationProvider = new TransactionBasedEMFOperationNotificationProvider(this);
@@ -100,7 +104,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @param notifier the {@link Notifier} instance
 	 * @throws IncQueryException
 	 */
-	public Agenda(Notifier notifier) throws IncQueryException {
+	protected Agenda(Notifier notifier) throws IncQueryException {
 		this(EngineManager.getInstance().getIncQueryEngine(notifier));
 	}
 	
@@ -112,7 +116,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @param allowMultipleFiring indicates whether multiple firing is allowed
 	 * @throws IncQueryException
 	 */
-	public Agenda(Notifier notifier, boolean allowMultipleFiring) throws IncQueryException {
+	protected Agenda(Notifier notifier, boolean allowMultipleFiring) throws IncQueryException {
 		this(EngineManager.getInstance().getIncQueryEngine(notifier), allowMultipleFiring);
 	}
 	
@@ -224,7 +228,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @return the collection of activations
 	 */
 	public Collection<Activation<? extends IPatternMatch>> getActivations() {
-		Collection<Activation<? extends IPatternMatch>> activations = new HashSet<Activation<? extends IPatternMatch>>();
+		activations.clear();
 		for (Rule<? extends IPatternMatch> r : rules) {
 			activations.addAll(r.getActivations());
 		}
