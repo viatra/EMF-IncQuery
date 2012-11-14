@@ -3,7 +3,7 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.specific;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 
 public class RecordingActivation<MatchType extends IPatternMatch> extends Activation<MatchType> {
 
@@ -14,6 +14,7 @@ public class RecordingActivation<MatchType extends IPatternMatch> extends Activa
 		this.rule = rule;
 	}
 
+	//Overridden because of DSE purposes
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
@@ -34,16 +35,10 @@ public class RecordingActivation<MatchType extends IPatternMatch> extends Activa
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
-	@Override
 	public String toString() {
 		return "[Rule: "+rule+"][Match: "+patternMatch+"][State: "+state+"][Fired: "+fired+"]";
 	}
 
-	
 	/**
 	 * Fires the activation and records the EMF model manipulations within a {@link RecordingCommand}.
 	 * This way the model manipulations can be re- or undone.

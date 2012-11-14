@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine;
+package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
+import org.eclipse.viatra2.emf.incquery.triggerengine.util.ActivationState;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**

@@ -1,8 +1,8 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.firing;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
-import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
 
 /**
  * A timed firing strategy is similar to the {@link AutomaticFiringStrategy} 
@@ -13,16 +13,21 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
  * @author Tamas Szabo
  *
  */
-public class TimedFiringStrategy implements Runnable {
+public class TimedFiringStrategy {
 
 	private long interval;
 	private volatile boolean interrupted = false;
 	private ActivationMonitor monitor;
+	private FiringThread firingThread;
 	
 	public TimedFiringStrategy(ActivationMonitor monitor, long interval) {
 		this.interval = interval;
 		this.monitor = monitor;
-		new FiringThread().start();
+		this.firingThread = new FiringThread();
+	}
+	
+	public void start() {
+		this.firingThread.start();
 	}
 	
 	private class FiringThread extends Thread {
@@ -42,7 +47,7 @@ public class TimedFiringStrategy implements Runnable {
 					Thread.sleep(interval);
 				} 
 				catch (InterruptedException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}
@@ -51,7 +56,4 @@ public class TimedFiringStrategy implements Runnable {
 	public void dispose() {
 		interrupted = true;
 	}
-
-	@Override
-	public void run() {}
 }

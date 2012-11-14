@@ -3,7 +3,7 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.notification;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 
 /**
  * The notification mechanism of this class is based on the {@link NavigationHelper} 
@@ -18,33 +18,37 @@ public class ReteBasedEMFOperationNotificationProvider extends EMFOperationNotif
 
 	private Agenda agenda;
 	private Runnable matchsetProcessor;
+	private NavigationHelper helper;
 	
-	public ReteBasedEMFOperationNotificationProvider(Agenda _agenda) {
+	public ReteBasedEMFOperationNotificationProvider(Agenda agenda) {
 		super();
-		this.agenda = _agenda;
-		this.matchsetProcessor = new Runnable() {
-			@Override
-			public void run() {
-				notfiyListeners();
-				agenda.afterActivationUpdateCallback();
-			}
-		};
+		this.agenda = agenda;
+		this.matchsetProcessor = new MatchSetProcessor();
 		
 		try {
-			this.agenda.getIqEngine().getBaseIndex().getAfterUpdateCallbacks().add(matchsetProcessor);
-		} 
+			helper = this.agenda.getIqEngine().getBaseIndex();
+		}
 		catch (IncQueryException e) {
-			e.printStackTrace();
+			this.agenda.getIqEngine().getLogger().error("The base index cannot be constructed for the engine!", e);
+		}
+		
+		if (helper != null) {
+			helper.getAfterUpdateCallbacks().add(matchsetProcessor);
+		}
+	}
+	
+	private class MatchSetProcessor implements Runnable {
+		@Override
+		public void run() {
+			notfiyListeners();
+			agenda.afterActivationUpdateCallback();
 		}
 	}
 
 	@Override
 	public void dispose() {
-		try {
-			this.agenda.getIqEngine().getBaseIndex().getAfterUpdateCallbacks().remove(matchsetProcessor);
-		} 
-		catch (IncQueryException e) {
-			e.printStackTrace();
+		if (helper != null) {
+			helper.getAfterUpdateCallbacks().remove(matchsetProcessor);
 		}
 		this.listeners.clear();
 	}

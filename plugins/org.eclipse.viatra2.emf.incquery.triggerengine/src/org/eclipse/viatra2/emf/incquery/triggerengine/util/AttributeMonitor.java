@@ -14,7 +14,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationProvider;
 
 public class AttributeMonitor<MatchType extends IPatternMatch> extends EMFOperationNotificationProvider {

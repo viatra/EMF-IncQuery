@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine;
+package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class RuleEngine {
 	private Map<IncQueryEngine, WeakReference<Agenda>> agendaMap;
 	private RuleFactory defaultRuleFactory;
 	
-	public static RuleEngine getInstance() {
+	public static synchronized RuleEngine getInstance() {
 		if (instance == null) {
 			instance = new RuleEngine();
 		}
@@ -52,7 +52,6 @@ public class RuleEngine {
 			engine = EngineManager.getInstance().getIncQueryEngine(notifier);
 			return getOrCreateAgenda(engine, allowMultipleFiring);
 		} catch (IncQueryException e) {
-			e.printStackTrace();
 			return null;
 		}
 	}

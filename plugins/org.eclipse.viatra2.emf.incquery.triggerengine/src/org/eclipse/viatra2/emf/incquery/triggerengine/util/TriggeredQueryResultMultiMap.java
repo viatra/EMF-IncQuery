@@ -17,10 +17,10 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.RuleEngine;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 /**

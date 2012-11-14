@@ -5,9 +5,9 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.RuleEngine;
-import org.eclipse.viatra2.emf.incquery.triggerengine.RuleFactory;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleFactory;
 
 public class DefaultRuleFactory implements RuleFactory {
 
@@ -27,7 +27,7 @@ public class DefaultRuleFactory implements RuleFactory {
 											disappearedStateUsed, 
 											allowMultipleFiring);
 		} catch (IncQueryException e) {
-			e.printStackTrace();
+			engine.getLogger().error("Error while creating RecordingRule!", e);
 		}
 		return rule;
 	}

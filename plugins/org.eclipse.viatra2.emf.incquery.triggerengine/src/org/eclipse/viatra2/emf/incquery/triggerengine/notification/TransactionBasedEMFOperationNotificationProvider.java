@@ -6,7 +6,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomainEvent;
 import org.eclipse.emf.transaction.TransactionalEditingDomainListener;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.emf.workspace.impl.EMFOperationTransaction;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 
 /**
  * The notification mechanism of this class is based on the transactions 

@@ -13,7 +13,7 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.util;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**

@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.notification;
 
-import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationMonitor;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
 
 /**
  * Classes implement this interface to provide notifications about the changes in the 

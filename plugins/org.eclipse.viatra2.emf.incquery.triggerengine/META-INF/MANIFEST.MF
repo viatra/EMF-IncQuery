@@ -11,8 +11,6 @@ Require-Bundle: org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0",
  org.eclipse.emf.databinding;bundle-version="1.2.0",
  org.eclipse.core.databinding.property,
  org.eclipse.emf.workspace;bundle-version="1.5.1"
-Export-Package: org.eclipse.viatra2.emf.incquery.triggerengine,
+Export-Package: org.eclipse.viatra2.emf.incquery.triggerengine.api,
  org.eclipse.viatra2.emf.incquery.triggerengine.firing,
- org.eclipse.viatra2.emf.incquery.triggerengine.notification,
- org.eclipse.viatra2.emf.incquery.triggerengine.specific,
- org.eclipse.viatra2.emf.incquery.triggerengine.util
+ org.eclipse.viatra2.emf.incquery.triggerengine.specific

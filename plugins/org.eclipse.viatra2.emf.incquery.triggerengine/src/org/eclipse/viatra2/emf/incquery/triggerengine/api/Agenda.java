@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine;
+package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -5,11 +5,11 @@ import java.util.Map;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Activation;
-import org.eclipse.viatra2.emf.incquery.triggerengine.ActivationState;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
+import org.eclipse.viatra2.emf.incquery.triggerengine.util.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.AttributeMonitor;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 

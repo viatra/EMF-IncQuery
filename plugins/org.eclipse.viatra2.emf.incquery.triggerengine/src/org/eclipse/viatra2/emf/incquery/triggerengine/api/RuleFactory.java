@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine;
+package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
