@@ -1,6 +1,10 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.notification;
 
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 
 /**
  * Classes implement this interface to provide notifications about the changes in the 
@@ -9,34 +13,47 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
  * @author Tamas Szabo
  *
  */
-public interface ActivationNotificationProvider {
+public abstract class ActivationNotificationProvider {
+	
+	protected Set<IActivationNotificationListener> activationNotificationListeners; 
+	
+	public ActivationNotificationProvider() {
+		this.activationNotificationListeners = new HashSet<IActivationNotificationListener>();
+	}
+	
+	/** 
+	 * Registers an {@link IActivationNotificationListener} to receive updates on activation 
+	 * appearance and disappearance.  
+	 * 
+	 * <p> The listener can be unregistered via 
+	 * {@link #removeActivationNotificationListener(IActivationNotificationListener)}.
+	 *  
+	 * @param fireNow if true, listener will be immediately invoked on all current activations as a one-time effect. 
+     *
+	 * @param listener the listener that will be notified of each new activation that appears or disappears, 
+	 * starting from now. 
+	 */
+	public abstract boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow);
 	
 	/**
-	 * Registers a listener that will be called each time the collection of activations is modified.
+	 * Unregisters a listener registered by 
+	 * {@link #addActivationNotificationListener(IActivationNotificationListener, boolean)}.
 	 * 
-	 * @param listener a ActivationNotificationListener to be called after each update
-	 * 
-	 * @return false if the callback was already registered
+	 * @param listener the listener that will no longer be notified. 
 	 */
-	public boolean addActivationNotificationListener(ActivationNotificationListener listener);
+	public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
+		return this.activationNotificationListeners.remove(listener);
+	}
+		
+	protected void notifyActivationAppearance(Activation<? extends IPatternMatch> activation) {
+		for (IActivationNotificationListener listener : this.activationNotificationListeners) {
+			listener.activationAppeared(activation);
+		}
+	}
 	
-	/**
-	 * Removes a previously registered listener. See addActivationNotificationListener().
-	 * 
-	 * @param listener the listener to remove
-	 * 
-	 * @return false if the callback was not registered
-	 */
-	public boolean removeActivationNotificationListener(ActivationNotificationListener listener);
-
-	/**
-	 * Instantiates a new {@link ActivationMonitor} that will keep track of the changes of activations.
-	 * It can be used to monitor and process the activations on an individual basis rather then inspecting 
-	 * the most up-to-date state in the {@link Agenda}.
-	 * 
-	 * @param fillAtStart indicates whether to initialize the monitor with the activations during creation
-	 * 
-	 * @return the {@link ActivationMonitor} instance
-	 */
-	public ActivationMonitor newActivationMonitor(boolean fillAtStart);
+	protected void notifyActivationDisappearance(Activation<? extends IPatternMatch> activation) {
+		for (IActivationNotificationListener listener : this.activationNotificationListeners) {
+			listener.activationDisappeared(activation);
+		}
+	}
 }

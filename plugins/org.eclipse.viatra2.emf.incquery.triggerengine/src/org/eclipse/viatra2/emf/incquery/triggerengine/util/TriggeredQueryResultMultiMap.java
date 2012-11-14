@@ -17,7 +17,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
@@ -41,9 +40,8 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
         super(agenda.getIqEngine().getLogger());
         this.agenda = agenda;
         
-        ActivationMonitor monitor = agenda.newActivationMonitor(true);
-        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
-        agenda.addActivationNotificationListener(firingStrategy);
+        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy();
+        agenda.addActivationNotificationListener(firingStrategy, true);
         
         appearanceProcessor = new IMatchProcessor<MatchType>() {
             @Override
@@ -79,7 +77,7 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
             newRule.afterDisappearanceJob = disappearanceProcessor;
         }
 
-        agenda.afterActivationUpdateCallback();
+        //agenda.afterActivationUpdateCallback();
     }
 
     protected abstract KeyType getKeyFromMatch(MatchType match); 

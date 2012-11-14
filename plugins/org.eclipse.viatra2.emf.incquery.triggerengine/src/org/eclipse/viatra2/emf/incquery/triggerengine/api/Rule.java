@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.ActivationState;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
@@ -24,7 +25,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  *
  * @param <MatchType> the type of the pattern match
  */
-public abstract class Rule<MatchType extends IPatternMatch> implements EMFOperationNotificationListener {
+public abstract class Rule<MatchType extends IPatternMatch> extends ActivationNotificationProvider implements 
+	IAttributeMonitorListener<MatchType>, IMatchUpdateListener<MatchType> {
 
 	public IMatchProcessor<MatchType> afterAppearanceJob;
 	public IMatchProcessor<MatchType> afterDisappearanceJob;

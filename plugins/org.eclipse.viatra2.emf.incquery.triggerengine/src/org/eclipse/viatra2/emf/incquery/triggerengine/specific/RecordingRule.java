@@ -8,15 +8,13 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationListener;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.ActivationState;
-import org.eclipse.viatra2.emf.incquery.triggerengine.util.AttributeMonitor;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.viatra2.emf.incquery.triggerengine.util.DefaultAttributeMonitor;
 
-public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> implements EMFOperationNotificationListener {
+public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> {
 	
-	private AttributeMonitor<MatchType> attributeMonitor;
-	private DeltaMonitor<MatchType> deltaMonitor;
+	private DefaultAttributeMonitor<MatchType> attributeMonitor;
 	
 	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher, 
 			final boolean upgradedStateUsed, 
@@ -24,9 +22,9 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 			final boolean allowMultipleFiring) {
 		super(agenda, matcher, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
 		
-		this.deltaMonitor = matcher.newDeltaMonitor(true);
-		this.attributeMonitor = new AttributeMonitor<MatchType>(this);
-		this.attributeMonitor.addNotificationProviderListener(this);
+		this.attributeMonitor = new DefaultAttributeMonitor<MatchType>();
+		this.matcher.addCallbackOnMatchUpdate(this, true);
+		this.attributeMonitor.addCallbackOnMatchUpdate(this);
 	}
 	
 	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher) {
@@ -50,6 +48,7 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 		if (activation != null) {
 			//upgraded state is not changed
 			activation.setFired(false);
+			notifyActivationAppearance(activation);
 		}
 		else {
 			activation = appearedMap.get(match);
@@ -59,6 +58,7 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 				activation.setFired(false);
 				activation.setState(ActivationState.UPDATED);
 				updatedMap.put(match, activation);
+				notifyActivationAppearance(activation);
 			}
 		}
 	}
@@ -75,15 +75,18 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 			activation.setFired(true);
 			activation.setState(ActivationState.APPEARED);
 			appearedMap.put(match, activation);
+			notifyActivationDisappearance(activation);
 		}
 		else {
 			activation = new RecordingActivation<MatchType>(this, match, allowMultipleFiring);
 			activation.setState(ActivationState.APPEARED);
 			appearedMap.put(match, activation);
-
+			
 			if (upgradedStateUsed) {
 				attributeMonitor.registerFor(match);
 			}
+			
+			notifyActivationAppearance(activation);
 		}
 	}
 
@@ -101,11 +104,13 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 				activation.setFired(false);
 				activation.setState(ActivationState.DISAPPEARED);
 				disappearedMap.put(match, activation);
+				notifyActivationAppearance(activation);
 			}
 			else {
 				appearedMap.remove(match);
 				//unregistering change listener from the affected observable values
 				attributeMonitor.unregisterFor(match);
+				notifyActivationDisappearance(activation);
 			}
 		}
 		else {
@@ -116,6 +121,7 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 				activation.setFired(false);
 				activation.setState(ActivationState.DISAPPEARED);
 				disappearedMap.put(match, activation);
+				notifyActivationAppearance(activation);
 			}
 		}
 	}
@@ -133,23 +139,34 @@ public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchTy
 	
 	@Override
 	public void dispose() {
-		attributeMonitor.unregisterForAll();
-		deltaMonitor.disconnectFromNetwork();
+		this.attributeMonitor.removeCallbackOnMatchUpdate(this);
+		this.attributeMonitor.dispose();
+		this.matcher.removeCallbackOnMatchUpdate(this);
 	}
 
 	@Override
-	public void afterEMFOperationListener() {
-		for (MatchType newMatch : deltaMonitor.matchFoundEvents) {
-			processMatchAppearance(newMatch);
+	public void notifyAppearance(MatchType match) {
+		processMatchAppearance(match);
+	}
+
+	@Override
+	public void notifyDisappearance(MatchType match) {
+		processMatchDisappearance(match);
+	}
+
+	@Override
+	public void notifyUpdate(MatchType match) {
+		processMatchModification(match);
+	}
+
+	@Override
+	public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
+		boolean notContained = this.activationNotificationListeners.add(listener);
+		if (notContained) {
+			for (Activation<MatchType> activation : getActivations()) {
+				listener.activationAppeared(activation);
+			}
 		}
-		for (MatchType lostMatch : deltaMonitor.matchLostEvents) {
-			processMatchDisappearance(lostMatch);
-		}
-		for (MatchType modMatch : attributeMonitor.matchModificationEvents) {
-			processMatchModification(modMatch);
-		}
-		
-		deltaMonitor.clear();
-		attributeMonitor.clear();
+		return notContained;
 	}
 }

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
@@ -43,9 +42,8 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 			rule.afterModificationJob = new MarkerUpdaterJob(markerMap, constraint, logger);
 		}
 		
-		ActivationMonitor monitor = agenda.newActivationMonitor(true);
-		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(monitor);
-		agenda.addActivationNotificationListener(firingStrategy);
+		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy();
+		agenda.addActivationNotificationListener(firingStrategy, true);
 	}
 	
 	public void dispose() {

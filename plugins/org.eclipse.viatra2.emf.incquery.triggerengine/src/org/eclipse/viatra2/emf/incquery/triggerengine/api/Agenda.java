@@ -16,11 +16,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.TimedFiringStrategy;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.EMFOperationNotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ReteBasedEMFOperationNotificationProvider;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.TransactionBasedEMFOperationNotificationProvider;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
 
 /**
@@ -29,7 +26,7 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
  * responsible for creating, managing and disposing rules in the Rule Engine. 
  * It provides an unmodifiable view for the collection of applicable activations.
  * <br/><br/>
- * One must register an {@link ActivationNotificationListener} in order to receive 
+ * One must register an {@link IActivationNotificationListener} in order to receive 
  * notifications automatically about the changes in the collection of activations.
  * <br/><br/>
  * The Trigger Engine is a collection of strategies which can be used to 
@@ -38,28 +35,28 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
  * state of development. 
  * <br/><br/>
  * Note that, one may instantiate an {@link ActivationMonitor} in order to 
- * process the activations on an individual basis, because the Agenda always reflects 
+ * process the activations on an individual basis, because the {@link Agenda} always reflects 
  * the most up-to-date state of the activations. 
  * 
- * One may define whether multiple firing of the same activation; that is only 
- * the Appeared state will be used from the lifecycle of activations. For more 
+ * One may define whether multiple firing of the same activation is allowed; that is, only 
+ * the Appeared state will be used from the lifecycle of {@link Activation}s and consecutive 
+ * firing of a previously applied {@link Activation} is possible. For more 
  * information on the lifecycle see {@link Activation}. Multiple firing is used 
  * for example in Design Space Exploration scenarios. 
  * 
  * @author Tamas Szabo
  *
  */
-public class Agenda implements ActivationNotificationProvider, ActivationNotificationListener {
+public class Agenda extends ActivationNotificationProvider 
+	implements IActivationNotificationListener {
 
 	private IncQueryEngine iqEngine;
 	private Set<Rule<? extends IPatternMatch>> rules;
-	private Set<ActivationNotificationListener> listeners;
 	private Set<ActivationMonitor> monitors;
 	private Notifier notifier;
 	private TransactionalEditingDomain editingDomain;
 	private boolean allowMultipleFiring;
 	private RuleFactory ruleFactory;
-	private EMFOperationNotificationProvider notificationProvider;
 	private Collection<Activation<? extends IPatternMatch>> activations;
 	
 	/**
@@ -82,19 +79,11 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	protected Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
 		this.iqEngine = iqEngine;
 		this.rules = new HashSet<Rule<? extends IPatternMatch>>();
-		this.listeners = new HashSet<ActivationNotificationListener>();
 		this.monitors = new HashSet<ActivationMonitor>();
 		this.notifier = iqEngine.getEmfRoot();
 		this.editingDomain = TransactionUtil.getEditingDomain(notifier);
 		this.allowMultipleFiring = allowMultipleFiring;
 		this.activations = new HashSet<Activation<? extends IPatternMatch>>();
-		
-		if (this.editingDomain != null) {
-			notificationProvider = new TransactionBasedEMFOperationNotificationProvider(this);
-		}
-		else {
-			notificationProvider = new ReteBasedEMFOperationNotificationProvider(this);
-		}
 	}
 	
 	/**
@@ -171,11 +160,9 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 */
 	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
 		Rule<Match> createRule(IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed) {
-		Rule<Match> rule = ruleFactory.createRule(iqEngine, factory, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
-		notificationProvider.addNotificationProviderListener(rule);
-		
-		//this call is necessary to initialize the collection of activations
-		rule.afterEMFOperationListener();
+		Rule<Match> rule = ruleFactory.
+				createRule(iqEngine, factory, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
+		rule.addActivationNotificationListener(this, true);
 		rules.add(rule);
 		return rule;
 	}
@@ -187,7 +174,7 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 */
 	public void removeRule(RecordingRule<IPatternMatch> rule) {
 		if (rules.contains(rule)) {
-			notificationProvider.removeNotificationProviderListener(rule);
+			rule.removeActivationNotificationListener(this);
 			rule.dispose();
 			rules.remove(rule);
 		}
@@ -209,8 +196,6 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 		for (Rule<? extends IPatternMatch> rule : rules) {
 			rule.dispose();
 		}
-		
-		notificationProvider.dispose();
 	}
 
 	/**
@@ -228,42 +213,50 @@ public class Agenda implements ActivationNotificationProvider, ActivationNotific
 	 * @return the collection of activations
 	 */
 	public Collection<Activation<? extends IPatternMatch>> getActivations() {
-		activations.clear();
-		for (Rule<? extends IPatternMatch> r : rules) {
-			activations.addAll(r.getActivations());
-		}
 		return Collections.unmodifiableCollection(activations);
-	}
-
-	@Override
-	public boolean addActivationNotificationListener(ActivationNotificationListener listener) {
-		return this.listeners.add(listener);
-	}
-
-	@Override
-	public boolean removeActivationNotificationListener(ActivationNotificationListener listener) {
-		return this.listeners.remove(listener);
 	}
 	
 	@Override
+	public void activationAppeared(Activation<? extends IPatternMatch> activation) {
+		this.activations.add(activation);
+		
+		for (ActivationMonitor monitor : monitors) {
+			monitor.addActivation(activation);
+		}
+		
+		notifyActivationAppearance(activation);
+	}
+
+	@Override
+	public void activationDisappeared(Activation<? extends IPatternMatch> activation) {
+		this.activations.remove(activation);
+		
+		for (ActivationMonitor monitor : monitors) {
+			monitor.removeActivation(activation);
+		}
+		
+		notifyActivationDisappearance(activation);
+	}
+	
 	public ActivationMonitor newActivationMonitor(boolean fillAtStart) {
 		ActivationMonitor monitor = new ActivationMonitor();
 		if (fillAtStart) {
-			monitor.addActivations(getActivations());
+			for (Activation<? extends IPatternMatch> activation : activations) {
+				monitor.addActivation(activation);
+			}
 		}
 		monitors.add(monitor);
 		return monitor;
 	}
 
 	@Override
-	public void afterActivationUpdateCallback() {
-		Collection<Activation<? extends IPatternMatch>> activations = getActivations();
-		for (ActivationMonitor monitor : monitors) {
-			monitor.addActivations(activations);
+	public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
+		boolean notContained = this.activationNotificationListeners.add(listener);
+		if (notContained) {
+			for (Activation<? extends IPatternMatch> activation : activations) {
+				listener.activationAppeared(activation);
+			}
 		}
-		
-		for (ActivationNotificationListener listener : listeners) {
-			listener.afterActivationUpdateCallback();
-		}
+		return notContained;
 	}
 }
