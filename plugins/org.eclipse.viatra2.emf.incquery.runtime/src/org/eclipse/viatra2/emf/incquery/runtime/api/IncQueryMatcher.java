@@ -138,7 +138,6 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 	 * @param fireNow if true, appearCallback will be immediately invoked on all current matches as a one-time effect. 
 	 *  See also {@link IncQueryMatcher#forEachMatch(IMatchProcessor)}.
 	 * @param listener the listener that will be notified of each new match that appears or disappears, starting from now. 
-	 * @return a handle that can be used to unregister the callback, freeing up some resources.
 	 */
 	public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener, boolean fireNow);
 	/**
