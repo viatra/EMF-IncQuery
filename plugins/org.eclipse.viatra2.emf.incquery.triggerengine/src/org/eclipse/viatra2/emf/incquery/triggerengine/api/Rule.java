@@ -10,6 +10,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationProvider;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IAttributeMonitorListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.ActivationState;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 

@@ -10,11 +10,12 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.ActivationState;
+import org.eclipse.viatra2.emf.incquery.triggerengine.util.AttributeMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.util.DefaultAttributeMonitor;
 
 public class RecordingRule<MatchType extends IPatternMatch> extends Rule<MatchType> {
 	
-	private DefaultAttributeMonitor<MatchType> attributeMonitor;
+	private AttributeMonitor<MatchType> attributeMonitor;
 	
 	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher, 
 			final boolean upgradedStateUsed, 

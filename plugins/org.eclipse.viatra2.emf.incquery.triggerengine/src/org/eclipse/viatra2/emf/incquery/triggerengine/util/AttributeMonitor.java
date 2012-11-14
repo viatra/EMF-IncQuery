@@ -1,9 +1,10 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine.api;
+package org.eclipse.viatra2.emf.incquery.triggerengine.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IAttributeMonitorListener;
 
 /**
  * The class defines the operations that are required to observ 
