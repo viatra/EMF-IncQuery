@@ -63,7 +63,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 	private void unregisterPattern(String patternFqn) {
 		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
 		if (!PatternRegistry.getInstance().isGenerated(pattern)) {
-			PatternRegistry.getInstance().unregisterPattern(patternFqn);
+			PatternRegistry.getInstance().unregisterPattern(pattern);
 			QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
 			
 			//unregister patterns from observable roots
