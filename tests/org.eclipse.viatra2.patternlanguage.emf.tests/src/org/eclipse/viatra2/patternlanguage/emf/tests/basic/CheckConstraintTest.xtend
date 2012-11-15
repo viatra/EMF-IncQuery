@@ -8,8 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.viatra2.patternlanguage.emf.tests.types
+package org.eclipse.viatra2.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
@@ -30,10 +29,13 @@ import org.eclipse.viatra2.patternlanguage.validation.EMFIssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CheckConstraintTest {
+	
 	@Inject
 	ParseHelper parseHelper
+	
 	@Inject
 	EMFPatternLanguageJavaValidator validator
+	
 	@Inject
 	Injector injector
 	
@@ -47,13 +49,13 @@ class CheckConstraintTest {
 	}
 	
 	@Test
-	def booleanCheck() {
+	def whitelistedCheck() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EBoolean(C);
-				check(C);
+			pattern name(D) = {			
+				EDouble(D);
+				check(java::lang::Math::abs(D) > 10.5);
 			}
 		') as PatternModel
 		model.assertNoErrors
@@ -61,65 +63,16 @@ class CheckConstraintTest {
 	}
 	
 	@Test
-	def accessEClassInCheck() {
+	def nonWhitelistedCheck() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EClass(C);
-				check(C.name.empty);
+			pattern name(L) = {
+				ELong(L);
+				check(java::util::Calendar::getInstance().getTime().getTime() > L);
 			}
 		') as PatternModel
-		tester.validate(model).assertError(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR)
+		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
 	
-	@Test
-	def booleanBlockExpressionCheck() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern name(C) = {
-				EClass(C);
-				EClass.name(C,S);
-				check({
-					val name = S;
-					name.empty;
-				});
-			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
-	}
-	
-	@Test
-	def booleanBlockExpressionWithReturnCheck() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern name(C) = {
-				EClass(C);
-				EClass.name(C,S);
-				check({
-					val name = S;
-					return name.empty
-				});
-			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
-	}
-	
-	@Test
-	def nonBooleanCheck() {
-		val model = parseHelper.parse('
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern name(S) = {
-				EString(S);
-				check(S.length);
-			}
-		') as PatternModel
-		tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)
-	}
-
 }

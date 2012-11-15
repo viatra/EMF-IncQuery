@@ -401,18 +401,18 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private boolean isImpureElement(JvmOperation jvmOperation) {
+        // First check if it is tagged with the @Pure annotation
         if (!jvmOperation.getAnnotations().isEmpty()) {
-            // First check if it is tagged with the @Pure annotation
             for (JvmAnnotationReference jvmAnnotationReference : jvmOperation.getAnnotations()) {
                 if (Pure.class.getSimpleName().equals(jvmAnnotationReference.getAnnotation().getSimpleName())) {
                     return false;
                 }
             }
-            // We consider the following packages pure by default: xbase.lib.*, java.lang.* and java.lang.math.*
-            String qualifiedName = jvmOperation.getQualifiedName();
-            if (qualifiedName.startsWith("xbase.lib.") || qualifiedName.startsWith("java.lang.")) {
-                return false;
-            }
+        }
+        // Second, we consider the following packages pure by default: xbase.lib.*, java.lang.* and java.lang.math.*
+        String qualifiedName = jvmOperation.getQualifiedName();
+        if (qualifiedName.startsWith("xbase.lib.") || qualifiedName.startsWith("java.lang.")) {
+            return false;
         }
         return true;
     }
