@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine.util;
+package org.eclipse.viatra2.emf.incquery.triggerengine.specific;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.AttributeMonitor;
 
 public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor<MatchType> {
 

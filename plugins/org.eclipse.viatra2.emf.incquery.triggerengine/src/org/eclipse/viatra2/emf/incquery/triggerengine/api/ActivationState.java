@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.incquery.triggerengine.util;
+package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
 public enum ActivationState {
 	APPEARED,

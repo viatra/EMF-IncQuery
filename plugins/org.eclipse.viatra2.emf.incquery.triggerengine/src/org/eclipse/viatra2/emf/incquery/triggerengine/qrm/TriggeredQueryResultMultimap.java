@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.triggerengine.util;
+package org.eclipse.viatra2.emf.incquery.triggerengine.qrm;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra2.emf.incquery.base.api.QueryResultMultimap;
@@ -26,7 +26,7 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStra
  * @author Abel Hegedus
  *
  */
-public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMatch, KeyType, ValueType> extends QueryResultMultimap<KeyType, ValueType> {
+public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMatch, KeyType, ValueType> extends QueryResultMultimap<KeyType, ValueType> {
 
     private IMatchProcessor<MatchType> appearanceProcessor;
     private IMatchProcessor<MatchType> disappearanceProcessor;
@@ -36,7 +36,7 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultiMap(Agenda agenda) {
+    protected TriggeredQueryResultMultimap(Agenda agenda) {
         super(agenda.getIqEngine().getLogger());
         this.agenda = agenda;
         
@@ -62,11 +62,11 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
         };
     }
     
-    protected TriggeredQueryResultMultiMap(IncQueryEngine engine) {
+    protected TriggeredQueryResultMultimap(IncQueryEngine engine) {
         this(RuleEngine.getInstance().getOrCreateAgenda(engine));
     }
     
-    protected TriggeredQueryResultMultiMap(Notifier notifier) {
+    protected TriggeredQueryResultMultimap(Notifier notifier) {
         this(RuleEngine.getInstance().getOrCreateAgenda(notifier));
     }
     
@@ -76,8 +76,6 @@ public abstract class TriggeredQueryResultMultiMap<MatchType extends IPatternMat
             newRule.afterAppearanceJob = appearanceProcessor;
             newRule.afterDisappearanceJob = disappearanceProcessor;
         }
-
-        //agenda.afterActivationUpdateCallback();
     }
 
     protected abstract KeyType getKeyFromMatch(MatchType match); 
