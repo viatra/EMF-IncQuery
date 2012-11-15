@@ -8,7 +8,7 @@
  * Contributors:
  *   Balazs Grill - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.databinding.runtime;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.old;
 
 import java.util.ArrayList;
 import java.util.Collection;
