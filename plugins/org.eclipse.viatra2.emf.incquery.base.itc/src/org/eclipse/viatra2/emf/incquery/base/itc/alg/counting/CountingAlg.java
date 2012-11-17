@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.TcRelationGenerator;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalWrapper;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IGraphDataSource;
@@ -69,8 +68,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	 * Initializes the transitive closure relation.
 	 */
 	private void initTc() {
-		TcRelationGenerator<V> tcg = new TcRelationGenerator<V>(gds);
-		this.setTcRelation(tcg.getTcRelation());
+		this.setTcRelation(CountingTcRelation.createFrom(gds));
 	}
 
 	/*
@@ -204,13 +202,8 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 		return this.tc;
 	}
 
-	public void setTcRelation(ITcRelation<V> tc) {
-		this.tc = new CountingTcRelation<V>(true);
-		for (V s : tc.getTupleStarts()) {
-			for (V t : tc.getTupleEnds(s)) {
-				this.tc.addTuple(s, t, 1);
-			}
-		}
+	public void setTcRelation(CountingTcRelation<V> tc) {
+		this.tc = tc;
 	}
 
 	/*
