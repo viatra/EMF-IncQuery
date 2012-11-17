@@ -11,13 +11,17 @@
 
 package org.eclipse.viatra2.emf.incquery.base.itc.alg.counting;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.ITcRelation;
+import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.topsort.TopSort;
+import org.eclipse.viatra2.emf.incquery.base.itc.igraph.IBiDirectionalGraphDataSource;
 
 /**
  * Transitive closure relation implementation for the Counting algorithm. 
@@ -270,5 +274,28 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
 		}
 		
 		return hash;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <V> CountingTcRelation<V> createFrom(IBiDirectionalGraphDataSource<V> gds) {
+		List<V> topologicalSorting = (List<V>) TopSort.getTopologicalSorting(gds);
+		CountingTcRelation<V> tc = new CountingTcRelation<V>(true);
+		Collections.reverse(topologicalSorting);
+		for (V n : topologicalSorting) {			
+			List<V> sourceNodes = gds.getSourceNodes(n);		
+			if (sourceNodes != null) {		
+				Set<V> tupEnds = tc.getTupleEnds(n);
+				for (V s : sourceNodes) {
+					tc.addTuple(s, n, 1);
+					if (tupEnds != null) {
+						for (V t : tupEnds) {
+							tc.addTuple(s, t, 1);
+						}
+					}
+				}
+			}
+		}
+		
+		return tc;
 	}
 }

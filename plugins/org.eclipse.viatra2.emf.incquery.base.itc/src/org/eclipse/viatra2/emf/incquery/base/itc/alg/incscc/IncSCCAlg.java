@@ -71,7 +71,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void init() {	
+	private void init() {
 		SCCResult<V> _sccres = SCC.computeSCC(gds);
 		Set<Set<V>> _sccs = _sccres.getSccs();
 		
@@ -217,7 +217,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void edgeDeleted(V source, V target) {		
+	public void edgeDeleted(V source, V target) {
 		V sourceRoot = sccs.find(source);
 		V targetRoot = sccs.find(target);
 		
