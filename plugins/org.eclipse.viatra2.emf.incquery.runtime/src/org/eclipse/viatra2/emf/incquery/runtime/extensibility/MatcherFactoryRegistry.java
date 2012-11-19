@@ -67,6 +67,8 @@ public final class MatcherFactoryRegistry {
 		{		
 			IExtension[] exts = poi.getExtensions();
 			
+			Set<String> duplicates = new HashSet<String>();
+			
 			for (IExtension ext: exts)
 			{
 				
@@ -83,7 +85,7 @@ public final class MatcherFactoryRegistry {
 							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
 							if(id.equals(fullyQualifiedName)) {
 							    if(factories.containsKey(fullyQualifiedName)) {
-							        IncQueryEngine.getDefaultLogger().warn(String.format("[MatcherFactoryRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!", fullyQualifiedName));
+							        duplicates.add(fullyQualifiedName);
 							    } else {
 							        factories.put(fullyQualifiedName, matcherFactory);
 							    }
@@ -103,6 +105,15 @@ public final class MatcherFactoryRegistry {
 					}
 				}
 			}
+            if (!duplicates.isEmpty()) {
+                StringBuilder duplicateSB = new StringBuilder(
+                        "[MatcherFactoryRegistry] Trying to register patterns with the same FQN multiple times. Check your plug-in configuration!\n");
+                duplicateSB.append("The following pattern FQNs appeared multiple times:\n");
+                for (String fqn : duplicates) {
+                    duplicateSB.append(String.format("\t%s\n", fqn));
+                }
+                IncQueryEngine.getDefaultLogger().warn(duplicateSB.toString());
+            }
 		}
 	}
 
