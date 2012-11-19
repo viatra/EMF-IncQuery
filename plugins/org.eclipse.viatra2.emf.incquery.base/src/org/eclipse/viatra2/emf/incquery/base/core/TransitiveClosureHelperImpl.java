@@ -64,6 +64,7 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements
 					IncQueryBaseException.INVALID_EMFROOT);
 
 		this.sccAlg = new IncSCCAlg<EObject>(dataSource);
+		this.sccAlg.attachObserver(this);
 		emfRoot.eAdapters().add(this);
 	}
 
@@ -105,44 +106,51 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements
 	public void notifyChanged(Notification notification) {
 		super.notifyChanged(notification);
 		Object feature = notification.getFeature();
+		Object oldValue = notification.getOldValue();
+		Object newValue = notification.getNewValue();
+		Object notifier = notification.getNotifier();
+		
 		//System.out.println(notification);
-		if (feature instanceof EReference) {
+		if (feature instanceof EReference && 
+				(oldValue == null || oldValue instanceof EObject) && 
+				(newValue == null || newValue instanceof EObject) && 
+				(notifier == null || notifier instanceof EObject)) {
 
 			EReference ref = (EReference) feature;
-			EObject oldValue = (EObject) notification.getOldValue();
-			EObject newValue = (EObject) notification.getNewValue();
-			EObject notifier = (EObject) notification.getNotifier();
+			EObject oldValueObj = (EObject) oldValue;
+			EObject newValueObj = (EObject) newValue;
+			EObject notifierObj = (EObject) notifier;
 
 			if (ref.isContainment()) {
 				// Inserting nodes
 				if (notification.getEventType() == Notification.ADD
-						&& oldValue == null && newValue != null) {
-					nodeInserted(newValue);
-					visitObjectForEReference(newValue, true);
+						&& oldValueObj == null && newValueObj != null) {
+					nodeInserted(newValueObj);
+					visitObjectForEReference(newValueObj, true);
 				}
 				if (notification.getEventType() == Notification.REMOVE
-						&& newValue == null && oldValue != null) {
-					visitObjectForEReference(oldValue, false);
-					nodeDeleted(oldValue);
+						&& newValueObj == null && oldValueObj != null) {
+					visitObjectForEReference(oldValueObj, false);
+					nodeDeleted(oldValueObj);
 				}
 			} else // Inserting edges (excusively -> edge or node modification)
 			if (refToObserv.contains(ref)) {
 
 				if (notification.getEventType() == Notification.ADD
-						&& newValue != null) {
-					edgeInserted(notifier, newValue);
+						&& newValueObj != null) {
+					edgeInserted(notifierObj, newValueObj);
 				}
-				if (notification.getEventType() == Notification.REMOVE
-						&& oldValue != null) {
-					edgeDeleted(notifier, oldValue);
+				else if (notification.getEventType() == Notification.REMOVE
+						&& oldValueObj != null) {
+					edgeDeleted(notifierObj, oldValueObj);
 				}
-				if (notification.getEventType() == Notification.SET) {
-					if (oldValue != null) {
-						edgeDeleted(notifier, oldValue);
+				else if (notification.getEventType() == Notification.SET) {
+					if (oldValueObj != null) {
+						edgeDeleted(notifierObj, oldValueObj);
 					}
 
-					if (newValue != null) {
-						edgeInserted(notifier, newValue);
+					if (newValueObj != null) {
+						edgeInserted(notifierObj, newValueObj);
 					}
 				}
 			}
@@ -150,7 +158,7 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements
 	}
 
 	private void edgeInserted(EObject source, EObject target) {
-		dataSource.notifyEdgeDeleted(source, target);
+		dataSource.notifyEdgeInserted(source, target);
 	}
 
 	private void edgeDeleted(EObject source, EObject target) {
