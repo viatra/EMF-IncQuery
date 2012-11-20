@@ -120,7 +120,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
                 }
             } catch (Error e) { // NOPMD
                 throw e;
-            } catch (Throwable e) {
+            } catch (Throwable e) { // NOPMD
                 logger.warn(
                         String.format(
                                 "The query result multimap encountered an error during executing a callback on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
@@ -349,7 +349,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
             }
         } catch (Error e) { // NOPMD
             throw e;
-        } catch (Throwable e) {
+        } catch (Throwable e) { // NOPMD
             logger.warn(
                     String.format(
                             "The query result multimap encountered an error during invoking setter on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
