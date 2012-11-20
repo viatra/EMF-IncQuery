@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Zoltan Ujhelyi - initial API and implementation
+ *   Mark Czotter, Zoltan Ujhelyi - initial API and implementation
+ *   Andras Okros - new validators added
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.validation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,27 +59,30 @@ import org.eclipse.xtext.validation.Check;
 import com.google.inject.Inject;
 
 /**
- * Validators for EMFPattern Language.
- * <p>
- * Validators implemented:
- * </p>
+ * Validators for EMFPattern Language:
  * <ul>
- * <li>Duplicate import of EPackage</li>
- * <li>Enum type validators</li>
+ * <li>Duplicate import of EPackages</li>
+ * <li>Enum types</li>
+ * <li>Unused variables</li>
+ * <li>FIXME do it</li>
  * </ul>
- * 
- * @author Mark Czotter, Zoltan Ujhelyi
- * 
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
-
-    public static final String DUPLICATE_IMPORT = "Duplicate import of ";
 
     @Inject
     private IMetamodelProvider metamodelProvider;
 
     @Inject
     private IEMFTypeProvider emfTypeProvider;
+
+    @Override
+    protected List<EPackage> getEPackages() {
+        // PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the
+        // validation process
+        List<EPackage> result = super.getEPackages();
+        result.add(org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.eINSTANCE);
+        return result;
+    }
 
     @Check
     public void checkDuplicatePackageImports(PatternModel patternModel) {
@@ -88,10 +91,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             for (int j = i + 1; j < patternModel.getImportPackages().size(); ++j) {
                 EPackage rightPackage = patternModel.getImportPackages().get(j).getEPackage();
                 if (leftPackage.equals(rightPackage)) {
-                    warning(DUPLICATE_IMPORT + leftPackage.getNsURI(),
+                    warning("Duplicate import of " + leftPackage.getNsURI(),
                             EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, i,
                             EMFIssueCodes.DUPLICATE_IMPORT);
-                    warning(DUPLICATE_IMPORT + rightPackage.getNsURI(),
+                    warning("Duplicate import of " + rightPackage.getNsURI(),
                             EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, j,
                             EMFIssueCodes.DUPLICATE_IMPORT);
                 }
@@ -113,147 +116,106 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
-    private enum VariableReferenceClass {
-        PositiveExistential, NegativeExistential, ReadOnly
-    }
-
-    private class ClassifiedVariableReferences {
-        private final Variable referredVariable;
-        private final boolean isLocalVariable;
-
-        private final Map<VariableReferenceClass, Integer> classifiedReferenceCount;
-        private final Set<Variable> equalsVariables;
-
-        public Variable getReferredVariable() {
-            return referredVariable;
-        }
-
-        public int getReferenceCount(VariableReferenceClass forClass) {
-            Integer count = classifiedReferenceCount.get(forClass);
-            return count == null ? 0 : count;
-        }
-
-        public int getReferenceCountSum() {
-            int sum = 0;
-
-            for (Integer val : classifiedReferenceCount.values()) {
-                sum += val;
+    @Check
+    public void checkParametersNamed(Pattern pattern) {
+        for (Variable var : pattern.getParameters()) {
+            if (var.getName().startsWith("_")) {
+                error("Parameter name must not start with _", var, PatternLanguagePackage.Literals.VARIABLE__NAME,
+                        EMFIssueCodes.SINGLEUSE_PARAMETER);
             }
-
-            return sum;
-        }
-
-        public boolean isVariableLocal() {
-            return isLocalVariable;
-        }
-
-        /**
-         * @return true if the variable is single-use a named variable
-         */
-        public boolean isNamedSingleUse() {
-            String name = referredVariable.getName();
-            return name != null && name.startsWith("_") && !name.contains("<");
-        }
-
-        public Set<Variable> getEqualsVariables() {
-            return equalsVariables;
-        }
-
-        /**
-         * @return true if the variable is an unnamed single-use variable
-         */
-        public boolean isUnnamedSingleUse() {
-            String name = referredVariable.getName();
-            return name != null && name.startsWith("_") && name.contains("<");
-        }
-
-        public ClassifiedVariableReferences(Variable referredVariable, boolean isLocal) {
-            this.referredVariable = referredVariable;
-            this.isLocalVariable = isLocal;
-
-            classifiedReferenceCount = new HashMap<VariableReferenceClass, Integer>();
-            equalsVariables = new HashSet<Variable>();
-        }
-
-        public void incrementCounter(VariableReferenceClass forClass) {
-            Integer count = classifiedReferenceCount.get(forClass);
-            classifiedReferenceCount.put(forClass, count == null ? 1 : count + 1);
-        }
-
-        public void addEqualsVariable(Variable var) {
-            equalsVariables.add(var);
         }
     }
 
-    private void classifyVariableReference(ClassifiedVariableReferences classifiedReferences, VariableReference varRef) {
-        EObject container = varRef.eContainer();
+    @Check
+    public void checkUnusedVariables(PatternBody patternBody) {
+        Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesMap = processVariableReferences(patternBody);
 
-        while (container != null && !(container instanceof Constraint || container instanceof AggregatedValue)) {
-            container = container.eContainer();
-        }
+        for (ClassifiedVariableReferences classifiedVariableReferences : classifiedVariableReferencesMap.values()) {
+            Variable referredVariable = classifiedVariableReferences.getReferredVariable();
+            if (referredVariable instanceof ParameterRef) {
+                continue;
+            }
+            if (classifiedVariableReferences.isVariableLocal()) {
+                if (classifiedVariableReferences
+                        .getReferenceCount(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL) == 1
+                        && classifiedVariableReferences.getReferenceCountSum() == 1
+                        && !classifiedVariableReferences.isNamedSingleUse()
+                        && !classifiedVariableReferences.isUnnamedSingleUse()) {
+                    warning(String.format(
+                            "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
+                            referredVariable.getName()), referredVariable.getReferences().get(0), null,
+                            EMFIssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
+                } else if (classifiedVariableReferences.getReferenceCountSum() > 1
+                        && classifiedVariableReferences.isNamedSingleUse()) {
+                    for (VariableReference ref : referredVariable.getReferences()) {
+                        error(String.format("Named single-use variable %s used multiple times.",
+                                referredVariable.getName()), ref, null,
+                                EMFIssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE);
 
-        if (container instanceof EClassifierConstraint) {
-            classifiedReferences.incrementCounter(VariableReferenceClass.PositiveExistential);
-        } else if (container instanceof CheckConstraint) {
-            classifiedReferences.incrementCounter(VariableReferenceClass.ReadOnly);
-        } else if (container instanceof CompareConstraint) {
-            CompareConstraint constraint = (CompareConstraint) container;
-
-            if (constraint.getFeature() == CompareFeature.EQUALITY) {
-                if (constraint.getLeftOperand() instanceof VariableValue
-                        && constraint.getRightOperand() instanceof VariableValue) {
-                    classifiedReferences.incrementCounter(VariableReferenceClass.ReadOnly);
-
-                    VariableReference leftVarRef = ((VariableValue) constraint.getLeftOperand()).getValue();
-                    VariableReference rightVarRef = ((VariableValue) constraint.getRightOperand()).getValue();
-                    Variable leftVariable = leftVarRef.getVariable();
-                    if (leftVariable instanceof ParameterRef) {
-                        leftVariable = ((ParameterRef) leftVariable).getReferredParam();
                     }
-                    Variable rightVariable = rightVarRef.getVariable();
-                    if (rightVariable instanceof ParameterRef) {
-                        rightVariable = ((ParameterRef) rightVariable).getReferredParam();
+                } else if (classifiedVariableReferences
+                        .getReferenceCount(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL) == 0) {
+                    if (classifiedVariableReferences
+                            .getReferenceCount(ClassifiedVariableReferenceEnum.NEGATIVE_EXISTENTIAL) == 0
+                            && !equalsVariableHasPositiveExistential(classifiedVariableReferencesMap,
+                                    classifiedVariableReferences.getEqualsVariables())) {
+                        error(String.format(
+                                "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
+                                referredVariable.getName()), referredVariable.getReferences().get(0), null,
+                                EMFIssueCodes.LOCAL_VARIABLE_READONLY);
+                    } else if (classifiedVariableReferences
+                            .getReferenceCount(ClassifiedVariableReferenceEnum.NEGATIVE_EXISTENTIAL) == 1
+                            && classifiedVariableReferences.getReferenceCountSum() == 1
+                            && !classifiedVariableReferences.isNamedSingleUse()
+                            && !classifiedVariableReferences.isUnnamedSingleUse()) {
+                        warning(String.format(
+                                "Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
+                                referredVariable.getName()), referredVariable.getReferences().get(0), null,
+                                EMFIssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
+                    } else if (classifiedVariableReferences.getReferenceCountSum() > 1) {
+                        error(String.format(
+                                "Local variable '%s' has no positive reference, thus its value cannot be determined.",
+                                referredVariable.getName()), referredVariable.getReferences().get(0), null,
+                                EMFIssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);
                     }
-                    if (leftVariable != rightVariable) { // not the same
-                                                         // variable
-                        if (leftVarRef == varRef) {
-                            classifiedReferences.addEqualsVariable(rightVariable);
-                        } else if (rightVarRef == varRef) {
-                            classifiedReferences.addEqualsVariable(leftVariable);
-                        } else {
-                            throw new UnsupportedOperationException(
-                                    "The variable reference in neither the left, nor the right value of the compare constraint.");
-                        }
-                    }
-                } else {
-                    classifiedReferences.incrementCounter(VariableReferenceClass.PositiveExistential);
                 }
-            } else if (constraint.getFeature() == CompareFeature.INEQUALITY) {
-                classifiedReferences.incrementCounter(VariableReferenceClass.ReadOnly);
-            } else {
-                throw new UnsupportedOperationException("Unrecognised compare feature.");
+            } else { // Symbolic variable:
+                if (classifiedVariableReferences.getReferenceCountSum() == 0) {
+                    error(String.format("Parameter '%s' is never referenced in body '%s'.", referredVariable.getName(),
+                            getPatternBodyName(patternBody)), referredVariable, null,
+                            EMFIssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
+                } else if (classifiedVariableReferences
+                        .getReferenceCount(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL) == 0
+                        && !equalsVariableHasPositiveExistential(classifiedVariableReferencesMap,
+                                classifiedVariableReferences.getEqualsVariables())) {
+                    error(String.format("Parameter '%s' has no positive reference in body '%s'.",
+                            referredVariable.getName(), getPatternBodyName(patternBody)), referredVariable, null,
+                            EMFIssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
+                }
             }
-        } else if (container instanceof PathExpressionConstraint) {
-            // if (((PathExpressionConstraint) container).isNegative()) {
-            // classifiedReferences
-            // .incrementCounter(VariableReferenceClass.NegativeExistential);
-            // } else {
-            classifiedReferences.incrementCounter(VariableReferenceClass.PositiveExistential);
-            // }
-        } else if (container instanceof PatternCompositionConstraint) {
-            if (((PatternCompositionConstraint) container).isNegative()) {
-                classifiedReferences.incrementCounter(VariableReferenceClass.NegativeExistential);
-            } else {
-                classifiedReferences.incrementCounter(VariableReferenceClass.PositiveExistential);
-            }
-        } else if (container instanceof AggregatedValue) {
-            classifiedReferences.incrementCounter(VariableReferenceClass.NegativeExistential);
-        } else {
-            throw new UnsupportedOperationException("Unrecognised constraint.");
         }
     }
 
-    private Map<Variable, ClassifiedVariableReferences> processVariableReferences(PatternBody inBody) {
+    private static String getPatternBodyName(PatternBody patternBody) {
+        return (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d",
+                ((Pattern) patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
+    }
+
+    private static boolean equalsVariableHasPositiveExistential(
+            Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesMap, Set<Variable> equalsVariables) {
+        if (!equalsVariables.isEmpty()) {
+            for (Variable var : equalsVariables) {
+                if (classifiedVariableReferencesMap.get(var).getReferenceCount(
+                        ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL) != 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static Map<Variable, ClassifiedVariableReferences> processVariableReferences(PatternBody inBody) {
         Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesCollection = new HashMap<Variable, ClassifiedVariableReferences>();
 
         Pattern pattern = (Pattern) inBody.eContainer();
@@ -263,7 +225,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             classifiedVariableReferencesCollection.put(var, varRefs);
             if (var.getType() != null) {
                 // type assertion on parameter
-                varRefs.incrementCounter(VariableReferenceClass.PositiveExistential);
+                varRefs.incrementCounter(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL);
             }
         }
 
@@ -301,115 +263,80 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         classifiedVariableReferencesCollection.put(classifiedVariableReferences.getReferredVariable(),
                                 classifiedVariableReferences);
                     }
-                    classifiedVariableReferences.incrementCounter(VariableReferenceClass.ReadOnly);
+                    classifiedVariableReferences.incrementCounter(ClassifiedVariableReferenceEnum.READ_ONLY);
                 }
             }
         }
         return classifiedVariableReferencesCollection;
     }
 
-    private String getPatternBodyName(PatternBody patternBody) {
-        return (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d",
-                ((Pattern) patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
-    }
+    private static void classifyVariableReference(ClassifiedVariableReferences classifiedReferences,
+            VariableReference varRef) {
+        EObject container = varRef.eContainer();
 
-    private boolean equalsVariableHasPositiveExistential(
-            Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesMap, Set<Variable> equalsVariables) {
-        if (!equalsVariables.isEmpty()) {
-            for (Variable var : equalsVariables) {
-                if (classifiedVariableReferencesMap.get(var).getReferenceCount(
-                        VariableReferenceClass.PositiveExistential) != 0) {
-                    return true;
-                }
-            }
+        while (container != null && !(container instanceof Constraint || container instanceof AggregatedValue)) {
+            container = container.eContainer();
         }
 
-        return false;
-    }
+        if (container instanceof EClassifierConstraint) {
+            classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL);
+        } else if (container instanceof CheckConstraint) {
+            classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.READ_ONLY);
+        } else if (container instanceof CompareConstraint) {
+            CompareConstraint constraint = (CompareConstraint) container;
 
-    @Check
-    public void checkParametersNamed(Pattern pattern) {
-        for (Variable var : pattern.getParameters()) {
-            if (var.getName().startsWith("_")) {
-                error("Parameter name must not start with _", var, PatternLanguagePackage.Literals.VARIABLE__NAME,
-                        EMFIssueCodes.SINGLEUSE_PARAMETER);
-            }
-        }
-    }
+            if (constraint.getFeature() == CompareFeature.EQUALITY) {
+                if (constraint.getLeftOperand() instanceof VariableValue
+                        && constraint.getRightOperand() instanceof VariableValue) {
+                    classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.READ_ONLY);
 
-    @Check
-    public void checkUnusedVariables(PatternBody patternBody) {
-        Map<Variable, ClassifiedVariableReferences> classifiedVariableReferencesMap = processVariableReferences(patternBody);
-
-        for (ClassifiedVariableReferences classifiedVariableReferences : classifiedVariableReferencesMap.values()) {
-            Variable referredVariable = classifiedVariableReferences.getReferredVariable();
-            if (referredVariable instanceof ParameterRef) {
-                continue;
-            }
-            if (classifiedVariableReferences.isVariableLocal()) {
-                if (classifiedVariableReferences.getReferenceCount(VariableReferenceClass.PositiveExistential) == 1
-                        && classifiedVariableReferences.getReferenceCountSum() == 1
-                        && !classifiedVariableReferences.isNamedSingleUse()
-                        && !classifiedVariableReferences.isUnnamedSingleUse()) {
-                    warning(String.format(
-                            "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
-                            referredVariable.getName()), referredVariable.getReferences().get(0), null,
-                            EMFIssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
-                } else if (classifiedVariableReferences.getReferenceCountSum() > 1
-                        && classifiedVariableReferences.isNamedSingleUse()) {
-                    for (VariableReference ref : referredVariable.getReferences()) {
-                        error(String.format("Named single-use variable %s used multiple times.",
-                                referredVariable.getName()), ref, null,
-                                EMFIssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE);
-
+                    VariableReference leftVarRef = ((VariableValue) constraint.getLeftOperand()).getValue();
+                    VariableReference rightVarRef = ((VariableValue) constraint.getRightOperand()).getValue();
+                    Variable leftVariable = leftVarRef.getVariable();
+                    if (leftVariable instanceof ParameterRef) {
+                        leftVariable = ((ParameterRef) leftVariable).getReferredParam();
                     }
-                } else if (classifiedVariableReferences.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0) {
-                    if (classifiedVariableReferences.getReferenceCount(VariableReferenceClass.NegativeExistential) == 0
-                            && !equalsVariableHasPositiveExistential(classifiedVariableReferencesMap,
-                                    classifiedVariableReferences.getEqualsVariables())) {
-                        error(String.format(
-                                "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
-                                referredVariable.getName()), referredVariable.getReferences().get(0), null,
-                                EMFIssueCodes.LOCAL_VARIABLE_READONLY);
-                    } else if (classifiedVariableReferences
-                            .getReferenceCount(VariableReferenceClass.NegativeExistential) == 1
-                            && classifiedVariableReferences.getReferenceCountSum() == 1
-                            && !classifiedVariableReferences.isNamedSingleUse()
-                            && !classifiedVariableReferences.isUnnamedSingleUse()) {
-                        warning(String.format(
-                                "Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
-                                referredVariable.getName()), referredVariable.getReferences().get(0), null,
-                                EMFIssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
-                    } else if (classifiedVariableReferences.getReferenceCountSum() > 1) {
-                        error(String.format(
-                                "Local variable '%s' has no positive reference, thus its value cannot be determined.",
-                                referredVariable.getName()), referredVariable.getReferences().get(0), null,
-                                EMFIssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);
+                    Variable rightVariable = rightVarRef.getVariable();
+                    if (rightVariable instanceof ParameterRef) {
+                        rightVariable = ((ParameterRef) rightVariable).getReferredParam();
                     }
+                    if (leftVariable != rightVariable) { // not the same
+                                                         // variable
+                        if (leftVarRef == varRef) {
+                            classifiedReferences.addEqualsVariable(rightVariable);
+                        } else if (rightVarRef == varRef) {
+                            classifiedReferences.addEqualsVariable(leftVariable);
+                        } else {
+                            throw new UnsupportedOperationException(
+                                    "The variable reference in neither the left, nor the right value of the compare constraint.");
+                        }
+                    }
+                } else {
+                    classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL);
                 }
-            } else { // Symbolic variable:
-                if (classifiedVariableReferences.getReferenceCountSum() == 0) {
-                    error(String.format("Parameter '%s' is never referenced in body '%s'.", referredVariable.getName(),
-                            getPatternBodyName(patternBody)), referredVariable, null,
-                            EMFIssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
-                } else if (classifiedVariableReferences.getReferenceCount(VariableReferenceClass.PositiveExistential) == 0
-                        && !equalsVariableHasPositiveExistential(classifiedVariableReferencesMap,
-                                classifiedVariableReferences.getEqualsVariables())) {
-                    error(String.format("Parameter '%s' has no positive reference in body '%s'.",
-                            referredVariable.getName(), getPatternBodyName(patternBody)), referredVariable, null,
-                            EMFIssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
-                }
+            } else if (constraint.getFeature() == CompareFeature.INEQUALITY) {
+                classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.READ_ONLY);
+            } else {
+                throw new UnsupportedOperationException("Unrecognised compare feature.");
             }
+        } else if (container instanceof PathExpressionConstraint) {
+            // if (((PathExpressionConstraint) container).isNegative()) {
+            // classifiedReferences
+            // .incrementCounter(VariableReferenceClass.NegativeExistential);
+            // } else {
+            classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL);
+            // }
+        } else if (container instanceof PatternCompositionConstraint) {
+            if (((PatternCompositionConstraint) container).isNegative()) {
+                classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.NEGATIVE_EXISTENTIAL);
+            } else {
+                classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL);
+            }
+        } else if (container instanceof AggregatedValue) {
+            classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.NEGATIVE_EXISTENTIAL);
+        } else {
+            throw new UnsupportedOperationException("Unrecognised constraint.");
         }
-    }
-
-    @Override
-    protected List<EPackage> getEPackages() {
-        // PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the
-        // validation process
-        List<EPackage> result = super.getEPackages();
-        result.add(org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage.eINSTANCE);
-        return result;
     }
 
     @Check
@@ -439,9 +366,13 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
           // }
     }
 
+    /**
+     * FIXME do it
+     * 
+     * @param pattern
+     */
     @Check
     public void checkPatternParametersType(Pattern pattern) {
-        // This check used to be an error, now it is classified as a warning only
         for (Variable variable : pattern.getParameters()) {
             EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
             EClassifier classifierDefined = emfTypeProvider.getClassifierForType(variable.getType());
@@ -463,32 +394,39 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    /**
+     * FIXME do it
+     * 
+     * @param patternBody
+     */
     @Check
     public void checkPatternVariablesType(PatternBody patternBody) {
         for (Variable variable : patternBody.getVariables()) {
             Set<EClassifier> possibleClassifiers = emfTypeProvider.getPossibleClassifiersForVariableInBody(patternBody,
                     variable);
+            // We only need to give warnings/errors if there is more possible classifiers
             if (possibleClassifiers.size() > 1) {
-                List<String> classifierNamesList = new ArrayList<String>();
-                List<String> classifierPackagesList = new ArrayList<String>();
-                for (Object element : possibleClassifiers.toArray()) {
-                    EClassifier classifier = (EClassifier) element;
-                    classifierNamesList.add(classifier.getName());
-                    classifierPackagesList.add(classifier.getEPackage().getName());
+                Set<String> classifierNamesSet = new HashSet<String>();
+                Set<String> classifierPackagesSet = new HashSet<String>();
+                for (EClassifier classifier : possibleClassifiers) {
+                    classifierNamesSet.add(classifier.getName());
+                    classifierPackagesSet.add(classifier.getEPackage().getName());
                 }
-                Set<String> classifierNamesSet = new HashSet<String>(classifierNamesList);
-                Set<String> classifierPackagesSet = new HashSet<String>(classifierPackagesList);
+                // If the String sets contains only 1 elements than it is an error
+                // There is some element which is defined multiple types within the ecores
                 if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
                     error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
                             .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                 } else {
                     EClassifier classifier = emfTypeProvider.getClassifierForPatternParameterVariable(variable);
-                    if (classifier != null && possibleClassifiers.contains(classifier)) {
-                        warning("Ambiguous variable type defintions: " + classifierNamesList + ", the parameter type ("
+                    PatternModel patternModel = (PatternModel) patternBody.eContainer().eContainer();
+                    if (classifier != null && possibleClassifiers.contains(classifier)
+                            && hasCommonSubType(patternModel, possibleClassifiers)) {
+                        warning("Ambiguous variable type defintions: " + classifierNamesSet + ", the parameter type ("
                                 + classifier.getName() + ") is used now.", variable.getReferences().get(0), null,
                                 EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
                     } else {
-                        error("Inconsistent variable type defintions: " + classifierNamesList
+                        error("Inconsistent variable type defintions: " + classifierNamesSet
                                 + ", type cannot be selected.", variable.getReferences().get(0), null,
                                 EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
                     }
@@ -497,6 +435,41 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    private static boolean hasCommonSubType(PatternModel patternModel, Set<EClassifier> classifiers) {
+        Set<EClass> realSubTypes = new HashSet<EClass>();
+        Set<EClassifier> probableSubTypes = new HashSet<EClassifier>();
+        for (PackageImport packageImport : patternModel.getImportPackages()) {
+            probableSubTypes.addAll(getAllEClassifiers(packageImport.getEPackage()));
+        }
+        for (EClassifier classifier : probableSubTypes) {
+            if (classifier instanceof EClass) {
+                EClass eClass = (EClass) classifier;
+                if (eClass.getEAllSuperTypes().containsAll(classifiers)) {
+                    realSubTypes.add(eClass);
+                }
+            }
+        }
+        if (realSubTypes.isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private static Set<EClassifier> getAllEClassifiers(EPackage ePackage) {
+        Set<EClassifier> resultSet = new HashSet<EClassifier>();
+        resultSet.addAll(ePackage.getEClassifiers());
+        for (EPackage subEPackage : ePackage.getESubpackages()) {
+            resultSet.addAll(subEPackage.getEClassifiers());
+        }
+        return resultSet;
+    }
+
+    /**
+     * FIXME do it
+     * 
+     * @param patternBody
+     */
     @Check
     public void checkForCartesianProduct(PatternBody patternBody) {
         List<Variable> variables = patternBody.getVariables();
@@ -662,6 +635,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         return false;
     }
 
+    /**
+     * FIXME do it
+     * 
+     * @param patternBody
+     */
     @Check
     public void checkForWrongLiteralAndComputationValuesInCompareConstraints(CompareConstraint compareConstraint) {
         // Equality and inequality (==, !=)
@@ -683,6 +661,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    /**
+     * FIXME do it
+     * 
+     * @param patternBody
+     */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPathExpressionConstraints(
             PathExpressionConstraint pathExpressionConstraint) {
@@ -704,6 +687,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    /**
+     * FIXME do it
+     * 
+     * @param patternBody
+     */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPatternCalls(PatternCall patternCall) {
         // Find and neg find (including count find as well)
@@ -725,6 +713,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    /**
+     * FIXME do it
+     * 
+     * @param patternBody
+     */
     @Check
     public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
         for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(checkConstraint

@@ -333,7 +333,7 @@ class TypeInferenceTest {
 	}
 	
 	@Test
-	def errorTypeTest() {
+	def errorTypeTest1() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
@@ -346,7 +346,7 @@ class TypeInferenceTest {
 	}
 	
 	@Test
-	def warningTypeTest1() {
+	def errorTypeTest2() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
@@ -354,7 +354,7 @@ class TypeInferenceTest {
 				EDataType(parameter);
 			} 
 		') as PatternModel
-		tester.validate(model).assertWarning(EMFIssueCodes::VARIABLE_TYPE_INVALID_WARNING)
+		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
@@ -363,7 +363,7 @@ class TypeInferenceTest {
 	}
 	
 	@Test
-	def warningTypeTest2() {
+	def errorTypeTest3() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
@@ -371,7 +371,7 @@ class TypeInferenceTest {
 				EClass(parameter);
 			} 
 		') as PatternModel
-		tester.validate(model).assertWarning(EMFIssueCodes::VARIABLE_TYPE_INVALID_WARNING)
+		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeProvider.getTypeForIdentifiable(param)
@@ -380,7 +380,7 @@ class TypeInferenceTest {
 	}
 	
 	@Test
-	def warningTypeTest3() {
+	def warningTypeTest1() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
