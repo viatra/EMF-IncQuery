@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
@@ -37,13 +38,13 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 		
 		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
 			Rule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
-			rule.afterAppearanceJob = new MarkerPlacerJob(markerMap, constraint, logger);
-			rule.afterDisappearanceJob = new MarkerEraserJob(markerMap, logger);
-			rule.afterModificationJob = new MarkerUpdaterJob(markerMap, constraint, logger);
+			rule.setStateChangeProcessor(ActivationState.APPEARED, new MarkerPlacerJob(markerMap, constraint, logger));
+			rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new MarkerEraserJob(markerMap, logger));
+			rule.setStateChangeProcessor(ActivationState.UPDATED, new MarkerUpdaterJob(markerMap, constraint, logger));
 		}
 		
-		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy();
-		agenda.addActivationNotificationListener(firingStrategy, true);
+		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
+		agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
 	}
 	
 	public void dispose() {

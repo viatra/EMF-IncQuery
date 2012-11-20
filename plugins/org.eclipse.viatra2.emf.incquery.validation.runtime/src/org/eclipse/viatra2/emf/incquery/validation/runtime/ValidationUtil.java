@@ -121,7 +121,7 @@ public class ValidationUtil {
 		return result;
 	}
 
-	public synchronized static void addNotifier(IEditorPart editorPart, Notifier notifier) {
+	public static synchronized void addNotifier(IEditorPart editorPart, Notifier notifier) {
 		adapterMap.put(editorPart, new ConstraintAdapter<IPatternMatch>(editorPart, notifier, logger));
 	}
 	
