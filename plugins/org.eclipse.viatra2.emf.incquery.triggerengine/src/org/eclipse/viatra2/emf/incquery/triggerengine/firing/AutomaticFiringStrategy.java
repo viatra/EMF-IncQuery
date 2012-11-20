@@ -3,8 +3,6 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.firing;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
-import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener;
-import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingActivation;
 
 /**
  * This class automatically fires the applicable activations 
@@ -15,15 +13,28 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingActivati
  * @author Tamas Szabo
  *
  */
-public class AutomaticFiringStrategy implements IActivationNotificationListener {
+public class AutomaticFiringStrategy implements IUpdateCompleteListener {
 
-	@Override
-	public void activationAppeared(Activation<? extends IPatternMatch> activation) {
-		((RecordingActivation<? extends IPatternMatch>) activation).fireWithRecording();
-	}
+    private ActivationMonitor monitor;
+    
+    /**
+     * 
+     */
+    public AutomaticFiringStrategy(ActivationMonitor monitor) {
+        this.monitor = monitor;
+    }
 
-	@Override
-	public void activationDisappeared(Activation<? extends IPatternMatch> activation) {
-		
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener#updateComplete()
+     */
+    @Override
+    public void updateComplete() {
+        if(monitor != null) {
+            for (Activation<? extends IPatternMatch> a : monitor.getActivations()) {
+                a.fire();
+            }
+            monitor.clear();
+        }
+    }
+    
 }

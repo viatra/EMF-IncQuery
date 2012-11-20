@@ -17,6 +17,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
@@ -40,8 +41,8 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
         super(agenda.getLogger());
         this.agenda = agenda;
         
-        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy();
-        agenda.addActivationNotificationListener(firingStrategy, true);
+        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
+        agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
         
         appearanceProcessor = new IMatchProcessor<MatchType>() {
             @Override
@@ -73,8 +74,8 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
     public <Matcher extends IncQueryMatcher<MatchType>> void addMatcherToMultimapResults(IMatcherFactory<Matcher> factory) {
         Rule<MatchType> newRule = agenda.createRule(factory, false, true);
         if(newRule != null) {
-            newRule.afterAppearanceJob = appearanceProcessor;
-            newRule.afterDisappearanceJob = disappearanceProcessor;
+            newRule.setStateChangeProcessor(ActivationState.APPEARED, appearanceProcessor);
+            newRule.setStateChangeProcessor(ActivationState.DISAPPEARED, disappearanceProcessor);
         }
     }
 

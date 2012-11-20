@@ -7,7 +7,7 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
  * The interface is used to observe the changes in the collection of activations.
  * <br/><br/>
  * An implementing class is for example the {@link Agenda} 
- * which is called back by the {@link Rule} instances when 
+ * which is called back by the {@link AbstractRule} instances when 
  * those have updated the activations after an EMF operation. 
  * 
  * @author Tamas Szabo

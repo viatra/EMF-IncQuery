@@ -8,7 +8,7 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 
 /**
  * Classes implement this interface to provide notifications about the changes in the 
- * collection of activations within the Rule Engine. 
+ * collection of activations within the AbstractRule Engine. 
  * 
  * @author Tamas Szabo
  *

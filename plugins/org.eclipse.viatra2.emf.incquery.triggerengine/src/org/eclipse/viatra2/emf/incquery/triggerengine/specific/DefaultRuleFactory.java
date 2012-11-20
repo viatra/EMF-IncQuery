@@ -5,27 +5,25 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleFactory;
 
 public class DefaultRuleFactory implements RuleFactory {
 
 	@Override
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Rule<Match> createRule(
+	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> AbstractRule<Match> createRule(
 			IncQueryEngine engine,
 			IMatcherFactory<Matcher> factory, 
 			boolean upgradedStateUsed,
-			boolean disappearedStateUsed, 
-			boolean allowMultipleFiring) {
+			boolean disappearedStateUsed) {
 		
-		Rule<Match> rule = null;
+		AbstractRule<Match> rule = null;
 		try {
 			rule = new RecordingRule<Match>(RuleEngine.getInstance().getOrCreateAgenda(engine), 
 											factory.getMatcher(engine), 
 											upgradedStateUsed, 
-											disappearedStateUsed, 
-											allowMultipleFiring);
+											disappearedStateUsed);
 		} catch (IncQueryException e) {
 			engine.getLogger().error("Error while creating RecordingRule!", e);
 		}

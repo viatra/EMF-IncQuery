@@ -9,35 +9,39 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
+import org.eclipse.viatra2.emf.incquery.triggerengine.firing.IQBaseCallbackUpdateCompleteProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.TimedFiringStrategy;
+import org.eclipse.viatra2.emf.incquery.triggerengine.firing.TransactionUpdateCompleteProvider;
+import org.eclipse.viatra2.emf.incquery.triggerengine.firing.UpdateCompleteProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener;
-import org.eclipse.viatra2.emf.incquery.triggerengine.specific.RecordingRule;
 
 /**
  * An Agenda is associated to each EMF instance model (more precisely {@link IncQueryEngine}
  * or equivalently {@link Notifier} in the context of EMF-IncQuery) and it is 
- * responsible for creating, managing and disposing rules in the Rule Engine. 
+ * responsible for creating, managing and disposing rules in the AbstractRule Engine. 
  * It provides an unmodifiable view for the collection of applicable activations.
- * <br/><br/>
- * One must register an {@link IActivationNotificationListener} in order to receive 
+ * 
+ * <p>One must register an {@link IActivationNotificationListener} in order to receive 
  * notifications automatically about the changes in the collection of activations.
- * <br/><br/>
- * The Trigger Engine is a collection of strategies which can be used to 
+ * 
+ * <p>The Trigger Engine is a collection of strategies which can be used to 
  * fire these activations with pre-defined timings. Such strategies include 
  * the {@link AutomaticFiringStrategy} and {@link TimedFiringStrategy} at the current 
  * state of development. 
- * <br/><br/>
- * Note that, one may instantiate an {@link ActivationMonitor} in order to 
+ * 
+ * <p>Note that, one may instantiate an {@link ActivationMonitor} in order to 
  * process the activations on an individual basis, because the {@link Agenda} always reflects 
  * the most up-to-date state of the activations. 
  * 
- * One may define whether multiple firing of the same activation is allowed; that is, only 
+ * <p>One may define whether multiple firing of the same activation is allowed; that is, only 
  * the Appeared state will be used from the lifecycle of {@link Activation}s and consecutive 
  * firing of a previously applied {@link Activation} is possible. For more 
  * information on the lifecycle see {@link Activation}. Multiple firing is used 
@@ -57,6 +61,7 @@ public class Agenda extends ActivationNotificationProvider
 	private boolean allowMultipleFiring;
 	private RuleFactory ruleFactory;
 	private Collection<Activation<? extends IPatternMatch>> activations;
+	private UpdateCompleteProvider updateCompleteProvider;
 	
 	/**
 	 * Instantiates a new Agenda instance with the given {@link IncQueryEngine}.
@@ -83,6 +88,18 @@ public class Agenda extends ActivationNotificationProvider
 		this.editingDomain = TransactionUtil.getEditingDomain(notifier);
 		this.allowMultipleFiring = allowMultipleFiring;
 		this.activations = new HashSet<Activation<? extends IPatternMatch>>();
+		
+		if (this.editingDomain != null) {
+		    updateCompleteProvider = new TransactionUpdateCompleteProvider(editingDomain);
+	    } else {
+	        NavigationHelper helper;
+            try {
+                helper = iqEngine.getBaseIndex();
+                updateCompleteProvider = new IQBaseCallbackUpdateCompleteProvider(helper);
+            } catch (IncQueryException e) {
+                getLogger().error("The base index cannot be constructed for the engine!", e);
+            }
+	    }
 	}
 	
 	/**
@@ -114,12 +131,19 @@ public class Agenda extends ActivationNotificationProvider
 	}
 	
 	/**
+     * @return the allowMultipleFiring
+     */
+    public boolean isAllowMultipleFiring() {
+        return allowMultipleFiring;
+    }
+
+    /**
 	 * Creates a new rule with the specified {@link RuleFactory}.
 	 * The upgraded and disappeared states will not be used in the 
 	 * lifecycle of rule's activations. 
 	 * 
 	 * @param factory the {@link IMatcherFactory} of the {@link IncQueryMatcher}
-	 * @return the {@link Rule} instance
+	 * @return the {@link AbstractRule} instance
 	 */
 	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
 	Rule<Match> createRule(IMatcherFactory<Matcher> factory) {
@@ -132,12 +156,12 @@ public class Agenda extends ActivationNotificationProvider
 	 * @param factory the {@link IMatcherFactory} of the {@link IncQueryMatcher}
 	 * @param upgradedStateUsed indicates whether the upgraded state is used in the lifecycle of the rule's activations
 	 * @param disappearedStateUsed indicates whether the disappeared state is used in the lifecycle of the rule's activations
-	 * @return the {@link Rule} instance
+	 * @return the {@link AbstractRule} instance
 	 */
 	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
 		Rule<Match> createRule(IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed) {
-		Rule<Match> rule = ruleFactory.
-				createRule(iqEngine, factory, upgradedStateUsed, disappearedStateUsed, allowMultipleFiring);
+		AbstractRule<Match> rule = ruleFactory.
+				createRule(iqEngine, factory, upgradedStateUsed, disappearedStateUsed);
 		rule.addActivationNotificationListener(this, true);
 		rules.add(rule);
 		return rule;
@@ -148,7 +172,7 @@ public class Agenda extends ActivationNotificationProvider
 	 * 
 	 * @param rule the rule to remove
 	 */
-	public void removeRule(RecordingRule<IPatternMatch> rule) {
+	public <MatchType extends IPatternMatch> void removeRule(AbstractRule<MatchType> rule) {
 		if (rules.contains(rule)) {
 			rule.removeActivationNotificationListener(this);
 			rule.dispose();
@@ -169,7 +193,10 @@ public class Agenda extends ActivationNotificationProvider
 	 * Call this method to properly dispose the Agenda. 
 	 */
 	public void dispose() {
-		for (Rule<? extends IPatternMatch> rule : rules) {
+	    if(updateCompleteProvider != null) {
+	        updateCompleteProvider.dispose();
+	    }
+	    for (Rule<? extends IPatternMatch> rule : rules) {
 			rule.dispose();
 		}
 	}
@@ -192,7 +219,21 @@ public class Agenda extends ActivationNotificationProvider
 		return Collections.unmodifiableCollection(activations);
 	}
 	
-	@Override
+	/**
+     * @return the updateCompleteProvider
+     */
+    public UpdateCompleteProvider getUpdateCompleteProvider() {
+        return updateCompleteProvider;
+    }
+
+    /**
+     * @param updateCompleteProvider the updateCompleteProvider to set
+     */
+    public void setUpdateCompleteProvider(UpdateCompleteProvider updateCompleteProvider) {
+        this.updateCompleteProvider = updateCompleteProvider;
+    }
+
+    @Override
 	public void activationAppeared(Activation<? extends IPatternMatch> activation) {
 		this.activations.add(activation);
 		
@@ -228,7 +269,7 @@ public class Agenda extends ActivationNotificationProvider
 	@Override
 	public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
 		boolean notContained = this.activationNotificationListeners.add(listener);
-		if (notContained) {
+		if (notContained && fireNow) {
 			for (Activation<? extends IPatternMatch> activation : activations) {
 				listener.activationAppeared(activation);
 			}

@@ -9,8 +9,8 @@ public class RecordingActivation<MatchType extends IPatternMatch> extends Activa
 
 	private RecordingRule<MatchType> rule;
 	
-	public RecordingActivation(RecordingRule<MatchType> rule, MatchType patternMatch, boolean allowMultipleFiring) {
-		super(rule, patternMatch, allowMultipleFiring);
+	public RecordingActivation(RecordingRule<MatchType> rule, MatchType patternMatch) {
+		super(rule, patternMatch);
 		this.rule = rule;
 	}
 
@@ -36,7 +36,7 @@ public class RecordingActivation<MatchType extends IPatternMatch> extends Activa
 
 	@Override
 	public String toString() {
-		return "[Rule: "+rule+"][Match: "+patternMatch+"][State: "+state+"][Fired: "+fired+"]";
+		return "[AbstractRule: "+rule+"][Match: "+patternMatch+"][State: "+state+"][Fired: "+fired+"]";
 	}
 
 	/**

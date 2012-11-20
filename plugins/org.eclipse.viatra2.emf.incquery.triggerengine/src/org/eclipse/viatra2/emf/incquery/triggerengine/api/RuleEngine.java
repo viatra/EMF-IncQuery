@@ -11,12 +11,12 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.specific.DefaultRuleFactory;
 
 /**
- * The Rule engine extends the functionality of EMF-IncQuery by 
+ * The AbstractRule engine extends the functionality of EMF-IncQuery by 
  * providing the basic facilities to create transformation rules. 
  * A transformation rule consists of the precondition being an EMF-IncQuery pattern 
  * and the postcondition defined as a portion of an arbitrary Java code. 
  * 
- * This class can be used to instantiate and lookup Agendas for a specific 
+ * <p>This class can be used to instantiate and lookup Agendas for a specific 
  * {@link Notifier} or {@link IncQueryEngine} instance. The Agenda acts as 
  * an up-to-date collection of the fireable rule activations (similar to the 
  * term known from the context of rule based expert systems). 

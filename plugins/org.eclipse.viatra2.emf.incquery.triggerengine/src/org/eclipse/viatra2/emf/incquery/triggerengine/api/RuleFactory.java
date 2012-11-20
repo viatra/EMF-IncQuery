@@ -6,7 +6,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
- * The {@link RuleFactory} defines the way a {@link Rule} instance is created.
+ * The {@link RuleFactory} defines the way a {@link AbstractRule} instance is created.
  * 
  * @author Tamas Szabo
  *
@@ -14,10 +14,9 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 public interface RuleFactory {
 
 	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
-		Rule<Match> createRule(IncQueryEngine engine, 
+		AbstractRule<Match> createRule(IncQueryEngine engine, 
 							   IMatcherFactory<Matcher> factory, 
 							   boolean upgradedStateUsed, 
-							   boolean disappearedStateUsed, 
-							   boolean allowMultipleFiring);
+							   boolean disappearedStateUsed);
 	
 }
