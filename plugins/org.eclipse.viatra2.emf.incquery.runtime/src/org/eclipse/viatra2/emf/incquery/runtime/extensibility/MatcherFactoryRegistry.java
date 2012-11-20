@@ -76,29 +76,7 @@ public final class MatcherFactoryRegistry {
 				for (IConfigurationElement el : els)
 				{
 					if (el.getName().equals("matcher")) {
-						try
-						{
-							String id = el.getAttribute("id");
-							@SuppressWarnings("unchecked")
-              IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>> provider = (IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>>)el.createExecutableExtension("factoryProvider");
-							IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
-							String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
-							if(id.equals(fullyQualifiedName)) {
-							    if(factories.containsKey(fullyQualifiedName)) {
-							        duplicates.add(fullyQualifiedName);
-							    } else {
-							        factories.put(fullyQualifiedName, matcherFactory);
-							    }
-							} else {
-								throw new UnsupportedOperationException(
-										"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
-										+ el.getDeclaringExtension().getUniqueIdentifier());
-							}
-						}
-						catch (Exception e)
-						{
-							IncQueryEngine.getDefaultLogger().error("[MatcherFactoryRegistry] Exception during matcher factory registry initialization " + e.getMessage(),e);
-						}
+						prepareMatcherFactory(factories, duplicates, el);
 					} else {
 						IncQueryEngine.getDefaultLogger().error("[MatcherFactoryRegistry] Unknown configuration element " + el.getName() + " in plugin.xml of "
 								+ el.getDeclaringExtension().getUniqueIdentifier());
@@ -110,12 +88,39 @@ public final class MatcherFactoryRegistry {
                         "[MatcherFactoryRegistry] Trying to register patterns with the same FQN multiple times. Check your plug-in configuration!\n");
                 duplicateSB.append("The following pattern FQNs appeared multiple times:\n");
                 for (String fqn : duplicates) {
-                    duplicateSB.append(String.format("\t%s\n", fqn));
+                    duplicateSB.append(String.format("\t%s%n", fqn));
                 }
                 IncQueryEngine.getDefaultLogger().warn(duplicateSB.toString());
             }
 		}
 	}
+
+    private static void prepareMatcherFactory(Map<String, IMatcherFactory<?>> factories, Set<String> duplicates,
+            IConfigurationElement el) {
+        try
+        {
+        	String id = el.getAttribute("id");
+        	@SuppressWarnings("unchecked")
+           IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>> provider = (IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>>)el.createExecutableExtension("factoryProvider");
+        	IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
+        	String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
+        	if(id.equals(fullyQualifiedName)) {
+        	    if(factories.containsKey(fullyQualifiedName)) {
+        	        duplicates.add(fullyQualifiedName);
+        	    } else {
+        	        factories.put(fullyQualifiedName, matcherFactory);
+        	    }
+        	} else {
+        		throw new UnsupportedOperationException(
+        				"Id attribute value " + id + " does not equal pattern FQN of factory " + fullyQualifiedName + " in plugin.xml of "
+        				+ el.getDeclaringExtension().getUniqueIdentifier());
+        	}
+        }
+        catch (Exception e)
+        {
+        	IncQueryEngine.getDefaultLogger().error("[MatcherFactoryRegistry] Exception during matcher factory registry initialization " + e.getMessage(),e);
+        }
+    }
 
 	/**
 	 * Puts the factory in the registry, unless it already contains a factory for the given pattern FQN 
