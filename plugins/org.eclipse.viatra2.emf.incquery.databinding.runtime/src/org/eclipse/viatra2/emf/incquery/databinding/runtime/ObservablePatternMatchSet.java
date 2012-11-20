@@ -25,9 +25,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
+import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 import com.google.common.collect.Sets;
 
@@ -53,7 +55,6 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) {
-        super();
         IMatcherFactory<Matcher> matcherFactory = (IMatcherFactory<Matcher>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
         createRuleInAgenda(matcherFactory, RuleEngine.getInstance().getOrCreateAgenda(matcher.getEngine()));
     }
@@ -96,19 +97,21 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      * @param agenda an existing {@link Agenda} where the rule is created
      */
     private <Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(IMatcherFactory<Matcher> factory, Agenda agenda) {
-         Rule<Match> rule = agenda.createRule(factory, false, true);
-         rule.afterAppearanceJob = new IMatchProcessor<Match>() {
-             @Override
-             public void process(Match match) {
-                 matchSetChanged(match, Direction.INSERT);
-             }
-         };
-         rule.afterDisappearanceJob = new IMatchProcessor<Match>() {
-             @Override
-             public void process(Match match) {
-                 matchSetChanged(match, Direction.DELETE);
-             }
-         };
+        Rule<Match> rule = agenda.createRule(factory, false, true);
+        rule.setStateChangeProcessor(ActivationState.APPEARED, new IMatchProcessor<Match>() {
+            @Override
+            public void process(Match match) {
+                matchSetChanged(match, Direction.INSERT);
+            }
+        });
+        rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new IMatchProcessor<Match>() {
+            @Override
+            public void process(Match match) {
+                matchSetChanged(match, Direction.DELETE);
+            }
+        });
+        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
+        agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
     }
     
     /**

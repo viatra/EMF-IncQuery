@@ -26,9 +26,11 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
+import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 /**
  * Observable view of a match set for a given {@link IncQueryMatcher} on a model
@@ -78,7 +80,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     }
     
     /**
-     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link IncQueryEngine}.
+     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link Agenda}.
+     * 
+     * <p> Note, that no firing strategy will be added to the {@link Agenda}!
      * 
      * @param factory the {@link IMatcherFactory} used to create a matcher
      * @param agenda an existing {@link Agenda} that specifies the used model 
@@ -86,6 +90,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory, Agenda agenda) {
         super();
         createRuleInAgenda(factory, agenda);
+        
     }
     
     /**
@@ -96,18 +101,20 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
      */
     private <Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(IMatcherFactory<Matcher> factory, Agenda agenda) {
          Rule<Match> rule = agenda.createRule(factory, false, true);
-         rule.afterAppearanceJob = new IMatchProcessor<Match>() {
+         rule.setStateChangeProcessor(ActivationState.APPEARED, new IMatchProcessor<Match>() {
              @Override
              public void process(Match match) {
                  matchSetChanged(match, Direction.INSERT);
              }
-         };
-         rule.afterDisappearanceJob = new IMatchProcessor<Match>() {
+         });
+         rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new IMatchProcessor<Match>() {
              @Override
              public void process(Match match) {
                  matchSetChanged(match, Direction.DELETE);
              }
-         };
+         });
+         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
+         agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
     }
     
     /**
