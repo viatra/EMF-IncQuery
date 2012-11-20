@@ -53,8 +53,10 @@ public class InitValidatorsHandler extends AbstractHandler {
         }
         if (notifier == null)
             throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
+        // FIXME should go through ValidationInitUtil!
         ValidationUtil.addNotifier(activeEditor, notifier);
         activeEditor.getEditorSite().getPage().addPartListener(ValidationPartListener.getInstance());
+        
         return null;
     }
 
