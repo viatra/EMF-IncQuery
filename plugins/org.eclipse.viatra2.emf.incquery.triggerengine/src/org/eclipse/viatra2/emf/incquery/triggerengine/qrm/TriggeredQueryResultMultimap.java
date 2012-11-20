@@ -37,7 +37,7 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
      * @param agenda
      */
     protected TriggeredQueryResultMultimap(Agenda agenda) {
-        super(agenda.getIqEngine().getLogger());
+        super(agenda.getLogger());
         this.agenda = agenda;
         
         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy();

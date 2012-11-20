@@ -5,15 +5,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.TimedFiringStrategy;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNotificationProvider;
@@ -84,29 +83,6 @@ public class Agenda extends ActivationNotificationProvider
 		this.editingDomain = TransactionUtil.getEditingDomain(notifier);
 		this.allowMultipleFiring = allowMultipleFiring;
 		this.activations = new HashSet<Activation<? extends IPatternMatch>>();
-	}
-	
-	/**
-	 * Instantiates a new Agenda instance with the given {@link Notifier}. 
-	 * Multiple firing of the same activation is not allowed.
-	 * 
-	 * @param notifier the {@link Notifier} instance
-	 * @throws IncQueryException
-	 */
-	protected Agenda(Notifier notifier) throws IncQueryException {
-		this(EngineManager.getInstance().getIncQueryEngine(notifier));
-	}
-	
-	/**
-	 * Instantiates a new Agenda instance with the given {@link Notifier} 
-	 * and sets whether multiple allowing is allowed.  
-	 * 
-	 * @param notifier the {@link Notifier} instance
-	 * @param allowMultipleFiring indicates whether multiple firing is allowed
-	 * @throws IncQueryException
-	 */
-	protected Agenda(Notifier notifier, boolean allowMultipleFiring) throws IncQueryException {
-		this(EngineManager.getInstance().getIncQueryEngine(notifier), allowMultipleFiring);
 	}
 	
 	/**
@@ -199,12 +175,12 @@ public class Agenda extends ActivationNotificationProvider
 	}
 
 	/**
-	 * Returns the IncQueryEngine instance associated with the Agenda.
+	 * Returns the logger associated with the Agenda.
 	 * 
 	 * @return
 	 */
-	public IncQueryEngine getIqEngine() {
-		return iqEngine;
+	public Logger getLogger() {
+		return iqEngine.getLogger();
 	}
 
 	/**
