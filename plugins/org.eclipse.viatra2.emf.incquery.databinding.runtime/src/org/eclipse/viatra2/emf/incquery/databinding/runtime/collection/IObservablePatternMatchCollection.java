@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.databinding.runtime.internal;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.collection;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
@@ -22,11 +22,17 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 public interface IObservablePatternMatchCollection<Match extends IPatternMatch>{
 
     /**
-     * Can be called to indicate that 
-     * @param match
+     * Can be called to indicate that a match appeared and should be added to the collection.
+     * 
+     * @param match the new match
      */
     void addMatch(Match match);
 
+    /**
+     * Can be called to indicate that a match disappeared and should be removed from the collection.
+     *  
+     * @param match the disappered match
+     */
     void removeMatch(Match match);
     
 }

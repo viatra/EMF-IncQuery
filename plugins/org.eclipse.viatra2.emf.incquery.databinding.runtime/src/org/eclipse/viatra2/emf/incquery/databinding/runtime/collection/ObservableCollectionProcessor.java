@@ -8,33 +8,52 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.databinding.runtime.internal;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.collection;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.Direction;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
-public class ObservableCollectionProcessor<Match extends IPatternMatch> implements IMatchProcessor<Match>{
+/**
+ * Match processor that can be parameterized with a {@link Direction} and an {@link IObservablePatternMatchCollection}.
+ * It can be registered for rules that take care of keeping the observable collection up-to-date (see
+ * {@link ObservableCollectionHelper#createRuleInAgenda}).
+ * 
+ * @author Abel Hegedus
+ * 
+ * @param <Match>
+ */
+public class ObservableCollectionProcessor<Match extends IPatternMatch> implements IMatchProcessor<Match> {
 
     private Direction direction;
     private IObservablePatternMatchCollection<Match> collection;
-    
+
+    /**
+     * Creates a processor with the given direction and observable collection.
+     * 
+     * @param direction the {@link Direction} of updates that are handled
+     * @param collection the {@link IObservablePatternMatchCollection} to manage
+     */
     public ObservableCollectionProcessor(Direction direction, IObservablePatternMatchCollection<Match> collection) {
         this.direction = direction;
         this.collection = collection;
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime
+     * .api.IPatternMatch)
      */
     @Override
     public void process(Match match) {
-        if(direction == Direction.INSERT) {
+        if (direction == Direction.INSERT) {
             collection.addMatch(match);
         } else {
             collection.removeMatch(match);
         }
-        
+
     }
-    
+
 }

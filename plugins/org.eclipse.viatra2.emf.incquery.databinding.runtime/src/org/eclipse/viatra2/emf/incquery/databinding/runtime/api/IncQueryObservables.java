@@ -22,22 +22,54 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.internal.ObservablePatternMatchList;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.internal.ObservablePatternMatchSet;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.collection.ObservablePatternMatchList;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
+ * Utility class for observing EMF-IncQuery related objects, such as match sets,
+ * match parameters.
+ * 
  * @author Abel Hegedus
  *
  */
 public class IncQueryObservables {
 
+    /**
+     * Hidden constructor for utility class
+     */
+    private IncQueryObservables() {
+        
+    }
+    
+    /**
+     * Create an observable list of the match set of the given query on the selected notifier.
+     * 
+     * <p>The matches are ordered by appearance, so a new match is always put on the end of the list.
+     * 
+     * <p>Use the generated matcher factories for initialization, in the generic case, you may have to
+     * accept an unchecked invocation (or use the Generic classes if you are sure).
+     * 
+     * @param factory the matcher factory for the query to observe
+     * @param notifier the notifier to use for the matcher
+     * @return an observable list of matches
+     */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(IMatcherFactory<Matcher> factory, Notifier notifier) {
         return new ObservablePatternMatchList<Match>(factory, notifier);
     }
     
+    /**
+     * Create an observable set of the match set of the given query on the selected notifier.
+     * 
+     * <p>Use the generated matcher factories for initialization, in the generic case, you may have to
+     * accept an unchecked invocation (or use the Generic classes if you are sure).
+     * 
+     * @param factory the matcher factory for the query to observe
+     * @param notifier the notifier to use for the matcher
+     * @return an observable set of matches
+     */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(IMatcherFactory<Matcher> factory, Notifier notifier) {
         return new ObservablePatternMatchSet<Match>(factory, notifier);
     }

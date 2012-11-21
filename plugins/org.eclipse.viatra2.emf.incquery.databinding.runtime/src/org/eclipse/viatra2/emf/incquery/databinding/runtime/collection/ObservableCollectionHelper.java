@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.databinding.runtime.internal;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.collection;
 
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.Direction;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
