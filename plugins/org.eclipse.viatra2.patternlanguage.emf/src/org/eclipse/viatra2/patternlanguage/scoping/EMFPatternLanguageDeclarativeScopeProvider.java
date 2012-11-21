@@ -203,10 +203,11 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends
 				EClassifier classifier = ((ClassType) type).getClassname();
 				if (classifier instanceof EClass) {
 					targetReferences = (((EClass)classifier).getEAllStructuralFeatures());
-				} else {
-					targetReferences = Collections.emptyList();
 				}
 			}
+            if (targetReferences.isEmpty()) {
+                return IScope.NULLSCOPE;
+            }
 			return Scopes.scopeFor(targetReferences);
 		}
 	}
