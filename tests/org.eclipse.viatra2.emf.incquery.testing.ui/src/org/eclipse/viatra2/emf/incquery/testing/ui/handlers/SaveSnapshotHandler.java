@@ -34,6 +34,7 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
 import org.eclipse.viatra2.emf.incquery.testing.core.ModelLoadHelper;
@@ -77,14 +78,21 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			ObservablePatternMatcher observablePatternMatcher = (ObservablePatternMatcher) obj;
 			editor = observablePatternMatcher.getParent().getEditorPart();
 			matchers.add(observablePatternMatcher);
-			engine = observablePatternMatcher.getMatcher().getEngine();
+			IncQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
+            engine = matcher.getEngine();
 			
 		} else if(obj instanceof ObservablePatternMatcherRoot) {
 			ObservablePatternMatcherRoot matcherRoot = (ObservablePatternMatcherRoot) obj;
 			editor = matcherRoot.getEditorPart();
 			if(matcherRoot.getMatchers().size() > 0) {
 				matchers.addAll(matcherRoot.getMatchers());
-				engine = matcherRoot.getMatchers().get(0).getMatcher().getEngine();
+				for (ObservablePatternMatcher obsMatcher : matcherRoot.getMatchers()) {
+                    IncQueryMatcher<?> matcher = obsMatcher.getMatcher();
+                    if(matcher != null && matcher.getEngine() != null) {
+                        engine = matcher.getEngine();
+                        break;
+                    }
+                }
 			}
 		}
 		if(engine == null) {
@@ -131,7 +139,9 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		} 
 		for (ObservablePatternMatcher matcher : matchers) {
 			IPatternMatch filter = matcher.getMatcher().arrayToMatch(matcher.getFilter());
-			helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
+			if(matcher.getMatcher() != null) {
+			    helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
+			}
 		}
 		
 		if(editor != null) {
