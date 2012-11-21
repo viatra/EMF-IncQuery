@@ -13,8 +13,8 @@ package org.eclipse.viatra2.patternlanguage.validation;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.common.util.DiagnosticChain;
+import org.eclipse.xtext.util.IAcceptor;
+import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.Sets;
 
@@ -24,41 +24,28 @@ import com.google.common.collect.Sets;
  *
  */
 public final class PatternSetValidationDiagnostics implements
-		DiagnosticChain {
-	Set<Diagnostic> foundErrors = Sets.newHashSet();
-	Set<Diagnostic> foundWarnings = Sets.newHashSet();
+ IAcceptor<Issue> {
+    Set<Issue> foundErrors = Sets.newHashSet();
+    Set<Issue> foundWarnings = Sets.newHashSet();
 
-	@Override
-	public void merge(Diagnostic diagnostic) {
-		if (diagnostic.getChildren().size() > 0) {
-			addAll(diagnostic);
-		} else {
-			add(diagnostic);
-		}
-		
-	}
-
-	@Override
-	public void addAll(Diagnostic diagnostic) {
-		for (Diagnostic child : diagnostic.getChildren()) {
-			add(child);
-		}
-	}
-
-	@Override
-	public void add(Diagnostic diagnostic) {
-		switch(diagnostic.getSeverity()) {
-		case Diagnostic.ERROR:
-			foundErrors.add(diagnostic);
-			break;
-		case Diagnostic.WARNING:
-			foundWarnings.add(diagnostic);
-			break;
-		default:
-			break;
-		}
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.xtext.util.IAcceptor#accept(java.lang.Object)
+     */
+    @Override
+    public void accept(Issue issue) {
+        switch (issue.getSeverity()) {
+        case ERROR:
+            foundErrors.add(issue);
+            break;
+        case WARNING:
+            foundWarnings.add(issue);
+            break;
+        case INFO:
+            break;
+        }
+    }
 	
 	public PatternValidationStatus getStatus() {
 		if (!foundErrors.isEmpty()) {
@@ -70,27 +57,29 @@ public final class PatternSetValidationDiagnostics implements
 		}
 	}
 	
-	public Set<Diagnostic> getAllErrors() {
+    public Set<Issue> getAllErrors() {
 		return Sets.newHashSet(foundErrors);
 	}
-	public Set<Diagnostic> getAllWarnings() {
+
+    public Set<Issue> getAllWarnings() {
 		return Sets.newHashSet(foundWarnings);
 	}
 	
 	public void logErrors(Logger logger) {
-		for (Diagnostic diag : foundErrors) {
+        for (Issue diag : foundErrors) {
 			logger.error(stringRepresentation(diag));
 		}
 	}
 	
 	public void logAllMessages(Logger logger) {
 		logErrors(logger);
-		for (Diagnostic diag : foundWarnings) {
+        for (Issue diag : foundWarnings) {
 			logger.warn(stringRepresentation(diag));
 		}
 	}
 	
-	private String stringRepresentation(Diagnostic diag) {
-		return String.format("%s (%s)", diag.getMessage(), diag.getSource());
+    private String stringRepresentation(Issue issue) {
+        return String.format("[%s] %s", issue.getSeverity().toString(), issue.getMessage());
 	}
+
 }

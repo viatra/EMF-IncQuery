@@ -11,36 +11,64 @@
 package org.eclipse.viatra2.patternlanguage.validation;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
+import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.validation.IDiagnosticConverter;
+import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public class PatternSetValidator {
 
-	@Inject
-	private EMFPatternLanguageJavaValidator validator;
-	@Inject
-	private Injector injector;
-	
-	public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
-		PatternSetValidationDiagnostics chain = new PatternSetValidationDiagnostics();
-		injector.injectMembers(chain);
-		for (Pattern pattern : patternSet) {
-			validator.validate(pattern, chain, null);
-			TreeIterator<EObject> it = pattern.eAllContents();
-			while(it.hasNext()) {
-				validator.validate(it.next(), chain, null);
-			}
-		}
-		return chain;
-	}
-	
+    @Inject
+    private Diagnostician diagnostician;
+    @Inject
+    private IResourceValidator resourceValidator;
+    @Inject
+    private IDiagnosticConverter converter;
+
+    public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
+        BasicDiagnostic chain = new BasicDiagnostic();
+        PatternSetValidationDiagnostics collectedIssues = new PatternSetValidationDiagnostics();
+        Set<Resource> containerResources = new HashSet<Resource>();
+        for (Pattern pattern : patternSet) {
+            Resource resource = pattern.eResource();
+            if (resource != null) {
+                containerResources.add(resource);
+            }
+        }
+        for (Resource resource : containerResources) {
+            for (Diagnostic diag : resource.getErrors()) {
+                if (diag instanceof AbstractDiagnostic) {
+                    AbstractDiagnostic abstractDiagnostic = (AbstractDiagnostic) diag;
+                    URI uri = abstractDiagnostic.getUriToProblem();
+                    EObject obj = resource.getEObject(uri.fragment());
+                    if (EcoreUtil.isAncestor(patternSet, obj)) {
+                        converter.convertResourceDiagnostic(abstractDiagnostic, Severity.ERROR, collectedIssues);
+                    }
+                }
+            }
+        }
+        for (Pattern pattern : patternSet) {
+            diagnostician.validate(pattern, chain);
+        }
+        converter.convertValidatorDiagnostic(chain, collectedIssues);
+        return collectedIssues;
+    }
+
 }
