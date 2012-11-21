@@ -18,6 +18,7 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
@@ -32,7 +33,7 @@ import com.google.common.collect.Sets;
  * Observable view of a match set for a given {@link IncQueryMatcher} on a model
  *  (match sets of an {@link IncQueryMatcher} are not ordered by default).
  *  
- * This implementation uses the {@link RuleEngine} to get notifications for match set changes,
+ * <p>This implementation uses the {@link RuleEngine} to get notifications for match set changes,
  *  and can be instantiated using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and
  *  either a {@link Notifier}, {@link IncQueryEngine} or {@link Agenda}.
  * 
@@ -46,6 +47,8 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     /**
      * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
      * 
+     * <p>Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+     * 
      * @param matcher the {@link IncQueryMatcher} to use as the source of the observable set
      */
     @SuppressWarnings("unchecked")
@@ -57,6 +60,8 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link Notifier}.
      * 
+     * <p>Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+     * 
      * @param factory the {@link IMatcherFactory} used to create a matcher
      * @param notifier the {@link Notifier} on which the matcher is created
      */
@@ -67,6 +72,8 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link IncQueryEngine}.
      * 
+     * <p>Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+     * 
      * @param factory the {@link IMatcherFactory} used to create a matcher
      * @param engine the {@link IncQueryEngine} on which the matcher is created
      */
@@ -76,6 +83,8 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link IncQueryEngine}.
+     * 
+     * <p>Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
      * 
      * @param factory the {@link IMatcherFactory} used to create a matcher
      * @param agenda an existing {@link Agenda} that specifies the used model 
