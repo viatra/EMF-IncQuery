@@ -158,6 +158,7 @@ public class UnionFind<V> {
 	 * @param root the root node
 	 */
 	public void deleteSet(V root) {
+		//if (setMap.containsKey(root)) 
 		for (V n : setMap.get(root)) {
 			nodeMap.remove(n);
 		}

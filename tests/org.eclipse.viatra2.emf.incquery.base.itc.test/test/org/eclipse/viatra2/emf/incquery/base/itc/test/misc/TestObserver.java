@@ -19,26 +19,48 @@ import java.util.Set;
 import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.Tuple;
 import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 
-public class TestObserver implements ITcObserver<Integer> {
+/**
+ * The {@link TestObserver} class can be used to assert the notifications of a 
+ * transitive closure algorithm. Before each edge deletion/insertion set the 
+ * expected tuples of notifications and the observer assert these tuples. 
+ * Don't forget to erase the contents of the observer before the next 
+ * edge manipulation. 
+ * 
+ * @author Tamas Szabo
+ *
+ * @param <V> the type parameter of the tuples
+ */
+public class TestObserver<V> implements ITcObserver<V> {
 
-	private Set<Tuple<Integer>> tuples;
+	private Set<Tuple<V>> deletedTuples;
+	private Set<Tuple<V>> insertedTuples;
 	
 	public TestObserver() {
-		this.tuples = new HashSet<Tuple<Integer>>();
+		this.deletedTuples = new HashSet<Tuple<V>>();
+		this.insertedTuples = new HashSet<Tuple<V>>();
 	}
 	
-	@Override
-	public void tupleInserted(Integer source, Integer target) {
-		assertTrue(this.tuples.contains(new Tuple<Integer>(source, target)));
+	public void addDeletedTuple(Tuple<V> tuple) {
+		this.deletedTuples.add(tuple);
+	}
+	
+	public void addInsertedTuple(Tuple<V> tuple) {
+		this.insertedTuples.add(tuple);
+	}
+	
+	public void clearTuples() {
+		this.deletedTuples.clear();
+		this.insertedTuples.clear();
 	}
 
 	@Override
-	public void tupleDeleted(Integer source, Integer target) {
-		assertTrue(this.tuples.contains(new Tuple<Integer>(source, target)));
+	public void tupleInserted(V source, V target) {
+		assertTrue(this.insertedTuples.contains(new Tuple<V>(source, target)));
 	}
-	
-	public Set<Tuple<Integer>> getTuples() {
-		return tuples;
+
+	@Override
+	public void tupleDeleted(V source, V target) {
+		assertTrue(this.deletedTuples.contains(new Tuple<V>(source, target)));
 	}
 
 }

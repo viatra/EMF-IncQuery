@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.base.core;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -51,51 +52,61 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements
 		this.notifier = emfRoot;
 		this.observers = new ArrayList<ITcObserver<EObject>>();
 		
-		if (emfRoot instanceof EObject)
-			dataSource = new EMFDataSource.ForEObject((EObject) emfRoot,
-					refToObserv);
-		else if (emfRoot instanceof Resource)
-			dataSource = new EMFDataSource.ForResource((Resource) emfRoot,
-					refToObserv);
-		else if (emfRoot instanceof ResourceSet)
+		if (emfRoot instanceof EObject) {
+			dataSource = new EMFDataSource.ForEObject((EObject) emfRoot, refToObserv);
+		}
+		else if (emfRoot instanceof Resource) {
+			dataSource = new EMFDataSource.ForResource((Resource) emfRoot, refToObserv);
+		}
+		else if (emfRoot instanceof ResourceSet) {
 			dataSource = new EMFDataSource.ForResourceSet((ResourceSet) emfRoot, refToObserv);
-		else
-			throw new IncQueryBaseException(
-					IncQueryBaseException.INVALID_EMFROOT);
+		}
+		else {
+			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
+		}
 
 		this.sccAlg = new IncSCCAlg<EObject>(dataSource);
 		this.sccAlg.attachObserver(this);
 		emfRoot.eAdapters().add(this);
 	}
 
-	private void visitObjectForEReference(EObject obj, boolean isInsert) {
-		for (EReference ref : obj.eClass().getEReferences()) {
+	/**
+	 * The method visits an {@link EObject} for the registered references in order to 
+	 * explore the potential nodes and edges that should be inserted and deleted. 
+	 * 
+	 * Multiple node deletion and insertion must be avoided!
+	 * 
+	 * @param source
+	 * @param isInsert
+	 */
+	private void visitObjectForEReference(EObject source, boolean isInsert) {
+		for (EReference ref : source.eClass().getEReferences()) {
 			if (refToObserv.contains(ref)) {
-				Object o = obj.eGet(ref);
+				Object o = source.eGet(ref);
 
 				if (o instanceof EObjectEList<?>) {
 					@SuppressWarnings("unchecked")
-					EObjectEList<EObject> list = (EObjectEList<EObject>) o;
+					List<EObject> list = (EObjectEList<EObject>) o;
 					Iterator<EObject> it = list.iterator();
 
 					while (it.hasNext()) {
 						EObject target = it.next();
 						if (isInsert) {
-							nodeInserted(target);
-							edgeInserted(obj, target);
+							if (!target.equals(source)) nodeInserted(target);
+							edgeInserted(source, target);
 						} else {
-							edgeDeleted(obj, target);
-							nodeDeleted(target);
+							edgeDeleted(source, target);
+							if (!target.equals(source)) nodeDeleted(target);
 						}
 					}
 				} else {
 					EObject target = (EObject) o;
 					if (isInsert) {
-						nodeInserted(target);
-						edgeInserted(obj, target);
+						if (!target.equals(source)) nodeInserted(target);
+						edgeInserted(source, target);
 					} else {
-						edgeDeleted(obj, target);
-						nodeDeleted(target);
+						edgeDeleted(source, target);
+						if (!target.equals(source)) nodeDeleted(target);
 					}
 				}
 			}

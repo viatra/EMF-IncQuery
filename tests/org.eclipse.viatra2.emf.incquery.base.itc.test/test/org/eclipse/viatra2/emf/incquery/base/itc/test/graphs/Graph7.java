@@ -20,7 +20,7 @@ public class Graph7 extends TestGraph<Integer> {
 	private static final long serialVersionUID = -3807323812221410872L;
 	
 	public Graph7() {
-		super(new TestObserver());
+		super(new TestObserver<Integer>());
 	}
 	
 	public void modify() {
@@ -32,31 +32,31 @@ public class Graph7 extends TestGraph<Integer> {
 		this.insertNode(n2);
 		this.insertNode(n3);
 
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n2));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n2));
 		this.insertEdge(n1, n2);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n1));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n1));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n2));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n1));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n1));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n2));
 		this.insertEdge(n2, n1);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n1));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n2));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n1));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n2));
 		this.insertEdge(n3, n2);
 
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n3));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n3));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n3));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n3));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n3));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n3));
 		this.insertEdge(n2, n3);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n1));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n2));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n3));
+		this.observer.clearTuples();
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n1));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n2));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n3));
 		this.deleteEdge(n1, n2);
 		
 	}

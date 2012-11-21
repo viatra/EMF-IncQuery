@@ -20,7 +20,7 @@ public class Graph5 extends TestGraph<Integer> {
 	private static final long serialVersionUID = -3807323812221410872L;
 	
 	public Graph5() {
-		super(new TestObserver());
+		super(new TestObserver<Integer>());
 	}
 	
 	public void modify() {
@@ -42,92 +42,100 @@ public class Graph5 extends TestGraph<Integer> {
 		this.insertNode(n7);
 		this.insertNode(n8);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n4));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n4));
 		this.insertEdge(n1, n4);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n4));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n4));
 		this.insertEdge(n2, n4);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n4));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n4));
 		this.insertEdge(n3, n4);
 
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n5));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n5));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n5));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n5));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n4, n5));
 		this.insertEdge(n4, n5);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n5, n6));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n6));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n6));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n6));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n4, n6));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n6));
 		this.insertEdge(n5, n6);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n5, n7));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n7));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n7));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n7));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n4, n7));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n7));
 		this.insertEdge(n5, n7);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n5, n8));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n1, n8));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n2, n8));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n3, n8));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n4, n8));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n8));
 		this.insertEdge(n5, n8);
 		
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n8, n8));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n8, n8));
 		this.insertEdge(n8, n8);
 		
-		this.observer.getTuples().clear();
+		this.observer.clearTuples();
 		this.insertEdge(n8, n8);
 		this.insertEdge(n8, n8);
 
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n4));
-		this.observer.getTuples().add(new Tuple<Integer>(n5, n4));
-		this.observer.getTuples().add(new Tuple<Integer>(n5, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n8, n4));
-		this.observer.getTuples().add(new Tuple<Integer>(n8, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n8, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n8, n7));
+		this.observer.clearTuples();
+		this.observer.addInsertedTuple(new Tuple<Integer>(n4, n4));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n4));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n5, n5));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n8, n4));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n8, n5));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n8, n6));
+		this.observer.addInsertedTuple(new Tuple<Integer>(n8, n7));
 		this.insertEdge(n8, n4);
 		
-		//the same here
+		this.observer.clearTuples();
+		this.observer.addDeletedTuple(new Tuple<Integer>(n4, n4));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n5, n4));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n5, n5));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n8, n4));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n8, n5));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n8, n6));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n8, n7));
 		this.deleteEdge(n8, n4);
 	
-		this.observer.getTuples().clear();
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n4, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n1, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n2, n8));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n5));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n6));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n7));
-		this.observer.getTuples().add(new Tuple<Integer>(n3, n8));
+		this.observer.clearTuples();
+		this.observer.addDeletedTuple(new Tuple<Integer>(n4, n5));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n4, n6));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n4, n7));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n4, n8));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n5));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n6));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n7));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n1, n8));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n2, n5));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n2, n6));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n2, n7));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n2, n8));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n3, n5));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n3, n6));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n3, n7));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n3, n8));
 		this.deleteEdge(n4, n5);
 		
-		this.observer.getTuples().clear();
+		this.observer.clearTuples();
 		this.deleteEdge(n8, n8);
 		this.deleteEdge(n8, n8);
-		this.observer.getTuples().add(new Tuple<Integer>(n8, n8));
+		this.observer.addDeletedTuple(new Tuple<Integer>(n8, n8));
 		this.deleteEdge(n8, n8);
 	}
 }
