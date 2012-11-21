@@ -16,7 +16,8 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -44,7 +45,7 @@ public class ObservablePatternMatch {
 		this.listener = new ParameterValueChangedListener();
 		if (message != null) {
 			setText(DatabindingAdapterUtil.getMessage(match, message));
-			affectedValues = DatabindingAdapterUtil.observeFeatures(match, listener, message);
+			affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
 		}
 		else {
 			this.text = match.toString();

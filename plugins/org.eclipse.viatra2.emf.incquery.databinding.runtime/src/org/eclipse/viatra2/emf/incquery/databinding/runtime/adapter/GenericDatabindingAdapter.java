@@ -9,20 +9,29 @@
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.databinding.runtime;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter;
 
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 import com.google.common.base.Preconditions;
 
-public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends DatabindingAdapter<T> {
+public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
 
-    protected Map<String, String> parameterMap;
+    private Map<String, String> parameterMap;
+	
+    public GenericDatabindingAdapter(Map<String, String> parameterMap) {
+        this.parameterMap = parameterMap;
+	}
+
+    public GenericDatabindingAdapter(Pattern pattern) {
+        this.parameterMap = DatabindingAdapterUtil.calculateObservableValues(pattern);
+    }
 	
 	@Override
 	public String[] getParameterNames() {
@@ -30,10 +39,10 @@ public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends Da
 	}
 
 	@Override
-	public IObservableValue getObservableParameter(T match,	String parameterName) {
+	public IObservableValue getObservableParameter(IPatternMatch match,	String parameterName) {
 		if (parameterMap.size() > 0) {
 			String expression = parameterMap.get(parameterName);
-			return DatabindingAdapterUtil.getObservableValue(match, expression);
+			return IncQueryObservables.getObservableValue(match, expression);
 		}
 		return null;
 	}

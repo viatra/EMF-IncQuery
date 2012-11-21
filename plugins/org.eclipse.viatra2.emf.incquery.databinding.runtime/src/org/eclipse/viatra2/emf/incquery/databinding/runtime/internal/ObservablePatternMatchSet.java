@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.databinding.runtime;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.internal;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,18 +18,13 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.Direction;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
-import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 import com.google.common.collect.Sets;
 
@@ -44,7 +39,7 @@ import com.google.common.collect.Sets;
  * @author Abel Hegedus
  *
  */
-public class ObservablePatternMatchSet<Match extends IPatternMatch> extends AbstractObservableSet {
+public class ObservablePatternMatchSet<Match extends IPatternMatch> extends AbstractObservableSet implements IObservablePatternMatchCollection<Match> {
 
     private final Set<Match> cache = Collections.synchronizedSet(new HashSet<Match>());
     
@@ -56,7 +51,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) {
         IMatcherFactory<Matcher> matcherFactory = (IMatcherFactory<Matcher>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
-        createRuleInAgenda(matcherFactory, RuleEngine.getInstance().getOrCreateAgenda(matcher.getEngine()));
+        ObservableCollectionHelper.createRuleInAgenda(this, matcherFactory, RuleEngine.getInstance().getOrCreateAgenda(matcher.getEngine()));
     }
     
     /**
@@ -87,50 +82,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory, Agenda agenda) {
         super();
-        createRuleInAgenda(factory, agenda);
-    }
-    
-    /**
-     * Creates the rule used for updating the results in the given agenda. 
-     * 
-     * @param factory the {@link IMatcherFactory} used to create the rule
-     * @param agenda an existing {@link Agenda} where the rule is created
-     */
-    private <Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(IMatcherFactory<Matcher> factory, Agenda agenda) {
-        Rule<Match> rule = agenda.createRule(factory, false, true);
-        rule.setStateChangeProcessor(ActivationState.APPEARED, new IMatchProcessor<Match>() {
-            @Override
-            public void process(Match match) {
-                matchSetChanged(match, Direction.INSERT);
-            }
-        });
-        rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new IMatchProcessor<Match>() {
-            @Override
-            public void process(Match match) {
-                matchSetChanged(match, Direction.DELETE);
-            }
-        });
-        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-        agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
-    }
-    
-    /**
-     * Propagates the match set change to observers.
-     * 
-     * @param match the {@link IPatternMatch} that appeared or disappeared.
-     * @param direction the {@link Direction} specifes that the match appeared or disappeared.
-     */
-    @SuppressWarnings("unchecked")
-    private void matchSetChanged(Match match, Direction direction) {
-        SetDiff diff;
-        if(direction == Direction.INSERT) {
-            cache.add(match);
-            diff = Diffs.createSetDiff(Sets.newHashSet(match), Collections.EMPTY_SET);
-        } else {
-            cache.remove(match);
-            diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(match));
-        }
-        fireSetChange(diff);
+        ObservableCollectionHelper.createRuleInAgenda(this, factory, agenda);
     }
     
     /* (non-Javadoc)
@@ -147,6 +99,28 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     @Override
     protected Set<Match> getWrappedSet() {
         return cache;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.databinding.runtime.util.IObservablePatternMatchCollection#addMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addMatch(Match match) {
+        cache.add(match);
+        SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(match), Collections.EMPTY_SET);
+        fireSetChange(diff);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.databinding.runtime.util.IObservablePatternMatchCollection#removeMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void removeMatch(Match match) {
+        cache.remove(match);
+        SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(match));
+        fireSetChange(diff);
     }
 
 }

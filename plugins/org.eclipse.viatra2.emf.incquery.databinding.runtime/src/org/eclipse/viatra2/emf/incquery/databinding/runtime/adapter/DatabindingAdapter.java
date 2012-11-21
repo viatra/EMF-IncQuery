@@ -9,18 +9,18 @@
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.databinding.runtime;
+package org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.ValueProperty;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil;
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.base.Preconditions;
 
 /**
- * The class is used to observ given parameters of a pattern.
+ * The class is used to observe given parameters of a pattern.
  * 
  * @author Tamas Szabo
  *
@@ -28,9 +28,9 @@ import com.google.common.base.Preconditions;
  */
 public abstract class DatabindingAdapter<T extends IPatternMatch> {
 	
-    class MatcherProperty extends ValueProperty {
+    protected class MatcherProperty extends ValueProperty {
 
-        String expression;
+        private String expression;
 
         public MatcherProperty(String expression) {
             this.expression = expression;
@@ -56,7 +56,7 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
         @Override
         public IObservableValue observe(Realm realm, Object source) {
             Preconditions.checkArgument((source instanceof IPatternMatch), "Source must be a typed Pattern Match");
-            return DatabindingAdapterUtil.getObservableValue((IPatternMatch) source, expression);
+            return IncQueryObservables.getObservableValue((IPatternMatch) source, expression);
         }
 
     }

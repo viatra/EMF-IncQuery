@@ -24,7 +24,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
 import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
 import org.eclipse.core.runtime.Path
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.DatabindingAdapterUtil
+import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil
 
 class DatabindingGenerator implements IGenerationFragment {
 	
@@ -126,7 +126,7 @@ class DatabindingGenerator implements IGenerationFragment {
 		
 		import java.util.HashMap;
 
-		import org.eclipse.viatra2.emf.incquery.databinding.runtime.BaseGeneratedDatabindingAdapter;
+		import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.BaseGeneratedDatabindingAdapter;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
 
