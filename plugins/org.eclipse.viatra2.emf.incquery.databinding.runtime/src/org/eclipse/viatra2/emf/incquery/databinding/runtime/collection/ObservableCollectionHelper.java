@@ -16,7 +16,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
 /**
@@ -42,14 +43,14 @@ public class ObservableCollectionHelper {
      * @param factory the {@link IMatcherFactory} used to create the rule
      * @param agenda an existing {@link Agenda} where the rule is created
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(IObservablePatternMatchCollection<Match> observableCollection, IMatcherFactory<Matcher> factory, Agenda agenda) {
-        Rule<Match> rule = agenda.createRule(factory, false, true);
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(IObservablePatternMatchCollection<Match> observableCollection, IMatcherFactory<Matcher> factory, IAgenda agenda) {
+        IRule<Match> rule = agenda.createRule(factory, false, true);
         ObservableCollectionProcessor<Match> insertProc = new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollection);
         ObservableCollectionProcessor<Match> deleteProc = new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollection);
         rule.setStateChangeProcessor(ActivationState.APPEARED, insertProc);
         rule.setStateChangeProcessor(ActivationState.DISAPPEARED, deleteProc);
         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-        agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
+        agenda.addUpdateCompleteListener(firingStrategy, true);
     }
 
 }

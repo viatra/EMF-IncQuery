@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
@@ -33,7 +34,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  *
  * @param <MatchType>
  */
-public interface Rule<MatchType extends IPatternMatch> {
+public interface IRule<MatchType extends IPatternMatch> extends IActivationNotificationProvider{
 
     /**
      * Returns the precondition pattern defined for the rule.
@@ -47,7 +48,7 @@ public interface Rule<MatchType extends IPatternMatch> {
      * 
      * @return the agenda managing the rule
      */
-    Agenda getAgenda();
+    IAgenda getAgenda();
 
     /**
      * Returns the unmodifiable list of current activations for the rule.

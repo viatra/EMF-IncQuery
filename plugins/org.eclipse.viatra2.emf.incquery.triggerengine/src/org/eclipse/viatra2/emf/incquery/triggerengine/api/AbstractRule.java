@@ -27,20 +27,21 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
  *
  * @param <MatchType> the type of the pattern match
  */
-public abstract class AbstractRule<MatchType extends IPatternMatch> extends ActivationNotificationProvider implements 
-	IAttributeMonitorListener<MatchType>, IMatchUpdateListener<MatchType>, Rule<MatchType> {
+public abstract class AbstractRule<MatchType extends IPatternMatch> implements 
+	IAttributeMonitorListener<MatchType>, IMatchUpdateListener<MatchType>, IRule<MatchType> {
 
 	private IMatchProcessor<MatchType> afterAppearanceJob;
 	private IMatchProcessor<MatchType> afterDisappearanceJob;
 	private IMatchProcessor<MatchType> afterModificationJob;
-	protected Agenda agenda;
+	protected IAgenda agenda;
 	protected boolean upgradedStateUsed;
 	protected boolean disappearedStateUsed;
 	protected IncQueryMatcher<MatchType> matcher;
 	protected Map<ActivationState, Map<MatchType, Activation<MatchType>>> stateMap;
 	protected AttributeMonitor<MatchType> attributeMonitor;
+	protected ActivationNotificationProvider activationProvider;
 	
-	public AbstractRule(Agenda agenda, 
+	public AbstractRule(IAgenda agenda, 
 				IncQueryMatcher<MatchType> matcher, 
 				boolean upgradedStateUsed, 
 				boolean disappearedStateUsed) {
@@ -52,10 +53,22 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
 		this.stateMap.put(ActivationState.APPEARED, new HashMap<MatchType, Activation<MatchType>>());
 		this.stateMap.put(ActivationState.DISAPPEARED, new HashMap<MatchType, Activation<MatchType>>());
 		this.stateMap.put(ActivationState.UPDATED, new HashMap<MatchType, Activation<MatchType>>());
+		
+		this.activationProvider = new ActivationNotificationProvider() {
+            
+            @Override
+            protected void listenerAdded(IActivationNotificationListener listener, boolean fireNow) {
+                if (fireNow) {
+                    for (Activation<MatchType> activation : getActivations()) {
+                        listener.activationAppeared(activation);
+                    }
+                }
+            }
+        };
 	}
 	
 	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule#getPattern()
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getPattern()
      */
 	@Override
     public Pattern getPattern() {
@@ -71,15 +84,15 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
 	public abstract void activationFired(Activation<MatchType> activation);
 	
 	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule#getAgenda()
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getAgenda()
      */
 	@Override
-    public Agenda getAgenda() {
+    public IAgenda getAgenda() {
 		return agenda;
 	}
 	
 	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule#getActivations()
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getActivations()
      */
 	@Override
     public List<Activation<MatchType>> getActivations() {
@@ -108,7 +121,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     	if (activation != null) {
     		//upgraded state is not changed
     		activation.setFired(false);
-    		notifyActivationAppearance(activation);
+    		activationProvider.notifyActivationAppearance(activation);
     	}
     	else {
     		activation = appearedMap.get(match);
@@ -118,7 +131,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     			activation.setFired(false);
     			activation.setState(ActivationState.UPDATED);
     			updatedMap.put(match, activation);
-    			notifyActivationAppearance(activation);
+    			activationProvider.notifyActivationAppearance(activation);
     		}
     	}
     }
@@ -135,7 +148,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     		activation.setFired(true);
     		activation.setState(ActivationState.APPEARED);
     		appearedMap.put(match, activation);
-    		notifyActivationDisappearance(activation);
+    		activationProvider.notifyActivationDisappearance(activation);
     	}
     	else {
     		activation = createActivation(match);
@@ -145,7 +158,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     			attributeMonitor.registerFor(match);
     		}
     		
-    		notifyActivationAppearance(activation);
+    		activationProvider.notifyActivationAppearance(activation);
     	}
     }
 
@@ -165,13 +178,13 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     			activation.setFired(false);
     			activation.setState(ActivationState.DISAPPEARED);
     			disappearedMap.put(match, activation);
-    			notifyActivationAppearance(activation);
+    			activationProvider.notifyActivationAppearance(activation);
     		}
     		else {
     			appearedMap.remove(match);
     			//unregistering change listener from the affected observable values
     			attributeMonitor.unregisterFor(match);
-    			notifyActivationDisappearance(activation);
+    			activationProvider.notifyActivationDisappearance(activation);
     		}
     	}
     	else {
@@ -182,7 +195,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     			activation.setFired(false);
     			activation.setState(ActivationState.DISAPPEARED);
     			disappearedMap.put(match, activation);
-    			notifyActivationAppearance(activation);
+    			activationProvider.notifyActivationAppearance(activation);
     		}
     	}
     }
@@ -202,19 +215,24 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     	processMatchModification(match);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#addActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener, boolean)
+     */
     @Override
     public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
-    	boolean notContained = this.activationNotificationListeners.add(listener);
-    	if (notContained) {
-    		for (Activation<MatchType> activation : getActivations()) {
-    			listener.activationAppeared(activation);
-    		}
-    	}
-    	return notContained;
+        return activationProvider.addActivationNotificationListener(listener, fireNow);
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule#setStateChangeProcessor(org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#removeActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener)
+     */
+    @Override
+    public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
+        return activationProvider.removeActivationNotificationListener(listener);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#setStateChangeProcessor(org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
      */
     @Override
     public void setStateChangeProcessor(ActivationState newState, IMatchProcessor<MatchType> processor) {
@@ -232,7 +250,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> extends Acti
     }
     
    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule#getStateChangeProcessor(org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getStateChangeProcessor(org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState)
      */
     @Override
     public IMatchProcessor<MatchType> getStateChangeProcessor(ActivationState newState) {

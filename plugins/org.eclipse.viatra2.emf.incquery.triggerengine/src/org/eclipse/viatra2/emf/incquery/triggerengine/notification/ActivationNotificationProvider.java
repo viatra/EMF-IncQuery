@@ -13,45 +13,43 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
  * @author Tamas Szabo
  *
  */
-public abstract class ActivationNotificationProvider {
+public abstract class ActivationNotificationProvider implements IActivationNotificationProvider {
 	
-	protected Set<IActivationNotificationListener> activationNotificationListeners; 
+	protected Set<IActivationNotificationListener> activationNotificationListeners;
 	
 	public ActivationNotificationProvider() {
 		this.activationNotificationListeners = new HashSet<IActivationNotificationListener>();
 	}
 	
-	/** 
-	 * Registers an {@link IActivationNotificationListener} to receive updates on activation 
-	 * appearance and disappearance.  
-	 * 
-	 * <p> The listener can be unregistered via 
-	 * {@link #removeActivationNotificationListener(IActivationNotificationListener)}.
-	 *  
-	 * @param fireNow if true, listener will be immediately invoked on all current activations as a one-time effect. 
-     *
-	 * @param listener the listener that will be notified of each new activation that appears or disappears, 
-	 * starting from now. 
-	 */
-	public abstract boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow);
+	/* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#addActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener, boolean)
+     */
+	@Override
+    public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
+	    boolean notContained = this.activationNotificationListeners.add(listener);
+        if (notContained) {
+            listenerAdded(listener, fireNow);
+        }
+        return notContained;
+	}
 	
-	/**
-	 * Unregisters a listener registered by 
-	 * {@link #addActivationNotificationListener(IActivationNotificationListener, boolean)}.
-	 * 
-	 * @param listener the listener that will no longer be notified. 
-	 */
-	public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
+	protected abstract void listenerAdded(IActivationNotificationListener listener, boolean fireNow);
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#removeActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener)
+     */
+	@Override
+    public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
 		return this.activationNotificationListeners.remove(listener);
 	}
 		
-	protected void notifyActivationAppearance(Activation<? extends IPatternMatch> activation) {
+	public void notifyActivationAppearance(Activation<? extends IPatternMatch> activation) {
 		for (IActivationNotificationListener listener : this.activationNotificationListeners) {
 			listener.activationAppeared(activation);
 		}
 	}
 	
-	protected void notifyActivationDisappearance(Activation<? extends IPatternMatch> activation) {
+	public void notifyActivationDisappearance(Activation<? extends IPatternMatch> activation) {
 		for (IActivationNotificationListener listener : this.activationNotificationListeners) {
 			listener.activationDisappeared(activation);
 		}

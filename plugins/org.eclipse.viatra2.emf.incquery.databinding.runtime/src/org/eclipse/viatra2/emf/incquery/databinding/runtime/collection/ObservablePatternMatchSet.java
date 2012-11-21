@@ -25,6 +25,7 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
 
 import com.google.common.collect.Sets;
@@ -89,7 +90,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      * @param factory the {@link IMatcherFactory} used to create a matcher
      * @param agenda an existing {@link Agenda} that specifies the used model 
      */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory, Agenda agenda) {
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory, IAgenda agenda) {
         super();
         ObservableCollectionHelper.createRuleInAgenda(this, factory, agenda);
     }

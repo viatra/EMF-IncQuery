@@ -27,8 +27,8 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.specific.DefaultRuleFactor
 public class RuleEngine {
 
 	private static RuleEngine instance;
-	private Map<IncQueryEngine, WeakReference<Agenda>> agendaMap;
-	private RuleFactory defaultRuleFactory;
+	private Map<IncQueryEngine, WeakReference<IAgenda>> agendaMap;
+	private IRuleFactory defaultRuleFactory;
 	
 	public static synchronized RuleEngine getInstance() {
 		if (instance == null) {
@@ -38,15 +38,15 @@ public class RuleEngine {
 	}
 	
 	protected RuleEngine() {
-		this.agendaMap = new WeakHashMap<IncQueryEngine, WeakReference<Agenda>>();
+		this.agendaMap = new WeakHashMap<IncQueryEngine, WeakReference<IAgenda>>();
 		this.defaultRuleFactory = new DefaultRuleFactory();
 	}
 	
-	public Agenda getOrCreateAgenda(Notifier notifier) {
+	public IAgenda getOrCreateAgenda(Notifier notifier) {
 		return getOrCreateAgenda(notifier, false);
 	}
 	
-	public Agenda getOrCreateAgenda(Notifier notifier, boolean allowMultipleFiring) {
+	public IAgenda getOrCreateAgenda(Notifier notifier, boolean allowMultipleFiring) {
 		IncQueryEngine engine;
 		try {
 			engine = EngineManager.getInstance().getIncQueryEngine(notifier);
@@ -56,22 +56,23 @@ public class RuleEngine {
 		}
 	}
 		
-	public Agenda getOrCreateAgenda(IncQueryEngine engine) {
+	public IAgenda getOrCreateAgenda(IncQueryEngine engine) {
 		return getOrCreateAgenda(engine, false);
 	}
 	
-	public Agenda getOrCreateAgenda(IncQueryEngine engine, boolean allowMultipleFiring) {
-		Agenda agenda = getAgenda(engine);
+	public IAgenda getOrCreateAgenda(IncQueryEngine engine, boolean allowMultipleFiring) {
+		IAgenda agenda = getAgenda(engine);
 		if (agenda == null) {
-			agenda = new Agenda(engine, allowMultipleFiring);
-			agenda.setRuleFactory(defaultRuleFactory);
-			agendaMap.put(engine, new WeakReference<Agenda>(agenda));
+			Agenda newAgenda = new Agenda(engine, allowMultipleFiring);
+			newAgenda.setRuleFactory(defaultRuleFactory);
+			agenda = newAgenda;
+			agendaMap.put(engine, new WeakReference<IAgenda>(agenda));
 		}
 		return agenda;
 	}
 	
-	private Agenda getAgenda(IncQueryEngine iqEngine) {
-		WeakReference<Agenda> agendaRef = agendaMap.get(iqEngine);
+	private IAgenda getAgenda(IncQueryEngine iqEngine) {
+		WeakReference<IAgenda> agendaRef = agendaMap.get(iqEngine);
 		if (agendaRef != null) {
 			return agendaRef.get();
 		}
