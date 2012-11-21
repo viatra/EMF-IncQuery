@@ -7,9 +7,9 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleFactory;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRuleFactory;
 
-public class DefaultRuleFactory implements RuleFactory {
+public class DefaultRuleFactory implements IRuleFactory {
 
 	@Override
 	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> AbstractRule<Match> createRule(

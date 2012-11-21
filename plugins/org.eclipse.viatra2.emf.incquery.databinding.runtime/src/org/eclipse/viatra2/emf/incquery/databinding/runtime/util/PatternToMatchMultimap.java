@@ -18,27 +18,35 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.qrm.TriggeredQueryResultMu
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
+ * Multimap for managing multiple patterns and related matches for a given notifier.
+ * 
  * @author Abel Hegedus
  *
  */
 public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends TriggeredQueryResultMultimap<MatchType, Pattern, MatchType> {
 
     /**
-     * @param agenda
+     * Creates a new multimap for the given agenda.
+     * 
+     * @param agenda the agenda to use
      */
     public PatternToMatchMultimap(Agenda agenda) {
         super(agenda);
     }
     
     /**
-     * @param engine
+     * Creates a new multimap for the given engine.
+     * 
+     * @param engine the engine to use
      */
     public PatternToMatchMultimap(IncQueryEngine engine) {
         super(engine);
     }
     
     /**
-     * @param notifier
+     * Creates a new multimap for the given notifier
+     * 
+     * @param notifier the notifier to use
      */
     public PatternToMatchMultimap(Notifier notifier) {
         super(notifier);

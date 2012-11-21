@@ -52,7 +52,7 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
             boolean needsNotification = true;
 
             /*Omit notifications about the executions of the assigned jobs in the RecordingActivation
-            Applying a rule in the Rule Engine will result the job to be executed under an 
+            Applying a rule in the IRule Engine will result the job to be executed under an 
             EMFOperationTransaction transaction*/
             if (event.getTransaction() instanceof EMFOperationTransaction) {
                 EMFOperationTransaction transaction = (EMFOperationTransaction) event.getTransaction();

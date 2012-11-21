@@ -19,7 +19,7 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNo
  * @author Abel Hegedus
  *
  */
-public abstract class UpdateCompleteProvider {
+public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider {
 
     private Set<IUpdateCompleteListener> listeners;
     
@@ -30,16 +30,10 @@ public abstract class UpdateCompleteProvider {
         listeners = new HashSet<IUpdateCompleteListener>();
     }
     
-    /** 
-     * Registers an {@link IUpdateCompleteListener} to receive notification on completed updates.  
-     * 
-     * <p> The listener can be unregistered via 
-     * {@link #removeUpdateCompleteListener(IUpdateCompleteListener)}.
-     *  
-     * @param fireNow if true, listener will be immediately invoked without waiting for the next update 
-     *
-     * @param listener the listener that will be notified of each completed update
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#addUpdateCompleteListener(org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener, boolean)
      */
+    @Override
     public boolean addUpdateCompleteListener(IUpdateCompleteListener listener, boolean fireNow) {
         boolean added = listeners.add(listener);
         if(added) {
@@ -48,12 +42,10 @@ public abstract class UpdateCompleteProvider {
         return added;
     }
     
-    /**
-     * Unregisters a listener registered by 
-     * {@link #addActivationNotificationListener(IActivationNotificationListener, boolean)}.
-     * 
-     * @param listener the listener that will no longer be notified. 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#removeUpdateCompleteListener(org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener)
      */
+    @Override
     public boolean removeUpdateCompleteListener(IUpdateCompleteListener listener) {
         return this.listeners.remove(listener);
     }
@@ -64,9 +56,10 @@ public abstract class UpdateCompleteProvider {
         }
     }
 
-    /**
-     * 
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#dispose()
      */
+    @Override
     public void dispose() {
         listeners.clear();
     }

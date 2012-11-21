@@ -18,8 +18,8 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Rule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
@@ -32,17 +32,17 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
     private IMatchProcessor<MatchType> appearanceProcessor;
     private IMatchProcessor<MatchType> disappearanceProcessor;
 
-    private Agenda agenda;
+    private IAgenda agenda;
     
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultimap(Agenda agenda) {
+    protected TriggeredQueryResultMultimap(IAgenda agenda) {
         super(agenda.getLogger());
         this.agenda = agenda;
         
         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-        agenda.getUpdateCompleteProvider().addUpdateCompleteListener(firingStrategy, true);
+        agenda.addUpdateCompleteListener(firingStrategy, true);
         
         appearanceProcessor = new IMatchProcessor<MatchType>() {
             @Override
@@ -72,7 +72,7 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
     }
     
     public <Matcher extends IncQueryMatcher<MatchType>> void addMatcherToMultimapResults(IMatcherFactory<Matcher> factory) {
-        Rule<MatchType> newRule = agenda.createRule(factory, false, true);
+        IRule<MatchType> newRule = agenda.createRule(factory, false, true);
         if(newRule != null) {
             newRule.setStateChangeProcessor(ActivationState.APPEARED, appearanceProcessor);
             newRule.setStateChangeProcessor(ActivationState.DISAPPEARED, disappearanceProcessor);

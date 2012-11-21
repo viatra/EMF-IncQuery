@@ -6,12 +6,12 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule;
+import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
 
 public class RecordingRule<MatchType extends IPatternMatch> extends AbstractRule<MatchType> {
 	
-	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher, 
+	public RecordingRule(IAgenda agenda, IncQueryMatcher<MatchType> matcher, 
 			final boolean upgradedStateUsed, 
 			final boolean disappearedStateUsed) {
 		super(agenda, matcher, upgradedStateUsed, disappearedStateUsed);
@@ -21,7 +21,7 @@ public class RecordingRule<MatchType extends IPatternMatch> extends AbstractRule
 		this.attributeMonitor.addCallbackOnMatchUpdate(this);
 	}
 	
-	public RecordingRule(Agenda agenda, IncQueryMatcher<MatchType> matcher) {
+	public RecordingRule(IAgenda agenda, IncQueryMatcher<MatchType> matcher) {
 		this(agenda, matcher, false, false);
 	}
 	
