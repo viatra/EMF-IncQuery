@@ -108,20 +108,20 @@ public class Agenda implements IAgenda {
             
             @Override
             public void activationDisappeared(Activation<? extends IPatternMatch> activation) {
-                activations.add(activation);
-                for (ActivationMonitor monitor : monitors) {
-                    monitor.addActivation(activation);
-                }
-                activationProvider.notifyActivationAppearance(activation);
-            }
-            
-            @Override
-            public void activationAppeared(Activation<? extends IPatternMatch> activation) {
                 activations.remove(activation);
                 for (ActivationMonitor monitor : monitors) {
                     monitor.removeActivation(activation);
                 }
                 activationProvider.notifyActivationDisappearance(activation);
+            }
+            
+            @Override
+            public void activationAppeared(Activation<? extends IPatternMatch> activation) {
+                activations.add(activation);
+                for (ActivationMonitor monitor : monitors) {
+                    monitor.addActivation(activation);
+                }
+                activationProvider.notifyActivationAppearance(activation);
             }
         };
 		
