@@ -668,9 +668,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             EClassifier rightClassifier = EMFPatternTypeUtil
                     .getClassifierForLiteralAndComputationValueReference(rightValueReference);
             if (leftClassifier != null && rightClassifier != null && !leftClassifier.equals(rightClassifier)) {
-                error("The types of the literal/computational values are different: " + leftClassifier.getName() + ", "
-                        + rightClassifier.getName() + ".", compareConstraint, null,
-                        EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
+                error("The types of the literal/computational values are different: "
+                        + leftClassifier.getInstanceClassName() + ", " + rightClassifier.getInstanceClassName() + ".",
+                        compareConstraint, null, EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
             }
         }
     }
@@ -687,9 +687,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
             if (inputClassifier != null && typeClassifier != null && !inputClassifier.equals(typeClassifier)) {
-                error("The type infered from the path expression (" + typeClassifier.getName()
-                        + ") is different from the input literal/computational value (" + inputClassifier.getName()
-                        + ").", pathExpressionConstraint, null,
+                error("The type infered from the path expression (" + typeClassifier.getInstanceClassName()
+                        + ") is different from the input literal/computational value ("
+                        + inputClassifier.getInstanceClassName() + ").", pathExpressionConstraint, null,
                         EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION);
             }
         }
@@ -706,9 +706,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 EClassifier inputClassifier = EMFPatternTypeUtil
                         .getClassifierForLiteralAndComputationValueReference(valueReference);
                 if (inputClassifier != null && typeClassifier != null && !inputClassifier.equals(typeClassifier)) {
-                    error("The type infered from the called pattern (" + typeClassifier.getName()
-                            + ") is different from the input literal/computational value (" + inputClassifier.getName()
-                            + ").", patternCall, null,
+                    error("The type infered from the called pattern (" + typeClassifier.getInstanceClassName()
+                            + ") is different from the input literal/computational value ("
+                            + inputClassifier.getInstanceClassName() + ").", patternCall, null,
                             EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
                 }
             }
