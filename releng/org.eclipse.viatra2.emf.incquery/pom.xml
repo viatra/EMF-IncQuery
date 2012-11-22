@@ -59,7 +59,9 @@
 	</modules>
 	<properties>
 		<tycho.version>0.16.0</tycho.version>
+		<tycho.extras.version>0.16.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
+		<tycho.scmUrl>scm:git:git://github.com/ujhelyiz/EMF-IncQuery.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.5.8.201207111220</jacoco.version>
@@ -113,6 +115,23 @@
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<sourceReferences>
+						<generate>true</generate>
+					</sourceReferences>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-sourceref-jgit</artifactId>
+						<version>${tycho.extras.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-publisher-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
@@ -125,7 +144,7 @@
 				<version>${jacoco.version}</version>
 				<configuration>
 					<destFile>${jacoco.targetdir}/jacoco.exec</destFile>
-					
+
 				</configuration>
 				<executions>
 					<execution>
@@ -133,17 +152,10 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<!-- <execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<dataFile>${jacoco.targetdir}/jacoco.exec</dataFile>
-							<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory>
-						</configuration>
-					</execution>-->
+					<!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals> 
+						<goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile> 
+						<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
+						</configuration> </execution> -->
 				</executions>
 			</plugin>
 			<plugin>
@@ -236,17 +248,17 @@
 		<system>GitHub Issues</system>
 	</issueManagement>
 	<profiles>
-	<profile>
-      <id>examples</id>
-      <activation>
-        <file>
-        	<exists>../../../examples/README.markdown</exists>
-        </file>
-      </activation>
-      <modules>
-        <module>../../../examples/school/org.eclipse.viatra2.emf.incquery.tests.school.parent</module>
-        <module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>        
-      </modules>
-    </profile>
+		<profile>
+			<id>examples</id>
+			<activation>
+				<file>
+					<exists>../../../examples/README.markdown</exists>
+				</file>
+			</activation>
+			<modules>
+				<module>../../../examples/school/org.eclipse.viatra2.emf.incquery.tests.school.parent</module>
+				<module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>
+			</modules>
+		</profile>
 	</profiles>
 </project>
