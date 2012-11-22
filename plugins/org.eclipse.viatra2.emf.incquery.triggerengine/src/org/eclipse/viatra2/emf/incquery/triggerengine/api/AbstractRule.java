@@ -191,12 +191,12 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
     		//changing activation state from updated to disappeared if it was fired
     		activation = updatedMap.get(match);
     		if (activation.isFired()) {
-    			updatedMap.remove(match);
-    			activation.setFired(false);
-    			activation.setState(ActivationState.DISAPPEARED);
-    			disappearedMap.put(match, activation);
-    			activationProvider.notifyActivationAppearance(activation);
+    		    activation.setFired(false);
     		}
+            updatedMap.remove(match);
+            activation.setState(ActivationState.DISAPPEARED);
+            disappearedMap.put(match, activation);
+   			activationProvider.notifyActivationAppearance(activation);
     	}
     }
 
