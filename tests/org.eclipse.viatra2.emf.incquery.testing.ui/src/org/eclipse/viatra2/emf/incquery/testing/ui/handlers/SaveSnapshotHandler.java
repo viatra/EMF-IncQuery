@@ -79,7 +79,9 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			editor = observablePatternMatcher.getParent().getEditorPart();
 			matchers.add(observablePatternMatcher);
 			IncQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
-            engine = matcher.getEngine();
+			if(matcher != null) {
+			    engine = matcher.getEngine();
+			}
 			
 		} else if(obj instanceof ObservablePatternMatcherRoot) {
 			ObservablePatternMatcherRoot matcherRoot = (ObservablePatternMatcherRoot) obj;
