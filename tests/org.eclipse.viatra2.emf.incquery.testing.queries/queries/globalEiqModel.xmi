@@ -305,7 +305,7 @@
         <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
-    <annotations name="DerivedFeature">
+    <annotations name="QueryBasedFeature">
       <parameters name="feature">
         <value xsi:type="patternLanguage:StringValue" value="role"/>
       </parameters>
@@ -377,7 +377,7 @@
         <value xsi:type="patternLanguage:BoolValue"/>
       </parameters>
     </annotations>
-    <annotations name="DerivedFeature">
+    <annotations name="QueryBasedFeature">
       <parameters name="feature">
         <value xsi:type="patternLanguage:StringValue" value="derivedValue"/>
       </parameters>
