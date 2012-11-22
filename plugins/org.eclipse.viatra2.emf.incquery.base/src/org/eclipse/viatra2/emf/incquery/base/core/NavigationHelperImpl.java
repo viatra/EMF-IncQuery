@@ -438,20 +438,20 @@ public class NavigationHelperImpl implements NavigationHelper {
 	 * This will run after updates.
 	 */
 //	 * If there are any such, updates are settled before they are run. 
-	public void runAfterUpdateCallbacks() {
-		try {
-			if (!afterUpdateCallbacks.isEmpty()) {
-				//settle();
-				for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
-					runnable.run();
-				}
-			}
-		} catch (Exception ex) {
-			logger.fatal(
-					"EMF-IncQuery Base encountered an error in delivering notifications about changes. " , ex);
-			//throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
-		}
-	}
+    public void runAfterUpdateCallbacks() {
+        if (!afterUpdateCallbacks.isEmpty()) {
+            // settle();
+            for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
+                try {
+                    runnable.run();
+                } catch (Exception ex) {
+                    logger.fatal("EMF-IncQuery Base encountered an error in delivering notifications about changes. ",
+                            ex);
+                    // throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
+                }
+            }
+        }
+    }
 	
 	protected void considerForExpansion(EObject obj) {
 		if (expansionAllowed) {
