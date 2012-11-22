@@ -32,21 +32,37 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 public class ValidationUtil {
+    
+    /**
+     * Constructor hidden for utility class
+     */
+    private ValidationUtil() {
+        
+    }
+
 
 	private static Logger logger = Logger.getLogger(ValidationUtil.class);
 	
 	private static Map<IWorkbenchPage, Set<IEditorPart>> pageMap = new HashMap<IWorkbenchPage, Set<IEditorPart>>();
 	
+	private static Set<String> genericEditorIds = Sets.newHashSet("org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID",
+	        "org.eclipse.emf.ecore.presentation.ReflectiveEditorID", "org.eclipse.emf.genericEditor");
+	
 	private static Map<IEditorPart, ConstraintAdapter<IPatternMatch>> adapterMap = new HashMap<IEditorPart, ConstraintAdapter<IPatternMatch>>();
-	public synchronized static Map<IEditorPart, ConstraintAdapter<IPatternMatch>> getAdapterMap() {
+	public static synchronized Map<IEditorPart, ConstraintAdapter<IPatternMatch>> getAdapterMap() {
 		return adapterMap;
 	}
 
 	private static Multimap<String, Constraint<IPatternMatch>> editorConstraintMap;
-	public synchronized static Multimap<String, Constraint<IPatternMatch>> getEditorConstraintMap() {
+	public static synchronized Multimap<String, Constraint<IPatternMatch>> getEditorConstraintMap() {
+	    if(editorConstraintMap == null) {
+	        editorConstraintMap = loadConstraintsFromExtensions();
+	    }
 		return editorConstraintMap;
 	}
 
@@ -69,21 +85,20 @@ public class ValidationUtil {
 		return IMarker.SEVERITY_INFO;
 	}
 
-	public synchronized static boolean isConstraintsRegisteredForEditorId(String editorId) {
-		if (editorConstraintMap == null) {
-			editorConstraintMap = loadConstraintsFromExtensions();
-		}
-		return editorConstraintMap.containsKey(editorId);
+	public static synchronized boolean isConstraintsRegisteredForEditorId(String editorId) {
+		return getEditorConstraintMap().containsKey(editorId);
 	}
 	
-	public synchronized static Set<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
+	public static synchronized Set<Constraint<IPatternMatch>> getConstraintsForEditorId(String editorId) {
+	    if(genericEditorIds.contains(editorId)) {
+            return ImmutableSet.copyOf(getEditorConstraintMap().values());
+        }
 		Set<Constraint<IPatternMatch>> set = new HashSet<Constraint<IPatternMatch>>(getEditorConstraintMap().get(editorId));
 		set.addAll(getEditorConstraintMap().get("*"));
 		return set;
 	}
 
-	@SuppressWarnings("unchecked")
-	private synchronized static Multimap<String, Constraint<IPatternMatch>> loadConstraintsFromExtensions() {
+	private static synchronized Multimap<String, Constraint<IPatternMatch>> loadConstraintsFromExtensions() {
 		Multimap<String, Constraint<IPatternMatch>> result = HashMultimap.create();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -92,34 +107,44 @@ public class ValidationUtil {
 		for (IExtension extension : ep.getExtensions()) {
 			for (IConfigurationElement ce : extension.getConfigurationElements()) {
 				if (ce.getName().equals("constraint")) {
-					try {
-						List<String> ids = new ArrayList<String>();
-						for (IConfigurationElement child : ce.getChildren()) {
-							if (child.getName().equals("enabledForEditor")) {
-								String id = child.getAttribute("editorId");
-								if (id != null && !id.equals("")) {
-									ids.add(id);
-								}
-							}
-						}
-
-						Object o = ce.createExecutableExtension("class");
-						if (o instanceof Constraint<?>) {
-							if (ids.isEmpty()) {
-								ids.add("*");
-							}
-							for (String id : ids) {
-								result.put(id, (Constraint<IPatternMatch>) o);
-							}
-						}
-					} catch (CoreException e) {
-						logger.error("Error loading EMF-IncQuery Validation Constraint", e);
-					}
+					processConstraintConfigurationElement(result, ce);
 				}
 			}
 		}
 		return result;
 	}
+
+    /**
+     * @param result
+     * @param ce
+     */
+	@SuppressWarnings("unchecked")
+    private static void processConstraintConfigurationElement(Multimap<String, Constraint<IPatternMatch>> result,
+            IConfigurationElement ce) {
+        try {
+        	List<String> ids = new ArrayList<String>();
+        	for (IConfigurationElement child : ce.getChildren()) {
+        		if (child.getName().equals("enabledForEditor")) {
+        			String id = child.getAttribute("editorId");
+        			if (id != null && !id.equals("")) {
+        				ids.add(id);
+        			}
+        		}
+        	}
+
+        	Object o = ce.createExecutableExtension("class");
+        	if (o instanceof Constraint<?>) {
+        		if (ids.isEmpty()) {
+        			ids.add("*");
+        		}
+        		for (String id : ids) {
+        			result.put(id, (Constraint<IPatternMatch>) o);
+        		}
+        	}
+        } catch (CoreException e) {
+        	logger.error("Error loading EMF-IncQuery Validation Constraint", e);
+        }
+    }
 
 	public static synchronized void addNotifier(IEditorPart editorPart, Notifier notifier) {
 		adapterMap.put(editorPart, new ConstraintAdapter<IPatternMatch>(editorPart, notifier, logger));

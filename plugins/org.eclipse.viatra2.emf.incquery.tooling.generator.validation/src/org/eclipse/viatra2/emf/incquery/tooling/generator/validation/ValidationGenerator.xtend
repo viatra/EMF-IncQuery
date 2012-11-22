@@ -30,13 +30,18 @@ import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue
 import java.util.List
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation
+import org.eclipse.viatra2.emf.incquery.tooling.generator.builder.IErrorFeedback
+import org.eclipse.xtext.diagnostics.Severity
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
 	@Inject
-	private IEiqGenmodelProvider eiqGenModelProvider;
+	private IEiqGenmodelProvider eiqGenModelProvider
+	
+	@Inject
+	private IErrorFeedback feedback
 	
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
@@ -44,6 +49,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
+	private static String VALIDATION_ERROR_CODE = "org.eclipse.viatra2.emf.incquery.validation.error"
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		
@@ -262,7 +268,16 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 
 			@Override
 			public EObject getLocationObject(«pattern.matchClassName» signature) {
-				Object location = signature.get("«getElementOfConstraintAnnotation(annotation, "location")»");
+				Object location = signature.get("«
+				{
+				  val loc = getElementOfConstraintAnnotation(annotation, "location")
+  				if(!pattern.parameterPositionsByName.containsKey(loc)){
+  				  feedback.reportError(annotation, "Location is not a valid parameter name!", VALIDATION_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+   				}
+ 				  loc
+				}
+				  »"
+				);
 				if(location instanceof EObject){
 					return (EObject) location;
 				}
