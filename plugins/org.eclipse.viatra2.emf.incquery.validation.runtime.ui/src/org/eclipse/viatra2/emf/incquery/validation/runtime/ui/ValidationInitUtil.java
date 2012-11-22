@@ -16,6 +16,13 @@ import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 public class ValidationInitUtil {
+    
+    /**
+     * Constructor hidden for utility class
+     */
+    private ValidationInitUtil() {
+        
+    }
 
     public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {
         // if(adapterMap.containsKey(activeEditor)) {
