@@ -64,7 +64,10 @@ import com.google.inject.Inject;
  * <li>Duplicate import of EPackages</li>
  * <li>Enum types</li>
  * <li>Unused variables</li>
- * <li>FIXME do it</li>
+ * <li>Type checking for parameters and body variables</li>
+ * <li>Type checking for literal and computational values in pattern calls, path expressions and compare constraints
+ * <li>Pattern body searching for isolated constraints (cartesian products)</li>
+ * <li>Non-EDataTypes in check expression</li>
  * </ul>
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
@@ -320,12 +323,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 throw new UnsupportedOperationException("Unrecognised compare feature.");
             }
         } else if (container instanceof PathExpressionConstraint) {
-            // if (((PathExpressionConstraint) container).isNegative()) {
-            // classifiedReferences
-            // .incrementCounter(VariableReferenceClass.NegativeExistential);
-            // } else {
             classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.POSITIVE_EXISTENTIAL);
-            // }
         } else if (container instanceof PatternCompositionConstraint) {
             if (((PatternCompositionConstraint) container).isNegative()) {
                 classifiedReferences.incrementCounter(ClassifiedVariableReferenceEnum.NEGATIVE_EXISTENTIAL);
@@ -360,14 +358,14 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 error(String.format("Invalid enumeration constant %s", enumType.getName()), value,
                         EMFPatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION, EMFIssueCodes.INVALID_ENUM_LITERAL);
             }
-        } // else {
-          // If container is not a PathExpression, the entire enum type has to be specified
-          // However, the it is checked during reference resolution
-          // }
+        }
     }
 
     /**
-     * FIXME do it
+     * The parameter's type must be the same or more specific than the type inferred from the pattern's body. This
+     * warning usually arises when we have more pattern bodies, which contains different type definitions for the same
+     * parameter. In a case like this the common parameter's type is the most specific common supertype of the
+     * respective calculated types in the bodies.
      * 
      * @param pattern
      */
@@ -395,46 +393,76 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * FIXME do it
+     * A variable's type can come from different sources: parameter's type definition, type definitions in the pattern
+     * bodies or calculated from path expression constraints or find calls. In these situations one variable might have
+     * conflicting type definitions. In conflicting situations if a variable's multiple types have a common subtype
+     * (which would ensure a pattern match runtime) and has a type defined as a parameter, than this type will be
+     * selected. In other cases we don't select a random type from the possibilities, the validator returns with an
+     * error. Note, if the multiple type definitions are related in subtype-supertype relations than the most specific
+     * is selected naturally (this is not even a warning).
      * 
-     * @param patternBody
+     * @param pattern
      */
     @Check
-    public void checkPatternVariablesType(PatternBody patternBody) {
-        for (Variable variable : patternBody.getVariables()) {
-            Set<EClassifier> possibleClassifiers = emfTypeProvider.getPossibleClassifiersForVariableInBody(patternBody,
-                    variable);
-            // We only need to give warnings/errors if there is more possible classifiers
-            if (possibleClassifiers.size() > 1) {
-                Set<String> classifierNamesSet = new HashSet<String>();
-                Set<String> classifierPackagesSet = new HashSet<String>();
-                for (EClassifier classifier : possibleClassifiers) {
-                    classifierNamesSet.add(classifier.getName());
-                    classifierPackagesSet.add(classifier.getEPackage().getName());
-                }
-                // If the String sets contains only 1 elements than it is an error
-                // There is some element which is defined multiple types within the ecores
-                if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
-                    error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
-                            .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
-                } else {
-                    EClassifier classifier = emfTypeProvider.getClassifierForPatternParameterVariable(variable);
-                    PatternModel patternModel = (PatternModel) patternBody.eContainer().eContainer();
-                    if (classifier != null && possibleClassifiers.contains(classifier)
-                            && hasCommonSubType(patternModel, possibleClassifiers)) {
-                        warning("Ambiguous variable type defintions: " + classifierNamesSet + ", the parameter type ("
-                                + classifier.getName() + ") is used now.", variable.getReferences().get(0), null,
-                                EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
+    public void checkPatternVariablesType(Pattern pattern) {
+        for (PatternBody patternBody : pattern.getBodies()) {
+            for (Variable variable : patternBody.getVariables()) {
+                Set<EClassifier> possibleClassifiers = emfTypeProvider.getPossibleClassifiersForVariableInBody(
+                        patternBody, variable);
+                // We only need to give warnings/errors if there is more possible classifiers
+                if (possibleClassifiers.size() > 1) {
+                    Set<String> classifierNamesSet = new HashSet<String>();
+                    Set<String> classifierPackagesSet = new HashSet<String>();
+                    for (EClassifier classifier : possibleClassifiers) {
+                        classifierNamesSet.add(classifier.getName());
+                        classifierPackagesSet.add(classifier.getEPackage().getName());
+                    }
+                    // If the String sets contains only 1 elements than it is an error
+                    // There is some element which is defined multiple types within the ecores
+                    if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
+                        error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
+                                .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                     } else {
-                        error("Inconsistent variable type defintions: " + classifierNamesSet
-                                + ", type cannot be selected.", variable.getReferences().get(0), null,
-                                EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                        EClassifier classifier = emfTypeProvider.getClassifierForPatternParameterVariable(variable);
+                        PatternModel patternModel = (PatternModel) patternBody.eContainer().eContainer();
+                        if (classifier != null && possibleClassifiers.contains(classifier)
+                                && hasCommonSubType(patternModel, possibleClassifiers)) {
+                            warning("Ambiguous variable type defintions: " + classifierNamesSet
+                                    + ", the parameter type (" + classifier.getName() + ") is used now.", variable
+                                    .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
+                        } else {
+                            boolean isParameter = false;
+                            for (Variable parameter : pattern.getParameters()) {
+                                if (parameter.getName().equals(variable.getName())) {
+                                    isParameter = true;
+                                }
+                            }
+                            if (isParameter) {
+                                error("Ambiguous variable type defintions: "
+                                        + classifierNamesSet
+                                        + ", type cannot be selected. Please specify the one to be used as the parameter type"
+                                        + " by adding it to the parameter definition.",
+                                        variable.getReferences().get(0), null,
+                                        EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                            } else {
+                                error("Inconsistent variable type defintions: " + classifierNamesSet
+                                        + ", type cannot be selected.", variable.getReferences().get(0), null,
+                                        EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
+    /**
+     * @param patternModel
+     * @param classifiers
+     * @return True if the given classifiers has a common subtype. The {@link PatternModel} is needed for focusing the
+     *         search, all ecore packages referenced from the patternmodel's head, and it's subpackages will be searched
+     *         for common subtype elements.
+     */
     private static boolean hasCommonSubType(PatternModel patternModel, Set<EClassifier> classifiers) {
         Set<EClass> realSubTypes = new HashSet<EClass>();
         Set<EClassifier> probableSubTypes = new HashSet<EClassifier>();
@@ -456,6 +484,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    /**
+     * @param ePackage
+     * @return all EClassifiers contained in the ePackage, and in the subpackages as well
+     */
     private static Set<EClassifier> getAllEClassifiers(EPackage ePackage) {
         Set<EClassifier> resultSet = new HashSet<EClassifier>();
         resultSet.addAll(ePackage.getEClassifiers());
@@ -466,7 +498,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * FIXME do it
+     * A validator for cartesian products (isolated constraints) in pattern bodies. There are two types of warnings:
+     * strict and soft. Strict warning means that there are constraints in the body which has no connection at all, in
+     * soft cases they connected at least with a count find. The validator's result always just a warning, however a
+     * strict warning usually a modeling design flaw which should be corrected.
      * 
      * @param patternBody
      */
@@ -636,9 +671,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * FIXME do it
+     * This validator checks if the literal or computational values match the other side's type in a compare constraint
+     * (equality/inequality). Both sides can be literal, we will do the check if at least on side is that.
      * 
-     * @param patternBody
+     * @param compareConstraint
      */
     @Check
     public void checkForWrongLiteralAndComputationValuesInCompareConstraints(CompareConstraint compareConstraint) {
@@ -662,9 +698,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * FIXME do it
+     * This validator checks if the literal or computational values match the path expression's type.
      * 
-     * @param patternBody
+     * @param pathExpressionConstraint
      */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPathExpressionConstraints(
@@ -688,9 +724,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * FIXME do it
+     * This validator checks if the literal or computational values match the pattern call's type.
      * 
-     * @param patternBody
+     * @param patternCall
      */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPatternCalls(PatternCall patternCall) {
@@ -714,9 +750,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * FIXME do it
+     * This validator looks up all variables in the {@link CheckConstraint} and reports an error if one them is not an
+     * {@link EDataType} instance. We do not allow arbitrary EMF elements in, so the checks are less likely to have
+     * side-effects.
      * 
-     * @param patternBody
+     * @param checkConstraint
      */
     @Check
     public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
