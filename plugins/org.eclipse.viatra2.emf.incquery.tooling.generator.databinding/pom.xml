@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
 		<groupId>org.eclipse.viatra2</groupId>
-		<version>0.6.9-SNAPSHOT</version>
+		<version>0.6.10-SNAPSHOT</version>
 		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
 	</parent>
 	<artifactId>org.eclipse.viatra2.emf.incquery.tooling.generator.databinding</artifactId>

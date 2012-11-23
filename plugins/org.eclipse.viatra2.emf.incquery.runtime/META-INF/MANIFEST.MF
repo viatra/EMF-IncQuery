@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Runtime Plug-in
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.runtime;singleton:=true
-Bundle-Version: 0.6.9.qualifier
+Bundle-Version: 0.6.10.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.runtime.IncQueryRuntimePlugin
 Require-Bundle: org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete;bundle-version="3.2.0";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.0";visibility:=reexport,

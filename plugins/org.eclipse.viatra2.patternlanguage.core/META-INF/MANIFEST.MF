@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Base Pattern Language Core
 Bundle-Vendor: Zoltan Ujhelyi/FTSRG
-Bundle-Version: 0.6.9.qualifier
+Bundle-Version: 0.6.10.qualifier
 Bundle-SymbolicName: org.eclipse.viatra2.patternlanguage.core;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",

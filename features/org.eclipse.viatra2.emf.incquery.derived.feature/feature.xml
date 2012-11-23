@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra2.emf.incquery.derived.feature"
       label="EMF-IncQuery Derived Feature Handling feature"
-      version="0.6.9.qualifier"
+      version="0.6.10.qualifier"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 
