@@ -18,13 +18,20 @@ import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingA
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
+/**
+ * The job is used to update a problem marker in the Problems View of Eclipse. 
+ * It is associated to the rule that is created for the constraint.  
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class MarkerUpdaterJob implements IMatchProcessor<IPatternMatch> {
 
 	private Constraint<IPatternMatch> constraint;
 	private Logger logger;
-	private ConstraintAdapter<? extends IPatternMatch> adapter;
+	private ConstraintAdapter adapter;
 	
-	public MarkerUpdaterJob(ConstraintAdapter<? extends IPatternMatch> adapter, Constraint<IPatternMatch> constraint, Logger logger) {
+	public MarkerUpdaterJob(ConstraintAdapter adapter, Constraint<IPatternMatch> constraint, Logger logger) {
 		this.constraint = constraint;
 		this.logger = logger;
 		this.adapter = adapter;

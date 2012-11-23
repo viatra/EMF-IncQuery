@@ -53,8 +53,8 @@ public class ValidationUtil {
 	private static Set<String> genericEditorIds = Sets.newHashSet("org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID",
 	        "org.eclipse.emf.ecore.presentation.ReflectiveEditorID", "org.eclipse.emf.genericEditor");
 	
-	private static Map<IEditorPart, ConstraintAdapter<IPatternMatch>> adapterMap = new HashMap<IEditorPart, ConstraintAdapter<IPatternMatch>>();
-	public static synchronized Map<IEditorPart, ConstraintAdapter<IPatternMatch>> getAdapterMap() {
+	private static Map<IEditorPart, ConstraintAdapter> adapterMap = new HashMap<IEditorPart, ConstraintAdapter>();
+	public static synchronized Map<IEditorPart, ConstraintAdapter> getAdapterMap() {
 		return adapterMap;
 	}
 
@@ -147,7 +147,7 @@ public class ValidationUtil {
     }
 
 	public static synchronized void addNotifier(IEditorPart editorPart, Notifier notifier) {
-		adapterMap.put(editorPart, new ConstraintAdapter<IPatternMatch>(editorPart, notifier, logger));
+		adapterMap.put(editorPart, new ConstraintAdapter(editorPart, notifier, logger));
 	}
 	
 	public static void registerEditorPart(IEditorPart editorPart) {

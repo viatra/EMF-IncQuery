@@ -26,7 +26,15 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
 
-public class ConstraintAdapter<T extends IPatternMatch> {
+/**
+ * The constraint adapter class is used to collect the constraints and deal with their 
+ * maintenance for a given EMF instance model. If the validation framework is 
+ * initialized an instance of this class will be created which handles the creation 
+ * of the appropriate rules and their jobs. 
+ *  
+ * @author Tamas Szabo
+ */
+public class ConstraintAdapter {
 	
 	private Map<IPatternMatch, IMarker> markerMap;
 	private IAgenda agenda;

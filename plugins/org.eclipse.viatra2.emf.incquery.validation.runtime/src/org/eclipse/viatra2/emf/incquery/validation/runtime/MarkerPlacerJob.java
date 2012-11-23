@@ -25,13 +25,21 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
 
+/**
+ * The job is used to create a problem marker in the Problems View of Eclipse 
+ * upon constraint violation. 
+ * It is associated to the rule that is created for the constraint.  
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class MarkerPlacerJob implements IMatchProcessor<IPatternMatch> {
 
 	private Constraint<IPatternMatch> constraint;
 	private Logger logger;
-	ConstraintAdapter<? extends IPatternMatch> adapter;
+	ConstraintAdapter adapter;
 	
-	public MarkerPlacerJob(ConstraintAdapter<? extends IPatternMatch> adapter, Constraint<IPatternMatch> constraint, Logger logger) {
+	public MarkerPlacerJob(ConstraintAdapter adapter, Constraint<IPatternMatch> constraint, Logger logger) {
 		this.constraint = constraint;
 		this.logger = logger;
 		this.adapter = adapter;

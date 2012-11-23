@@ -17,12 +17,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
+/**
+ * The job is used to remove a problem marker from the Problems View of Eclipse
+ * when the constraint violation is no longer present. 
+ * It is associated to the rule that is created for the constraint.  
+ * 
+ * @author Tamas Szabo
+ *
+ */
 public class MarkerEraserJob implements IMatchProcessor<IPatternMatch> {
 
 	private Logger logger;
-	private ConstraintAdapter<? extends IPatternMatch> adapter;
+	private ConstraintAdapter adapter;
 	
-	public MarkerEraserJob(ConstraintAdapter<? extends IPatternMatch> adapter, Logger logger) {
+	public MarkerEraserJob(ConstraintAdapter adapter, Logger logger) {
 		this.logger = logger;
 		this.adapter = adapter;
 	}
