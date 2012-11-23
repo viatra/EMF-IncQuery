@@ -199,7 +199,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			    entry.key = "patternFQN"
 			    entry.value = pattern.fullyQualifiedName
 			    annotation.details.add(entry)
-			    feature.EContainingClass.eResource.save(null)
 				} else {
 					ast.removeHandlerField(bodyDeclListRewrite, type, genFeature.name)
 					ast.restoreGetterMethod(document, compunit, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature)
@@ -209,7 +208,11 @@ class DerivedFeatureGenerator implements IGenerationFragment {
               feature.EAnnotations.remove(it)
             }
           ]
+				}
+				try{
           feature.EContainingClass.eResource.save(null)
+				} catch(Exception e){
+				  logger.error("Error happened when trying to save Ecore file!", e)
 				}
 
 				val edits = rewrite.rewriteAST(document, javaProject.getOptions(true));
