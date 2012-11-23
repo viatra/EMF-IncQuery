@@ -38,9 +38,9 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 		
 		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
 			IRule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
-			rule.setStateChangeProcessor(ActivationState.APPEARED, new MarkerPlacerJob(markerMap, constraint, logger));
-			rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new MarkerEraserJob(markerMap, logger));
-			rule.setStateChangeProcessor(ActivationState.UPDATED, new MarkerUpdaterJob(markerMap, constraint, logger));
+			rule.setStateChangeProcessor(ActivationState.APPEARED, new MarkerPlacerJob(this, constraint, logger));
+			rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new MarkerEraserJob(this, logger));
+			rule.setStateChangeProcessor(ActivationState.UPDATED, new MarkerUpdaterJob(this, constraint, logger));
 		}
 		
 		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
@@ -57,5 +57,17 @@ public class ConstraintAdapter<T extends IPatternMatch> {
 			}
 		}
 		agenda.dispose();
+	}
+	
+	public IMarker getMarker(IPatternMatch match) {
+		return this.markerMap.get(match);
+	}
+	
+	public IMarker addMarker(IPatternMatch match, IMarker marker) {
+		return this.markerMap.put(match, marker);
+	}
+	
+	public IMarker removeMarker(IPatternMatch match) {
+		return this.markerMap.remove(match);
 	}
 }

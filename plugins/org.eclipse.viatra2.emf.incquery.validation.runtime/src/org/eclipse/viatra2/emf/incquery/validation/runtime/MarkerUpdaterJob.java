@@ -11,8 +11,6 @@
 
 package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -24,17 +22,17 @@ public class MarkerUpdaterJob implements IMatchProcessor<IPatternMatch> {
 
 	private Constraint<IPatternMatch> constraint;
 	private Logger logger;
-	private Map<IPatternMatch, IMarker> markerMap;
+	private ConstraintAdapter<? extends IPatternMatch> adapter;
 	
-	public MarkerUpdaterJob(Map<IPatternMatch, IMarker> markerMap, Constraint<IPatternMatch> constraint, Logger logger) {
+	public MarkerUpdaterJob(ConstraintAdapter<? extends IPatternMatch> adapter, Constraint<IPatternMatch> constraint, Logger logger) {
 		this.constraint = constraint;
 		this.logger = logger;
-		this.markerMap = markerMap;
+		this.adapter = adapter;
 	}
 	
 	@Override
 	public void process(IPatternMatch match) {
-		IMarker marker = markerMap.get(match);
+		IMarker marker = adapter.getMarker(match);
 		if (marker != null) {
 			try {
 				marker.setAttribute(IMarker.MESSAGE, DatabindingAdapterUtil.getMessage(match, constraint.getMessage()));
