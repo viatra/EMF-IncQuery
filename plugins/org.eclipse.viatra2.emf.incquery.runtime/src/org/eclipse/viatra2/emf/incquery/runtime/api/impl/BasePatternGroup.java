@@ -44,7 +44,9 @@ public abstract class BasePatternGroup implements IPatternGroup {
 	@Override
 	public void prepare(IncQueryEngine engine) throws IncQueryException {
 		try {
-			engine.getReteEngine().buildMatchersCoalesced(getPatterns());
+			final Set<Pattern> patterns = getPatterns();
+			engine.getSanitizer().admit(patterns);
+			engine.getReteEngine().buildMatchersCoalesced(patterns);
 		} catch (RetePatternBuildException e) {
 			throw new IncQueryException(e);
 		}

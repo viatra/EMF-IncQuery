@@ -84,6 +84,7 @@ public class PatternSanitizer {
 	 */
 	public boolean admit(Collection<Pattern> patterns) {		
 		Set<Pattern> newPatterns = getAllReferencedUnvalidatedPatterns(patterns);
+		if (newPatterns.isEmpty()) return true;
 		
 		// TODO validate(toBeValidated) as a group
 		Set<Pattern> inadmissible = new HashSet<Pattern>();
