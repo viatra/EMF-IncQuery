@@ -125,7 +125,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
     	}
     	else {
     		activation = appearedMap.get(match);
-    		if (activation != null && activation.isFired()) {
+    		if (activation != null) {
     			//changing activation state from appeared to upgraded
     			appearedMap.remove(match);
     			activation.setFired(false);
@@ -190,9 +190,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
     	else {
     		//changing activation state from updated to disappeared if it was fired
     		activation = updatedMap.get(match);
-    		if (activation.isFired()) {
-    		    activation.setFired(false);
-    		}
+    		activation.setFired(false);
             updatedMap.remove(match);
             activation.setState(ActivationState.DISAPPEARED);
             disappearedMap.put(match, activation);
