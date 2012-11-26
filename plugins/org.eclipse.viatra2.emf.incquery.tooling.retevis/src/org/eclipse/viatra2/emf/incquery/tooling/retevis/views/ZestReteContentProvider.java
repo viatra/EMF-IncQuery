@@ -3,6 +3,7 @@ package org.eclipse.viatra2.emf.incquery.tooling.retevis.views;
 import java.lang.reflect.Field;
 import java.util.Vector;
 
+import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer;
@@ -12,7 +13,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
-import org.eclipse.zest.core.viewers.IGraphEntityContentProvider;
 
 public class ZestReteContentProvider extends ArrayContentProvider implements
 		IGraphEntityContentProvider {

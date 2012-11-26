@@ -12,6 +12,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.text.FlowPage;
 import org.eclipse.draw2d.text.TextFlow;
 import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.viatra2.emf.incquery.tooling.retevis.theme.ColorTheme;
@@ -30,7 +31,6 @@ import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.Uniquene
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 
 public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider {
 
