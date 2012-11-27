@@ -17,6 +17,7 @@
          </annotationparameter>
       </annotation>
       <annotation
+            additionalValidator="org.eclipse.viatra2.emf.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator"
             description="Defines observable values for the pattern&apos;s parameters; the code generator will create accessors for such values to use in databinding contexts."
             name="ObservableValue">
          <annotationparameter
