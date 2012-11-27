@@ -125,7 +125,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
     	}
     	else {
     		activation = appearedMap.get(match);
-    		if (activation != null) {
+    		if (activation != null && activation.isFired()) {
     			//changing activation state from appeared to upgraded
     			appearedMap.remove(match);
     			activation.setFired(false);
