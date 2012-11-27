@@ -10,14 +10,22 @@
  *******************************************************************************/
 package org.eclipse.viatra2.patternlanguage.core;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.naming.PatternNameProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
+
+import com.google.inject.Provides;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntimeModule {
+
+    @Provides
+    Logger provideLoggerImplementation() {
+        return Logger.getLogger(PatternLanguageRuntimeModule.class);
+    }
 
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {

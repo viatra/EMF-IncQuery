@@ -15,4 +15,5 @@ Require-Bundle: org.eclipse.core.databinding,
 Export-Package: org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter,
  org.eclipse.viatra2.emf.incquery.databinding.runtime.api,
  org.eclipse.viatra2.emf.incquery.databinding.runtime.collection,
- org.eclipse.viatra2.emf.incquery.databinding.runtime.util
+ org.eclipse.viatra2.emf.incquery.databinding.runtime.util,
+ org.eclipse.viatra2.emf.incquery.databinding.runtime.util.validation
