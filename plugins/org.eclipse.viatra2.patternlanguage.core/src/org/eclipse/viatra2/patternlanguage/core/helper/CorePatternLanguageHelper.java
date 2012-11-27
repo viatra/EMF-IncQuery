@@ -44,6 +44,8 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableReferenc
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.VariableValue;
 import org.eclipse.xtext.xbase.XExpression;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -87,6 +89,24 @@ public final class CorePatternLanguageHelper {
             }
         }
         return isPrivate;
+    }
+
+    /**
+     * Returns the parameter of a pattern by name
+     * 
+     * @param pattern
+     * @param name
+     * @return the requested parameter of the pattern, or null if none exists
+     * @since 0.7.0
+     */
+    public static Variable getParameterByName(final Pattern pattern, final String name) {
+        return Iterables.find(pattern.getParameters(), new Predicate<Variable>() {
+
+            @Override
+            public boolean apply(Variable variable) {
+                return name.equals(variable.getName());
+            }
+        }, null);
     }
 
     /** Compiles a map for name-based lookup of symbolic parameter positions. */
@@ -226,6 +246,7 @@ public final class CorePatternLanguageHelper {
      * @param name
      *            the name of the annotation to return
      * @returns the first annotation or null if no such annotation exists
+     * @since 0.7.0
      */
     public static Annotation getFirstAnnotationByName(Pattern pattern, String name) {
         return Iterables.find(pattern.getAnnotations(), new AnnotationNameFilter(name), null);
@@ -240,6 +261,7 @@ public final class CorePatternLanguageHelper {
      * @param name
      *            the name of the annotation to return
      * @returns a non-null, but possibly empty collection of annotations
+     * @since 0.7.0
      */
     public static Collection<Annotation> getAnnotationsByName(Pattern pattern, String name) {
         return Collections2.filter(pattern.getAnnotations(), new AnnotationNameFilter(name));
@@ -251,6 +273,43 @@ public final class CorePatternLanguageHelper {
             parameterMap.put(param.getName(), param.getValue());
         }
         return parameterMap;
+    }
+
+    /**
+     * Returns all annotation parameters with a selected name
+     * 
+     * @param annotation
+     * @param parameterName
+     * @return a lazy collection of annotation parameters with the selected name. May be empty, but is never null.
+     */
+    public static Collection<ValueReference> getAnnotationParameters(final Annotation annotation,
+            final String parameterName) {
+        return Collections2.transform(
+                Collections2.filter(annotation.getParameters(), new Predicate<AnnotationParameter>() {
+                    @Override
+                    public boolean apply(AnnotationParameter parameter) {
+                        Preconditions.checkArgument(parameter != null);
+                        return parameter.getName().equals(parameterName);
+                    }
+                }), new Function<AnnotationParameter, ValueReference>() {
+                    @Override
+                    public ValueReference apply(AnnotationParameter parameter) {
+                        Preconditions.checkArgument(parameter != null);
+                        return parameter.getValue();
+                    }
+                });
+    }
+
+    /**
+     * Returns the first annotation parameter with a selected name.
+     * 
+     * @param annotation
+     * @param parameterName
+     * @return the annotation with the selected name, or null if no such annotation exists.
+     */
+    public static ValueReference getFirstAnnotationParameter(final Annotation annotation, final String parameterName) {
+        Collection<ValueReference> parameters = getAnnotationParameters(annotation, parameterName);
+        return (!parameters.isEmpty()) ? parameters.iterator().next() : null;
     }
 
     /**
