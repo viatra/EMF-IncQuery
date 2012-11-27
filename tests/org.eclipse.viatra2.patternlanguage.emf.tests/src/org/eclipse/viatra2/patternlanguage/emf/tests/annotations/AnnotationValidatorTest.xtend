@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.patternlanguage.emf.tests.composition
+package org.eclipse.viatra2.patternlanguage.emf.tests.annotations
 
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Before
