@@ -47,4 +47,12 @@ public interface IPatternAnnotationValidator {
 	boolean isDeprecated();
 
 	boolean isDeprecated(String parameterName);
+
+    /**
+     * Provides an additional validator implementation.
+     * 
+     * @return the validator object if specified or null otherwise.
+     * @since 0.7.0
+     */
+    IPatternAnnotationAdditionalValidator getAdditionalValidator();
 }

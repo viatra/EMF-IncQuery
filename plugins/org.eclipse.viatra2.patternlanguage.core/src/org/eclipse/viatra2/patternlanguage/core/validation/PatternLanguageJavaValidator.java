@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator;
 import org.eclipse.viatra2.patternlanguage.core.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
@@ -70,7 +71,7 @@ import com.google.inject.Inject;
  * 
  */
 @SuppressWarnings("restriction")
-public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator {
+public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator implements IIssueCallback {
 
     public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
     public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern ";
@@ -221,6 +222,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, annotation.getParameters()
                                     .indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                 }
+            }
+            // Execute extra validation
+            if (validator.getAdditionalValidator() != null) {
+                validator.getAdditionalValidator().executeAdditionalValidation(annotation, this);
             }
         } else {
             warning("Unknown annotation " + annotation.getName(), PatternLanguagePackage.Literals.ANNOTATION__NAME,
@@ -415,6 +420,36 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             return false;
         }
         return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.xtext.validation.AbstractDeclarativeValidator#warning(java.lang.String,
+     * org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String[])
+     */
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.patternlanguage.core.validation.IIssueCallback#warning(java.lang.String, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void warning(String message, EObject source, EStructuralFeature feature, String code,
+            String... issueData) {
+        super.warning(message, source, feature, code, issueData);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.xtext.validation.AbstractDeclarativeValidator#error(java.lang.String,
+     * org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String[])
+     */
+    /* (non-Javadoc)
+     * @see org.eclipse.viatra2.patternlanguage.core.validation.IIssueCallback#error(java.lang.String, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void error(String message, EObject source, EStructuralFeature feature, String code,
+            String... issueData) {
+        super.error(message, source, feature, code, issueData);
     }
 
 }
