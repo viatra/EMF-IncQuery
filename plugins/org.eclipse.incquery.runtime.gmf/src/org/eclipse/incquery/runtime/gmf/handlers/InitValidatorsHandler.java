@@ -19,12 +19,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.incquery.validation.runtime.ValidationPartListener;
+import org.eclipse.incquery.validation.runtime.ValidationUtil;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationPartListener;
-import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 
 public class InitValidatorsHandler extends AbstractHandler {
 

@@ -24,9 +24,9 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
+import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
 
 import com.google.common.collect.Sets;
 

@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.databinding,
  org.eclipse.incquery.runtime;bundle-version="0.6.0",
  org.eclipse.emf.databinding,
  org.eclipse.core.databinding.property,
- org.eclipse.viatra2.emf.incquery.triggerengine;bundle-version="0.7.0";visibility:=reexport
+ org.eclipse.incquery.runtime.triggerengine;bundle-version="0.7.0";visibility:=reexport
 Export-Package: org.eclipse.incquery.databinding.runtime.adapter,
  org.eclipse.incquery.databinding.runtime.api,
  org.eclipse.incquery.databinding.runtime.collection,

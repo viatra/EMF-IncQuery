@@ -14,11 +14,11 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule;
-import org.eclipse.viatra2.emf.incquery.triggerengine.firing.AutomaticFiringStrategy;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
+import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
+import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
+import org.eclipse.incquery.runtime.triggerengine.api.IRule;
+import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy;
 
 /**
  * Utility class to prepare a rule in an agenda for an observable collection.

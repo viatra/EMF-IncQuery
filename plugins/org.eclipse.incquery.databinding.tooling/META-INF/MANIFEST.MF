@@ -14,4 +14,4 @@ Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.6.0",
  com.google.inject,
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.incquery.databinding.runtime;bundle-version="0.7.0"
-Export-Package: org.eclipse.viatra2.emf.incquery.tooling.generator.databinding
+Export-Package: org.eclipse.incquery.databinding.tooling

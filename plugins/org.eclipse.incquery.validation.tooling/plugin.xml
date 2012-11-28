@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.incquery.tooling.core.generatorFragment">
+      <fragment
+            annotation="Constraint"
+            fragment="org.eclipse.incquery.validation.tooling.ValidationGenerator"></fragment>
+   </extension>
+   <extension
+         point="org.eclipse.incquery.patternlanguage.annotation">
+      <annotation
+            description="This annotation is used to mark a pattern for use in the IncQuery validation framework."
+            name="Constraint">
+         <annotationparameter
+               description="The location of constraint represents the pattern parameter the object the constraint violation needs to be attached to."
+               mandatory="true"
+               multiple="false"
+               name="location"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The message to display when the constraint violation is found. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$."
+               mandatory="true"
+               multiple="false"
+               name="message"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="Possible values: &quot;error&quot; and &quot;warning&quot;."
+               mandatory="true"
+               multiple="false"
+               name="severity"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="An Eclipse editor ID where the validation framework should register itself to the context menu. Use &quot;*&quot; as a wildcard if the constraint should be used always when validation is started."
+               mandatory="false"
+               multiple="true"
+               name="targetEditorId"
+               type="string">
+         </annotationparameter>
+      </annotation>
+   </extension>
+</plugin>

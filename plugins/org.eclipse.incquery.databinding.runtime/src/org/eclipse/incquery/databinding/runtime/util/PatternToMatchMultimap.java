@@ -14,8 +14,8 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
-import org.eclipse.viatra2.emf.incquery.triggerengine.qrm.TriggeredQueryResultMultimap;
+import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
+import org.eclipse.incquery.runtime.triggerengine.qrm.TriggeredQueryResultMultimap;
 
 /**
  * Multimap for managing multiple patterns and related matches for a given notifier.
