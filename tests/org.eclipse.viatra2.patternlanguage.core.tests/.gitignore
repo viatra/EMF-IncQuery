@@ -1,6 +1,0 @@
-**/plugin.xml_gen
-*/bin/**
-*/target
-plugin.xml_gen
-.DS_Store
-src-gen/**/*
