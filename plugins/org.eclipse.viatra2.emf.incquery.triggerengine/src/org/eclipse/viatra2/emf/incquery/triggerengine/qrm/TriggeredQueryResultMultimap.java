@@ -11,7 +11,7 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.qrm;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra2.emf.incquery.base.api.QueryResultMultimap;
+import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;

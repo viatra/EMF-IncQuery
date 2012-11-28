@@ -10,7 +10,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;

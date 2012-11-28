@@ -31,9 +31,9 @@ import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.network.Receiv
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.network.Supplier;
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.remote.Address;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.emf.incquery.base.api.IncQueryBaseFactory;
-import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
-import org.eclipse.viatra2.emf.incquery.base.exception.IncQueryBaseException;
+import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.PatternSanitizer;

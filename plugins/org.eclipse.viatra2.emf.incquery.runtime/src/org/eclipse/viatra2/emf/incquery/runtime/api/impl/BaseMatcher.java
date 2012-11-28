@@ -25,7 +25,7 @@ import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.misc.DeltaMoni
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;

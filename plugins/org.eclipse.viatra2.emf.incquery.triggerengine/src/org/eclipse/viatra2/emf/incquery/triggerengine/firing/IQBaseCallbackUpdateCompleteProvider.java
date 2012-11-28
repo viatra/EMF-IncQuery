@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.triggerengine.firing;
 
-import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 
 /**
  * @author Abel Hegedus

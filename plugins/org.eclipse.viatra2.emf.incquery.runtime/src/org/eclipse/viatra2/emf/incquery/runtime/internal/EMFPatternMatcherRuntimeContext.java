@@ -26,7 +26,7 @@ import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.IPatte
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 

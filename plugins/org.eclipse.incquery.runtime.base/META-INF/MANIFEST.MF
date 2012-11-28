@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.viatra2.emf.incquery.base
+Bundle-SymbolicName: org.eclipse.incquery.runtime.base;singleton:=true
+Bundle-Version: 0.7.0.qualifier
+Bundle-Activator: org.eclipse.incquery.runtime.base.IncQueryBasePlugin
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: org.eclipse.incquery.runtime.base.itc,
+ org.eclipse.emf.ecore,
+ org.eclipse.core.runtime;bundle-version="3.7.0",
+ org.apache.log4j;bundle-version="1.2.15",
+ com.google.guava;bundle-version="10.0.1"
+Export-Package: org.eclipse.incquery.runtime.base.api,
+ org.eclipse.incquery.runtime.base.comprehension,
+ org.eclipse.incquery.runtime.base.exception

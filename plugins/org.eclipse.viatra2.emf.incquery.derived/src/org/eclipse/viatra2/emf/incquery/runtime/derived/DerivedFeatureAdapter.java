@@ -28,8 +28,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFModelComprehension;
-import org.eclipse.viatra2.emf.incquery.base.comprehension.EMFVisitor;
+import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
+import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 /**

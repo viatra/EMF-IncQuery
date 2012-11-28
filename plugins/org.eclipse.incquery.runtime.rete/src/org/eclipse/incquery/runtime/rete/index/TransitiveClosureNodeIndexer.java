@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;
@@ -23,7 +24,6 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.rete.tuple.MaskedTuple;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
 
 public class TransitiveClosureNodeIndexer extends StandardIndexer implements IterableIndexer {
 	private TransitiveClosureNode tcNode;
@@ -92,9 +92,9 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
 		return asTupleCollection(tcAlg.getTcRelation()).iterator();	
 	}
 	
-	private Collection<Tuple> asTupleCollection(Collection<org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.Tuple<Object>> tuples) {
+	private Collection<Tuple> asTupleCollection(Collection<org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple<Object>> tuples) {
 		Set<Tuple> retSet = new HashSet<Tuple>();
-		for (org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.Tuple<Object> tuple : tuples) {
+		for (org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple<Object> tuple : tuples) {
 			retSet.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
 		}
 		return retSet;

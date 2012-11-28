@@ -24,10 +24,10 @@ import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.Predi
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.network.Direction;
-import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
-import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
-import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
-import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.api.DataTypeListener;
+import org.eclipse.incquery.runtime.base.api.FeatureListener;
+import org.eclipse.incquery.runtime.base.api.InstanceListener;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 /**

@@ -12,15 +12,15 @@ package org.eclipse.incquery.runtime.rete.single;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple;
+import org.eclipse.incquery.runtime.base.itc.graphimpl.Graph;
+import org.eclipse.incquery.runtime.base.itc.igraph.ITcDataSource;
+import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Clearable;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.incscc.IncSCCAlg;
-import org.eclipse.viatra2.emf.incquery.base.itc.alg.misc.Tuple;
-import org.eclipse.viatra2.emf.incquery.base.itc.graphimpl.Graph;
-import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcDataSource;
-import org.eclipse.viatra2.emf.incquery.base.itc.igraph.ITcObserver;
 
 // TODO egyelore (i,j) elek, majd helyette mask megoldas
 // TODO bemeneti index
