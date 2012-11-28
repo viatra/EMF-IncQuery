@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.AnnotationParameter;
@@ -29,7 +30,6 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 

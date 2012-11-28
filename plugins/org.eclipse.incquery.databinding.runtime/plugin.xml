@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="databinding" name="databinding" schema="schema/databinding.exsd"/>
+   <extension
+         point="org.eclipse.incquery.patternlanguage.annotation">
+      <annotation
+            deprecated="true"
+            description="Defines the label that will be used in the Query Explorer for the pattern&apos;s matches. This annotation is deprecated, please use the @QueryExplorer instead. "
+            name="PatternUI">
+         <annotationparameter
+               description="This message will appear for each match of the pattern. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.&quot;"
+               mandatory="true"
+               multiple="false"
+               name="message"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            additionalValidator="org.eclipse.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator"
+            description="Defines observable values for the pattern&apos;s parameters; the code generator will create accessors for such values to use in databinding contexts."
+            name="ObservableValue">
+         <annotationparameter
+               description="The name of the observable value."
+               mandatory="false"
+               multiple="false"
+               name="name"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="This expression defines the attribute of a pattern parameter for which the IObservableValue will be created."
+               mandatory="false"
+               multiple="false"
+               name="expression"
+               type="string">
+         </annotationparameter>
+      </annotation>
+   </extension>
+
+</plugin>

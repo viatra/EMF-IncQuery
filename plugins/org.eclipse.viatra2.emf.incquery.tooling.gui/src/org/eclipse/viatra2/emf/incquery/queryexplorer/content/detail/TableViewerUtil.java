@@ -14,6 +14,7 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.detail;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -26,7 +27,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;

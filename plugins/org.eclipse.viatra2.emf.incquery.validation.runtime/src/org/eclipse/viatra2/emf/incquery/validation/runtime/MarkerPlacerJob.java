@@ -20,10 +20,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 
 /**
  * The job is used to create a problem marker in the Problems View of Eclipse 

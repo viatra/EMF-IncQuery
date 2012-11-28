@@ -23,7 +23,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.viatra2.emf.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator
+import org.eclipse.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator
 
 
 @RunWith(typeof(XtextRunner))

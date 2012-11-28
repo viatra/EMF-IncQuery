@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui</name>
+	<name>org.eclipse.incquery.tooling.generator.model.ui</name>
 	<comment></comment>
 	<projects>
 	</projects>
