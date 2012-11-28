@@ -7,7 +7,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.graphiti.ui;bundle-version="0.8.2",
  org.eclipse.core.commands;bundle-version="3.6.0",
  org.eclipse.ui;bundle-version="3.7.0",
- org.eclipse.viatra2.emf.incquery.tooling.gui;bundle-version="0.6.5",
+ org.eclipse.incquery.tooling.ui;bundle-version="0.6.5",
  org.eclipse.emf.edit;bundle-version="2.7.2",
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.200",
  org.eclipse.graphiti;bundle-version="0.8.2",

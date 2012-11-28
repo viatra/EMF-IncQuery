@@ -18,12 +18,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.incquery.runtime.graphiti.util.GraphitiModelConnector;
+import org.eclipse.incquery.ui.queryexplorer.QueryExplorer;
+import org.eclipse.incquery.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.ui.queryexplorer.handlers.LoadModelHandler;
+import org.eclipse.incquery.ui.queryexplorer.handlers.util.ModelConnector;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.LoadModelHandler;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.handlers.util.ModelConnector;
 
 public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 

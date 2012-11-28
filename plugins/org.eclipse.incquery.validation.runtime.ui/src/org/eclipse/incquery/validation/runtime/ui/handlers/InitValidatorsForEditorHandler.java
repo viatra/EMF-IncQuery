@@ -14,10 +14,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.ui.queryexplorer.adapters.AdapterUtil;
 import org.eclipse.incquery.validation.runtime.ui.ValidationInitUtil;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.adapters.AdapterUtil;
 
 public class InitValidatorsForEditorHandler extends InitValidatorsForSelectionHandler {
 

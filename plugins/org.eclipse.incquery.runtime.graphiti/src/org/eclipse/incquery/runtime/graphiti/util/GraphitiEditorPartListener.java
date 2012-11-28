@@ -13,11 +13,11 @@ package org.eclipse.incquery.runtime.graphiti.util;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.incquery.ui.queryexplorer.QueryExplorer;
+import org.eclipse.incquery.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.ui.queryexplorer.util.BasePartListener;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.viatra2.emf.incquery.queryexplorer.util.BasePartListener;
 
 /**
  * The PartListener is used to observe EditorPart close actions on Graphiti editors.

@@ -6,7 +6,7 @@ Bundle-Version: 0.7.0.qualifier
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.testing.ui.IncQueryTestingUIPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.viatra2.emf.incquery.tooling.gui;bundle-version="0.6.0",
+ org.eclipse.incquery.tooling.ui;bundle-version="0.6.0",
  org.eclipse.core.expressions;bundle-version="3.4.300",
  org.eclipse.viatra2.emf.incquery.testing.core;bundle-version="0.6.0",
  org.eclipse.emf.common.ui;bundle-version="2.7.0",
