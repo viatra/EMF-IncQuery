@@ -24,12 +24,12 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel;
 
 /**

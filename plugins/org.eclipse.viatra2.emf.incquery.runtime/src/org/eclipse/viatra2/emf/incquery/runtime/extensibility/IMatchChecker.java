@@ -13,7 +13,7 @@ package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
 import java.util.Map;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
  * An interface for the org.eclipse.viatra2.emf.incquery.xexpressionevaluator

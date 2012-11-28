@@ -14,12 +14,12 @@ package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 import java.util.HashMap;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.Buildable;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Variable;
 
 /**
  * @author Bergmann Gábor

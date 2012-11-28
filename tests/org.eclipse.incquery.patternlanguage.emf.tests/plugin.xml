@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.incquery.patternlanguage.annotation">
+      <annotation
+            name="Optional">
+      </annotation>
+      <annotation
+            name="Param1">
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="p1"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            name="Param2">
+         <annotationparameter
+               mandatory="true"
+               multiple="false"
+               name="p1">
+         </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="p2">
+         </annotationparameter>
+      </annotation>
+   </extension>
+</plugin>

@@ -1,10 +1,10 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.specific;
 
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.RuleEngine;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRuleFactory;

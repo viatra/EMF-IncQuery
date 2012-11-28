@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternGroup;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Generic implementation of {@link IPatternGroup}, covering an arbitrarily chosen set of patterns. 

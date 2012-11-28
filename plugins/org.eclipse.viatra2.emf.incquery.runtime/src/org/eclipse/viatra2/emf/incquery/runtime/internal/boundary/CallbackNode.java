@@ -11,13 +11,13 @@
 package org.eclipse.viatra2.emf.incquery.runtime.internal.boundary;
 
 
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.misc.SimpleReceiver;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.network.Direction;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.SimpleReceiver;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 
 /**
  * @author Bergmann Gabor

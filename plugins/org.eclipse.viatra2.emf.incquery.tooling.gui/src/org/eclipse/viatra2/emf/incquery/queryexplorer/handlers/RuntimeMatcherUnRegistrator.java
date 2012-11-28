@@ -14,12 +14,12 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.handlers;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class RuntimeMatcherUnRegistrator implements Runnable {
 

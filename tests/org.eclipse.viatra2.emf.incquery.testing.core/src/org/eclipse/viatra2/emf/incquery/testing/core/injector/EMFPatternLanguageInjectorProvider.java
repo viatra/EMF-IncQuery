@@ -14,7 +14,7 @@
 */
 package org.eclipse.viatra2.emf.incquery.testing.core.injector;
 
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.xtext.junit4.GlobalRegistries;
 import org.eclipse.xtext.junit4.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.junit4.IInjectorProvider;

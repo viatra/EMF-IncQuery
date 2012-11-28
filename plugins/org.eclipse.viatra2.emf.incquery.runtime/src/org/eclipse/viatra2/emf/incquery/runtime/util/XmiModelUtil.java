@@ -15,9 +15,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.patternlanguage.emf.IResourceSetPreparer;
 import org.eclipse.viatra2.emf.incquery.runtime.internal.XtextInjectorProvider;
-import org.eclipse.viatra2.patternlanguage.IResourceSetPreparer;
 import org.eclipse.xtext.common.types.access.ClasspathTypeProviderFactory;
 
 import com.google.inject.Injector;

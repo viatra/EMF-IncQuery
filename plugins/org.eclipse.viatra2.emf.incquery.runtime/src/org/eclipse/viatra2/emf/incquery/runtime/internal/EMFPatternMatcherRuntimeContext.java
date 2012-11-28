@@ -19,15 +19,15 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IPredicateTraceListener;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 
 

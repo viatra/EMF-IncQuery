@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
@@ -13,7 +14,6 @@ import org.eclipse.viatra2.emf.incquery.triggerengine.notification.ActivationNot
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.AttributeMonitor;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IAttributeMonitorListener;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * A {@link AbstractRule} defines a transformation step in the context of the AbstractRule Engine. 

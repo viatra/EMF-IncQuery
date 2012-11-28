@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA2 R3 Incremental Pattern Matcher Core
+Bundle-SymbolicName: org.eclipse.incquery.runtime.rete
+Bundle-Version: 0.7.0.qualifier
+Bundle-Activator: org.eclipse.incquery.runtime.rete.Activator
+Bundle-Vendor: BUTE-FTSRG / Bergmann Gabor
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.viatra2.emf.incquery.base.itc;bundle-version="0.6.0";visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.incquery.runtime.rete.boundary,
+ org.eclipse.incquery.runtime.rete.construction,
+ org.eclipse.incquery.runtime.rete.construction.basiclinear,
+ org.eclipse.incquery.runtime.rete.construction.helpers,
+ org.eclipse.incquery.runtime.rete.construction.psystem,
+ org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred,
+ org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables,
+ org.eclipse.incquery.runtime.rete.index,
+ org.eclipse.incquery.runtime.rete.matcher,
+ org.eclipse.incquery.runtime.rete.misc,
+ org.eclipse.incquery.runtime.rete.network,
+ org.eclipse.incquery.runtime.rete.remote,
+ org.eclipse.incquery.runtime.rete.single,
+ org.eclipse.incquery.runtime.rete.tuple,
+ org.eclipse.incquery.runtime.rete.util

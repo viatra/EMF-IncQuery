@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
@@ -32,7 +33,6 @@ import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ImportListLabelProv
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListAdapter;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectListLabelProvider;
 import org.eclipse.viatra2.emf.incquery.gui.wizards.internal.ObjectParameter;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 
 import com.google.inject.Inject;
 

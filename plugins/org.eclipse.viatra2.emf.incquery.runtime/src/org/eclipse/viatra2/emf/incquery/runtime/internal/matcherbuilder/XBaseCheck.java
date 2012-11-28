@@ -17,14 +17,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.BaseTypeSafePredicateCheck;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.BaseTypeSafePredicateCheck;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.FlatTuple;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Variable;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.xtext.xbase.XExpression;
 
 /**

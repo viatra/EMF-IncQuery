@@ -11,9 +11,9 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * This is a generic factory for EMF-IncQuery pattern matchers, for "interpretative" query execution.

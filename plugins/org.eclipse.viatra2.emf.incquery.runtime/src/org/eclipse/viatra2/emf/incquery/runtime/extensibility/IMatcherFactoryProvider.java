@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.extensibility;
 
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 
 /**
  * Provides a MatcherFactory.

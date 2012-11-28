@@ -13,8 +13,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * @author Mark Czotter

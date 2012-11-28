@@ -14,8 +14,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 
 /**
  * Interface for an EMF-IncQuery matcher associated with a graph pattern.

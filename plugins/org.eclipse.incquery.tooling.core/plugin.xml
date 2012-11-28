@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="generatorFragment" name="EMF-IncQuery Code Generation Fragment" schema="schema/generatorFragment.exsd"/>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.projectnature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.incquery.tooling.core.project.IncQueryNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.marker.inference"
+         name="EMF-IncQuery Generator Marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="org.eclipse.viatra2.emf.incquery.tooling.generator.marker.fragment"
+         name="EMF-IncQuery Generator Marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+
+</plugin>

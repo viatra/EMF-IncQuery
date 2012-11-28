@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.viatra2.emf.incquery.core.project.ProjectGenerationHelper;
 
 public class EnsureProjectDependencies extends
 		WorkspaceModifyOperation {

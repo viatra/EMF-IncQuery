@@ -12,10 +12,10 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
 import java.util.List;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Basic interface for rules, for the default implementation, see {@link AbstractRule}.

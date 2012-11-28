@@ -11,15 +11,15 @@
 
 package org.eclipse.viatra2.emf.incquery.runtime.internal.matcherbuilder;
 
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options.BuilderMethod;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternBody;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.Buildable;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.Stub;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.helpers.BuildHelper;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.util.Options;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.util.Options.BuilderMethod;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.PatternBody;
 
 /**
  * @author Bergmann Gábor

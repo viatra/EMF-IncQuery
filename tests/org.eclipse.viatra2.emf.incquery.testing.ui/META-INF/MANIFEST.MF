@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions;bundle-version="3.4.300",
  org.eclipse.viatra2.emf.incquery.testing.core;bundle-version="0.6.0",
  org.eclipse.emf.common.ui;bundle-version="2.7.0",
- org.eclipse.viatra2.patternlanguage.emf.ui;bundle-version="0.6.0",
+ org.eclipse.incquery.patternlanguage.emf.ui;bundle-version="0.6.0",
  org.eclipse.xtext.ui;bundle-version="2.3.0",
  org.eclipse.viatra2.emf.incquery.snapshot;bundle-version="0.6.0",
  org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.0"

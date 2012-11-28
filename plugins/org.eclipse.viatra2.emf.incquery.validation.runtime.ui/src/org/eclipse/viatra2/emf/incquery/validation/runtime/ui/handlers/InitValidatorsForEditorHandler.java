@@ -13,10 +13,10 @@ package org.eclipse.viatra2.emf.incquery.validation.runtime.ui.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.adapters.AdapterUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ui.ValidationInitUtil;
 
 public class InitValidatorsForEditorHandler extends InitValidatorsForSelectionHandler {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http://www.eclipse.org/incquery/patternlanguage/emf/PatternLanguage" 
+       class = "org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage"
+       genModel = "org/eclipse/incquery/patternlanguage/emf/EMFPatternLanguage.genmodel" /> 
+	
+  </extension>
+
+
+
+
+
+</plugin>

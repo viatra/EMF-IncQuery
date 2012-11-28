@@ -26,6 +26,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.emf.incquery.testing.core.ModelLoadHelper;
+import org.eclipse.incquery.emf.incquery.testing.core.SnapshotHelper;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
@@ -37,8 +39,6 @@ import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
-import org.eclipse.viatra2.emf.incquery.testing.core.ModelLoadHelper;
-import org.eclipse.viatra2.emf.incquery.testing.core.SnapshotHelper;
 
 import com.google.inject.Inject;
 

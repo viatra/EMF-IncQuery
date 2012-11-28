@@ -12,13 +12,13 @@
 package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.RetePatternMatcher;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * This is a generic pattern matcher for any EMF-IncQuery pattern, with "interpretative" query execution.

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.viatra2.patternlanguage.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.incquery.patternlanguage" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.viatra2.patternlanguage.core" id="annotation" name="Pattern Annotation"/>
+         <meta.schema plugin="org.eclipse.incquery.patternlanguage" id="annotation" name="Pattern Annotation"/>
       </appInfo>
       <documentation>
          The extension point defines an annotation for a pattern. An annotation consists of a name, a series of parameters and optionally a language name.

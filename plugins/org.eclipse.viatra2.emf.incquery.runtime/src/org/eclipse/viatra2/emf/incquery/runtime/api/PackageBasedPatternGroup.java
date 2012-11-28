@@ -13,9 +13,9 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternGroup;
 import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Package based {@link BasePatternGroup} implementation. It handles patterns as

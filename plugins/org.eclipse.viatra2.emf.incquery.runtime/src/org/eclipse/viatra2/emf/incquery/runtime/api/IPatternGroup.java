@@ -13,8 +13,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 
 /**
  * Generic interface for group of patterns.

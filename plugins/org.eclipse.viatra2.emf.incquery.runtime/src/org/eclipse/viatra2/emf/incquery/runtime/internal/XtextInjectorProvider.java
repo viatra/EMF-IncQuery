@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.runtime.internal;
 
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 
 import com.google.inject.Injector;
 

@@ -14,9 +14,9 @@ package org.eclipse.viatra2.emf.incquery.gui.content;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.incquery.tooling.core.project.IncQueryNature;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.runtime.util.XmiModelUtil;
 
 public class QueryFolderFilter extends ViewerFilter {

@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.queryexplorer.util;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
@@ -18,7 +19,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.patternsviewer.PatternLeaf;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 public class CheckStateListener implements ICheckStateListener {
 

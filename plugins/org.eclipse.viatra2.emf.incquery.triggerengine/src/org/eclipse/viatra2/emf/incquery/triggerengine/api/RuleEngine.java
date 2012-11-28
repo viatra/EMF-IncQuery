@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.triggerengine.specific.DefaultRuleFactory;
 
 /**

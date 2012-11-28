@@ -13,8 +13,8 @@ package org.eclipse.viatra2.emf.incquery.runtime.api;
 
 import java.util.Arrays;
 
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
 
 /**
  * Generic signature object implementation. 

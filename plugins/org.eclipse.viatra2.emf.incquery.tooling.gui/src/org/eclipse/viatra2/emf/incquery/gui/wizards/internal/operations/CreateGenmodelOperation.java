@@ -23,13 +23,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.incquery.tooling.core.project.IncQueryNature;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.viatra2.emf.incquery.core.project.IncQueryNature;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelReference;
 import org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.IncQueryGeneratorModel;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.StringInputStream;
 

@@ -12,16 +12,16 @@ package org.eclipse.viatra2.emf.incquery.databinding.runtime.util.validation;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationAdditionalValidator;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
-import org.eclipse.viatra2.patternlanguage.core.validation.IIssueCallback;
-import org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Annotation;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.PatternLanguagePackage;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.StringValue;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.ValueReference;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Variable;
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 
 import com.google.inject.Inject;
 

@@ -19,16 +19,16 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
+import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.network.Direction;
 import org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener;
 import org.eclipse.viatra2.emf.incquery.base.api.FeatureListener;
 import org.eclipse.viatra2.emf.incquery.base.api.InstanceListener;
 import org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper;
 import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine;
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction;
 
 /**
  * A listener binding as Rete boundary to an eiqBase index

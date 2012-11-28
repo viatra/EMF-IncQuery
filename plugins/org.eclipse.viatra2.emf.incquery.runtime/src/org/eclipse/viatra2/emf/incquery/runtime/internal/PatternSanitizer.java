@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-import org.eclipse.viatra2.patternlanguage.validation.PatternSetValidationDiagnostics;
-import org.eclipse.viatra2.patternlanguage.validation.PatternSetValidator;
-import org.eclipse.viatra2.patternlanguage.validation.PatternValidationStatus;
+import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator;
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 
 import com.google.inject.Injector;
 
