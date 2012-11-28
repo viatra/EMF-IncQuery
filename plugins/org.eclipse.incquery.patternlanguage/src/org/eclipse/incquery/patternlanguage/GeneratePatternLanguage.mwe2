@@ -1,0 +1,136 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+module org.eclipse.incquery.patternlanguage.PatternLanguage
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.generator.*
+import org.eclipse.xtext.ui.generator.*
+import org.eclipse.incquery.patternlanguage.generator.*
+
+var grammarURI = "classpath:/org/eclipse/incquery/patternlanguage/PatternLanguage.xtext"
+var file.extensions = "pattern"
+var projectName = "org.eclipse.incquery.patternlanguage"
+var runtimeProject = "../${projectName}"
+
+Workflow {
+    bean = StandaloneSetup {
+        scanClassPath = true
+        platformUri = "${runtimeProject}/.."
+        registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
+        registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
+		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
+    }
+
+    component = DirectoryCleaner {
+        directory = "${runtimeProject}/src-gen"
+        exclude = "keep.txt"
+    }
+
+    component = DirectoryCleaner {
+     exclude = "keep.txt"
+        directory = "${runtimeProject}.ui/src-gen"
+    }
+
+    component = ExtendedPatternLanguageGenerator {
+        pathRtProject = runtimeProject
+        pathUiProject = "${runtimeProject}.ui"
+//        pathTestProject = "../../tests/${projectName}.tests"
+        projectNameRt = projectName
+        projectNameUi = "${projectName}.ui"
+        
+        language = {
+            uri = grammarURI
+            fileExtensions = file.extensions
+
+            // Java API to access grammar elements (required by several other fragments)
+            fragment = grammarAccess.GrammarAccessFragment {}
+
+            // generates Java API for the generated EPackages
+            fragment = ecore.EcoreGeneratorFragment {}
+
+            // Serializer 2.0
+            fragment = serializer.SerializerFragment {}
+
+            // a custom ResourceFactory for use with EMF
+            fragment = resourceFactory.ResourceFactoryFragment {
+                fileExtensions = file.extensions
+            }
+
+            // java-based API for validation
+            fragment = validation.JavaValidatorFragment {
+                //composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
+                //composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+            }
+
+            // scoping and exporting API
+            // fragment = scoping.ImportURIScopingFragment {}
+
+            // scoping and exporting API
+            //fragment = scoping.ImportURIScopingFragment {}
+            fragment = scoping.ImportNamespacesScopingFragment {
+             //Avoids regenerating PatternLanguageScopeProvider.java
+             //that conflicts with PatternLanguageScopeProvider.xtend
+             generateStub = false
+            }
+            fragment = exporting.QualifiedNamesFragment {}
+            fragment = builder.BuilderIntegrationFragment {}
+
+            // formatter API
+            fragment = formatting.FormatterFragment {}
+
+            // labeling API
+            fragment = labeling.LabelProviderFragment {}
+
+            // outline API
+            fragment = outline.OutlineTreeProviderFragment {}
+            fragment = outline.QuickOutlineFragment {}
+
+            // quickfix API
+            fragment = quickfix.QuickfixProviderFragment {}
+
+            // content assist API
+            fragment = contentAssist.JavaBasedContentAssistFragment {}
+
+            // generates junit test support classes into Generator#pathTestProject
+            // fragment = junit.Junit4Fragment {}
+
+            // project wizard (optional)
+            // fragment = projectWizard.SimpleProjectWizardFragment {
+            // generatorProjectName = "${projectName}"
+            // modelFileExtension = file.extensions
+            // }
+            
+			// rename refactoring
+			fragment = refactoring.RefactorElementNameFragment {}
+
+            // provides the necessary bindings for java types integration
+            fragment = types.TypesGeneratorFragment {}
+
+            // generates the required bindings only if the grammar inherits from Xbase
+            fragment = xbase.XbaseGeneratorFragment { }
+            
+            // Code generator
+			fragment = generator.GeneratorFragment {
+			}
+
+            // provides a preference page for template proposals
+            //fragment = templates.CodetemplatesGeneratorFragment {}
+
+
+            // provides a compare view
+			// fragment = compare.CompareFragment {
+			// fileExtensions = file.extensions
+			// }
+
+        }
+    }
+    
+}

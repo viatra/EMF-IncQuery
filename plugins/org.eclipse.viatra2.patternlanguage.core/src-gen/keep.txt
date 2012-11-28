@@ -1,1 +1,0 @@
-This file is needed to prevent git from omitting this folder that would cause an ugly bug.
