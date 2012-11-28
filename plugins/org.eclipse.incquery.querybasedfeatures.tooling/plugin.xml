@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.incquery.tooling.core.generatorFragment">
+      <fragment
+            annotation="QueryBasedFeature"
+            fragment="org.eclipse.incquery.querybasedfeatures.tooling.DerivedFeatureGenerator">
+      </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.incquery.patternlanguage.annotation">
+      <annotation
+            description="This annotation is used to mark a pattern as a query definition for a query-based feature."
+            name="QueryBasedFeature">
+         <annotationparameter
+               description="The name of the EStructuralFeature that the query will serve."
+               mandatory="false"
+               multiple="false"
+               name="feature"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The name of the parameter that is the source of the derived feature."
+               mandatory="false"
+               multiple="false"
+               name="source"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               description="The name"
+               mandatory="false"
+               multiple="false"
+               name="target"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               description="Possible values: single, many, counter, sum, iteration (default: feature.isMany?many:single)"
+               mandatory="false"
+               multiple="false"
+               name="kind"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="In case of single and many reference features, it is possible to disable the caching (this may free up some memory but result in slightly lowerr performance (default: true)."
+               mandatory="false"
+               multiple="false"
+               name="keepCache"
+               type="boolean">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            deprecated="true"
+            description="Please use @QueryBasedFeature instead."
+            name="DerivedFeature">
+      </annotation>
+   </extension>
+
+</plugin>

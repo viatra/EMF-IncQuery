@@ -21,9 +21,9 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
-import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
+import org.eclipse.incquery.querybasedfeatures.runtime.IQueryBasedFeatureHandler;
+import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureHelper;
+import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 

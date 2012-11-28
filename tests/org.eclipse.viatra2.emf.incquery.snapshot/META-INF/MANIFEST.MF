@@ -12,6 +12,6 @@ Export-Package: org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.incquery.runtime;bundle-version="0.6.0",
- org.eclipse.viatra2.emf.incquery.derived
+ org.eclipse.incquery.querybasedfeatures.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.viatra2.emf.incquery.tooling.generator" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.viatra2.emf.incquery.tooling.generator" id="generatorFragment" name="EMF-IncQuery Code Generation Fragment"/>
+         <meta.schema plugin="org.eclipse.incquery.tooling.core" id="generatorFragment" name="EMF-IncQuery Code Generation Fragment"/>
       </appinfo>
       <documentation>
          A code generation fragment for a specific annotation.
@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.viatra2.patternlanguage.core.annotation/annotation/@name"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.incquery.patternlanguage.annotation/annotation/@name"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -65,7 +65,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.tooling.generator.fragments.IGenerationFragment"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.tooling.core.fragments.IGenerationFragment"/>
                </appinfo>
             </annotation>
          </attribute>
