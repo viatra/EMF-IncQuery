@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.firing;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationMonitor;
 

@@ -12,7 +12,8 @@
 package org.eclipse.incquery.tooling.core.generator.fragments;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.tooling.core.generator.GeneratorModule;
 
 /**
  * An interface for collecting code generation fragments for specific patterns.

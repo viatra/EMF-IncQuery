@@ -4,5 +4,5 @@ Bundle-Name: EMF-IncQuery backed derived features
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.derived
 Bundle-Version: 0.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.viatra2.emf.incquery.runtime;bundle-version="0.6.5"
+Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.6.5"
 Export-Package: org.eclipse.viatra2.emf.incquery.runtime.derived

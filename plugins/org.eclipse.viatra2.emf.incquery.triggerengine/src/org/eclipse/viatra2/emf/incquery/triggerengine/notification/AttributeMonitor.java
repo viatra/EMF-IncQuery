@@ -3,7 +3,7 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.notification;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
  * The class defines the operations that are required to observ 

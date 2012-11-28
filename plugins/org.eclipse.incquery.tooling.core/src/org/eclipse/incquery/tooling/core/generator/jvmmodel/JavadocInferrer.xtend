@@ -12,10 +12,10 @@
 package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
+import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 
 class JavadocInferrer {
 	

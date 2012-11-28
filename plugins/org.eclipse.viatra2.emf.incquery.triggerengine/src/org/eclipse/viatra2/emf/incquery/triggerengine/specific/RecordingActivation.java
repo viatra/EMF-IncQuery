@@ -2,7 +2,7 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.specific;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 
 public class RecordingActivation<MatchType extends IPatternMatch> extends Activation<MatchType> {

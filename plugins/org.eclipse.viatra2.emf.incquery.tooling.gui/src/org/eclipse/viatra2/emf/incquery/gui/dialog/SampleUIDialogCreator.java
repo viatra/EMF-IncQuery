@@ -12,13 +12,13 @@ package org.eclipse.viatra2.emf.incquery.gui.dialog;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * @author Mark Czotter

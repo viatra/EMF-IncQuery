@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.ui;
 
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IInjectorProvider;
+import org.eclipse.incquery.runtime.extensibility.IInjectorProvider;
 
 import com.google.inject.Injector;
 

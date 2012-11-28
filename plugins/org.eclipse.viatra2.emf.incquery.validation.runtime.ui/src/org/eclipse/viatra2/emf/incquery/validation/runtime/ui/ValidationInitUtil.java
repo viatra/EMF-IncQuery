@@ -11,7 +11,7 @@
 package org.eclipse.viatra2.emf.incquery.validation.runtime.ui;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
 

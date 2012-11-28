@@ -14,8 +14,8 @@ package org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 /**
  * the class is used to join an IEditorPart instance and a ResourceSet instance.

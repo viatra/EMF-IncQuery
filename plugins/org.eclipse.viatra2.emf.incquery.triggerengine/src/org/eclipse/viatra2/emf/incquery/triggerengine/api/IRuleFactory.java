@@ -1,9 +1,9 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * The {@link IRuleFactory} defines the way a {@link AbstractRule} instance is created.

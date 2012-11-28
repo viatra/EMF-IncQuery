@@ -9,6 +9,7 @@ import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.HorizontalShiftAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -20,7 +21,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.incquery.tooling.retevis.theme.ColorTheme;
 import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.ReteBoundary;
 

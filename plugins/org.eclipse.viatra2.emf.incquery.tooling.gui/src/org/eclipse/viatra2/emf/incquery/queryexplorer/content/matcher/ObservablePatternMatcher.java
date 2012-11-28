@@ -26,12 +26,12 @@ import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation.

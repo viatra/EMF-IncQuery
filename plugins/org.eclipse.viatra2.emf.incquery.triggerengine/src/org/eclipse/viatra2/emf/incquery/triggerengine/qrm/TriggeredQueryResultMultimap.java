@@ -11,12 +11,12 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.qrm;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule;

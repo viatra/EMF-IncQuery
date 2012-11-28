@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.gui.dialog;
 
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -17,7 +18,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * @author Mark Czotter

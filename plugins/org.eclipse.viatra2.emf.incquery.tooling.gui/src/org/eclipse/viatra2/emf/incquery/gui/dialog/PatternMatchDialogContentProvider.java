@@ -12,10 +12,10 @@ package org.eclipse.viatra2.emf.incquery.gui.dialog;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * @author Mark Czotter

@@ -24,13 +24,13 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
-import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 /**
  * @author Abel Hegedus

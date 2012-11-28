@@ -11,9 +11,9 @@
 package org.eclipse.viatra2.emf.incquery.databinding.runtime.collection;
 
 import org.eclipse.incquery.emf.incquery.base.itc.alg.incscc.Direction;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Agenda;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda;

@@ -13,9 +13,9 @@ package org.eclipse.incquery.tooling.core.generator.fragments;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.ExtensionGenerator;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.Pair;
 

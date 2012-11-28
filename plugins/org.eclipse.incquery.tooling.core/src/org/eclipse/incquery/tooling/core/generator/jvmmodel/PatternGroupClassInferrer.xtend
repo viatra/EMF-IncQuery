@@ -13,11 +13,11 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.HashSet
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedPatternGroup
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup
+import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmTypeReference

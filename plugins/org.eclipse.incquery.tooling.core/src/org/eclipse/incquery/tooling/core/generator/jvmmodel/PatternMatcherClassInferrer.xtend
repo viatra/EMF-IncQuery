@@ -13,18 +13,18 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.emf.common.notify.Notifier
-import org.eclipse.viatra2.emf.incquery.runtime.api.EngineManager
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher
+import org.eclipse.incquery.runtime.api.EngineManager
+import org.eclipse.incquery.runtime.api.IncQueryEngine
+import org.eclipse.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.incquery.runtime.exception.IncQueryException
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.

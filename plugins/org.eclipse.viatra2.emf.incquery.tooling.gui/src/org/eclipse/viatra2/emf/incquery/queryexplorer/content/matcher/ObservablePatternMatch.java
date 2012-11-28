@@ -16,11 +16,11 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * A PatternMatch is associated to every match of a matcher.

@@ -15,9 +15,9 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider;
 import org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider;
 

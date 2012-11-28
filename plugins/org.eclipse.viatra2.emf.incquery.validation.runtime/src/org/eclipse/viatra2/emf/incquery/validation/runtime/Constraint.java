@@ -12,9 +12,9 @@
 package org.eclipse.viatra2.emf.incquery.validation.runtime;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
 
 public abstract class Constraint<T extends IPatternMatch> {
 

@@ -24,8 +24,8 @@ import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.StringValue
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ListMultimap;

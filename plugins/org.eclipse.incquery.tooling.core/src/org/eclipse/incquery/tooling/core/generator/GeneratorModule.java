@@ -19,8 +19,8 @@ import org.eclipse.incquery.tooling.core.generator.fragments.ExtensionBasedGener
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.incquery.tooling.core.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.tooling.core.generator.types.GenModelBasedTypeProvider;
-import org.eclipse.viatra2.emf.incquery.tooling.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.JdtTypeProviderFactory;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
@@ -43,11 +43,13 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.generator.types.TypesGeneratorFragment
-	public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+	@Override
+    public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
 		return JdtTypeProviderFactory.class;
 	}
 	
-	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
+	@Override
+    public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
 		return GenModelMetamodelProviderService.class;
 	}
 	

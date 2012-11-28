@@ -17,17 +17,17 @@ import java.util.List
 import java.util.Map
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.CheckConstraint
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.incquery.runtime.rete.tuple.Tuple
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.IMatchChecker
+import org.eclipse.incquery.runtime.extensibility.IMatchChecker
 
 /**
  * {@link IMatchChecker} implementation inferer.

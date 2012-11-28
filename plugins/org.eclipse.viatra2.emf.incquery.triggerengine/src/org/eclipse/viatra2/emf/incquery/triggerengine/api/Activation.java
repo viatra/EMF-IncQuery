@@ -1,7 +1,7 @@
 package org.eclipse.viatra2.emf.incquery.triggerengine.api;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
  * An {@link Activation} is a created for a {@link AbstractRule} when the 

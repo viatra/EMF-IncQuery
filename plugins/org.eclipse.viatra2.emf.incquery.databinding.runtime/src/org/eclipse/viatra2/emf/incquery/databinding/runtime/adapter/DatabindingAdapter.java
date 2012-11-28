@@ -14,8 +14,8 @@ package org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.ValueProperty;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.base.Preconditions;
 

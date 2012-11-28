@@ -10,7 +10,7 @@ Export-Package: org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue
 Require-Bundle: org.eclipse.pde.core,
  org.eclipse.emf.ecore,
  org.eclipse.emf.transaction,
- org.eclipse.viatra2.emf.incquery.runtime,
+ org.eclipse.incquery.runtime,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.viatra2.emf.incquery.snapshot
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

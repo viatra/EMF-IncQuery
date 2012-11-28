@@ -20,11 +20,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 /**
  * Utility class for instantiating query-based feature handlers ({@link IQueryBasedFeatureHandler}).

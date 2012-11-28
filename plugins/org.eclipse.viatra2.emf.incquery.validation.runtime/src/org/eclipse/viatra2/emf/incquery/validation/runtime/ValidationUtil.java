@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;

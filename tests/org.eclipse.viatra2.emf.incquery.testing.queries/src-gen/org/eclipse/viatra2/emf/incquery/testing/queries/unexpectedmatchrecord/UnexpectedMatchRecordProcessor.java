@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;

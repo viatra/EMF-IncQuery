@@ -21,12 +21,12 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * Utility class for observing EMF-IncQuery related objects, such as match sets,

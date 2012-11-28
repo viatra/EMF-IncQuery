@@ -13,18 +13,18 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import java.util.Arrays
-import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BasePatternMatch
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch
+import org.eclipse.incquery.runtime.api.IPatternMatch
 
 /**
  * {@link IPatternMatch} implementation inferer.

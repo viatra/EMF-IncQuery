@@ -19,17 +19,14 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.xmi.XMLResource
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternURIHandler
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternCall
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguageFactory
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.xbase.XFeatureCall
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ParameterRef
 
 /**
  * @author Mark Czotter

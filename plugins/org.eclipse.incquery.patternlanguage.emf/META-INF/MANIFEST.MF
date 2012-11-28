@@ -23,17 +23,17 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.1.0";visibility:=reexport,
  org.eclipse.incquery.runtime.rete;bundle-version="0.7.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.incquery.emf.incquery.runtime.exception,
- org.eclipse.incquery.patternlanguage.emf,
+Export-Package: org.eclipse.incquery.patternlanguage.emf,
+ org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage,
+ org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.impl,
+ org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.util,
  org.eclipse.incquery.patternlanguage.emf.formatting,
  org.eclipse.incquery.patternlanguage.emf.jvmmodel,
+ org.eclipse.incquery.patternlanguage.emf.parser.antlr,
+ org.eclipse.incquery.patternlanguage.emf.parser.antlr.internal,
  org.eclipse.incquery.patternlanguage.emf.scoping,
  org.eclipse.incquery.patternlanguage.emf.serializer,
  org.eclipse.incquery.patternlanguage.emf.types,
  org.eclipse.incquery.patternlanguage.emf.validation,
- org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage,
- org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.impl,
- org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.util,
- org.eclipse.incquery.patternlanguage.emf.parser.antlr,
- org.eclipse.incquery.patternlanguage.emf.parser.antlr.internal
+ org.eclipse.incquery.runtime.exception
 

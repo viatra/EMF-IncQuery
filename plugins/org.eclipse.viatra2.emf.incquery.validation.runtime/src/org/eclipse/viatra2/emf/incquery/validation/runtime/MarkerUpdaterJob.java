@@ -14,9 +14,9 @@ package org.eclipse.viatra2.emf.incquery.validation.runtime;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 /**
  * The job is used to update a problem marker in the Problems View of Eclipse. 

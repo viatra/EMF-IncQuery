@@ -12,15 +12,15 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import org.apache.log4j.Logger
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory
-import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException
+import org.eclipse.incquery.runtime.api.IMatcherFactory
+import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.tooling.core.generator.builder.GeneratorIssueCodes
 import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.diagnostics.Severity

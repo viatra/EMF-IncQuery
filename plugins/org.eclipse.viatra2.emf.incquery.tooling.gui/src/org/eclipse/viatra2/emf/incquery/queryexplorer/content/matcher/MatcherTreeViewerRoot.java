@@ -18,10 +18,10 @@ import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine;
 
 public class MatcherTreeViewerRoot {
 private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;

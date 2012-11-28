@@ -16,8 +16,8 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.base.Preconditions;
 

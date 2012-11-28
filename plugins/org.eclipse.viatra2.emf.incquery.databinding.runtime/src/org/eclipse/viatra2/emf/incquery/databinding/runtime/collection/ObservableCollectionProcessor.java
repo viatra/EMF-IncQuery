@@ -11,8 +11,8 @@
 package org.eclipse.viatra2.emf.incquery.databinding.runtime.collection;
 
 import org.eclipse.incquery.emf.incquery.base.itc.alg.incscc.Direction;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
  * Match processor that can be parameterized with a {@link Direction} and an {@link IObservablePatternMatchCollection}.

@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 

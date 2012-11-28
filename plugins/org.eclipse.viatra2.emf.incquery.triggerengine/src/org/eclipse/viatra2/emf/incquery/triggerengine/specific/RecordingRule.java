@@ -2,8 +2,8 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.specific;
 
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule;

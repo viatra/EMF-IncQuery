@@ -19,16 +19,16 @@ import java.util.Map;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.runtime.api.GenericPatternMatch;
+import org.eclipse.incquery.runtime.api.GenericPatternMatcher;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra2.emf.incquery.gui.IncQueryGUIPlugin;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.GenericPatternMatcher;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * Each IEditingDomainProvider will be associated a PatternMatcherRoot element in the tree viewer.

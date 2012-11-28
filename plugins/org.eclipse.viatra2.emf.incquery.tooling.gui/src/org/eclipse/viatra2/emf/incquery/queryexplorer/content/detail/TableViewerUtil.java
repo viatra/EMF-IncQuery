@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.emf.core.patternLanguage.Variable;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
@@ -30,7 +31,6 @@ import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.Observable
 import org.eclipse.viatra2.emf.incquery.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.DatabindingUtil;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.util.PatternRegistry;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 

@@ -16,9 +16,9 @@ import org.apache.log4j.Logger
 import org.eclipse.core.resources.IWorkspaceRoot
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PatternModel
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils

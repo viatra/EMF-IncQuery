@@ -1,6 +1,6 @@
 package org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
 

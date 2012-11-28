@@ -15,12 +15,12 @@ import com.google.inject.Inject
 import java.util.Collection
 import java.util.HashSet
 import java.util.Set
-import org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor
+import org.eclipse.incquery.runtime.api.IMatchProcessor
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor
-import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor
+import org.eclipse.incquery.runtime.rete.tuple.Tuple
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable

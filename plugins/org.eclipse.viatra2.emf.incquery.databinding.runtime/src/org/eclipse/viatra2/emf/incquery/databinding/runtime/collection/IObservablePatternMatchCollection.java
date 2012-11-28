@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.incquery.databinding.runtime.collection;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
  * Common interface for observable pattern match collections (e.g. 

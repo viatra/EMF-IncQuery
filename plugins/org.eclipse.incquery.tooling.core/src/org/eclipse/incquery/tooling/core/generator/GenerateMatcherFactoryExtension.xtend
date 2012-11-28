@@ -12,14 +12,14 @@
 package org.eclipse.incquery.tooling.core.generator
 
 import com.google.inject.Inject
-import org.eclipse.viatra2.emf.incquery.runtime.IExtensions
-import org.eclipse.viatra2.emf.incquery.tooling.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern
+import org.eclipse.incquery.runtime.IExtensions
+import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.lib.Pair
 
-import static extension org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper.*
+import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmIdentifiableElement
 

@@ -3,7 +3,7 @@ package org.eclipse.viatra2.emf.incquery.triggerengine.notification;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra2.emf.incquery.triggerengine.api.Activation;
 
 /**

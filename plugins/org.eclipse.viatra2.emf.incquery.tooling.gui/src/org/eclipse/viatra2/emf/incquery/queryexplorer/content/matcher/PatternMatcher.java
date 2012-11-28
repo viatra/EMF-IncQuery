@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation.

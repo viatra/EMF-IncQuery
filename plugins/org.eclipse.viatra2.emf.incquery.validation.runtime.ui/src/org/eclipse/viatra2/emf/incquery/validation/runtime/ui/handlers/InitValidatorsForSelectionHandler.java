@@ -14,7 +14,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.emf.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
