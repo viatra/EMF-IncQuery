@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra2.emf.incquery.testing.ui;
 
-import org.eclipse.incquery.patternlanguage.ui.EMFPatternLanguageExecutableExtensionFactory;
+import org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
 
 public class IncQueryLanguageExecutableExtensionFactory extends

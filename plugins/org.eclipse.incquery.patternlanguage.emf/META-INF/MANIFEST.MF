@@ -33,6 +33,7 @@ Export-Package: org.eclipse.incquery.patternlanguage.emf,
  org.eclipse.incquery.patternlanguage.emf.parser.antlr.internal,
  org.eclipse.incquery.patternlanguage.emf.scoping,
  org.eclipse.incquery.patternlanguage.emf.serializer,
+ org.eclipse.incquery.patternlanguage.emf.services,
  org.eclipse.incquery.patternlanguage.emf.types,
  org.eclipse.incquery.patternlanguage.emf.validation,
  org.eclipse.incquery.runtime.exception

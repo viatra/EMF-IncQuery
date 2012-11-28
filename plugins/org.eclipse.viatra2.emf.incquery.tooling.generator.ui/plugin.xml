@@ -2,14 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment">
+         point="org.eclipse.incquery.tooling.core.generatorFragment">
       <fragment
             annotation="Handler"
-            fragment="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.SampleUIGenerator">
+            fragment="org.eclipse.incquery.tooling.generator.sampleui.SampleUIGenerator">
       </fragment>
    </extension>
    <extension
-         point="org.eclipse.viatra2.patternlanguage.core.annotation">
+         point="org.eclipse.incquery.patternlanguage.annotation">
       <annotation
             description="This annotation can be used to generate a sample code with a handler and a dialog that shows the matches of the query in a selected file resource."
             name="Handler">

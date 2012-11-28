@@ -14,8 +14,8 @@ package org.eclipse.incquery.patternlanguage.emf.tests;
 import java.util.Collection;
 
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
-import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.EMFPatternLanguagePackage;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.xtext.junit.AbstractXtextTests;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;

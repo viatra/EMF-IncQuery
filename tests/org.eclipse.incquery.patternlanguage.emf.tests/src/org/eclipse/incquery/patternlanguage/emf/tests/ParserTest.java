@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.viatra2.patternlanguage.EMFPatternLanguageInjectorProvider;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider;
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.IGrammarAccess;

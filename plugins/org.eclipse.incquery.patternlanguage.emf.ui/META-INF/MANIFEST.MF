@@ -29,8 +29,7 @@ Require-Bundle: org.eclipse.incquery.patternlanguage.emf;visibility:=reexport,
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.incquery.patternlanguage.ui,
- org.eclipse.incquery.patternlanguage.ui.contentassist,
- org.eclipse.viatra2.patternlanguage.ui.contentassist.antlr,
- org.eclipse.viatra2.patternlanguage.ui.internal
-Bundle-Activator: org.eclipse.incquery.patternlanguage.ui.EMFPatternLanguageUIActivator
+Export-Package: org.eclipse.incquery.patternlanguage.emf.ui,
+ org.eclipse.incquery.patternlanguage.emf.ui.contentassist,
+ org.eclipse.incquery.patternlanguage.emf.ui.internal
+Bundle-Activator: org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageUIActivator

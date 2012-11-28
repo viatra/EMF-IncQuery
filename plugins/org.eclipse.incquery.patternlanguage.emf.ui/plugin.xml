@@ -421,7 +421,7 @@
     </provider>
   </extension>
   <extension
-        point="org.eclipse.viatra2.emf.incquery.runtime.injectorprovider">
+        point="org.eclipse.incquery.runtime.injectorprovider">
      <injector
            injector="org.eclipse.incquery.patternlanguage.ui.UiPluginInjectorProvider">
      </injector>
