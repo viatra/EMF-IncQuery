@@ -87,12 +87,8 @@ public abstract class DeltaMonitor<MatchType> extends SimpleReceiver implements 
 	public abstract MatchType statelessConvert(Tuple tuple);
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
-	public void update(Direction direction, Tuple updateElement) {
+	@Override
+    public void update(Direction direction, Tuple updateElement) {
 		if (statelessFilter(updateElement)) {
 			MatchType match = statelessConvert(updateElement);
 			if (direction == Direction.INSERT) {
@@ -109,7 +105,8 @@ public abstract class DeltaMonitor<MatchType> extends SimpleReceiver implements 
 		}
 	}
 
-	public void clear() {
+	@Override
+    public void clear() {
 		matchFoundEvents.clear();
 		matchLostEvents.clear();
 	}

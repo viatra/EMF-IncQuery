@@ -40,9 +40,9 @@ class DerivedFeatureSourceCodeUtil {
 	def dummyCompUnitHeader()'''
 	  import org.eclipse.emf.common.util.EList;
 	  import org.eclipse.emf.ecore.EClass;
-	  import org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler;
-	  import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureKind;
-	  import org.eclipse.viatra2.emf.incquery.runtime.derived.QueryBasedFeatureHelper;
+	  import org.eclipse.incquery.querybasedfeatures.runtime.IQueryBasedFeatureHandler;
+	  import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
+	  import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureHelper;
 	  
 	  public class DummyClass {
 	   public void DummyMethod() {

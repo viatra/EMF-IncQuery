@@ -38,17 +38,11 @@ public class ConstantValue<PatternDescription, StubHandle>
 		super(pSystem, new FlatTuple(variable), value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
-	 */
 	@Override
 	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
 		return buildable.buildStartStub(new Object[]{supplierKey}, this.variablesTuple.getElements());
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
-	 */
+
 	@Override
 	protected String keyToString() {
 		return supplierKey.toString();

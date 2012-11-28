@@ -66,10 +66,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
             }
         };
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getPattern()
-     */
+
 	@Override
     public Pattern getPattern() {
 		return matcher.getPattern();
@@ -82,18 +79,12 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
 	 * @param activation the activation that was fired
 	 */
 	public abstract void activationFired(Activation<MatchType> activation);
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getAgenda()
-     */
+
 	@Override
     public IAgenda getAgenda() {
 		return agenda;
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getActivations()
-     */
+
 	@Override
     public List<Activation<MatchType>> getActivations() {
 		List<Activation<MatchType>> activations = new ArrayList<Activation<MatchType>>();
@@ -213,25 +204,16 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
     	processMatchModification(match);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#addActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener, boolean)
-     */
     @Override
     public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
         return activationProvider.addActivationNotificationListener(listener, fireNow);
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#removeActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener)
-     */
+
     @Override
     public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
         return activationProvider.removeActivationNotificationListener(listener);
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#setStateChangeProcessor(org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-     */
+
     @Override
     public void setStateChangeProcessor(ActivationState newState, IMatchProcessor<MatchType> processor) {
         switch (newState) {
@@ -246,10 +228,7 @@ public abstract class AbstractRule<MatchType extends IPatternMatch> implements
             break;
         }
     }
-    
-   /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IRule#getStateChangeProcessor(org.eclipse.viatra2.emf.incquery.triggerengine.api.ActivationState)
-     */
+
     @Override
     public IMatchProcessor<MatchType> getStateChangeProcessor(ActivationState newState) {
         switch (newState) {

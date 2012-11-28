@@ -72,18 +72,13 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 		this.pattern = pattern;		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPattern()
-	 */
 	@Override
 	public Pattern getPattern() {
 		return pattern;
 	}
 	
 	private String fullyQualifiedName;
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPatternName()
-	 */
+
 	@Override
 	public String getPatternName() {
 		if (fullyQualifiedName == null) 
@@ -91,18 +86,12 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 		return fullyQualifiedName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#arrayToMatch(java.lang.Object[])
-	 */
 	@Override
 	public GenericPatternMatch arrayToMatch(Object[] parameters) {
 		return new GenericPatternMatch(this, parameters);
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcher#tupleToMatch(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	protected GenericPatternMatch tupleToMatch(Tuple t) {
 		return new GenericPatternMatch(this, t.getElements());

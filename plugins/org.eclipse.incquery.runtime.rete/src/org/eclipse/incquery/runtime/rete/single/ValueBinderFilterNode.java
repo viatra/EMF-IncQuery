@@ -39,9 +39,6 @@ public class ValueBinderFilterNode extends FilterNode {
 
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.FilterNode#check(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	public boolean check(Tuple ps) {
 		return bindingValue.equals(ps.get(bindingIndex));

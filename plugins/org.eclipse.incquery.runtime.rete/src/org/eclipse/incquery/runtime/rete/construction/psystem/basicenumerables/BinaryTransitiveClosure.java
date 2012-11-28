@@ -36,18 +36,12 @@ public class BinaryTransitiveClosure<PatternDescription, StubHandle>
 		super(pSystem, variablesTuple, pattern);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
-	 */
 	@Override
 	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
 		Stub<StubHandle> patternProduction = buildable.patternCallStub(variablesTuple, supplierKey);
 		return buildable.buildTransitiveClosure(patternProduction);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
-	 */
 	@Override
 	protected String keyToString() {
 		return pSystem.getContext().printType(supplierKey)+"+";

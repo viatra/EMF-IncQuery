@@ -30,17 +30,11 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
  */
 public abstract class BasePatternGroup implements IPatternGroup {
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup#prepare(org.eclipse.emf.common.notify.Notifier)
-	 */
 	@Override
 	public void prepare(Notifier emfRoot) throws IncQueryException {
 		prepare(EngineManager.getInstance().getIncQueryEngine(emfRoot));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup#prepare(org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine)
-	 */
 	@Override
 	public void prepare(IncQueryEngine engine) throws IncQueryException {
 		try {

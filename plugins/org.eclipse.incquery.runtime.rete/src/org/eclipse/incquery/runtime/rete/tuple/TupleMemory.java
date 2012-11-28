@@ -42,7 +42,8 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 	 * 
 	 * @return true if a new pattern is entered
 	 */
-	public boolean add(Tuple ps) {
+	@Override
+    public boolean add(Tuple ps) {
 		boolean exists = occurences.containsKey(ps);
 
 		if (exists)
@@ -70,32 +71,32 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 		return empty;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Clearable#clear()
-	 */
-	public void clear() {
+	@Override
+    public void clear() {
 		occurences.clear();
 
 	}
 
-	public Iterator<Tuple> iterator() {
+	@Override
+    public Iterator<Tuple> iterator() {
 		return occurences.keySet().iterator();
 	}
 
-	public boolean addAll(Collection<? extends Tuple> arg0) {
+	@Override
+    public boolean addAll(Collection<? extends Tuple> arg0) {
 		boolean change = false;
 		for (Tuple ps : arg0)
 			change |= add(ps);
 		return change;
 	}
 
-	public boolean contains(Object arg0) {
+	@Override
+    public boolean contains(Object arg0) {
 		return occurences.containsKey(arg0);
 	}
 
-	public boolean containsAll(Collection<?> arg0) {
+	@Override
+    public boolean containsAll(Collection<?> arg0) {
 		return occurences.keySet().containsAll(arg0);
 //		for (Object o : arg0)
 //			if (!occurences.containsKey(o))
@@ -103,22 +104,26 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 //		return true;
 	}
 
-	public boolean isEmpty() {
+	@Override
+    public boolean isEmpty() {
 		return occurences.isEmpty();
 	}
 
-	public boolean remove(Object arg0) {
+	@Override
+    public boolean remove(Object arg0) {
 		return remove((Tuple) arg0);
 	}
 
-	public boolean removeAll(Collection<?> arg0) {
+	@Override
+    public boolean removeAll(Collection<?> arg0) {
 		boolean change = false;
 		for (Object o : arg0)
 			change |= remove(o);
 		return change;
 	}
 
-	public boolean retainAll(Collection<?> arg0) {
+	@Override
+    public boolean retainAll(Collection<?> arg0) {
 		return occurences.keySet().retainAll(arg0);
 //		HashSet<Tuple> obsolete = new HashSet<Tuple>();
 //		for (Tuple key : occurences.keySet())
@@ -129,7 +134,8 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 //		return !obsolete.isEmpty();
 	}
 
-	public int size() {
+	@Override
+    public int size() {
 //		int sum = 0;
 //		for (Integer count : occurences.values())
 //			sum += count;
@@ -137,12 +143,14 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 		return occurences.size();
 	}
 
-	public Object[] toArray() {
+	@Override
+    public Object[] toArray() {
 		return toArray(new Object[0]);
 	}
 
 //	@SuppressWarnings("unchecked")
-	public <T> T[] toArray(T[] arg0) {
+	@Override
+    public <T> T[] toArray(T[] arg0) {
 		return occurences.keySet().toArray(arg0);
 //		int length = size();
 //		T[] result = (T[]) java.lang.reflect.Array.newInstance(arg0.getClass()

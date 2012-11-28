@@ -40,18 +40,12 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 		this.array = array;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#get(java.lang.String)
-	 */
 	@Override
 	public Object get(String parameterName) {
 		Integer index = matcher.getPositionOfParameter(parameterName);
 		return index == null? null : array[index];
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#set(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public boolean set(String parameterName, Object newValue) {
 		Integer index = matcher.getPositionOfParameter(parameterName);
@@ -90,9 +84,6 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#prettyPrint()
-	 */
 	@Override
 	public String prettyPrint() {
 		StringBuilder result = new StringBuilder();
@@ -104,25 +95,16 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 		return result.toString();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#pattern()
-	 */
 	@Override
 	public Pattern pattern() {
 		return matcher.getPattern();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#patternName()
-	 */
 	@Override
 	public String patternName() {
 		return matcher.getPatternName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#parameterNames()
-	 */
 	@Override
 	public String[] parameterNames() {
 		return matcher.getParameterNames();

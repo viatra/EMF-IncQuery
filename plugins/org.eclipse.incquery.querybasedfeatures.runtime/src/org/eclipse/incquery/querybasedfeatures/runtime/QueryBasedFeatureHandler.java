@@ -194,9 +194,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         processMatchesRunnable.run();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getValue(java.lang.Object)
-     */
     @Override
     public Object getValue(Object source) {
         switch (kind) {
@@ -213,9 +210,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getIntValue(java.lang.Object)
-     */
     @Override
     public int getIntValue(Object source) {
         Integer result = counterMemory.get(source);
@@ -225,9 +219,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getSingleReferenceValue(java.lang.Object)
-     */
     @Override
     public Object getSingleReferenceValue(Object source) {
         if (keepCache) {
@@ -252,9 +243,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getManyReferenceValue(java.lang.Object)
-     */
     @Override
     public List<?> getManyReferenceValue(Object source) {
         if (keepCache) {
@@ -271,13 +259,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
             IPatternMatch match = matcher.newEmptyMatch();
             match.set(sourceParamName, source);
             matcher.forEachMatch(match, new IMatchProcessor<IPatternMatch>() {
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see
-                 * org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery
-                 * .runtime.api.IPatternMatch)
-                 */
+
                 @Override
                 public void process(IPatternMatch match) {
                     // TODO Auto-generated method stub
@@ -321,9 +303,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getManyReferenceValueAsEList(java.lang.Object)
-     */
     @Override
     public EList getManyReferenceValueAsEList(Object source) {
         Collection<?> values = getManyReferenceValue(source);
@@ -453,9 +432,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         throw new UnsupportedOperationException("Iteration derived feature handlers must override oldMatchIteration");
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.runtime.derived.IQueryBasedFeatureHandler#getValueIteration(java.lang.Object)
-     */
     @Override
     public Object getValueIteration(Object source) {
         throw new UnsupportedOperationException("Iteration derived feature handlers must override getValueIteration");

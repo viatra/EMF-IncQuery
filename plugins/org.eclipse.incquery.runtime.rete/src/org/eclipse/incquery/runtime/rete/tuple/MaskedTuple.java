@@ -36,17 +36,11 @@ public class MaskedTuple extends Tuple {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple#get(int)
-	 */
 	@Override
 	public Object get(int index) {
 		return wrapped.get(mask.indices[index]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple#getSize()
-	 */
 	@Override
 	public int getSize() {
 		return mask.indices.length;

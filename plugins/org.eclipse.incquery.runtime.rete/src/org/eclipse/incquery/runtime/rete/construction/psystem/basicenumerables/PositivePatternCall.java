@@ -36,17 +36,11 @@ public class PositivePatternCall<PatternDescription, StubHandle>
 		super(pSystem, variablesTuple, pattern);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
-	 */
 	@Override
 	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
 		return buildable.patternCallStub(variablesTuple, supplierKey);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
-	 */
 	@Override
 	protected String keyToString() {
 		return pSystem.getContext().printPattern(supplierKey);

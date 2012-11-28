@@ -88,18 +88,13 @@ public class MatchUpdateAdapter<Match extends IPatternMatch> implements IMatchUp
 		this.disappearCallback = disappearCallback;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener#notifyAppearance(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
-	public void notifyAppearance(Match match) {
+	@Override
+    public void notifyAppearance(Match match) {
 		if (appearCallback != null) appearCallback.process(match);
 	};
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener#notifyDisappearance(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
-	public void notifyDisappearance(Match match) {
+	@Override
+    public void notifyDisappearance(Match match) {
 		if (disappearCallback != null) disappearCallback.process(match);
 	};
 	

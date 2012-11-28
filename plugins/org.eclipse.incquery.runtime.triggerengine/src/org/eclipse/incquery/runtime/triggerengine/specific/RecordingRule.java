@@ -47,9 +47,6 @@ public class RecordingRule<MatchType extends IPatternMatch> extends AbstractRule
 		this.matcher.removeCallbackOnMatchUpdate(this);
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule#createActivation(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @Override
     protected Activation<MatchType> createActivation(MatchType match) {
             Activation<MatchType> activation;

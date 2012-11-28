@@ -39,7 +39,7 @@ class VariableResolutionTest {
 	@Test
 	def parameterResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
@@ -55,7 +55,7 @@ class VariableResolutionTest {
 	@Test
 	def singleUseResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern.parameters(Name,_parameter);
@@ -71,7 +71,7 @@ class VariableResolutionTest {
 	@Test
 	def anonymVariablesResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern helper(A,B,C) = {
 				Pattern(A);
 				Pattern(B);
@@ -92,7 +92,7 @@ class VariableResolutionTest {
 	@Test
 	def parameterResolutionFailed() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name2);
@@ -109,7 +109,7 @@ class VariableResolutionTest {
 	@Test
 	def constraintVariableResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name2);

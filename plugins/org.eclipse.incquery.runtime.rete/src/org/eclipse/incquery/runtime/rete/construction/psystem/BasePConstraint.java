@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 public abstract class BasePConstraint<PatternDescription, StubHandle> implements PConstraint {
 	protected PSystem<PatternDescription, StubHandle, ?> pSystem;
 	protected Buildable<PatternDescription, StubHandle, ?> buildable;
-	private Set<PVariable> affectedVariables;
+	private final Set<PVariable> affectedVariables;
 
 	/**
 	 * @param affectedVariables
@@ -46,17 +46,11 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
 	}
 	protected abstract String toStringRest();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getAffectedVariables()
-	 */
 	@Override
 	public Set<PVariable> getAffectedVariables() {
 		return affectedVariables;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#replaceVariable(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	public void replaceVariable(PVariable obsolete, PVariable replacement) {
 		if (affectedVariables.remove(obsolete)) {
@@ -68,9 +62,6 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
 	}
 	protected abstract void doReplaceVariable(PVariable obsolete, PVariable replacement);
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#delete()
-	 */
 	@Override
 	public void delete() {
 		for (PVariable pVariable : affectedVariables) {
@@ -79,9 +70,6 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
 		pSystem.unregisterConstraint(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#checkSanity()
-	 */
 	@Override
 	public void checkSanity() throws RetePatternBuildException {}
 }

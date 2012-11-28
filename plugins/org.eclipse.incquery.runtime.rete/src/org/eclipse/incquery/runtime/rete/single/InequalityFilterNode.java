@@ -44,11 +44,6 @@ public class InequalityFilterNode extends FilterNode {
 		this.inequalityMask = inequalityMask;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.FilterNode#check(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	public boolean check(Tuple ps) {
 		Object subject = ps.get(subjectIndex);

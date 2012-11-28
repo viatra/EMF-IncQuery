@@ -48,11 +48,6 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
         // "Could not parse pattern definition.");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPattern()
-     */
     @Override
     public Pattern getPattern() {
         return pattern;

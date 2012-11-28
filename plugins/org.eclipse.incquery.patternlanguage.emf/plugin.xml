@@ -5,7 +5,7 @@
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
-       uri = "http://www.eclipse.org/incquery/patternlanguage/emf/PatternLanguage" 
+       uri = "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" 
        class = "org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage"
        genModel = "org/eclipse/incquery/patternlanguage/emf/EMFPatternLanguage.genmodel" /> 
 	

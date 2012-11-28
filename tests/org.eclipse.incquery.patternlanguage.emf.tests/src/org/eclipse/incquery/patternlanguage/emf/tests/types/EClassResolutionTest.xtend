@@ -39,7 +39,7 @@ class EClassResolutionTest {
 	@Test
 	def eClassResolutionSuccess() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
@@ -71,7 +71,7 @@ class EClassResolutionTest {
 	@Test
 	def eClassResolutionFailed() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				UndefinedType(Name);

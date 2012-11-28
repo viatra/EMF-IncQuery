@@ -24,7 +24,7 @@ package org.eclipse.incquery.runtime.internal;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
 //import org.eclipse.viatra2.patternlanguage.core.helper.CorePatternLanguageHelper;
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Pattern;
 //
 ///**
 // * Internal RetePatternBuilder that multiplexes build requests to contributions to the BuilderRegistry.

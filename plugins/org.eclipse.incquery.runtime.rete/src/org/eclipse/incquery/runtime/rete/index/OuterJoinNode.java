@@ -43,17 +43,11 @@ public class OuterJoinNode extends DualInputNode {
 		this.defaults = defaults;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.DualInputNode#calibrate(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	public Tuple calibrate(Tuple primary, Tuple secondary) {
 		return unify(primary, secondary);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.DualInputNode#notifyUpdate(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.DualInputNode.Side, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple, boolean)
-	 */
 	@Override
 	public void notifyUpdate(Side side, Direction direction,
 			Tuple updateElement, Tuple signature, boolean change) {
@@ -86,10 +80,8 @@ public class OuterJoinNode extends DualInputNode {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#pullInto(java.util.Collection)
-	 */
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		reteContainer.flushUpdates();
 
 		for (Tuple signature : primarySlot.getSignatures()) {

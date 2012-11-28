@@ -79,10 +79,7 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle>
 		}
 		return deferringVariables;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#checkSanity()
-	 */
+
 	@Override
 	public void checkSanity() throws RetePatternBuildException {
 		super.checkSanity();

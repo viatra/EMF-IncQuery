@@ -72,41 +72,21 @@ public class FlatTuple extends Tuple {
 		calcHash();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple#get(int)
-	 */
 	@Override
 	public Object get(int index) {
 		return elements[index];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple#getSize()
-	 */
 	@Override
 	public int getSize() {
 		return elements.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple#getElements()
-	 */
 	@Override
 	public Object[] getElements() {
 		return elements;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple#internalEquals(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	protected boolean internalEquals(Tuple other) {
 		if (other instanceof FlatTuple) {

@@ -86,7 +86,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationAdditionalValidator"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator"/>
                </appInfo>
             </annotation>
          </attribute>

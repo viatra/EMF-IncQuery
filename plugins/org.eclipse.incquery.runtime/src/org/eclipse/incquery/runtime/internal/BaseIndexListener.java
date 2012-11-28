@@ -88,78 +88,51 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.InstanceListener#instanceInserted(org.eclipse.emf.ecore.EClass, org.eclipse.emf.ecore.EObject)
-	 */
 	@Override
 	public void instanceInserted(EClass clazz, EObject instance) {
 		boundary.updateUnary(Direction.INSERT, instance, clazz);
 		boundary.updateInstantiation(Direction.INSERT, clazz, instance);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.InstanceListener#instanceDeleted(org.eclipse.emf.ecore.EClass, org.eclipse.emf.ecore.EObject)
-	 */
 	@Override
 	public void instanceDeleted(EClass clazz, EObject instance) {
 		boundary.updateUnary(Direction.REVOKE, instance, clazz);
 		boundary.updateInstantiation(Direction.REVOKE, clazz, instance);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener#dataTypeInstanceInserted(org.eclipse.emf.ecore.EDataType, java.lang.Object)
-	 */
 	@Override
 	public void dataTypeInstanceInserted(EDataType type, Object instance) {
 		boundary.updateUnary(Direction.INSERT, instance, type);
 		boundary.updateInstantiation(Direction.INSERT, type, instance);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.DataTypeListener#dataTypeInstanceDeleted(org.eclipse.emf.ecore.EDataType, java.lang.Object)
-	 */
 	@Override
 	public void dataTypeInstanceDeleted(EDataType type, Object instance) {
 		boundary.updateUnary(Direction.REVOKE, instance, type);
 		boundary.updateInstantiation(Direction.REVOKE, type, instance);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.FeatureListener#featureInserted(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.Object)
-	 */
 	@Override
 	public void featureInserted(EObject host, EStructuralFeature feature, Object value) {
 		boundary.updateBinaryEdge(Direction.INSERT, host, value, feature);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.FeatureListener#featureDeleted(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.Object)
-	 */
 	@Override
 	public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
 		boundary.updateBinaryEdge(Direction.REVOKE, host, value, feature);
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener#registerSensitiveTerm(java.lang.Object, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode)
-	 */
 	@Override
 	public void registerSensitiveTerm(Object element,
 			PredicateEvaluatorNode termEvaluatorNode) {
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.IManipulationListener#unregisterSensitiveTerm(java.lang.Object, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.PredicateEvaluatorNode)
-	 */
 	@Override
 	public void unregisterSensitiveTerm(Object element,
 			PredicateEvaluatorNode termEvaluatorNode) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.Disconnectable#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		baseIndex.unregisterFeatureListener(features, this); features.clear();

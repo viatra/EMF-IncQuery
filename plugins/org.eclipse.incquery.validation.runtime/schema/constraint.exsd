@@ -58,7 +58,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.viatra2.emf.incquery.validation.core.Constraint:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.incquery.validation.runtime.Constraint:"/>
                </appinfo>
             </annotation>
          </attribute>

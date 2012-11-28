@@ -35,9 +35,6 @@ import org.eclipse.incquery.runtime.rete.util.Options;
  */
 public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implements IReteLayoutStrategy<PatternDescription, StubHandle, Collector> {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IReteLayoutStrategy#layout(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem)
-	 */
 	@Override
 	public Stub<StubHandle> layout(final PSystem<PatternDescription, StubHandle, Collector> pSystem)
 		throws RetePatternBuildException 

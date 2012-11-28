@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="EIQSnapshot" nsURI="http://www.eclipse.org/viatra2/emf/incquery/snapshot"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="EIQSnapshot" nsURI="http://www.eclipse.org/incquery/snapshot"
     nsPrefix="eiqSnapshot">
   <eClassifiers xsi:type="ecore:EClass" name="MatchSetRecord">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="patternQualifiedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -14,16 +14,7 @@
         eType="#//MatchSubstitutionRecord" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="role" eType="#//RecordRole"
         changeable="false" volatile="true" transient="true" derived="true">
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"/>
-      </eAnnotations>
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"/>
-      </eAnnotations>
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"/>
-      </eAnnotations>
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
+      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
         <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"/>
       </eAnnotations>
     </eStructuralFeatures>
@@ -32,16 +23,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="derivedValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         changeable="false" volatile="true" transient="true" derived="true">
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"/>
-      </eAnnotations>
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"/>
-      </eAnnotations>
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"/>
-      </eAnnotations>
-      <eAnnotations source="org.eclipse.viatra2.emf.incquery.derived.feature">
+      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
         <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"/>
       </eAnnotations>
     </eStructuralFeatures>

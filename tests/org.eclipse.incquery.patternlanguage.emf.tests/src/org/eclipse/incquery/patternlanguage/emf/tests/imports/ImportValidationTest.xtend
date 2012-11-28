@@ -50,8 +50,8 @@ class ImportValidationTest extends AbstractValidatorTest {
 	@Test
 	def duplicateImport() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);

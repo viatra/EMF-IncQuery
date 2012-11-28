@@ -46,13 +46,13 @@ class PatternValidationTest extends AbstractValidatorTest {
 	}
 	@Test
 	def emptyBodyValidation() {
-		val model = parseHelper.parse('import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+		val model = parseHelper.parse('import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
         pattern resolutionTest(A) = {}') as PatternModel
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::PATTERN_BODY_EMPTY), getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED))
 	}
 	@Test
 	def emptyParameterListValidation() {
-		val model = parseHelper.parse('import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+		val model = parseHelper.parse('import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 		pattern resolutionTest() = {Pattern(A);}') as PatternModel
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::MISSING_PATTERN_PARAMETERS), getWarningCode(EMFIssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE))
 	}
@@ -60,7 +60,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 	@Test
 	def unusedPrivatePatternValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			private pattern unusedPrivatePattern(Pattern) {
 				Pattern(Pattern);
 			}
@@ -71,7 +71,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 	@Test
 	def singleUseParameterValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern unusedPrivatePattern(_Pattern) {
 				Pattern(_Pattern);
 			}

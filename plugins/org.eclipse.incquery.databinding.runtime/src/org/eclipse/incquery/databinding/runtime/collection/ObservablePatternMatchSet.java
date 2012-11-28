@@ -111,9 +111,6 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         return cache;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.databinding.runtime.util.IObservablePatternMatchCollection#addMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @SuppressWarnings("unchecked")
     @Override
     public void addMatch(Match match) {
@@ -122,9 +119,6 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         fireSetChange(diff);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.databinding.runtime.util.IObservablePatternMatchCollection#removeMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @SuppressWarnings("unchecked")
     @Override
     public void removeMatch(Match match) {

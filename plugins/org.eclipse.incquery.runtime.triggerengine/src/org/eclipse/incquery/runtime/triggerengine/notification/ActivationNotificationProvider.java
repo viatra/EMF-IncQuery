@@ -20,10 +20,7 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
 	public ActivationNotificationProvider() {
 		this.activationNotificationListeners = new HashSet<IActivationNotificationListener>();
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#addActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener, boolean)
-     */
+
 	@Override
     public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
 	    boolean notContained = this.activationNotificationListeners.add(listener);
@@ -34,10 +31,7 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
 	}
 	
 	protected abstract void listenerAdded(IActivationNotificationListener listener, boolean fireNow);
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#removeActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener)
-     */
+
 	@Override
     public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
 		return this.activationNotificationListeners.remove(listener);

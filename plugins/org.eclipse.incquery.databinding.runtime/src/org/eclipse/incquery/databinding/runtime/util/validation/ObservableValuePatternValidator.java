@@ -33,7 +33,7 @@ import com.google.inject.Inject;
  */
 public class ObservableValuePatternValidator implements IPatternAnnotationAdditionalValidator {
 
-    private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra2.emf.incquery.databinding.";
+    private static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.databinding.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String UNKNOWN_VARIABLE_CODE = VALIDATOR_BASE_CODE + "unknown_variable";
     public static final String UNKNOWN_ATTRIBUTE_CODE = VALIDATOR_BASE_CODE + "unknown_attribute";
@@ -41,13 +41,7 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
 
     @Inject
     private IEMFTypeProvider typeProvider;
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationAdditionalValidator#
-     * executeAdditionalValidation(org.eclipse.viatra2.patternlanguage.core.patternLanguage.Annotation,
-     * org.eclipse.viatra2.patternlanguage.core.validation.PatternLanguageJavaValidator)
-     */
+
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         Pattern pattern = (Pattern) annotation.eContainer();

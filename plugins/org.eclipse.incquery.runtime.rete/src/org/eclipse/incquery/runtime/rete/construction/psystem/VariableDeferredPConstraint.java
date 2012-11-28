@@ -38,9 +38,7 @@ public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle
 	public boolean isReadyAt(Stub<StubHandle> stub) {
 		return stub.getVariablesIndex().keySet().containsAll(getDeferringVariables());
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#raiseForeverDeferredError(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
+
 	@Override
 	public void raiseForeverDeferredError(Stub<StubHandle> stub)
 			throws RetePatternBuildException {

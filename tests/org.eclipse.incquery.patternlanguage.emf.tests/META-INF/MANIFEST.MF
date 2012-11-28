@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.viatra2.patternlanguage.emf.tests
+Bundle-Name: org.eclipse.incquery.patternlanguage.emf.tests
 Bundle-Vendor: My Company
 Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.incquery.patternlanguage.emf.tests;singleton:=true

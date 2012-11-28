@@ -26,9 +26,6 @@ public abstract class DefaultIndexerListener implements IndexerListener {
 		this.owner = new WeakReference<Node>(owner);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IndexerListener#getOwner()
-	 */
 	@Override
 	public Node getOwner() {
 		return owner.get();

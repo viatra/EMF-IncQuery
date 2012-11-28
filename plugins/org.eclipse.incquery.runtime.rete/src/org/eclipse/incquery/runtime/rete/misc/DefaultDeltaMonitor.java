@@ -37,9 +37,6 @@ public class DefaultDeltaMonitor extends DeltaMonitor<Tuple> {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.misc.DeltaMonitor#statelessConvert(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	public Tuple statelessConvert(Tuple tuple) {
 		return tuple;

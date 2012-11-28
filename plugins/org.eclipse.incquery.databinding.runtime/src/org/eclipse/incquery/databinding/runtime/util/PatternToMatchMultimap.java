@@ -52,17 +52,11 @@ public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends Tri
         super(notifier);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.util.TriggeredQueryResultMultimap#getKeyFromMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @Override
     protected Pattern getKeyFromMatch(MatchType match) {
         return match.pattern();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.util.TriggeredQueryResultMultimap#getValueFromMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @Override
     protected MatchType getValueFromMatch(MatchType match) {
         return match;

@@ -37,17 +37,11 @@ public class TypeUnary<PatternDescription, StubHandle>
 		super(pSystem, new FlatTuple(variable), typeKey);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#doCreateStub()
-	 */
 	@Override
 	public Stub<StubHandle> doCreateStub() {	
 		return buildable.unaryTypeStub(variablesTuple, supplierKey);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.ITypeInfoProviderConstraint#getTypeInfo(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	public Object getTypeInfo(PVariable variable) {
 		if (variable.equals(variablesTuple.get(0))) 
@@ -55,9 +49,6 @@ public class TypeUnary<PatternDescription, StubHandle>
 		return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.KeyedEnumerablePConstraint#keyToString()
-	 */
 	@Override
 	protected String keyToString() {
 		return pSystem.getContext().printType(supplierKey);

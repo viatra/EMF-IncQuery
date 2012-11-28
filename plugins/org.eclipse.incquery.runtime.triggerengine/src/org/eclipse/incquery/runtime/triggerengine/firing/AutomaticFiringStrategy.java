@@ -15,18 +15,12 @@ import org.eclipse.incquery.runtime.triggerengine.api.ActivationMonitor;
  */
 public class AutomaticFiringStrategy implements IUpdateCompleteListener {
 
-    private ActivationMonitor monitor;
+    private final ActivationMonitor monitor;
     
-    /**
-     * 
-     */
     public AutomaticFiringStrategy(ActivationMonitor monitor) {
         this.monitor = monitor;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener#updateComplete()
-     */
     @Override
     public void updateComplete() {
         if(monitor != null) {

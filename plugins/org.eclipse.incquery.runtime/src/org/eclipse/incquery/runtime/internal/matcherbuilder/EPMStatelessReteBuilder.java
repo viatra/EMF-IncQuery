@@ -21,8 +21,8 @@ package org.eclipse.incquery.runtime.internal.matcherbuilder;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Pattern;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Variable;
 //import org.eclipse.viatra2.patternlanguage.emf.matcherbuilder.runtime.PatternRegistry;
 //
 ///**

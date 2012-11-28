@@ -76,17 +76,12 @@ public class Inequality<PatternDescription, StubHandle>
 //		return hashSet;
 //	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#getDeferringVariables()
-	 */
+
 	@Override
 	protected Set<PVariable> getDeferringVariables() {
 		return getAffectedVariables();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		Map<Object, Integer> variablesIndex = stub.getVariablesIndex();
@@ -102,9 +97,6 @@ public class Inequality<PatternDescription, StubHandle>
 //		return result;
 //	}
 
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.IFoldablePConstraint#getIncorporator()
-//	 */
 //	@Override
 //	public IFoldablePConstraint getIncorporator() {
 //		return incorporator;
@@ -115,9 +107,6 @@ public class Inequality<PatternDescription, StubHandle>
 //		this.incorporator = incorporator;
 //	}
 //	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.IFoldablePConstraint#incorporate(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.IFoldablePConstraint)
-//	 */
 //	@Override
 //	public boolean incorporate(IFoldablePConstraint other) {
 //		if (other instanceof Inequality<?, ?>) {
@@ -129,27 +118,18 @@ public class Inequality<PatternDescription, StubHandle>
 //			}
 //		} else return false;
 //	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#toStringRest()
-	 */
+
 	@Override
 	protected String toStringRest() {
 		return who.toString() + (isWeak() ? "!=?" : "!=") + withWhom.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#replaceVariable(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
 		if (obsolete.equals(who)) who = replacement;
 		if (obsolete.equals(withWhom)) withWhom = replacement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return Collections.emptySet();

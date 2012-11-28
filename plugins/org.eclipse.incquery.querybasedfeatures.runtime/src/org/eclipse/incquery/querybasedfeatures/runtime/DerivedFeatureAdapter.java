@@ -51,8 +51,8 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 	private Object oldValue;
 	private EClassifier type;
 
-	private List<EStructuralFeature> localFeatures = new ArrayList<EStructuralFeature>();
-	private List<DependentFeaturePath> featurePaths = new ArrayList<DerivedFeatureAdapter.DependentFeaturePath>();
+	private final List<EStructuralFeature> localFeatures = new ArrayList<EStructuralFeature>();
+	private final List<DependentFeaturePath> featurePaths = new ArrayList<DerivedFeatureAdapter.DependentFeaturePath>();
 
 	/*
 	 * Convenience constructor for a local and navigated dependency
@@ -232,7 +232,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 		private EStructuralFeature dependantFeature = null;
 		private EStructuralFeature navigationFeature = null;
 		
-		private AdapterImpl dependantAdapter = new AdapterImpl() {
+		private final AdapterImpl dependantAdapter = new AdapterImpl() {
 			
 			@Override
 			public void notifyChanged(Notification msg) {
@@ -311,9 +311,6 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 			sendNotificationForEReference(source, feature, target);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.viatra2.emf.incquery.runtime.internal.EMFVisitor#pruneSubtrees(org.eclipse.emf.ecore.EObject)
-		 */
 		@Override
 		public boolean pruneSubtrees(EObject source) {
 			return true;

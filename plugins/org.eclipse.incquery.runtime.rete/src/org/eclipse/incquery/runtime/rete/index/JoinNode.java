@@ -37,12 +37,6 @@ public class JoinNode extends DualInputNode {
 		// TODO Auto-generated constructor stub
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.DualInputNode#calibrate(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple,
-	 * org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
 	@Override
 	public Tuple calibrate(Tuple primary, Tuple secondary) {
 		return unify(primary, secondary);
@@ -54,12 +48,6 @@ public class JoinNode extends DualInputNode {
 //				Options.enableInheritance, true);
 //	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.DualInputNode#notifyUpdate(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.DualInputNode.Side,
-	 * org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple, boolean)
-	 */
 	@Override
 	public void notifyUpdate(Side side, Direction direction,
 			Tuple updateElement, Tuple signature, boolean change) 
@@ -97,12 +85,8 @@ public class JoinNode extends DualInputNode {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#pullInto(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver)
-	 */
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		reteContainer.flushUpdates();
 
 		for (Tuple signature : primarySlot.getSignatures()) {

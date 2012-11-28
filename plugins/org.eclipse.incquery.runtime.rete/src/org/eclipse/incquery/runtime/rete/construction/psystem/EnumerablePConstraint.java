@@ -45,18 +45,11 @@ public abstract class EnumerablePConstraint<PatternDescription, StubHandle> exte
 	
 	public abstract Stub<StubHandle> doCreateStub() throws RetePatternBuildException;
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#replaceVariable(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
 		variablesTuple = variablesTuple.replaceAll(obsolete, replacement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#toStringRest()
-	 */
 	@Override
 	protected String toStringRest() {
 		String stringRestRest = toStringRestRest();
@@ -73,9 +66,7 @@ public abstract class EnumerablePConstraint<PatternDescription, StubHandle> exte
 	public Tuple getVariablesTuple() {
 		return variablesTuple;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
+	
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return getAffectedVariables();

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.viatra2.emf.incquery.databinding.runtime
+Bundle-Name: org.eclipse.incquery.databinding.runtime
 Bundle-SymbolicName: org.eclipse.incquery.databinding.runtime;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-ActivationPolicy: lazy

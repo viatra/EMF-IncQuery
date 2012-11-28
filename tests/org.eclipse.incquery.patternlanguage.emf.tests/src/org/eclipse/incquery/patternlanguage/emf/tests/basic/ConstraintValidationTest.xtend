@@ -46,7 +46,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def intConstantCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
 				1 == 2;
@@ -57,7 +57,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def stringDoubleConstantCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
 				1.2 == "String";
@@ -71,7 +71,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def enumIntConstantCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
 				false == 2;
@@ -85,7 +85,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightVariableCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(Name) = {
 				1 == Name;
 				IntValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
@@ -97,7 +97,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightNewVariableCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
 				1 == Name2;
@@ -110,7 +110,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftVariableCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(Name) = {
 				Name == "Test";
 				StringValue.value(Name2, Name);	// Name2 should be a single variable, e.g. _Name2
@@ -122,7 +122,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftNewVariableCompareValidation() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
 				Name2 == "Test";

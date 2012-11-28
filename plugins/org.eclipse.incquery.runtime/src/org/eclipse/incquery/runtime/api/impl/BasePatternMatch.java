@@ -51,9 +51,6 @@ public abstract class BasePatternMatch implements IPatternMatch {
 	
 	// TODO performance can be improved here somewhat
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#get(int)
-	 */
 	@Override
 	public Object get(int position) {
 		if (position >= 0 && position < parameterNames().length)
@@ -61,9 +58,6 @@ public abstract class BasePatternMatch implements IPatternMatch {
 		else return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch#set(int, java.lang.Object)
-	 */
 	@Override
 	public boolean set(int position, Object newValue) {
 		if (position >= 0 && position < parameterNames().length)

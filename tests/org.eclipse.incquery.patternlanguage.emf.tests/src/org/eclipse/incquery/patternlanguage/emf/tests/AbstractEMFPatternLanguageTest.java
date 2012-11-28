@@ -29,7 +29,7 @@ import com.google.inject.Inject;
 public abstract class AbstractEMFPatternLanguageTest extends AbstractXtextTests {
 
 	static final ImmutableSet<String> defaultPackages = ImmutableSet
-			.of("http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage");
+			.of("http://www.eclipse.org/incquery/patternlanguage/PatternLanguage");
 	
 	@Inject
 	EValidator.Registry validationRegistry;

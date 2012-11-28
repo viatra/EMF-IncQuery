@@ -36,7 +36,7 @@ package org.eclipse.incquery.runtime.internal.boundary;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options;
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Pattern;
 //
 ///**
 // * Input node relying on the NavigationUtil base index.

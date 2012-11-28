@@ -6,10 +6,10 @@
          point="org.eclipse.ui.views">
       <view
             name="Rete Visualizer"
-            icon="platform:/plugin/org.eclipse.viatra2.emf.incquery.tooling.gui/icons/logo2.png"
-            category="org.eclipse.viatra2.emf.incquery.tooling.gui"
+            icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png"
+            category="org.eclipse.incquery.tooling.ui"
             class="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView"
-            id="org.eclipse.viatra2.emf.incquery.tooling.retevis.views.ReteVisView">
+            id="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView">
       </view>
    </extension>
 

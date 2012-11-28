@@ -65,8 +65,8 @@ class SampleUIGenerator implements IGenerationFragment {
 		 	"org.eclipse.emf.ecore", 
 		 	"org.eclipse.pde.core", 
 		 	"org.eclipse.core.resources", 
-		 	"org.eclipse.viatra2.emf.incquery.runtime",
-		 	"org.eclipse.viatra2.emf.incquery.tooling.gui")
+		 	"org.eclipse.incquery.runtime",
+		 	"org.eclipse.incquery.tooling.ui")
 	}
 	
 	override getProjectPostfix() {
@@ -80,7 +80,7 @@ class SampleUIGenerator implements IGenerationFragment {
 			exGen.contribElement(it, "command") [
 				exGen.contribAttribute(it, "id", pattern.commandId)
 				exGen.contribAttribute(it, "name", "Get All Matches for " + pattern.fullyQualifiedName)
-				exGen.contribAttribute(it, "categoryId", "org.eclipse.viatra2.emf.incquery.tooling.category")
+				exGen.contribAttribute(it, "categoryId", "org.eclipse.incquery.tooling.category")
 			]
 		],
 		exGen.contribExtension(pattern.handlerExtensionId, ECLIPSE_UI_HANDLERS_EXTENSION_POINT) [

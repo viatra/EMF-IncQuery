@@ -80,15 +80,15 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 * 		  )
 	 */
 	private static String annotationLiteral 		= "QueryBasedFeature"
-	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features"
-	private static String ANNOTATION_NAME 	= "org.eclipse.viatra2.emf.incquery.derived.feature"
-	private static String IMPORT_QUALIFIER 			= "org.eclipse.viatra2.emf.incquery.runtime.derived"
+	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.incquery.runtime.base.wellbehaving.derived.features"
+	private static String ANNOTATION_NAME 			= "org.eclipse.incquery.querybasedfeature" //TODO fix models!
+	private static String IMPORT_QUALIFIER 			= "org.eclipse.incquery.querybasedfeatures.runtime"
 	private static String FEATUREKIND_IMPORT		= "QueryBasedFeatureKind"
 	private static String HELPER_IMPORT 			= "QueryBasedFeatureHelper"
 	//private static String HANDLER_NAME 				= "IncqueryFeatureHandler"
 	private static String HANDLER_NAME 				= "IQueryBasedFeatureHandler"
 	private static String HANDLER_FIELD_SUFFIX 		= "Handler"
-	private static String DERIVED_ERROR_CODE = "org.eclipse.viatra2.emf.incquery.runtime.derived.error"
+	private static String DERIVED_ERROR_CODE		= "org.eclipse.incquery.runtime.querybasedfeature.error"
 	
 	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
 	private static Map<String,QueryBasedFeatureKind> kinds = newHashMap(
@@ -248,10 +248,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	def private findJavaProject(GenPackage pckg){
 		// find java project
 		val projectDir = pckg.genModel.modelProjectDirectory
-		//val project = ProjectLocator::locateProject(projectDir)
 		ProjectLocator::locateProject(projectDir,logger)
-		//ProjectGenerationHelper::ensureBundleDependencies(project, newArrayList("org.eclipse.viatra2.emf.incquery.runtime"))
-		//JavaCore::create(project)
 	}
 	
 	def private findJavaFile(GenPackage pckg, GenClass genSourceClass, IJavaProject javaProject){

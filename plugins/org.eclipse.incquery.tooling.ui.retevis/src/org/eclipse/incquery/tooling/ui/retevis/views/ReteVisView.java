@@ -34,7 +34,7 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "org.eclipse.viatra2.emf.incquery.tooling.retevis.views.ReteVisView";
+	public static final String ID = "org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView";
 
 	private GraphViewer graphViewer;
     private ColorTheme theme;

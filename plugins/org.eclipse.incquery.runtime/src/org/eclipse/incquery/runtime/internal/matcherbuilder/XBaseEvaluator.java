@@ -112,14 +112,6 @@ public class XBaseEvaluator extends AbstractEvaluator {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.
-	 * AbstractEvaluator
-	 * #doEvaluate(org.eclipse.viatra2.gtasm.patternmatcher.incremental
-	 * .rete.tuple.Tuple)
-	 */
 	@Override
 	public Object doEvaluate(Tuple tuple) throws Throwable {
 		// First option: try to evalute with the generated code

@@ -20,9 +20,6 @@ package org.eclipse.incquery.runtime.api;
  */
 public abstract class GenericMatchProcessor implements IMatchProcessor<IPatternMatch> {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-	 */
 	@Override
 	public void process(IPatternMatch match) {
 		process(match.toArray());

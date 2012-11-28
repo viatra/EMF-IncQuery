@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 
 public class GenmodelProjectBasedValidation extends GeneratorModelJavaValidator {
 
-    public static final String GENMODEL_DEPENDENCY = "org.eclipse.viatra2.emf.incquery.tooling.generator.ui."
+    public static final String GENMODEL_DEPENDENCY = "org.eclipse.incquery.tooling.generator.model.ui."
             + "genmodel_dependency";
 
     @Inject

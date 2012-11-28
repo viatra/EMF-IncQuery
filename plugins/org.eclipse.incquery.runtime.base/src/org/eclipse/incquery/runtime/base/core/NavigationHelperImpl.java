@@ -55,16 +55,16 @@ public class NavigationHelperImpl implements NavigationHelper {
 //	protected NavigationHelperVisitor visitor;
 	protected NavigationHelperContentAdapter contentAdapter;
 	
-	private Logger logger;
+	private final Logger logger;
 	
 	/**
 	 * These global listeners will be called after updates.
 	 */
 	protected Set<Runnable> afterUpdateCallbacks;
 	
-	private Map<InstanceListener, Collection<EClass>> instanceListeners;
-	private Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
-	private Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
+	private final Map<InstanceListener, Collection<EClass>> instanceListeners;
+	private final Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
+	private final Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
 	
 	/**
 	 * Feature registration and model traversal is delayed while true
@@ -105,10 +105,6 @@ public class NavigationHelperImpl implements NavigationHelper {
 		return result;
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper#isInWildcardMode()
-	 */
 	@Override
 	public boolean isInWildcardMode() {
 		return inWildcardMode;
@@ -691,9 +687,6 @@ public class NavigationHelperImpl implements NavigationHelper {
 		return logger;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.base.api.NavigationHelper#addRoot(org.eclipse.emf.common.notify.Notifier)
-	 */
 	@Override
 	public void addRoot(Notifier emfRoot) throws IncQueryBaseException {
 		addRootInternal(emfRoot);

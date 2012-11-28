@@ -45,17 +45,11 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 		//parameterVariable.setExportedParameter(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#replaceVariable(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
 		if (obsolete.equals(parameterVariable)) parameterVariable = replacement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#toStringRest()
-	 */
 	@Override
 	protected String toStringRest() {
 		Object varName = parameterVariable.getName();
@@ -64,9 +58,6 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 				parameterName + "(" + varName + ")"	;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return Collections.emptySet();
@@ -85,26 +76,17 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 	public PVariable getParameterVariable() {
 		return parameterVariable;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#getDeferringVariables()
-	 */
+
 	@Override
 	protected Set<PVariable> getDeferringVariables() {
 		return Collections.singleton(parameterVariable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		return stub;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#checkSanity()
-	 */
 	@Override
 	public void checkSanity() throws RetePatternBuildException {
 		super.checkSanity();
@@ -119,9 +101,6 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#raiseForeverDeferredError(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException 
 	{

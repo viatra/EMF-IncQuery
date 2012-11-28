@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.viatra2.emf.incquery.tooling.generator.model
-Bundle-Vendor: My Company
+Bundle-Name: org.eclipse.incquery.tooling.generator.model
 Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.incquery.tooling.generator.model;singleton:=true
 Bundle-ActivationPolicy: lazy

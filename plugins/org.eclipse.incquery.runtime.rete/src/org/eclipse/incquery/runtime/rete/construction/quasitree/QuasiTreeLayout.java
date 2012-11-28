@@ -51,9 +51,6 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector>
 		implements
 		IReteLayoutStrategy<PatternDescription, StubHandle, Collector> {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IReteLayoutStrategy#layout(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PSystem)
-	 */
 	@Override
 	public Stub<StubHandle> layout(PSystem<PatternDescription, StubHandle, Collector> pSystem) throws RetePatternBuildException {
 		return new Scaffold(pSystem).run();

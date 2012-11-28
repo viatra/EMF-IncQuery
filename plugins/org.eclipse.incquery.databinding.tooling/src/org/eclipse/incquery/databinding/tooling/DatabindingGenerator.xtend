@@ -29,7 +29,7 @@ import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil
 class DatabindingGenerator implements IGenerationFragment {
 	
 	private static String DATABINDINGEXTENSION_PREFIX = "extension.databinding."
-	private static String DATABINDINGEXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding"
+	private static String DATABINDINGEXTENSION_POINT = "org.eclipse.incquery.databinding.runtime.databinding"
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	private static String annotationLiteral = "ObservableValue"
 
@@ -58,8 +58,8 @@ class DatabindingGenerator implements IGenerationFragment {
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.core.databinding.property", 
 		"org.eclipse.core.databinding.observable", 
-		"org.eclipse.viatra2.emf.incquery.databinding.runtime",
-		"org.eclipse.viatra2.emf.incquery.runtime")
+		"org.eclipse.incquery.databinding.runtime",
+		"org.eclipse.incquery.runtime")
 	}
 	
 	override getProjectPostfix() {
@@ -126,7 +126,7 @@ class DatabindingGenerator implements IGenerationFragment {
 		
 		import java.util.HashMap;
 
-		import org.eclipse.viatra2.emf.incquery.databinding.runtime.adapter.BaseGeneratedDatabindingAdapter;
+		import org.eclipse.incquery.databinding.runtime.adapter.BaseGeneratedDatabindingAdapter;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
 

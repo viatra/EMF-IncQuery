@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA2 R3 Incremental Pattern Matcher Core
+Bundle-Name: Incremental Pattern Matcher Core
 Bundle-SymbolicName: org.eclipse.incquery.runtime.rete
 Bundle-Version: 0.7.0.qualifier
 Bundle-Activator: org.eclipse.incquery.runtime.rete.Activator

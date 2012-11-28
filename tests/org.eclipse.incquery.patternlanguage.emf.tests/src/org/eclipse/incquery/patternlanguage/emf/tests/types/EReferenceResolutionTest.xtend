@@ -39,7 +39,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name : Pattern, Body) = {
 				Pattern.bodies(Name, Body);
@@ -56,7 +56,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolutionChain() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name : Pattern, Constraint) = {
 				Pattern.bodies.constraints(Name, Constraint);
@@ -76,7 +76,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolutionEscapedKeyword() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage"
 
 			pattern keywordAsIdentifier(A,B) = {
 				EClassifierConstraint.^var(A,B); 
@@ -92,7 +92,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolutionInvalid(){
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name : Pattern, Constraint) = {
 				Pattern.notExist(Name, Constraint);

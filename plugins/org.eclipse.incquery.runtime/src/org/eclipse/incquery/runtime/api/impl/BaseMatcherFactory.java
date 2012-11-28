@@ -31,27 +31,19 @@ public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? exten
 
 	protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.common.notify.Notifier, int)
-	 */
 	@Override
 	public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
 		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(emfRoot);
 		return instantiate(engine);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.ReteEngine)
-	 */
+
 	@Override
 	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
 		return instantiate(engine);
 	}
 
 	private String fullyQualifiedName;
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPatternFullyQualifiedName()
-	 */
+
 	@Override
 	public String getPatternFullyQualifiedName() {
 		if (fullyQualifiedName == null) 
@@ -62,17 +54,11 @@ public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? exten
 
 // // EXPERIMENTAL	
 //	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.transaction.TransactionalEditingDomain)
-//	 */
 //	@Override
 //	public Matcher getMatcher(TransactionalEditingDomain trDomain) throws IncQueryRuntimeException {
 //		return getMatcher(trDomain, 0);
 //	}
 //
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getMatcher(org.eclipse.emf.transaction.TransactionalEditingDomain, int)
-//	 */
 //	@Override
 //	public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException {
 //		try {		

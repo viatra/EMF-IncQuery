@@ -35,12 +35,8 @@ public class Bag extends SimpleReceiver {
 		contents = new LinkedList<Tuple>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
-	public void update(Direction direction, Tuple updateElement) {
+	@Override
+    public void update(Direction direction, Tuple updateElement) {
 		if (direction == Direction.INSERT)
 			contents.add(updateElement);
 		else

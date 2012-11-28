@@ -5,9 +5,9 @@
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
-       uri = "http://www.eclipse.org/viatra2/emf/incquery/tooling/generator/IQGenModel" 
-       class = "org.eclipse.viatra2.emf.incquery.tooling.generator.generatorModel.GeneratorModelPackage"
-       genModel = "org/eclipse/viatra2/emf/incquery/tooling/generator/GeneratorModel.genmodel" /> 
+       uri = "http://www.eclipse.org/incquery/tooling/generator/model/IQGenModel" 
+       class = "org.eclipse.incquery.tooling.generator.model.generatorModel.GeneratorModelPackage"
+       genModel = "org/eclipse/incquery/tooling/generator/model/GeneratorModel.genmodel" /> 
 	
   </extension>
 

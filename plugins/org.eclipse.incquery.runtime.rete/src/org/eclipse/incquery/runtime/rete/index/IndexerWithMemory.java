@@ -44,7 +44,8 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
 		reteContainer.registerClearable(memory);		
 	}
 
-	public void update(Direction direction, Tuple updateElement) {
+	@Override
+    public void update(Direction direction, Tuple updateElement) {
 		Tuple signature = mask.transform(updateElement);
 		boolean change = (direction == Direction.INSERT) ? memory.add(
 				updateElement, signature) : memory.remove(updateElement,
@@ -57,7 +58,8 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
 	 */
 	protected abstract void update(Direction direction, Tuple updateElement, Tuple signature, boolean change);
 
-	public void appendParent(Supplier supplier) {
+	@Override
+    public void appendParent(Supplier supplier) {
 		if (parent == null) 
 			parent = supplier;
 		else
@@ -66,16 +68,14 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
 					"). ");
 	}
 
-	public void removeParent(Supplier supplier) {
+	@Override
+    public void removeParent(Supplier supplier) {
 		if (parent == supplier) 
 			parent = null;
 		else
 			throw new IllegalArgumentException("Illegal RETE edge removal: the parent of " + this + " is not " + supplier);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#getParents()
-	 */
 	@Override
 	public Collection<Supplier> getParents() {
 		Vector<Supplier> v = new Vector<Supplier>();

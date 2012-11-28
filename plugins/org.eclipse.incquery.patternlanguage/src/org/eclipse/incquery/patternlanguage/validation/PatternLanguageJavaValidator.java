@@ -420,30 +420,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.xtext.validation.AbstractDeclarativeValidator#warning(java.lang.String,
-     * org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String[])
-     */
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.patternlanguage.core.validation.IIssueCallback#warning(java.lang.String, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String)
-     */
     @Override
     public void warning(String message, EObject source, EStructuralFeature feature, String code,
             String... issueData) {
         super.warning(message, source, feature, code, issueData);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.xtext.validation.AbstractDeclarativeValidator#error(java.lang.String,
-     * org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String[])
-     */
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.patternlanguage.core.validation.IIssueCallback#error(java.lang.String, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.String, java.lang.String)
-     */
     @Override
     public void error(String message, EObject source, EStructuralFeature feature, String code,
             String... issueData) {

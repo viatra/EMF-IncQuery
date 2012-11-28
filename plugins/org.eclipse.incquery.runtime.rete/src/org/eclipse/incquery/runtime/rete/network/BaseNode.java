@@ -38,33 +38,25 @@ public abstract class BaseNode implements Node {
 			return "[" + nodeId+ "]" + getClass().getSimpleName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node#getContainer()
-	 */
-	public ReteContainer getContainer() {
+	@Override
+    public ReteContainer getContainer() {
 		return reteContainer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node#getNodeId()
-	 */
-	public long getNodeId() {
+	@Override
+    public long getNodeId() {
 		return nodeId;
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node#getTag()
-	 */
-	public Object getTag() {
+	@Override
+    public Object getTag() {
 		return tag;
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Node#setTag(java.lang.Object)
-	 */
-	public void setTag(Object tag) {
+	@Override
+    public void setTag(Object tag) {
 		this.tag = tag;
 	}
 

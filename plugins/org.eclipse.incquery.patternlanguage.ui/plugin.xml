@@ -8,10 +8,10 @@
 
 
 
-    <!-- marker definitions for org.eclipse.viatra2.patternlanguage.core.PatternLanguage -->
+    <!-- marker definitions for org.eclipse.incquery.patternlanguage.PatternLanguage -->
 
 	<!-- Quick Outline -->
-    <!-- quickfix marker resolution generator for org.eclipse.viatra2.patternlanguage.core.PatternLanguage -->
+    <!-- quickfix marker resolution generator for org.eclipse.incquery.patternlanguage.PatternLanguage -->
    	<!-- Rename Refactoring -->
 
 <!-- Type Hierarchy  -->

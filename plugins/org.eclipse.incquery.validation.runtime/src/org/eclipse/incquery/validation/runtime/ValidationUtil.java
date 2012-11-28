@@ -102,7 +102,7 @@ public class ValidationUtil {
 		Multimap<String, Constraint<IPatternMatch>> result = HashMultimap.create();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.validation.runtime.constraint");
+		IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.incquery.validation.runtime.constraint");
 
 		for (IExtension extension : ep.getExtensions()) {
 			for (IConfigurationElement ce : extension.getConfigurationElements()) {

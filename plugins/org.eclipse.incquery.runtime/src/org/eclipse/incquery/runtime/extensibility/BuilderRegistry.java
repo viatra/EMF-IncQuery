@@ -15,7 +15,7 @@ package org.eclipse.incquery.runtime.extensibility;
 //import java.util.HashMap;
 //import java.util.Map;
 //
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Pattern;
 //
 ///**
 // * Registry class for registering IncQuery pattern builders.

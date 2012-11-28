@@ -39,9 +39,7 @@ public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleRe
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
+
 	@Override
 	public void update(Direction direction, Tuple updateElement) {
 		Match match = statelessConvert(updateElement);

@@ -13,26 +13,18 @@ package org.eclipse.incquery.runtime.triggerengine.firing;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
-
 /**
  * @author Abel Hegedus
  *
  */
 public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider {
 
-    private Set<IUpdateCompleteListener> listeners;
+    private final Set<IUpdateCompleteListener> listeners;
     
-    /**
-     * 
-     */
     public UpdateCompleteProvider() {
         listeners = new HashSet<IUpdateCompleteListener>();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#addUpdateCompleteListener(org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener, boolean)
-     */
     @Override
     public boolean addUpdateCompleteListener(IUpdateCompleteListener listener, boolean fireNow) {
         boolean added = listeners.add(listener);
@@ -42,9 +34,6 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
         return added;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#removeUpdateCompleteListener(org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener)
-     */
     @Override
     public boolean removeUpdateCompleteListener(IUpdateCompleteListener listener) {
         return this.listeners.remove(listener);
@@ -56,9 +45,6 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#dispose()
-     */
     @Override
     public void dispose() {
         listeners.clear();
