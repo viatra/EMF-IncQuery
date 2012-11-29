@@ -29,8 +29,7 @@ public class IncQueryRuntimePlugin extends Plugin {
 	// The shared instance
 	private static IncQueryRuntimePlugin plugin;
 	
-	public static final String PLUGIN_ID="org.eclipse.viatra2.emf.incquery.runtime";
-	private static final String INJECTOREXTENSIONID = "org.eclipse.viatra2.emf.incquery.runtime.injectorprovider";
+	public static final String PLUGIN_ID="org.eclipse.incquery.runtime";
 
 	/*
 	 * (non-Javadoc)
@@ -67,7 +66,7 @@ public class IncQueryRuntimePlugin extends Plugin {
 	}
 
 	private Injector createInjector() throws CoreException {
-		IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(INJECTOREXTENSIONID);
+		IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(IExtensions.INJECTOREXTENSIONID);
 		if (providers.length > 0) {
 			IConfigurationElement provider = providers[0]; //XXX multiple providers not supported
 			IInjectorProvider injectorProvider = (IInjectorProvider) provider.createExecutableExtension("injector");

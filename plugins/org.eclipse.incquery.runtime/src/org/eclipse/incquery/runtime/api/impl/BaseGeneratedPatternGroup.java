@@ -22,9 +22,6 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
  */
 public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup#getPatterns()
-	 */
 	@Override
 	public Set<Pattern> getPatterns() {
 		return patterns(matcherFactories);

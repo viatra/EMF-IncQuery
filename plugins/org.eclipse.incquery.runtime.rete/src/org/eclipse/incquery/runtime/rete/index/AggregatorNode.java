@@ -54,7 +54,8 @@ public abstract class AggregatorNode extends StandardNode {
 			mainAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
 		}
 		projection.attachListener(new DefaultIndexerListener(this){		
-			public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+			@Override
+            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
 				aggregateUpdate(direction, updateElement, signature, change);
 			}
 		});		
@@ -97,10 +98,8 @@ public abstract class AggregatorNode extends StandardNode {
 		return aggregatorOuterIdentityIndexers[resultPositionInSignature];
 	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#pullInto(java.util.Collection)
-	 */
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		for (Tuple signature: mainAggregates.keySet()) {
 			collector.add(packResult(signature, mainAggregates.get(signature)));
 		}
@@ -162,7 +161,8 @@ public abstract class AggregatorNode extends StandardNode {
 			
 		}
 
-		public Collection<Tuple> get(Tuple signature) {	
+		@Override
+        public Collection<Tuple> get(Tuple signature) {	
 			return Collections.singleton(packResult(signature, getAggregate(signature)));
 		}
 		
@@ -222,7 +222,8 @@ public abstract class AggregatorNode extends StandardNode {
 				this.reorder = mask;
 		}
 
-		public Collection<Tuple> get(Tuple signatureWithResult) {
+		@Override
+        public Collection<Tuple> get(Tuple signatureWithResult) {
 			Tuple prunedSignature = pruneResult.transform(signatureWithResult);
 			Object result = getAggregate(prunedSignature);
 			if (signatureWithResult.get(resultPositionInSignature).equals(result))

@@ -37,7 +37,7 @@ class PackageDeclarationTest {
 	def simplePackage() {
 		val model = parseHelper.parse('
 			package school
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
@@ -51,7 +51,7 @@ class PackageDeclarationTest {
 	def hierarchicPackage() {
 		val model = parseHelper.parse('
 			package hu.bme.mit.school;
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
@@ -66,7 +66,7 @@ class PackageDeclarationTest {
 	def capitalizedPackageName() {
 				val model = parseHelper.parse('
 			package School
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);

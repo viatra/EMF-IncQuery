@@ -28,7 +28,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
 	/**
 	 *  The plug-in ID
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.tooling.gui";
+	public static final String PLUGIN_ID = "org.eclipse.incquery.tooling.ui";
 	
 	public static final String ICON_ROOT = "navigator_root";
 	public static final String ICON_MATCHER = "matcher";

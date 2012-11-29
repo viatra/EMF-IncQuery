@@ -43,24 +43,16 @@ public abstract class FilterNode extends SingleInputNode {
 	 */
 	public abstract boolean check(Tuple ps);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#pullInto(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver)
-	 */
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
 			if (check(ps))
 				collector.add(ps);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
-	public void update(Direction direction, Tuple updateElement) {
+	@Override
+    public void update(Direction direction, Tuple updateElement) {
 		if (check(updateElement))
 			propagateUpdate(direction, updateElement);
 	}

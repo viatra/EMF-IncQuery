@@ -17,9 +17,9 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * ALL METHODS: FOR INTERNAL USE ONLY; ONLY INVOKE FROM
- *         org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.ReteContainer
+ *         {@link ReteContainer}
  *         
- * @author Gabor Bergmann 
+ * @author Gabor Bergmann
  */
 public interface Receiver extends Node {
 

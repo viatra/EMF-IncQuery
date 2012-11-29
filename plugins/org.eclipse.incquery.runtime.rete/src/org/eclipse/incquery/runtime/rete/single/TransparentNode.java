@@ -29,17 +29,14 @@ public class TransparentNode extends SingleInputNode {
 		super(reteContainer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
-	public void update(Direction direction, Tuple updateElement) {
+	@Override
+    public void update(Direction direction, Tuple updateElement) {
 		propagateUpdate(direction, updateElement);
 
 	}
 
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		propagatePullInto(collector);
 	}
 

@@ -51,12 +51,6 @@ public class MetamodelProviderService implements IMetamodelProvider {
 		return genmodelRegistry;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider#
-	 * getAllMetamodelObjects()
-	 */
 	@Override
 	public IScope getAllMetamodelObjects(EObject context) {
 		final Map<String, EPackage> metamodelMap = getMetamodelMap();
@@ -64,7 +58,8 @@ public class MetamodelProviderService implements IMetamodelProvider {
 				metamodelMap.keySet());
 		Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
 				new Function<String, IEObjectDescription>() {
-					public IEObjectDescription apply(String from) {
+					@Override
+                    public IEObjectDescription apply(String from) {
 						EPackage ePackage = metamodelMap.get(from);
 						// InternalEObject proxyPackage = (InternalEObject)
 						// EcoreFactory.eINSTANCE.createEPackage();
@@ -92,13 +87,6 @@ public class MetamodelProviderService implements IMetamodelProvider {
 
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.viatra2.patternlanguage.scoping.IMetamodelProvider#getPackage
-	 * (java.lang.String)
-	 */
 	@Override
 	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
 		if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {

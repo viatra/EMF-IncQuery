@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.incquery.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.incquery.runtime" id="org.eclipse.viatra2.emf.incquery.xexpressionevaluator" name="EMF-IncQuery XExpression Evaluator"/>
+         <meta.schema plugin="org.eclipse.incquery.runtime" id="xexpressionevaluator" name="EMF-IncQuery XExpression Evaluator"/>
       </appInfo>
       <documentation>
          FIXME do it, enter description!
@@ -62,7 +62,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.runtime.api.IMatchChecker"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.runtime.extensibility.IMatchChecker"/>
                </appInfo>
             </annotation>
          </attribute>

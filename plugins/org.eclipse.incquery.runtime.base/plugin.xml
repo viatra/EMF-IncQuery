@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features" name="EMF-IncQuery Wellbehaving Derived Features" schema="schema/org.eclipse.viatra2.emf.incquery.wellbehavingDerivedFeature.exsd"/>
+   <extension-point id="org.eclipse.incquery.runtime.base.wellbehaving.derived.features" name="EMF-IncQuery Wellbehaving Derived Features" schema="schema/wellbehavingDerivedFeature.exsd"/>
    <extension
-         point="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features">
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
       <wellbehaving-derived-feature
             classifier-name="EGenericType"
             feature-name="eRawType"

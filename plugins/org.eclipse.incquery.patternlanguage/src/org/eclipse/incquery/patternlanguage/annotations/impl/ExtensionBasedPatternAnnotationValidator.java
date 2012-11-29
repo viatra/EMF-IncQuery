@@ -158,22 +158,11 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
         return "";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.patternlanguage.core.annotations. IPatternAnnotationValidator#isDeprecated()
-     */
     @Override
     public boolean isDeprecated() {
         return deprecated;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.patternlanguage.core.annotations.
-     * IPatternAnnotationValidator#isDeprecated(java.lang.String)
-     */
     @Override
     public boolean isDeprecated(String parameterName) {
         for (ExtensionBasedPatternAnnotationParameter param : definedAttributes) {
@@ -184,11 +173,6 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.patternlanguage.core.annotations.IPatternAnnotationValidator#getAdditionalValidator()
-     */
     @Override
     public IPatternAnnotationAdditionalValidator getAdditionalValidator() {
         return validator;

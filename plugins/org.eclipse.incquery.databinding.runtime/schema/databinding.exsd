@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.viatra2.emf.incquery.databinding.runtime.DatabindingAdapter:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -79,7 +79,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcherFactory:"/>
                </appinfo>
             </annotation>
          </attribute>

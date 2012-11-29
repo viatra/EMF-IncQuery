@@ -24,9 +24,9 @@ import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
 import org.eclipse.incquery.runtime.rete.index.JoinNode;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext.GeneralizationQueryDirection;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext.GeneralizationQueryDirection;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Production;
@@ -332,7 +332,6 @@ public class ReteBoundary<PatternDescription> {
 			this.containmentTransitiveRoot = containmentTransitiveRoot; // cast
 																		// back
 																		// to
-																		// org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.
 																		// Supplier
 		}
 		return containmentTransitiveRoot;
@@ -394,8 +393,6 @@ public class ReteBoundary<PatternDescription> {
 			this.instantiationTransitiveRoot = instantiationTransitiveRoot; // cast
 																			// back
 																			// to
-																			// org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network
-																			// .
 																			// Supplier
 		}
 		return instantiationTransitiveRoot;
@@ -456,8 +453,6 @@ public class ReteBoundary<PatternDescription> {
 			this.generalizationTransitiveRoot = generalizationTransitiveRoot; // cast
 																				// back
 																				// to
-																				// org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network
-																				// .
 																				// Supplier
 		}
 		return generalizationTransitiveRoot;

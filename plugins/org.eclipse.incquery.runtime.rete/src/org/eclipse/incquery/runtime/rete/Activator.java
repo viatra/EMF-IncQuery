@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete";
+	public static final String PLUGIN_ID = "org.eclipse.incquery.runtime.rete";
 
 	// The shared instance
 	private static Activator plugin;

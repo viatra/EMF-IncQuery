@@ -53,19 +53,13 @@ public class Equality<PatternDescription, StubHandle> extends
 	public boolean isMoot() {
 		return who.equals(withWhom);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#replaceVariable(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
+
 	@Override
 	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
 		if (obsolete.equals(who)) who = replacement;
 		if (obsolete.equals(withWhom)) withWhom = replacement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#toStringRest()
-	 */
 	@Override
 	protected String toStringRest() {
 		return who.getName() + "=" + withWhom.getName();
@@ -86,18 +80,11 @@ public class Equality<PatternDescription, StubHandle> extends
 		return withWhom;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return Collections.emptySet();
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#isReadyAt(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	public boolean isReadyAt(Stub<StubHandle> stub) {
 		return isMoot() || 
@@ -106,10 +93,6 @@ public class Equality<PatternDescription, StubHandle> extends
 				// until then, LayoutHelper.unifyVariablesAlongEqualities(PSystem<PatternDescription, StubHandle, Collector>) is recommended.
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		if (isMoot()) return stub;
@@ -126,10 +109,6 @@ public class Equality<PatternDescription, StubHandle> extends
 		return null;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#raiseForeverDeferredError(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
 		String[] args = {who.toString(), withWhom.toString()};

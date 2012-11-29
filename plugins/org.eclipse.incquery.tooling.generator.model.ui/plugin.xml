@@ -6,42 +6,42 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             extensions="eiqgen"
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
+            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
             name="GeneratorModel Editor">
         </editor>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
         <handler
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+                    definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.validate">
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+            commandId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.validate">
          <activeWhen>
             <reference
-                    definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+                    definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
             </reference>
          </activeWhen>
       </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+        <definition id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel" 
+                        value="org.eclipse.incquery.tooling.generator.model.GeneratorModel" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -50,35 +50,33 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-              category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-              class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-              id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-              name="GeneratorModel">
-            <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
+            name="GeneratorModel">
+            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
         </page>
         <page
-            category="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.coloring"
+            category="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.coloring"
             name="Syntax Coloring">
-            <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
+            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
         </page>
         <page
-            category="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.templates"
+            category="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.templates"
             name="Templates">
-            <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
+            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-              category="org.eclipse.viatra2.patternlanguage.EMFPatternLanguage"
-              class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-              id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-              name="GeneratorModel">
-            <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
+            name="GeneratorModel">
+            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -88,14 +86,14 @@
     <extension
         point="org.eclipse.ui.keywords">
         <keyword
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"
+            id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"
             label="GeneratorModel"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
       <command
             description="Trigger expensive validation"
-            id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.validate"
+            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.validate"
             name="Validate">
       </command>
     </extension>
@@ -103,12 +101,12 @@
         <menuContribution
             locationURI="popup:#TextEditorContext?after=group.edit">
              <command
-                 commandId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.validate"
+                 commandId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.validate"
                  style="push"
                  tooltip="Trigger expensive validation">
             <visibleWhen checkEnabled="false">
                 <reference
-                    definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+                    definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
@@ -118,7 +116,7 @@
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
 			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
 				<visibleWhen checkEnabled="false">
-                	<reference definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+                	<reference definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
                 	</reference>
             	</visibleWhen>
 			</command>
@@ -126,11 +124,11 @@
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 	    <handler
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+                    definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -141,19 +139,19 @@
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
-			class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
 			type="eiqgen">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
             uriExtension="eiqgen">
         </resourceServiceProvider>
     </extension>
 
 
-    <!-- marker definitions for org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel -->
+    <!-- marker definitions for org.eclipse.incquery.tooling.generator.model.GeneratorModel -->
     <extension
             id="generatormodel.check.fast"
             name="GeneratorModel Problem"
@@ -180,11 +178,11 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+			class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+					definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -204,33 +202,33 @@
 				style="push"
 				tooltip="Open Quick Outline">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened"/>
+					<reference definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel -->
+    <!-- quickfix marker resolution generator for org.eclipse.incquery.tooling.generator.model.GeneratorModel -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.generatormodel.check.fast">
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.incquery.tooling.generator.model.ui.generatormodel.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.generatormodel.check.normal">
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.incquery.tooling.generator.model.ui.generatormodel.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.generatormodel.check.expensive">
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.incquery.tooling.generator.model.ui.generatormodel.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -240,11 +238,11 @@
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
+			class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+					definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -256,7 +254,7 @@
                style="push">
             <visibleWhen checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.Editor.opened">
+                     definitionId="org.eclipse.incquery.tooling.generator.model.GeneratorModel.Editor.opened">
                </reference>
             </visibleWhen>
          </command>
@@ -264,29 +262,29 @@
    </extension>
    <extension point="org.eclipse.ui.preferencePages">
 	    <page
-	        category="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel"
-	        class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.refactoring"
+	        category="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
+	        class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.refactoring"
 	        name="Refactoring">
-	        <keywordReference id="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.keyword_GeneratorModel"/>
+	        <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
 	    </page>
 	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.compare.contentViewers"
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+    <viewer id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.compare.contentViewers"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="eiqgen">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.compare.contentMergeViewers"
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+    <viewer id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.compare.contentMergeViewers"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="eiqgen" label="GeneratorModel Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="org.eclipse.viatra2.emf.incquery.tooling.generator.GeneratorModel.editors.documentProviders"
-            class="org.eclipse.viatra2.emf.incquery.tooling.generator.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
+    <provider id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.editors.documentProviders"
+            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
             extensions="eiqgen">
     </provider>
   </extension>

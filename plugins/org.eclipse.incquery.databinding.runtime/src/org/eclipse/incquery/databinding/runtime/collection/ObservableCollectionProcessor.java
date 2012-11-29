@@ -39,13 +39,6 @@ public class ObservableCollectionProcessor<Match extends IPatternMatch> implemen
         this.collection = collection;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process(org.eclipse.viatra2.emf.incquery.runtime
-     * .api.IPatternMatch)
-     */
     @Override
     public void process(Match match) {
         if (direction == Direction.INSERT) {

@@ -15,7 +15,7 @@ import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" as core
 import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
-generate eMFPatternLanguage "http://www.eclipse.org/incquery/patternlanguage/emf/PatternLanguage"
+generate eMFPatternLanguage "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage"
 
 EMFPatternModel returns core::PatternModel:
 	{PatternModel}

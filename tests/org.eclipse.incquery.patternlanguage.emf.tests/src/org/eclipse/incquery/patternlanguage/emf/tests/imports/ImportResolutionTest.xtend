@@ -35,7 +35,7 @@ class ImportResolutionTest {
 	@Test
 	def importResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
@@ -45,14 +45,14 @@ class ImportResolutionTest {
 		val importDecl = model.importPackages.get(0)
 		val ePackage = importDecl.EPackage
 		assertNotNull(ePackage)
-		assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage")
+		assertEquals(ePackage.nsURI, "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage")
 	}
 	
 	@Test
 	def multipleImportResolution() {
 		val model = parseHelper.parse('
-			import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage";
-			import "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage";
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage";
+			import "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage";
 
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
@@ -62,11 +62,11 @@ class ImportResolutionTest {
 		var importDecl = model.importPackages.get(0)
 		var ePackage = importDecl.EPackage
 		assertNotNull(ePackage)
-		assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage")
+		assertEquals(ePackage.nsURI, "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage")
 		importDecl = model.importPackages.get(1)
 		ePackage = importDecl.EPackage
 		assertNotNull(ePackage)
-		assertEquals(ePackage.nsURI, "http://www.eclipse.org/viatra2/patternlanguage/EMFPatternLanguage")
+		assertEquals(ePackage.nsURI, "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage")
 	}
 	
 	@Test

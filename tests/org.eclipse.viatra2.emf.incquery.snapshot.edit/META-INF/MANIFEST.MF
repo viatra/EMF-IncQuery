@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.snapshot.edit;singleton:=true
+Bundle-SymbolicName: org.eclipse.incquery.snapshot.edit;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.provider.EiqsnapshotEditPlugin$Implementation
@@ -10,7 +10,7 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.provider
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.viatra2.emf.incquery.snapshot;visibility:=reexport,
+ org.eclipse.incquery.snapshot;visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.edit;visibility:=reexport

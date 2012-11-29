@@ -48,17 +48,11 @@ public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> exte
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPattern()
-	 */
 	@Override
 	public Pattern getPattern() {
 		return factory.getPattern();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPatternName()
-	 */
 	@Override
 	public String getPatternName() {
 		return factory.getPatternFullyQualifiedName();

@@ -13,7 +13,6 @@ package org.eclipse.incquery.patternlanguage.emf.ui;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
-import org.eclipse.incquery.patternlanguage.emf.ui.AbstractEMFPatternLanguageUiModule;
 import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
@@ -48,7 +47,7 @@ import com.google.inject.name.Names;
  * Use this class to register components to be used within the IDE.
  */
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
-	private static final String loggerRoot = "org.eclipse.viatra2.emf.incquery";
+	private static final String loggerRoot = "org.eclipse.incquery";
 
 	public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
 		super(plugin);

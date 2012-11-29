@@ -34,17 +34,11 @@ public class Instantiation<PatternDescription, StubHandle> extends
 		super(pSystem, parent, child, transitive);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.CoreModelRelationship#doCreateTransitiveStub()
-	 */
 	@Override
 	protected Stub<StubHandle> doCreateTransitiveStub() {
 		return buildable.instantiationTransitiveStub(variablesTuple);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicenumerables.CoreModelRelationship#doCreateDirectStub()
-	 */
 	@Override
 	protected Stub<StubHandle> doCreateDirectStub() {
 		return buildable.instantiationDirectStub(variablesTuple);

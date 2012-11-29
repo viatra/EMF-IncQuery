@@ -190,9 +190,6 @@ public class EMFPatternMatcherRuntimeContext
 //		this.traversalCoalescing = false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherRuntimeContext#coalesceTraversals(java.util.concurrent.Callable)
-	 */
 	@Override
 	public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
 		return baseIndex.coalesceTraversals(callable);
@@ -460,9 +457,6 @@ public class EMFPatternMatcherRuntimeContext
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.IPatternMatcherRuntimeContext#subscribePatternMatcherForTraceInfluences(org.eclipse.viatra2.gtasm.patternmatcher.incremental.ReteEngine)
-	 */
 	@Override
 	public IPredicateTraceListener subscribePatternMatcherForTraceInfluences(ReteEngine<Pattern> engine) {
 		// No ASMFunctions, use DUMMY

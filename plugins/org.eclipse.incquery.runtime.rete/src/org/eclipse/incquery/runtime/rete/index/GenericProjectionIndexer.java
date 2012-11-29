@@ -42,24 +42,21 @@ public class GenericProjectionIndexer extends IndexerWithMemory implements Proje
 		propagate(direction, updateElement,signature, change);
 	}
 
-	public Collection<Tuple> get(Tuple signature) {
+	@Override
+    public Collection<Tuple> get(Tuple signature) {
 		return memory.get(signature);
 	}
 
-	public Iterator<Tuple> iterator() {
+	@Override
+    public Iterator<Tuple> iterator() {
 		return memory.iterator();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.IterableIndexer#getSignatures()
-	 */
-	 public Collection<Tuple> getSignatures() {
+	 @Override
+    public Collection<Tuple> getSignatures() {
 		return memory.getSignatures();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.index.Indexer#getActiveNode()
-	 */
 	@Override
 	public Receiver getActiveNode() {
 		return this;

@@ -97,18 +97,13 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     }
     return posMapping;
   } 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getPositionOfParameter(java.lang.String)
-   */
   @Override
   public Integer getPositionOfParameter(String parameterName) {
     return getPosMapping().get(parameterName);
   }
   
   private String[] parameterNames;
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getParameterNames()
-   */
+
   @Override
   public String[] getParameterNames() {
     if (parameterNames == null) {
@@ -123,17 +118,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
   // BASE IMPLEMENTATION
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatches()
-   */
   @Override
   public Collection<Match> getAllMatches() {
     return rawGetAllMatches(emptyArray());
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllMatches(java.lang.Object[])
-   */
   @Override
   public Collection<Match> rawGetAllMatches(Object[] parameters) {
     ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
@@ -143,26 +132,17 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     return matches;
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllMatches(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-   */
   @Override
   public Collection<Match> getAllMatches(Match partialMatch) {
     return rawGetAllMatches(partialMatch.toArray());
   }
   // with input binding as pattern-specific parameters: not declared in interface
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneArbitraryMatch()
-   */
   @Override
   public Match getOneArbitraryMatch() {
     return rawGetOneArbitraryMatch(emptyArray());
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetOneArbitraryMatch(java.lang.Object[])
-   */
   @Override
   public Match rawGetOneArbitraryMatch(Object[] parameters) {
     Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
@@ -172,51 +152,33 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
       return null;  
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getOneArbitraryMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-   */
   @Override
   public Match getOneArbitraryMatch(Match partialMatch) {
     return rawGetOneArbitraryMatch(partialMatch.toArray());
   }
   // with input binding as pattern-specific parameters: not declared in interface
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawHasMatch(java.lang.Object[])
-   */
   @Override
   public boolean rawHasMatch(Object[] parameters) {
     return patternMatcher.count(parameters, notNull(parameters)) > 0;
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#hasMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-   */
   @Override
   public boolean hasMatch(Match partialMatch) {
     return rawHasMatch(partialMatch.toArray());
   }
   // with input binding as pattern-specific parameters: not declared in interface
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#countMatches()
-   */
   @Override
   public int countMatches() {
     return rawCountMatches(emptyArray());
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawCountMatches(java.lang.Object[])
-   */
   @Override
   public int rawCountMatches(Object[] parameters) {
     return patternMatcher.count(parameters, notNull(parameters));
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#countMatches(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-   */
   @Override
   public int countMatches(Match partialMatch) {
     return rawCountMatches(partialMatch.toArray());
@@ -224,9 +186,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
   // with input binding as pattern-specific parameters: not declared in interface
 
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawForEachMatch(java.lang.Object[], org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-   */
   @Override
   public void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
     ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
@@ -234,42 +193,27 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     for(Tuple t: m) processor.process(tupleToMatch(t));
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forEachMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-   */
   @Override
   public void forEachMatch(IMatchProcessor<? super Match> processor) {
     rawForEachMatch(emptyArray(), processor);
   };
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forEachMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-   */
   @Override
   public void forEachMatch(Match match, IMatchProcessor<? super Match> processor) {
     rawForEachMatch(match.toArray(), processor);
   };
   // with input binding as pattern-specific parameters: not declared in interface
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forOneArbitraryMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-   */
   @Override
   public boolean forOneArbitraryMatch(IMatchProcessor<? super Match> processor) {
     return rawForOneArbitraryMatch(emptyArray(), processor);
   } 
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#forOneArbitraryMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch, org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-   */
   @Override
   public boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor) {
     return rawForOneArbitraryMatch(partialMatch.toArray(), processor);    
   };  
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawForOneArbitraryMatch(java.lang.Object[], org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor)
-   */
   @Override
   public boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
     Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
@@ -282,9 +226,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
   }
   // with input binding as pattern-specific parameters: not declared in interface
   	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackOnMatchUpdate(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener, boolean)
-	 */
 	@Override
 	public void addCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener, boolean fireNow) {
 		final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(), engine, listener) {
@@ -296,17 +237,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 	    patternMatcher.connect(callbackNode, listener, fireNow);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#removeCallbackOnMatchUpdate(org.eclipse.viatra2.emf.incquery.runtime.api.IMatchUpdateListener)
-	 */
 	@Override
 	public void removeCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener) {
 		patternMatcher.disconnectByTag(listener);
 	}
     
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newDeltaMonitor(boolean)
-   */
   @Override
   public DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart) {
     DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
@@ -319,9 +254,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     return dm;
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawNewFilteredDeltaMonitor(boolean, java.lang.Object[])
-   */
   @Override
   public DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
     final int length = parameters.length;
@@ -344,73 +276,46 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     return dm;
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newFilteredDeltaMonitor(boolean, org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-   */
   @Override
   public DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch) {
     return rawNewFilteredDeltaMonitor(fillAtStart, partialMatch.toArray());
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackAfterUpdates(java.lang.Runnable)
-   */
   @Override
   public boolean addCallbackAfterUpdates(Runnable callback) {
     return baseIndex.getAfterUpdateCallbacks().add(callback);
   }
 
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#removeCallbackAfterUpdates(java.lang.Runnable)
-   */
   @Override
   public boolean removeCallbackAfterUpdates(Runnable callback) {
     return baseIndex.getAfterUpdateCallbacks().remove(callback);
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#addCallbackOnWipes(java.lang.Runnable)
-   */
   @Override
   public boolean addCallbackAfterWipes(Runnable callback) {
     return engine.getAfterWipeCallbacks().add(callback);
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#removeCallbackOnWipes(java.lang.Runnable)
-   */
   @Override
   public boolean removeCallbackAfterWipes(Runnable callback) {
     return engine.getAfterWipeCallbacks().remove(callback);
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#matchToArray(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-   */
   @Override
   public Object[] matchToArray(Match partialMatch) {
     return partialMatch.toArray();
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newEmptyMatch()
-   */
   @Override
   public Match newEmptyMatch() {
     return arrayToMatch(new Object[getParameterNames().length]);
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#newMatch(java.lang.Object[])
-   */
   @Override
   public Match newMatch(Object... parameters) {
     return arrayToMatch(parameters);
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getAllValues(java.lang.String)
-   */
   @Override
   public Set<Object> getAllValues(final String parameterName) {
     return rawGetAllValues(getPositionOfParameter(parameterName), emptyArray());
@@ -421,9 +326,6 @@ public Set<Object> getAllValues(final String parameterName, Match partialMatch) 
     return rawGetAllValues(getPositionOfParameter(parameterName), partialMatch.toArray());
   };
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#rawGetAllValues(java.lang.String, java.lang.Object[])
-   */
   @Override
   public Set<Object> rawGetAllValues(final int position, Object[] parameters) {
     if(position >= 0 && position < getParameterNames().length) {
@@ -449,13 +351,7 @@ public Set<Object> getAllValues(final String parameterName, Match partialMatch) 
    */
   protected <T> void rawAccumulateAllValues(final int position, Object[] parameters, final Set<T> accumulator) {
     rawForEachMatch(parameters, new IMatchProcessor<Match>() {
-      /*
-       * (non-Javadoc)
-       * 
-       * @see
-       * org.eclipse.viatra2.emf.incquery.runtime.api.IMatchProcessor#process
-       * (org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-       */
+
       @SuppressWarnings("unchecked")
       @Override
       public void process(Match match) {
@@ -464,9 +360,6 @@ public Set<Object> getAllValues(final String parameterName, Match partialMatch) 
     });
   }
   
-  /* (non-Javadoc)
-   * @see org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryMatcher#getEngine()
-   */
   @Override
   public IncQueryEngine getEngine() {
     return engine;

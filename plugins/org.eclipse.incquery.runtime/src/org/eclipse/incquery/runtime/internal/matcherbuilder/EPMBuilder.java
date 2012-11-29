@@ -43,25 +43,16 @@ public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pa
 
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#getContext()
-	 */
 	@Override
 	public IPatternMatcherContext<Pattern> getContext() {
 		return context;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#refresh()
-	 */
 	@Override
 	public void refresh() {
 		baseBuildable.reinitialize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#construct(java.lang.Object)
-	 */
 	@Override
 	public Collector construct(Pattern pattern) throws RetePatternBuildException {
 		try {
@@ -76,9 +67,6 @@ public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.IRetePatternBuilder#getPosMapping(java.lang.Object)
-	 */
 	@Override
 	public HashMap<Object, Integer> getPosMapping(Pattern gtPattern) {
 		HashMap<Object, Integer> result = new HashMap<Object, Integer>();

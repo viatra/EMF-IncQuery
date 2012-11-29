@@ -17,7 +17,7 @@ public final class IssueCodes {
 	
 	private IssueCodes() {}
 
-	protected static final String ISSUE_CODE_PREFIX = "org.eclipse.viatra2.patternlanguage.core.validation.IssueCodes.";
+	protected static final String ISSUE_CODE_PREFIX = "org.eclipse.incquery.patternlanguage.validation.IssueCodes.";
 	
 	public static final String DUPLICATE_PATTERN_PARAMETER_NAME = ISSUE_CODE_PREFIX + "duplicate_pattern_parameter_name";
 	public static final String DUPLICATE_PATTERN_DEFINITION = ISSUE_CODE_PREFIX + "duplicate_pattern_definition";

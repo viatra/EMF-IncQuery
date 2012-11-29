@@ -29,20 +29,13 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
 
 	protected Supplier parent;
 
-	/**
-	 * 
-	 */
 	public SingleInputNode(ReteContainer reteContainer) {
 		super(reteContainer);
 		parent = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#appendParent(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier)
-	 */
-	public void appendParent(Supplier supplier) {
+	@Override
+    public void appendParent(Supplier supplier) {
 		if (parent == null) 
 			parent = supplier;
 		else
@@ -51,12 +44,8 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
 					") as it is not a Uniqueness Enforcer Node. ");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#removeParent(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier)
-	 */
-	public void removeParent(Supplier supplier) {
+	@Override
+    public void removeParent(Supplier supplier) {
 		if (parent == supplier) 
 			parent = null;
 		else
@@ -70,9 +59,6 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
 		if (parent != null) parent.pullInto(collector);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#getParents()
-	 */
 	@Override
 	public Collection<Supplier> getParents() {
 		if (parent == null) 

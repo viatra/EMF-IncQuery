@@ -60,7 +60,7 @@ public class PatternAnnotationProvider {
         }
     }
 
-    static final String EXTENSIONID = "org.eclipse.viatra2.patternlanguage.core.annotation";
+    static final String EXTENSIONID = "org.eclipse.incquery.patternlanguage.annotation";
     private Map<String, IPatternAnnotationValidator> annotationValidators;
 
     protected void initializeValidators() {

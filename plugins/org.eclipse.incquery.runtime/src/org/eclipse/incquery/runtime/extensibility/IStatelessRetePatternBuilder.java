@@ -19,7 +19,7 @@ package org.eclipse.incquery.runtime.extensibility;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.remote.Address;
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Pattern;
 //
 ///**
 // * Stateless version of IRetePatternBuilder: takes all parameters upon call.

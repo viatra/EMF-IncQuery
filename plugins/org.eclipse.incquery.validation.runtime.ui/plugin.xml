@@ -4,23 +4,23 @@
    <extension
          point="org.eclipse.ui.commands">
       <!--<command
-            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnSelection"
+            id="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnSelection"
             name="Initialize EMF-IncQuery Validators on Selected Subtree">
       </command>-->
       <command
-            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+            id="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnEditor"
             name="Initialize EMF-IncQuery Validators on Editor">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <!--<handler
-            class="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.handlers.InitValidatorsForSelectionHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnSelection">
+            class="org.eclipse.incquery.validation.runtime.ui.handlers.InitValidatorsForSelectionHandler"
+            commandId="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnSelection">
       </handler>-->
       <handler
             class="org.eclipse.incquery.validation.runtime.ui.handlers.InitValidatorsForEditorHandler"
-            commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor">
+            commandId="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnEditor">
       </handler>
    </extension>
    <extension
@@ -29,10 +29,10 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any">
          <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu"
+               id="org.eclipse.incquery.validation.runtime.ui.menu"
                label="EMF-IncQuery Validation">
             <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+                  commandId="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnEditor"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -40,7 +40,7 @@
                         variable="activeEditorId">
                      <test
                            forcePluginActivation="true"
-                           property="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.hasConstraint">
+                           property="org.eclipse.incquery.validation.runtime.ui.hasConstraint">
                      </test>
                   </with>
                </visibleWhen>
@@ -50,95 +50,11 @@
             </separator>
          </menu>
       </menuContribution>
-      <!--<menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.ecoreEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnSelection"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
-                  </reference>
-               </visibleWhen>
-            </command>
-         </menu>
-      </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.xmlReflectiveEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnSelection"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
-                  </reference>
-               </visibleWhen>
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.emf.genericEditor">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.genericEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnSelection"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
-                  </reference>
-               </visibleWhen>
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.emf.ecore.presentation.ReflectiveEditorID">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.reflectiveEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnSelection"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
-                  </reference>
-               </visibleWhen>
-            </command>
-         </menu>
-      </menuContribution>-->
-      <!--<menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         <menu
-               id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu.ecoreEditor"
-               label="EMF-IncQuery">
-            <command
-                  commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>-->
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions">
+            locationURI="popup:org.eclipse.incquery.validation.runtime.ui.menu?after=additions">
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+               commandId="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnEditor"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -153,9 +69,9 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions">
+            locationURI="popup:org.eclipse.incquery.validation.runtime.ui.menu?after=additions">
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+               commandId="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnEditor"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -170,9 +86,9 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions">
+            locationURI="popup:org.eclipse.incquery.validation.runtime.ui.menu?after=additions">
          <command
-               commandId="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor"
+               commandId="org.eclipse.incquery.validation.runtime.ui.initValidatorsOnEditor"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -189,7 +105,7 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
-            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.notifierdef">
+            id="org.eclipse.incquery.validation.runtime.ui.notifierdef">
          <with
                variable="selection">
             <iterate
@@ -206,8 +122,8 @@
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             class="org.eclipse.incquery.validation.runtime.ui.EditorReferenceTester"
-            id="org.eclipse.viatra2.emf.incquery.validation.runtime.ui.editorReference"
-            namespace="org.eclipse.viatra2.emf.incquery.validation.runtime.ui"
+            id="org.eclipse.incquery.validation.runtime.ui.editorReference"
+            namespace="org.eclipse.incquery.validation.runtime.ui"
             properties="hasConstraint"
             type="java.lang.String">
       </propertyTester>

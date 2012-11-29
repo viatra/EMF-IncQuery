@@ -58,7 +58,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.viatra2.emf.incquery.runtime.extensibility.IInjectorProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.runtime.extensibility.IInjectorProvider"/>
                </appInfo>
             </annotation>
          </attribute>

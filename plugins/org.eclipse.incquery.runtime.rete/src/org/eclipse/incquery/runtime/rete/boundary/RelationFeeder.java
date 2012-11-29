@@ -11,8 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext.GeneralizationQueryDirection;
+import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
@@ -38,9 +38,6 @@ public class RelationFeeder extends Feeder {
 
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.Feeder#feed()
-	 */
 	@Override
 	public void feed() {
 		if (typeObject != null) {

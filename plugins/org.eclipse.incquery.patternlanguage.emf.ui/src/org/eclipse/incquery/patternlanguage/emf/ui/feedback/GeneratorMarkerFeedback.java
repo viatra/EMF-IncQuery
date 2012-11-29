@@ -39,9 +39,6 @@ public class GeneratorMarkerFeedback implements IErrorFeedback {
 	@Inject
 	private Logger logger;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.patternlanguage.ui.feedback.IErrorFeedback#reportError(org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void reportError(EObject ctx, String message, String errorCode, Severity severity, String markerType) {
 		try {
@@ -58,9 +55,7 @@ public class GeneratorMarkerFeedback implements IErrorFeedback {
 			logger.error("Error while creating error marker", e);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.patternlanguage.ui.feedback.IErrorFeedback#reportErrorNoLocation(org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String)
-	 */
+
 	@Override
 	public void reportErrorNoLocation(EObject ctx, String message, String errorCode, Severity severity, String markerType) {
 		try {
@@ -77,9 +72,6 @@ public class GeneratorMarkerFeedback implements IErrorFeedback {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.patternlanguage.ui.feedback.IErrorFeedback#reportError(org.eclipse.core.resources.IFile, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void reportError(IFile file, String message, String errorCode, Severity severity, String markerType) {
 		try {

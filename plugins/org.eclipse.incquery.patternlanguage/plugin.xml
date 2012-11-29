@@ -12,7 +12,7 @@
 	
   </extension>
   <extension
-        point="org.eclipse.viatra2.emf.incquery.base.wellbehaving.derived.features">
+        point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
      <wellbehaving-derived-feature
            classifier-name="PatternBody"
            feature-name="variables"

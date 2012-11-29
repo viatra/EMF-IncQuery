@@ -33,9 +33,6 @@ public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, St
 		this.supplierKey = supplierKey;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.EnumerablePConstraint#toStringRestRest()
-	 */
 	@Override
 	protected String toStringRestRest() {
 		return supplierKey == null ? "$any(null)" : keyToString();

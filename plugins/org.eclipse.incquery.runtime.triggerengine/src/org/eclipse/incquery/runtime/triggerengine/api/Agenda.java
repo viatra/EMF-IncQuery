@@ -53,17 +53,17 @@ import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotifi
  */
 public class Agenda implements IAgenda {
 
-	private IncQueryEngine iqEngine;
-	private Set<IRule<? extends IPatternMatch>> rules;
-	private Set<ActivationMonitor> monitors;
-	private Notifier notifier;
-	private TransactionalEditingDomain editingDomain;
-	private boolean allowMultipleFiring;
+	private final IncQueryEngine iqEngine;
+	private final Set<IRule<? extends IPatternMatch>> rules;
+	private final Set<ActivationMonitor> monitors;
+	private final Notifier notifier;
+	private final TransactionalEditingDomain editingDomain;
+	private final boolean allowMultipleFiring;
 	private IRuleFactory ruleFactory;
-	private Collection<Activation<? extends IPatternMatch>> activations;
+	private final Collection<Activation<? extends IPatternMatch>> activations;
 	private IUpdateCompleteProvider updateCompleteProvider;
-	private IActivationNotificationListener activationListener;
-	private ActivationNotificationProvider activationProvider;
+	private final IActivationNotificationListener activationListener;
+	private final ActivationNotificationProvider activationProvider;
 	
 	/**
 	 * Instantiates a new Agenda instance with the given {@link IncQueryEngine}.
@@ -146,43 +146,28 @@ public class Agenda implements IAgenda {
 	public void setRuleFactory(IRuleFactory ruleFactory) {
 		this.ruleFactory = ruleFactory;
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#getNotifier()
-     */
+
 	@Override
     public Notifier getNotifier() {
 		return notifier;
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#getEditingDomain()
-     */
+
 	@Override
     public TransactionalEditingDomain getEditingDomain() {
 		return editingDomain;
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#isAllowMultipleFiring()
-     */
+
     @Override
     public boolean isAllowMultipleFiring() {
         return allowMultipleFiring;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#createRule(org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory)
-     */
 	@Override
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
 	IRule<Match> createRule(IMatcherFactory<Matcher> factory) {
 		return createRule(factory, false, false);
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#createRule(org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory, boolean, boolean)
-     */
+
 	@Override
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
 		IRule<Match> createRule(IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed) {
@@ -193,9 +178,6 @@ public class Agenda implements IAgenda {
 		return rule;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#removeRule(org.eclipse.viatra2.emf.incquery.triggerengine.api.AbstractRule)
-     */
 	@Override
     public <MatchType extends IPatternMatch> void removeRule(AbstractRule<MatchType> rule) {
 		if (rules.contains(rule)) {
@@ -205,17 +187,11 @@ public class Agenda implements IAgenda {
 		}
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#getRules()
-     */
 	@Override
     public Collection<IRule<? extends IPatternMatch>> getRules() {
 		return rules;
 	}
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#dispose()
-     */
+
 	@Override
     public void dispose() {
 	    if(updateCompleteProvider != null) {
@@ -226,17 +202,11 @@ public class Agenda implements IAgenda {
 		}
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#getLogger()
-     */
 	@Override
     public Logger getLogger() {
 		return iqEngine.getLogger();
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#getActivations()
-     */
 	@Override
     public Collection<Activation<? extends IPatternMatch>> getActivations() {
 		return Collections.unmodifiableCollection(activations);
@@ -255,10 +225,7 @@ public class Agenda implements IAgenda {
     public void setUpdateCompleteProvider(IUpdateCompleteProvider updateCompleteProvider) {
         this.updateCompleteProvider = updateCompleteProvider;
     }
-	
-	/* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.api.IAgenda#newActivationMonitor(boolean)
-     */
+
 	@Override
     public ActivationMonitor newActivationMonitor(boolean fillAtStart) {
 		ActivationMonitor monitor = new ActivationMonitor();
@@ -271,10 +238,6 @@ public class Agenda implements IAgenda {
 		return monitor;
 	}
 
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#addUpdateCompleteListener(org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener, boolean)
-     */
     @Override
     public boolean addUpdateCompleteListener(IUpdateCompleteListener listener, boolean fireNow) {
         if(updateCompleteProvider != null) {
@@ -284,9 +247,6 @@ public class Agenda implements IAgenda {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteProvider#removeUpdateCompleteListener(org.eclipse.viatra2.emf.incquery.triggerengine.firing.IUpdateCompleteListener)
-     */
     @Override
     public boolean removeUpdateCompleteListener(IUpdateCompleteListener listener) {
         if(updateCompleteProvider != null) {
@@ -296,17 +256,11 @@ public class Agenda implements IAgenda {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#addActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener, boolean)
-     */
     @Override
     public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
         return activationProvider.addActivationNotificationListener(listener, fireNow);
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationProvider#removeActivationNotificationListener(org.eclipse.viatra2.emf.incquery.triggerengine.notification.IActivationNotificationListener)
-     */
+
     @Override
     public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
         return activationProvider.removeActivationNotificationListener(listener);

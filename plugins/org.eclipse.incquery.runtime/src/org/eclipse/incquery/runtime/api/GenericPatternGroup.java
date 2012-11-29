@@ -37,9 +37,6 @@ public class GenericPatternGroup extends BasePatternGroup {
 		this.patterns = patterns;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IPatternGroup#getPatterns()
-	 */
 	@Override
 	public Set<Pattern> getPatterns() {
 		return patterns;

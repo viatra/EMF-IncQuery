@@ -232,7 +232,7 @@ public final class ReteContainer {
 	public void sendUpdateInternal(Receiver receiver, Direction direction,
 			Tuple updateElement) {
 		// sendUpdateExternal(receiver, direction, updateElement);
-		// if (org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.util.Options.synchronous) receiver.update(direction,
+		// if (org.eclipse.incquery.runtime.rete.util.Options.synchronous) receiver.update(direction,
 		// updateElement);
 		// else {
 		UpdateMessage message = new UpdateMessage(receiver, direction,

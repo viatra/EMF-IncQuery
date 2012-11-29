@@ -104,12 +104,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider# getClassifierForVariable
-     * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
-     */
     @Override
     public EClassifier getClassifierForVariable(Variable variable) {
         EcoreUtil2.resolveAll(variable);
@@ -177,14 +171,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#getPossibleClassifiersForVariableInBody(org.eclipse
-     * .viatra2.patternlanguage.core.patternLanguage.PatternBody,
-     * org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
-     */
     @Override
     public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable) {
         Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable, 0,
@@ -196,14 +182,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider#getClassifierForPatternParameterVariable(org.eclipse
-     * .viatra2.patternlanguage.core.patternLanguage.PatternBody,
-     * org.eclipse.viatra2.patternlanguage.core.patternLanguage.Variable)
-     */
     @Override
     public EClassifier getClassifierForPatternParameterVariable(Variable variable) {
         if (variable instanceof ParameterRef) {
@@ -351,12 +329,6 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra2.patternlanguage.types.IEMFTypeProvider# getClassifierForType
-     * (org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type)
-     */
     @Override
     public EClassifier getClassifierForType(Type type) {
         return EMFPatternTypeUtil.getClassifierForType(type);

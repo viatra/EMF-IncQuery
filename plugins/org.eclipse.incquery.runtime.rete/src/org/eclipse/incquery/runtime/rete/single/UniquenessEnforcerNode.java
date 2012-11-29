@@ -65,12 +65,8 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 //		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#update(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Direction, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.Tuple)
-	 */
-	public void update(Direction direction, Tuple updateElement) {
+	@Override
+    public void update(Direction direction, Tuple updateElement) {
 		boolean change;
 		if (direction == Direction.INSERT) {
 			change = memory.add(updateElement);
@@ -93,9 +89,6 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode#constructIndex(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask)
-	 */
 	@Override
 	public ProjectionIndexer constructIndex(TupleMask mask) {
 		if (Options.employTrivialIndexers) {
@@ -105,12 +98,8 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 		return super.constructIndex(mask);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#pullInto(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver)
-	 */
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		collector.addAll(memory);
 	}
 
@@ -124,25 +113,16 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 		return memoryIdentityIndexer;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.SingleInputNode#appendParent(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier)
-	 */
 	@Override
 	public void appendParent(Supplier supplier) {
 		parents.add(supplier);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.single.SingleInputNode#removeParent(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier)
-	 */
 	@Override
 	public void removeParent(Supplier supplier) {
 		parents.remove(supplier);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Receiver#getParents()
-	 */
 	@Override
 	public Collection<Supplier> getParents() {
 		return parents;

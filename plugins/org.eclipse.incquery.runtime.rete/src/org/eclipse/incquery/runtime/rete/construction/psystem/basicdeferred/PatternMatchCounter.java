@@ -42,33 +42,21 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
 		this.resultVariable = resultVariable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return Collections.singleton(resultVariable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.PatternCallBasedDeferred#doDoReplaceVariables(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable, org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	protected void doDoReplaceVariables(PVariable obsolete, PVariable replacement) {
 		if (resultVariable.equals(obsolete)) resultVariable = replacement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.basicdeferred.PatternCallBasedDeferred#getCandidateQuantifiedVariables()
-	 */
 	@Override
 	protected Set<PVariable> getCandidateQuantifiedVariables() {
 		return actualParametersTuple.<PVariable>getDistinctElements();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		Stub<StubHandle> sideStub = getSideStub();
@@ -97,9 +85,6 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.BasePConstraint#toStringRest()
-	 */
 	@Override
 	protected String toStringRest() {
 		return pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString() + "->" + resultVariable.toString();

@@ -48,9 +48,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 	public EdgeInterpretation edgeInterpretation() {
 		return EdgeInterpretation.BINARY;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.IPatternMatcherContext#allowedGeneralizationQueryDirection()
-	 */
+
 	@Override
 	public GeneralizationQueryDirection allowedGeneralizationQueryDirection() {
 		return GeneralizationQueryDirection.SUPERTYPE_ONLY_SMART_NOTIFICATIONS;
@@ -72,9 +70,6 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 		else throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#isUnaryType(java.lang.Object)
-	 */
 	@Override
 	public boolean isUnaryType(Object typeObject) {
 		return typeObject instanceof EClassifier;
@@ -97,9 +92,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 			return Collections.emptyList();// no subtyping between EDataTypes?		
 		} else throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#isBinaryType(java.lang.Object)
-	 */
+
 	@Override
 	public boolean isBinaryEdgeType(Object typeObject) {
 		return typeObject instanceof EStructuralFeature;
@@ -121,9 +114,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 			Object typeObject) {
 		throw new UnsupportedOperationException();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#isTernaryType(java.lang.Object)
-	 */
+
 	@Override
 	public boolean isTernaryEdgeType(Object typeObject) {
 		return false;
@@ -185,41 +176,26 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 		if (getLogger()!=null) getLogger().error(message, cause);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logFatal(java.lang.String)
-	 */
 	@Override
 	public void logFatal(String message) {
 		if (getLogger()!=null) getLogger().fatal(message);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logFatal(java.lang.String, java.lang.Throwable)
-	 */
 	@Override
 	public void logFatal(String message, Throwable cause) {
 		if (getLogger()!=null) getLogger().fatal(message, cause);
 	}
 	
-	 /* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logWarning(java.lang.String)
-	 */
 	@Override
 	public void logWarning(String message) {
 		if (getLogger()!=null) getLogger().warn(message);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#logWarning(java.lang.String, java.lang.Throwable)
-	 */
 	@Override
 	public void logWarning(String message, Throwable cause) {
 		if (getLogger()!=null) getLogger().warn(message, cause);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#printPattern(java.lang.Object)
-	 */
 	@Override
 	public String printPattern(Pattern pattern) {
 		if (pattern == null) {
@@ -228,9 +204,6 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
 		return CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.matcher.IPatternMatcherContext#printType(java.lang.Object)
-	 */
 	@Override
 	public String printType(Object typeObject) {
 		if (typeObject == null) {

@@ -44,17 +44,11 @@ public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatc
 		this.pattern = pattern;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.IMatcherFactory#getPattern()
-	 */
 	@Override
 	public Pattern getPattern() {
 		return pattern;
 	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseMatcherFactory#instantiate(org.eclipse.viatra2.emf.incquery.runtime.api.IncQueryEngine)
-	 */
 	@Override
 	public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryException {
 		return new GenericPatternMatcher(pattern, engine);

@@ -42,26 +42,16 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
 		super(pSystem, affectedVariables);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return Collections.emptySet();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#getDeferringVariables()
-	 */
 	@Override
 	protected Set<PVariable> getDeferringVariables() {
 		return getAffectedVariables();
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#isReadyAt(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	public boolean isReadyAt(Stub<StubHandle> stub) {
 		if (super.isReadyAt(stub)) {
@@ -103,10 +93,7 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
 		}
 		return allTypeRestrictions;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.VariableDeferredPConstraint#raiseForeverDeferredError(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
+
 	@Override
 	public void raiseForeverDeferredError(Stub<StubHandle> stub)
 			throws RetePatternBuildException {

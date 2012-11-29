@@ -38,25 +38,21 @@ public abstract class StandardNode extends BaseNode implements Supplier {
 			reteContainer.sendUpdateInternal(r, direction, updateElement);
 	}
 
-	public void appendChild(Receiver receiver) {
+	@Override
+    public void appendChild(Receiver receiver) {
 		children.add(receiver);
 	}
 
-	public void removeChild(Receiver receiver) {
+	@Override
+    public void removeChild(Receiver receiver) {
 		children.remove(receiver);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#getReceivers()
-	 */
 	@Override
 	public Collection<Receiver> getReceivers() {
 		return children;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.Supplier#constructIndex(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask)
-	 */
 	@Override
 	public ProjectionIndexer constructIndex(TupleMask mask) {
 		final GenericProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);

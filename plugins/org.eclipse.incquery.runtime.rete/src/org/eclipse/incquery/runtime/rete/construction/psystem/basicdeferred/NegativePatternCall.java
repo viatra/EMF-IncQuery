@@ -38,9 +38,6 @@ public class NegativePatternCall<PatternDescription, StubHandle> extends
 		super(pSystem, actualParametersTuple, pattern);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.PConstraint#getDeducedVariables()
-	 */
 	@Override
 	public Set<PVariable> getDeducedVariables() {
 		return Collections.emptySet();
@@ -54,9 +51,6 @@ public class NegativePatternCall<PatternDescription, StubHandle> extends
 		return getAffectedVariables();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.psystem.DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub)
-	 */
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
 		Stub<StubHandle> sideStub = getSideStub();

@@ -110,10 +110,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 //		}
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.network.StandardNode#constructIndex(org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.tuple.TupleMask)
-	 */
+
 	@Override
 	public ProjectionIndexer constructIndex(TupleMask mask) {
 		if (Options.employTrivialIndexers) {
@@ -124,13 +121,15 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 	}
 	
 	
-	public void pullInto(Collection<Tuple> collector) {
+	@Override
+    public void pullInto(Collection<Tuple> collector) {
 		for (Tuple ps : outgoing)
 			collector.add(boundary.wrapTuple(ps));
 	
 	}
 
-	public void update(Direction direction, Tuple wrappers) {
+	@Override
+    public void update(Direction direction, Tuple wrappers) {
 		Tuple updateElement = boundary.unwrapTuple(wrappers);
 		updateOccurences(direction, updateElement);
 		if (direction == Direction.REVOKE) {
@@ -337,10 +336,12 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 			super(reteContainer);
 		}
 
-		public void pullInto(Collection<Tuple> collector) {
+		@Override
+        public void pullInto(Collection<Tuple> collector) {
 		}
 
-		public void update(Direction direction, Tuple updateElement) {
+		@Override
+        public void update(Direction direction, Tuple updateElement) {
 			notifyASMFunctionValueChanged(updateElement);
 		}
 	}
@@ -350,10 +351,12 @@ public class PredicateEvaluatorNode extends SingleInputNode {
 			super(reteContainer);
 		}
 
-		public void pullInto(Collection<Tuple> collector) {
+		@Override
+        public void pullInto(Collection<Tuple> collector) {
 		}
 
-		public void update(Direction direction, Tuple updateElement) {
+		@Override
+        public void update(Direction direction, Tuple updateElement) {
 			notifyElementChange(updateElement.get(0));
 		}
 	}

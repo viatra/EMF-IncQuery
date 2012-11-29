@@ -16,8 +16,7 @@ import java.util.Map;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
- * An interface for the org.eclipse.viatra2.emf.incquery.xexpressionevaluator
- * extension point schema}
+ * An interface for the xexpressionevaluator extension point schema}
  */
 public interface IMatchChecker {
 

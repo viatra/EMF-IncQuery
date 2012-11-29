@@ -30,8 +30,8 @@ public final class ProjectLocator {
     IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
     if(project.exists()) {
       ArrayList<String> dependencies = new ArrayList<String>();
-      dependencies.add("org.eclipse.viatra2.emf.incquery.runtime");
-      dependencies.add("org.eclipse.viatra2.emf.incquery.derived");
+      dependencies.add("org.eclipse.incquery.runtime");
+      dependencies.add("org.eclipse.incquery.querybasedfeatures.runtime");
       try {
         ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
       } catch (CoreException e) {

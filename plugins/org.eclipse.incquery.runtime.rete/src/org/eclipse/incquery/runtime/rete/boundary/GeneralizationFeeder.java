@@ -32,9 +32,6 @@ public class GeneralizationFeeder extends Feeder {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.boundary.Feeder#feed()
-	 */
 	@Override
 	public void feed() {
 		context.enumerateAllGeneralizations(pairCrawler());

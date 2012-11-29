@@ -61,15 +61,6 @@ public class XBaseCheck<StubHandle> extends
 		// nameProvider = injector.getInstance(IQualifiedNameProvider.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction
-	 * .psystem
-	 * .DeferredPConstraint#doCheckOn(org.eclipse.viatra2.gtasm.patternmatcher
-	 * .incremental.rete.construction.Stub)
-	 */
 	@Override
 	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub)
 			throws RetePatternBuildException {
@@ -122,13 +113,6 @@ public class XBaseCheck<StubHandle> extends
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction
-	 * .psystem.BasePConstraint#toStringRest()
-	 */
 	@Override
 	protected String toStringRest() {
 		return new FlatTuple(
@@ -137,17 +121,6 @@ public class XBaseCheck<StubHandle> extends
 				+ "|=" + xExpression.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction
-	 * .psystem
-	 * .BasePConstraint#doReplaceVariable(org.eclipse.viatra2.gtasm.patternmatcher
-	 * .incremental.rete.construction.psystem.PVariable,
-	 * org.eclipse.viatra2.gtasm
-	 * .patternmatcher.incremental.rete.construction.psystem.PVariable)
-	 */
 	@Override
 	protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
 	}

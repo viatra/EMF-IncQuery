@@ -46,7 +46,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void validClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
 				Pattern.bodies.constraints(p1,c);
@@ -63,7 +63,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void wrongArityClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern, c) = {
 				Pattern.bodies.constraints(p1,c);
@@ -81,7 +81,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void negatedClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
 				Pattern.bodies.constraints(p1,c);
@@ -98,7 +98,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void aggregatedClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/viatra2/patternlanguage/core/PatternLanguage"
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
 				Pattern.bodies.constraints(p1,c);

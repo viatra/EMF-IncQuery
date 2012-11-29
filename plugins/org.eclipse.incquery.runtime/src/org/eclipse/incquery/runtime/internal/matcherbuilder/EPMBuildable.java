@@ -17,7 +17,7 @@ package org.eclipse.incquery.runtime.internal.matcherbuilder;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Buildable;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.RetePatternBuildException;
 //import org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete.construction.Stub;
-//import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Pattern;
+//import org.eclipse.incquery.patternlanguage.PatternLanguage.Pattern;
 //import org.eclipse.xtext.xbase.XExpression;
 //
 ///**

@@ -42,7 +42,7 @@ import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
  */
 public class ObservablePatternMatchList<Match extends IPatternMatch> extends AbstractObservableList implements IObservablePatternMatchCollection<Match> {
 
-    private List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
+    private final List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
     
     /**
      * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
@@ -122,9 +122,6 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         return cache.get(index);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.databinding.runtime.util.IObservablePatternMatchCollection#addMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @Override
     public void addMatch(Match match) {
         ListDiffEntry diffentry = Diffs.createListDiffEntry(cache.size(), true, match);
@@ -133,9 +130,6 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         fireListChange(diff);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra2.emf.incquery.databinding.runtime.util.IObservablePatternMatchCollection#removeMatch(org.eclipse.viatra2.emf.incquery.runtime.api.IPatternMatch)
-     */
     @Override
     public void removeMatch(Match match) {
         final int index = cache.indexOf(match);
