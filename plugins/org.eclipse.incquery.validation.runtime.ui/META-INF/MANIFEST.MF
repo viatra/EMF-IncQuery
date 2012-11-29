@@ -8,7 +8,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide;visibility:=reexport,
  org.eclipse.emf.edit.ui;bundle-version="2.6.0",
- org.eclipse.incquery.validation.runtime;bundle-version="0.6.0",
+ org.eclipse.incquery.validation.runtime;bundle-version="0.7.0",
  org.eclipse.core.expressions,
  org.eclipse.incquery.tooling.ui;bundle-version="0.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
