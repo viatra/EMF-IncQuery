@@ -22,7 +22,8 @@ public interface IExtensions {
 	public static final String MATCHERFACTORY_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID + ".matcherfactory";
 	
 	// Extension point for registering the generated java codes from the xbase xexpressions
-	public static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID + "xexpressionevaluator";
+    public static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID
+            + ".xexpressionevaluator";
 	
 	public static final String INJECTOREXTENSIONID = IncQueryRuntimePlugin.PLUGIN_ID + ".injectorprovider";
 }
