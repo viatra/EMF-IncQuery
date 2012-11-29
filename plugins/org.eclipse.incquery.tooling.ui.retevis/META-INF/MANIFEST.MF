@@ -4,7 +4,7 @@ Bundle-Name: EMF-IncQuery Rete Visualization Plug-in
 Bundle-SymbolicName: org.eclipse.incquery.tooling.ui.retevis;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-Activator: org.eclipse.incquery.tooling.ui.retevis.Activator
-Bundle-Vendor: Istvan Rath / BUTE
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.draw2d;bundle-version="3.7.0",

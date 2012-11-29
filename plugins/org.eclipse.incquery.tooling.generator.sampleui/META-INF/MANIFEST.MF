@@ -4,7 +4,7 @@ Bundle-Name: Sample UI Generator
 Bundle-SymbolicName: org.eclipse.incquery.tooling.generator.sampleui;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: Zoltan Ujhelyi/FTSRG
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.7.0",
  org.eclipse.incquery.patternlanguage.emf;bundle-version="0.7.0",

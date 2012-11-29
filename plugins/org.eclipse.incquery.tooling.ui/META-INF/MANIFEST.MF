@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Graphical User Interface of the EMF-IncQuery project
 Bundle-SymbolicName: org.eclipse.incquery.tooling.ui;singleton:=true
 Bundle-Version: 0.7.0.qualifier
-Bundle-Vendor: Zoltan Ujhelyi/FTSRG
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
