@@ -43,21 +43,25 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
 import com.google.inject.Injector;
 
 /**
- * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. 
- * The engine hosts pattern matchers, and will listen on EMF update notifications stemming from the given model in order to maintain live results. 
+ * A EMF-IncQuery engine back-end, attached to a model such as an EMF resource. The engine hosts pattern matchers, and
+ * will listen on EMF update notifications stemming from the given model in order to maintain live results.
  * 
- * <p>Pattern matchers within this engine may be instantiated in the following ways: <ul>
- *  <li> Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this engine or the EMF model root.
- *  <li> Use the matcher factory associated with the generated matcher class to achieve the same.
- *  <li> Use {@link GenericPatternMatcher} or {@link GenericMatcherFactory} instead of the various generated classes.
- *  </ul>
- * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; 
- * 	this improves the performance of pattern matcher construction, unless the engine is in wildcard mode.
+ * <p>
+ * Pattern matchers within this engine may be instantiated in the following ways:
+ * <ul>
+ * <li>Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this
+ * engine or the EMF model root.
+ * <li>Use the matcher factory associated with the generated matcher class to achieve the same.
+ * <li>Use {@link GenericPatternMatcher} or {@link GenericMatcherFactory} instead of the various generated classes.
+ * </ul>
+ * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; this improves
+ * the performance of pattern matcher construction, unless the engine is in wildcard mode.
  * 
- * <p>The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
+ * <p>
+ * The engine can be disposed in order to detach from the EMF model and stop listening on update notifications.
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public class IncQueryEngine {
 
@@ -294,19 +298,7 @@ public class IncQueryEngine {
 		ReteContainerBuildable<Pattern> buildable = new ReteContainerBuildable<Pattern>(engine);
 		EPMBuilder<Address<? extends Supplier>, Address<? extends Receiver>> builder = 
 				new EPMBuilder<Address<? extends Supplier>, Address<? extends Receiver>> (buildable, context);
-//		Collection<ViatraEMFPatternmatcherBuildAdvisor> advisors = 
-//			BuilderRegistry.getContributedPatternBuildAdvisors();	
-//		if (advisors==null || advisors.isEmpty()) {			
 			engine.setBuilder(builder);
-//			Set<Pattern> patternSet = BuilderRegistry.getContributedStatelessPatternBuilders().keySet(); 
-//			try {
-//				engine.buildMatchersCoalesced(patternSet);
-//			} catch (RetePatternBuildException e) {
-//				throw new IncQueryRuntimeException(e);
-//			}
-//		} else {
-//			advisors.iterator().next().applyBuilder(engine, buildable, context);
-//		}
 		return engine;
 	}
 

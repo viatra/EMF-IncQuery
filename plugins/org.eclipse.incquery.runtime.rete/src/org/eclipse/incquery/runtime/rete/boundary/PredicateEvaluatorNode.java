@@ -36,18 +36,16 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 /**
  * @author Gabor Bergmann
  * 
- *         Permits the traversal of update notifications if a given function
- *         (with variables mapped to given positions in the Tuple) equals a
- *         right-hand-side (also mapped to a given position). If right-hand-side
- *         is omitted, the function is the predicate itself and should evaluate to true.
+ *         Permits the traversal of update notifications if a given function (with variables mapped to given positions
+ *         in the Tuple) equals a right-hand-side (also mapped to a given position). If right-hand-side is omitted, the
+ *         function is the predicate itself and should evaluate to true.
  * 
- *         The predicate is reevaluated on the Tuple each time an element affected by
- *         the term experiences a move, name or value change. Furthermore, it is
- *         also reevaluated if any ASMfunctions called at the previous
- *         evaluation are changed at the positions that were used.
+ *         The predicate is reevaluated on the Tuple each time an element affected by the term experiences a move, name
+ *         or value change. Furthermore, it is also reevaluated if any ASMfunctions called at the previous evaluation
+ *         are changed at the positions that were used.
  * 
- *         Uses unwrapped tuples. In distributed environments, AbstractPredicateEvaluatorNodes 
- *         should always be built on the head container, because they need access to Viatra.
+ *         Uses unwrapped tuples. In distributed environments, AbstractPredicateEvaluatorNodes should always be built on
+ *         the head container if they need single-threaded access to the environment.
  * 
  */
 

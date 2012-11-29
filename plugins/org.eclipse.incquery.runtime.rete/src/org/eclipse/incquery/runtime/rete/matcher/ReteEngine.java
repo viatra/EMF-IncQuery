@@ -56,7 +56,7 @@ public class ReteEngine<PatternDescription> {
 	
 	protected IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> builder;
 
-	protected final boolean parallelExecutionEnabled; // TRUE if Viatra can go on
+    protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
 												// while RETE does its job.
 	
 //	protected BlockingQueue<Throwable> caughtExceptions;

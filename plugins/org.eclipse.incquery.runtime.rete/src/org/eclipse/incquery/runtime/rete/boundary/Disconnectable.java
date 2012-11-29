@@ -12,18 +12,17 @@
 package org.eclipse.incquery.runtime.rete.boundary;
 
 /**
- * For objects that connect a RETE implementation to the Viatra framework.
+ * For objects that connect a RETE implementation to the underlying model.
  * 
  * @author Gabor Bergmann
  * 
  */
 public interface Disconnectable {
 
-	/**
-	 * Disconnects this rete engine component from the viatra framework.
-	 * Disconnecting enables the garbage collection mechanisms to dispose of the
-	 * rete network.
-	 */
+    /**
+     * Disconnects this rete engine component from the underlying model. Disconnecting enables the garbage collection
+     * mechanisms to dispose of the rete network.
+     */
 	void disconnect();
 
 }
