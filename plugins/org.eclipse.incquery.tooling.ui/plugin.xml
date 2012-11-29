@@ -4,33 +4,33 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="org.eclipse.incquery.ui.category"
+            id="org.eclipse.incquery.tooling.ui.category"
             name="EMF-IncQuery">
       </category>
       <wizard
-            category="org.eclipse.incquery.ui.category"
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse..incquery.ui.wizards.NewProjectWizard"
+            category="org.eclipse.incquery.tooling.ui.category"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.wizards.NewProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
-            id="org.eclipse..incquery.ui.newproject"
+            id="org.eclipse.incquery.tooling.ui.newproject"
             name="EMF-IncQuery Project"
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
       <wizard
             category="org.eclipse.incquery.tooling.ui.category"
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse..incquery.ui.wizards.NewEiqFileWizard"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.uiwizards.NewEiqFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
-            id="org.eclipse.incquery.ui.neweiqfile"
+            id="org.eclipse.incquery.tooling.ui.neweiqfile"
             name="EMF-IncQuery Query Definition "
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
       </wizard>
       <wizard
             category="org.eclipse.incquery.tooling.ui.category"
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.wizards.NewGenmodelWizard"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.wizards.NewGenmodelWizard"
             icon="icons/logo2.png"
-            id="org.eclipse.incquery.ui.neweiqgenmodel"
+            id="org.eclipse.incquery.tooling.ui.neweiqgenmodel"
             name="EMF-IncQuery Generator Model"
             project="false">
       </wizard>
@@ -45,7 +45,7 @@
             category="org.eclipse.incquery"
             composite="true"
             contentFile="cheatsheets/gettingstarted.xml"
-            id="org.eclipse.incquery.ui.cheatsheet"
+            id="org.eclipse.incquery.tooling.ui.cheatsheet"
             name="Getting Started with EMF-IncQuery">
       </cheatsheet>
    </extension>
@@ -57,7 +57,7 @@
       </category>
       <view
             category="org.eclipse.incquery.tooling.ui"
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer"
             icon="icons/logo2.png"
             id="org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer"
             name="Query Explorer">
@@ -166,7 +166,7 @@
             <iterate
                   ifEmpty="false">
                <instanceof
-                     value="org.eclipse.incquery.ui.queryexplorer.content.patternsviewer.PatternComponent">
+                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent">
                </instanceof>
             </iterate>
             <count
@@ -196,11 +196,11 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.RuntimeMatcherRegistrationHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.RuntimeMatcherRegistrationHandler"
             commandId="org.eclipse.incquery.tooling.ui.runtimematcherreg">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.LoadModelHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadmodel">
          <activeWhen>
             <reference
@@ -209,7 +209,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.LoadEiqPatternHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadEiqPatternHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadmodel">
          <activeWhen>
             <reference
@@ -218,47 +218,47 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.ShowLocationHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.ShowLocationHandler"
             commandId="org.eclipse.incquery.tooling.ui.showlocation">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.queryexplorer.handlers.UnloadModelHandler"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.UnloadModelHandler"
             commandId="org.eclipse.incquery.tooling.ui.unmodel">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.queryexplorer.handlers.PatternUnregistrationHandler"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PatternUnregistrationHandler"
             commandId="org.eclipse.incquery.tooling.ui.unregisterpattern">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.queryexplorer.handlers.PackagePresentationHandler"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PackagePresentationHandler"
             commandId="org.eclipse.incquery.tooling.ui.pattern.flat">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.queryexplorer.handlers.PackagePresentationHandler"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PackagePresentationHandler"
             commandId="org.eclipse.incquery.tooling.ui.pattern.hierarchical">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.LoadModelHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadModelHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadresourceset">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.LoadResourceHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadResourceHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadresource">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.LoadEiqModelHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadEiqModelHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadeiqmodel">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.LoadEiqPatternHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadEiqPatternHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadeiqpattern">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.ui.queryexplorer.handlers.PatternRegitryShowLocationHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PatternRegitryShowLocationHandler"
             commandId="org.eclipse.incquery.tooling.ui.showlocation_patternreg">
       </handler>
       <handler
-            class="org.eclipse.incquery.ui.queryexplorer.handlers.ResetUIHandler"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.ResetUIHandler"
             commandId="org.eclipse.incquery.tooling.ui.resetui">
       </handler>
    </extension>
@@ -288,7 +288,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:org.eclipse.incquery.ui.queryexplorer.QueryExplorer">
+            locationURI="toolbar:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer">
          <command
                commandId="org.eclipse.incquery.tooling.ui.loadmodel"
                icon="icons/load.gif"
@@ -303,7 +303,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.incquery.ui.queryexplorer.QueryExplorer.treeViewerMenu">
+            locationURI="popup:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
                commandId="org.eclipse.incquery.tooling.ui.showlocation"
                icon="icons/forward_nav.gif"
@@ -357,7 +357,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.incquery.ui.queryexplorer.QueryExplorer.patternsViewerMenu">
+            locationURI="popup:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.patternsViewerMenu">
          <command
                commandId="org.eclipse.incquery.tooling.ui.unregisterpattern"
                icon="icons/unload.gif"
@@ -373,7 +373,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.incquery.ui.queryexplorer.QueryExplorer">
+            locationURI="menu:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer">
          <menu
                label="Patterns viewer presentation">
             <command
@@ -514,7 +514,7 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <commonFilter
             activeByDefault="true"
-            class="org.eclipse.incquery.ui.content.QueryFolderFilter"
+            class="org.eclipse.incquery.tooling.ui.content.QueryFolderFilter"
             description="Hides EMF-IncQuery queries folder"
             id="org.eclipse.incquery.tooling.ui.queriesFolderFilter"
             name="EMF-IncQuery output folder"
@@ -535,7 +535,7 @@
    <extension
          point="org.eclipse.jdt.ui.javaElementFilters">
       <filter
-            class="org.eclipse.incquery.ui.content.QueryFolderFilter"
+            class="org.eclipse.incquery.tooling.ui.content.QueryFolderFilter"
             description="Hides EMF-IncQuery queries folder"
             enabled="true"
             id="org.eclipse.incquery.tooling.ui.queriesFolderFilter"
@@ -545,7 +545,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage"
-            class="org.eclipse.incquery.ui.queryexplorer.preference.PatternInitializationPreferencePage"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.preference.PatternInitializationPreferencePage"
             id="org.eclipse.incquery.tooling.ui.page1"
             name="Query Explorer">
          <keywordReference
@@ -596,7 +596,7 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.emf.edit.domain.IEditingDomainProvider"
-            class="org.eclipse.incquery.ui.queryexplorer.adapters.AdapterFactoryForEcoreEditors">
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterFactoryForEcoreEditors">
          <adapter
                type="org.eclipse.emf.ecore.resource.ResourceSet">
          </adapter>
