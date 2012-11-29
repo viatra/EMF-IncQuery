@@ -16,10 +16,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.incquery.runtime.graphiti.util.GraphitiModelConnector;
-import org.eclipse.incquery.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.incquery.ui.queryexplorer.handlers.LoadModelHandler;
-import org.eclipse.incquery.ui.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadModelHandler;
+import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.ModelConnector;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 

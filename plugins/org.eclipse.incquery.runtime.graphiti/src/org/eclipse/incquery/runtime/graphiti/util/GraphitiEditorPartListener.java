@@ -13,9 +13,9 @@ package org.eclipse.incquery.runtime.graphiti.util;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.incquery.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.incquery.ui.queryexplorer.util.BasePartListener;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.BasePartListener;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 

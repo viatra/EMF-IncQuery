@@ -14,7 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.ui.queryexplorer.adapters.AdapterUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterUtil;
 import org.eclipse.incquery.validation.runtime.ui.ValidationInitUtil;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
