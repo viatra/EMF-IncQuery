@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.viatra2.emf.incquery.testing.queries
+Bundle-SymbolicName: org.eclipse.incquery.testing.queries;singleton:=true
+Bundle-Version: 0.7.0.qualifier
+Bundle-Vendor: Budapest University of Technology and Economics
+Export-Package: org.eclipse.incquery.testing.queries.recordrolevalue,
+ org.eclipse.incquery.testing.queries.substitutionvalue,
+ org.eclipse.incquery.testing.queries.unexpectedmatchrecord
+Require-Bundle: org.eclipse.pde.core,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.transaction,
+ org.eclipse.incquery.runtime,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.incquery.snapshot
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -15,7 +15,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="role" eType="#//RecordRole"
         changeable="false" volatile="true" transient="true" derived="true">
       <eAnnotations source="org.eclipse.incquery.querybasedfeature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue"/>
+        <details key="patternFQN" value="org.eclipse.incquery.testing.queries.RecordRoleValue"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -24,7 +24,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="derivedValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         changeable="false" volatile="true" transient="true" derived="true">
       <eAnnotations source="org.eclipse.incquery.querybasedfeature">
-        <details key="patternFQN" value="org.eclipse.viatra2.emf.incquery.testing.queries.SubstitutionValue"/>
+        <details key="patternFQN" value="org.eclipse.incquery.testing.queries.SubstitutionValue"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

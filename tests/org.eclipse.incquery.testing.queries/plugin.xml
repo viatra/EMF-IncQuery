@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
+            id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.incquery.testing.queries.RecordRoleValue"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
+            id="org.eclipse.incquery.testing.queries.RecordRoleValue">
+      </matcher>
+   </extension>
+   <extension
+         id="extension.derived.org.eclipse.incquery.testing.queries.RecordRoleValue"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="MatchRecord"
+            feature-name="role"
+            package-nsUri="http://www.eclipse.org/incquery/snapshot">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
+         id="org.eclipse.incquery.testing.queries.SubstitutionValue"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
+            id="org.eclipse.incquery.testing.queries.SubstitutionValue">
+      </matcher>
+   </extension>
+   <extension
+         id="extension.derived.org.eclipse.incquery.testing.queries.SubstitutionValue"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="MatchSubstitutionRecord"
+            feature-name="derivedValue"
+            package-nsUri="http://www.eclipse.org/incquery/snapshot">
+      </wellbehaving-derived-feature>
+   </extension>
+
+</plugin>
