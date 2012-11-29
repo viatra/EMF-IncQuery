@@ -71,7 +71,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class DatabindingUtil {
 
-	private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
+    /**
+     * 
+     */
+    private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
+    private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
 	private static Map<URI, IConfigurationElement> uriConfElementMap = null;
 	private static ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
 	private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
@@ -270,7 +274,6 @@ public class DatabindingUtil {
 			
 			String filtered = isFiltered ? " - Filtered" : "";
 			
-			//return this.matcher.getPatternName() + (isGeneratedString +" [size of matchset: "+matches.size()+"]");
 			return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, filtered, isGeneratedString);
 		}
 	}
@@ -295,7 +298,7 @@ public class DatabindingUtil {
 		try {
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
 			IExtensionPoint ep = reg
-					.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
+.getExtensionPoint(DATABINDING_EXTENSION);
 			for (IExtension e : ep.getExtensions()) {
 				for (IConfigurationElement ce : e.getConfigurationElements()) {
 					String[] tokens = patternName.split("\\.");
@@ -383,7 +386,7 @@ public class DatabindingUtil {
 	private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGeneratedMatcher(String patternName) {
 		try {
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
-			IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.viatra2.emf.incquery.databinding.runtime.databinding");
+            IExtensionPoint ep = reg.getExtensionPoint(DATABINDING_EXTENSION);
 			for (IExtension e : ep.getExtensions()) {
 				for (IConfigurationElement ce : e.getConfigurationElements()) {
 					String[] tokens = patternName.split("\\.");

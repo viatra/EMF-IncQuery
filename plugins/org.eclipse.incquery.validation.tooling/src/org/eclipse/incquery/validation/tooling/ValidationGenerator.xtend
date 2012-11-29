@@ -41,11 +41,10 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
-	private static String UI_VALIDATION_MENU_URI = "popup:org.eclipse.viatra2.emf.incquery.validation.runtime.ui.menu?after=additions"
-	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra2.emf.incquery.validation.runtime.constraint"
+	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.incquery.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
-	private static String VALIDATION_ERROR_CODE = "org.eclipse.viatra2.emf.incquery.validation.error"
+	private static String VALIDATION_ERROR_CODE = "org.eclipse.incquery.validation.error"
 	
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		
@@ -101,8 +100,8 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	override getProjectDependencies() {
-		newArrayList("org.eclipse.viatra2.emf.incquery.runtime",
-			"org.eclipse.viatra2.emf.incquery.validation.runtime"
+		newArrayList("org.eclipse.incquery.runtime",
+			"org.eclipse.incquery.validation.runtime"
 		)
 	}
 	
@@ -144,57 +143,9 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
         }
       ]
     )
-    /*for(ann : pattern.annotations){
-      if(ann.name == annotationLiteral){
-        val editorIds = ann.getAnnotationParameterValue("targetEditorId")
-        for (id : editorIds){
-          val editorId = (id as StringValue).value
-          editorId.createExtensionContributionForEditorId(exGen,extensionList)
-        }
-      }
-    }
-		
-		if(pattern.hasAnnotationLiteral(annotationLiteral)){
-  		val patternModel = pattern.eContainer as PatternModel;
-  		for (imp : patternModel.importPackages) {
-  			val pack = imp.EPackage;
-  			val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
-  			
-  			if (genPackage != null) {
-  				val editorId = genPackage.qualifiedEditorClassName+"ID";
-  				editorId.createExtensionContributionForEditorId(exGen,extensionList)
-  			}
-  		}
-		}*/
 			
 		return extensionList
 	}
-	
-	/*def createExtensionContributionForEditorId(String editorId, ExtensionGenerator exGen, List extensionList){
-   
-   if (!editorId.nullOrEmpty && !contributedEditorIds.contains(editorId)) {
-      val editorMenuContribution = exGen.contribExtension(menuContributionId(editorId), ECLIPSE_MENUS_EXTENSION_POINT) [
-      exGen.contribElement(it, "menuContribution") [
-        exGen.contribAttribute(it, "locationURI", UI_VALIDATION_MENU_URI)
-          exGen.contribElement(it, "command") [
-            exGen.contribAttribute(it, "commandId", "org.eclipse.viatra2.emf.incquery.validation.runtime.ui.initValidatorsOnEditor")
-            exGen.contribAttribute(it, "style", "push")
-            exGen.contribElement(it, "visibleWhen") [
-              exGen.contribAttribute(it, "checkEnabled", "false")
-              exGen.contribElement(it, "with")[
-                exGen.contribAttribute(it, "variable", "activeEditorId")
-                exGen.contribElement(it, "equals")[
-                  exGen.contribAttribute(it, "value", editorId)
-                ]
-              ]
-            ]
-          ]
-        ] 
-      ]
-      extensionList.add(editorMenuContribution)
-      contributedEditorIds.add(editorId)
-    }
-	}*/
 	
 	def constraintClassName(Pattern pattern, Annotation annotation) {
 		String::format("%s.%s%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, annotationLiteral,pattern.annotations.indexOf(annotation))
@@ -240,10 +191,10 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		
 		import org.eclipse.emf.ecore.EObject;
 
-		import org.eclipse.viatra2.emf.incquery.validation.runtime.Constraint;
-		import org.eclipse.viatra2.emf.incquery.validation.runtime.ValidationUtil;
-		import org.eclipse.viatra2.emf.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
-		import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+		import org.eclipse.incquery.validation.runtime.Constraint;
+		import org.eclipse.incquery.validation.runtime.ValidationUtil;
+		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
+		import org.eclipse.incquery.runtime.exception.IncQueryException;
 		
 		import «pattern.packageName + "." + pattern.matchClassName»;
 		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;

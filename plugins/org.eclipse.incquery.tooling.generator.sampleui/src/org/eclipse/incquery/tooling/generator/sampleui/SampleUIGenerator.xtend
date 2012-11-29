@@ -187,8 +187,8 @@ class SampleUIGenerator implements IGenerationFragment {
 		import org.eclipse.jface.viewers.IStructuredSelection;
 		import org.eclipse.swt.widgets.Display;
 		import org.eclipse.ui.handlers.HandlerUtil;
-		import org.eclipse.viatra2.emf.incquery.gui.dialog.SampleUIDialogCreator;
-		import org.eclipse.viatra2.emf.incquery.runtime.exception.IncQueryException;
+		import org.eclipse.incquery.tooling.ui.dialog.SampleUIDialogCreator;
+		import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 		import «pattern.packageName + "." + pattern.matchClassName»;
