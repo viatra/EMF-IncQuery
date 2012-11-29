@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.incquery.runtime.feature"
+      label="EMF-IncQuery Runtime feature"
+      version="0.7.0.qualifier"
+      provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
+      license-feature="org.eclipse.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
+
+   <description>
+      EMF-IncQuery runtime feature. This is the minimum dependency to execute EMF-IncQuery matchers.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+   </url>
+
+   <plugin
+         id="org.eclipse.incquery.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.incquery.runtime.rete"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.incquery.patternlanguage"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.incquery.patternlanguage.emf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.incquery.runtime.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.incquery.runtime.base.itc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.incquery.runtime.triggerengine"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

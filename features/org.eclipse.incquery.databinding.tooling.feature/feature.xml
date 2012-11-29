@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.incquery.databinding.tooling.feature"
+      label="EMF-IncQuery Databinding Tooling Feature"
+      version="0.7.0.qualifier"
+      provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
+      license-feature="org.eclipse.incquery.licence.feature"
+      license-feature-version="1.0.0.qualifier">
+
+   <description>
+      Code generator for JFace Databinding support for EMF-IncQuery results.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <includes
+         id="org.eclipse.incquery.databinding.runtime.feature"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.incquery.databinding.tooling"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
