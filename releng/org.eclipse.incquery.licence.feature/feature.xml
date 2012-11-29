@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra2.emf.incquery.licence.feature"
+      id="org.eclipse.incquery.licence.feature"
       label="EMF-IncQuery licence feature"
       version="1.0.0.qualifier"
       provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group">

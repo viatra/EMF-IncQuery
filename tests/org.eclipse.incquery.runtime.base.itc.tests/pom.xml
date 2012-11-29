@@ -4,11 +4,11 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.eclipse.viatra2</groupId>
+		<groupId>org.eclipse.incquery</groupId>
 		<version>0.7.0-SNAPSHOT</version>
-		<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
-		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
+		<artifactId>org.eclipse.incquery.parent</artifactId>
+		<relativePath>../../releng/org.eclipse.incquery.parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>org.eclipse.viatra2.emf.incquery.base.itc.test</artifactId>
+	<artifactId>org.eclipse.incquery.runtime.base.itc.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 </project>

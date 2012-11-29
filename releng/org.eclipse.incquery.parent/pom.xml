@@ -3,59 +3,58 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.viatra2</groupId>
-	<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
+	<groupId>org.eclipse.incquery</groupId>
+	<artifactId>org.eclipse.incquery.parent</artifactId>
 	<name>EMF-IncQuery</name>
 	<url>http://viatra.inf.mit.bme.hu/incquery</url>
 	<version>0.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.model</module>
-		<module>../../plugins/org.eclipse.viatra2.gtasm.patternmatcher.incremental.rete</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.derived</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime.gmf</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.runtime.graphiti</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.databinding.runtime</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.core</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.databinding</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.derived</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.gui</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.core.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.emf.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.model.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.validation.runtime.ui</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.tooling.generator.validation</module>
-		<module>../../plugins/org.eclipse.viatra2.patternlanguage.generator.util</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.base.itc</module>
-		<module>../../plugins/org.eclipse.viatra2.emf.incquery.triggerengine</module>
-		<module>../../tests/org.eclipse.viatra2.patternlanguage.emf.tests</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.base.itc.test</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot.edit</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.snapshot.editor</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.core</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.queries</module>
-		<module>../../tests/org.eclipse.viatra2.emf.incquery.testing.ui</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.derived.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.derived.tooling.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.databinding.tooling.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.sdk.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.testing.sdk</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.gmf.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.runtime.graphiti.feature</module>
-		<module>../../features/org.eclipse.viatra2.emf.incquery.validation.tooling.feature</module>
-		<module>../../releng/org.eclipse.viatra2.emf.incquery.licence.feature</module>
-		<module>../../releng/org.eclipse.viatra2.patternlanguage.update</module>
+		<module>../../plugins/org.eclipse.incquery.patternlanguage.generator</module>
+		<module>../../plugins/org.eclipse.incquery.patternlanguage</module>
+		<module>../../plugins/org.eclipse.incquery.patternlanguage.ui</module>
+		<module>../../plugins/org.eclipse.incquery.patternlanguage.emf</module>
+		<module>../../plugins/org.eclipse.incquery.patternlanguage.emf.ui</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.generator.model</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.generator.model.ui</module>
+		<module>../../plugins/org.eclipse.incquery.runtime</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.base</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.base.itc</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.triggerengine</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.core</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
+		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
+		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
+		<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
+		<module>../../plugins/org.eclipse.incquery.databinding.tooling</module>
+		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
+		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
+		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
+		<module>../../tests/org.eclipse.incquery.patternlanguage.emf.tests</module>
+		<module>../../tests/org.eclipse.incquery.runtime.base.itc.tests</module>
+		<module>../../tests/org.eclipse.incquery.snapshot</module>
+		<module>../../tests/org.eclipse.incquery.snapshot.edit</module>
+		<module>../../tests/org.eclipse.incquery.snapshot.editor</module>
+		<module>../../tests/org.eclipse.incquery.testing.core</module>
+		<module>../../tests/org.eclipse.incquery.testing.queries</module>
+		<module>../../tests/org.eclipse.incquery.testing.ui</module>
+		<module>../../features/org.eclipse.incquery.runtime.feature</module>
+		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
+		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
+		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
+		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module>
+		<module>../../features/org.eclipse.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
+		<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
+		<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
+		<module>../../features/org.eclipse.incquery.runtime.gmf.feature</module>
+		<module>../../features/org.eclipse.incquery.runtime.graphiti.feature</module>
+		<module>../../releng/org.eclipse.incquery.licence.feature</module>
+		<module>../../releng/org.eclipse.incquery.update</module>
 	</modules>
 	<properties>
 		<tycho.version>0.16.0</tycho.version>
@@ -73,7 +72,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath>
-		<sonar.skippedModules>org.eclipse.viatra2.emf.incquery.runtime.feature,org.eclipse.viatra2.emf.incquery.databinding.feature,org.eclipse.viatra2.emf.incquery.databinding.tooling.feature,org.eclipse.viatra2.emf.incquery.sdk.feature,org.eclipse.viatra2.emf.incquery.validation.feature,org.eclipse.viatra2.emf.incquery.validation.gmf.feature,org.eclipse.viatra2.emf.incquery.validation.tooling.feature,org.eclipse.viatra2.emf.incquery.licence.feature,org.eclipse.viatra2.patternlanguage.update,school,school.edit,school.editor,org.eclipse.viatra2.emf.incquery.snapshot,org.eclipse.viatra2.emf.incquery.snapshot.edit,org.eclipse.viatra2.emf.incquery.snapshot.editor</sonar.skippedModules>
+		<sonar.skippedModules>org.eclipse.incquery.runtime.feature,org.eclipse.incquery.databinding.runtime.feature,org.eclipse.incquery.databinding.tooling.feature,org.eclipse.incquery.sdk.feature.feature,org.eclipse.incquery.validation.runtime.feature,org.eclipse.incquery.validation.tooling.feature,org.eclipse.incquery.licence.feature,org.eclipse.incquery.update,school,school.edit,school.editor,org.eclipse.incquery.snapshot,org.eclipse.incquery.snapshot.edit,org.eclipse.incquery.snapshot.editor</sonar.skippedModules>
 	</properties>
 	<build>
 		<plugins>
@@ -91,9 +90,9 @@
 					<resolver>p2</resolver>
 					<target>
 						<artifact>
-							<groupId>org.eclipse.viatra2</groupId>
-							<artifactId>org.eclipse.viatra2.patternlanguage.update</artifactId>
-							<version>0.6.5-SNAPSHOT</version>
+							<groupId>org.eclipse.incquery</groupId>
+							<artifactId>org.eclipse.incquery.update</artifactId>
+							<version>0.7.0-SNAPSHOT</version>
 							<classifier>emfpattern</classifier>
 						</artifact>
 					</target>
@@ -256,7 +255,7 @@
 				</file>
 			</activation>
 			<modules>
-				<module>../../../examples/school/org.eclipse.viatra2.emf.incquery.tests.school.parent</module>
+				<module>../../../examples/school/org.eclipse.incquery.tests.school.parent</module>
 				<module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>
 			</modules>
 		</profile>

@@ -4,12 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>org.eclipse.viatra2.emf.incquery</artifactId>
-		<groupId>org.eclipse.viatra2</groupId>
+		<artifactId>org.eclipse.incquery.parent</artifactId>
+		<groupId>org.eclipse.incquery</groupId>
 		<version>0.7.0-SNAPSHOT</version>
-		<relativePath>../../releng/org.eclipse.viatra2.emf.incquery/pom.xml</relativePath>
+		<relativePath>../../releng/org.eclipse.incquery.parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>org.eclipse.viatra2.emf.incquery.sdk.feature</artifactId>
+	<artifactId>org.eclipse.incquery.sdk.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
 	<build>
 		<plugins>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.incquery.databinding.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.databinding.runtime.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.databinding.tooling.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.databinding.tooling.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.querybasedfeatures.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.querybasedfeatures.runtime.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.querybasedfeatures.tooling.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.querybasedfeatures.tooling.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.runtime.gmf.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.sdk.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.sdk.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.validation.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.validation.runtime.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.validation.tooling.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.validation.tooling.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage"/>
+   </feature>
+   
+   <feature url="features/org.eclipse.incquery.databinding.runtime.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.databinding.runtime.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.databinding.tooling.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.databinding.tooling.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.querybasedfeatures.runtime.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.querybasedfeatures.runtime.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.querybasedfeatures.tooling.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.querybasedfeatures.tooling.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.runtime.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.sdk.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.testing.sdk.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.validation.runtime.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.validation.runtime.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <feature url="features/org.eclipse.incquery.validation.tooling.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.validation.tooling.feature.source" version="0.7.0.qualifier">
+      <category name="org.eclipse.viatra2.patternlanguage.sources"/>
+   </feature>
+   <category-def name="org.eclipse.viatra2.patternlanguage" label="EMF-IncQuery"/>
+   <category-def name="org.eclipse.viatra2.patternlanguage.sources" label="EMF-IncQuery Sources"/>
+</site>
