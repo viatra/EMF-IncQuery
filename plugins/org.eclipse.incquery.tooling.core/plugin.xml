@@ -3,16 +3,19 @@
 <plugin>
    <extension-point id="generatorFragment" name="EMF-IncQuery Code Generation Fragment" schema="schema/generatorFragment.exsd"/>
    <extension
-         id="org.eclipse.viatra2.emf.incquery.projectnature"
+         id="org.eclipse.incquery.projectnature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
                class="org.eclipse.incquery.tooling.core.project.IncQueryNature">
          </run>
       </runtime>
+      <builder
+            id="org.eclipse.incquery.tooling.core.projectbuilder">
+      </builder>
    </extension>
    <extension
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.marker.inference"
+         id="org.eclipse.incquery.tooling.core.generator.marker.inference"
          name="EMF-IncQuery Generator Marker"
          point="org.eclipse.core.resources.markers">
       <super
@@ -23,7 +26,7 @@
       </persistent>
    </extension>
    <extension
-         id="org.eclipse.viatra2.emf.incquery.tooling.generator.marker.fragment"
+         id="org.eclipse.incquery.tooling.core.generator.marker.fragment"
          name="EMF-IncQuery Generator Marker"
          point="org.eclipse.core.resources.markers">
       <super
@@ -32,6 +35,16 @@
       <persistent
             value="true">
       </persistent>
+   </extension>
+   <extension
+         id="projectbuilder"
+         name="EMF-IncQuery Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.incquery.tooling.core.project.IncQueryProjectBuilder">
+         </run></builder>
    </extension>
 
 </plugin>

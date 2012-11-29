@@ -23,6 +23,7 @@ public class IncQueryGeneratorPlugin implements BundleActivator {
 	private static BundleContext context;
 	private Injector injector;
 	public static IncQueryGeneratorPlugin INSTANCE;
+    public static final String BUNDLE_ID = "org.eclipse.incquery.tooling.core";
 
 	public static BundleContext getContext() {
 		return context;

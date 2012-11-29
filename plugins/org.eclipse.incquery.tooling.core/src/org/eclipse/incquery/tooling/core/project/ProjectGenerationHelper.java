@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -111,8 +112,7 @@ public abstract class ProjectGenerationHelper {
 	public static void createProject(IProjectDescription description,
 			IProject proj, List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
 		List<String> dependencies = Lists.newArrayList("org.eclipse.pde.core", "org.eclipse.emf.ecore",
-				"org.eclipse.emf.transaction",
-				"org.eclipse.viatra2.emf.incquery.runtime",
+                "org.eclipse.emf.transaction", IncQueryRuntimePlugin.PLUGIN_ID,
 				"org.eclipse.xtext.xbase.lib"); 
 		if (additionalDependencies != null) {
 			dependencies.addAll(additionalDependencies);

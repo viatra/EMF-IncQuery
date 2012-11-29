@@ -40,7 +40,7 @@ public class ExtensionBasedGenerationFragmentProvider implements
 	@Inject
 	private Logger logger;
 
-	static final String EXTENSIONID = "org.eclipse.viatra2.emf.incquery.tooling.generator.generatorFragment";
+    static final String EXTENSIONID = "org.eclipse.incquery.tooling.core.generatorFragment";
 	static final String GENERIC_ATTRIBUTE = "";
 	private Multimap<String, IGenerationFragment> fragments;
 	

@@ -51,14 +51,6 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
 	@Inject
 	private Primitives primitives;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.viatra2.patternlanguage.types.EMFPatternTypeProvider#
-	 * getTypeReferenceForVariableWithEClassifier
-	 * (org.eclipse.emf.ecore.EClassifier,
-	 * org.eclipse.incquery.patternlanguage.PatternLanguage.Variable)
-	 */
 	@Override
 	protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
 		JvmTypeReference typeReference = super.getTypeReferenceForVariableWithEClassifier(classifier, variable);

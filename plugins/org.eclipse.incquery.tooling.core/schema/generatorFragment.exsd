@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.viatra2.emf.incquery.tooling.generator" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.incquery.tooling.core.generator" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
          <meta.schema plugin="org.eclipse.incquery.tooling.core" id="generatorFragment" name="EMF-IncQuery Code Generation Fragment"/>
