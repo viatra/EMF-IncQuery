@@ -6,9 +6,9 @@ Bundle-Version: 0.7.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Bundle-Localization: plugin
-Export-Package: org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot,
- org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.impl,
- org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.util
+Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot,
+ org.eclipse.incquery.snapshot.EIQSnapshot.impl,
+ org.eclipse.incquery.snapshot.EIQSnapshot.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.incquery.runtime;bundle-version="0.7.0",

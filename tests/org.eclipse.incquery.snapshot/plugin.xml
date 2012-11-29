@@ -3,8 +3,8 @@
 <plugin>
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.eclipse.org/viatra2/emf/incquery/snapshot"
-            class="org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage"
+            uri="http://www.eclipse.org/incquery/snapshot"
+            class="org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage"
             genModel="model/eiqsnapshot.genmodel"/>
    </extension>
 </plugin>
