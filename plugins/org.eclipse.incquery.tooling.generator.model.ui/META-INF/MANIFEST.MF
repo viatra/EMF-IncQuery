@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.incquery.tooling.generator.model;visibility:=reexpor
  org.eclipse.compare,
  org.eclipse.jdt.core,
  org.eclipse.emf.codegen.ecore,
- org.eclipse.incquery.tooling.core;bundle-version="0.6.0"
+ org.eclipse.incquery.tooling.core;bundle-version="0.7.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.tooling.generator.model.ui.contentassist,
