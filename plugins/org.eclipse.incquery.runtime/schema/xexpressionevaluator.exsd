@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.incquery.runtime" id="xexpressionevaluator" name="EMF-IncQuery XExpression Evaluator"/>
       </appInfo>
       <documentation>
-         FIXME do it, enter description!
+         This expression point is used by the code generator to register the java codes created for the xbase expressions.
       </documentation>
    </annotation>
 
