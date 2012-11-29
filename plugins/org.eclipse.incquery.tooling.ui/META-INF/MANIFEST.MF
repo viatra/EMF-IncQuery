@@ -42,14 +42,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.codegen.ecore,
  org.eclipse.incquery.tooling.generator.model;bundle-version="0.6.0",
  org.eclipse.incquery.tooling.core;bundle-version="0.6.0"
-Bundle-Activator: org.eclipse.incquery.ui.IncQueryGUIPlugin
+Bundle-Activator: org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.incquery.ui.dialog,
- org.eclipse.incquery.ui.queryexplorer,
- org.eclipse.incquery.ui.queryexplorer.adapters,
- org.eclipse.incquery.ui.queryexplorer.content.matcher,
- org.eclipse.incquery.ui.queryexplorer.content.patternsviewer,
- org.eclipse.incquery.ui.queryexplorer.handlers,
- org.eclipse.incquery.ui.queryexplorer.handlers.util,
- org.eclipse.incquery.ui.queryexplorer.util
+Export-Package: org.eclipse.incquery.tooling.ui.dialog,
+ org.eclipse.incquery.tooling.ui.queryexplorer,
+ org.eclipse.incquery.tooling.ui.queryexplorer.adapters,
+ org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher,
+ org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer,
+ org.eclipse.incquery.tooling.ui.queryexplorer.handlers,
+ org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util,
+ org.eclipse.incquery.tooling.ui.queryexplorer.util
 

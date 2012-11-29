@@ -14,7 +14,7 @@
    			Note: if you wish to specify queries for a domain defined in a project that is already installed as a plug-in (in EMF terms, registered in the Global EPackage Registry), the .eiqgen file is not necessary.
    		</description>
    		<subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Generator Model">
-         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqgenmodel)"/>
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.incquery.tooling.ui.neweiqgenmodel)"/>
       	</subitem>
       	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added."></subitem>
       	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button."></subitem>
@@ -28,7 +28,7 @@
       	Query definition patterns can have <b>header parameters</b> that specify the input/output variables of a query. Each header parameter should have a type assigned, and it can serves both as input and output depending on the <b>parameter binding</b>. Parameter bindings may be later provided using the Details/Filters panel (right side) in the Query Explorer, or using the Java API. A binding may specify that a header parameter should correspond to a pre-determined value, e.g. a model object or a scalar value.<br/>
       </description>
       <subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Query Definition">
-         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.neweiqfile)"/>
+         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.incquery.tooling.ui.neweiqfile)"/>
       </subitem>
       <subitem skip="true" label="On the second wizard page, give your pattern a unique name."></subitem>
       <subitem skip="true" label="Specify packages to import."></subitem>
@@ -60,7 +60,7 @@ This pattern includes a simple <b>edge type constraint</b> of type School.teache
 Make sure that you are experimenting with the Query Explorer in the same Eclipse instance where the school.incquery project is located (and which already contains school, school.edit and school.editor as plug-ins).
    	</description>
    	<subitem skip="true" label="Open the Query Explorer view, if not already open.">
-   		<command required="true" serialization="org.eclipse.ui.views.showView(org.eclipse.viatra2.emf.incquery.queryexplorer.QueryExplorer)"></command>
+   		<command required="true" serialization="org.eclipse.ui.views.showView(org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer)"></command>
    	</subitem>
    	<subitem skip="false" label="Import your query definition patterns by putting the Query Definition Editor in focus, and then pushing the green button in the top right corner of the Query Explorer."></subitem>
    	<subitem skip="false" label="Apply the query patterns on an instance model, by opening an instance model in the School Editor, and then pushing the green button again."></subitem>

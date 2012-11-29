@@ -29,7 +29,7 @@ To create the example EMF metamodel, you may either import the domain project (<
       <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Project">
          <command
                required="false"
-               serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.viatra2.emf.incquery.gui.newproject)"/>
+               serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.incquery.tooling.ui.newproject)"/>
       </subitem>
       <subitem label="Give a name to the project (e.g. school.incquery), then press Finish."></subitem>
       <!-- <subitem skip="true" label="(Optionally, only if you aren't using a new Eclipse Application:) On the second wizard page, add a reference to the school.genmodel Generator Model by pushing Add and browsing to the school.genmodel file in the school project. Click on Finish to proceed."></subitem> -->
