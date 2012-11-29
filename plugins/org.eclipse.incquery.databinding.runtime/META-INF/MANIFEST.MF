@@ -17,3 +17,4 @@ Export-Package: org.eclipse.incquery.databinding.runtime.adapter,
  org.eclipse.incquery.databinding.runtime.collection,
  org.eclipse.incquery.databinding.runtime.util,
  org.eclipse.incquery.databinding.runtime.util.validation
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

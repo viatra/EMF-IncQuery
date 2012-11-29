@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.graphiti.ui;bundle-version="0.8.2",
  org.eclipse.emf.transaction;bundle-version="1.4.0",
  org.eclipse.core.expressions,
  org.eclipse.incquery.runtime;bundle-version="0.6.5"
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

@@ -17,4 +17,4 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.2.0,3.0.0)";visibility:=ree
  org.antlr.runtime,
  org.eclipse.xtext.common.types;bundle-version="[2.2.0,3.0.0)",
  org.eclipse.xtext.xbase;bundle-version="[2.2.0,3.0.0)"
-Bundle-Vendor: Zoltan Ujhelyi/FTSRG
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

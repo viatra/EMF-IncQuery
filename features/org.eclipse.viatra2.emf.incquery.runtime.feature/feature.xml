@@ -3,6 +3,7 @@
       id="org.eclipse.viatra2.emf.incquery.runtime.feature"
       label="EMF-IncQuery Runtime feature"
       version="0.7.0.qualifier"
+      provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 
@@ -66,4 +67,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
 </feature>

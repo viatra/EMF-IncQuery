@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.incquery.patternlanguage.emf.tests
-Bundle-Vendor: My Company
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.incquery.patternlanguage.emf.tests;singleton:=true
 Bundle-ActivationPolicy: lazy

@@ -18,4 +18,5 @@ Require-Bundle: org.eclipse.xtend.lib,
 Export-Package: org.eclipse.viatra2.emf.incquery.testing.core,
  org.eclipse.viatra2.emf.incquery.testing.core.base,
  org.eclipse.viatra2.emf.incquery.testing.core.injector
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 

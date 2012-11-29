@@ -4,7 +4,7 @@ Bundle-Name: Incremental Pattern Matcher Core
 Bundle-SymbolicName: org.eclipse.incquery.runtime.rete
 Bundle-Version: 0.7.0.qualifier
 Bundle-Activator: org.eclipse.incquery.runtime.rete.Activator
-Bundle-Vendor: BUTE-FTSRG / Bergmann Gabor
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.incquery.runtime.base.itc;bundle-version="0.7.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

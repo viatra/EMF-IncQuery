@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.7.0",
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.incquery.databinding.runtime;bundle-version="0.7.0"
 Export-Package: org.eclipse.incquery.databinding.tooling
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: org.eclipse.viatra2.emf.incquery.testing.queries
 Bundle-SymbolicName: org.eclipse.viatra2.emf.incquery.testing.queries;singleton:=true
 Bundle-Version: 0.7.0.qualifier
-Bundle-Vendor: %providerName
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Export-Package: org.eclipse.viatra2.emf.incquery.testing.queries.recordrolevalue,
  org.eclipse.viatra2.emf.incquery.testing.queries.substitutionvalue,
  org.eclipse.viatra2.emf.incquery.testing.queries.unexpectedmatchrecord

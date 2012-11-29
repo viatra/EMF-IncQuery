@@ -16,3 +16,4 @@ Export-Package: org.eclipse.incquery.runtime.triggerengine.api,
  org.eclipse.incquery.runtime.triggerengine.notification,
  org.eclipse.incquery.runtime.triggerengine.qrm,
  org.eclipse.incquery.runtime.triggerengine.specific
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

@@ -3,7 +3,7 @@
       id="org.eclipse.viatra2.emf.incquery.runtime.gmf.feature"
       label="EMF-IncQuery GMF Extensions"
       version="0.7.0.qualifier"
-      provider-name="Zoltan Ujhelyi/FTSRG"
+      provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
       license-feature="org.eclipse.viatra2.emf.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 
