@@ -358,7 +358,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         Integer value = getIntValue(source);
         if (value <= Integer.MAX_VALUE - delta) {
             int tempMemory = value + delta;
-            notifications.add(new ENotificationImpl(source, Notification.SET, feature, counterMemory.get(source),
+            notifications.add(new ENotificationImpl(source, Notification.SET, feature, (int) counterMemory.get(source),
                     tempMemory));
             counterMemory.put(source, tempMemory);
         } else {
@@ -448,7 +448,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
                     .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
         } else if (value >= delta) {
             int tempMemory = value - delta;
-            notifications.add(new ENotificationImpl(source, Notification.SET, feature, value, tempMemory));
+            notifications.add(new ENotificationImpl(source, Notification.SET, feature, (int) value, tempMemory));
             counterMemory.put(source, tempMemory);
         } else {
             throw new IncQueryException(String.format("The counter of %s for feature %s cannot go below zero!", source,
