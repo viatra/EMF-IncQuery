@@ -17,5 +17,5 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
  * 
  */
 public class PatternLanguageOutlineTreeProvider extends DefaultOutlineTreeProvider {
-	
+
 }

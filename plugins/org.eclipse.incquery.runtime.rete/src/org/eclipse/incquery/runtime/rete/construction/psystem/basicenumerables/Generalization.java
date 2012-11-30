@@ -17,31 +17,30 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public class Generalization<PatternDescription, StubHandle> extends
-		CoreModelRelationship<PatternDescription, StubHandle> {
+        CoreModelRelationship<PatternDescription, StubHandle> {
 
-	/**
-	 * @param buildable
-	 * @param parent
-	 * @param child
-	 * @param transitive
-	 */
-	public Generalization(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			PVariable parent, PVariable child, boolean transitive) {
-		super(pSystem, parent, child, transitive);
-	}
+    /**
+     * @param buildable
+     * @param parent
+     * @param child
+     * @param transitive
+     */
+    public Generalization(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
+            boolean transitive) {
+        super(pSystem, parent, child, transitive);
+    }
 
-	@Override
-	protected Stub<StubHandle> doCreateTransitiveStub() {
-		return buildable.generalizationTransitiveStub(variablesTuple);
-	}
+    @Override
+    protected Stub<StubHandle> doCreateTransitiveStub() {
+        return buildable.generalizationTransitiveStub(variablesTuple);
+    }
 
-	@Override
-	protected Stub<StubHandle> doCreateDirectStub() {
-		return buildable.generalizationDirectStub(variablesTuple);
-	}
+    @Override
+    protected Stub<StubHandle> doCreateDirectStub() {
+        return buildable.generalizationDirectStub(variablesTuple);
+    }
 
 }

@@ -27,12 +27,12 @@ public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntime
         return Logger.getLogger(PatternLanguageRuntimeModule.class);
     }
 
-	@Override
-	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
-		return PatternNameProvider.class;
-	}
-	
-	public Class<? extends PatternAnnotationProvider> bindPatternAnnotationProvider() {
-		return PatternAnnotationProvider.class;
-	}
+    @Override
+    public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+        return PatternNameProvider.class;
+    }
+
+    public Class<? extends PatternAnnotationProvider> bindPatternAnnotationProvider() {
+        return PatternAnnotationProvider.class;
+    }
 }

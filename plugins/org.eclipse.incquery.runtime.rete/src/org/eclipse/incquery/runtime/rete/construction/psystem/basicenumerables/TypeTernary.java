@@ -21,44 +21,44 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
-public class TypeTernary<PatternDescription, StubHandle> 
-	extends KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> 
-	implements ITypeInfoProviderConstraint
-{
-	private final IPatternMatcherContext<PatternDescription> context;
+public class TypeTernary<PatternDescription, StubHandle> extends
+        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
+    private final IPatternMatcherContext<PatternDescription> context;
 
-	/**
-	 * @param buildable
-	 * @param variablesTuple
-	 * @param supplierKey type info
-	 */
-	public TypeTernary(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			IPatternMatcherContext<PatternDescription> context,
-			PVariable edge, PVariable source, PVariable target, 
-			Object supplierKey) {
-		super(pSystem, new FlatTuple(edge, source, target), supplierKey);
-		this.context = context;
-	}
+    /**
+     * @param buildable
+     * @param variablesTuple
+     * @param supplierKey
+     *            type info
+     */
+    public TypeTernary(PSystem<PatternDescription, StubHandle, ?> pSystem,
+            IPatternMatcherContext<PatternDescription> context, PVariable edge, PVariable source, PVariable target,
+            Object supplierKey) {
+        super(pSystem, new FlatTuple(edge, source, target), supplierKey);
+        this.context = context;
+    }
 
-	@Override
-	public Stub<StubHandle> doCreateStub() {
-		return buildable.ternaryEdgeTypeStub(variablesTuple, supplierKey);
-	}
+    @Override
+    public Stub<StubHandle> doCreateStub() {
+        return buildable.ternaryEdgeTypeStub(variablesTuple, supplierKey);
+    }
 
-	@Override
-	public Object getTypeInfo(PVariable variable) {
-		if (variable.equals(variablesTuple.get(0))) return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapTernary(supplierKey);
-		if (variable.equals(variablesTuple.get(1))) return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapAny(context.ternaryEdgeSourceType(supplierKey));
-		if (variable.equals(variablesTuple.get(2))) return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapAny(context.ternaryEdgeTargetType(supplierKey));
-		return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
-	}
+    @Override
+    public Object getTypeInfo(PVariable variable) {
+        if (variable.equals(variablesTuple.get(0)))
+            return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapTernary(supplierKey);
+        if (variable.equals(variablesTuple.get(1)))
+            return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapAny(context.ternaryEdgeSourceType(supplierKey));
+        if (variable.equals(variablesTuple.get(2)))
+            return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapAny(context.ternaryEdgeTargetType(supplierKey));
+        return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
+    }
 
-	@Override
-	protected String keyToString() {
-		return pSystem.getContext().printType(supplierKey);
-	}
+    @Override
+    protected String keyToString() {
+        return pSystem.getContext().printType(supplierKey);
+    }
 
 }

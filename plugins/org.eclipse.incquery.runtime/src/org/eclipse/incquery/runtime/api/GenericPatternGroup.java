@@ -18,76 +18,71 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.impl.BasePatternGroup;
 
 /**
- * Generic implementation of {@link IPatternGroup}, covering an arbitrarily chosen set of patterns. 
- * Use the public constructor or static GenericPatternGroup.of(...) methods to instantiate.
+ * Generic implementation of {@link IPatternGroup}, covering an arbitrarily chosen set of patterns. Use the public
+ * constructor or static GenericPatternGroup.of(...) methods to instantiate.
  * 
  * @author Mark Czotter
  * 
  */
 public class GenericPatternGroup extends BasePatternGroup {
-	
-	private final Set<Pattern> patterns;
-	
-	/**
-	 * Creates a GenericPatternGroup object with a set of patterns.
-	 * 
-	 * @param patterns
-	 */
-	public GenericPatternGroup(Set<Pattern> patterns) {
-		this.patterns = patterns;
-	}
-	
-	@Override
-	public Set<Pattern> getPatterns() {
-		return patterns;
-	}
-	
-	/**
-	 * Creates a generic {@link IPatternGroup} instance from
-	 * {@link IMatcherFactory} objects.
-	 * 
-	 * @param matcherFactories
-	 * @return
-	 */
-	public static IPatternGroup of(Set<IMatcherFactory<?>> matcherFactories) {
-		return new GenericPatternGroup(patterns(matcherFactories));
-	}
 
-	/**
-	 * Creates a generic {@link IPatternGroup} instance from
-	 * {@link Pattern} objects.
-	 * 
-	 * @param matcherFactories
-	 * @return
-	 */
-	public static IPatternGroup of(Pattern... patterns) {
-		return new GenericPatternGroup(new HashSet<Pattern>(Arrays.asList(patterns)));
-	}	
+    private final Set<Pattern> patterns;
 
-	/**
-	 * Creates a generic {@link IPatternGroup} instance from
-	 * {@link IMatcherFactory} objects.
-	 * 
-	 * @param matcherFactories
-	 * @return
-	 */
-	public static IPatternGroup of(IMatcherFactory<?>... matcherFactories) {
-		return of(new HashSet<IMatcherFactory<?>>(Arrays.asList(matcherFactories)));
-	}	
+    /**
+     * Creates a GenericPatternGroup object with a set of patterns.
+     * 
+     * @param patterns
+     */
+    public GenericPatternGroup(Set<Pattern> patterns) {
+        this.patterns = patterns;
+    }
 
-	/**
-	 * Creates a generic {@link IPatternGroup} instance from other
-	 * {@link IPatternGroup} objects (subgroups).
-	 * 
-	 * @param matcherFactories
-	 * @return
-	 */
-	public static IPatternGroup of(IPatternGroup... subGroups) {
-		Set<Pattern> patterns = new HashSet<Pattern>();
-		for (IPatternGroup group : subGroups) {
-			patterns.addAll(group.getPatterns());
-		}
-		return new GenericPatternGroup(patterns);
-	}	
+    @Override
+    public Set<Pattern> getPatterns() {
+        return patterns;
+    }
+
+    /**
+     * Creates a generic {@link IPatternGroup} instance from {@link IMatcherFactory} objects.
+     * 
+     * @param matcherFactories
+     * @return
+     */
+    public static IPatternGroup of(Set<IMatcherFactory<?>> matcherFactories) {
+        return new GenericPatternGroup(patterns(matcherFactories));
+    }
+
+    /**
+     * Creates a generic {@link IPatternGroup} instance from {@link Pattern} objects.
+     * 
+     * @param matcherFactories
+     * @return
+     */
+    public static IPatternGroup of(Pattern... patterns) {
+        return new GenericPatternGroup(new HashSet<Pattern>(Arrays.asList(patterns)));
+    }
+
+    /**
+     * Creates a generic {@link IPatternGroup} instance from {@link IMatcherFactory} objects.
+     * 
+     * @param matcherFactories
+     * @return
+     */
+    public static IPatternGroup of(IMatcherFactory<?>... matcherFactories) {
+        return of(new HashSet<IMatcherFactory<?>>(Arrays.asList(matcherFactories)));
+    }
+
+    /**
+     * Creates a generic {@link IPatternGroup} instance from other {@link IPatternGroup} objects (subgroups).
+     * 
+     * @param matcherFactories
+     * @return
+     */
+    public static IPatternGroup of(IPatternGroup... subGroups) {
+        Set<Pattern> patterns = new HashSet<Pattern>();
+        for (IPatternGroup group : subGroups) {
+            patterns.addAll(group.getPatterns());
+        }
+        return new GenericPatternGroup(patterns);
+    }
 }
-

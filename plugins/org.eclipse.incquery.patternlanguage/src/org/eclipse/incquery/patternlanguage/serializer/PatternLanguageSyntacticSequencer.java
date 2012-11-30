@@ -10,6 +10,5 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.serializer;
 
-
 public class PatternLanguageSyntacticSequencer extends AbstractPatternLanguageSyntacticSequencer {
 }

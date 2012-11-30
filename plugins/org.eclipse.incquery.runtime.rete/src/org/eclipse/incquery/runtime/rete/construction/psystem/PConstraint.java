@@ -17,16 +17,17 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public interface PConstraint {
 
-	public Set<PVariable> getAffectedVariables();
-	public Set<PVariable> getDeducedVariables();
-	
-	public void replaceVariable(PVariable obsolete, PVariable replacement);
-	
-	public void delete();
-	
-	public void checkSanity() throws RetePatternBuildException;
+    public Set<PVariable> getAffectedVariables();
+
+    public Set<PVariable> getDeducedVariables();
+
+    public void replaceVariable(PVariable obsolete, PVariable replacement);
+
+    public void delete();
+
+    public void checkSanity() throws RetePatternBuildException;
 }

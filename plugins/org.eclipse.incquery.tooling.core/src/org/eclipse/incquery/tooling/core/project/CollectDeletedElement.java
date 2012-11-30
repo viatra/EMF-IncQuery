@@ -19,15 +19,14 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 class CollectDeletedElement implements IResourceVisitor {
-	List<IResource> toDelete = new ArrayList<IResource>();
-	@Override
-	public boolean visit(IResource resource) throws CoreException {
-		if (resource instanceof IFile
-				&& "java".equalsIgnoreCase(((IFile) resource)
-						.getFileExtension())) {
-			toDelete.add(resource);
-			return false;
-		}
-		return true;
-	}
+    List<IResource> toDelete = new ArrayList<IResource>();
+
+    @Override
+    public boolean visit(IResource resource) throws CoreException {
+        if (resource instanceof IFile && "java".equalsIgnoreCase(((IFile) resource).getFileExtension())) {
+            toDelete.add(resource);
+            return false;
+        }
+        return true;
+    }
 }

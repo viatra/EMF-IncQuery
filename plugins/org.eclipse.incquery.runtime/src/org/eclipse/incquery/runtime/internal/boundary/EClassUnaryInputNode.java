@@ -1,4 +1,5 @@
 package org.eclipse.incquery.runtime.internal.boundary;
+
 ///*******************************************************************************
 // * Copyright (c) 2004-2012 Gabor Bergmann and Daniel Varro
 // * All rights reserved. This program and the accompanying materials
@@ -199,4 +200,4 @@ package org.eclipse.incquery.runtime.internal.boundary;
 //		return identityIndexer;
 //	}
 //	
-//}
+// }

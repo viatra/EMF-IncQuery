@@ -29,75 +29,71 @@ import com.google.common.collect.Iterables;
 
 /**
  * <p>
- * An extended abstract declarative scope provider to facilitate the reusing of
- * abstract declarative scope providers together with XBase scope provider.
+ * An extended abstract declarative scope provider to facilitate the reusing of abstract declarative scope providers
+ * together with XBase scope provider.
  * </p>
  * <p>
- * See <a href=
- * "http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521"
- * >http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521</a>
- * for details.
+ * See <a href= "http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521"
+ * >http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521</a> for details.
  * </p>
  * 
  * @author Zoltan Ujhelyi
  * 
  */
-public class PatternLanguageDeclarativeScopeProvider extends
-		MyAbstractDeclarativeScopeProvider {
+public class PatternLanguageDeclarativeScopeProvider extends MyAbstractDeclarativeScopeProvider {
 
     private static final class PrivateDescFilter implements Predicate<IEObjectDescription> {
         @Override
         public boolean apply(IEObjectDescription input) {
-        	// filter not local, private patterns (private patterns in other
-        	// resources)
-        	// this information stored in the userdata of the
-        	// EObjectDescription
-        	// EObjectDescription only created for not local eObjects, so
-        	// check for resource equality is unnecessary.
-        	if ("true".equals(input.getUserData("private"))) {
-        		return false;
-        	}
-        	return true;
+            // filter not local, private patterns (private patterns in other
+            // resources)
+            // this information stored in the userdata of the
+            // EObjectDescription
+            // EObjectDescription only created for not local eObjects, so
+            // check for resource equality is unnecessary.
+            if ("true".equals(input.getUserData("private"))) {
+                return false;
+            }
+            return true;
         }
     }
 
     private static final class UndefinedVariable implements Predicate<Variable> {
-		@Override
+        @Override
         public boolean apply(Variable input) {
-			return input.getName() != null && !input.getName().isEmpty();
-		}
-	}
+            return input.getName() != null && !input.getName().isEmpty();
+        }
+    }
 
-    private static final class CreateObjectDescFunction implements
-			Function<Variable, IEObjectDescription> {
+    private static final class CreateObjectDescFunction implements Function<Variable, IEObjectDescription> {
         @Override
         public IEObjectDescription apply(Variable from) {
-			return EObjectDescription.create(from.getName(), from);
-		}
-	}
+            return EObjectDescription.create(from.getName(), from);
+        }
+    }
 
-	/**
-	 * Custom scoping for patternRef in {@link PatternCall}. Currently returns
-	 * all Pattern that is visible from the current context.
-	 * 
-	 * @param ctx
-	 * @param ref
-	 * @return
-	 */
-	public IScope scope_PatternCall_patternRef(PatternCall ctx, EReference ref) {
-		IScope scope = delegateGetScope(ctx, ref);
+    /**
+     * Custom scoping for patternRef in {@link PatternCall}. Currently returns all Pattern that is visible from the
+     * current context.
+     * 
+     * @param ctx
+     * @param ref
+     * @return
+     */
+    public IScope scope_PatternCall_patternRef(PatternCall ctx, EReference ref) {
+        IScope scope = delegateGetScope(ctx, ref);
         return new FilteringScope(scope, new PrivateDescFilter());
-	}
+    }
 
-	public IScope scope_VariableReference_variable(EObject ctx, EReference ref) {
-		EObject it = ctx;
-		PatternBody body = null;
-		while (it != null && !(it instanceof Pattern)) {
-			if (it instanceof PatternBody) {
-				body = (PatternBody) it;
-			}
-			it = it.eContainer();
-		}
+    public IScope scope_VariableReference_variable(EObject ctx, EReference ref) {
+        EObject it = ctx;
+        PatternBody body = null;
+        while (it != null && !(it instanceof Pattern)) {
+            if (it instanceof PatternBody) {
+                body = (PatternBody) it;
+            }
+            it = it.eContainer();
+        }
         CreateObjectDescFunction createObjectDescFunction = new CreateObjectDescFunction();
         EList<Variable> variables;
         if (body != null) {
@@ -107,12 +103,10 @@ public class PatternLanguageDeclarativeScopeProvider extends
             variables = pattern.getParameters();
         } else {
             return IScope.NULLSCOPE;
-		}
-		UndefinedVariable variableFilter = new UndefinedVariable();
-        IScope localScope = new SimpleScope(IScope.NULLSCOPE,
-				Iterables.transform(
-                Iterables.filter(variables, variableFilter),
-						createObjectDescFunction));
-		return localScope;
-	}
+        }
+        UndefinedVariable variableFilter = new UndefinedVariable();
+        IScope localScope = new SimpleScope(IScope.NULLSCOPE, Iterables.transform(
+                Iterables.filter(variables, variableFilter), createObjectDescFunction));
+        return localScope;
+    }
 }

@@ -18,29 +18,27 @@ import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
  * @author Gabor Bergmann
  * 
- *         A bag is a container that tuples can be dumped into. Does NOT
- *         propagate updates! Optimized for small contents size OR positive
- *         updates only.
+ *         A bag is a container that tuples can be dumped into. Does NOT propagate updates! Optimized for small contents
+ *         size OR positive updates only.
  */
 public class Bag extends SimpleReceiver {
 
-	public Collection<Tuple> contents;
+    public Collection<Tuple> contents;
 
-	public Bag(ReteContainer reteContainer) {
-		super(reteContainer);
-		contents = new LinkedList<Tuple>();
-	}
+    public Bag(ReteContainer reteContainer) {
+        super(reteContainer);
+        contents = new LinkedList<Tuple>();
+    }
 
-	@Override
+    @Override
     public void update(Direction direction, Tuple updateElement) {
-		if (direction == Direction.INSERT)
-			contents.add(updateElement);
-		else
-			contents.remove(updateElement);
-	}
+        if (direction == Direction.INSERT)
+            contents.add(updateElement);
+        else
+            contents.remove(updateElement);
+    }
 
 }

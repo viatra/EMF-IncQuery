@@ -18,19 +18,19 @@ import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
 
 public abstract class Constraint<T extends IPatternMatch> {
 
-	public abstract String getMessage();
+    public abstract String getMessage();
 
-	public abstract EObject getLocationObject(T signature);
+    public abstract EObject getLocationObject(T signature);
 
-	public String prettyPrintSignature(T signature) {
-		return signature.prettyPrint();
-	}
+    public String prettyPrintSignature(T signature) {
+        return signature.prettyPrint();
+    }
 
-	public Object[] extractAffectedElements(T signature) {
-		return signature.toArray();
-	}
-	
-	public abstract int getSeverity();
-	
-	public abstract BaseGeneratedMatcherFactory<? extends BaseGeneratedMatcher<T>> getMatcherFactory();
+    public Object[] extractAffectedElements(T signature) {
+        return signature.toArray();
+    }
+
+    public abstract int getSeverity();
+
+    public abstract BaseGeneratedMatcherFactory<? extends BaseGeneratedMatcher<T>> getMatcherFactory();
 }

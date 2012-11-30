@@ -66,337 +66,329 @@ import org.eclipse.xtext.xbase.XExpression;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public class EPMBodyToPSystem<StubHandle, Collector> {
-	
-	protected Pattern pattern;
-	protected PatternBody body;
-	protected IPatternMatcherContext<Pattern> context;
-	protected Buildable<Pattern, StubHandle, Collector> buildable;
-	
-	protected PSystem<Pattern, StubHandle, Collector> pSystem;
-	
-	String patternFQN;
 
-	/**
-	 * @param pattern
-	 * @param body
-	 * @param builder
-	 * @param buildable
-	 */
-	public EPMBodyToPSystem(Pattern pattern, PatternBody body,
-			IPatternMatcherContext<Pattern> context,
-			Buildable<Pattern, StubHandle, Collector> buildable) {
-		super();
-		this.pattern = pattern;
-		this.body = body;
-		this.context = context;
-		this.buildable = buildable;
-		
-		patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-	}
-	
-	public PSystem<Pattern, StubHandle, Collector> toPSystem() throws RetePatternBuildException {
-		try {
-			if (this.pSystem == null) {
-				this.pSystem = new PSystem<Pattern, StubHandle, Collector>(context, buildable, pattern);
-				
-				// TODO
-	//			preProcessAssignments();
-				preProcessParameters();
-				gatherBodyConstraints();
-			}
-			return pSystem;
-		} catch (RetePatternBuildException e) {
-			e.setPatternDescription(pattern);
-			throw e;
-		}
-	}
+    protected Pattern pattern;
+    protected PatternBody body;
+    protected IPatternMatcherContext<Pattern> context;
+    protected Buildable<Pattern, StubHandle, Collector> buildable;
 
-	public PVariable[] symbolicParameterArray() throws RetePatternBuildException {
-		toPSystem();
-		
-		EList<Variable> symParameters = pattern.getParameters();
-		int arity = symParameters.size();
-		PVariable[] result = new PVariable[arity];
-		for (int i=0; i<arity; ++i) result[i] = getPNode(symParameters.get(i));
-		return result;
-	}
-//	protected PVariable getPNode(String name) {
-//		return pSystem.getOrCreateVariableByName(name);
-//	}
+    protected PSystem<Pattern, StubHandle, Collector> pSystem;
 
-	protected PVariable getPNode(Variable variable) {
-		if (variable instanceof ParameterRef) // handle referenced parameter variables
-			return getPNode(((ParameterRef) variable).getReferredParam()); // assumed to be non-null
-		else 
-			return pSystem.getOrCreateVariableByName(variable);
-	}
-	protected PVariable getPNode(VariableReference variable) {
-		// Warning! variable.getVar() does not differentiate between 
-		// multiple anonymous variables ('_')
-		return getPNode(variable.getVariable());
-	}
-	protected Tuple getPNodeTuple(List<? extends ValueReference> variables) throws RetePatternBuildException {
-		PVariable[] pNodeArray = getPNodeArray(variables);
-		return new FlatTuple(pNodeArray);
-	}
-	public PVariable[] getPNodeArray(List<? extends ValueReference> variables) throws RetePatternBuildException {
-		int k = 0;
-		PVariable[] pNodeArray = new PVariable[variables.size()];
-		for (ValueReference varRef : variables) {
-			pNodeArray[k++] = getPNode(varRef);
-		}
-		return pNodeArray;
-	}
-	protected PVariable getPNode(ValueReference reference) throws RetePatternBuildException {
-		if (reference instanceof VariableValue)
-			return getPNode(((VariableValue) reference).getValue());
-		else if (reference instanceof AggregatedValue)
-			return aggregate((AggregatedValue) reference);
-		else if (reference instanceof IntValue)
-			return pSystem.newConstantVariable(((IntValue) reference).getValue());
-		else if (reference instanceof StringValue)
-			return pSystem.newConstantVariable(((StringValue) reference).getValue());
-		else if (reference instanceof EnumValue) // EMF-specific
-			return pSystem.newConstantVariable(((EnumValue) reference).getLiteral().getInstance());
-		else if (reference instanceof DoubleValue) {
-			return pSystem.newConstantVariable(((DoubleValue) reference).getValue());
-		}
-		else if (reference instanceof BoolValue) {
-			Boolean b = ((BoolValue) reference).isValue();
-			return pSystem.newConstantVariable(b);
-		}
-		else throw new RetePatternBuildException(
-				"Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
-				new String[]{
-						reference != null? reference.eClass().getName() : "(null)",
-						reference != null? reference.eClass().getEPackage().getNsURI() : "(null)",
-						pattern.getName()
-				}, "Unsupported value expression", pattern);
-	}
-	
+    String patternFQN;
 
-	protected PVariable newVirtual() {
-		return pSystem.newVirtualVariable();
-	}
-//	protected Tuple getPNodeTuple(List<? extends ValueReference> references) throws RetePatternBuildException {
-//		PVariable[] pNodeArray = getPNodeArray(references);
-//		return new FlatTuple(pNodeArray);
-//	}
-//	public PVariable[] getPNodeArray(List<? extends ValueReference> references) throws RetePatternBuildException {
-//		int k = 0;
-//		PVariable[] pNodeArray = new PVariable[references.size()];
-//		for (ValueReference varRef : references) {
-//			pNodeArray[k++] = getPNode(varRef);
-//		}
-//		return pNodeArray;
-//	}	
-	private void preProcessParameters() {
-		EList<Variable> parameters = pattern.getParameters();
-		for (Variable variable : parameters) {
-			new ExportedParameter<Pattern, StubHandle>(pSystem, getPNode(variable), variable.getName());
-			if (variable.getType() != null && variable.getType() instanceof ClassType) {
-				EClassifier classname = ((ClassType)variable.getType()).getClassname();
-				PVariable pNode = getPNode(variable);
-				new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
-			}
-		}
-		
-//		final EList<Variable> bodyVariables = body.getVariables();
-//		for (Variable bodyVariable : bodyVariables) {
-//			if (bodyVariable instanceof ParameterRef) {
-//				final Variable referredParam = ((ParameterRef) bodyVariable).getReferredParam();				
-//				new Equality<Pattern, StubHandle>(pSystem, 
-//						getPNode(referredParam), getPNode(bodyVariable));
-//			}
-//		}
-	}
-	private void gatherBodyConstraints() throws RetePatternBuildException {
-		EList<Constraint> constraints = body.getConstraints();
-		for (Constraint constraint : constraints) {
-			gatherConstraint(constraint);
-		}
-	}
+    /**
+     * @param pattern
+     * @param body
+     * @param builder
+     * @param buildable
+     */
+    public EPMBodyToPSystem(Pattern pattern, PatternBody body, IPatternMatcherContext<Pattern> context,
+            Buildable<Pattern, StubHandle, Collector> buildable) {
+        super();
+        this.pattern = pattern;
+        this.body = body;
+        this.context = context;
+        this.buildable = buildable;
 
-	/**
-	 * @param constraint
-	 * @throws RetePatternBuildException
-	 */
-	protected void gatherConstraint(Constraint constraint)
-			throws RetePatternBuildException {
-		if (constraint instanceof EClassifierConstraint) {  // EMF-specific
-			EClassifierConstraint constraint2 = (EClassifierConstraint) constraint;
-			gatherClassifierConstraint(constraint2);
-		} else if (constraint instanceof PatternCompositionConstraint) {
-			PatternCompositionConstraint constraint2 = (PatternCompositionConstraint) constraint;
-			gatherCompositionConstraint(constraint2);
-		} else if (constraint instanceof CompareConstraint) {
-			CompareConstraint compare = (CompareConstraint) constraint;
-			gatherCompareConstraint(compare);
-		} else if (constraint instanceof PathExpressionConstraint) {
-			// TODO advanced features here?
-			PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;			
-			gatherPathExpression(pathExpression);
-		} else if (constraint instanceof CheckConstraint) {
-			final CheckConstraint check = (CheckConstraint) constraint;
-			gatherCheckConstraint(check);
-		// TODO OTHER CONSTRAINT TYPES
-		} else {
-			throw new RetePatternBuildException(
-					"Unsupported constraint type {1} in pattern {2}.", 
-					new String[]{constraint.eClass().getName(), patternFQN}, 
-					"Unsupported constraint type", pattern);
-		}
-	}
+        patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+    }
 
-	/**
-	 * @param check
-	 */
-	protected void gatherCheckConstraint(final CheckConstraint check) {
-		XExpression expression = check.getExpression();
-		new XBaseCheck<StubHandle>(this, expression, pattern);
-	}
+    public PSystem<Pattern, StubHandle, Collector> toPSystem() throws RetePatternBuildException {
+        try {
+            if (this.pSystem == null) {
+                this.pSystem = new PSystem<Pattern, StubHandle, Collector>(context, buildable, pattern);
 
-	/**
-	 * @param pathExpression
-	 * @throws RetePatternBuildException
-	 */
-	protected void gatherPathExpression(PathExpressionConstraint pathExpression)
-			throws RetePatternBuildException {
-		PathExpressionHead head = pathExpression.getHead();
-		PVariable currentSrc = getPNode(head.getSrc());
-		PVariable finalDst = getPNode(head.getDst());
-		PathExpressionTail currentTail = head.getTail();
-		
-		// type constraint on source
-		Type headType = head.getType(); 
-		if (headType instanceof ClassType) {
-			EClassifier headClassname =  ((ClassType)headType).getClassname();
-			new TypeUnary<Pattern, StubHandle>(pSystem, currentSrc, headClassname);
-		} else {
-			throw new RetePatternBuildException(
-				"Unsupported path expression head type {1} in pattern {2}: {3}", 
-				new String[]{headType.eClass().getName(), patternFQN, typeStr(headType)}, 
-				"Unsupported navigation source", pattern);
-		}
+                // TODO
+                // preProcessAssignments();
+                preProcessParameters();
+                gatherBodyConstraints();
+            }
+            return pSystem;
+        } catch (RetePatternBuildException e) {
+            e.setPatternDescription(pattern);
+            throw e;
+        }
+    }
 
-		// process each segment			
-		while (currentTail != null) {
-			Type currentPathSegmentType = currentTail.getType();
-			currentTail = currentTail.getTail();
-			
-			PVariable intermediate = newVirtual();
-			gatherPathSegment(currentPathSegmentType, currentSrc, intermediate);
-			
-			currentSrc = intermediate;
-		}
-		// link the final step to the overall destination
-		new Equality<Pattern, StubHandle>(pSystem, currentSrc, finalDst);
-	}
+    public PVariable[] symbolicParameterArray() throws RetePatternBuildException {
+        toPSystem();
 
-	/**
-	 * @param compare
-	 * @throws RetePatternBuildException
-	 */
-	protected void gatherCompareConstraint(CompareConstraint compare)
-			throws RetePatternBuildException {
-		PVariable left = getPNode(compare.getLeftOperand()); 
-		PVariable right = getPNode(compare.getRightOperand()); 
-		switch(compare.getFeature()) {
-		case EQUALITY:
-			new Equality<Pattern, StubHandle>(pSystem, left, right);
-			break;
-		case INEQUALITY:
-			new Inequality<Pattern, StubHandle>(pSystem, left, right, false);
-		}
-	}
+        EList<Variable> symParameters = pattern.getParameters();
+        int arity = symParameters.size();
+        PVariable[] result = new PVariable[arity];
+        for (int i = 0; i < arity; ++i)
+            result[i] = getPNode(symParameters.get(i));
+        return result;
+    }
 
-	/**
-	 * @param constraint
-	 * @throws RetePatternBuildException
-	 */
-	protected void gatherCompositionConstraint(
-			PatternCompositionConstraint constraint)
-			throws RetePatternBuildException {
-		PatternCall call = constraint.getCall();
-		Pattern patternRef = call.getPatternRef();
-		Tuple pNodeTuple = getPNodeTuple(call.getParameters());
-		if (!call.isTransitive()) {
-			if (constraint.isNegative()) 
-				new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
-			else 
-				new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
-		} else {
-			if (pNodeTuple.getSize() != 2)
-				throw new RetePatternBuildException(
-						"Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.", 
-						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN},
-						"Transitive closure only supported for binary patterns.", 
-						pattern); 
-			else if (constraint.isNegative()) 
-				throw new RetePatternBuildException(
-						"Unsupported negated transitive closure of {1} in pattern {2}", 
-						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
-						"Unsupported negated transitive closure", pattern);
-			else 
-				new BinaryTransitiveClosure<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
-//				throw new RetePatternBuildException(
-//						"Unsupported positive transitive closure of {1} in pattern {2}", 
-//						new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN}, 
-//						pattern);
-		}
-	}
+    // protected PVariable getPNode(String name) {
+    // return pSystem.getOrCreateVariableByName(name);
+    // }
 
-	/**
-	 * @param constraint
-	 */
-	protected void gatherClassifierConstraint(EClassifierConstraint constraint) {
-		EClassifier classname = ((ClassType)constraint.getType()).getClassname();
-		PVariable pNode = getPNode(constraint.getVar());
-		new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
-	}
+    protected PVariable getPNode(Variable variable) {
+        if (variable instanceof ParameterRef) // handle referenced parameter variables
+            return getPNode(((ParameterRef) variable).getReferredParam()); // assumed to be non-null
+        else
+            return pSystem.getOrCreateVariableByName(variable);
+    }
 
-	protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg) throws RetePatternBuildException {
-		if (segmentType instanceof ReferenceType) {  // EMF-specific
-			EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
-			if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
-				new TypeTernary<Pattern, StubHandle>(pSystem, context, newVirtual(), src, trg, typeObject);
-			} else {
-				new TypeBinary<Pattern, StubHandle>(pSystem, context, src, trg, typeObject);
-			}
-		} else throw new RetePatternBuildException(
-				"Unsupported path segment type {1} in pattern {2}: {3}", 
-				new String[]{segmentType.eClass().getName(), patternFQN, typeStr(segmentType)}, 
-				"Unsupported navigation step", pattern);		
-	}
+    protected PVariable getPNode(VariableReference variable) {
+        // Warning! variable.getVar() does not differentiate between
+        // multiple anonymous variables ('_')
+        return getPNode(variable.getVariable());
+    }
 
+    protected Tuple getPNodeTuple(List<? extends ValueReference> variables) throws RetePatternBuildException {
+        PVariable[] pNodeArray = getPNodeArray(variables);
+        return new FlatTuple(pNodeArray);
+    }
 
-	protected PVariable aggregate(AggregatedValue reference) throws RetePatternBuildException {
-		PVariable result = newVirtual();
-		
-		PatternCall call = reference.getCall();
-		Pattern patternRef = call.getPatternRef();
-		Tuple pNodeTuple = getPNodeTuple(call.getParameters());
-		
-		AggregatorExpression aggregator = reference.getAggregator();
-		if (aggregator instanceof CountAggregator) {
-			new PatternMatchCounter<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef, result);
-		} else throw new RetePatternBuildException(
-				"Unsupported aggregator expression type {1} in pattern {2}.", 
-				new String[]{aggregator.eClass().getName(), patternFQN}, 
-				"Unsupported aggregator expression", pattern);	
-		
-		
-		return result;
-	}
-	
-	/**
-	 * @return the string describing a metamodel type, for debug / exception purposes
-	 */
-	private String typeStr(Type type) {
-		return type.getTypename() == null ? "(null)" : type.getTypename();
-	}
+    public PVariable[] getPNodeArray(List<? extends ValueReference> variables) throws RetePatternBuildException {
+        int k = 0;
+        PVariable[] pNodeArray = new PVariable[variables.size()];
+        for (ValueReference varRef : variables) {
+            pNodeArray[k++] = getPNode(varRef);
+        }
+        return pNodeArray;
+    }
+
+    protected PVariable getPNode(ValueReference reference) throws RetePatternBuildException {
+        if (reference instanceof VariableValue)
+            return getPNode(((VariableValue) reference).getValue());
+        else if (reference instanceof AggregatedValue)
+            return aggregate((AggregatedValue) reference);
+        else if (reference instanceof IntValue)
+            return pSystem.newConstantVariable(((IntValue) reference).getValue());
+        else if (reference instanceof StringValue)
+            return pSystem.newConstantVariable(((StringValue) reference).getValue());
+        else if (reference instanceof EnumValue) // EMF-specific
+            return pSystem.newConstantVariable(((EnumValue) reference).getLiteral().getInstance());
+        else if (reference instanceof DoubleValue) {
+            return pSystem.newConstantVariable(((DoubleValue) reference).getValue());
+        } else if (reference instanceof BoolValue) {
+            Boolean b = ((BoolValue) reference).isValue();
+            return pSystem.newConstantVariable(b);
+        } else
+            throw new RetePatternBuildException(
+                    "Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
+                    new String[] { reference != null ? reference.eClass().getName() : "(null)",
+                            reference != null ? reference.eClass().getEPackage().getNsURI() : "(null)",
+                            pattern.getName() }, "Unsupported value expression", pattern);
+    }
+
+    protected PVariable newVirtual() {
+        return pSystem.newVirtualVariable();
+    }
+
+    // protected Tuple getPNodeTuple(List<? extends ValueReference> references) throws RetePatternBuildException {
+    // PVariable[] pNodeArray = getPNodeArray(references);
+    // return new FlatTuple(pNodeArray);
+    // }
+    // public PVariable[] getPNodeArray(List<? extends ValueReference> references) throws RetePatternBuildException {
+    // int k = 0;
+    // PVariable[] pNodeArray = new PVariable[references.size()];
+    // for (ValueReference varRef : references) {
+    // pNodeArray[k++] = getPNode(varRef);
+    // }
+    // return pNodeArray;
+    // }
+    private void preProcessParameters() {
+        EList<Variable> parameters = pattern.getParameters();
+        for (Variable variable : parameters) {
+            new ExportedParameter<Pattern, StubHandle>(pSystem, getPNode(variable), variable.getName());
+            if (variable.getType() != null && variable.getType() instanceof ClassType) {
+                EClassifier classname = ((ClassType) variable.getType()).getClassname();
+                PVariable pNode = getPNode(variable);
+                new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+            }
+        }
+
+        // final EList<Variable> bodyVariables = body.getVariables();
+        // for (Variable bodyVariable : bodyVariables) {
+        // if (bodyVariable instanceof ParameterRef) {
+        // final Variable referredParam = ((ParameterRef) bodyVariable).getReferredParam();
+        // new Equality<Pattern, StubHandle>(pSystem,
+        // getPNode(referredParam), getPNode(bodyVariable));
+        // }
+        // }
+    }
+
+    private void gatherBodyConstraints() throws RetePatternBuildException {
+        EList<Constraint> constraints = body.getConstraints();
+        for (Constraint constraint : constraints) {
+            gatherConstraint(constraint);
+        }
+    }
+
+    /**
+     * @param constraint
+     * @throws RetePatternBuildException
+     */
+    protected void gatherConstraint(Constraint constraint) throws RetePatternBuildException {
+        if (constraint instanceof EClassifierConstraint) { // EMF-specific
+            EClassifierConstraint constraint2 = (EClassifierConstraint) constraint;
+            gatherClassifierConstraint(constraint2);
+        } else if (constraint instanceof PatternCompositionConstraint) {
+            PatternCompositionConstraint constraint2 = (PatternCompositionConstraint) constraint;
+            gatherCompositionConstraint(constraint2);
+        } else if (constraint instanceof CompareConstraint) {
+            CompareConstraint compare = (CompareConstraint) constraint;
+            gatherCompareConstraint(compare);
+        } else if (constraint instanceof PathExpressionConstraint) {
+            // TODO advanced features here?
+            PathExpressionConstraint pathExpression = (PathExpressionConstraint) constraint;
+            gatherPathExpression(pathExpression);
+        } else if (constraint instanceof CheckConstraint) {
+            final CheckConstraint check = (CheckConstraint) constraint;
+            gatherCheckConstraint(check);
+            // TODO OTHER CONSTRAINT TYPES
+        } else {
+            throw new RetePatternBuildException("Unsupported constraint type {1} in pattern {2}.", new String[] {
+                    constraint.eClass().getName(), patternFQN }, "Unsupported constraint type", pattern);
+        }
+    }
+
+    /**
+     * @param check
+     */
+    protected void gatherCheckConstraint(final CheckConstraint check) {
+        XExpression expression = check.getExpression();
+        new XBaseCheck<StubHandle>(this, expression, pattern);
+    }
+
+    /**
+     * @param pathExpression
+     * @throws RetePatternBuildException
+     */
+    protected void gatherPathExpression(PathExpressionConstraint pathExpression) throws RetePatternBuildException {
+        PathExpressionHead head = pathExpression.getHead();
+        PVariable currentSrc = getPNode(head.getSrc());
+        PVariable finalDst = getPNode(head.getDst());
+        PathExpressionTail currentTail = head.getTail();
+
+        // type constraint on source
+        Type headType = head.getType();
+        if (headType instanceof ClassType) {
+            EClassifier headClassname = ((ClassType) headType).getClassname();
+            new TypeUnary<Pattern, StubHandle>(pSystem, currentSrc, headClassname);
+        } else {
+            throw new RetePatternBuildException("Unsupported path expression head type {1} in pattern {2}: {3}",
+                    new String[] { headType.eClass().getName(), patternFQN, typeStr(headType) },
+                    "Unsupported navigation source", pattern);
+        }
+
+        // process each segment
+        while (currentTail != null) {
+            Type currentPathSegmentType = currentTail.getType();
+            currentTail = currentTail.getTail();
+
+            PVariable intermediate = newVirtual();
+            gatherPathSegment(currentPathSegmentType, currentSrc, intermediate);
+
+            currentSrc = intermediate;
+        }
+        // link the final step to the overall destination
+        new Equality<Pattern, StubHandle>(pSystem, currentSrc, finalDst);
+    }
+
+    /**
+     * @param compare
+     * @throws RetePatternBuildException
+     */
+    protected void gatherCompareConstraint(CompareConstraint compare) throws RetePatternBuildException {
+        PVariable left = getPNode(compare.getLeftOperand());
+        PVariable right = getPNode(compare.getRightOperand());
+        switch (compare.getFeature()) {
+        case EQUALITY:
+            new Equality<Pattern, StubHandle>(pSystem, left, right);
+            break;
+        case INEQUALITY:
+            new Inequality<Pattern, StubHandle>(pSystem, left, right, false);
+        }
+    }
+
+    /**
+     * @param constraint
+     * @throws RetePatternBuildException
+     */
+    protected void gatherCompositionConstraint(PatternCompositionConstraint constraint)
+            throws RetePatternBuildException {
+        PatternCall call = constraint.getCall();
+        Pattern patternRef = call.getPatternRef();
+        Tuple pNodeTuple = getPNodeTuple(call.getParameters());
+        if (!call.isTransitive()) {
+            if (constraint.isNegative())
+                new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+            else
+                new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+        } else {
+            if (pNodeTuple.getSize() != 2)
+                throw new RetePatternBuildException(
+                        "Transitive closure of {1} in pattern {2} is unsupported because called pattern is not binary.",
+                        new String[] { CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                        "Transitive closure only supported for binary patterns.", pattern);
+            else if (constraint.isNegative())
+                throw new RetePatternBuildException("Unsupported negated transitive closure of {1} in pattern {2}",
+                        new String[] { CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
+                        "Unsupported negated transitive closure", pattern);
+            else
+                new BinaryTransitiveClosure<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+            // throw new RetePatternBuildException(
+            // "Unsupported positive transitive closure of {1} in pattern {2}",
+            // new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN},
+            // pattern);
+        }
+    }
+
+    /**
+     * @param constraint
+     */
+    protected void gatherClassifierConstraint(EClassifierConstraint constraint) {
+        EClassifier classname = ((ClassType) constraint.getType()).getClassname();
+        PVariable pNode = getPNode(constraint.getVar());
+        new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+    }
+
+    protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg) throws RetePatternBuildException {
+        if (segmentType instanceof ReferenceType) { // EMF-specific
+            EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
+            if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
+                new TypeTernary<Pattern, StubHandle>(pSystem, context, newVirtual(), src, trg, typeObject);
+            } else {
+                new TypeBinary<Pattern, StubHandle>(pSystem, context, src, trg, typeObject);
+            }
+        } else
+            throw new RetePatternBuildException("Unsupported path segment type {1} in pattern {2}: {3}", new String[] {
+                    segmentType.eClass().getName(), patternFQN, typeStr(segmentType) }, "Unsupported navigation step",
+                    pattern);
+    }
+
+    protected PVariable aggregate(AggregatedValue reference) throws RetePatternBuildException {
+        PVariable result = newVirtual();
+
+        PatternCall call = reference.getCall();
+        Pattern patternRef = call.getPatternRef();
+        Tuple pNodeTuple = getPNodeTuple(call.getParameters());
+
+        AggregatorExpression aggregator = reference.getAggregator();
+        if (aggregator instanceof CountAggregator) {
+            new PatternMatchCounter<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef, result);
+        } else
+            throw new RetePatternBuildException("Unsupported aggregator expression type {1} in pattern {2}.",
+                    new String[] { aggregator.eClass().getName(), patternFQN }, "Unsupported aggregator expression",
+                    pattern);
+
+        return result;
+    }
+
+    /**
+     * @return the string describing a metamodel type, for debug / exception purposes
+     */
+    private String typeStr(Type type) {
+        return type.getTypename() == null ? "(null)" : type.getTypename();
+    }
 
 }

@@ -18,25 +18,23 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * An aggregation node that simply counts the number of tuples conforming to the signature.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public class CountNode extends AggregatorNode {
-	
 
-	public CountNode(ReteContainer reteContainer, ProjectionIndexer projection) {
-		super(reteContainer, projection);
-	}
+    public CountNode(ReteContainer reteContainer, ProjectionIndexer projection) {
+        super(reteContainer, projection);
+    }
 
+    int sizeOf(Collection<Tuple> group) {
+        return group == null ? 0 : group.size();
+    }
 
-	int sizeOf(Collection<Tuple> group) {
-		return group==null ? 0 : group.size();
-	}
+    @Override
+    public Object aggregateGroup(Tuple signature, Collection<Tuple> group) {
+        return sizeOf(group);
+    }
 
-
-	@Override
-	public Object aggregateGroup(Tuple signature, Collection<Tuple> group) {
-		return sizeOf(group);
-	}
-	
 }

@@ -14,12 +14,11 @@ package org.eclipse.incquery.tooling.ui;
 import org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
 
-public class IncQueryLanguageExecutableExtensionFactory extends
-		EMFPatternLanguageExecutableExtensionFactory {
+public class IncQueryLanguageExecutableExtensionFactory extends EMFPatternLanguageExecutableExtensionFactory {
 
-	@Override
-	protected Bundle getBundle() {
-		return IncQueryGUIPlugin.getDefault().getBundle();
-	}
+    @Override
+    protected Bundle getBundle() {
+        return IncQueryGUIPlugin.getDefault().getBundle();
+    }
 
 }

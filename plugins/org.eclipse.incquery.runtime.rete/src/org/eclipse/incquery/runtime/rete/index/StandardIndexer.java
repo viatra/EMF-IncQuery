@@ -21,88 +21,89 @@ import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
-
 /**
  * An abstract standard implementation of the Indexer interface, providing common bookkeeping functionality.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public abstract class StandardIndexer implements Indexer {
-	
-	protected ReteContainer reteContainer;
-	protected long nodeId;
-	protected Object tag;
-	protected Supplier parent;
-	protected List<IndexerListener> listeners;
-	protected TupleMask mask;
 
-	public StandardIndexer(ReteContainer reteContainer, TupleMask mask) {
-		super();
-		this.reteContainer = reteContainer;
-		this.nodeId = reteContainer.registerNode(this);
-		this.parent = null;
-		this.mask = mask;
-		this.listeners = new ArrayList<IndexerListener>();
-	}
-	
-	protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-		for (IndexerListener listener : listeners) {
-			listener.notifyIndexerUpdate(direction, updateElement, signature, change);
-		}
-	}
+    protected ReteContainer reteContainer;
+    protected long nodeId;
+    protected Object tag;
+    protected Supplier parent;
+    protected List<IndexerListener> listeners;
+    protected TupleMask mask;
 
-	/**
-	 * @return the mask
-	 */
-	public TupleMask getMask() {
-		return mask;
-	}
+    public StandardIndexer(ReteContainer reteContainer, TupleMask mask) {
+        super();
+        this.reteContainer = reteContainer;
+        this.nodeId = reteContainer.registerNode(this);
+        this.parent = null;
+        this.mask = mask;
+        this.listeners = new ArrayList<IndexerListener>();
+    }
 
-	public Supplier getParent() {
-		return parent;
-	}
+    protected void propagate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+        for (IndexerListener listener : listeners) {
+            listener.notifyIndexerUpdate(direction, updateElement, signature, change);
+        }
+    }
 
-	public void attachListener(IndexerListener listener) {
-		listeners.add(listener);
-	}
+    /**
+     * @return the mask
+     */
+    public TupleMask getMask() {
+        return mask;
+    }
 
-	public void detachListener(IndexerListener listener) {
-		listeners.remove(listener);
-	}
-	
-	public Collection<IndexerListener> getListeners() {
-		return listeners;
-	}
+    public Supplier getParent() {
+        return parent;
+    }
 
-	public ReteContainer getContainer() {
-		return reteContainer;
-	}
+    public void attachListener(IndexerListener listener) {
+        listeners.add(listener);
+    }
 
-	public long getNodeId() {
-		return nodeId;
-	}
+    public void detachListener(IndexerListener listener) {
+        listeners.remove(listener);
+    }
 
-	/**
-	 * @return the tag
-	 */
-	public Object getTag() {
-		return tag;
-	}
+    public Collection<IndexerListener> getListeners() {
+        return listeners;
+    }
 
-	/**
-	 * @param tag
-	 *            the tag to set
-	 */
-	public void setTag(Object tag) {
-		this.tag = tag;
-	}
+    public ReteContainer getContainer() {
+        return reteContainer;
+    }
 
-	@Override
-	public String toString() {
-		if (tag != null)
-			return "[" + nodeId+ "]" + getClass().getSimpleName() + "("+ parent + "/"+ mask+")" + " [[" + tag.toString() + "]]";
-		else
-			return "[" + nodeId+ "]" + getClass().getSimpleName() + "("+ parent + "/"+ mask+")";
-	};
+    public long getNodeId() {
+        return nodeId;
+    }
+
+    /**
+     * @return the tag
+     */
+    public Object getTag() {
+        return tag;
+    }
+
+    /**
+     * @param tag
+     *            the tag to set
+     */
+    public void setTag(Object tag) {
+        this.tag = tag;
+    }
+
+    @Override
+    public String toString() {
+        if (tag != null)
+            return "[" + nodeId + "]" + getClass().getSimpleName() + "(" + parent + "/" + mask + ")" + " [["
+                    + tag.toString() + "]]";
+        else
+            return "[" + nodeId + "]" + getClass().getSimpleName() + "(" + parent + "/" + mask + ")";
+    };
 
 }

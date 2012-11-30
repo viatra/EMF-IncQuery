@@ -13,37 +13,37 @@ package org.eclipse.incquery.runtime.rete.tuple;
 
 /**
  * A tuple that transparently provides a masked (transformed) view of another tuple.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public class MaskedTuple extends Tuple {
 
-	Tuple wrapped;
-	TupleMask mask;
-	
-	
-	public MaskedTuple(Tuple wrapped, TupleMask mask) {
-		super();
-//		if (wrapped instanceof MaskedTuple) {
-//			MaskedTuple parent = (MaskedTuple)wrapped;
-//			this.wrapped = parent.wrapped;
-//			this.mask = mask.transform(parent.mask);
-//		}
-//		else 
-		{
-			this.wrapped = wrapped;
-			this.mask = mask;
-		}
-	}
+    Tuple wrapped;
+    TupleMask mask;
 
-	@Override
-	public Object get(int index) {
-		return wrapped.get(mask.indices[index]);
-	}
+    public MaskedTuple(Tuple wrapped, TupleMask mask) {
+        super();
+        // if (wrapped instanceof MaskedTuple) {
+        // MaskedTuple parent = (MaskedTuple)wrapped;
+        // this.wrapped = parent.wrapped;
+        // this.mask = mask.transform(parent.mask);
+        // }
+        // else
+        {
+            this.wrapped = wrapped;
+            this.mask = mask;
+        }
+    }
 
-	@Override
-	public int getSize() {
-		return mask.indices.length;
-	}
+    @Override
+    public Object get(int index) {
+        return wrapped.get(mask.indices[index]);
+    }
+
+    @Override
+    public int getSize() {
+        return mask.indices.length;
+    }
 
 }

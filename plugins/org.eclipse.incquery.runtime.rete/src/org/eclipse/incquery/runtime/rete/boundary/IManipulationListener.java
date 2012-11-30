@@ -13,22 +13,20 @@ package org.eclipse.incquery.runtime.rete.boundary;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public interface IManipulationListener extends Disconnectable {
-	
-	/**
-	 * @param element
-	 * @param termEvaluatorNode
-	 */
-	void registerSensitiveTerm(Object element,
-			PredicateEvaluatorNode termEvaluatorNode);
 
-	/**
-	 * @param element
-	 * @param termEvaluatorNode
-	 */
-	void unregisterSensitiveTerm(Object element,
-			PredicateEvaluatorNode termEvaluatorNode);
+    /**
+     * @param element
+     * @param termEvaluatorNode
+     */
+    void registerSensitiveTerm(Object element, PredicateEvaluatorNode termEvaluatorNode);
+
+    /**
+     * @param element
+     * @param termEvaluatorNode
+     */
+    void unregisterSensitiveTerm(Object element, PredicateEvaluatorNode termEvaluatorNode);
 
 }

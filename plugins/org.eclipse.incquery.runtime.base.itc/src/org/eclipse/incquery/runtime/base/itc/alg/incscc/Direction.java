@@ -12,9 +12,8 @@ package org.eclipse.incquery.runtime.base.itc.alg.incscc;
 
 /**
  * @author Tamas Szabo
- *
+ * 
  */
 public enum Direction {
-	INSERT,
-	DELETE
+    INSERT, DELETE
 }

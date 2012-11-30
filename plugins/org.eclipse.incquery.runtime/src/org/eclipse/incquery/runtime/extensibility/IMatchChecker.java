@@ -20,16 +20,14 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  */
 public interface IMatchChecker {
 
-	/**
-	 * The implementation should return the result value of the xexpression.
-	 * 
-	 * @param tuple
-	 *            which holds the actual values for this expression
-	 * @param tupleNameMap
-	 *            which holds the used name-integer pairs, to be able to get out
-	 *            the attributes from the tuple
-	 */
-	public Object evaluateXExpression(final Tuple tuple,
-			final Map<String, Integer> tupleNameMap);
+    /**
+     * The implementation should return the result value of the xexpression.
+     * 
+     * @param tuple
+     *            which holds the actual values for this expression
+     * @param tupleNameMap
+     *            which holds the used name-integer pairs, to be able to get out the attributes from the tuple
+     */
+    public Object evaluateXExpression(final Tuple tuple, final Map<String, Integer> tupleNameMap);
 
 }

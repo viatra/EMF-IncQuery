@@ -20,57 +20,54 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Item;
 
 public class MatcherConfigurationCellModifier implements ICellModifier {
-	
-	private TableViewer viewer;
-	
-	public MatcherConfigurationCellModifier(TableViewer viewer) {
-		this.viewer = viewer;
-	}
-	
-	@Override
-	public boolean canModify(Object element, String property) {
-		if (property.equalsIgnoreCase("filter")) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
 
-	@Override
-	public Object getValue(Object element, String property) {
-		MatcherConfiguration conf = (MatcherConfiguration) element;
-		if (property.equalsIgnoreCase("filter")) {
-			if (conf.getFilter() instanceof EObject) {
-				EObject eObj = (EObject) conf.getFilter();
-				URI uri = eObj.eClass().eResource().getURI();
-				AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
-				if (lp != null) {
-					return lp.getText(eObj);
-				}
-			}
-			return conf.getFilter();
-		}
-		else if (property.equalsIgnoreCase("class")) {
-			return conf.getClazz();
-		}
-		else if (property.equalsIgnoreCase("parameter")) {
-			return conf.getParameterName();
-		}
-		return "";
-	}
+    private TableViewer viewer;
 
-	@Override
-	public void modify(Object element, String property, Object value) {
-		if (element instanceof Item) {
-	         element = ((Item) element).getData();
-	    }
-		MatcherConfiguration conf = (MatcherConfiguration) element;
-		
-		if (conf != null && property.equalsIgnoreCase("filter")) {
-			conf.setFilter(value);
-			viewer.update(conf, null);
-		}
-	}
+    public MatcherConfigurationCellModifier(TableViewer viewer) {
+        this.viewer = viewer;
+    }
+
+    @Override
+    public boolean canModify(Object element, String property) {
+        if (property.equalsIgnoreCase("filter")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Object getValue(Object element, String property) {
+        MatcherConfiguration conf = (MatcherConfiguration) element;
+        if (property.equalsIgnoreCase("filter")) {
+            if (conf.getFilter() instanceof EObject) {
+                EObject eObj = (EObject) conf.getFilter();
+                URI uri = eObj.eClass().eResource().getURI();
+                AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+                if (lp != null) {
+                    return lp.getText(eObj);
+                }
+            }
+            return conf.getFilter();
+        } else if (property.equalsIgnoreCase("class")) {
+            return conf.getClazz();
+        } else if (property.equalsIgnoreCase("parameter")) {
+            return conf.getParameterName();
+        }
+        return "";
+    }
+
+    @Override
+    public void modify(Object element, String property, Object value) {
+        if (element instanceof Item) {
+            element = ((Item) element).getData();
+        }
+        MatcherConfiguration conf = (MatcherConfiguration) element;
+
+        if (conf != null && property.equalsIgnoreCase("filter")) {
+            conf.setFilter(value);
+            viewer.update(conf, null);
+        }
+    }
 
 }

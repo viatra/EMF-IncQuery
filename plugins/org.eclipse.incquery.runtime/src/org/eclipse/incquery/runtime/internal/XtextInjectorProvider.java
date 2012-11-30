@@ -16,30 +16,28 @@ import com.google.inject.Injector;
 
 /**
  * A singleton provider for Xtext injectors
+ * 
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public final class XtextInjectorProvider {
 
-	public final static XtextInjectorProvider INSTANCE = new XtextInjectorProvider();
-	private Injector injector;
-	
-	
-	private XtextInjectorProvider() {}
+    public final static XtextInjectorProvider INSTANCE = new XtextInjectorProvider();
+    private Injector injector;
 
+    private XtextInjectorProvider() {
+    }
 
-	public Injector getInjector() {
-		return injector;
-	}
+    public Injector getInjector() {
+        return injector;
+    }
 
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
 
-	public void setInjector(Injector injector) {
-		this.injector = injector;
-	}
-	
-	public void initializeHeadlessInjector() {
-		EMFPatternLanguageStandaloneSetup setup = 
-				new EMFPatternLanguageStandaloneSetup();
-		injector = setup.createInjectorAndDoEMFRegistration();
-	}
+    public void initializeHeadlessInjector() {
+        EMFPatternLanguageStandaloneSetup setup = new EMFPatternLanguageStandaloneSetup();
+        injector = setup.createInjectorAndDoEMFRegistration();
+    }
 }

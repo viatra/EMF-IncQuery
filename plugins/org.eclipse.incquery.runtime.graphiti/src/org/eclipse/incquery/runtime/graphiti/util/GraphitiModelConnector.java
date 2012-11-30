@@ -30,62 +30,62 @@ import org.eclipse.ui.IWorkbenchPage;
 
 public class GraphitiModelConnector extends EMFModelConnector {
 
-	private IWorkbenchPage workbenchPage;
-	
-	public GraphitiModelConnector(MatcherTreeViewerRootKey key) {
-		super(key);
-		this.workbenchPage = key.getEditorPart().getSite().getPage();
-	}
+    private IWorkbenchPage workbenchPage;
 
-	@Override
-	public void loadModel() {
-		workbenchPage.addPartListener(GraphitiEditorPartListener.getInstance());
-		if (QueryExplorer.getInstance() != null) {
-			QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
-		}
-	}
+    public GraphitiModelConnector(MatcherTreeViewerRootKey key) {
+        super(key);
+        this.workbenchPage = key.getEditorPart().getSite().getPage();
+    }
 
-	@Override
-	public void unloadModel() {
-		workbenchPage.removePartListener(GraphitiEditorPartListener.getInstance());
-		if (QueryExplorer.getInstance() != null) {
-			QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
-		}
-	}
+    @Override
+    public void loadModel() {
+        workbenchPage.addPartListener(GraphitiEditorPartListener.getInstance());
+        if (QueryExplorer.getInstance() != null) {
+            QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+        }
+    }
 
-	@Override
-	public void showLocation(Object[] locationObjects) {
-		//reflective set selection is not needed
-		IStructuredSelection preparedSelection = prepareSelection(locationObjects);
-		navigateToElements(key.getEditorPart(), preparedSelection);
-		workbenchPage.bringToTop(key.getEditorPart());
-	}
-	
-	@Override
-	protected TreePath createTreePath(IEditorPart editor, EObject obj) {
-		if (editor instanceof DiagramEditor) {			
-			Diagram diagram = ((DiagramEditor) editor).getDiagramTypeProvider().getDiagram();
-			List<PictogramElement> pictogramElements = Graphiti.getLinkService().getPictogramElements(diagram, obj);
-			if (!pictogramElements.isEmpty()) {
-				List<EditPart> parts = new ArrayList<EditPart>();
-				for (PictogramElement element : pictogramElements) {
-					EditPart part = ((DiagramEditor) editor).getEditPartForPictogramElement(element);
-					if (part != null) {
-						parts.add(part);
-					}
-				}
-				return new TreePath(parts.toArray());
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
-		if (editorPart instanceof DiagramEditor) {
-			DiagramEditor providerEditor = (DiagramEditor) editorPart;
-			providerEditor.getGraphicalViewer().setSelection(selection);
-		}
-	}
+    @Override
+    public void unloadModel() {
+        workbenchPage.removePartListener(GraphitiEditorPartListener.getInstance());
+        if (QueryExplorer.getInstance() != null) {
+            QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+        }
+    }
+
+    @Override
+    public void showLocation(Object[] locationObjects) {
+        // reflective set selection is not needed
+        IStructuredSelection preparedSelection = prepareSelection(locationObjects);
+        navigateToElements(key.getEditorPart(), preparedSelection);
+        workbenchPage.bringToTop(key.getEditorPart());
+    }
+
+    @Override
+    protected TreePath createTreePath(IEditorPart editor, EObject obj) {
+        if (editor instanceof DiagramEditor) {
+            Diagram diagram = ((DiagramEditor) editor).getDiagramTypeProvider().getDiagram();
+            List<PictogramElement> pictogramElements = Graphiti.getLinkService().getPictogramElements(diagram, obj);
+            if (!pictogramElements.isEmpty()) {
+                List<EditPart> parts = new ArrayList<EditPart>();
+                for (PictogramElement element : pictogramElements) {
+                    EditPart part = ((DiagramEditor) editor).getEditPartForPictogramElement(element);
+                    if (part != null) {
+                        parts.add(part);
+                    }
+                }
+                return new TreePath(parts.toArray());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
+        if (editorPart instanceof DiagramEditor) {
+            DiagramEditor providerEditor = (DiagramEditor) editorPart;
+            providerEditor.getGraphicalViewer().setSelection(selection);
+        }
+    }
 
 }

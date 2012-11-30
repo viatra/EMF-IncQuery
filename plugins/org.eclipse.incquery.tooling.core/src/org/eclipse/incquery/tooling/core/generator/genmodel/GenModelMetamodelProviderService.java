@@ -84,7 +84,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService i
 
     @Inject
     private IJavaProjectProvider projectProvider;
-    
+
     @Inject
     private IQualifiedNameConverter qualifiedNameConverter;
 
@@ -277,7 +277,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService i
         }
         return resultList;
     }
-    
+
     private List<GenPackage> getAllNestedGenPackages(GenPackage outerGenPackage) {
         List<GenPackage> resultList = new ArrayList<GenPackage>();
         for (GenPackage innerGenPackage : outerGenPackage.getNestedGenPackages()) {

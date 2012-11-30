@@ -12,29 +12,33 @@ package org.eclipse.incquery.runtime.triggerengine.notification;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public interface IActivationNotificationProvider {
 
-    /** 
-     * Registers an {@link IActivationNotificationListener} to receive updates on activation 
-     * appearance and disappearance.  
+    /**
+     * Registers an {@link IActivationNotificationListener} to receive updates on activation appearance and
+     * disappearance.
      * 
-     * <p> The listener can be unregistered via 
+     * <p>
+     * The listener can be unregistered via
      * {@link #removeActivationNotificationListener(IActivationNotificationListener)}.
-     *  
-     * @param fireNow if true, listener will be immediately invoked on all current activations as a one-time effect. 
-     *
-     * @param listener the listener that will be notified of each new activation that appears or disappears, 
-     * starting from now. 
+     * 
+     * @param fireNow
+     *            if true, listener will be immediately invoked on all current activations as a one-time effect.
+     * 
+     * @param listener
+     *            the listener that will be notified of each new activation that appears or disappears, starting from
+     *            now.
      */
     boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow);
 
     /**
-     * Unregisters a listener registered by 
+     * Unregisters a listener registered by
      * {@link #addActivationNotificationListener(IActivationNotificationListener, boolean)}.
      * 
-     * @param listener the listener that will no longer be notified. 
+     * @param listener
+     *            the listener that will no longer be notified.
      */
     boolean removeActivationNotificationListener(IActivationNotificationListener listener);
 

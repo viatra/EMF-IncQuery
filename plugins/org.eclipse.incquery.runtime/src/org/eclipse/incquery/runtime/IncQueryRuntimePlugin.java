@@ -26,54 +26,57 @@ import com.google.inject.Injector;
  */
 public class IncQueryRuntimePlugin extends Plugin {
 
-	// The shared instance
-	private static IncQueryRuntimePlugin plugin;
-	
-	public static final String PLUGIN_ID="org.eclipse.incquery.runtime";
+    // The shared instance
+    private static IncQueryRuntimePlugin plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-		// TODO Builder registry may be used later
-		//BuilderRegistry.initRegistry();
-		XtextInjectorProvider.INSTANCE.setInjector(createInjector());
-		//MatcherFactoryRegistry.initRegistry();
-	}
+    public static final String PLUGIN_ID = "org.eclipse.incquery.runtime";
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		XtextInjectorProvider.INSTANCE.setInjector(null);
-		super.stop(context);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+        // TODO Builder registry may be used later
+        // BuilderRegistry.initRegistry();
+        XtextInjectorProvider.INSTANCE.setInjector(createInjector());
+        // MatcherFactoryRegistry.initRegistry();
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static IncQueryRuntimePlugin getDefault() {
-		return plugin;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        XtextInjectorProvider.INSTANCE.setInjector(null);
+        super.stop(context);
+    }
 
-	private Injector createInjector() throws CoreException {
-		IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(IExtensions.INJECTOREXTENSIONID);
-		if (providers.length > 0) {
-			IConfigurationElement provider = providers[0]; //XXX multiple providers not supported
-			IInjectorProvider injectorProvider = (IInjectorProvider) provider.createExecutableExtension("injector");
-			return injectorProvider.getInjector();
-		} else {
-			return new EMFPatternLanguageStandaloneSetup().createInjector();
-		}
-	}
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static IncQueryRuntimePlugin getDefault() {
+        return plugin;
+    }
+
+    private Injector createInjector() throws CoreException {
+        IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(
+                IExtensions.INJECTOREXTENSIONID);
+        if (providers.length > 0) {
+            IConfigurationElement provider = providers[0]; // XXX multiple providers not supported
+            IInjectorProvider injectorProvider = (IInjectorProvider) provider.createExecutableExtension("injector");
+            return injectorProvider.getInjector();
+        } else {
+            return new EMFPatternLanguageStandaloneSetup().createInjector();
+        }
+    }
 
 }

@@ -9,14 +9,12 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
  * The {@link IRuleFactory} defines the way a {@link AbstractRule} instance is created.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public interface IRuleFactory {
 
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> 
-		AbstractRule<Match> createRule(IncQueryEngine engine, 
-							   IMatcherFactory<Matcher> factory, 
-							   boolean upgradedStateUsed, 
-							   boolean disappearedStateUsed);
-	
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> AbstractRule<Match> createRule(
+            IncQueryEngine engine, IMatcherFactory<Matcher> factory, boolean upgradedStateUsed,
+            boolean disappearedStateUsed);
+
 }

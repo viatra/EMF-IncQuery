@@ -14,7 +14,7 @@ import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider {
 

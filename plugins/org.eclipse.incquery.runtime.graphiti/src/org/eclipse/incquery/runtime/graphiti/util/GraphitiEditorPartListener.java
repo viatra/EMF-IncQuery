@@ -23,37 +23,37 @@ import org.eclipse.ui.IWorkbenchPart;
  * The PartListener is used to observe EditorPart close actions on Graphiti editors.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class GraphitiEditorPartListener extends BasePartListener {
-	
-	private static GraphitiEditorPartListener instance;
-	
-	protected GraphitiEditorPartListener() {
-		
-	}
-	
-	public synchronized static GraphitiEditorPartListener getInstance() {
-		if (instance == null) {
-			instance = new GraphitiEditorPartListener();
-		}
-		return instance;
-	}
 
-	@Override
-	public void partClosed(IWorkbenchPart part) {
+    private static GraphitiEditorPartListener instance;
 
-		if (part != null && part instanceof IEditorPart) {
-			IEditorPart closedEditor = (IEditorPart) part;
-			if (closedEditor instanceof DiagramEditor) {
-				DiagramEditor providerEditor = (DiagramEditor) closedEditor;
-				ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
-				if (resourceSet.getResources().size() > 0) {
-					MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
-					QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
-				}
-			}
-		}
+    protected GraphitiEditorPartListener() {
 
-	}
+    }
+
+    public synchronized static GraphitiEditorPartListener getInstance() {
+        if (instance == null) {
+            instance = new GraphitiEditorPartListener();
+        }
+        return instance;
+    }
+
+    @Override
+    public void partClosed(IWorkbenchPart part) {
+
+        if (part != null && part instanceof IEditorPart) {
+            IEditorPart closedEditor = (IEditorPart) part;
+            if (closedEditor instanceof DiagramEditor) {
+                DiagramEditor providerEditor = (DiagramEditor) closedEditor;
+                ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
+                if (resourceSet.getResources().size() > 0) {
+                    MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resourceSet);
+                    QueryExplorer.getInstance().getModelConnectorMap().get(key).unloadModel();
+                }
+            }
+        }
+
+    }
 }

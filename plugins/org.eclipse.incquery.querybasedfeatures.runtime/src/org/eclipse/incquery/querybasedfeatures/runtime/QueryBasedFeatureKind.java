@@ -10,6 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime;
 
-public enum QueryBasedFeatureKind{
-	SUM, COUNTER, SINGLE_REFERENCE, MANY_REFERENCE, ITERATION
+public enum QueryBasedFeatureKind {
+    SUM, COUNTER, SINGLE_REFERENCE, MANY_REFERENCE, ITERATION
 }

@@ -17,29 +17,28 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @author Tamas Szabo
- *
+ * 
  */
 public class ElementSelectionDialogContentProvider implements IStructuredContentProvider {
 
-	@Override
-	public void dispose() {
-		
-	}
+    @Override
+    public void dispose() {
 
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
-	}
+    }
 
-	@Override
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof Object[]) {
-			return (Object[]) inputElement;
-		}
-		else if (inputElement instanceof Collection<?>) {
-			return ((Collection<?>) inputElement).toArray();
-		}
-		return null;
-	}
+    @Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+    }
+
+    @Override
+    public Object[] getElements(Object inputElement) {
+        if (inputElement instanceof Object[]) {
+            return (Object[]) inputElement;
+        } else if (inputElement instanceof Collection<?>) {
+            return ((Collection<?>) inputElement).toArray();
+        }
+        return null;
+    }
 
 }

@@ -21,25 +21,25 @@ import org.eclipse.swt.widgets.Display;
 import com.google.inject.Injector;
 
 class DeltaVisitor implements IResourceDeltaVisitor {
-	private final Injector injector;
+    private final Injector injector;
 
-	public DeltaVisitor(Injector injector) {
-		this.injector = injector;
-	}
+    public DeltaVisitor(Injector injector) {
+        this.injector = injector;
+    }
 
-	public boolean visit(IResourceDelta delta) {
-		IResource res = delta.getResource();
-		
-		if (res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
-			
-			IFile file = (IFile) res;
-			if (PatternRegistry.getInstance().getFiles().contains(file)) {
-				RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file);
-				injector.injectMembers(registrator);
-				Display.getDefault().asyncExec(registrator);
-			}
-			return false;
-		}
-		return true;
-	}
+    public boolean visit(IResourceDelta delta) {
+        IResource res = delta.getResource();
+
+        if (res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
+
+            IFile file = (IFile) res;
+            if (PatternRegistry.getInstance().getFiles().contains(file)) {
+                RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file);
+                injector.injectMembers(registrator);
+                Display.getDefault().asyncExec(registrator);
+            }
+            return false;
+        }
+        return true;
+    }
 }

@@ -14,8 +14,7 @@ package org.eclipse.incquery.runtime.rete.network;
 /**
  * @author Gabor Bergmann
  * 
- *         A Tunnel is an interface into which elments can be instered and from
- *         which productions can be extracted.
+ *         A Tunnel is an interface into which elments can be instered and from which productions can be extracted.
  */
 public interface Tunnel extends Supplier, Receiver {
 

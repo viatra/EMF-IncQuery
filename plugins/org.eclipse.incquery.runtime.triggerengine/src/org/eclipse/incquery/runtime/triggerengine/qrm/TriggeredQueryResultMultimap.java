@@ -25,25 +25,26 @@ import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
-public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMatch, KeyType, ValueType> extends QueryResultMultimap<KeyType, ValueType> {
+public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMatch, KeyType, ValueType> extends
+        QueryResultMultimap<KeyType, ValueType> {
 
     private IMatchProcessor<MatchType> appearanceProcessor;
     private IMatchProcessor<MatchType> disappearanceProcessor;
 
     private IAgenda agenda;
-    
+
     /**
      * @param agenda
      */
     protected TriggeredQueryResultMultimap(IAgenda agenda) {
         super(agenda.getLogger());
         this.agenda = agenda;
-        
+
         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
         agenda.addUpdateCompleteListener(firingStrategy, true);
-        
+
         appearanceProcessor = new IMatchProcessor<MatchType>() {
             @Override
             public void process(MatchType match) {
@@ -52,7 +53,7 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
                 internalPut(key, value);
             }
         };
-        
+
         disappearanceProcessor = new IMatchProcessor<MatchType>() {
             @Override
             public void process(MatchType match) {
@@ -62,25 +63,26 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
             }
         };
     }
-    
+
     protected TriggeredQueryResultMultimap(IncQueryEngine engine) {
         this(RuleEngine.getInstance().getOrCreateAgenda(engine));
     }
-    
+
     protected TriggeredQueryResultMultimap(Notifier notifier) {
         this(RuleEngine.getInstance().getOrCreateAgenda(notifier));
     }
-    
-    public <Matcher extends IncQueryMatcher<MatchType>> void addMatcherToMultimapResults(IMatcherFactory<Matcher> factory) {
+
+    public <Matcher extends IncQueryMatcher<MatchType>> void addMatcherToMultimapResults(
+            IMatcherFactory<Matcher> factory) {
         IRule<MatchType> newRule = agenda.createRule(factory, false, true);
-        if(newRule != null) {
+        if (newRule != null) {
             newRule.setStateChangeProcessor(ActivationState.APPEARED, appearanceProcessor);
             newRule.setStateChangeProcessor(ActivationState.DISAPPEARED, disappearanceProcessor);
         }
     }
 
-    protected abstract KeyType getKeyFromMatch(MatchType match); 
-    
+    protected abstract KeyType getKeyFromMatch(MatchType match);
+
     protected abstract ValueType getValueFromMatch(MatchType match);
-    
+
 }

@@ -21,65 +21,78 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Mark Czotter
- *
+ * 
  */
 public class PatternMatchDialogLabelProvider implements ILabelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
-	@Override
-	public void addListener(ILabelProviderListener listener) {
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+     */
+    @Override
+    public void addListener(ILabelProviderListener listener) {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
-	@Override
-	public void dispose() {
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+     */
+    @Override
+    public void dispose() {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-	 */
-	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+     */
+    @Override
+    public boolean isLabelProperty(Object element, String property) {
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+     */
+    @Override
+    public void removeListener(ILabelProviderListener listener) {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
-	@Override
-	public Image getImage(Object element) {
-		ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
-		if (element instanceof IPatternMatch) {
-			return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCH);
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+     */
+    @Override
+    public Image getImage(Object element) {
+        ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
+        if (element instanceof IPatternMatch) {
+            return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCH);
+        }
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
-	@Override
-	public String getText(Object element) {
-		if (element instanceof IPatternMatch) {
-			String message = DatabindingUtil.getMessage((IPatternMatch) element, true);
-			if (message != null) {
-				return DatabindingAdapterUtil.getMessage((IPatternMatch) element, message);				
-			} else {
-				return element.toString();
-			}
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+     */
+    @Override
+    public String getText(Object element) {
+        if (element instanceof IPatternMatch) {
+            String message = DatabindingUtil.getMessage((IPatternMatch) element, true);
+            if (message != null) {
+                return DatabindingAdapterUtil.getMessage((IPatternMatch) element, message);
+            } else {
+                return element.toString();
+            }
+        }
+        return null;
+    }
 
 }

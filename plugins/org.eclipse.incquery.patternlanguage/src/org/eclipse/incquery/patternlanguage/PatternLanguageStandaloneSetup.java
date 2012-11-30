@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage;
 
-
 /**
- * Initialization support for running Xtext languages 
- * without equinox extension registry
+ * Initialization support for running Xtext languages without equinox extension registry
  */
-public class PatternLanguageStandaloneSetup extends PatternLanguageStandaloneSetupGenerated{
+public class PatternLanguageStandaloneSetup extends PatternLanguageStandaloneSetupGenerated {
 
-	public static void doSetup() {
-		new PatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
+    public static void doSetup() {
+        new PatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+    }
 }
-

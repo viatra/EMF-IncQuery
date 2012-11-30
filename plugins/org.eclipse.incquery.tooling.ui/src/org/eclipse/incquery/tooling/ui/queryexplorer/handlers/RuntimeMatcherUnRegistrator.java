@@ -23,24 +23,25 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 
 public class RuntimeMatcherUnRegistrator implements Runnable {
 
-	private final IFile file;
-	
-	public RuntimeMatcherUnRegistrator(IFile file) {
-		this.file = file;
-	}
+    private final IFile file;
 
-	@Override
-	public void run() {		
-		MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-		List<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
-		for (Pattern pattern : removedPatterns) {
-			for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-				root.unregisterPattern(pattern);
-			}
-			QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
-		}
-		
-		QueryExplorer.getInstance().getPatternsViewer().refresh();
-	}
+    public RuntimeMatcherUnRegistrator(IFile file) {
+        this.file = file;
+    }
+
+    @Override
+    public void run() {
+        MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
+        List<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
+        for (Pattern pattern : removedPatterns) {
+            for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+                root.unregisterPattern(pattern);
+            }
+            QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot()
+                    .removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+        }
+
+        QueryExplorer.getInstance().getPatternsViewer().refresh();
+    }
 
 }

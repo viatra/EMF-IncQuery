@@ -23,46 +23,46 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  */
 public class TrimmerNode extends TransformerNode {
 
-	protected TupleMask mask;
+    protected TupleMask mask;
 
-	/**
-	 * @param reteContainer
-	 * @param mask
-	 *            The mask used to trim substitutions.
-	 */
-	public TrimmerNode(ReteContainer reteContainer, TupleMask mask) {
-		super(reteContainer);
-		this.mask = mask;
-	}
+    /**
+     * @param reteContainer
+     * @param mask
+     *            The mask used to trim substitutions.
+     */
+    public TrimmerNode(ReteContainer reteContainer, TupleMask mask) {
+        super(reteContainer);
+        this.mask = mask;
+    }
 
-	/**
-	 * @param reteContainer
-	 * @param mask
-	 *            The mask used to trim substitutions.
-	 */
-	public TrimmerNode(ReteContainer reteContainer) {
-		super(reteContainer);
-		this.mask = null;
-	}
+    /**
+     * @param reteContainer
+     * @param mask
+     *            The mask used to trim substitutions.
+     */
+    public TrimmerNode(ReteContainer reteContainer) {
+        super(reteContainer);
+        this.mask = null;
+    }
 
-	/**
-	 * @return the mask
-	 */
-	public TupleMask getMask() {
-		return mask;
-	}
+    /**
+     * @return the mask
+     */
+    public TupleMask getMask() {
+        return mask;
+    }
 
-	/**
-	 * @param mask
-	 *            the mask to set
-	 */
-	public void setMask(TupleMask mask) {
-		this.mask = mask;
-	}
+    /**
+     * @param mask
+     *            the mask to set
+     */
+    public void setMask(TupleMask mask) {
+        this.mask = mask;
+    }
 
-	@Override
-	protected Tuple transform(Tuple input) {
-		return mask.transform(input);
-	}
+    @Override
+    protected Tuple transform(Tuple input) {
+        return mask.transform(input);
+    }
 
 }

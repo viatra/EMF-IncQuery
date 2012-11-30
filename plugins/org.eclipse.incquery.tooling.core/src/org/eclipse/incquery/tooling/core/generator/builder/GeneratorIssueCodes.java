@@ -14,9 +14,10 @@ package org.eclipse.incquery.tooling.core.generator.builder;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 
 public final class GeneratorIssueCodes {
-	
-	private GeneratorIssueCodes() {}
-	
+
+    private GeneratorIssueCodes() {
+    }
+
     public static final String INVALID_PATTERN_MODEL_CODE = IncQueryGeneratorPlugin.BUNDLE_ID + ".invalid.patternmodel";
     public static final String INVALID_TYPEREF_CODE = IncQueryGeneratorPlugin.BUNDLE_ID + ".invalid.typeref";
 }

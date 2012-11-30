@@ -22,60 +22,58 @@ import org.eclipse.ui.PlatformUI;
  * An {@link IListAdapter} implementation for specifying pattern parameters in the wizard.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class ObjectListAdapter implements IListAdapter<ObjectParameter> {
 
-	private ListDialogField<EPackage> importList;
-	private NewEiqFileWizardPatternConfigurationPage page;
-	
-	public ObjectListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
-		this.importList = importList;
-		this.page = page;
-	}
-	
-	@Override
-	public void customButtonPressed(ListDialogField<ObjectParameter> field, int index) {
-		ObjectParameter parameter = new ObjectParameter();
-		ObjectParameterConfigurationDialog dialog = new ObjectParameterConfigurationDialog(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				importList.getElements(), parameter);
-		//a unique parameter object is needed because the dialog will be disposed after the ok button is pressed
-		if (index == 0) {
-			//Add
-			if (dialog.open() == Dialog.OK) {
-				field.addElement(parameter);
-			}
-		}
-		else if (index == 1) {
-			//Modify
-			ObjectParameter firstElement = field.getSelectedElements().get(0);
-			parameter.setObject(firstElement.getObject());
-			parameter.setParameterName(firstElement.getParameterName());
-			if (dialog.open() == Dialog.OK) {
-				firstElement.setObject(parameter.getObject());
-				firstElement.setParameterName(parameter.getParameterName());
-			}
-		}
-		
-		field.refresh();
-	}
+    private ListDialogField<EPackage> importList;
+    private NewEiqFileWizardPatternConfigurationPage page;
 
-	@Override
-	public void selectionChanged(ListDialogField<ObjectParameter> field) {
-		if (field.getElements().size() > 0) {
-			field.enableButton(1, true);
-			page.parameterSet = true;
-		}
-		else {
-			field.enableButton(1, false);
-			page.parameterSet = false;
-		}
-		
-		page.validatePage();
-	}
+    public ObjectListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
+        this.importList = importList;
+        this.page = page;
+    }
 
-	@Override
-	public void doubleClicked(ListDialogField<ObjectParameter> field) {}
+    @Override
+    public void customButtonPressed(ListDialogField<ObjectParameter> field, int index) {
+        ObjectParameter parameter = new ObjectParameter();
+        ObjectParameterConfigurationDialog dialog = new ObjectParameterConfigurationDialog(PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getShell(), importList.getElements(), parameter);
+        // a unique parameter object is needed because the dialog will be disposed after the ok button is pressed
+        if (index == 0) {
+            // Add
+            if (dialog.open() == Dialog.OK) {
+                field.addElement(parameter);
+            }
+        } else if (index == 1) {
+            // Modify
+            ObjectParameter firstElement = field.getSelectedElements().get(0);
+            parameter.setObject(firstElement.getObject());
+            parameter.setParameterName(firstElement.getParameterName());
+            if (dialog.open() == Dialog.OK) {
+                firstElement.setObject(parameter.getObject());
+                firstElement.setParameterName(parameter.getParameterName());
+            }
+        }
+
+        field.refresh();
+    }
+
+    @Override
+    public void selectionChanged(ListDialogField<ObjectParameter> field) {
+        if (field.getElements().size() > 0) {
+            field.enableButton(1, true);
+            page.parameterSet = true;
+        } else {
+            field.enableButton(1, false);
+            page.parameterSet = false;
+        }
+
+        page.validatePage();
+    }
+
+    @Override
+    public void doubleClicked(ListDialogField<ObjectParameter> field) {
+    }
 }

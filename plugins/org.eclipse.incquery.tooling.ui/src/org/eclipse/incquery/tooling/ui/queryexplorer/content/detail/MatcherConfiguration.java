@@ -13,44 +13,44 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 
 public class MatcherConfiguration {
 
-	private String parameterName;
-	private String clazz;
-	private Object filter;
+    private String parameterName;
+    private String clazz;
+    private Object filter;
 
-	public MatcherConfiguration(String parameterName, String clazz,	Object filter) {
-		super();
-		this.parameterName = parameterName;
-		this.clazz = clazz;
-		this.filter = filter;
-	}
+    public MatcherConfiguration(String parameterName, String clazz, Object filter) {
+        super();
+        this.parameterName = parameterName;
+        this.clazz = clazz;
+        this.filter = filter;
+    }
 
-	public String getParameterName() {
-		return parameterName;
-	}
+    public String getParameterName() {
+        return parameterName;
+    }
 
-	public void setParameterName(String parameterName) {
-		this.parameterName = parameterName;
-	}
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
 
-	public String getClazz() {
-		return clazz;
-	}
+    public String getClazz() {
+        return clazz;
+    }
 
-	public void setClazz(String clazz) {
-		this.clazz = clazz;
-	}
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
 
-	public Object getFilter() {
-		return filter;
-	}
+    public Object getFilter() {
+        return filter;
+    }
 
-	public void setFilter(Object filter) {
-		this.filter = filter;
-	}
-	
-	//Used by ViewerComparator too
-	@Override
-	public String toString() {
-		return parameterName;
-	}
+    public void setFilter(Object filter) {
+        this.filter = filter;
+    }
+
+    // Used by ViewerComparator too
+    @Override
+    public String toString() {
+        return parameterName;
+    }
 }

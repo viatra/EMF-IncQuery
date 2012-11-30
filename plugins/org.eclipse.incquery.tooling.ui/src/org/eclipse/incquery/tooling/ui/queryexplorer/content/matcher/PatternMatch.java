@@ -23,71 +23,69 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 
 /**
- * A PatternMatch is associated to every match of a matcher.
- * It is the lowest level element is the treeviewer.
+ * A PatternMatch is associated to every match of a matcher. It is the lowest level element is the treeviewer.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class PatternMatch {
 
-	private String text;
-	private IPatternMatch match;
-	private PatternMatcher parent;
-	private String message;
-	private ParameterValueChangedListener listener;
-	private List<IObservableValue> affectedValues;
-	
-	public PatternMatch(PatternMatcher parent, IPatternMatch match) {
-		this.parent = parent;
-		this.match = match;
-		this.message = DatabindingUtil.getMessage(match, parent.isGenerated());
-		this.listener = new ParameterValueChangedListener();
-		if (message != null) {
-			setText(DatabindingAdapterUtil.getMessage(match, message));
-			affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
-		}
-		else {
-			this.text = match.toString();
-		}
-	}
-	
-	public void dispose() {
-		if (affectedValues != null) {
-			for (IObservableValue val : affectedValues) {
-				val.removeValueChangeListener(listener);
-			}
-		}
-	}
-	
-	public void setText(String text) {
-		this.text = text;
-		String[] properties = new String[] {"text"};
-		if (QueryExplorer.getInstance() != null) {
-			QueryExplorer.getInstance().getMatcherTreeViewer().update(this, properties);
-		}
-	}
+    private String text;
+    private IPatternMatch match;
+    private PatternMatcher parent;
+    private String message;
+    private ParameterValueChangedListener listener;
+    private List<IObservableValue> affectedValues;
 
-	public String getText() {
-		return text;
-	}
+    public PatternMatch(PatternMatcher parent, IPatternMatch match) {
+        this.parent = parent;
+        this.match = match;
+        this.message = DatabindingUtil.getMessage(match, parent.isGenerated());
+        this.listener = new ParameterValueChangedListener();
+        if (message != null) {
+            setText(DatabindingAdapterUtil.getMessage(match, message));
+            affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
+        } else {
+            this.text = match.toString();
+        }
+    }
 
-	public PatternMatcher getParent() {
-		return parent;
-	}
-	
-	private class ParameterValueChangedListener implements IValueChangeListener {
-		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			setText(DatabindingAdapterUtil.getMessage(match, message));
-		}
-	}
+    public void dispose() {
+        if (affectedValues != null) {
+            for (IObservableValue val : affectedValues) {
+                val.removeValueChangeListener(listener);
+            }
+        }
+    }
 
-	public IPatternMatch getPatternMatch() {
-		return match;
-	}
-	
-	public Object[] getLocationObjects() {
-		return this.match.toArray();
-	}
+    public void setText(String text) {
+        this.text = text;
+        String[] properties = new String[] { "text" };
+        if (QueryExplorer.getInstance() != null) {
+            QueryExplorer.getInstance().getMatcherTreeViewer().update(this, properties);
+        }
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public PatternMatcher getParent() {
+        return parent;
+    }
+
+    private class ParameterValueChangedListener implements IValueChangeListener {
+        @Override
+        public void handleValueChange(ValueChangeEvent event) {
+            setText(DatabindingAdapterUtil.getMessage(match, message));
+        }
+    }
+
+    public IPatternMatch getPatternMatch() {
+        return match;
+    }
+
+    public Object[] getLocationObjects() {
+        return this.match.toArray();
+    }
 }

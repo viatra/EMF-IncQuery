@@ -20,28 +20,29 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 import org.eclipse.jface.viewers.TreeSelection;
 
 /**
- * Show location handler for the pattern registry extension. 
+ * Show location handler for the pattern registry extension.
  * 
- * Note that the default handler (used in the middle viewer) cannot be used as the selection providers for the QueryExplorer view 
- * should be set according to the focus. However, I could not manage to properly listen on focus change events.  
+ * Note that the default handler (used in the middle viewer) cannot be used as the selection providers for the
+ * QueryExplorer view should be set according to the focus. However, I could not manage to properly listen on focus
+ * change events.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class PatternRegitryShowLocationHandler extends ShowLocationHandler {
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
-		Object firstElement = selection.getFirstElement();
-		
-		if (firstElement instanceof PatternLeaf) {
-			String patternFqn = ((PatternLeaf) firstElement).getFullPatternNamePrefix();
-			Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-			setSelectionToXTextEditor(pattern);
-		}
-		
-		return null;
-	}
-	
+
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
+        Object firstElement = selection.getFirstElement();
+
+        if (firstElement instanceof PatternLeaf) {
+            String patternFqn = ((PatternLeaf) firstElement).getFullPatternNamePrefix();
+            Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+            setSelectionToXTextEditor(pattern);
+        }
+
+        return null;
+    }
+
 }

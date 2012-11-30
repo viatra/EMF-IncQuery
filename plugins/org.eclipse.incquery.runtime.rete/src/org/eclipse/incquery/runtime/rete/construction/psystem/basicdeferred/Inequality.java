@@ -25,136 +25,136 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPC
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
-public class Inequality<PatternDescription, StubHandle> 
-	extends VariableDeferredPConstraint<PatternDescription, StubHandle> 
-//	implements IFoldablePConstraint 
+public class Inequality<PatternDescription, StubHandle> extends
+        VariableDeferredPConstraint<PatternDescription, StubHandle>
+// implements IFoldablePConstraint
 {
 
-	private PVariable who;
-	private PVariable withWhom;
-//	private IFoldablePConstraint incorporator;
-	
-	/**
-	 * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is undeducible.
-	 */
-	private boolean weak; 
-	
-	
-	public Inequality(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			PVariable who, PVariable withWhom) 
-	{
-		this(pSystem, who, withWhom, false);
-	}
-	
-	public Inequality(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			PVariable who, PVariable withWhom,
-			boolean weak) 
-	{
-		super(pSystem, new HashSet<PVariable>(Arrays.asList(new PVariable[]{who, withWhom})));
-		// this(pSystem, who, Collections.singleton(withWhom));
-		this.who = who;
-		this.withWhom = withWhom;
-		this.weak = weak;
-	}
+    private PVariable who;
+    private PVariable withWhom;
+    // private IFoldablePConstraint incorporator;
 
-//	private Inequality(
-//			PSystem<PatternDescription, StubHandle, ?> pSystem,
-//			PVariable subject, Set<PVariable> inequals) 
-//	{
-//		super(pSystem, include(inequals, subject));
-//		this.subject = subject;
-//		this.inequals = inequals;
-//	}
+    /**
+     * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is
+     * undeducible.
+     */
+    private boolean weak;
 
-//	private static HashSet<PVariable> include(Set<PVariable> inequals, PVariable subject) {
-//		HashSet<PVariable> hashSet = new HashSet<PVariable>(inequals);
-//		hashSet.add(subject);
-//		return hashSet;
-//	}
+    public Inequality(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable who, PVariable withWhom) {
+        this(pSystem, who, withWhom, false);
+    }
 
+    public Inequality(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable who, PVariable withWhom,
+            boolean weak) {
+        super(pSystem, new HashSet<PVariable>(Arrays.asList(new PVariable[] { who, withWhom })));
+        // this(pSystem, who, Collections.singleton(withWhom));
+        this.who = who;
+        this.withWhom = withWhom;
+        this.weak = weak;
+    }
 
-	@Override
-	protected Set<PVariable> getDeferringVariables() {
-		return getAffectedVariables();
-	}
+    // private Inequality(
+    // PSystem<PatternDescription, StubHandle, ?> pSystem,
+    // PVariable subject, Set<PVariable> inequals)
+    // {
+    // super(pSystem, include(inequals, subject));
+    // this.subject = subject;
+    // this.inequals = inequals;
+    // }
 
-	@Override
-	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
-		Map<Object, Integer> variablesIndex = stub.getVariablesIndex();
-		return buildable.buildInjectivityChecker(stub, variablesIndex.get(who), new int[]{variablesIndex.get(withWhom)});
-	}
+    // private static HashSet<PVariable> include(Set<PVariable> inequals, PVariable subject) {
+    // HashSet<PVariable> hashSet = new HashSet<PVariable>(inequals);
+    // hashSet.add(subject);
+    // return hashSet;
+    // }
 
-//	private static int[] mapIndices(Map<Object, Integer> variablesIndex, Set<PVariable> keys) {
-//		int[] result = new int[keys.size()];
-//		int k = 0;
-//		for (PVariable key : keys) {
-//			result[k++] = variablesIndex.get(key);
-//		}
-//		return result;
-//	}
+    @Override
+    protected Set<PVariable> getDeferringVariables() {
+        return getAffectedVariables();
+    }
 
-//	@Override
-//	public IFoldablePConstraint getIncorporator() {
-//		return incorporator;
-//	}
-//
-//	@Override
-//	public void registerIncorporatationInto(IFoldablePConstraint incorporator) {
-//		this.incorporator = incorporator;
-//	}
-//	
-//	@Override
-//	public boolean incorporate(IFoldablePConstraint other) {
-//		if (other instanceof Inequality<?, ?>) {
-//			Inequality other2 = (Inequality) other;
-//			if (subject.equals(other2.subject)) {
-//				Set<PVariable> newInequals = new HashSet<PVariable>(inequals);
-//				newInequals.addAll(other2.inequals);
-//				return new Inequality<PatternDescription, StubHandle>(buildable, subject, newInequals);
-//			}
-//		} else return false;
-//	}
+    @Override
+    protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
+        Map<Object, Integer> variablesIndex = stub.getVariablesIndex();
+        return buildable.buildInjectivityChecker(stub, variablesIndex.get(who),
+                new int[] { variablesIndex.get(withWhom) });
+    }
 
-	@Override
-	protected String toStringRest() {
-		return who.toString() + (isWeak() ? "!=?" : "!=") + withWhom.toString();
-	}
+    // private static int[] mapIndices(Map<Object, Integer> variablesIndex, Set<PVariable> keys) {
+    // int[] result = new int[keys.size()];
+    // int k = 0;
+    // for (PVariable key : keys) {
+    // result[k++] = variablesIndex.get(key);
+    // }
+    // return result;
+    // }
 
-	@Override
-	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-		if (obsolete.equals(who)) who = replacement;
-		if (obsolete.equals(withWhom)) withWhom = replacement;
-	}
+    // @Override
+    // public IFoldablePConstraint getIncorporator() {
+    // return incorporator;
+    // }
+    //
+    // @Override
+    // public void registerIncorporatationInto(IFoldablePConstraint incorporator) {
+    // this.incorporator = incorporator;
+    // }
+    //
+    // @Override
+    // public boolean incorporate(IFoldablePConstraint other) {
+    // if (other instanceof Inequality<?, ?>) {
+    // Inequality other2 = (Inequality) other;
+    // if (subject.equals(other2.subject)) {
+    // Set<PVariable> newInequals = new HashSet<PVariable>(inequals);
+    // newInequals.addAll(other2.inequals);
+    // return new Inequality<PatternDescription, StubHandle>(buildable, subject, newInequals);
+    // }
+    // } else return false;
+    // }
 
-	@Override
-	public Set<PVariable> getDeducedVariables() {
-		return Collections.emptySet();
-	}
+    @Override
+    protected String toStringRest() {
+        return who.toString() + (isWeak() ? "!=?" : "!=") + withWhom.toString();
+    }
 
-	/**
-	 * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is undeducible.
-	 * @return the weak
-	 */
-	public boolean isWeak() {
-		return weak;
-	}
+    @Override
+    public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+        if (obsolete.equals(who))
+            who = replacement;
+        if (obsolete.equals(withWhom))
+            withWhom = replacement;
+    }
 
-	/**
-	 * A weak inequality constraint is eliminable if who is the same as withWhom, or if any if them is undeducible.
-	 */
-	public boolean isEliminable() {
-		return isWeak() && (who.equals(withWhom) || !who.isDeducable() || !withWhom.isDeducable());
-	}
-	
-	/**
-	 * Eliminates a weak inequality constraint if it can be ignored when who is the same as withWhom, or if any if them is undeducible.
-	 */	
-	public void eliminateWeak() {
-		if (isEliminable()) delete();
-	}
-	
+    @Override
+    public Set<PVariable> getDeducedVariables() {
+        return Collections.emptySet();
+    }
+
+    /**
+     * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is
+     * undeducible.
+     * 
+     * @return the weak
+     */
+    public boolean isWeak() {
+        return weak;
+    }
+
+    /**
+     * A weak inequality constraint is eliminable if who is the same as withWhom, or if any if them is undeducible.
+     */
+    public boolean isEliminable() {
+        return isWeak() && (who.equals(withWhom) || !who.isDeducable() || !withWhom.isDeducable());
+    }
+
+    /**
+     * Eliminates a weak inequality constraint if it can be ignored when who is the same as withWhom, or if any if them
+     * is undeducible.
+     */
+    public void eliminateWeak() {
+        if (isEliminable())
+            delete();
+    }
+
 }

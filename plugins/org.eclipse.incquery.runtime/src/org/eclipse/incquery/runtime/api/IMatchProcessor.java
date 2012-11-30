@@ -14,16 +14,18 @@ package org.eclipse.incquery.runtime.api;
 /**
  * A "lambda" action that can be executed on each match of a pattern.
  * 
- * Clients can manually implement process() in an (anonymous) class, or alternatively, 
- *  extend either {@link GenericMatchProcessor} or the user-friendly pattern-specific generated match processor classes.
+ * Clients can manually implement process() in an (anonymous) class, or alternatively, extend either
+ * {@link GenericMatchProcessor} or the user-friendly pattern-specific generated match processor classes.
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
-public interface IMatchProcessor<Match extends IPatternMatch> {	
-	/**
-	 * Defines the action that is to be executed on each match. 
-	 * @param match a single match of the pattern that must be processed by the implementation of this method
-	 */
-	public void process(Match match);
+public interface IMatchProcessor<Match extends IPatternMatch> {
+    /**
+     * Defines the action that is to be executed on each match.
+     * 
+     * @param match
+     *            a single match of the pattern that must be processed by the implementation of this method
+     */
+    public void process(Match match);
 }

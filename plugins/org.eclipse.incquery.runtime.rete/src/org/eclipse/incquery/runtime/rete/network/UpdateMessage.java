@@ -14,23 +14,24 @@ package org.eclipse.incquery.runtime.rete.network;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 class UpdateMessage {
-	public Receiver receiver;
-	public Direction direction;
-	public Tuple updateElement;
+    public Receiver receiver;
+    public Direction direction;
+    public Tuple updateElement;
 
-	public UpdateMessage(Receiver receiver, Direction direction,
-			Tuple updateElement) {
-		this.receiver = receiver;
-		this.direction = direction;
-		this.updateElement = updateElement;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "M." + direction + ": " + updateElement + " -> " + receiver;
-	}
+    public UpdateMessage(Receiver receiver, Direction direction, Tuple updateElement) {
+        this.receiver = receiver;
+        this.direction = direction;
+        this.updateElement = updateElement;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "M." + direction + ": " + updateElement + " -> " + receiver;
+    }
 
 }

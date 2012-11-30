@@ -11,19 +11,18 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer;
 
-public class PatternsViewerHierarchicalLabelProvider extends
-		PatternsViewerFlatLabelProvider {
+public class PatternsViewerHierarchicalLabelProvider extends PatternsViewerFlatLabelProvider {
 
-	public PatternsViewerHierarchicalLabelProvider(PatternsViewerInput input) {
-		super(input);
-	}
+    public PatternsViewerHierarchicalLabelProvider(PatternsViewerInput input) {
+        super(input);
+    }
 
-	@Override
-	public String getText(Object element) {
-		if (element instanceof PatternComponent) {
-			return ((PatternComponent) element).getPatternNameFragment();
-		}
-		return null;
-	}
+    @Override
+    public String getText(Object element) {
+        if (element instanceof PatternComponent) {
+            return ((PatternComponent) element).getPatternNameFragment();
+        }
+        return null;
+    }
 
 }

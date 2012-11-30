@@ -29,93 +29,82 @@ import org.eclipse.incquery.tooling.generator.model.generatorModel.IncQueryGener
  */
 public interface IEiqGenmodelProvider {
 
-	/**
-	 * Gets the generator model for a selected IncQuery-related context object
-	 * (e.g. a {@link Pattern}). If the project of the pattern has no generator
-	 * model specified, this method returns an empty generator model. The
-	 * genmodel will be placed into the {@link ResourceSet} of the Pattern
-	 * object.
-	 * 
-	 * @param pattern
-	 * @return the loaded generator model
-	 * @throws IllegalArgumentException
-	 *             if the parameter pattern is not serialized into a
-	 *             {@link ResourceSet} that is not linked to an IncQuery project
-	 */
-	IncQueryGeneratorModel getGeneratorModel(EObject context);
+    /**
+     * Gets the generator model for a selected IncQuery-related context object (e.g. a {@link Pattern}). If the project
+     * of the pattern has no generator model specified, this method returns an empty generator model. The genmodel will
+     * be placed into the {@link ResourceSet} of the Pattern object.
+     * 
+     * @param pattern
+     * @return the loaded generator model
+     * @throws IllegalArgumentException
+     *             if the parameter pattern is not serialized into a {@link ResourceSet} that is not linked to an
+     *             IncQuery project
+     */
+    IncQueryGeneratorModel getGeneratorModel(EObject context);
 
-	/**
-	 * Gets the generator model for a selected IncQuery project. If the project
-	 * has no generator model specified, this method returns an empty generator
-	 * model. The genmodel will be placed into the specified resource set
-	 * 
-	 * @param project
-	 * @param set
-	 * @return the loaded generator model
-	 */
-	IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set);
-	
-	/**
-	 * Saves the changes to the generator model instance in the selected
-	 * project. The provider assumes that the genmodel was instantiated by using
-	 * the {@link #getGeneratorModel(EObject)} or the
-	 * {@link #getGeneratorModel(IProject, ResourceSet)} methods.
-	 * 
-	 * @throws IOException 
-	 */
-	void saveGeneratorModel(IProject project, IncQueryGeneratorModel generatorModel) throws IOException;
+    /**
+     * Gets the generator model for a selected IncQuery project. If the project has no generator model specified, this
+     * method returns an empty generator model. The genmodel will be placed into the specified resource set
+     * 
+     * @param project
+     * @param set
+     * @return the loaded generator model
+     */
+    IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set);
 
-	
-	/**
-	 * Collects all EPackage objects available from a selected project, including
-	 * the ones from the EPackage Registry.
-	 * If the project features an eiqgen files, the packages referenced there
-	 * are also included.
-	 * @param project
-	 * @return a non-null collection of packages
-	 * @throws CoreException 
-	 */
-	Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException;
-	
-	/**
-	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
-	 * The context object is used for determining the actual project.
-	 * 
-	 * @param ePackage
-	 * @return the corresponding {@link GenPackage} for the selected
-	 *         {@link EPackage}
-	 */
-	GenPackage findGenPackage(EObject context, EPackage ePackage);
-	
-	/**
-	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
-	 * The resource set is expected to be the one Xtext assigns for a Java
-	 * project.
-	 * 
-	 * @param packageNsUri
-	 * @return the corresponding {@link GenPackage} for the selected
-	 *         {@link EPackage}
-	 */
-	GenPackage findGenPackage(ResourceSet set, final String packageNsUri);
-	/**
-	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
-	 * The resource set is expected to be the one Xtext assigns for a Java
-	 * project.
-	 * 
-	 * @param packageNsUri
-	 * @return the corresponding {@link GenPackage} for the selected
-	 *         {@link EPackage}
-	 */
-	GenPackage findGenPackage(ResourceSet set, final EPackage ePackage);
-	
-	/**
-	 * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}.
-	 * The context object is used for determining the actual project.
-	 * 
-	 * @param packageNsUri
-	 * @return the corresponding {@link GenPackage} for the selected
-	 *         {@link EPackage}
-	 */
-	GenPackage findGenPackage(EObject ctx, final String packageNsUri);
+    /**
+     * Saves the changes to the generator model instance in the selected project. The provider assumes that the genmodel
+     * was instantiated by using the {@link #getGeneratorModel(EObject)} or the
+     * {@link #getGeneratorModel(IProject, ResourceSet)} methods.
+     * 
+     * @throws IOException
+     */
+    void saveGeneratorModel(IProject project, IncQueryGeneratorModel generatorModel) throws IOException;
+
+    /**
+     * Collects all EPackage objects available from a selected project, including the ones from the EPackage Registry.
+     * If the project features an eiqgen files, the packages referenced there are also included.
+     * 
+     * @param project
+     * @return a non-null collection of packages
+     * @throws CoreException
+     */
+    Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException;
+
+    /**
+     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The context object is used for
+     * determining the actual project.
+     * 
+     * @param ePackage
+     * @return the corresponding {@link GenPackage} for the selected {@link EPackage}
+     */
+    GenPackage findGenPackage(EObject context, EPackage ePackage);
+
+    /**
+     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The resource set is expected to be the
+     * one Xtext assigns for a Java project.
+     * 
+     * @param packageNsUri
+     * @return the corresponding {@link GenPackage} for the selected {@link EPackage}
+     */
+    GenPackage findGenPackage(ResourceSet set, final String packageNsUri);
+
+    /**
+     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The resource set is expected to be the
+     * one Xtext assigns for a Java project.
+     * 
+     * @param packageNsUri
+     * @return the corresponding {@link GenPackage} for the selected {@link EPackage}
+     */
+    GenPackage findGenPackage(ResourceSet set, final EPackage ePackage);
+
+    /**
+     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The context object is used for
+     * determining the actual project.
+     * 
+     * @param packageNsUri
+     * @return the corresponding {@link GenPackage} for the selected {@link EPackage}
+     */
+    GenPackage findGenPackage(EObject ctx, final String packageNsUri);
 
 }

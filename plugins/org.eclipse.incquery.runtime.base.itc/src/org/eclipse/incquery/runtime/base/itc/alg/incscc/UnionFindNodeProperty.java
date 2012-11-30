@@ -13,22 +13,22 @@ package org.eclipse.incquery.runtime.base.itc.alg.incscc;
 
 public class UnionFindNodeProperty<V> {
 
-	public int rank;
-	public V parent;
-	
-	public UnionFindNodeProperty() {
-		this.rank = 0;
-		this.parent = null;
-	}
-	
-	public UnionFindNodeProperty(int rank, V parent) {
-		super();
-		this.rank = rank;
-		this.parent = parent;
-	}
+    public int rank;
+    public V parent;
 
-	@Override
-	public String toString() {
-		return "[rank:"+rank+", parent:"+parent.toString()+"]";
-	}
+    public UnionFindNodeProperty() {
+        this.rank = 0;
+        this.parent = null;
+    }
+
+    public UnionFindNodeProperty(int rank, V parent) {
+        super();
+        this.rank = rank;
+        this.parent = parent;
+    }
+
+    @Override
+    public String toString() {
+        return "[rank:" + rank + ", parent:" + parent.toString() + "]";
+    }
 }

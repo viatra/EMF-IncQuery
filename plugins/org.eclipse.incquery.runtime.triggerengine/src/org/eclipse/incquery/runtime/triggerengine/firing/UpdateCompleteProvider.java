@@ -15,30 +15,30 @@ import java.util.Set;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider {
 
     private final Set<IUpdateCompleteListener> listeners;
-    
+
     public UpdateCompleteProvider() {
         listeners = new HashSet<IUpdateCompleteListener>();
     }
-    
+
     @Override
     public boolean addUpdateCompleteListener(IUpdateCompleteListener listener, boolean fireNow) {
         boolean added = listeners.add(listener);
-        if(added) {
+        if (added) {
             listener.updateComplete();
         }
         return added;
     }
-    
+
     @Override
     public boolean removeUpdateCompleteListener(IUpdateCompleteListener listener) {
         return this.listeners.remove(listener);
     }
-    
+
     protected void updateCompleted() {
         for (IUpdateCompleteListener listener : this.listeners) {
             listener.updateComplete();
@@ -49,5 +49,5 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
     public void dispose() {
         listeners.clear();
     }
-    
+
 }

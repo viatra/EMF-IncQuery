@@ -19,52 +19,52 @@ import org.eclipse.ui.IWorkbenchPart;
  * The PartListener is used to observe EditorPart close actions.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class ValidationPartListener implements IPartListener {
-	
-	private static ValidationPartListener instance;
-	
-	public static ValidationPartListener getInstance() {
-		if (instance == null) {
-			instance = new ValidationPartListener();
-		}
-		return instance;
-	}
-	
-	protected ValidationPartListener() {
-		
-	}
-	
-	@Override
-	public void partActivated(IWorkbenchPart part) {
 
-	}
+    private static ValidationPartListener instance;
 
-	@Override
-	public void partBroughtToTop(IWorkbenchPart part) {
+    public static ValidationPartListener getInstance() {
+        if (instance == null) {
+            instance = new ValidationPartListener();
+        }
+        return instance;
+    }
 
-	}
+    protected ValidationPartListener() {
 
-	@Override
-	public void partClosed(IWorkbenchPart part) {
-		if (part instanceof IEditorPart) {
-			IEditorPart closedEditor = (IEditorPart) part;
-			ConstraintAdapter adapter = ValidationUtil.getAdapterMap().remove(part);
-			if (adapter != null) {
-				adapter.dispose();
-			}
-			ValidationUtil.unregisterEditorPart(closedEditor);
-		}
-	}
+    }
 
-	@Override
-	public void partDeactivated(IWorkbenchPart part) {
+    @Override
+    public void partActivated(IWorkbenchPart part) {
 
-	}
+    }
 
-	@Override
-	public void partOpened(IWorkbenchPart part) {
+    @Override
+    public void partBroughtToTop(IWorkbenchPart part) {
 
-	}
+    }
+
+    @Override
+    public void partClosed(IWorkbenchPart part) {
+        if (part instanceof IEditorPart) {
+            IEditorPart closedEditor = (IEditorPart) part;
+            ConstraintAdapter adapter = ValidationUtil.getAdapterMap().remove(part);
+            if (adapter != null) {
+                adapter.dispose();
+            }
+            ValidationUtil.unregisterEditorPart(closedEditor);
+        }
+    }
+
+    @Override
+    public void partDeactivated(IWorkbenchPart part) {
+
+    }
+
+    @Override
+    public void partOpened(IWorkbenchPart part) {
+
+    }
 }

@@ -14,34 +14,32 @@ import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
-public class ZestReteContentProvider extends ArrayContentProvider implements
-		IGraphEntityContentProvider {
+public class ZestReteContentProvider extends ArrayContentProvider implements IGraphEntityContentProvider {
 
-	@Override
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof ReteContainer) {
-			return super.getElements(((ReteContainer)inputElement).getAllNodes());
-		}
-		else if (inputElement instanceof ReteBoundary) {
-			ReteBoundary rb = (ReteBoundary) inputElement;
-			Vector<Node> r = new Vector<Node>();
-			for (Object a : rb.getAllUnaryRoots()) {
-				r.add(rb.getHeadContainer().resolveLocal( (Address)a )); // access all unary constraints
-			}
-			for (Object a : rb.getAllTernaryEdgeRoots()) {
-				r.add(rb.getHeadContainer().resolveLocal( (Address)a )); // access all ternary constraints	
-			}
-			return r.toArray();
-		}
-		return super.getElements(inputElement);
-	}
+    @Override
+    public Object[] getElements(Object inputElement) {
+        if (inputElement instanceof ReteContainer) {
+            return super.getElements(((ReteContainer) inputElement).getAllNodes());
+        } else if (inputElement instanceof ReteBoundary) {
+            ReteBoundary rb = (ReteBoundary) inputElement;
+            Vector<Node> r = new Vector<Node>();
+            for (Object a : rb.getAllUnaryRoots()) {
+                r.add(rb.getHeadContainer().resolveLocal((Address) a)); // access all unary constraints
+            }
+            for (Object a : rb.getAllTernaryEdgeRoots()) {
+                r.add(rb.getHeadContainer().resolveLocal((Address) a)); // access all ternary constraints
+            }
+            return r.toArray();
+        }
+        return super.getElements(inputElement);
+    }
 
-	@Override
-	public Object[] getConnectedTo(Object entity) {
-		if (entity instanceof Node) {
-			Vector<Node> r = new Vector<Node>();
+    @Override
+    public Object[] getConnectedTo(Object entity) {
+        if (entity instanceof Node) {
+            Vector<Node> r = new Vector<Node>();
             if (entity instanceof Supplier) {
-				r.addAll( ((Supplier)entity).getReceivers() );
+                r.addAll(((Supplier) entity).getReceivers());
                 try {
                     Field field = entity.getClass().getDeclaredField("memoryNullIndexer");
                     field.setAccessible(true);
@@ -74,18 +72,17 @@ public class ZestReteContentProvider extends ArrayContentProvider implements
                 // r.add(node.getNullIndexer());
                 //
                 // }
-			}
-			if (entity instanceof Indexer) {
-				if (entity instanceof StandardIndexer) {
-					for (IndexerListener il : ((StandardIndexer)entity).getListeners()){
-						r.add(il.getOwner());
-					}
-				}
-			}
-			return r.toArray();
-		}
-		return null;
-	}
-	
-	
+            }
+            if (entity instanceof Indexer) {
+                if (entity instanceof StandardIndexer) {
+                    for (IndexerListener il : ((StandardIndexer) entity).getListeners()) {
+                        r.add(il.getOwner());
+                    }
+                }
+            }
+            return r.toArray();
+        }
+        return null;
+    }
+
 }

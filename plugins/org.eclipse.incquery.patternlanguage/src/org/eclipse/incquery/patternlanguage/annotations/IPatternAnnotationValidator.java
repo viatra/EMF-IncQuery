@@ -16,37 +16,39 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 
 /**
  * An interface for validating pattern {@link Annotation} objects.
+ * 
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public interface IPatternAnnotationValidator {
 
-	Iterable<String> getMissingMandatoryAttributes(Annotation annotation);
-	
-	/**
-	 * @param annotation
-	 * @return
-	 */
-	Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation);
-	
-	/**
-	 * Returns whether a parameter of an annotation is mistyped
-	 * @param parameter
-	 * @return the expected class of the parameter variable
-	 */
-	Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter);
+    Iterable<String> getMissingMandatoryAttributes(Annotation annotation);
 
-	Iterable<String> getAllAvailableParameterNames();
-	
-	String getAnnotationName();
-	
-	String getDescription();
-	
-	String getDescription(String parameterName);
+    /**
+     * @param annotation
+     * @return
+     */
+    Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation);
 
-	boolean isDeprecated();
+    /**
+     * Returns whether a parameter of an annotation is mistyped
+     * 
+     * @param parameter
+     * @return the expected class of the parameter variable
+     */
+    Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter);
 
-	boolean isDeprecated(String parameterName);
+    Iterable<String> getAllAvailableParameterNames();
+
+    String getAnnotationName();
+
+    String getDescription();
+
+    String getDescription(String parameterName);
+
+    boolean isDeprecated();
+
+    boolean isDeprecated(String parameterName);
 
     /**
      * Provides an additional validator implementation.

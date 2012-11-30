@@ -16,9 +16,8 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
- * This node filters patterns according to equalities and inequalities of
- * elements. The 'subject' element is asserted to be different from the elements
- * given by the inequalityMask.
+ * This node filters patterns according to equalities and inequalities of elements. The 'subject' element is asserted to
+ * be different from the elements given by the inequalityMask.
  * 
  * 
  * @author Gabor Bergmann
@@ -26,32 +25,30 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  */
 public class InequalityFilterNode extends FilterNode {
 
-	int subjectIndex;
-	TupleMask inequalityMask;
+    int subjectIndex;
+    TupleMask inequalityMask;
 
-	/**
-	 * @param reteContainer
-	 * @param subjectIndex
-	 *            the index of the element that should be compared.
-	 * @param inequalityMask
-	 *            the indices of elements that should be different from the
-	 *            subjectIndex.
-	 */
-	public InequalityFilterNode(ReteContainer reteContainer, int subject,
-			TupleMask inequalityMask) {
-		super(reteContainer);
-		this.subjectIndex = subject;
-		this.inequalityMask = inequalityMask;
-	}
+    /**
+     * @param reteContainer
+     * @param subjectIndex
+     *            the index of the element that should be compared.
+     * @param inequalityMask
+     *            the indices of elements that should be different from the subjectIndex.
+     */
+    public InequalityFilterNode(ReteContainer reteContainer, int subject, TupleMask inequalityMask) {
+        super(reteContainer);
+        this.subjectIndex = subject;
+        this.inequalityMask = inequalityMask;
+    }
 
-	@Override
-	public boolean check(Tuple ps) {
-		Object subject = ps.get(subjectIndex);
-		for (int ineq : inequalityMask.indices) {
-			if (subject.equals(ps.get(ineq)))
-				return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean check(Tuple ps) {
+        Object subject = ps.get(subjectIndex);
+        for (int ineq : inequalityMask.indices) {
+            if (subject.equals(ps.get(ineq)))
+                return false;
+        }
+        return true;
+    }
 
 }

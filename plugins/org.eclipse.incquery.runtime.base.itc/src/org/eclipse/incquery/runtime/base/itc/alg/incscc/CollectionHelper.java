@@ -15,42 +15,46 @@ import java.util.Set;
 
 /**
  * @author Tamas Szabo
- *
+ * 
  */
 public class CollectionHelper {
 
-	/**
-	 * Returns the intersection of two sets.
-	 * 
-	 * @param set1 the first set
-	 * @param set2 the second set
-	 * @return the intersection of the sets
-	 */
-	public static <V> Set<V> intersection(Set<V> set1, Set<V> set2) {
-		Set<V> intersection = new HashSet<V>();
-		for (V n : set1) {
-			if (set2.contains(n)) {
-				intersection.add(n);
-			}
-		}
-		return intersection;
-	}
-	
-	/**
-	 * Returns the difference of two sets (S1\S2).
-	 * 
-	 * @param set1 the first set
-	 * @param set2 the second set
-	 * @return the difference of the sets
-	 */
-	public static <V> Set<V> difference(Set<V> set1, Set<V> set2) {
-		Set<V> difference = new HashSet<V>();
-		for (V n : set1) {
-			if (!set2.contains(n)) {
-				difference.add(n);
-			}
-		}
-		return difference;
-	}
-	
+    /**
+     * Returns the intersection of two sets.
+     * 
+     * @param set1
+     *            the first set
+     * @param set2
+     *            the second set
+     * @return the intersection of the sets
+     */
+    public static <V> Set<V> intersection(Set<V> set1, Set<V> set2) {
+        Set<V> intersection = new HashSet<V>();
+        for (V n : set1) {
+            if (set2.contains(n)) {
+                intersection.add(n);
+            }
+        }
+        return intersection;
+    }
+
+    /**
+     * Returns the difference of two sets (S1\S2).
+     * 
+     * @param set1
+     *            the first set
+     * @param set2
+     *            the second set
+     * @return the difference of the sets
+     */
+    public static <V> Set<V> difference(Set<V> set1, Set<V> set2) {
+        Set<V> difference = new HashSet<V>();
+        for (V n : set1) {
+            if (!set2.contains(n)) {
+                difference.add(n);
+            }
+        }
+        return difference;
+    }
+
 }

@@ -29,142 +29,139 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import com.google.inject.Injector;
 
 /**
- * Stateful sanitizer that maintains a set of admitted patterns. 
- * Patterns go through sanitization checks (validation + name uniqueness) before they can be admitted.
+ * Stateful sanitizer that maintains a set of admitted patterns. Patterns go through sanitization checks (validation +
+ * name uniqueness) before they can be admitted.
  * 
- * <p>INVARIANTS: <ul>
+ * <p>
+ * INVARIANTS:
+ * <ul>
  * <li>the set of admitted patterns is closed with respect to references.
  * <li>the set of admitted patterns are free of errors.
  * <li>admitted patterns have unique qualified names.
  * </ul>
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public class PatternSanitizer {
-	Set<Pattern> admittedPatterns = new HashSet<Pattern>();
-	Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
-		
-	Logger logger;
-	
+    Set<Pattern> admittedPatterns = new HashSet<Pattern>();
+    Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
 
-	/**
-	 * Creates an instance of the stateful sanitizer. 
-	 * 
-	 * @param logger where detected problems will be logged
-	 */
-	public PatternSanitizer(final Logger logger) {
-		super();
+    Logger logger;
 
-		this.logger = logger;	
-	}
-	
+    /**
+     * Creates an instance of the stateful sanitizer.
+     * 
+     * @param logger
+     *            where detected problems will be logged
+     */
+    public PatternSanitizer(final Logger logger) {
+        super();
 
-		
-		
-	/**
-	 * Admits a new pattern, checking if it passes validation and name uniqueness checks. 
-	 * Referenced patterns likewise go through the checks.
-	 * Transactional semantics: will only admit any patterns if none of them have any errors.
-	 * 
-	 * @param pattern a pattern that should be validated.
-	 * @return false if the pattern was not possible to admit, true if it passed all validation checks (or was already admitted before)
-	 */
-	public boolean admit(Pattern pattern) {
-		return admit(Collections.singletonList(pattern));
-	}
-	
-	/**
-	 * Admits new patterns, checking whether they all pass validation and name uniqueness checks.  
-	 * Referenced patterns likewise go through the checks. 
-	 * Transactional semantics: will only admit any patterns if none of them have any errors.
-	 * 
-	 * @param patterns the collection of patterns that should be validated together.
-	 * @return false if the patterns were not possible to admit, true if they passed all validation checks (or were already admitted before)
-	 */
-	public boolean admit(Collection<Pattern> patterns) {		
-		Set<Pattern> newPatterns = getAllReferencedUnvalidatedPatterns(patterns);
-		if (newPatterns.isEmpty()) return true;
-		
-		// TODO validate(toBeValidated) as a group
-		Set<Pattern> inadmissible = new HashSet<Pattern>();
-		Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
-		for (Pattern current : newPatterns) {
-			if (current == null) {
-				inadmissible.add(current);
-				logger.error("Null pattern value");
-			}
-			
-			final String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(current);
-			final boolean duplicate = patternsByName.containsKey(fullyQualifiedName) || newPatternsByName.containsKey(fullyQualifiedName);
-			if (duplicate) {
-				inadmissible.add(current);
-				logger.error("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
-			} else {
-				newPatternsByName.put(fullyQualifiedName, current);
-			}
-			
-			final boolean validationPassed = true; //validator == null || validator.validate(current, errorOnlyLogger);
-			if (!validationPassed) {
-				inadmissible.add(current);
-			}	
-			
-		}
-		Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-		PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
-		PatternSetValidationDiagnostics validatorResult = validator.validate(patterns);
-		validatorResult.logErrors(logger);
-		
-		boolean ok = inadmissible.isEmpty() && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
-		if (ok) {
-			admittedPatterns.addAll(newPatterns);
-			patternsByName.putAll(newPatternsByName);
-		}
-		return ok;
-	}
+        this.logger = logger;
+    }
 
+    /**
+     * Admits a new pattern, checking if it passes validation and name uniqueness checks. Referenced patterns likewise
+     * go through the checks. Transactional semantics: will only admit any patterns if none of them have any errors.
+     * 
+     * @param pattern
+     *            a pattern that should be validated.
+     * @return false if the pattern was not possible to admit, true if it passed all validation checks (or was already
+     *         admitted before)
+     */
+    public boolean admit(Pattern pattern) {
+        return admit(Collections.singletonList(pattern));
+    }
 
+    /**
+     * Admits new patterns, checking whether they all pass validation and name uniqueness checks. Referenced patterns
+     * likewise go through the checks. Transactional semantics: will only admit any patterns if none of them have any
+     * errors.
+     * 
+     * @param patterns
+     *            the collection of patterns that should be validated together.
+     * @return false if the patterns were not possible to admit, true if they passed all validation checks (or were
+     *         already admitted before)
+     */
+    public boolean admit(Collection<Pattern> patterns) {
+        Set<Pattern> newPatterns = getAllReferencedUnvalidatedPatterns(patterns);
+        if (newPatterns.isEmpty())
+            return true;
 
+        // TODO validate(toBeValidated) as a group
+        Set<Pattern> inadmissible = new HashSet<Pattern>();
+        Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
+        for (Pattern current : newPatterns) {
+            if (current == null) {
+                inadmissible.add(current);
+                logger.error("Null pattern value");
+            }
 
-	/**
-	 * Gathers all patterns that are not admitted yet, but are transitively referenced from the given patterns.
-	 */
-	protected Set<Pattern> getAllReferencedUnvalidatedPatterns(Collection<Pattern> patterns) {
-		Set<Pattern> toBeValidated = new HashSet<Pattern>();
+            final String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(current);
+            final boolean duplicate = patternsByName.containsKey(fullyQualifiedName)
+                    || newPatternsByName.containsKey(fullyQualifiedName);
+            if (duplicate) {
+                inadmissible.add(current);
+                logger.error("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
+            } else {
+                newPatternsByName.put(fullyQualifiedName, current);
+            }
 
-		LinkedList<Pattern> unexplored = new LinkedList<Pattern>();	
-		
-		for (Pattern pattern : patterns) {
-			if (!admittedPatterns.contains(pattern)) {
-				toBeValidated.add(pattern);
-				unexplored.add(pattern);
-			}
-		} 
-		
-		while (!unexplored.isEmpty()) {
-			Pattern current = unexplored.pollFirst();			
-			final Set<Pattern> referencedPatterns = CorePatternLanguageHelper.getReferencedPatterns(current);
-			for (Pattern referenced : referencedPatterns) {
-				if (!admittedPatterns.contains(referenced) && !toBeValidated.contains(referenced)) {
-					toBeValidated.add(referenced);
-					unexplored.add(referenced);
-				}
-			}
-		}
-		return toBeValidated;
-	}
+            final boolean validationPassed = true; // validator == null || validator.validate(current, errorOnlyLogger);
+            if (!validationPassed) {
+                inadmissible.add(current);
+            }
 
+        }
+        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+        PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
+        PatternSetValidationDiagnostics validatorResult = validator.validate(patterns);
+        validatorResult.logErrors(logger);
 
+        boolean ok = inadmissible.isEmpty() && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
+        if (ok) {
+            admittedPatterns.addAll(newPatterns);
+            patternsByName.putAll(newPatternsByName);
+        }
+        return ok;
+    }
 
+    /**
+     * Gathers all patterns that are not admitted yet, but are transitively referenced from the given patterns.
+     */
+    protected Set<Pattern> getAllReferencedUnvalidatedPatterns(Collection<Pattern> patterns) {
+        Set<Pattern> toBeValidated = new HashSet<Pattern>();
 
-	/**
-	 * Returns the set of patterns that have been admitted so far.
-	 * @return the admitted patterns
-	 */
-	public Set<Pattern> getAdmittedPatterns() {
-		return Collections.unmodifiableSet(admittedPatterns);
-	}
-	
-	
-	
+        LinkedList<Pattern> unexplored = new LinkedList<Pattern>();
+
+        for (Pattern pattern : patterns) {
+            if (!admittedPatterns.contains(pattern)) {
+                toBeValidated.add(pattern);
+                unexplored.add(pattern);
+            }
+        }
+
+        while (!unexplored.isEmpty()) {
+            Pattern current = unexplored.pollFirst();
+            final Set<Pattern> referencedPatterns = CorePatternLanguageHelper.getReferencedPatterns(current);
+            for (Pattern referenced : referencedPatterns) {
+                if (!admittedPatterns.contains(referenced) && !toBeValidated.contains(referenced)) {
+                    toBeValidated.add(referenced);
+                    unexplored.add(referenced);
+                }
+            }
+        }
+        return toBeValidated;
+    }
+
+    /**
+     * Returns the set of patterns that have been admitted so far.
+     * 
+     * @return the admitted patterns
+     */
+    public Set<Pattern> getAdmittedPatterns() {
+        return Collections.unmodifiableSet(admittedPatterns);
+    }
+
 }

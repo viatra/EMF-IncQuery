@@ -28,37 +28,37 @@ import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
 
-	public Class<? extends IGenerationFragmentProvider> bindIGenerationFragmentProvider() {
-		return ExtensionBasedGenerationFragmentProvider.class;
-	}
+    public Class<? extends IGenerationFragmentProvider> bindIGenerationFragmentProvider() {
+        return ExtensionBasedGenerationFragmentProvider.class;
+    }
 
-	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-	public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
-		return EMFPatternLanguageJvmModelInferrer.class;
-	}
+    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+    public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
+        return EMFPatternLanguageJvmModelInferrer.class;
+    }
 
-	// contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
-	public IWorkspaceRoot bindIWorkspaceRootToInstance() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-	
-	// contributed by org.eclipse.xtext.generator.types.TypesGeneratorFragment
-	@Override
+    // contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
+    public IWorkspaceRoot bindIWorkspaceRootToInstance() {
+        return ResourcesPlugin.getWorkspace().getRoot();
+    }
+
+    // contributed by org.eclipse.xtext.generator.types.TypesGeneratorFragment
+    @Override
     public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
-		return JdtTypeProviderFactory.class;
-	}
-	
-	@Override
+        return JdtTypeProviderFactory.class;
+    }
+
+    @Override
     public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
-		return GenModelMetamodelProviderService.class;
-	}
-	
-	public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
-		return GenModelMetamodelProviderService.class;
-	}
-	
-	@Override
-	public Class<? extends ITypeProvider> bindITypeProvider() {
-		return GenModelBasedTypeProvider.class;
-	}
+        return GenModelMetamodelProviderService.class;
+    }
+
+    public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
+        return GenModelMetamodelProviderService.class;
+    }
+
+    @Override
+    public Class<? extends ITypeProvider> bindITypeProvider() {
+        return GenModelBasedTypeProvider.class;
+    }
 }

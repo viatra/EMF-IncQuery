@@ -17,7 +17,6 @@ import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
  * Simply propagates everything. Might be used to join or fork.
  * 
@@ -25,19 +24,19 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  */
 public class TransparentNode extends SingleInputNode {
 
-	public TransparentNode(ReteContainer reteContainer) {
-		super(reteContainer);
-	}
+    public TransparentNode(ReteContainer reteContainer) {
+        super(reteContainer);
+    }
 
-	@Override
+    @Override
     public void update(Direction direction, Tuple updateElement) {
-		propagateUpdate(direction, updateElement);
+        propagateUpdate(direction, updateElement);
 
-	}
+    }
 
-	@Override
+    @Override
     public void pullInto(Collection<Tuple> collector) {
-		propagatePullInto(collector);
-	}
+        propagatePullInto(collector);
+    }
 
 }

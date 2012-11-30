@@ -14,14 +14,16 @@ package org.eclipse.incquery.runtime.rete.boundary;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
- * Collects traces of predicate evaluation, and notifies the predicate evaluator node to re-evaluate predicates when these traces are influenced by changes.
+ * Collects traces of predicate evaluation, and notifies the predicate evaluator node to re-evaluate predicates when
+ * these traces are influenced by changes.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public interface IPredicateTraceListener extends Disconnectable {
 
-	public void registerSensitiveTrace(Tuple trace, PredicateEvaluatorNode node);
+    public void registerSensitiveTrace(Tuple trace, PredicateEvaluatorNode node);
 
-	public void unregisterSensitiveTrace(Tuple trace, PredicateEvaluatorNode node);
+    public void unregisterSensitiveTrace(Tuple trace, PredicateEvaluatorNode node);
 
 }

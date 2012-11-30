@@ -21,43 +21,40 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
-public class TypeBinary<PatternDescription, StubHandle> 
-	extends KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> 
-	implements ITypeInfoProviderConstraint
-{
-	private final IPatternMatcherContext<PatternDescription> context;
+public class TypeBinary<PatternDescription, StubHandle> extends
+        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
+    private final IPatternMatcherContext<PatternDescription> context;
 
-	/**
-	 * @param buildable
-	 * @param variablesTuple
-	 * @param typeKey
-	 */
-	public TypeBinary(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			IPatternMatcherContext<PatternDescription> context,
-			PVariable source, PVariable target, 
-			Object typeKey) {
-		super(pSystem, new FlatTuple(source, target), typeKey);
-		this.context = context;
-	}
+    /**
+     * @param buildable
+     * @param variablesTuple
+     * @param typeKey
+     */
+    public TypeBinary(PSystem<PatternDescription, StubHandle, ?> pSystem,
+            IPatternMatcherContext<PatternDescription> context, PVariable source, PVariable target, Object typeKey) {
+        super(pSystem, new FlatTuple(source, target), typeKey);
+        this.context = context;
+    }
 
-	@Override
-	public Stub<StubHandle> doCreateStub() {
-		return buildable.binaryEdgeTypeStub(variablesTuple, supplierKey);
-	}
+    @Override
+    public Stub<StubHandle> doCreateStub() {
+        return buildable.binaryEdgeTypeStub(variablesTuple, supplierKey);
+    }
 
-	@Override
-	public Object getTypeInfo(PVariable variable) {
-		if (variable.equals(variablesTuple.get(0))) return context.binaryEdgeSourceType(supplierKey);
-		if (variable.equals(variablesTuple.get(1))) return context.binaryEdgeTargetType(supplierKey);
-		return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
-	}
+    @Override
+    public Object getTypeInfo(PVariable variable) {
+        if (variable.equals(variablesTuple.get(0)))
+            return context.binaryEdgeSourceType(supplierKey);
+        if (variable.equals(variablesTuple.get(1)))
+            return context.binaryEdgeTargetType(supplierKey);
+        return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
+    }
 
-	@Override
-	protected String keyToString() {
-		return pSystem.getContext().printType(supplierKey);
-	}
-	
+    @Override
+    protected String keyToString() {
+        return pSystem.getContext().printType(supplierKey);
+    }
+
 }

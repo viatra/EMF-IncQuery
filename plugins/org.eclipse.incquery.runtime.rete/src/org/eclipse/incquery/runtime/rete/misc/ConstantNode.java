@@ -17,7 +17,6 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
  * Node that always contains a single constant Tuple
  * 
@@ -25,15 +24,15 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  */
 public class ConstantNode extends StandardNode {
 
-	protected Tuple constant;
+    protected Tuple constant;
 
-	public ConstantNode(ReteContainer reteContainer, Tuple constant) {
-		super(reteContainer);
-		this.constant = constant;
-	}
+    public ConstantNode(ReteContainer reteContainer, Tuple constant) {
+        super(reteContainer);
+        this.constant = constant;
+    }
 
-	public void pullInto(Collection<Tuple> collector) {
-		collector.add(constant);
-	}
+    public void pullInto(Collection<Tuple> collector) {
+        collector.add(constant);
+    }
 
 }

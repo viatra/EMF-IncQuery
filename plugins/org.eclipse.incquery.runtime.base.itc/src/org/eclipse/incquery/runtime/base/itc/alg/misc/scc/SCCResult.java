@@ -11,72 +11,71 @@
 
 package org.eclipse.incquery.runtime.base.itc.alg.misc.scc;
 
-
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphDataSource;
 
 public class SCCResult<V> {
 
-	private Set<Set<V>> sccs;
-	private IGraphDataSource<V> gds;
+    private Set<Set<V>> sccs;
+    private IGraphDataSource<V> gds;
 
-	public SCCResult(Set<Set<V>> sccs, IGraphDataSource<V> gds) {
-		this.sccs = sccs;
-		this.gds = gds;
-	}
+    public SCCResult(Set<Set<V>> sccs, IGraphDataSource<V> gds) {
+        this.sccs = sccs;
+        this.gds = gds;
+    }
 
-	public Set<Set<V>> getSccs() {
-		return sccs;
-	}
+    public Set<Set<V>> getSccs() {
+        return sccs;
+    }
 
-	public int getSCCCount() {
-		return sccs.size();
-	}
+    public int getSCCCount() {
+        return sccs.size();
+    }
 
-	public double getAverageNodeCount() {
-		double a = 0;
+    public double getAverageNodeCount() {
+        double a = 0;
 
-		for (Set<V> s : sccs) {
-			a += s.size();
-		}
+        for (Set<V> s : sccs) {
+            a += s.size();
+        }
 
-		return a / sccs.size();
-	}
+        return a / sccs.size();
+    }
 
-	public double getAverageEdgeCount() {
-		long edgeSum = 0;
+    public double getAverageEdgeCount() {
+        long edgeSum = 0;
 
-		for (Set<V> scc : sccs) {
-			for (V source : scc) {
-				for (V target : gds.getTargetNodes(source)) {
-					if (scc.contains(target))
-						edgeSum++;
-				}
-			}
-		}
+        for (Set<V> scc : sccs) {
+            for (V source : scc) {
+                for (V target : gds.getTargetNodes(source)) {
+                    if (scc.contains(target))
+                        edgeSum++;
+                }
+            }
+        }
 
-		return (double) edgeSum / (double) sccs.size();
-	}
+        return (double) edgeSum / (double) sccs.size();
+    }
 
-	public int getBiggestSCCSize() {
-		int max = 0;
+    public int getBiggestSCCSize() {
+        int max = 0;
 
-		for (Set<V> scc : sccs) {
-			if (scc.size() > max)
-				max = scc.size();
-		}
+        for (Set<V> scc : sccs) {
+            if (scc.size() > max)
+                max = scc.size();
+        }
 
-		return max;
-	}
+        return max;
+    }
 
-	public long getSumOfSquares() {
-		long sum = 0;
+    public long getSumOfSquares() {
+        long sum = 0;
 
-		for (Set<V> scc : sccs) {
-			sum += scc.size() * scc.size();
-		}
+        for (Set<V> scc : sccs) {
+            sum += scc.size() * scc.size();
+        }
 
-		return sum;
-	}
+        return sum;
+    }
 }

@@ -23,23 +23,23 @@ import com.google.inject.Injector;
 
 public class LoadEiqPatternHandler extends AbstractHandler {
 
-	@Inject
-	Injector injector;
+    @Inject
+    Injector injector;
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		try {
-			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
-			if (file != null) {
-				RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
-				injector.injectMembers(registrator);
-				Display.getDefault().asyncExec(registrator);
-			}
-		} catch (Exception e) {
-			throw new ExecutionException("Cannot load pattern file", e);
-		}
+        try {
+            IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
+            if (file != null) {
+                RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
+                injector.injectMembers(registrator);
+                Display.getDefault().asyncExec(registrator);
+            }
+        } catch (Exception e) {
+            throw new ExecutionException("Cannot load pattern file", e);
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

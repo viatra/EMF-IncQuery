@@ -23,6 +23,6 @@ public interface Disconnectable {
      * Disconnects this rete engine component from the underlying model. Disconnecting enables the garbage collection
      * mechanisms to dispose of the rete network.
      */
-	void disconnect();
+    void disconnect();
 
 }

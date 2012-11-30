@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public interface IIssueCallback {
 

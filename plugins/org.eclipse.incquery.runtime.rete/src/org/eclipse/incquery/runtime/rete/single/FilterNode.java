@@ -17,10 +17,9 @@ import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
- * This node implements a simple filter. A stateless abstract check() predicate
- * determines whether a matching is allowed to pass.
+ * This node implements a simple filter. A stateless abstract check() predicate determines whether a matching is allowed
+ * to pass.
  * 
  * 
  * 
@@ -29,32 +28,31 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  */
 public abstract class FilterNode extends SingleInputNode {
 
-	public FilterNode(ReteContainer reteContainer) {
-		super(reteContainer);
-	}
+    public FilterNode(ReteContainer reteContainer) {
+        super(reteContainer);
+    }
 
-	/**
-	 * Abstract filtering predicate. Expected to be stateless.
-	 * 
-	 * @param ps
-	 *            the matching to be checked.
-	 * @return true if and only if the parameter matching is allowed to pass
-	 *         through this node.
-	 */
-	public abstract boolean check(Tuple ps);
+    /**
+     * Abstract filtering predicate. Expected to be stateless.
+     * 
+     * @param ps
+     *            the matching to be checked.
+     * @return true if and only if the parameter matching is allowed to pass through this node.
+     */
+    public abstract boolean check(Tuple ps);
 
-	@Override
+    @Override
     public void pullInto(Collection<Tuple> collector) {
-		for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
-			if (check(ps))
-				collector.add(ps);
-		}
-	}
+        for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
+            if (check(ps))
+                collector.add(ps);
+        }
+    }
 
-	@Override
+    @Override
     public void update(Direction direction, Tuple updateElement) {
-		if (check(updateElement))
-			propagateUpdate(direction, updateElement);
-	}
+        if (check(updateElement))
+            propagateUpdate(direction, updateElement);
+    }
 
 }

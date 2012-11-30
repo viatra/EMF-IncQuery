@@ -14,5 +14,5 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.preference;
 public class PreferenceConstants {
 
     public static final String WILDCARD_MODE = "org.eclipse.incquery.tooling.gui.queryexplorer.WildcardMode";
-	
+
 }

@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
  * Interface intended for nodes containing complete matches.
  * 
@@ -23,27 +22,26 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  */
 public interface Production extends Tunnel, Iterable<Tuple> {
 
-	/**
-	 * @return the position mapping of this particular pattern that maps members
-	 *         of the tuple type to their positions
-	 */
-	HashMap<Object, Integer> getPosMapping();
+    /**
+     * @return the position mapping of this particular pattern that maps members of the tuple type to their positions
+     */
+    HashMap<Object, Integer> getPosMapping();
 
-	// /**
-	// * Removes all parents of the production node,
-	// * making it once independent from the pattern recognition subnet,
-	// * so that a new pattern definition can be applied.
-	// */
-	// void tearOff();
-	//	
-	// /**
-	// * Sets the dirty flag.
-	// */
-	// void setDirty(boolean dirty);
-	//	
-	// /**
-	// * Returns the value of the dirty flag.
-	// * If true, pattern matcher needs to be reconstructed.
-	// */
-	// boolean isDirty();
+    // /**
+    // * Removes all parents of the production node,
+    // * making it once independent from the pattern recognition subnet,
+    // * so that a new pattern definition can be applied.
+    // */
+    // void tearOff();
+    //
+    // /**
+    // * Sets the dirty flag.
+    // */
+    // void setDirty(boolean dirty);
+    //
+    // /**
+    // * Returns the value of the dirty flag.
+    // * If true, pattern matcher needs to be reconstructed.
+    // */
+    // boolean isDirty();
 }

@@ -17,31 +17,30 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public class Instantiation<PatternDescription, StubHandle> extends
-		CoreModelRelationship<PatternDescription, StubHandle> {
+        CoreModelRelationship<PatternDescription, StubHandle> {
 
-	/**
-	 * @param buildable
-	 * @param parent
-	 * @param child
-	 * @param transitive
-	 */
-	public Instantiation(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			PVariable parent, PVariable child, boolean transitive) {
-		super(pSystem, parent, child, transitive);
-	}
+    /**
+     * @param buildable
+     * @param parent
+     * @param child
+     * @param transitive
+     */
+    public Instantiation(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
+            boolean transitive) {
+        super(pSystem, parent, child, transitive);
+    }
 
-	@Override
-	protected Stub<StubHandle> doCreateTransitiveStub() {
-		return buildable.instantiationTransitiveStub(variablesTuple);
-	}
+    @Override
+    protected Stub<StubHandle> doCreateTransitiveStub() {
+        return buildable.instantiationTransitiveStub(variablesTuple);
+    }
 
-	@Override
-	protected Stub<StubHandle> doCreateDirectStub() {
-		return buildable.instantiationDirectStub(variablesTuple);
-	}
+    @Override
+    protected Stub<StubHandle> doCreateDirectStub() {
+        return buildable.instantiationDirectStub(variablesTuple);
+    }
 
 }

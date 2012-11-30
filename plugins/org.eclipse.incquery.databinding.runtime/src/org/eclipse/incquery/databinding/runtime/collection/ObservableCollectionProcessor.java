@@ -31,8 +31,10 @@ public class ObservableCollectionProcessor<Match extends IPatternMatch> implemen
     /**
      * Creates a processor with the given direction and observable collection.
      * 
-     * @param direction the {@link Direction} of updates that are handled
-     * @param collection the {@link IObservablePatternMatchCollection} to manage
+     * @param direction
+     *            the {@link Direction} of updates that are handled
+     * @param collection
+     *            the {@link IObservablePatternMatchCollection} to manage
      */
     public ObservableCollectionProcessor(Direction direction, IObservablePatternMatchCollection<Match> collection) {
         this.direction = direction;

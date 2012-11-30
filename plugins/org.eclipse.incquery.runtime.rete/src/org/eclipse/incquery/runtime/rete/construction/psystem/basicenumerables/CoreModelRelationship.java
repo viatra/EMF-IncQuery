@@ -20,50 +20,44 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  * @param <PatternDescription>
  * @param <StubHandle>
  */
-public abstract class CoreModelRelationship<PatternDescription, StubHandle>
-		extends EnumerablePConstraint<PatternDescription, StubHandle> {
+public abstract class CoreModelRelationship<PatternDescription, StubHandle> extends
+        EnumerablePConstraint<PatternDescription, StubHandle> {
 
-	protected boolean transitive;
+    protected boolean transitive;
 
-	protected abstract Stub<StubHandle> doCreateTransitiveStub();
+    protected abstract Stub<StubHandle> doCreateTransitiveStub();
 
-	protected abstract Stub<StubHandle> doCreateDirectStub();
+    protected abstract Stub<StubHandle> doCreateDirectStub();
 
-	/**
-	 * @param buildable
-	 * @param variablesTuple
-	 */
-	public CoreModelRelationship(
-			PSystem<PatternDescription, StubHandle, ?> pSystem, 
-			PVariable parent, 
-			PVariable child, 
-			boolean transitive) 
-	{
-		super(pSystem, new FlatTuple(parent, child));
-		this.transitive = transitive;
-	}
+    /**
+     * @param buildable
+     * @param variablesTuple
+     */
+    public CoreModelRelationship(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
+            boolean transitive) {
+        super(pSystem, new FlatTuple(parent, child));
+        this.transitive = transitive;
+    }
 
-	@Override
-	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
-		return isTransitive() ? 
-				doCreateTransitiveStub() : 
-				doCreateDirectStub();
-	}
+    @Override
+    public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
+        return isTransitive() ? doCreateTransitiveStub() : doCreateDirectStub();
+    }
 
-	@Override
-	protected String toStringRestRest() {
-		return transitive ? "transitive" : "direct";
-	}
+    @Override
+    protected String toStringRestRest() {
+        return transitive ? "transitive" : "direct";
+    }
 
-	/**
-	 * @return the transitive
-	 */
-	public boolean isTransitive() {
-		return transitive;
-	}
+    /**
+     * @return the transitive
+     */
+    public boolean isTransitive() {
+        return transitive;
+    }
 
 }

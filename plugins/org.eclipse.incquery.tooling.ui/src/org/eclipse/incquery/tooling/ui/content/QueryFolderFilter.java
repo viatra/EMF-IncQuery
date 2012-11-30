@@ -21,25 +21,25 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 public class QueryFolderFilter extends ViewerFilter {
 
-	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		try {
-			//Filter only active on IncQuery projects
-			if (parentElement instanceof IProject) {
-				IProject project = (IProject) parentElement;
-				if (project.hasNature(IncQueryNature.NATURE_ID))
-					return true;
-			}
-			if (element instanceof IFolder) {
-				IFolder folder = (IFolder) element;
-				if (XmiModelUtil.XMI_OUTPUT_FOLDER.equals(folder.getName())) {
-					return false;
-				}
-			}
-		} catch (CoreException e) {
-			//If exception is thrown, simply ignore it, and filter nothing
-		}
-		return true;
-	}
+    @Override
+    public boolean select(Viewer viewer, Object parentElement, Object element) {
+        try {
+            // Filter only active on IncQuery projects
+            if (parentElement instanceof IProject) {
+                IProject project = (IProject) parentElement;
+                if (project.hasNature(IncQueryNature.NATURE_ID))
+                    return true;
+            }
+            if (element instanceof IFolder) {
+                IFolder folder = (IFolder) element;
+                if (XmiModelUtil.XMI_OUTPUT_FOLDER.equals(folder.getName())) {
+                    return false;
+                }
+            }
+        } catch (CoreException e) {
+            // If exception is thrown, simply ignore it, and filter nothing
+        }
+        return true;
+    }
 
 }

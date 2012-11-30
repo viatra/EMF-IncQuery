@@ -21,41 +21,38 @@ import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 
 /**
  * Provides common functionality of pattern-specific generated matchers.
+ * 
  * @author Bergmann Gábor
  * @param <Signature>
- *
+ * 
  */
 public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> extends BaseMatcher<Signature> {
-	
-	protected IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory;
-	
-	public BaseGeneratedMatcher(
-			IncQueryEngine engine, 
-			IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory) 
-			throws IncQueryException 
-	{
-		super(engine, accessMatcher(engine, factory.getPattern()), factory.getPattern());
-		this.factory = factory;
-	}
-	
-	static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
-		checkPattern(engine, pattern);
-		try {
-			return engine.getReteEngine().accessMatcher(pattern);
-		} catch (RetePatternBuildException e) {
-			throw new IncQueryException(e);
-		}
-	}
-	
-	
-	@Override
-	public Pattern getPattern() {
-		return factory.getPattern();
-	}
-	
-	@Override
-	public String getPatternName() {
-		return factory.getPatternFullyQualifiedName();
-	}
-	
+
+    protected IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory;
+
+    public BaseGeneratedMatcher(IncQueryEngine engine,
+            IMatcherFactory<? extends BaseGeneratedMatcher<Signature>> factory) throws IncQueryException {
+        super(engine, accessMatcher(engine, factory.getPattern()), factory.getPattern());
+        this.factory = factory;
+    }
+
+    static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+        checkPattern(engine, pattern);
+        try {
+            return engine.getReteEngine().accessMatcher(pattern);
+        } catch (RetePatternBuildException e) {
+            throw new IncQueryException(e);
+        }
+    }
+
+    @Override
+    public Pattern getPattern() {
+        return factory.getPattern();
+    }
+
+    @Override
+    public String getPatternName() {
+        return factory.getPatternFullyQualifiedName();
+    }
+
 }

@@ -24,28 +24,28 @@ import com.google.common.base.Preconditions;
 public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
 
     private final Map<String, String> parameterMap;
-	
+
     public GenericDatabindingAdapter(Map<String, String> parameterMap) {
         this.parameterMap = parameterMap;
-	}
+    }
 
     public GenericDatabindingAdapter(Pattern pattern) {
         this.parameterMap = DatabindingAdapterUtil.calculateObservableValues(pattern);
     }
-	
-	@Override
-	public String[] getParameterNames() {
-		return parameterMap.keySet().toArray(new String[parameterMap.keySet().size()]);
-	}
 
-	@Override
-	public IObservableValue getObservableParameter(IPatternMatch match,	String parameterName) {
-		if (parameterMap.size() > 0) {
-			String expression = parameterMap.get(parameterName);
-			return IncQueryObservables.getObservableValue(match, expression);
-		}
-		return null;
-	}
+    @Override
+    public String[] getParameterNames() {
+        return parameterMap.keySet().toArray(new String[parameterMap.keySet().size()]);
+    }
+
+    @Override
+    public IObservableValue getObservableParameter(IPatternMatch match, String parameterName) {
+        if (parameterMap.size() > 0) {
+            String expression = parameterMap.get(parameterName);
+            return IncQueryObservables.getObservableValue(match, expression);
+        }
+        return null;
+    }
 
     public IValueProperty getProperty(String parameterName) {
         Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");

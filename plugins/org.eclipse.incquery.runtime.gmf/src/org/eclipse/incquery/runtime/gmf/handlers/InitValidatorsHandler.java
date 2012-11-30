@@ -56,7 +56,7 @@ public class InitValidatorsHandler extends AbstractHandler {
         // FIXME should go through ValidationInitUtil!
         ValidationUtil.addNotifier(activeEditor, notifier);
         activeEditor.getEditorSite().getPage().addPartListener(ValidationPartListener.getInstance());
-        
+
         return null;
     }
 

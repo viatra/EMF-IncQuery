@@ -32,47 +32,55 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 public class DatabindingAdapterUtil {
-	
-	public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
 
-    private DatabindingAdapterUtil() {}
-	
-	/**
-     * Returns an IObservableValue for the given match based on the given expression.
-     * If an attribute is not present in the expression than it tries with the 'name' attribute.
-     * If it is not present the returned value will be null.
+    public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
+
+    private DatabindingAdapterUtil() {
+    }
+
+    /**
+     * Returns an IObservableValue for the given match based on the given expression. If an attribute is not present in
+     * the expression than it tries with the 'name' attribute. If it is not present the returned value will be null.
      * 
-     * @param match the match object
-     * @param expression the expression
-     * @return IObservableValue instance or null 
+     * @param match
+     *            the match object
+     * @param expression
+     *            the expression
+     * @return IObservableValue instance or null
      * @deprecated Use {@link IncQueryObservables#getObservableValue(IPatternMatch,String)} instead
      */
     @Deprecated
     public static IObservableValue getObservableValue(IPatternMatch match, String expression) {
         return IncQueryObservables.getObservableValue(match, expression);
     }
-	
-	/**
-     * Registers the given changeListener for the appropriate features of the given signature.
-     * The features will be computed based on the message parameter.
+
+    /**
+     * Registers the given changeListener for the appropriate features of the given signature. The features will be
+     * computed based on the message parameter.
      * 
-     * @param signature the signature instance
-     * @param changeListener the changle listener 
-     * @param message the message which can be found in the appropriate PatternUI annotation
+     * @param signature
+     *            the signature instance
+     * @param changeListener
+     *            the changle listener
+     * @param message
+     *            the message which can be found in the appropriate PatternUI annotation
      * @return the list of IObservableValue instances for which the IValueChangeListener was registered
      * @deprecated Use {@link IncQueryObservables#observeFeatures(IPatternMatch,IValueChangeListener,String)} instead
      */
     @Deprecated
-    public static List<IObservableValue> observeFeatures(IPatternMatch match,	IValueChangeListener changeListener, String message) {
+    public static List<IObservableValue> observeFeatures(IPatternMatch match, IValueChangeListener changeListener,
+            String message) {
         return IncQueryObservables.observeFeatures(match, changeListener, message);
     }
-	
-	/**
-     * Registers the given change listener on the given object's all accessible fields. 
-     * This function uses Java Reflection.
+
+    /**
+     * Registers the given change listener on the given object's all accessible fields. This function uses Java
+     * Reflection.
      * 
-     * @param changeListener the changle listener 
-     * @param object the observed object
+     * @param changeListener
+     *            the changle listener
+     * @param object
+     *            the observed object
      * @return the list of IObservableValue instances for which the IValueChangeListener was registered
      * @deprecated Use {@link IncQueryObservables#observeAllAttributes(IValueChangeListener,Object)} instead
      */
@@ -80,66 +88,64 @@ public class DatabindingAdapterUtil {
     public static List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
         return IncQueryObservables.observeAllAttributes(changeListener, object);
     }
-	
-	/**
-	 * Get the structural feature with the given name of the given object.
-	 * 
-	 * @param o the object (must be an EObject)
-	 * @param featureName the name of the feature
-	 * @return the EStructuralFeature of the object or null if it can not be found
-	 */
-	public static EStructuralFeature getFeature(Object o, String featureName) {
-		if (o instanceof EObject) {
-			EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(featureName);
-			return feature;
-		}
-		return null;
-	}
-	
-	public static String getMessage(IPatternMatch match, String message) {
-		String[] tokens = message.split("\\$");
-		StringBuilder newText = new StringBuilder();
-		
-		for (int i = 0;i<tokens.length;i++) {
-			if (i % 2 == 0) {
-				newText.append(tokens[i]);
-			}
-			else {
-				String[] objectTokens = tokens[i].split("\\.");
-				if (objectTokens.length > 0) {
-					Object o = null;
-					EStructuralFeature feature = null;
-					
-					if (objectTokens.length == 1) {
-						o = match.get(objectTokens[0]);
-						feature = DatabindingAdapterUtil.getFeature(o, "name");
-					}
-					if (objectTokens.length == 2) {
-						o = match.get(objectTokens[0]);
-						feature = DatabindingAdapterUtil.getFeature(o, objectTokens[1]);
-					}
-					
-					if (o != null && feature != null) {
-						Object value = ((EObject) o).eGet(feature);
-						if (value != null) {
-							newText.append(value.toString());
-						}
-						else {
-							newText.append("null");
-						}
-					}
-					else if (o != null) {
-						newText.append(o.toString());
-					}
-				}	
-				else {
-					newText.append("[no such parameter]");
-				}
-			}
-		}
-		
-		return newText.toString();
-	}
+
+    /**
+     * Get the structural feature with the given name of the given object.
+     * 
+     * @param o
+     *            the object (must be an EObject)
+     * @param featureName
+     *            the name of the feature
+     * @return the EStructuralFeature of the object or null if it can not be found
+     */
+    public static EStructuralFeature getFeature(Object o, String featureName) {
+        if (o instanceof EObject) {
+            EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(featureName);
+            return feature;
+        }
+        return null;
+    }
+
+    public static String getMessage(IPatternMatch match, String message) {
+        String[] tokens = message.split("\\$");
+        StringBuilder newText = new StringBuilder();
+
+        for (int i = 0; i < tokens.length; i++) {
+            if (i % 2 == 0) {
+                newText.append(tokens[i]);
+            } else {
+                String[] objectTokens = tokens[i].split("\\.");
+                if (objectTokens.length > 0) {
+                    Object o = null;
+                    EStructuralFeature feature = null;
+
+                    if (objectTokens.length == 1) {
+                        o = match.get(objectTokens[0]);
+                        feature = DatabindingAdapterUtil.getFeature(o, "name");
+                    }
+                    if (objectTokens.length == 2) {
+                        o = match.get(objectTokens[0]);
+                        feature = DatabindingAdapterUtil.getFeature(o, objectTokens[1]);
+                    }
+
+                    if (o != null && feature != null) {
+                        Object value = ((EObject) o).eGet(feature);
+                        if (value != null) {
+                            newText.append(value.toString());
+                        } else {
+                            newText.append("null");
+                        }
+                    } else if (o != null) {
+                        newText.append(o.toString());
+                    }
+                } else {
+                    newText.append("[no such parameter]");
+                }
+            }
+        }
+
+        return newText.toString();
+    }
 
     /**
      * @param pattern
@@ -152,7 +158,7 @@ public class DatabindingAdapterUtil {
         }
         for (Annotation annotation : CorePatternLanguageHelper
                 .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
-    
+
             ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
                     .getAnnotationParameters(annotation);
             List<ValueReference> nameAttributes = parameterMap.get("name");
@@ -170,7 +176,7 @@ public class DatabindingAdapterUtil {
                     propertyMap.put(key, value);
                 }
             }
-    	}
+        }
         return propertyMap;
     }
 }

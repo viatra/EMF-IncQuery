@@ -17,32 +17,31 @@ import org.eclipse.incquery.runtime.rete.util.OrderingCompareAgent;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
-public class JoinOrderingHeuristics<PatternDescription, StubHandle, Collector> implements Comparator<JoinCandidate<StubHandle>> {
+public class JoinOrderingHeuristics<PatternDescription, StubHandle, Collector> implements
+        Comparator<JoinCandidate<StubHandle>> {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public int compare(JoinCandidate<StubHandle> jc1, JoinCandidate<StubHandle> jc2) {
+        return new OrderingCompareAgent<JoinCandidate<StubHandle>>(jc1, jc2) {
+            @Override
+            protected void doCompare() {
+                swallowBoolean(true && consider(preferTrue(a.isTrivial(), b.isTrivial()))
+                        && consider(preferTrue(a.isCheckOnly(), b.isCheckOnly()))
+                        && consider(preferFalse(a.isDescartes(), b.isDescartes()))
 
-	/* (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public int compare(JoinCandidate<StubHandle> jc1, JoinCandidate<StubHandle> jc2) {
-		return new OrderingCompareAgent<JoinCandidate<StubHandle>>(jc1, jc2) {
-			@Override
-			protected void doCompare() {
-				swallowBoolean(true 
-				&& consider(preferTrue(a.isTrivial(), b.isTrivial()))
-				&& consider(preferTrue(a.isCheckOnly(), b.isCheckOnly()))
-				&& consider(preferFalse(a.isDescartes(), b.isDescartes()))
-				
-				// TODO main heuristic decisions
-				
-				&& consider(preferLess(a.toString(), b.toString()))
-				);
-			}			
-		}.compare();
-		
-	}
-	
-	
+                        // TODO main heuristic decisions
+
+                        && consider(preferLess(a.toString(), b.toString())));
+            }
+        }.compare();
+
+    }
+
 }

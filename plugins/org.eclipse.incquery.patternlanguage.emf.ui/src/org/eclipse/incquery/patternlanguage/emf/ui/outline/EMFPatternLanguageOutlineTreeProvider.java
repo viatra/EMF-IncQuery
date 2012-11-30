@@ -32,70 +32,68 @@ import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
  * 
  * @author Mark Czotter
  */
-public class EMFPatternLanguageOutlineTreeProvider extends
-		DefaultOutlineTreeProvider {
+public class EMFPatternLanguageOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	protected void _createChildren(DocumentRootNode parentNode,
-			PatternModel model) {
-		// adding a structuralfeaturenode for ecore package imports
-		createEStructuralFeatureNode(
-				parentNode,
-				model,
-				EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES,
-				_image(model), "import declarations", false);
-		// adding patterns to the default DocumentRootNode
-		for (EObject element : model.getPatterns()) {
-			createNode(parentNode, element);
-		}
-	}
-	
-	protected void _createChildren(IOutlineNode parentNode, Pattern model) {
-		if (model.getBodies().size() == 1) {
-			_createChildren(parentNode, model.getBodies().get(0));
-		} else {
-			for (PatternBody body : model.getBodies()) {
-				createNode(parentNode, body);
-			}
-		}
-	}
-	
-	protected void _createChildren(IOutlineNode parentNode, EClassifierConstraint constraint) {
-		// By leaving this method empty, the EClass Constraint will not have any children in the outline view
-	}
-	
-	protected void _createChildren(IOutlineNode parentNode, PathExpressionConstraint constraint) {
-		PathExpressionHead head = constraint.getHead();
-		if (head.getTail() != null) {
-			createNode(parentNode, head.getTail());
-		}
-	}
-	
-	protected void _createChildren(IOutlineNode parentNode, PathExpressionTail tail) {
-		if (tail.getTail() != null) {
-			createNode(parentNode, tail.getTail());
-		}
-	}
-	
-	protected void _createChildren(IOutlineNode parentNode, PatternCompositionConstraint constraint) {
-		// By leaving this method empty, the Pattern Composition Constraint will not have any children in the outline view
-	}
-	
-	/**
-	 * Simple text styling for {@link Pattern}. 
-	 * @param pattern
-	 * @return
-	 */
-	protected String _text(Pattern pattern) {
-		StringBuilder result = new StringBuilder();
-		result.append(pattern.getName());
-		result.append("(");
-		for (Iterator<Variable> iter = pattern.getParameters().iterator();iter.hasNext();) {
-			result.append(iter.next().getName());
-			if (iter.hasNext()) {
-				result.append(",");
-			}
-		}
-		result.append(")");
-		return result.toString();
-	}
+    protected void _createChildren(DocumentRootNode parentNode, PatternModel model) {
+        // adding a structuralfeaturenode for ecore package imports
+        createEStructuralFeatureNode(parentNode, model,
+                EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, _image(model),
+                "import declarations", false);
+        // adding patterns to the default DocumentRootNode
+        for (EObject element : model.getPatterns()) {
+            createNode(parentNode, element);
+        }
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, Pattern model) {
+        if (model.getBodies().size() == 1) {
+            _createChildren(parentNode, model.getBodies().get(0));
+        } else {
+            for (PatternBody body : model.getBodies()) {
+                createNode(parentNode, body);
+            }
+        }
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, EClassifierConstraint constraint) {
+        // By leaving this method empty, the EClass Constraint will not have any children in the outline view
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, PathExpressionConstraint constraint) {
+        PathExpressionHead head = constraint.getHead();
+        if (head.getTail() != null) {
+            createNode(parentNode, head.getTail());
+        }
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, PathExpressionTail tail) {
+        if (tail.getTail() != null) {
+            createNode(parentNode, tail.getTail());
+        }
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, PatternCompositionConstraint constraint) {
+        // By leaving this method empty, the Pattern Composition Constraint will not have any children in the outline
+        // view
+    }
+
+    /**
+     * Simple text styling for {@link Pattern}.
+     * 
+     * @param pattern
+     * @return
+     */
+    protected String _text(Pattern pattern) {
+        StringBuilder result = new StringBuilder();
+        result.append(pattern.getName());
+        result.append("(");
+        for (Iterator<Variable> iter = pattern.getParameters().iterator(); iter.hasNext();) {
+            result.append(iter.next().getName());
+            if (iter.hasNext()) {
+                result.append(",");
+            }
+        }
+        result.append(")");
+        return result.toString();
+    }
 }

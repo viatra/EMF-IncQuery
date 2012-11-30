@@ -18,40 +18,43 @@ import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
-
 /**
- * A node that indexes incoming Tuples by their signatures as specified by a
- * TupleMask. Notifies listeners about such update events through the IndexerListener.
+ * A node that indexes incoming Tuples by their signatures as specified by a TupleMask. Notifies listeners about such
+ * update events through the IndexerListener.
  * 
- * Signature tuples are created by transforming the update tuples using the mask. 
- * Tuples stored with the same signature are grouped together. The group or a reduction thereof is retrievable.
+ * Signature tuples are created by transforming the update tuples using the mask. Tuples stored with the same signature
+ * are grouped together. The group or a reduction thereof is retrievable.
+ * 
  * @author Gabor Bergmann
  */
 public interface Indexer extends Node {
-	/**
-	 * @return the mask by which the contents are indexed.
-	 */
-	public TupleMask getMask();
-	
-	/**
-	 * @return the node whose contents are indexed.
-	 */
-	public Supplier getParent();
-	
-	/**
-	 * @return all stored tuples that conform to the specified signature, null if there are none such.
-	 * CONTRACT: do not modify!
-	 */
-	public Collection<Tuple> get(Tuple signature);
-	
-	/**
-	 * This indexer will be updated whenever a Rete update is sent to the active node (or an equivalent time slot allotted to it). 
-	 * The active node is typically the indexer itself, but it can be a different node such as its parent.
-	 * @return the active node that operates this indexer
-	 */
-	public Node getActiveNode();
+    /**
+     * @return the mask by which the contents are indexed.
+     */
+    public TupleMask getMask();
 
-	public void attachListener(IndexerListener listener);
-	public void detachListener(IndexerListener listener);
+    /**
+     * @return the node whose contents are indexed.
+     */
+    public Supplier getParent();
+
+    /**
+     * @return all stored tuples that conform to the specified signature, null if there are none such. CONTRACT: do not
+     *         modify!
+     */
+    public Collection<Tuple> get(Tuple signature);
+
+    /**
+     * This indexer will be updated whenever a Rete update is sent to the active node (or an equivalent time slot
+     * allotted to it). The active node is typically the indexer itself, but it can be a different node such as its
+     * parent.
+     * 
+     * @return the active node that operates this indexer
+     */
+    public Node getActiveNode();
+
+    public void attachListener(IndexerListener listener);
+
+    public void detachListener(IndexerListener listener);
 
 }

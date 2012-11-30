@@ -25,23 +25,24 @@ import com.google.inject.Inject;
 
 public class LoadEiqModelHandler extends LoadModelHandler {
 
-	@Inject
-	DatabindingUtil dbUtil;
+    @Inject
+    DatabindingUtil dbUtil;
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		try {
-			IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
-			if (file != null) {
-				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(HandlerUtil.getActiveEditor(event),	dbUtil.parseEPM(file));
-				ModelConnector contentModel = new EMFModelConnector(key);
-				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-				contentModel.loadModel();
-			}
-		} catch (Exception e) {
-			throw new ExecutionException("Cannot load pattern model", e);
-		}
-		return null;
-	}
+        try {
+            IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
+            if (file != null) {
+                MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(HandlerUtil.getActiveEditor(event),
+                        dbUtil.parseEPM(file));
+                ModelConnector contentModel = new EMFModelConnector(key);
+                QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
+                contentModel.loadModel();
+            }
+        } catch (Exception e) {
+            throw new ExecutionException("Cannot load pattern model", e);
+        }
+        return null;
+    }
 }

@@ -23,20 +23,20 @@ import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotifi
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
-public interface IAgenda extends IUpdateCompleteProvider, IActivationNotificationProvider{
+public interface IAgenda extends IUpdateCompleteProvider, IActivationNotificationProvider {
 
     /**
-     * Returns the {@link Notifier} instance associated to the Agenda. 
+     * Returns the {@link Notifier} instance associated to the Agenda.
      * 
      * @return the {@link Notifier} instance
      */
     Notifier getNotifier();
 
     /**
-     * Returns the {@link TransactionalEditingDomain} for the underlying {@link Notifier} 
-     * (associated to the Agenda) if it is available. 
+     * Returns the {@link TransactionalEditingDomain} for the underlying {@link Notifier} (associated to the Agenda) if
+     * it is available.
      * 
      * @return the {@link TransactionalEditingDomain} instance or null if it is not available
      */
@@ -48,11 +48,11 @@ public interface IAgenda extends IUpdateCompleteProvider, IActivationNotificatio
     boolean isAllowMultipleFiring();
 
     /**
-     * Creates a new rule with the specified {@link IRuleFactory}.
-     * The upgraded and disappeared states will not be used in the 
-     * lifecycle of rule's activations. 
+     * Creates a new rule with the specified {@link IRuleFactory}. The upgraded and disappeared states will not be used
+     * in the lifecycle of rule's activations.
      * 
-     * @param factory the {@link IMatcherFactory} of the {@link IncQueryMatcher}
+     * @param factory
+     *            the {@link IMatcherFactory} of the {@link IncQueryMatcher}
      * @return the {@link AbstractRule} instance
      */
     <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IRule<Match> createRule(
@@ -61,30 +61,34 @@ public interface IAgenda extends IUpdateCompleteProvider, IActivationNotificatio
     /**
      * Creates a new rule with the specified {@link IRuleFactory}.
      * 
-     * @param factory the {@link IMatcherFactory} of the {@link IncQueryMatcher}
-     * @param upgradedStateUsed indicates whether the upgraded state is used in the lifecycle of the rule's activations
-     * @param disappearedStateUsed indicates whether the disappeared state is used in the lifecycle of the rule's activations
+     * @param factory
+     *            the {@link IMatcherFactory} of the {@link IncQueryMatcher}
+     * @param upgradedStateUsed
+     *            indicates whether the upgraded state is used in the lifecycle of the rule's activations
+     * @param disappearedStateUsed
+     *            indicates whether the disappeared state is used in the lifecycle of the rule's activations
      * @return the {@link AbstractRule} instance
      */
     <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IRule<Match> createRule(
             IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed);
 
     /**
-     * Removes a rule from the Agenda. 
+     * Removes a rule from the Agenda.
      * 
-     * @param rule the rule to remove
+     * @param rule
+     *            the rule to remove
      */
     <MatchType extends IPatternMatch> void removeRule(AbstractRule<MatchType> rule);
 
     /**
-     * Returns the rules that were created in this Agenda instance. 
+     * Returns the rules that were created in this Agenda instance.
      * 
      * @return the collection of rules
      */
     Collection<IRule<? extends IPatternMatch>> getRules();
 
     /**
-     * Call this method to properly dispose the Agenda. 
+     * Call this method to properly dispose the Agenda.
      */
     void dispose();
 

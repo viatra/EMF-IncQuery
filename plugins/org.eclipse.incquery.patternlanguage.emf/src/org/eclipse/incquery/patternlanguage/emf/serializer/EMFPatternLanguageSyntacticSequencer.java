@@ -10,6 +10,5 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.serializer;
 
-
 public class EMFPatternLanguageSyntacticSequencer extends AbstractEMFPatternLanguageSyntacticSequencer {
 }

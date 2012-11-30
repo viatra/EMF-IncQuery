@@ -19,7 +19,7 @@ import org.eclipse.emf.workspace.impl.EMFOperationTransaction;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
     private TransactionListener transactionListener;
@@ -36,24 +36,29 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
     private class TransactionListener implements TransactionalEditingDomainListener {
 
         @Override
-        public void transactionStarting(TransactionalEditingDomainEvent event) {}
+        public void transactionStarting(TransactionalEditingDomainEvent event) {
+        }
 
         @Override
-        public void transactionInterrupted(TransactionalEditingDomainEvent event) {}
+        public void transactionInterrupted(TransactionalEditingDomainEvent event) {
+        }
 
         @Override
-        public void transactionStarted(TransactionalEditingDomainEvent event) {}
+        public void transactionStarted(TransactionalEditingDomainEvent event) {
+        }
 
         @Override
-        public void transactionClosing(TransactionalEditingDomainEvent event) {}
+        public void transactionClosing(TransactionalEditingDomainEvent event) {
+        }
 
         @Override
         public void transactionClosed(TransactionalEditingDomainEvent event) {
             boolean needsNotification = true;
 
-            /*Omit notifications about the executions of the assigned jobs in the RecordingActivation
-            Applying a rule in the IRule Engine will result the job to be executed under an 
-            EMFOperationTransaction transaction*/
+            /*
+             * Omit notifications about the executions of the assigned jobs in the RecordingActivation Applying a rule
+             * in the IRule Engine will result the job to be executed under an EMFOperationTransaction transaction
+             */
             if (event.getTransaction() instanceof EMFOperationTransaction) {
                 EMFOperationTransaction transaction = (EMFOperationTransaction) event.getTransaction();
                 // FIXME this is a really ugly hack!
@@ -68,7 +73,8 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
         }
 
         @Override
-        public void editingDomainDisposing(TransactionalEditingDomainEvent event) {}
+        public void editingDomainDisposing(TransactionalEditingDomainEvent event) {
+        }
     }
 
     @Override

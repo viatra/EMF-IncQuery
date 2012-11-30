@@ -18,36 +18,33 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
- * This node receives updates from a remote supplier; no local updates are
- * expected.
+ * This node receives updates from a remote supplier; no local updates are expected.
  * 
  * @author Gabor Bergmann
  * 
  */
 public class RemoteSupplier extends SingleInputNode {
 
-	RemoteReceiver counterpart;
+    RemoteReceiver counterpart;
 
-	/**
-	 * @param reteContainer
-	 * @param remoteAddress
-	 */
-	public RemoteSupplier(ReteContainer reteContainer,
-			RemoteReceiver counterpart) {
-		super(reteContainer);
-		this.counterpart = counterpart;
-		counterpart.addTarget(reteContainer.makeAddress(this));
-	}
+    /**
+     * @param reteContainer
+     * @param remoteAddress
+     */
+    public RemoteSupplier(ReteContainer reteContainer, RemoteReceiver counterpart) {
+        super(reteContainer);
+        this.counterpart = counterpart;
+        counterpart.addTarget(reteContainer.makeAddress(this));
+    }
 
-	public void pullInto(Collection<Tuple> collector) {
-		Collection<Tuple> pulled = counterpart.remotePull();
-		collector.addAll(pulled);
-	}
+    public void pullInto(Collection<Tuple> collector) {
+        Collection<Tuple> pulled = counterpart.remotePull();
+        collector.addAll(pulled);
+    }
 
-	public void update(Direction direction, Tuple updateElement) {
-		propagateUpdate(direction, updateElement);
-	}
+    public void update(Direction direction, Tuple updateElement) {
+        propagateUpdate(direction, updateElement);
+    }
 
 }

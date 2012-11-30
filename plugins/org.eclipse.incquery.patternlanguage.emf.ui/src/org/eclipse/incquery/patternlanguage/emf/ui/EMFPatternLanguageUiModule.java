@@ -47,85 +47,83 @@ import com.google.inject.name.Names;
  * Use this class to register components to be used within the IDE.
  */
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
-	private static final String loggerRoot = "org.eclipse.incquery";
+    private static final String loggerRoot = "org.eclipse.incquery";
 
-	public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
-		super(plugin);
-	}
-	
-	@Provides
-	@Singleton
-	Logger provideLoggerImplementation() {
-		Logger logger = Logger.getLogger(loggerRoot);
-		logger.setAdditivity(false);
-		logger.addAppender(new ConsoleAppender());
-		logger.addAppender(new EclipseLogAppender());
-		return logger;
-	}
+    public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
+        super(plugin);
+    }
 
-	@Override
-	public void configure(Binder binder) {
-		super.configure(binder);
-		binder.bind(String.class)
-				.annotatedWith(
-						Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
-				.toInstance(".,");
-	}
-	
-	/*
-	 * Registering model inferrer from the tooling.generator project
-	 */
-	public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
-		return EMFPatternLanguageJvmModelInferrer.class;
-	}
-	
-	@Override
-	public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
-		return EMFPatternLanguageBuilderParticipant.class;
-	}
-	
-	@Override
-	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
-		return EMFPatternLanguageHighlightingCalculator.class;
-	}
+    @Provides
+    @Singleton
+    Logger provideLoggerImplementation() {
+        Logger logger = Logger.getLogger(loggerRoot);
+        logger.setAdditivity(false);
+        logger.addAppender(new ConsoleAppender());
+        logger.addAppender(new EclipseLogAppender());
+        return logger;
+    }
 
-	@Override
-	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
-		return EMFPatternLanguageHighlightingConfiguration.class;
-	}
-	
-	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
-		return GenModelMetamodelProviderService.class;
-	}
+    @Override
+    public void configure(Binder binder) {
+        super.configure(binder);
+        binder.bind(String.class)
+                .annotatedWith(Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
+                .toInstance(".,");
+    }
 
-	public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
-		return GenModelMetamodelProviderService.class;
-	}
-	
-	public Class<? extends ITypeProvider> bindITypeProvider() {
-		return GenModelBasedTypeProvider.class;
-	}
-	
-	@Override
-	public Class<? extends IEObjectHoverDocumentationProvider> bindIEObjectHoverDocumentationProvider() {
-		return EMFPatternLanguageHoverDocumentationProvider.class;
-	}
+    /*
+     * Registering model inferrer from the tooling.generator project
+     */
+    public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
+        return EMFPatternLanguageJvmModelInferrer.class;
+    }
 
-	public Class<? extends IErrorFeedback> bindIErrorFeedback(){
-		return GeneratorMarkerFeedback.class;
-	}
-	
+    @Override
+    public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
+        return EMFPatternLanguageBuilderParticipant.class;
+    }
 
-	public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
-		return EMFPatternJvmModelAssociator.class;
-	}
-	
-	public Class<? extends JvmModelAssociator> bindJvmModelAssociator() {
-		return EMFPatternJvmModelAssociator.class;
-	}
-	
-	@SingletonBinding(eager = true)
-	public Class<? extends EMFPatternLanguageJavaValidator> bindEMFPatternLanguageJavaValidator() {
-		return GenmodelBasedEMFPatternLanguageJavaValidator.class;
-	}
+    @Override
+    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+        return EMFPatternLanguageHighlightingCalculator.class;
+    }
+
+    @Override
+    public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+        return EMFPatternLanguageHighlightingConfiguration.class;
+    }
+
+    public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
+        return GenModelMetamodelProviderService.class;
+    }
+
+    public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
+        return GenModelMetamodelProviderService.class;
+    }
+
+    public Class<? extends ITypeProvider> bindITypeProvider() {
+        return GenModelBasedTypeProvider.class;
+    }
+
+    @Override
+    public Class<? extends IEObjectHoverDocumentationProvider> bindIEObjectHoverDocumentationProvider() {
+        return EMFPatternLanguageHoverDocumentationProvider.class;
+    }
+
+    public Class<? extends IErrorFeedback> bindIErrorFeedback() {
+        return GeneratorMarkerFeedback.class;
+    }
+
+    public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
+        return EMFPatternJvmModelAssociator.class;
+    }
+
+    public Class<? extends JvmModelAssociator> bindJvmModelAssociator() {
+        return EMFPatternJvmModelAssociator.class;
+    }
+
+    @SingletonBinding(eager = true)
+    public Class<? extends EMFPatternLanguageJavaValidator> bindEMFPatternLanguageJavaValidator() {
+        return GenmodelBasedEMFPatternLanguageJavaValidator.class;
+    }
 }

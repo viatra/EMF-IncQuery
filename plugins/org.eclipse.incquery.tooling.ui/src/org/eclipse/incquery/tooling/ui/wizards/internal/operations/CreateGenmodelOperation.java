@@ -33,46 +33,40 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.StringInputStream;
 
-public class CreateGenmodelOperation extends
-		WorkspaceModifyOperation {
-	private final IProject project;
-	private final List<GenModel> genmodels;
-	private final IEiqGenmodelProvider genmodelProvider;
-	private final IResourceSetProvider resourceSetProvider;
+public class CreateGenmodelOperation extends WorkspaceModifyOperation {
+    private final IProject project;
+    private final List<GenModel> genmodels;
+    private final IEiqGenmodelProvider genmodelProvider;
+    private final IResourceSetProvider resourceSetProvider;
 
-	public CreateGenmodelOperation(IProject project,
-			List<GenModel> genmodels, IEiqGenmodelProvider genmodelProvider, IResourceSetProvider resourceSetProvider) {
-		this.project = project;
-		this.genmodels = genmodels;
-		this.genmodelProvider = genmodelProvider;
-		this.resourceSetProvider = resourceSetProvider;
-	}
+    public CreateGenmodelOperation(IProject project, List<GenModel> genmodels, IEiqGenmodelProvider genmodelProvider,
+            IResourceSetProvider resourceSetProvider) {
+        this.project = project;
+        this.genmodels = genmodels;
+        this.genmodelProvider = genmodelProvider;
+        this.resourceSetProvider = resourceSetProvider;
+    }
 
-	@Override
-    protected void execute(IProgressMonitor monitor)
-			throws CoreException {
-		try {
-			IncQueryGeneratorModel generatorModel = genmodelProvider
-					.getGeneratorModel(project,
-							resourceSetProvider.get(project));
-			EList<GeneratorModelReference> genmodelRefs = generatorModel
-					.getGenmodels();
-			for (GenModel ecoreGenmodel : genmodels) {
-				GeneratorModelReference ref = GeneratorModelFactory.eINSTANCE
-						.createGeneratorModelReference();
-				ref.setGenmodel(ecoreGenmodel);
-				genmodelRefs.add(ref);
-			}
-			if (genmodelRefs.isEmpty()) {
-				IFile file = project.getFile(IncQueryNature.IQGENMODEL);
-				file.create(new StringInputStream(""), false, new SubProgressMonitor(monitor, 1));
-			} else {
-				genmodelProvider.saveGeneratorModel(project, generatorModel);
-			}
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					IncQueryGUIPlugin.PLUGIN_ID,
-					"Cannot create generator model: " + e.getMessage(), e));
-		}
-	}
+    @Override
+    protected void execute(IProgressMonitor monitor) throws CoreException {
+        try {
+            IncQueryGeneratorModel generatorModel = genmodelProvider.getGeneratorModel(project,
+                    resourceSetProvider.get(project));
+            EList<GeneratorModelReference> genmodelRefs = generatorModel.getGenmodels();
+            for (GenModel ecoreGenmodel : genmodels) {
+                GeneratorModelReference ref = GeneratorModelFactory.eINSTANCE.createGeneratorModelReference();
+                ref.setGenmodel(ecoreGenmodel);
+                genmodelRefs.add(ref);
+            }
+            if (genmodelRefs.isEmpty()) {
+                IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+                file.create(new StringInputStream(""), false, new SubProgressMonitor(monitor, 1));
+            } else {
+                genmodelProvider.saveGeneratorModel(project, generatorModel);
+            }
+        } catch (IOException e) {
+            throw new CoreException(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
+                    "Cannot create generator model: " + e.getMessage(), e));
+        }
+    }
 }

@@ -11,23 +11,19 @@ import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
 
 public class DefaultRuleFactory implements IRuleFactory {
 
-	@Override
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> AbstractRule<Match> createRule(
-			IncQueryEngine engine,
-			IMatcherFactory<Matcher> factory, 
-			boolean upgradedStateUsed,
-			boolean disappearedStateUsed) {
-		
-		AbstractRule<Match> rule = null;
-		try {
-			rule = new RecordingRule<Match>(RuleEngine.getInstance().getOrCreateAgenda(engine), 
-											factory.getMatcher(engine), 
-											upgradedStateUsed, 
-											disappearedStateUsed);
-		} catch (IncQueryException e) {
-			engine.getLogger().error("Error while creating RecordingRule!", e);
-		}
-		return rule;
-	}
+    @Override
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> AbstractRule<Match> createRule(
+            IncQueryEngine engine, IMatcherFactory<Matcher> factory, boolean upgradedStateUsed,
+            boolean disappearedStateUsed) {
+
+        AbstractRule<Match> rule = null;
+        try {
+            rule = new RecordingRule<Match>(RuleEngine.getInstance().getOrCreateAgenda(engine),
+                    factory.getMatcher(engine), upgradedStateUsed, disappearedStateUsed);
+        } catch (IncQueryException e) {
+            engine.getLogger().error("Error while creating RecordingRule!", e);
+        }
+        return rule;
+    }
 
 }

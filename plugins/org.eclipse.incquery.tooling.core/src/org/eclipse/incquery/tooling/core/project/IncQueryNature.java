@@ -22,41 +22,38 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class IncQueryNature implements IProjectNature {
 
-	/**
-	 * The project nature identifier used for defining the project nature of an
-	 * IncQuery project.
-	 */
+    /**
+     * The project nature identifier used for defining the project nature of an IncQuery project.
+     */
     public static final String NATURE_ID = "org.eclipse.incquery.projectnature"; //$NON-NLS-1$
     public static final String BUNDLE_ID = "org.eclipse.incquery.tooling.core"; //$NON-NLS-1$
     public static final String BUILDER_ID = BUNDLE_ID + ".projectbuilder";//$NON-NLS-1$
-	public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
-	public static final String SRC_DIR = "src/"; //$NON-NLS-1$
-	public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; //$NON_NLS-1$
-	public static final String IQGENMODEL = "generator.eiqgen";
-	
-	private IProject project;
+    public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
+    public static final String SRC_DIR = "src/"; //$NON-NLS-1$
+    public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; // $NON_NLS-1$
+    public static final String IQGENMODEL = "generator.eiqgen";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#getProject()
-	 */
-	public IProject getProject() {
-		return project;
-	}
+    private IProject project;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core
-	 * .resources.IProject)
-	 */
-	public void setProject(IProject project) {
-		this.project = project;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IProjectNature#getProject()
+     */
+    public IProject getProject() {
+        return project;
+    }
 
-	public void configure() throws CoreException {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core .resources.IProject)
+     */
+    public void setProject(IProject project) {
+        this.project = project;
+    }
+
+    public void configure() throws CoreException {
         IProjectDescription desc = project.getDescription();
         ICommand[] commands = desc.getBuildSpec();
         for (int i = 0; i < commands.length; i++) {
@@ -72,9 +69,9 @@ public class IncQueryNature implements IProjectNature {
         newCommandList[commands.length] = command;
         desc.setBuildSpec(newCommandList);
         project.setDescription(desc, null);
-	}
+    }
 
-	public void deconfigure() throws CoreException {
+    public void deconfigure() throws CoreException {
         IProjectDescription desc = project.getDescription();
         ICommand[] commands = desc.getBuildSpec();
         int index = 0;
@@ -94,6 +91,6 @@ public class IncQueryNature implements IProjectNature {
         newCommandList[commands.length] = command;
         desc.setBuildSpec(newCommandList);
         project.setDescription(desc, null);
-	}
+    }
 
 }

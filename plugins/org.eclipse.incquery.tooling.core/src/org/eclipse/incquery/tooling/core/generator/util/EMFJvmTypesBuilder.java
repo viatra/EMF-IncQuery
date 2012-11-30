@@ -35,77 +35,76 @@ import com.google.inject.Inject;
 @SuppressWarnings("restriction")
 public class EMFJvmTypesBuilder extends JvmTypesBuilder {
 
-	@Inject
-	private TypesFactory factory = TypesFactory.eINSTANCE;
-	
-	@Inject 
-	private TypeReferences typeReferences;
-	@Inject
-	private Logger logger;
-   	
-	/**
-	 * Creates a {@link JvmWildcardTypeReference} with a {@link JvmLowerBound}
-	 * constraint to 'clone' parameter.
-	 * 
-	 * @param clone
-	 * @return {@link JvmWildcardTypeReference} with a {@link JvmLowerBound}
-	 *         contraint.
-	 */
-   	public JvmWildcardTypeReference wildCardSuper(JvmTypeReference clone) {
-		JvmWildcardTypeReference result = factory.createJvmWildcardTypeReference();
-		JvmLowerBound lowerBound = factory.createJvmLowerBound();
-		lowerBound.setTypeReference(clone);
-		result.getConstraints().add(lowerBound);
-		return result;
-   	}
-   	
-   	/**
-   	 * Creates a JvmTypeReference, that does not have any type parameter (serialized as a raw type).
-   	 * @return
-   	 */
-   	public JvmTypeReference newRawTypeRef(EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
-   		Preconditions.checkNotNull(clazz, "clazz");
-   		
-   		JvmType declaredType = typeReferences.findDeclaredType(clazz, ctx);
-   		if (declaredType == null) {
-   			return null;   			
-   		} 
-		return createTypeRef(declaredType);
-   	}
-   	
-   	/**
-   	 * Creates a JvmTypeReference, that does not have any type parameter (serialized as a raw type).
-   	 * @return
-   	 */
-   	public JvmTypeReference newRawTypeRef(EObject ctx, String typeName, JvmTypeReference... typeArgs) {
-   		Preconditions.checkNotNull(typeName, "typeName");
-   		Preconditions.checkNotNull(ctx, "context");
-   		
-   		JvmType declaredType = typeReferences.findDeclaredType(typeName, ctx);
-   		if (declaredType == null) {
-   			return null;   			
-   		} 
-   		return createTypeRef(declaredType);
-   	}
-   	
-   	private JvmTypeReference createTypeRef(JvmType type) {
-   		JvmParameterizedTypeReference reference = factory.createJvmParameterizedTypeReference();
-		reference.setType(type);
-		return reference;
-   	}
-	
-	/**
-	 * Overriding parent method to replace logging
-	 * {@inheritDoc}
-	 */
-	protected <T extends EObject> T initializeSafely(T targetElement, Procedure1<? super T> initializer) {
-		if(targetElement != null && initializer != null) {
-			try {
-				initializer.apply(targetElement);
-			} catch (Exception e) {
-				logger.error("Error initializing JvmElement", e);
-			}
-		}
-		return targetElement;
-	}
+    @Inject
+    private TypesFactory factory = TypesFactory.eINSTANCE;
+
+    @Inject
+    private TypeReferences typeReferences;
+    @Inject
+    private Logger logger;
+
+    /**
+     * Creates a {@link JvmWildcardTypeReference} with a {@link JvmLowerBound} constraint to 'clone' parameter.
+     * 
+     * @param clone
+     * @return {@link JvmWildcardTypeReference} with a {@link JvmLowerBound} contraint.
+     */
+    public JvmWildcardTypeReference wildCardSuper(JvmTypeReference clone) {
+        JvmWildcardTypeReference result = factory.createJvmWildcardTypeReference();
+        JvmLowerBound lowerBound = factory.createJvmLowerBound();
+        lowerBound.setTypeReference(clone);
+        result.getConstraints().add(lowerBound);
+        return result;
+    }
+
+    /**
+     * Creates a JvmTypeReference, that does not have any type parameter (serialized as a raw type).
+     * 
+     * @return
+     */
+    public JvmTypeReference newRawTypeRef(EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
+        Preconditions.checkNotNull(clazz, "clazz");
+
+        JvmType declaredType = typeReferences.findDeclaredType(clazz, ctx);
+        if (declaredType == null) {
+            return null;
+        }
+        return createTypeRef(declaredType);
+    }
+
+    /**
+     * Creates a JvmTypeReference, that does not have any type parameter (serialized as a raw type).
+     * 
+     * @return
+     */
+    public JvmTypeReference newRawTypeRef(EObject ctx, String typeName, JvmTypeReference... typeArgs) {
+        Preconditions.checkNotNull(typeName, "typeName");
+        Preconditions.checkNotNull(ctx, "context");
+
+        JvmType declaredType = typeReferences.findDeclaredType(typeName, ctx);
+        if (declaredType == null) {
+            return null;
+        }
+        return createTypeRef(declaredType);
+    }
+
+    private JvmTypeReference createTypeRef(JvmType type) {
+        JvmParameterizedTypeReference reference = factory.createJvmParameterizedTypeReference();
+        reference.setType(type);
+        return reference;
+    }
+
+    /**
+     * Overriding parent method to replace logging {@inheritDoc}
+     */
+    protected <T extends EObject> T initializeSafely(T targetElement, Procedure1<? super T> initializer) {
+        if (targetElement != null && initializer != null) {
+            try {
+                initializer.apply(targetElement);
+            } catch (Exception e) {
+                logger.error("Error initializing JvmElement", e);
+            }
+        }
+        return targetElement;
+    }
 }

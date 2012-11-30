@@ -16,21 +16,22 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 /**
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public interface IPatternMatcherStringTypedContext<PatternDescription> extends
-		IPatternMatcherContext<PatternDescription> {
+        IPatternMatcherContext<PatternDescription> {
 
-	//	String retrieveUnaryTypeFQN(Object typeObject);
-	//	String retrieveTernaryEdgeTypeFQN(Object typeObject);	
-	//	String retrieveBinaryEdgeTypeFQN(Object typeObject);
-		
-	Object resolveConstant(String fullyQualifiedName) throws RetePatternBuildException; //Type? Instance? Entity? Relation? Who knows?
+    // String retrieveUnaryTypeFQN(Object typeObject);
+    // String retrieveTernaryEdgeTypeFQN(Object typeObject);
+    // String retrieveBinaryEdgeTypeFQN(Object typeObject);
 
-	Object retrieveBinaryEdgeType(String fullyQualifiedName) throws RetePatternBuildException;
+    Object resolveConstant(String fullyQualifiedName) throws RetePatternBuildException; // Type? Instance? Entity?
+                                                                                        // Relation? Who knows?
 
-	Object retrieveTernaryEdgeType(String fullyQualifiedName) throws RetePatternBuildException;
+    Object retrieveBinaryEdgeType(String fullyQualifiedName) throws RetePatternBuildException;
 
-	Object retrieveUnaryType(String fullyQualifiedName) throws RetePatternBuildException;
+    Object retrieveTernaryEdgeType(String fullyQualifiedName) throws RetePatternBuildException;
+
+    Object retrieveUnaryType(String fullyQualifiedName) throws RetePatternBuildException;
 
 }

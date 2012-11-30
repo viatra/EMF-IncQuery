@@ -21,17 +21,18 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class UnloadModelHandler extends AbstractHandler {
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-		if (selection instanceof TreeSelection) {
-			ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ((TreeSelection) selection).getFirstElement();
-			QueryExplorer.getInstance().getModelConnectorMap().get(root.getKey()).unloadModel();
-		}
 
-		QueryExplorer.getInstance().clearTableViewer();
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+
+        ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+        if (selection instanceof TreeSelection) {
+            ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ((TreeSelection) selection)
+                    .getFirstElement();
+            QueryExplorer.getInstance().getModelConnectorMap().get(root.getKey()).unloadModel();
+        }
+
+        QueryExplorer.getInstance().clearTableViewer();
+        return null;
+    }
 }

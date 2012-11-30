@@ -20,31 +20,31 @@ import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import com.google.inject.Inject;
 
 /**
- * Helper class for loading XMI resources using information available in 
- *
+ * Helper class for loading XMI resources using information available in
+ * 
  */
 public class XMIResourceURIHandler extends URIHandlerImpl {
 
-	@Inject
-	IMetamodelProvider metamodelProvider;
-	private ResourceSet set;
-	
-	public XMIResourceURIHandler(ResourceSet set) {
-		this.set = set;
-	}
-	
-	@Override
-	public URI resolve(URI uri) {
-		if (uri.isRelative()) {
-			return super.resolve(uri);
-		}
-		if(!uri.isPlatform()) {
-			EPackage epackage = metamodelProvider.loadEPackage(uri.trimFragment().toString(), set);
-			if (epackage != null) {
-				return epackage.eResource().getURI().appendFragment(uri.fragment());
-			}
-		}
-		return super.resolve(uri);
-	}
-	
+    @Inject
+    IMetamodelProvider metamodelProvider;
+    private ResourceSet set;
+
+    public XMIResourceURIHandler(ResourceSet set) {
+        this.set = set;
+    }
+
+    @Override
+    public URI resolve(URI uri) {
+        if (uri.isRelative()) {
+            return super.resolve(uri);
+        }
+        if (!uri.isPlatform()) {
+            EPackage epackage = metamodelProvider.loadEPackage(uri.trimFragment().toString(), set);
+            if (epackage != null) {
+                return epackage.eResource().getURI().appendFragment(uri.fragment());
+            }
+        }
+        return super.resolve(uri);
+    }
+
 }

@@ -30,75 +30,99 @@ import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
 
 /**
- * Observable view of a match set for a given {@link IncQueryMatcher} on a model
- *  (match sets of an {@link IncQueryMatcher} are ordered by the order of their appearance).
- *  
- * <p>This implementation uses the {@link RuleEngine} to get notifications for match set changes,
- *  and can be instantiated using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and
- *  either a {@link Notifier}, {@link IncQueryEngine} or {@link Agenda}.
+ * Observable view of a match set for a given {@link IncQueryMatcher} on a model (match sets of an
+ * {@link IncQueryMatcher} are ordered by the order of their appearance).
+ * 
+ * <p>
+ * This implementation uses the {@link RuleEngine} to get notifications for match set changes, and can be instantiated
+ * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a {@link Notifier},
+ * {@link IncQueryEngine} or {@link Agenda}.
  * 
  * @author Abel Hegedus
- *
+ * 
  */
-public class ObservablePatternMatchList<Match extends IPatternMatch> extends AbstractObservableList implements IObservablePatternMatchCollection<Match> {
+public class ObservablePatternMatchList<Match extends IPatternMatch> extends AbstractObservableList implements
+        IObservablePatternMatchCollection<Match> {
 
     private final List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
-    
+
     /**
      * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
      * 
-     * <p>Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
      * 
-     * @param matcher the {@link IncQueryMatcher} to use as the source of the observable list
+     * @param matcher
+     *            the {@link IncQueryMatcher} to use as the source of the observable list
      */
     @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) {
         super();
-        IMatcherFactory<Matcher> matcherFactory = (IMatcherFactory<Matcher>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
-        ObservableCollectionHelper.createRuleInAgenda(this, matcherFactory, RuleEngine.getInstance().getOrCreateAgenda(matcher.getEngine()));
+        IMatcherFactory<Matcher> matcherFactory = (IMatcherFactory<Matcher>) MatcherFactoryRegistry
+                .getOrCreateMatcherFactory(matcher.getPattern());
+        ObservableCollectionHelper.createRuleInAgenda(this, matcherFactory,
+                RuleEngine.getInstance().getOrCreateAgenda(matcher.getEngine()));
     }
-    
+
     /**
-     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link Notifier}.
+     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
+     * {@link Notifier}.
      * 
-     * <p>Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
      * 
-     * @param factory the {@link IMatcherFactory} used to create a matcher
-     * @param notifier the {@link Notifier} on which the matcher is created
+     * @param factory
+     *            the {@link IMatcherFactory} used to create a matcher
+     * @param notifier
+     *            the {@link Notifier} on which the matcher is created
      */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory, Notifier notifier) {
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
+            Notifier notifier) {
         this(factory, RuleEngine.getInstance().getOrCreateAgenda(notifier));
     }
-    
+
     /**
-     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link IncQueryEngine}.
+     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
+     * {@link IncQueryEngine}.
      * 
-     * <p>Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
      * 
-     * @param factory the {@link IMatcherFactory} used to create a matcher
-     * @param engine the {@link IncQueryEngine} on which the matcher is created
+     * @param factory
+     *            the {@link IMatcherFactory} used to create a matcher
+     * @param engine
+     *            the {@link IncQueryEngine} on which the matcher is created
      */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
+            IncQueryEngine engine) {
         this(factory, RuleEngine.getInstance().getOrCreateAgenda(engine));
     }
-    
+
     /**
-     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given {@link Agenda}.
+     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
+     * {@link Agenda}.
      * 
-     * <p>Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
      * 
-     * <p> Note, that no firing strategy will be added to the {@link Agenda}!
+     * <p>
+     * Note, that no firing strategy will be added to the {@link Agenda}!
      * 
-     * @param factory the {@link IMatcherFactory} used to create a matcher
-     * @param agenda an existing {@link Agenda} that specifies the used model 
+     * @param factory
+     *            the {@link IMatcherFactory} used to create a matcher
+     * @param agenda
+     *            an existing {@link Agenda} that specifies the used model
      */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory, IAgenda agenda) {
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
+            IAgenda agenda) {
         super();
         ObservableCollectionHelper.createRuleInAgenda(this, factory, agenda);
-        
+
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.databinding.observable.list.IObservableList#getElementType()
      */
     @Override
@@ -106,7 +130,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         return IPatternMatch.class;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.databinding.observable.list.AbstractObservableList#doGetSize()
      */
     @Override
@@ -114,7 +140,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         return cache.size();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.util.AbstractList#get(int)
      */
     @Override

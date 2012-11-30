@@ -16,27 +16,27 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
  * Depicts an abstract evaluator that evaluates tuples to Objects. Used inside evaluator nodes.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public abstract class AbstractEvaluator {
-	/**
-	 * Each tuple represents a trace of the activity during evaluation. 
-	 * Change notifications received on these traces will be used to trigger re-evaluation.
-	 */
-	Set<Tuple> traces = new HashSet<Tuple>();
-	
-	public abstract Object doEvaluate(Tuple tuple) throws Throwable;
-	
-	final Object evaluate(Tuple tuple) throws Throwable {
-		traces.clear();
-		return doEvaluate(tuple);
-	}
+    /**
+     * Each tuple represents a trace of the activity during evaluation. Change notifications received on these traces
+     * will be used to trigger re-evaluation.
+     */
+    Set<Tuple> traces = new HashSet<Tuple>();
 
-	public Set<Tuple> getTraces() {
-		return traces;
-	}
+    public abstract Object doEvaluate(Tuple tuple) throws Throwable;
+
+    final Object evaluate(Tuple tuple) throws Throwable {
+        traces.clear();
+        return doEvaluate(tuple);
+    }
+
+    public Set<Tuple> getTraces() {
+        return traces;
+    }
 }

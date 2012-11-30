@@ -42,7 +42,7 @@ public class PatternAnnotationProvider {
     private Logger log;
     @Inject
     private Injector injector;
-    
+
     private static final class ExtensionConverter implements
             Function<IConfigurationElement, ExtensionBasedPatternAnnotationParameter> {
         @Override

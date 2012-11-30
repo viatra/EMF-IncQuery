@@ -20,16 +20,15 @@ import org.eclipse.xtext.serializer.tokens.CrossReferenceSerializer;
 
 public class EMFPatternLanguageCrossRefSerializer extends CrossReferenceSerializer {
 
-	@Override
-	public String serializeCrossRef(EObject semanticObject,
-			CrossReference crossref, EObject target, INode node, Acceptor errors) {
-		if (target instanceof EPackage) {
-			return String.format("\"%s\"", ((EPackage)target).getNsURI());
-		} else if (target instanceof ENamedElement) {
-			return ((ENamedElement) target).getName();
-		}
-		return super.serializeCrossRef(semanticObject, crossref, target, node,
-				errors);
-	}
+    @Override
+    public String serializeCrossRef(EObject semanticObject, CrossReference crossref, EObject target, INode node,
+            Acceptor errors) {
+        if (target instanceof EPackage) {
+            return String.format("\"%s\"", ((EPackage) target).getNsURI());
+        } else if (target instanceof ENamedElement) {
+            return ((ENamedElement) target).getName();
+        }
+        return super.serializeCrossRef(semanticObject, crossref, target, node, errors);
+    }
 
 }

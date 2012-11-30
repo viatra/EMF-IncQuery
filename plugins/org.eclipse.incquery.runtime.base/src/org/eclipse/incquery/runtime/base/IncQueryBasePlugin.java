@@ -17,40 +17,42 @@ import org.osgi.framework.BundleContext;
 
 public class IncQueryBasePlugin extends Plugin {
 
-	// The shared instance
-	private static IncQueryBasePlugin plugin;
-	
-	public static final String PLUGIN_ID="org.eclipse.incquery.runtime.base";
-	public static final String WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID = "org.eclipse.incquery.runtime.base.wellbehaving.derived.features";
+    // The shared instance
+    private static IncQueryBasePlugin plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-		WellbehavingDerivedFeatureRegistry.initRegistry();
-	}
+    public static final String PLUGIN_ID = "org.eclipse.incquery.runtime.base";
+    public static final String WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID = "org.eclipse.incquery.runtime.base.wellbehaving.derived.features";
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+        WellbehavingDerivedFeatureRegistry.initRegistry();
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static IncQueryBasePlugin getDefault() {
-		return plugin;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static IncQueryBasePlugin getDefault() {
+        return plugin;
+    }
 
 }

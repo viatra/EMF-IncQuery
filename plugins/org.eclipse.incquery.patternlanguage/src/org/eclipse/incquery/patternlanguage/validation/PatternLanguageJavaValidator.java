@@ -90,8 +90,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Check
     public void checkPatternParameters(Pattern pattern) {
         if (pattern.getParameters().size() == 0) {
-            warning("Parameterless patterns can only be used to check for existence of a condition.", PatternLanguagePackage.Literals.PATTERN__NAME,
-                    IssueCodes.MISSING_PATTERN_PARAMETERS);
+            warning("Parameterless patterns can only be used to check for existence of a condition.",
+                    PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.MISSING_PATTERN_PARAMETERS);
             // As no duplicate parameters are available, returning now
             return;
         }
@@ -99,9 +99,11 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             String leftParameterName = pattern.getParameters().get(i).getName();
             for (int j = i + 1; j < pattern.getParameters().size(); ++j) {
                 if (equal(leftParameterName, pattern.getParameters().get(j).getName())) {
-                    error(DUPLICATE_VARIABLE_MESSAGE + leftParameterName, PatternLanguagePackage.Literals.PATTERN__PARAMETERS, i,
+                    error(DUPLICATE_VARIABLE_MESSAGE + leftParameterName,
+                            PatternLanguagePackage.Literals.PATTERN__PARAMETERS, i,
                             IssueCodes.DUPLICATE_PATTERN_PARAMETER_NAME);
-                    error(DUPLICATE_VARIABLE_MESSAGE + leftParameterName, PatternLanguagePackage.Literals.PATTERN__PARAMETERS, j,
+                    error(DUPLICATE_VARIABLE_MESSAGE + leftParameterName,
+                            PatternLanguagePackage.Literals.PATTERN__PARAMETERS, j,
                             IssueCodes.DUPLICATE_PATTERN_PARAMETER_NAME);
                 }
             }
@@ -168,10 +170,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     Pattern rightPattern = model.getPatterns().get(j);
                     String rightPatternName = rightPattern.getName();
                     if (equal(leftPatternName, rightPatternName)) {
-                        error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + leftPatternName, leftPattern, PatternLanguagePackage.Literals.PATTERN__NAME,
-                                IssueCodes.DUPLICATE_PATTERN_DEFINITION);
-                        error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + rightPatternName, rightPattern, PatternLanguagePackage.Literals.PATTERN__NAME,
-                                IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+                        error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + leftPatternName, leftPattern,
+                                PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+                        error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + rightPatternName, rightPattern,
+                                PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                     }
                 }
             }
@@ -421,14 +423,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     @Override
-    public void warning(String message, EObject source, EStructuralFeature feature, String code,
-            String... issueData) {
+    public void warning(String message, EObject source, EStructuralFeature feature, String code, String... issueData) {
         super.warning(message, source, feature, code, issueData);
     }
 
     @Override
-    public void error(String message, EObject source, EStructuralFeature feature, String code,
-            String... issueData) {
+    public void error(String message, EObject source, EStructuralFeature feature, String code, String... issueData) {
         super.error(message, source, feature, code, issueData);
     }
 

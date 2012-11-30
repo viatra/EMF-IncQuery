@@ -1,6 +1,5 @@
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
-
 import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
@@ -27,90 +26,90 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * 
  * @author istvanrath
- *
+ * 
  */
 public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
 
-	/**
-	 * The ID of the view as specified by the extension.
-	 */
-	public static final String ID = "org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView";
+    /**
+     * The ID of the view as specified by the extension.
+     */
+    public static final String ID = "org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView";
 
-	private GraphViewer graphViewer;
+    private GraphViewer graphViewer;
     private ColorTheme theme;
 
-	 @Override
-	  public AbstractZoomableViewer getZoomableViewer() {
-	    return graphViewer;
-	  }
-	
-	/**
-	 * The constructor.
-	 */
-	public ReteVisView() { }
+    @Override
+    public AbstractZoomableViewer getZoomableViewer() {
+        return graphViewer;
+    }
 
-	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
-	 */
-	@Override
+    /**
+     * The constructor.
+     */
+    public ReteVisView() {
+    }
+
+    /**
+     * This is a callback that will allow us to create the viewer and initialize it.
+     */
+    @Override
     public void createPartControl(Composite parent) {
-		// initialize Zest viewer
-		graphViewer = new GraphViewer(parent, SWT.BORDER);
+        // initialize Zest viewer
+        graphViewer = new GraphViewer(parent, SWT.BORDER);
         graphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-		graphViewer.setContentProvider(new ZestReteContentProvider());
-		ZestReteLabelProvider labelProvider = new ZestReteLabelProvider();
+        graphViewer.setContentProvider(new ZestReteContentProvider());
+        ZestReteLabelProvider labelProvider = new ZestReteLabelProvider();
         Display display = parent.getDisplay();
         theme = new ColorTheme(display);
         labelProvider.setColors(theme);
-        graphViewer.setLabelProvider(labelProvider);	    
-	}
+        graphViewer.setLabelProvider(labelProvider);
+    }
 
-	@Override
-	public void init(IViewSite site) throws PartInitException {
-		super.init(site);
-		site.getPage().addSelectionListener(new ISelectionListener() {
-			
-			@Override
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection sel = (IStructuredSelection) selection;
-					Object o = sel.getFirstElement();
-					if (o!=null && o instanceof ObservablePatternMatcher) {
-						ObservablePatternMatcher pm = (ObservablePatternMatcher) o;
-						//String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
-						try {
-							ReteBoundary rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
-							((ZestReteLabelProvider)graphViewer.getLabelProvider()).setRb( rb );
-							//graphViewer.setInput( pm.getMatcher().getEngine().getReteEngine().getBoundary() );
+    @Override
+    public void init(IViewSite site) throws PartInitException {
+        super.init(site);
+        site.getPage().addSelectionListener(new ISelectionListener() {
+
+            @Override
+            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+                if (selection instanceof IStructuredSelection) {
+                    IStructuredSelection sel = (IStructuredSelection) selection;
+                    Object o = sel.getFirstElement();
+                    if (o != null && o instanceof ObservablePatternMatcher) {
+                        ObservablePatternMatcher pm = (ObservablePatternMatcher) o;
+                        // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
+                        try {
+                            ReteBoundary rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
+                            ((ZestReteLabelProvider) graphViewer.getLabelProvider()).setRb(rb);
+                            // graphViewer.setInput( pm.getMatcher().getEngine().getReteEngine().getBoundary() );
                             SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
                             HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
                             graphViewer.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
                                     sugiyamaAlgorithm, shiftAlgorithm }));
                             // graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
-							//graphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
-							//graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
-							//graphViewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
+                            // graphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
+                            // graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
+                            // graphViewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
                             graphViewer.setInput(rb.getHeadContainer());
                             // graphViewer.applyLayout();
                             // graphViewer.refresh();
-						} catch (IncQueryException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});	
-	}
-	
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	@Override
-	public void setFocus() {
-		// treeViewer.getControl().setFocus();
-	}
+                        } catch (IncQueryException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Passing the focus request to the viewer's control.
+     */
+    @Override
+    public void setFocus() {
+        // treeViewer.getControl().setFocus();
+    }
 
     /*
      * (non-Javadoc)
@@ -124,7 +123,5 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
         }
         super.dispose();
     }
-	
-	
-	
+
 }

@@ -11,12 +11,12 @@
 
 package org.eclipse.incquery.runtime.rete.index;
 
-
 /**
- * An iterable indexer that receives updates from a node, and groups received tuples intact, i.e. it does not reduce tuple groups.
+ * An iterable indexer that receives updates from a node, and groups received tuples intact, i.e. it does not reduce
+ * tuple groups.
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public interface ProjectionIndexer extends IterableIndexer {
 

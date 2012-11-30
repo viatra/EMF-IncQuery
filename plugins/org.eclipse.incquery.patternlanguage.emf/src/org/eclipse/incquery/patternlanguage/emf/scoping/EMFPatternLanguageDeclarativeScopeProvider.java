@@ -53,163 +53,165 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
- * <p>An extended abstract declarative scope provider to facilitate the reusing of abstract
- * declarative scope providers together with XBase scope provider.</p>
- * <p>See <a href="http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521">http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521</a> for details.</p>
+ * <p>
+ * An extended abstract declarative scope provider to facilitate the reusing of abstract declarative scope providers
+ * together with XBase scope provider.
+ * </p>
+ * <p>
+ * See <a
+ * href="http://www.eclipse.org/forums/index.php/mv/msg/219841/699521/#msg_699521">http://www.eclipse.org/forums/index
+ * .php/mv/msg/219841/699521/#msg_699521</a> for details.
+ * </p>
+ * 
  * @author Zoltan Ujhelyi
- *
+ * 
  */
-public class EMFPatternLanguageDeclarativeScopeProvider extends
-		PatternLanguageDeclarativeScopeProvider {
-	@Inject
-	private IQualifiedNameConverter qualifiedNameConverter;
-	@Inject
-	private IMetamodelProvider metamodelProvider;
-	
-	/**
-	 * {@inheritDoc}
-	 * Overridden for debugging purposes.
-	 */
-	@Override
-	protected Predicate<Method> getPredicate(EObject context, EClass type) {
-		String methodName = "scope_" + type.getName();
-//		System.out.println(methodName + " ctx " + context.eClass().getName());
-		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
-	}
+public class EMFPatternLanguageDeclarativeScopeProvider extends PatternLanguageDeclarativeScopeProvider {
+    @Inject
+    private IQualifiedNameConverter qualifiedNameConverter;
+    @Inject
+    private IMetamodelProvider metamodelProvider;
 
-	/**
-	 * {@inheritDoc}
-	 * Overridden for debugging purposes.
-	 */
-	@Override
-	protected Predicate<Method> getPredicate(EObject context, EReference reference) {
-		String methodName = "scope_" + reference.getEContainingClass().getName() + "_" + reference.getName();
-//		System.out.println(methodName + " ctx " + context.eClass().getName());
-		return PolymorphicDispatcher.Predicates.forName(methodName, 2);
-	}
-	
-	public IScope scope_EPackage(PackageImport ctx, EReference ref) {
-		return metamodelProvider.getAllMetamodelObjects(ctx);
-	}
-	
-	public IScope scope_EClassifier(PatternBody ctx, EReference ref) {
-		// This is needed for content assist - in that case the ClassType does not exists
-		EObject root = getRootContainer(ctx);
-		if (root instanceof PatternModel){
-			return createReferencedPackagesScope((PatternModel) root);
-		} else { 
-			return IScope.NULLSCOPE;
-		}
-	}
-	
-	public IScope scope_EClassifier(ClassType ctx, EReference ref) {
-		EObject root = getRootContainer(ctx);
-		if (root instanceof PatternModel){
-			return createReferencedPackagesScope((PatternModel) root);
-		} else {
-			return IScope.NULLSCOPE;
-		}
-	}
-	
-	public IScope scope_EClassifier(Variable ctx, EReference ref) {
-		EObject root = getRootContainer(ctx);
-		if (root instanceof PatternModel){
-			return createReferencedPackagesScope((PatternModel) root);
-		} else {
-			return IScope.NULLSCOPE;
-		}
-	}
-	
-	protected IScope createClassifierScope(Iterable<EClassifier> classifiers) {
-		return Scopes.scopeFor(classifiers);
-	}
-	
-	protected IScope createReferencedPackagesScope(PatternModel model) {
-		final Collection<EClassifier> allClassifiers = new ArrayList<EClassifier>();
-		for(PackageImport decl: model.getImportPackages()) {
-			if (decl.getEPackage() != null) {
-				allClassifiers.addAll(decl.getEPackage().getEClassifiers());
-			}
-		}
-		return createClassifierScope(allClassifiers);
-	}
-	
-	public IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
-		// This is needed for content assist - in that case the ExpressionTail does not exists
-		return expressionParentScopeProvider.doSwitch(ctx);
-	}
-	
-	public IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
-		return expressionParentScopeProvider.doSwitch(ctx.eContainer());
-	}
-	
-	public IScope scope_EEnum(EnumValue ctx, EReference ref) {
-		PatternModel model = (PatternModel) getRootContainer(ctx);
-		final Collection<EEnum> enums = Lists.newArrayList();
-		for (PackageImport decl : model.getImportPackages()) {
-			if (decl.getEPackage() != null) {
-				Iterables.addAll(enums, Iterables.filter(decl.getEPackage()
-						.getEClassifiers(), EEnum.class));
-			}
-		}
-		return Scopes.scopeFor(enums);
-	}
-	
-	public IScope scope_EEnumLiteral(EnumValue ctx, EReference ref) {
-		EEnum type;
-		try {
-			type = ctx.getEnumeration();
-			type = (type != null) ? type : EMFPatternLanguageScopeHelper
-					.calculateEnumerationType((PathExpressionHead) ctx
-							.eContainer());
-		} catch (ResolutionException e) {
-			return IScope.NULLSCOPE;
-		}
-		return calculateEnumLiteralScope(type);
-	}
-	
-	private IScope calculateEnumLiteralScope(EEnum enumeration) {
-		EList<EEnumLiteral> literals = enumeration.getELiterals();
-		return Scopes.scopeFor(literals, new Function<EEnumLiteral, QualifiedName>() {
-			@Override
+    /**
+     * {@inheritDoc} Overridden for debugging purposes.
+     */
+    @Override
+    protected Predicate<Method> getPredicate(EObject context, EClass type) {
+        String methodName = "scope_" + type.getName();
+        // System.out.println(methodName + " ctx " + context.eClass().getName());
+        return PolymorphicDispatcher.Predicates.forName(methodName, 2);
+    }
+
+    /**
+     * {@inheritDoc} Overridden for debugging purposes.
+     */
+    @Override
+    protected Predicate<Method> getPredicate(EObject context, EReference reference) {
+        String methodName = "scope_" + reference.getEContainingClass().getName() + "_" + reference.getName();
+        // System.out.println(methodName + " ctx " + context.eClass().getName());
+        return PolymorphicDispatcher.Predicates.forName(methodName, 2);
+    }
+
+    public IScope scope_EPackage(PackageImport ctx, EReference ref) {
+        return metamodelProvider.getAllMetamodelObjects(ctx);
+    }
+
+    public IScope scope_EClassifier(PatternBody ctx, EReference ref) {
+        // This is needed for content assist - in that case the ClassType does not exists
+        EObject root = getRootContainer(ctx);
+        if (root instanceof PatternModel) {
+            return createReferencedPackagesScope((PatternModel) root);
+        } else {
+            return IScope.NULLSCOPE;
+        }
+    }
+
+    public IScope scope_EClassifier(ClassType ctx, EReference ref) {
+        EObject root = getRootContainer(ctx);
+        if (root instanceof PatternModel) {
+            return createReferencedPackagesScope((PatternModel) root);
+        } else {
+            return IScope.NULLSCOPE;
+        }
+    }
+
+    public IScope scope_EClassifier(Variable ctx, EReference ref) {
+        EObject root = getRootContainer(ctx);
+        if (root instanceof PatternModel) {
+            return createReferencedPackagesScope((PatternModel) root);
+        } else {
+            return IScope.NULLSCOPE;
+        }
+    }
+
+    protected IScope createClassifierScope(Iterable<EClassifier> classifiers) {
+        return Scopes.scopeFor(classifiers);
+    }
+
+    protected IScope createReferencedPackagesScope(PatternModel model) {
+        final Collection<EClassifier> allClassifiers = new ArrayList<EClassifier>();
+        for (PackageImport decl : model.getImportPackages()) {
+            if (decl.getEPackage() != null) {
+                allClassifiers.addAll(decl.getEPackage().getEClassifiers());
+            }
+        }
+        return createClassifierScope(allClassifiers);
+    }
+
+    public IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
+        // This is needed for content assist - in that case the ExpressionTail does not exists
+        return expressionParentScopeProvider.doSwitch(ctx);
+    }
+
+    public IScope scope_EStructuralFeature(PathExpressionTail ctx, EReference ref) {
+        return expressionParentScopeProvider.doSwitch(ctx.eContainer());
+    }
+
+    public IScope scope_EEnum(EnumValue ctx, EReference ref) {
+        PatternModel model = (PatternModel) getRootContainer(ctx);
+        final Collection<EEnum> enums = Lists.newArrayList();
+        for (PackageImport decl : model.getImportPackages()) {
+            if (decl.getEPackage() != null) {
+                Iterables.addAll(enums, Iterables.filter(decl.getEPackage().getEClassifiers(), EEnum.class));
+            }
+        }
+        return Scopes.scopeFor(enums);
+    }
+
+    public IScope scope_EEnumLiteral(EnumValue ctx, EReference ref) {
+        EEnum type;
+        try {
+            type = ctx.getEnumeration();
+            type = (type != null) ? type : EMFPatternLanguageScopeHelper
+                    .calculateEnumerationType((PathExpressionHead) ctx.eContainer());
+        } catch (ResolutionException e) {
+            return IScope.NULLSCOPE;
+        }
+        return calculateEnumLiteralScope(type);
+    }
+
+    private IScope calculateEnumLiteralScope(EEnum enumeration) {
+        EList<EEnumLiteral> literals = enumeration.getELiterals();
+        return Scopes.scopeFor(literals, new Function<EEnumLiteral, QualifiedName>() {
+            @Override
             public QualifiedName apply(EEnumLiteral literal) {
-				QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(literal.getLiteral());
-				return qualifiedName;
-			}
-		}, IScope.NULLSCOPE);
-	}
-	
-	private final ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();
-	
-	static class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
+                QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(literal.getLiteral());
+                return qualifiedName;
+            }
+        }, IScope.NULLSCOPE);
+    }
 
-		@Override
-		public IScope casePathExpressionHead(PathExpressionHead object) {
-			return calculateReferences(object.getType());
-		}
+    private final ParentScopeProvider expressionParentScopeProvider = new ParentScopeProvider();
 
-		@Override
-		public IScope casePathExpressionTail(PathExpressionTail object) {
-			return calculateReferences(object.getType());
-		}
-		
-		private IScope calculateReferences(Type type) {
-			List<EStructuralFeature> targetReferences = Collections.emptyList();
-			if (type instanceof ReferenceType) {
-				EClassifier referredType = ((ReferenceType) type).getRefname().getEType();
-				if (referredType instanceof EClass) {
-					targetReferences = ((EClass) referredType).getEAllStructuralFeatures();
-				}
-			} else if (type instanceof ClassType) {
-				EClassifier classifier = ((ClassType) type).getClassname();
-				if (classifier instanceof EClass) {
-					targetReferences = (((EClass)classifier).getEAllStructuralFeatures());
-				}
-			}
+    static class ParentScopeProvider extends PatternLanguageSwitch<IScope> {
+
+        @Override
+        public IScope casePathExpressionHead(PathExpressionHead object) {
+            return calculateReferences(object.getType());
+        }
+
+        @Override
+        public IScope casePathExpressionTail(PathExpressionTail object) {
+            return calculateReferences(object.getType());
+        }
+
+        private IScope calculateReferences(Type type) {
+            List<EStructuralFeature> targetReferences = Collections.emptyList();
+            if (type instanceof ReferenceType) {
+                EClassifier referredType = ((ReferenceType) type).getRefname().getEType();
+                if (referredType instanceof EClass) {
+                    targetReferences = ((EClass) referredType).getEAllStructuralFeatures();
+                }
+            } else if (type instanceof ClassType) {
+                EClassifier classifier = ((ClassType) type).getClassname();
+                if (classifier instanceof EClass) {
+                    targetReferences = (((EClass) classifier).getEAllStructuralFeatures());
+                }
+            }
             if (targetReferences.isEmpty()) {
                 return IScope.NULLSCOPE;
             }
-			return Scopes.scopeFor(targetReferences);
-		}
-	}
+            return Scopes.scopeFor(targetReferences);
+        }
+    }
 }

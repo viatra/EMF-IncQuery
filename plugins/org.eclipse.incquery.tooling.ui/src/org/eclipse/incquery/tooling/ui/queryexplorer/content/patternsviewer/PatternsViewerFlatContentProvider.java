@@ -18,69 +18,68 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
-	
-	public PatternsViewerFlatContentProvider() {}
-	
-	@Override
-	public void dispose() {}
 
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+    public PatternsViewerFlatContentProvider() {
+    }
 
-	@Override
-	public Object[] getElements(Object inputElement) {
-		if (inputElement != null && inputElement instanceof PatternsViewerInput) {
-			return ((PatternsViewerInput) inputElement).getChildren();
-		}
-		return null;
-	}
-	
+    @Override
+    public void dispose() {
+    }
 
-	@Override
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement != null && parentElement instanceof PatternComposite) {
-			return getLeavesOrComponentsWithLeaves((PatternComposite) parentElement).toArray();
-		}
-		return null;
-	}
+    @Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    }
 
-	//OK
-	@Override
-	public Object getParent(Object element) {
-		if (element != null && element instanceof PatternLeaf) {
-			return ((PatternComponent) element).getParent();
-		}
-		else if (element != null && element instanceof PatternComposite) {
-			return ((PatternComposite) element).getRoot();
-		}
-		return null;
-	}
+    @Override
+    public Object[] getElements(Object inputElement) {
+        if (inputElement != null && inputElement instanceof PatternsViewerInput) {
+            return ((PatternsViewerInput) inputElement).getChildren();
+        }
+        return null;
+    }
 
-	//OK
-	@Override
-	public boolean hasChildren(Object element) {
-		if (element != null && element instanceof PatternComposite) {
-			return ((PatternComposite) element).getDirectLeaves().size() > 0;
-		}
-		return false;
-	}
+    @Override
+    public Object[] getChildren(Object parentElement) {
+        if (parentElement != null && parentElement instanceof PatternComposite) {
+            return getLeavesOrComponentsWithLeaves((PatternComposite) parentElement).toArray();
+        }
+        return null;
+    }
 
-	private List<PatternComponent> getLeavesOrComponentsWithLeaves(PatternComposite composite) {
-		List<PatternComponent> components = new ArrayList<PatternComponent>();
-		for (PatternComponent pc : composite.getDirectChildren()) {
-			if (pc instanceof PatternLeaf) {
-				components.add(pc);
-			}
-			else {
-				PatternComposite comp = (PatternComposite) pc;
-				if (comp.getDirectLeaves().size() > 0) {
-					components.add(pc);
-				}
-				else {
-					components.addAll(getLeavesOrComponentsWithLeaves(comp));
-				}
-			}
-		}
-		return components;
-	}
+    // OK
+    @Override
+    public Object getParent(Object element) {
+        if (element != null && element instanceof PatternLeaf) {
+            return ((PatternComponent) element).getParent();
+        } else if (element != null && element instanceof PatternComposite) {
+            return ((PatternComposite) element).getRoot();
+        }
+        return null;
+    }
+
+    // OK
+    @Override
+    public boolean hasChildren(Object element) {
+        if (element != null && element instanceof PatternComposite) {
+            return ((PatternComposite) element).getDirectLeaves().size() > 0;
+        }
+        return false;
+    }
+
+    private List<PatternComponent> getLeavesOrComponentsWithLeaves(PatternComposite composite) {
+        List<PatternComponent> components = new ArrayList<PatternComponent>();
+        for (PatternComponent pc : composite.getDirectChildren()) {
+            if (pc instanceof PatternLeaf) {
+                components.add(pc);
+            } else {
+                PatternComposite comp = (PatternComposite) pc;
+                if (comp.getDirectLeaves().size() > 0) {
+                    components.add(pc);
+                } else {
+                    components.addAll(getLeavesOrComponentsWithLeaves(comp));
+                }
+            }
+        }
+        return components;
+    }
 }

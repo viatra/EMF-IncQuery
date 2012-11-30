@@ -18,70 +18,67 @@ import org.eclipse.incquery.runtime.api.impl.BasePatternGroup;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 /**
- * Package based {@link BasePatternGroup} implementation. It handles patterns as
- * a group within the same package.
+ * Package based {@link BasePatternGroup} implementation. It handles patterns as a group within the same package.
  * 
  * @author Abel Hegedus, Mark Czotter
  * 
  */
 public class PackageBasedPatternGroup extends BasePatternGroup {
 
-	private final Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
-	private final String packageName;
-	private final boolean includeSubPackages;
-	
-	public PackageBasedPatternGroup(String packageName) {
-		this(packageName, false);
-	}
+    private final Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
+    private final String packageName;
+    private final boolean includeSubPackages;
 
-	public PackageBasedPatternGroup(String packageName,
-			boolean includeSubPackages) {
-		super();
-		this.packageName = packageName;
-		this.includeSubPackages = includeSubPackages;
-		refresh();
-	}
-	
-	@Override
-	public Set<Pattern> getPatterns() {
-		return patterns(getMatcherFactories());
-	}
-	
-	/**
-	 * @return the packageName
-	 */
-	public String getPackageName() {
-		return packageName;
-	}
-	
-	/**
-	 * @return the matcherFactories
-	 */
-	public Set<IMatcherFactory<?>> getMatcherFactories() {
-		return matcherFactories;
-	}
-	
-	/**
-	 * @return the includeSubPackages
-	 */
-	public boolean isIncludeSubPackages() {
-		return includeSubPackages;
-	}
+    public PackageBasedPatternGroup(String packageName) {
+        this(packageName, false);
+    }
 
-	/**
-	 * Refreshes the pattern group from the matcher registry based on the
-	 * parameters used during the initialization
-	 */
-	public void refresh() {
-		refreshInternal();
-	}
+    public PackageBasedPatternGroup(String packageName, boolean includeSubPackages) {
+        super();
+        this.packageName = packageName;
+        this.includeSubPackages = includeSubPackages;
+        refresh();
+    }
 
-	private void refreshInternal() {
-		if(isIncludeSubPackages()) {
-			this.matcherFactories.addAll(MatcherFactoryRegistry.getPatternSubTree(this.packageName));
-		} else {
-			this.matcherFactories.addAll(MatcherFactoryRegistry.getPatternGroup(this.packageName));
-		}
-	}
+    @Override
+    public Set<Pattern> getPatterns() {
+        return patterns(getMatcherFactories());
+    }
+
+    /**
+     * @return the packageName
+     */
+    public String getPackageName() {
+        return packageName;
+    }
+
+    /**
+     * @return the matcherFactories
+     */
+    public Set<IMatcherFactory<?>> getMatcherFactories() {
+        return matcherFactories;
+    }
+
+    /**
+     * @return the includeSubPackages
+     */
+    public boolean isIncludeSubPackages() {
+        return includeSubPackages;
+    }
+
+    /**
+     * Refreshes the pattern group from the matcher registry based on the parameters used during the initialization
+     */
+    public void refresh() {
+        refreshInternal();
+    }
+
+    private void refreshInternal() {
+        if (isIncludeSubPackages()) {
+            this.matcherFactories.addAll(MatcherFactoryRegistry.getPatternSubTree(this.packageName));
+        } else {
+            this.matcherFactories.addAll(MatcherFactoryRegistry.getPatternGroup(this.packageName));
+        }
+    }
 
 }

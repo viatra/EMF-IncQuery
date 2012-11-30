@@ -27,55 +27,55 @@ import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy
 import org.eclipse.ui.IEditorPart;
 
 /**
- * The constraint adapter class is used to collect the constraints and deal with their 
- * maintenance for a given EMF instance model. If the validation framework is 
- * initialized an instance of this class will be created which handles the creation 
- * of the appropriate rules and their jobs. 
- *  
+ * The constraint adapter class is used to collect the constraints and deal with their maintenance for a given EMF
+ * instance model. If the validation framework is initialized an instance of this class will be created which handles
+ * the creation of the appropriate rules and their jobs.
+ * 
  * @author Tamas Szabo
  */
 public class ConstraintAdapter {
-	
-	private Map<IPatternMatch, IMarker> markerMap;
-	private IAgenda agenda;
-	
-	public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
-		this.markerMap = new HashMap<IPatternMatch, IMarker>();
-		
-		this.agenda = RuleEngine.getInstance().getOrCreateAgenda(notifier);
-		
-		for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite().getId())) {
-			IRule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
-			rule.setStateChangeProcessor(ActivationState.APPEARED, new MarkerPlacerJob(this, constraint, logger));
-			rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new MarkerEraserJob(this, logger));
-			rule.setStateChangeProcessor(ActivationState.UPDATED, new MarkerUpdaterJob(this, constraint, logger));
-		}
-		
-		AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-		agenda.addUpdateCompleteListener(firingStrategy, true);
-	}
-	
-	public void dispose() {
-		for (IMarker marker : markerMap.values()) {
-			try {
-				marker.delete();
-			} 
-			catch (CoreException e) {
-				agenda.getLogger().error(String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
-			}
-		}
-		agenda.dispose();
-	}
-	
-	public IMarker getMarker(IPatternMatch match) {
-		return this.markerMap.get(match);
-	}
-	
-	public IMarker addMarker(IPatternMatch match, IMarker marker) {
-		return this.markerMap.put(match, marker);
-	}
-	
-	public IMarker removeMarker(IPatternMatch match) {
-		return this.markerMap.remove(match);
-	}
+
+    private Map<IPatternMatch, IMarker> markerMap;
+    private IAgenda agenda;
+
+    public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
+        this.markerMap = new HashMap<IPatternMatch, IMarker>();
+
+        this.agenda = RuleEngine.getInstance().getOrCreateAgenda(notifier);
+
+        for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
+                .getId())) {
+            IRule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
+            rule.setStateChangeProcessor(ActivationState.APPEARED, new MarkerPlacerJob(this, constraint, logger));
+            rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new MarkerEraserJob(this, logger));
+            rule.setStateChangeProcessor(ActivationState.UPDATED, new MarkerUpdaterJob(this, constraint, logger));
+        }
+
+        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
+        agenda.addUpdateCompleteListener(firingStrategy, true);
+    }
+
+    public void dispose() {
+        for (IMarker marker : markerMap.values()) {
+            try {
+                marker.delete();
+            } catch (CoreException e) {
+                agenda.getLogger().error(
+                        String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
+            }
+        }
+        agenda.dispose();
+    }
+
+    public IMarker getMarker(IPatternMatch match) {
+        return this.markerMap.get(match);
+    }
+
+    public IMarker addMarker(IPatternMatch match, IMarker marker) {
+        return this.markerMap.put(match, marker);
+    }
+
+    public IMarker removeMarker(IPatternMatch match) {
+        return this.markerMap.remove(match);
+    }
 }

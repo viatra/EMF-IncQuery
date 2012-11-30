@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.generator.model;
 
-
 /**
- * Initialization support for running Xtext languages 
- * without equinox extension registry
+ * Initialization support for running Xtext languages without equinox extension registry
  */
-public class GeneratorModelStandaloneSetup extends GeneratorModelStandaloneSetupGenerated{
+public class GeneratorModelStandaloneSetup extends GeneratorModelStandaloneSetupGenerated {
 
-	public static void doSetup() {
-		new GeneratorModelStandaloneSetup().createInjectorAndDoEMFRegistration();
-	}
+    public static void doSetup() {
+        new GeneratorModelStandaloneSetup().createInjectorAndDoEMFRegistration();
+    }
 }
-

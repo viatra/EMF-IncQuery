@@ -19,34 +19,33 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
- * The job is used to update a problem marker in the Problems View of Eclipse. 
- * It is associated to the rule that is created for the constraint.  
+ * The job is used to update a problem marker in the Problems View of Eclipse. It is associated to the rule that is
+ * created for the constraint.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class MarkerUpdaterJob implements IMatchProcessor<IPatternMatch> {
 
-	private Constraint<IPatternMatch> constraint;
-	private Logger logger;
-	private ConstraintAdapter adapter;
-	
-	public MarkerUpdaterJob(ConstraintAdapter adapter, Constraint<IPatternMatch> constraint, Logger logger) {
-		this.constraint = constraint;
-		this.logger = logger;
-		this.adapter = adapter;
-	}
-	
-	@Override
-	public void process(IPatternMatch match) {
-		IMarker marker = adapter.getMarker(match);
-		if (marker != null) {
-			try {
-				marker.setAttribute(IMarker.MESSAGE, DatabindingAdapterUtil.getMessage(match, constraint.getMessage()));
-			} 
-			catch (CoreException e) {
-				logger.error("Error during marker update!", e);
-			}
-		}
-	}
+    private Constraint<IPatternMatch> constraint;
+    private Logger logger;
+    private ConstraintAdapter adapter;
+
+    public MarkerUpdaterJob(ConstraintAdapter adapter, Constraint<IPatternMatch> constraint, Logger logger) {
+        this.constraint = constraint;
+        this.logger = logger;
+        this.adapter = adapter;
+    }
+
+    @Override
+    public void process(IPatternMatch match) {
+        IMarker marker = adapter.getMarker(match);
+        if (marker != null) {
+            try {
+                marker.setAttribute(IMarker.MESSAGE, DatabindingAdapterUtil.getMessage(match, constraint.getMessage()));
+            } catch (CoreException e) {
+                logger.error("Error during marker update!", e);
+            }
+        }
+    }
 }

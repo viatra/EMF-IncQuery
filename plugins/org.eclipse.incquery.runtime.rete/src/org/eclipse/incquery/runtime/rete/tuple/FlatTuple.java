@@ -18,81 +18,82 @@ import java.util.Arrays;
  */
 public class FlatTuple extends Tuple {
 
-	/**
-	 * Array of substituted values. DO NOT MODIFY! Use Constructor to build a
-	 * new instance instead.
-	 */
-	private final Object[] elements;
+    /**
+     * Array of substituted values. DO NOT MODIFY! Use Constructor to build a new instance instead.
+     */
+    private final Object[] elements;
 
-	/**
-	 * Creates a Tuple instance, fills it with the given array. @pre: no elements
-	 * are null
-	 * 
-	 * @param elements
-	 *            array of substitution values
-	 */
-	public FlatTuple(Object[] elements) {
-		this.elements = elements;
-		calcHash();
-	}
+    /**
+     * Creates a Tuple instance, fills it with the given array. @pre: no elements are null
+     * 
+     * @param elements
+     *            array of substitution values
+     */
+    public FlatTuple(Object[] elements) {
+        this.elements = elements;
+        calcHash();
+    }
 
-	/**
-	 * Creates a Tuple instance of size one, fills it with the given object.
-	 * @pre: o!=null
-	 * 
-	 * @param o
-	 *            the single substitution
-	 */
-	public FlatTuple(Object o) {
-		elements = new Object[1];
-		elements[0] = o;
-		calcHash();
-	}
+    /**
+     * Creates a Tuple instance of size one, fills it with the given object.
+     * 
+     * @pre: o!=null
+     * 
+     * @param o
+     *            the single substitution
+     */
+    public FlatTuple(Object o) {
+        elements = new Object[1];
+        elements[0] = o;
+        calcHash();
+    }
 
-	/**
-	 * Creates a Tuple instance of size two, fills it with the given objects.
-	 * @pre: o1!=null, o2!=null
-	 */
-	public FlatTuple(Object o1, Object o2) {
-		elements = new Object[2];
-		elements[0] = o1;
-		elements[1] = o2;
-		calcHash();
-	}
+    /**
+     * Creates a Tuple instance of size two, fills it with the given objects.
+     * 
+     * @pre: o1!=null, o2!=null
+     */
+    public FlatTuple(Object o1, Object o2) {
+        elements = new Object[2];
+        elements[0] = o1;
+        elements[1] = o2;
+        calcHash();
+    }
 
-	/**
-	 * Creates a Tuple instance of size three, fills it with the given objects.
-	 * @pre: o1!=null, o2!=null, o3!=null
-	 */
-	public FlatTuple(Object o1, Object o2, Object o3) {
-		elements = new Object[3];
-		elements[0] = o1;
-		elements[1] = o2;
-		elements[2] = o3;
-		calcHash();
-	}
+    /**
+     * Creates a Tuple instance of size three, fills it with the given objects.
+     * 
+     * @pre: o1!=null, o2!=null, o3!=null
+     */
+    public FlatTuple(Object o1, Object o2, Object o3) {
+        elements = new Object[3];
+        elements[0] = o1;
+        elements[1] = o2;
+        elements[2] = o3;
+        calcHash();
+    }
 
-	@Override
-	public Object get(int index) {
-		return elements[index];
-	}
+    @Override
+    public Object get(int index) {
+        return elements[index];
+    }
 
-	@Override
-	public int getSize() {
-		return elements.length;
-	}
+    @Override
+    public int getSize() {
+        return elements.length;
+    }
 
-	@Override
-	public Object[] getElements() {
-		return elements;
-	}
+    @Override
+    public Object[] getElements() {
+        return elements;
+    }
 
-	@Override
-	protected boolean internalEquals(Tuple other) {
-		if (other instanceof FlatTuple) {
-			return Arrays.equals(elements, ((FlatTuple) other).elements);
-		} else
-			return super.internalEquals(other);
-	}
+    @Override
+    protected boolean internalEquals(Tuple other) {
+        if (other instanceof FlatTuple) {
+            return Arrays.equals(elements, ((FlatTuple) other).elements);
+        } else
+            return super.internalEquals(other);
+    }
 
 }

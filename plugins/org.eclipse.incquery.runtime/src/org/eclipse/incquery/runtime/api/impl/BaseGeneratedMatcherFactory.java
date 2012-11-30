@@ -34,9 +34,9 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
         BaseMatcherFactory<Matcher> {
 
     private static Map<String, PatternModel> bundleNameToPatternModelMap = new HashMap<String, PatternModel>();
-    
+
     private static Map<String, Resource> bundleNameToResourceMap = new HashMap<String, Resource>();
-    
+
     private final Pattern pattern;
 
     public BaseGeneratedMatcherFactory() throws IncQueryException {

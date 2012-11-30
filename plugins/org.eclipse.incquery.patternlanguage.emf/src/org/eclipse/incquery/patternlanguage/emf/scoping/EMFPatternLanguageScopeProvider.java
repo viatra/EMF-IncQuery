@@ -15,9 +15,8 @@ import org.eclipse.incquery.patternlanguage.scoping.PatternLanguageScopeProvider
 /**
  * This class contains custom scoping description.
  * 
- * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#scoping
- * on how and when to use it 
- *
+ * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#scoping on how and when to use it
+ * 
  */
 public class EMFPatternLanguageScopeProvider extends PatternLanguageScopeProvider {
 

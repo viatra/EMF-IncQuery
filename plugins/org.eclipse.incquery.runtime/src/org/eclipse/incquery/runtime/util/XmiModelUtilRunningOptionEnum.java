@@ -18,16 +18,17 @@ public enum XmiModelUtilRunningOptionEnum {
     /**
      * Use this if you intend to call the XmiModelUtil with workspace only URIs.
      */
-    JUST_RESOURCE, 
-    
+    JUST_RESOURCE,
+
     /**
      * Use this if you intend to call the XmiModelUtil with plugin only URIs.
      */
-    JUST_PLUGIN, 
-    
+    JUST_PLUGIN,
+
     /**
-     * Default choice should be this. Use this if you intend to call the XmiModelUtil with both workspace and plugin URIs.
+     * Default choice should be this. Use this if you intend to call the XmiModelUtil with both workspace and plugin
+     * URIs.
      */
     BOTH;
-    
+
 }

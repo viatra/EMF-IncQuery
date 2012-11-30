@@ -26,113 +26,105 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  * @param <PatternDescription>
  * @param <StubHandle>
  */
-public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle>
-		extends VariableDeferredPConstraint<PatternDescription, StubHandle> {
+public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> extends
+        VariableDeferredPConstraint<PatternDescription, StubHandle> {
 
-	protected Tuple actualParametersTuple;
+    protected Tuple actualParametersTuple;
 
-	protected abstract void doDoReplaceVariables(PVariable obsolete, PVariable replacement);
+    protected abstract void doDoReplaceVariables(PVariable obsolete, PVariable replacement);
 
-	protected abstract Set<PVariable> getCandidateQuantifiedVariables();
+    protected abstract Set<PVariable> getCandidateQuantifiedVariables();
 
-	protected PatternDescription pattern;
-	private Set<PVariable> deferringVariables;
+    protected PatternDescription pattern;
+    private Set<PVariable> deferringVariables;
 
-	/**
-	 * @param buildable
-	 * @param additionalAffectedVariables
-	 */
-	public PatternCallBasedDeferred(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			Tuple actualParametersTuple, PatternDescription pattern, 
-			Set<PVariable> additionalAffectedVariables) {
-		super(pSystem, union(actualParametersTuple.<PVariable>getDistinctElements(), additionalAffectedVariables));
-		this.actualParametersTuple = actualParametersTuple;
-		this.pattern = pattern;
-	}
-	public PatternCallBasedDeferred(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			Tuple actualParametersTuple, PatternDescription pattern) {
-		this(pSystem, actualParametersTuple, pattern, Collections.<PVariable>emptySet());
-	}
+    /**
+     * @param buildable
+     * @param additionalAffectedVariables
+     */
+    public PatternCallBasedDeferred(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple actualParametersTuple,
+            PatternDescription pattern, Set<PVariable> additionalAffectedVariables) {
+        super(pSystem, union(actualParametersTuple.<PVariable> getDistinctElements(), additionalAffectedVariables));
+        this.actualParametersTuple = actualParametersTuple;
+        this.pattern = pattern;
+    }
 
-	private static Set<PVariable> union(
-			Set<PVariable> a,
-			Set<PVariable> b) {
-		Set<PVariable> result = new HashSet<PVariable>();
-		result.addAll(a);
-		result.addAll(b);
-		return result;
-	}
+    public PatternCallBasedDeferred(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple actualParametersTuple,
+            PatternDescription pattern) {
+        this(pSystem, actualParametersTuple, pattern, Collections.<PVariable> emptySet());
+    }
 
-	@Override
-	protected Set<PVariable> getDeferringVariables() {
-		if (deferringVariables == null) {
-			deferringVariables = new HashSet<PVariable>();
-			for (PVariable var : getCandidateQuantifiedVariables()) {
-				if (var.isDeducable()) deferringVariables.add(var);
-			}
-		}
-		return deferringVariables;
-	}
+    private static Set<PVariable> union(Set<PVariable> a, Set<PVariable> b) {
+        Set<PVariable> result = new HashSet<PVariable>();
+        result.addAll(a);
+        result.addAll(b);
+        return result;
+    }
 
-	@Override
-	public void checkSanity() throws RetePatternBuildException {
-		super.checkSanity();
-		for (Object obj : this.actualParametersTuple.getDistinctElements()) {
-			PVariable var = (PVariable) obj;
-			if (!getDeferringVariables().contains(var)) {
-				// so this is a free variable of the NAC / aggregation?
-				for (PConstraint pConstraint : var.getReferringConstraints()) { 
-					if (
-							pConstraint!=this && 
-							!(
-									pConstraint instanceof Equality<?, ?> && 
-									((Equality<?, ?>)pConstraint).isMoot()
-							)
-						) 
-					throw new RetePatternBuildException(
-							"Variable {1} of constraint {2} is not a positively determined part of the pattern, yet it is also affected by {3}.", 
-							new String[]{var.toString(), this.toString(), pConstraint.toString()}, 
-							"Read-only variable can not be deduced", null);
-				}
-			}
-		}
+    @Override
+    protected Set<PVariable> getDeferringVariables() {
+        if (deferringVariables == null) {
+            deferringVariables = new HashSet<PVariable>();
+            for (PVariable var : getCandidateQuantifiedVariables()) {
+                if (var.isDeducable())
+                    deferringVariables.add(var);
+            }
+        }
+        return deferringVariables;
+    }
 
-	}
+    @Override
+    public void checkSanity() throws RetePatternBuildException {
+        super.checkSanity();
+        for (Object obj : this.actualParametersTuple.getDistinctElements()) {
+            PVariable var = (PVariable) obj;
+            if (!getDeferringVariables().contains(var)) {
+                // so this is a free variable of the NAC / aggregation?
+                for (PConstraint pConstraint : var.getReferringConstraints()) {
+                    if (pConstraint != this
+                            && !(pConstraint instanceof Equality<?, ?> && ((Equality<?, ?>) pConstraint).isMoot()))
+                        throw new RetePatternBuildException(
+                                "Variable {1} of constraint {2} is not a positively determined part of the pattern, yet it is also affected by {3}.",
+                                new String[] { var.toString(), this.toString(), pConstraint.toString() },
+                                "Read-only variable can not be deduced", null);
+                }
+            }
+        }
 
-	/**
-	 * @param stub
-	 * @param sideStub
-	 * @return
-	 */
-	protected BuildHelper.JoinHelper<StubHandle> getJoinHelper(Stub<StubHandle> stub, Stub<StubHandle> sideStub) {
-		BuildHelper.JoinHelper<StubHandle> joinHelper = new BuildHelper.JoinHelper<StubHandle>(stub, sideStub);
-		return joinHelper;
-	}
+    }
 
-	/**
-	 * @return
-	 * @throws RetePatternBuildException
-	 */
-	protected Stub<StubHandle> getSideStub() throws RetePatternBuildException {
-		Stub<StubHandle> sideStub = buildable.patternCallStub(actualParametersTuple, pattern);
-		sideStub = BuildHelper.enforceVariableCoincidences(buildable, sideStub);
-		return sideStub;
-	}
+    /**
+     * @param stub
+     * @param sideStub
+     * @return
+     */
+    protected BuildHelper.JoinHelper<StubHandle> getJoinHelper(Stub<StubHandle> stub, Stub<StubHandle> sideStub) {
+        BuildHelper.JoinHelper<StubHandle> joinHelper = new BuildHelper.JoinHelper<StubHandle>(stub, sideStub);
+        return joinHelper;
+    }
 
-	@Override
-	protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-		if (deferringVariables != null) { 
-			throw new IllegalStateException("Cannot replace variables on " + this + 
-					" when deferring variables have already been identified.");
-		}
-		actualParametersTuple.replaceAll(obsolete, replacement);
-		doDoReplaceVariables(obsolete, replacement);
-	}
+    /**
+     * @return
+     * @throws RetePatternBuildException
+     */
+    protected Stub<StubHandle> getSideStub() throws RetePatternBuildException {
+        Stub<StubHandle> sideStub = buildable.patternCallStub(actualParametersTuple, pattern);
+        sideStub = BuildHelper.enforceVariableCoincidences(buildable, sideStub);
+        return sideStub;
+    }
+
+    @Override
+    protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+        if (deferringVariables != null) {
+            throw new IllegalStateException("Cannot replace variables on " + this
+                    + " when deferring variables have already been identified.");
+        }
+        actualParametersTuple.replaceAll(obsolete, replacement);
+        doDoReplaceVariables(obsolete, replacement);
+    }
 
 }

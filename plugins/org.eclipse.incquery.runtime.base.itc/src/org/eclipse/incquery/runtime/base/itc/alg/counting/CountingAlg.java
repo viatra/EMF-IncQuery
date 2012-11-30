@@ -34,203 +34,200 @@ import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
  */
 public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
-	private static final long serialVersionUID = -2383210800242398869L;
-	private CountingTcRelation<V> tc = null;
-	private CountingTcRelation<V> dtc = null;
-	private IBiDirectionalGraphDataSource<V> gds = null;
-	private ArrayList<ITcObserver<V>> observers;
+    private static final long serialVersionUID = -2383210800242398869L;
+    private CountingTcRelation<V> tc = null;
+    private CountingTcRelation<V> dtc = null;
+    private IBiDirectionalGraphDataSource<V> gds = null;
+    private ArrayList<ITcObserver<V>> observers;
 
-	/**
-	 * Constructs a new Counting algorithm and initializes the transitive
-	 * closure relation with the given graph data source. Attach itself on the
-	 * graph data source as an observer.
-	 * 
-	 * @param gds
-	 *            the graph data source instance
-	 */
-	public CountingAlg(IGraphDataSource<V> gds) {
+    /**
+     * Constructs a new Counting algorithm and initializes the transitive closure relation with the given graph data
+     * source. Attach itself on the graph data source as an observer.
+     * 
+     * @param gds
+     *            the graph data source instance
+     */
+    public CountingAlg(IGraphDataSource<V> gds) {
 
-		if (gds instanceof IBiDirectionalGraphDataSource<?>) {
-			this.gds = (IBiDirectionalGraphDataSource<V>) gds;
-		} else {
-			this.gds = new IBiDirectionalWrapper<V>(gds);
-		}
+        if (gds instanceof IBiDirectionalGraphDataSource<?>) {
+            this.gds = (IBiDirectionalGraphDataSource<V>) gds;
+        } else {
+            this.gds = new IBiDirectionalWrapper<V>(gds);
+        }
 
-		observers = new ArrayList<ITcObserver<V>>();
-		tc = new CountingTcRelation<V>(true);
-		dtc = new CountingTcRelation<V>(false);
+        observers = new ArrayList<ITcObserver<V>>();
+        tc = new CountingTcRelation<V>(true);
+        dtc = new CountingTcRelation<V>(false);
 
-		initTc();
-		gds.attachObserver(this);
-	}
+        initTc();
+        gds.attachObserver(this);
+    }
 
-	/**
-	 * Initializes the transitive closure relation.
-	 */
-	private void initTc() {
-		this.setTcRelation(CountingTcRelation.createFrom(gds));
-	}
+    /**
+     * Initializes the transitive closure relation.
+     */
+    private void initTc() {
+        this.setTcRelation(CountingTcRelation.createFrom(gds));
+    }
 
-	@Override
-	public void edgeInserted(V source, V target) {
-		if (!source.equals(target)) {
-			deriveTc(source, target, 1);
-		}
-	}
+    @Override
+    public void edgeInserted(V source, V target) {
+        if (!source.equals(target)) {
+            deriveTc(source, target, 1);
+        }
+    }
 
-	@Override
-	public void edgeDeleted(V source, V target) {
-		if (!source.equals(target)) {
-			deriveTc(source, target, -1);
-		}
-	}
+    @Override
+    public void edgeDeleted(V source, V target) {
+        if (!source.equals(target)) {
+            deriveTc(source, target, -1);
+        }
+    }
 
-	@Override
-	public void nodeInserted(V n) {
+    @Override
+    public void nodeInserted(V n) {
 
-	}
+    }
 
-	@Override
-	public void nodeDeleted(V n) {
-		this.tc.deleteTupleEnd(n);
-	}
+    @Override
+    public void nodeDeleted(V n) {
+        this.tc.deleteTupleEnd(n);
+    }
 
-	/**
-	 * Derives the transitive closure relation when an edge is inserted or
-	 * deleted.
-	 * 
-	 * @param source
-	 *            the source of the edge
-	 * @param target
-	 *            the target of the edge
-	 * @param dCount
-	 *            the value is -1 if an edge was deleted and +1 if an edge was
-	 *            inserted
-	 */
-	private void deriveTc(V source, V target, int dCount) {
+    /**
+     * Derives the transitive closure relation when an edge is inserted or deleted.
+     * 
+     * @param source
+     *            the source of the edge
+     * @param target
+     *            the target of the edge
+     * @param dCount
+     *            the value is -1 if an edge was deleted and +1 if an edge was inserted
+     */
+    private void deriveTc(V source, V target, int dCount) {
 
-//		if (dCount == 1 && isReachable(target, source)) {
-//			System.out.println("The graph contains cycle with (" + source + ","+ target + ") edge!");
-//		}
+        // if (dCount == 1 && isReachable(target, source)) {
+        // System.out.println("The graph contains cycle with (" + source + ","+ target + ") edge!");
+        // }
 
-		dtc.clear();
-		Set<V> tupEnds = null;
+        dtc.clear();
+        Set<V> tupEnds = null;
 
-		// 1. d(tc(x,y)) :- d(l(x,y))
-		if (tc.addTuple(source, target, dCount)) {
-			dtc.addTuple(source, target, dCount);
-			notifyTcObservers(source, target, dCount);
-		}
+        // 1. d(tc(x,y)) :- d(l(x,y))
+        if (tc.addTuple(source, target, dCount)) {
+            dtc.addTuple(source, target, dCount);
+            notifyTcObservers(source, target, dCount);
+        }
 
-		// 2. d(tc(x,y)) :- d(l(x,z)) & tc(z,y)
-		tupEnds = tc.getTupleEnds(target);
-		if (tupEnds != null) {
-			for (V tupEnd : tupEnds) {
-				if (!tupEnd.equals(source)) {	
-					if (tc.addTuple(source, tupEnd, dCount)) {
-						dtc.addTuple(source, tupEnd, dCount);
-						notifyTcObservers(source, tupEnd, dCount);
-					}
-				}
-			}
-		}		
-		
-		// 3. d(tc(x,y)) :- lv(x,z) & d(tc(z,y))
-		CountingTcRelation<V> newTuples = new CountingTcRelation<V>(false);
-		CountingTcRelation<V> tmp = null;
-		List<V> nodes = null;
-		newTuples.union(dtc);
+        // 2. d(tc(x,y)) :- d(l(x,z)) & tc(z,y)
+        tupEnds = tc.getTupleEnds(target);
+        if (tupEnds != null) {
+            for (V tupEnd : tupEnds) {
+                if (!tupEnd.equals(source)) {
+                    if (tc.addTuple(source, tupEnd, dCount)) {
+                        dtc.addTuple(source, tupEnd, dCount);
+                        notifyTcObservers(source, tupEnd, dCount);
+                    }
+                }
+            }
+        }
 
-		while (!newTuples.isEmpty()) {
+        // 3. d(tc(x,y)) :- lv(x,z) & d(tc(z,y))
+        CountingTcRelation<V> newTuples = new CountingTcRelation<V>(false);
+        CountingTcRelation<V> tmp = null;
+        List<V> nodes = null;
+        newTuples.union(dtc);
 
-			tmp = dtc;
-			dtc = newTuples;
-			newTuples = tmp;
-			newTuples.clear();
+        while (!newTuples.isEmpty()) {
 
-			for (V tS : dtc.getTupleStarts()) {
+            tmp = dtc;
+            dtc = newTuples;
+            newTuples = tmp;
+            newTuples.clear();
 
-				nodes = gds.getSourceNodes(tS);
-				if (nodes != null) {
+            for (V tS : dtc.getTupleStarts()) {
 
-					for (V nS : nodes) {
+                nodes = gds.getSourceNodes(tS);
+                if (nodes != null) {
 
-						tupEnds = dtc.getTupleEnds(tS);
-						if (tupEnds != null) {
+                    for (V nS : nodes) {
 
-							for (V tT : tupEnds) {
+                        tupEnds = dtc.getTupleEnds(tS);
+                        if (tupEnds != null) {
 
-								if (!nS.equals(tT)) {
-									if (tc.addTuple(nS, tT, dCount)) {
-										newTuples.addTuple(nS, tT, dCount);
-										notifyTcObservers(nS, tT, dCount);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		//System.out.println(tc);
-	}
+                            for (V tT : tupEnds) {
 
-	public ITcRelation<V> getTcRelation() {
-		return this.tc;
-	}
+                                if (!nS.equals(tT)) {
+                                    if (tc.addTuple(nS, tT, dCount)) {
+                                        newTuples.addTuple(nS, tT, dCount);
+                                        notifyTcObservers(nS, tT, dCount);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-	public void setTcRelation(CountingTcRelation<V> tc) {
-		this.tc = tc;
-	}
+        // System.out.println(tc);
+    }
 
-	@Override
-	public boolean isReachable(V source, V target) {
-		return tc.containsTuple(source, target);
-	}
+    public ITcRelation<V> getTcRelation() {
+        return this.tc;
+    }
 
-	@Override
-	public void attachObserver(ITcObserver<V> to) {
-		this.observers.add(to);
+    public void setTcRelation(CountingTcRelation<V> tc) {
+        this.tc = tc;
+    }
 
-	}
+    @Override
+    public boolean isReachable(V source, V target) {
+        return tc.containsTuple(source, target);
+    }
 
-	@Override
-	public void detachObserver(ITcObserver<V> to) {
-		this.observers.remove(to);
-	}
+    @Override
+    public void attachObserver(ITcObserver<V> to) {
+        this.observers.add(to);
 
-	@Override
-	public Set<V> getAllReachableTargets(V source) {
-		Set<V> targets = new HashSet<V>();
-		if (tc.getTupleEnds(source) != null) {
-			targets.addAll(tc.getTupleEnds(source));
-		}
-		return targets;
-	}
+    }
 
-	@Override
-	public Set<V> getAllReachableSources(V target) {
-		Set<V> sources = new HashSet<V>();
-		if (tc.getTupleStarts(target) != null) {
-			sources.addAll(tc.getTupleStarts(target));
-		}
-		return sources;
-	}
+    @Override
+    public void detachObserver(ITcObserver<V> to) {
+        this.observers.remove(to);
+    }
 
-	private void notifyTcObservers(V source, V target, int dir) {
-		for (ITcObserver<V> o : observers) {
-			if (dir == 1)
-				o.tupleInserted(source, target);
-			if (dir == -1)
-				o.tupleDeleted(source, target);
-		}
-	}
+    @Override
+    public Set<V> getAllReachableTargets(V source) {
+        Set<V> targets = new HashSet<V>();
+        if (tc.getTupleEnds(source) != null) {
+            targets.addAll(tc.getTupleEnds(source));
+        }
+        return targets;
+    }
 
-	@Override
-	public void dispose() {
-		tc.clear();
-		dtc.clear();
-		this.gds.detachObserver(this);
-	}
+    @Override
+    public Set<V> getAllReachableSources(V target) {
+        Set<V> sources = new HashSet<V>();
+        if (tc.getTupleStarts(target) != null) {
+            sources.addAll(tc.getTupleStarts(target));
+        }
+        return sources;
+    }
+
+    private void notifyTcObservers(V source, V target, int dir) {
+        for (ITcObserver<V> o : observers) {
+            if (dir == 1)
+                o.tupleInserted(source, target);
+            if (dir == -1)
+                o.tupleDeleted(source, target);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        tc.clear();
+        dtc.clear();
+        this.gds.detachObserver(this);
+    }
 }

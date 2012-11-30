@@ -17,41 +17,43 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * An {@link ILabelProvider} implementation used in the 
- * {@link ElementListSelectionDialog} when choosing the type of a pattern parameter.
+ * An {@link ILabelProvider} implementation used in the {@link ElementListSelectionDialog} when choosing the type of a
+ * pattern parameter.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class ObjectParameterConfigurationLabelProvider implements ILabelProvider {
 
-	@Override
-	public void addListener(ILabelProviderListener listener) {}
+    @Override
+    public void addListener(ILabelProviderListener listener) {
+    }
 
-	@Override
-	public void dispose() {}
+    @Override
+    public void dispose() {
+    }
 
-	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
+    @Override
+    public boolean isLabelProperty(Object element, String property) {
+        return false;
+    }
 
-	@Override
-	public void removeListener(ILabelProviderListener listener) {}
+    @Override
+    public void removeListener(ILabelProviderListener listener) {
+    }
 
-	@Override
-	public Image getImage(Object element) {
-		return null;
-	}
+    @Override
+    public Image getImage(Object element) {
+        return null;
+    }
 
-	@Override
-	public String getText(Object element) {
-		if (element instanceof EClassifier) {
-			return ((EClassifier) element).getName();
-		}
-		else {
-			return element.toString();
-		}
-	}
+    @Override
+    public String getText(Object element) {
+        if (element instanceof EClassifier) {
+            return ((EClassifier) element).getName();
+        } else {
+            return element.toString();
+        }
+    }
 
 }

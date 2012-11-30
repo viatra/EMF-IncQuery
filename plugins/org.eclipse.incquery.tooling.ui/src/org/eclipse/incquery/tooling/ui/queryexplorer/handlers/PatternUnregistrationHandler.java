@@ -25,54 +25,54 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 import org.eclipse.jface.viewers.TreeSelection;
 
 /**
- * Handler used for pattern unregistration (called from Pattern Registry). 
+ * Handler used for pattern unregistration (called from Pattern Registry).
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class PatternUnregistrationHandler extends AbstractHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
-		
-		for (Object element : selection.toArray()) {	
-			if (element instanceof PatternLeaf) {
-				PatternLeaf leaf = (PatternLeaf) element;
-				unregisterPattern(leaf.getFullPatternNamePrefix());
-			}
-			else {
-				PatternComposite composite = (PatternComposite) element;
-				List<PatternLeaf> leaves = composite.getAllLeaves();
-				for (PatternLeaf leaf : leaves) {
-					unregisterPattern(leaf.getFullPatternNamePrefix());
-				}
-			}
-		}
-		
-		QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().purge();
-		QueryExplorer.getInstance().getPatternsViewer().refresh();
-		return null;
-	}
-	
-	/**
-	 * Unregisters the given pattern both from the QueryExplorer and the Pattern Registry.
-	 * 
-	 * @param patternFqn the fully qualified name of the pattern
-	 */
-	private void unregisterPattern(String patternFqn) {
-		Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-		if (!PatternRegistry.getInstance().isGenerated(pattern)) {
-			PatternRegistry.getInstance().unregisterPattern(pattern);
-			QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
-			
-			//unregister patterns from observable roots
-			for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
-				root.unregisterPattern(pattern);
-			}
-			
-			//the pattern is not active anymore
-			PatternRegistry.getInstance().removeActivePattern(pattern);
-		}
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
+
+        for (Object element : selection.toArray()) {
+            if (element instanceof PatternLeaf) {
+                PatternLeaf leaf = (PatternLeaf) element;
+                unregisterPattern(leaf.getFullPatternNamePrefix());
+            } else {
+                PatternComposite composite = (PatternComposite) element;
+                List<PatternLeaf> leaves = composite.getAllLeaves();
+                for (PatternLeaf leaf : leaves) {
+                    unregisterPattern(leaf.getFullPatternNamePrefix());
+                }
+            }
+        }
+
+        QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().purge();
+        QueryExplorer.getInstance().getPatternsViewer().refresh();
+        return null;
+    }
+
+    /**
+     * Unregisters the given pattern both from the QueryExplorer and the Pattern Registry.
+     * 
+     * @param patternFqn
+     *            the fully qualified name of the pattern
+     */
+    private void unregisterPattern(String patternFqn) {
+        Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+        if (!PatternRegistry.getInstance().isGenerated(pattern)) {
+            PatternRegistry.getInstance().unregisterPattern(pattern);
+            QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
+
+            // unregister patterns from observable roots
+            for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+                root.unregisterPattern(pattern);
+            }
+
+            // the pattern is not active anymore
+            PatternRegistry.getInstance().removeActivePattern(pattern);
+        }
+    }
 }

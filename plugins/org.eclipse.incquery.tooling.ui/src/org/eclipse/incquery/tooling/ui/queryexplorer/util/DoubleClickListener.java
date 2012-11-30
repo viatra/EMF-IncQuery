@@ -27,28 +27,29 @@ import com.google.inject.Inject;
 
 public class DoubleClickListener implements IDoubleClickListener {
 
-	private static final String EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION = "Exception when activating show location!";
+    private static final String EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION = "Exception when activating show location!";
 
-	@Inject
-	private Logger logger;
-	
-	@Override
-	public void doubleClick(DoubleClickEvent event) {
-		ISelection selection = event.getSelection();
-		if (selection instanceof TreeSelection) {
-			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(IHandlerService.class);
-			try {
-				handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
-			} catch (ExecutionException e) {
-				logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
-			} catch (NotDefinedException e) {
-				logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
-			} catch (NotEnabledException e) {
-				logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
-			} catch (NotHandledException e) {
-				logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
-			}
-		}
-	}
+    @Inject
+    private Logger logger;
+
+    @Override
+    public void doubleClick(DoubleClickEvent event) {
+        ISelection selection = event.getSelection();
+        if (selection instanceof TreeSelection) {
+            IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getService(IHandlerService.class);
+            try {
+                handlerService.executeCommand(CommandConstants.SHOW_LOCATION_COMMAND_ID, null);
+            } catch (ExecutionException e) {
+                logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+            } catch (NotDefinedException e) {
+                logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+            } catch (NotEnabledException e) {
+                logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+            } catch (NotHandledException e) {
+                logger.error(EXCEPTION_WHEN_ACTIVATING_SHOW_LOCATION, e);
+            }
+        }
+    }
 
 }

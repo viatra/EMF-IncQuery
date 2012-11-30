@@ -29,37 +29,36 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
  * 
  */
 public abstract class BasePatternGroup implements IPatternGroup {
-	
-	@Override
-	public void prepare(Notifier emfRoot) throws IncQueryException {
-		prepare(EngineManager.getInstance().getIncQueryEngine(emfRoot));
-	}
-	
-	@Override
-	public void prepare(IncQueryEngine engine) throws IncQueryException {
-		try {
-			final Set<Pattern> patterns = getPatterns();
-			engine.getSanitizer().admit(patterns);
-			engine.getReteEngine().buildMatchersCoalesced(patterns);
-		} catch (RetePatternBuildException e) {
-			throw new IncQueryException(e);
-		}
-	}
-	
-	/**
-	 * Returns a set of {@link Pattern} objects, accessible from the
-	 * {@link IMatcherFactory} objects.
-	 * 
-	 * @see IMatcherFactory#getPattern()
-	 * @param matcherFactories
-	 * @return
-	 */
-	public static Set<Pattern> patterns(Set<IMatcherFactory<?>> matcherFactories) {
-		Set<Pattern> result = new HashSet<Pattern>();
-		for (IMatcherFactory<?> factory : matcherFactories) {
-			result.add(factory.getPattern());
-		}
-		return result;
-	}
-	
+
+    @Override
+    public void prepare(Notifier emfRoot) throws IncQueryException {
+        prepare(EngineManager.getInstance().getIncQueryEngine(emfRoot));
+    }
+
+    @Override
+    public void prepare(IncQueryEngine engine) throws IncQueryException {
+        try {
+            final Set<Pattern> patterns = getPatterns();
+            engine.getSanitizer().admit(patterns);
+            engine.getReteEngine().buildMatchersCoalesced(patterns);
+        } catch (RetePatternBuildException e) {
+            throw new IncQueryException(e);
+        }
+    }
+
+    /**
+     * Returns a set of {@link Pattern} objects, accessible from the {@link IMatcherFactory} objects.
+     * 
+     * @see IMatcherFactory#getPattern()
+     * @param matcherFactories
+     * @return
+     */
+    public static Set<Pattern> patterns(Set<IMatcherFactory<?>> matcherFactories) {
+        Set<Pattern> result = new HashSet<Pattern>();
+        for (IMatcherFactory<?> factory : matcherFactories) {
+            result.add(factory.getPattern());
+        }
+        return result;
+    }
+
 }

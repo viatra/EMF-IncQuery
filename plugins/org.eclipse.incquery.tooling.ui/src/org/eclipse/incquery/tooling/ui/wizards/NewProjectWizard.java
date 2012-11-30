@@ -49,103 +49,96 @@ import com.google.inject.Inject;
  */
 public class NewProjectWizard extends Wizard implements INewWizard {
 
-	private WizardNewProjectCreationPage projectCreationPage;
-	private NewEiqGenmodelPage genmodelPage;
-	private IProject project;
-	private IWorkbench workbench;
-	private IWorkspace workspace;
+    private WizardNewProjectCreationPage projectCreationPage;
+    private NewEiqGenmodelPage genmodelPage;
+    private IProject project;
+    private IWorkbench workbench;
+    private IWorkspace workspace;
 
-	@Inject
-	private IEiqGenmodelProvider genmodelProvider;
-	@Inject
-	private IResourceSetProvider resourceSetProvider;
-	@Inject
-	private Logger logger;
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
-	@Override
-	public void addPages() {
-		projectCreationPage = new WizardNewProjectCreationPage(
-				"NewIncQueryProject");
-		projectCreationPage.setTitle("New EMF IncQuery Project");
-		projectCreationPage
-				.setDescription("Create a new EMF IncQuery project.");
-		addPage(projectCreationPage);
-		genmodelPage = new NewEiqGenmodelPage(true);
-		addPage(genmodelPage);
-	}
+    @Inject
+    private IEiqGenmodelProvider genmodelProvider;
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
+    @Inject
+    private Logger logger;
 
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.workbench = workbench;
-		workspace = ResourcesPlugin.getWorkspace();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#addPages()
+     */
+    @Override
+    public void addPages() {
+        projectCreationPage = new WizardNewProjectCreationPage("NewIncQueryProject");
+        projectCreationPage.setTitle("New EMF IncQuery Project");
+        projectCreationPage.setDescription("Create a new EMF IncQuery project.");
+        addPage(projectCreationPage);
+        genmodelPage = new NewEiqGenmodelPage(true);
+        addPage(genmodelPage);
+    }
 
-	@Override
-	public boolean performFinish() {
-		if (project != null) {
-			return true;
-		}
-		final IProject projectHandle = projectCreationPage.getProjectHandle();
-		if (projectHandle.exists()) {
-			return false;
-		}
-		URI projectURI = (!projectCreationPage.useDefaults()) ? projectCreationPage
-				.getLocationURI() : null;
-		final IProjectDescription description = workspace
-				.newProjectDescription(projectHandle.getName());
-		description.setLocationURI(projectURI);
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        this.workbench = workbench;
+        workspace = ResourcesPlugin.getWorkspace();
+    }
 
-		WorkspaceModifyOperation op = null;  
-		if (genmodelPage.isCreateGenmodelChecked()) {
-			List<String> genmodelDependencies = new ArrayList<String>();
-			for (GenModel model : genmodelPage.getSelectedGenmodels()) {
-				String modelPluginID = model.getModelPluginID();
-				if (!genmodelDependencies.contains(modelPluginID)) {
-					genmodelDependencies.add(modelPluginID);
-				}
-			}
-			WorkspaceModifyOperation projectOp = new CreateProjectOperation(
-					projectHandle, description, genmodelDependencies);
-			WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(
-					projectHandle, genmodelPage.getSelectedGenmodels(),
-					genmodelProvider, resourceSetProvider);
-			op = new CompositeWorkspaceModifyOperation(
-					new WorkspaceModifyOperation[] { projectOp, genmodelOp },
-					"Creating project");
-		} else {
-			op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String>of());
-		}
+    @Override
+    public boolean performFinish() {
+        if (project != null) {
+            return true;
+        }
+        final IProject projectHandle = projectCreationPage.getProjectHandle();
+        if (projectHandle.exists()) {
+            return false;
+        }
+        URI projectURI = (!projectCreationPage.useDefaults()) ? projectCreationPage.getLocationURI() : null;
+        final IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
+        description.setLocationURI(projectURI);
 
-		try {
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			//Removing project if it is partially created
-			if (projectHandle.exists()) {
-				try {
-					projectHandle.delete(true, new NullProgressMonitor());
-				} catch (CoreException e1) {
-					logger.error("Cannot remove partially created EMF-IncQuery project.", e1);
-				}
-			}
-			Throwable realException = e.getTargetException();
-			logger.error("Cannot create EMF-IncQuery project: " + realException.getMessage(), realException);
-			MessageDialog.openError(getShell(), "Error",
-					realException.getMessage());
-			return false;
-		}
+        WorkspaceModifyOperation op = null;
+        if (genmodelPage.isCreateGenmodelChecked()) {
+            List<String> genmodelDependencies = new ArrayList<String>();
+            for (GenModel model : genmodelPage.getSelectedGenmodels()) {
+                String modelPluginID = model.getModelPluginID();
+                if (!genmodelDependencies.contains(modelPluginID)) {
+                    genmodelDependencies.add(modelPluginID);
+                }
+            }
+            WorkspaceModifyOperation projectOp = new CreateProjectOperation(projectHandle, description,
+                    genmodelDependencies);
+            WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(projectHandle,
+                    genmodelPage.getSelectedGenmodels(), genmodelProvider, resourceSetProvider);
+            op = new CompositeWorkspaceModifyOperation(new WorkspaceModifyOperation[] { projectOp, genmodelOp },
+                    "Creating project");
+        } else {
+            op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String> of());
+        }
 
-		project = projectHandle;
+        try {
+            getContainer().run(true, true, op);
+        } catch (InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            // Removing project if it is partially created
+            if (projectHandle.exists()) {
+                try {
+                    projectHandle.delete(true, new NullProgressMonitor());
+                } catch (CoreException e1) {
+                    logger.error("Cannot remove partially created EMF-IncQuery project.", e1);
+                }
+            }
+            Throwable realException = e.getTargetException();
+            logger.error("Cannot create EMF-IncQuery project: " + realException.getMessage(), realException);
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        }
 
-		BasicNewProjectResourceWizard.selectAndReveal(project,
-				workbench.getActiveWorkbenchWindow());
+        project = projectHandle;
 
-		return true;
+        BasicNewProjectResourceWizard.selectAndReveal(project, workbench.getActiveWorkbenchWindow());
 
-	}
+        return true;
+
+    }
 
 }

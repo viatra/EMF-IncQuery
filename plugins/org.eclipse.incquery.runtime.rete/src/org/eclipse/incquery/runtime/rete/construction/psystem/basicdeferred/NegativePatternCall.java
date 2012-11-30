@@ -23,53 +23,48 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public class NegativePatternCall<PatternDescription, StubHandle> extends
-		PatternCallBasedDeferred<PatternDescription, StubHandle> {
-	
-	/**
-	 * @param buildable
-	 * @param affectedVariables
-	 */
-	public NegativePatternCall(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			Tuple actualParametersTuple, PatternDescription pattern) {
-		super(pSystem, actualParametersTuple, pattern);
-	}
+        PatternCallBasedDeferred<PatternDescription, StubHandle> {
 
-	@Override
-	public Set<PVariable> getDeducedVariables() {
-		return Collections.emptySet();
-	}
+    /**
+     * @param buildable
+     * @param affectedVariables
+     */
+    public NegativePatternCall(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple actualParametersTuple,
+            PatternDescription pattern) {
+        super(pSystem, actualParametersTuple, pattern);
+    }
 
-	/**
-	 * @return all variables that may potentially be quantified they are not used anywhere else
-	 */
-	@Override
-	protected Set<PVariable> getCandidateQuantifiedVariables() {
-		return getAffectedVariables();
-	}
+    @Override
+    public Set<PVariable> getDeducedVariables() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
-		Stub<StubHandle> sideStub = getSideStub();
-		BuildHelper.JoinHelper<StubHandle> joinHelper = getJoinHelper(stub, sideStub);
-		return buildable.buildBetaNode(
-				stub, sideStub, 
-				joinHelper.getPrimaryMask(), 
-				joinHelper.getSecondaryMask(), 
-				joinHelper.getComplementerMask(), 
-				true);
-	}
+    /**
+     * @return all variables that may potentially be quantified they are not used anywhere else
+     */
+    @Override
+    protected Set<PVariable> getCandidateQuantifiedVariables() {
+        return getAffectedVariables();
+    }
 
-	@Override
-	protected void doDoReplaceVariables(PVariable obsolete, PVariable replacement) {
-	}
-	@Override
-	protected String toStringRest() {
-		return "!" + pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString();
-	}
+    @Override
+    protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
+        Stub<StubHandle> sideStub = getSideStub();
+        BuildHelper.JoinHelper<StubHandle> joinHelper = getJoinHelper(stub, sideStub);
+        return buildable.buildBetaNode(stub, sideStub, joinHelper.getPrimaryMask(), joinHelper.getSecondaryMask(),
+                joinHelper.getComplementerMask(), true);
+    }
 
+    @Override
+    protected void doDoReplaceVariables(PVariable obsolete, PVariable replacement) {
+    }
+
+    @Override
+    protected String toStringRest() {
+        return "!" + pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString();
+    }
 
 }

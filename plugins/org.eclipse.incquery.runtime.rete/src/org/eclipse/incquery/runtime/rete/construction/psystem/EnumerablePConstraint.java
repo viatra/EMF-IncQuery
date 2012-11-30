@@ -20,58 +20,59 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * A constraint for which all satisfying tuples of variable values can be enumerated at any point during run-time.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
-public abstract class EnumerablePConstraint<PatternDescription, StubHandle> extends BasePConstraint<PatternDescription, StubHandle> {
-	protected Tuple variablesTuple;
-	private Stub<StubHandle> stub;
-	
-	protected EnumerablePConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple) {
-		super(pSystem, variablesTuple.<PVariable>getDistinctElements());
-		this.variablesTuple = variablesTuple;
-	}
-	
-	public Stub<StubHandle> getStub() throws RetePatternBuildException {
-		if (stub == null) {
-			stub = doCreateStub();
-			stub.addConstraint(this);
-			
-			// check for any variable coincidences and enforce them
-			stub = BuildHelper.enforceVariableCoincidences(buildable, stub);
-		}
-		return stub;
-	}
-	
-	public abstract Stub<StubHandle> doCreateStub() throws RetePatternBuildException;
+public abstract class EnumerablePConstraint<PatternDescription, StubHandle> extends
+        BasePConstraint<PatternDescription, StubHandle> {
+    protected Tuple variablesTuple;
+    private Stub<StubHandle> stub;
 
-	@Override
-	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-		variablesTuple = variablesTuple.replaceAll(obsolete, replacement);
-	}
+    protected EnumerablePConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple) {
+        super(pSystem, variablesTuple.<PVariable> getDistinctElements());
+        this.variablesTuple = variablesTuple;
+    }
 
-	@Override
-	protected String toStringRest() {
-		String stringRestRest = toStringRestRest();
-		String tupleString = "@" + variablesTuple.toString();
-		return stringRestRest == null ? tupleString : ":" + stringRestRest + tupleString;
-	}
-	protected String toStringRestRest() {
-		return null;
-	}
+    public Stub<StubHandle> getStub() throws RetePatternBuildException {
+        if (stub == null) {
+            stub = doCreateStub();
+            stub.addConstraint(this);
 
-	/**
-	 * @return the variablesTuple
-	 */
-	public Tuple getVariablesTuple() {
-		return variablesTuple;
-	}
-	
-	@Override
-	public Set<PVariable> getDeducedVariables() {
-		return getAffectedVariables();
-	}	
-	
-	
+            // check for any variable coincidences and enforce them
+            stub = BuildHelper.enforceVariableCoincidences(buildable, stub);
+        }
+        return stub;
+    }
+
+    public abstract Stub<StubHandle> doCreateStub() throws RetePatternBuildException;
+
+    @Override
+    public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+        variablesTuple = variablesTuple.replaceAll(obsolete, replacement);
+    }
+
+    @Override
+    protected String toStringRest() {
+        String stringRestRest = toStringRestRest();
+        String tupleString = "@" + variablesTuple.toString();
+        return stringRestRest == null ? tupleString : ":" + stringRestRest + tupleString;
+    }
+
+    protected String toStringRestRest() {
+        return null;
+    }
+
+    /**
+     * @return the variablesTuple
+     */
+    public Tuple getVariablesTuple() {
+        return variablesTuple;
+    }
+
+    @Override
+    public Set<PVariable> getDeducedVariables() {
+        return getAffectedVariables();
+    }
 
 }

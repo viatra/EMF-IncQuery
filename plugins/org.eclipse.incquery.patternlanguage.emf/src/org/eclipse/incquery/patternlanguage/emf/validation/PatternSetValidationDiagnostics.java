@@ -20,11 +20,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Stateless validator for a set of patterns.
+ * 
  * @author Zoltan Ujhelyi
- *
+ * 
  */
-public final class PatternSetValidationDiagnostics implements
- IAcceptor<Issue> {
+public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
     Set<Issue> foundErrors = Sets.newHashSet();
     Set<Issue> foundWarnings = Sets.newHashSet();
 
@@ -46,40 +46,40 @@ public final class PatternSetValidationDiagnostics implements
             break;
         }
     }
-	
-	public PatternValidationStatus getStatus() {
-		if (!foundErrors.isEmpty()) {
-			return PatternValidationStatus.ERROR;
-		} else if (!foundWarnings.isEmpty()) {
-			return PatternValidationStatus.WARNING;
-		} else {
-			return PatternValidationStatus.OK;
-		}
-	}
-	
+
+    public PatternValidationStatus getStatus() {
+        if (!foundErrors.isEmpty()) {
+            return PatternValidationStatus.ERROR;
+        } else if (!foundWarnings.isEmpty()) {
+            return PatternValidationStatus.WARNING;
+        } else {
+            return PatternValidationStatus.OK;
+        }
+    }
+
     public Set<Issue> getAllErrors() {
-		return Sets.newHashSet(foundErrors);
-	}
+        return Sets.newHashSet(foundErrors);
+    }
 
     public Set<Issue> getAllWarnings() {
-		return Sets.newHashSet(foundWarnings);
-	}
-	
-	public void logErrors(Logger logger) {
+        return Sets.newHashSet(foundWarnings);
+    }
+
+    public void logErrors(Logger logger) {
         for (Issue diag : foundErrors) {
-			logger.error(stringRepresentation(diag));
-		}
-	}
-	
-	public void logAllMessages(Logger logger) {
-		logErrors(logger);
+            logger.error(stringRepresentation(diag));
+        }
+    }
+
+    public void logAllMessages(Logger logger) {
+        logErrors(logger);
         for (Issue diag : foundWarnings) {
-			logger.warn(stringRepresentation(diag));
-		}
-	}
-	
+            logger.warn(stringRepresentation(diag));
+        }
+    }
+
     private String stringRepresentation(Issue issue) {
         return String.format("[%s] %s", issue.getSeverity().toString(), issue.getMessage());
-	}
+    }
 
 }

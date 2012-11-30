@@ -19,82 +19,94 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @author Mark Czotter
- *
+ * 
  */
 public class PatternMatchDialogContentProvider implements ITreeContentProvider {
 
-	private IncQueryMatcher<? extends IPatternMatch> matcher;
-	private Collection<? extends IPatternMatch> matches;
-	
-	public PatternMatchDialogContentProvider(
-			IncQueryMatcher<? extends IPatternMatch> matcher,
-			Collection<? extends IPatternMatch> matches) {
-		this.matcher = matcher;
-		this.matches = matches;
-	}
+    private IncQueryMatcher<? extends IPatternMatch> matcher;
+    private Collection<? extends IPatternMatch> matches;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	@Override
-	public void dispose() {
-		this.matcher = null;
-		this.matches = null;
-	}
+    public PatternMatchDialogContentProvider(IncQueryMatcher<? extends IPatternMatch> matcher,
+            Collection<? extends IPatternMatch> matches) {
+        this.matcher = matcher;
+        this.matches = matches;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput != null && newInput instanceof IncQueryMatcher<?> && newInput != oldInput) {
-			this.matcher = (IncQueryMatcher<?>) newInput;
-			this.matches = matcher.getAllMatches();
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    @Override
+    public void dispose() {
+        this.matcher = null;
+        this.matches = null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
-	 */
-	@Override
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof IncQueryMatcher<?>) {
-			return matches.toArray();
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (newInput != null && newInput instanceof IncQueryMatcher<?> && newInput != oldInput) {
+            this.matcher = (IncQueryMatcher<?>) newInput;
+            this.matches = matcher.getAllMatches();
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
-	@Override
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IncQueryMatcher<?>) {
-			return matches.toArray();
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
+     */
+    @Override
+    public Object[] getElements(Object inputElement) {
+        if (inputElement instanceof IncQueryMatcher<?>) {
+            return matches.toArray();
+        }
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
-	@Override
-	public Object getParent(Object element) {
-		if (element instanceof IPatternMatch) {
-			return matcher;
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+     */
+    @Override
+    public Object[] getChildren(Object parentElement) {
+        if (parentElement instanceof IncQueryMatcher<?>) {
+            return matches.toArray();
+        }
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
-	@Override
-	public boolean hasChildren(Object element) {
-		if (element instanceof IncQueryMatcher<?>) {
-			return !matches.isEmpty();
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+     */
+    @Override
+    public Object getParent(Object element) {
+        if (element instanceof IPatternMatch) {
+            return matcher;
+        }
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+     */
+    @Override
+    public boolean hasChildren(Object element) {
+        if (element instanceof IncQueryMatcher<?>) {
+            return !matches.isEmpty();
+        }
+        return false;
+    }
 
 }

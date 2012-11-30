@@ -33,65 +33,55 @@ import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration;
 import com.google.inject.Inject;
 
 @SuppressWarnings("restriction")
-public class EMFPatternLanguageHighlightingCalculator extends
-		XbaseHighlightingCalculator {
+public class EMFPatternLanguageHighlightingCalculator extends XbaseHighlightingCalculator {
 
-	@Inject
-	private PatternAnnotationProvider annotationProvider;
+    @Inject
+    private PatternAnnotationProvider annotationProvider;
 
-	@Override
-	protected void searchAndHighlightElements(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
-		TreeIterator<EObject> iterator = resource.getAllContents();
-		while (iterator.hasNext()) {
-			EObject object = iterator.next();
-			if (object instanceof XAbstractFeatureCall) {
-				computeFeatureCallHighlighting((XAbstractFeatureCall) object, acceptor);
-			} else if (object instanceof XNumberLiteral) {
-			// Handle XAnnotation in a special way because we want the @ highlighted too
-				highlightNumberLiterals((XNumberLiteral) object, acceptor);
-			} else if (object instanceof XAnnotation) {
-				highlightAnnotation((XAnnotation) object, acceptor);
-			} else if (object instanceof ClassType  || object instanceof ReferenceType) {
-				ICompositeNode node = NodeModelUtils.findActualNodeFor(object);
-				highlightNode(node, EMFPatternLanguageHighlightingConfiguration.METAMODEL_REFERENCE, acceptor);
-			} else if (object instanceof Annotation
-					&& annotationProvider.isDeprecated((Annotation) object)) {
-				Annotation annotation = (Annotation) object;
-				ICompositeNode compositeNode = NodeModelUtils
-						.findActualNodeFor(annotation);
-				INode node = null;
-				for (ILeafNode leafNode : compositeNode.getLeafNodes()) {
-					if (leafNode.getText().equals(annotation.getName())) {
-						node = leafNode;
-						break;
-					}
-				}
-				node = (node == null) ? compositeNode : node;
-				highlightNode(node,
-						XbaseHighlightingConfiguration.DEPRECATED_MEMBERS,
-						acceptor);
-			} else if (object instanceof AnnotationParameter
-					&& annotationProvider
-							.isDeprecated((AnnotationParameter) object)) {
-			  ICompositeNode compositeNode = NodeModelUtils
-            .findActualNodeFor(object);
-        INode node = null;
-        for (ILeafNode leafNode : compositeNode.getLeafNodes()) {
-          if (leafNode.getText().equals(((AnnotationParameter)object).getName())) {
-            node = leafNode;
-            break;
-          }
+    @Override
+    protected void searchAndHighlightElements(XtextResource resource, IHighlightedPositionAcceptor acceptor) {
+        TreeIterator<EObject> iterator = resource.getAllContents();
+        while (iterator.hasNext()) {
+            EObject object = iterator.next();
+            if (object instanceof XAbstractFeatureCall) {
+                computeFeatureCallHighlighting((XAbstractFeatureCall) object, acceptor);
+            } else if (object instanceof XNumberLiteral) {
+                // Handle XAnnotation in a special way because we want the @ highlighted too
+                highlightNumberLiterals((XNumberLiteral) object, acceptor);
+            } else if (object instanceof XAnnotation) {
+                highlightAnnotation((XAnnotation) object, acceptor);
+            } else if (object instanceof ClassType || object instanceof ReferenceType) {
+                ICompositeNode node = NodeModelUtils.findActualNodeFor(object);
+                highlightNode(node, EMFPatternLanguageHighlightingConfiguration.METAMODEL_REFERENCE, acceptor);
+            } else if (object instanceof Annotation && annotationProvider.isDeprecated((Annotation) object)) {
+                Annotation annotation = (Annotation) object;
+                ICompositeNode compositeNode = NodeModelUtils.findActualNodeFor(annotation);
+                INode node = null;
+                for (ILeafNode leafNode : compositeNode.getLeafNodes()) {
+                    if (leafNode.getText().equals(annotation.getName())) {
+                        node = leafNode;
+                        break;
+                    }
+                }
+                node = (node == null) ? compositeNode : node;
+                highlightNode(node, XbaseHighlightingConfiguration.DEPRECATED_MEMBERS, acceptor);
+            } else if (object instanceof AnnotationParameter
+                    && annotationProvider.isDeprecated((AnnotationParameter) object)) {
+                ICompositeNode compositeNode = NodeModelUtils.findActualNodeFor(object);
+                INode node = null;
+                for (ILeafNode leafNode : compositeNode.getLeafNodes()) {
+                    if (leafNode.getText().equals(((AnnotationParameter) object).getName())) {
+                        node = leafNode;
+                        break;
+                    }
+                }
+                node = (node == null) ? compositeNode : node;
+
+                highlightNode(node, XbaseHighlightingConfiguration.DEPRECATED_MEMBERS, acceptor);
+            } else {
+                computeReferencedJvmTypeHighlighting(acceptor, object);
+            }
         }
-        node = (node == null) ? compositeNode : node;
-				
-				
-				highlightNode(node,
-						XbaseHighlightingConfiguration.DEPRECATED_MEMBERS,
-						acceptor);
-			} else {
-				computeReferencedJvmTypeHighlighting(acceptor, object);
-			}
-		}
-	}
-	
+    }
+
 }

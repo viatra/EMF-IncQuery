@@ -23,56 +23,51 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
-public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pattern, StubHandle, Collector> 
-{
-	protected Buildable<Pattern, StubHandle, Collector> baseBuildable;
-	protected IPatternMatcherContext<Pattern> context;
+public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pattern, StubHandle, Collector> {
+    protected Buildable<Pattern, StubHandle, Collector> baseBuildable;
+    protected IPatternMatcherContext<Pattern> context;
 
-	/**
-	 * @param baseBuildable
-	 * @param context
-	 */
-	public EPMBuilder(Buildable<Pattern, StubHandle, Collector> baseBuildable,
-			IPatternMatcherContext<Pattern> context) {
-		super();
-		this.baseBuildable = baseBuildable;
-		this.context = context;
-	}
+    /**
+     * @param baseBuildable
+     * @param context
+     */
+    public EPMBuilder(Buildable<Pattern, StubHandle, Collector> baseBuildable, IPatternMatcherContext<Pattern> context) {
+        super();
+        this.baseBuildable = baseBuildable;
+        this.context = context;
+    }
 
+    @Override
+    public IPatternMatcherContext<Pattern> getContext() {
+        return context;
+    }
 
+    @Override
+    public void refresh() {
+        baseBuildable.reinitialize();
+    }
 
-	@Override
-	public IPatternMatcherContext<Pattern> getContext() {
-		return context;
-	}
+    @Override
+    public Collector construct(Pattern pattern) throws RetePatternBuildException {
+        try {
+            EPMBuildScaffold<StubHandle, Collector> epmBuildScaffold = new EPMBuildScaffold<StubHandle, Collector>(
+                    baseBuildable, context);
+            return epmBuildScaffold.construct(pattern);
+        } catch (RuntimeException ex) {
+            throw new RetePatternBuildException(
+                    "Error during constructing Rete pattern matcher; please review Error Log and consult developers",
+                    new String[0], "Error during pattern matcher construction", pattern, ex);
+        }
+    }
 
-	@Override
-	public void refresh() {
-		baseBuildable.reinitialize();
-	}
-
-	@Override
-	public Collector construct(Pattern pattern) throws RetePatternBuildException {
-		try {
-			EPMBuildScaffold<StubHandle, Collector> epmBuildScaffold = 
-					new EPMBuildScaffold<StubHandle, Collector>(baseBuildable, context);
-			return epmBuildScaffold.construct(pattern);
-		} catch (RuntimeException ex) {
-			throw new RetePatternBuildException(
-				"Error during constructing Rete pattern matcher; please review Error Log and consult developers", new String[0], 
-				"Error during pattern matcher construction", 
-				pattern, ex);
-		}
-	}
-
-	@Override
-	public HashMap<Object, Integer> getPosMapping(Pattern gtPattern) {
-		HashMap<Object, Integer> result = new HashMap<Object, Integer>();
-		EList<Variable> parameters = gtPattern.getParameters();
-		for (int i=0; i<parameters.size(); ++i)
-			result.put(parameters.get(i), i);
-		return result;
-	}
+    @Override
+    public HashMap<Object, Integer> getPosMapping(Pattern gtPattern) {
+        HashMap<Object, Integer> result = new HashMap<Object, Integer>();
+        EList<Variable> parameters = gtPattern.getParameters();
+        for (int i = 0; i < parameters.size(); ++i)
+            result.put(parameters.get(i), i);
+        return result;
+    }
 }

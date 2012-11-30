@@ -18,36 +18,32 @@ import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
-
 /**
- * @author Gabor Bergmann Indexer whose lifetime last until the first get() DO
- *         NOT connect to nodes!
+ * @author Gabor Bergmann Indexer whose lifetime last until the first get() DO NOT connect to nodes!
  */
 public class OnetimeIndexer extends GenericProjectionIndexer {
 
-	public OnetimeIndexer(ReteContainer reteContainer, TupleMask mask) {
-		super(reteContainer, mask);
-	}
+    public OnetimeIndexer(ReteContainer reteContainer, TupleMask mask) {
+        super(reteContainer, mask);
+    }
 
-	@Override
-	public Collection<Tuple> get(Tuple signature) {
-		if (org.eclipse.incquery.runtime.rete.util.Options.releaseOnetimeIndexers) {
-			reteContainer.unregisterClearable(memory);
-			reteContainer.unregisterNode(this);
-		}
-		return super.get(signature);
-	}
+    @Override
+    public Collection<Tuple> get(Tuple signature) {
+        if (org.eclipse.incquery.runtime.rete.util.Options.releaseOnetimeIndexers) {
+            reteContainer.unregisterClearable(memory);
+            reteContainer.unregisterNode(this);
+        }
+        return super.get(signature);
+    }
 
-	@Override
-	public void appendParent(Supplier supplier) {
-		throw new UnsupportedOperationException(
-				"onetime indexer cannot have parents");
-	}
+    @Override
+    public void appendParent(Supplier supplier) {
+        throw new UnsupportedOperationException("onetime indexer cannot have parents");
+    }
 
-	@Override
-	public void attachListener(IndexerListener listener) {
-		throw new UnsupportedOperationException(
-				"onetime indexer cannot have listeners");
-	}
+    @Override
+    public void attachListener(IndexerListener listener) {
+        throw new UnsupportedOperationException("onetime indexer cannot have listeners");
+    }
 
 }

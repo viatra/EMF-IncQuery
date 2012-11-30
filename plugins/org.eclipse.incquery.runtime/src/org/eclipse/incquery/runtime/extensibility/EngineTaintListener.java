@@ -18,33 +18,36 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 /**
  * Listens for the event of the engine becoming tainted.
  * 
- * Attach this listener to the logger of the engine as an appender. 
- * Do not forget to remove when losing interest or when engine is disposed. 
+ * Attach this listener to the logger of the engine as an appender. Do not forget to remove when losing interest or when
+ * engine is disposed.
  * 
  * @author Bergmann Gabor
  * @see IncQueryEngine#isTainted()
  */
 public abstract class EngineTaintListener extends AppenderSkeleton {
-	public static final Level TRESHOLD = Level.FATAL;
+    public static final Level TRESHOLD = Level.FATAL;
 
-	/**
-	 * This callback will be alerted at most once, when the engine becomes tainted.
-	 */
-	public abstract void engineBecameTainted();
-	
-	private boolean noTaintDetectedYet = true;
+    /**
+     * This callback will be alerted at most once, when the engine becomes tainted.
+     */
+    public abstract void engineBecameTainted();
 
-	@Override
-	public boolean requiresLayout() {return false;}
+    private boolean noTaintDetectedYet = true;
 
-	@Override
-	public void close() {}
+    @Override
+    public boolean requiresLayout() {
+        return false;
+    }
 
-	@Override
-	protected void append(LoggingEvent event) {
-		if (event.getLevel().isGreaterOrEqual(TRESHOLD) && noTaintDetectedYet) {
-			noTaintDetectedYet = false;
-			engineBecameTainted();
-		}					
-	}
+    @Override
+    public void close() {
+    }
+
+    @Override
+    protected void append(LoggingEvent event) {
+        if (event.getLevel().isGreaterOrEqual(TRESHOLD) && noTaintDetectedYet) {
+            noTaintDetectedYet = false;
+            engineBecameTainted();
+        }
+    }
 }

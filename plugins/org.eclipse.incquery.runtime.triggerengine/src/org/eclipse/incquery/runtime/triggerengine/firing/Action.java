@@ -5,16 +5,16 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
 public class Action extends RecordingCommand {
 
-	private Runnable task;
+    private Runnable task;
 
-	public Action(TransactionalEditingDomain domain, Runnable task) {
-		super(domain);
-		this.task = task;
-	}
+    public Action(TransactionalEditingDomain domain, Runnable task) {
+        super(domain);
+        this.task = task;
+    }
 
-	@Override
-	protected void doExecute() {
-		task.run();
-	}
+    @Override
+    protected void doExecute() {
+        task.run();
+    }
 
 }

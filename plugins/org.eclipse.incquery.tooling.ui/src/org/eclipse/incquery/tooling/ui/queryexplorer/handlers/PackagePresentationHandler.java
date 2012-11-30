@@ -17,10 +17,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 
 public class PackagePresentationHandler extends AbstractHandler {
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		QueryExplorer.getInstance().setPackagePresentation(event.getCommand().getId(), true);				
-		return null;
-	}
+
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        QueryExplorer.getInstance().setPackagePresentation(event.getCommand().getId(), true);
+        return null;
+    }
 }

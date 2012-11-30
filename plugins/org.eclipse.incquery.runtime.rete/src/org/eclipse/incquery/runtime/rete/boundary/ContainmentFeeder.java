@@ -16,26 +16,23 @@ import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
-
-
 public class ContainmentFeeder extends Feeder {
 
-	/**
-	 * @param receiver
-	 * @param context
-	 * @param network
-	 * @param boundary
-	 */
-	public ContainmentFeeder(Address<? extends Receiver> receiver,
-			IPatternMatcherRuntimeContext<?> context, Network network,
-			ReteBoundary<?> boundary) {
-		super(receiver, context, network, boundary);
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * @param receiver
+     * @param context
+     * @param network
+     * @param boundary
+     */
+    public ContainmentFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext<?> context,
+            Network network, ReteBoundary<?> boundary) {
+        super(receiver, context, network, boundary);
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public void feed() {
-		context.enumerateAllUnaryContainments(pairCrawler());
-	}
+    @Override
+    public void feed() {
+        context.enumerateAllUnaryContainments(pairCrawler());
+    }
 
 }

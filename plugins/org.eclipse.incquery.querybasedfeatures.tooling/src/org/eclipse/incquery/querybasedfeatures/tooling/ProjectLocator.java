@@ -22,28 +22,28 @@ import org.eclipse.jdt.core.JavaCore;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public final class ProjectLocator {
-  
-  public static IJavaProject locateProject(String path, Logger logger) {
-    IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
-    if(project.exists()) {
-      ArrayList<String> dependencies = new ArrayList<String>();
-      dependencies.add("org.eclipse.incquery.runtime");
-      dependencies.add("org.eclipse.incquery.querybasedfeatures.runtime");
-      try {
-        ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
-      } catch (CoreException e) {
-        logger.error("Could not add required dependencies to model project.", e);
-      }
-      return JavaCore.create(project);
-    } else {
-      return null;
+
+    public static IJavaProject locateProject(String path, Logger logger) {
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
+        if (project.exists()) {
+            ArrayList<String> dependencies = new ArrayList<String>();
+            dependencies.add("org.eclipse.incquery.runtime");
+            dependencies.add("org.eclipse.incquery.querybasedfeatures.runtime");
+            try {
+                ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
+            } catch (CoreException e) {
+                logger.error("Could not add required dependencies to model project.", e);
+            }
+            return JavaCore.create(project);
+        } else {
+            return null;
+        }
     }
-  }
-  
-  private ProjectLocator() {
-  }
-  
+
+    private ProjectLocator() {
+    }
+
 }

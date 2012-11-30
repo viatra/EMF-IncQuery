@@ -29,35 +29,34 @@ import com.google.inject.Injector;
 @SuppressWarnings("restriction")
 public class RuntimeMatcherRegistrationHandler extends AbstractHandler {
 
-	@Inject
-	Injector injector;
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IFile file = null;
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		
-		if (selection != null && selection instanceof IStructuredSelection) {
-			Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-			if (firstElement != null && firstElement instanceof IFile) {
-				file = (IFile) firstElement;
-			}
-		}
-		else {
-			IEditorPart editor = HandlerUtil.getActiveEditor(event);
-			if (editor instanceof XbaseEditor) {
-				FileEditorInput input = (FileEditorInput) HandlerUtil.getActiveEditorInput(event);
-				file = input.getFile();
-			}
-		}
-		
-		if (file != null) {
-			RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
-			injector.injectMembers(registrator);
-			Display.getDefault().asyncExec(registrator);
-		}
-		
-		return null;
-	}
+    @Inject
+    Injector injector;
+
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IFile file = null;
+        ISelection selection = HandlerUtil.getCurrentSelection(event);
+
+        if (selection != null && selection instanceof IStructuredSelection) {
+            Object firstElement = ((IStructuredSelection) selection).getFirstElement();
+            if (firstElement != null && firstElement instanceof IFile) {
+                file = (IFile) firstElement;
+            }
+        } else {
+            IEditorPart editor = HandlerUtil.getActiveEditor(event);
+            if (editor instanceof XbaseEditor) {
+                FileEditorInput input = (FileEditorInput) HandlerUtil.getActiveEditorInput(event);
+                file = input.getFile();
+            }
+        }
+
+        if (file != null) {
+            RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
+            injector.injectMembers(registrator);
+            Display.getDefault().asyncExec(registrator);
+        }
+
+        return null;
+    }
 
 }

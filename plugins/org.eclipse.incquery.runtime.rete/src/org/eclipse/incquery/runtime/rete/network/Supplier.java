@@ -17,41 +17,37 @@ import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
-
 /**
  * @author Gabor Bergmann
  * 
- *         A supplier is an object that can propagate insert or revoke events
- *         towards receivers.
+ *         A supplier is an object that can propagate insert or revoke events towards receivers.
  */
 public interface Supplier extends Node {
 
-	/**
-	 * pulls the contents of this object in this particular moment into a target
-	 * collection
-	 */
-	public void pullInto(Collection<Tuple> collector);
+    /**
+     * pulls the contents of this object in this particular moment into a target collection
+     */
+    public void pullInto(Collection<Tuple> collector);
 
-	/**
-	 * appends a receiver that will continously receive insert and revoke
-	 * updates from this supplier
-	 */
-	void appendChild(Receiver receiver);
+    /**
+     * appends a receiver that will continously receive insert and revoke updates from this supplier
+     */
+    void appendChild(Receiver receiver);
 
-	/**
-	 * removes a receiver
-	 */
-	void removeChild(Receiver receiver);
-	
-	/**
-	 * Instantiates (or reuses, depending on implementation) an index according to the given mask. 
-	 * Intended for internal use; clients should invoke through Library.accesProjectionIndexer() instead to enable reusing.
-	 */
-	ProjectionIndexer constructIndex(TupleMask mask);
+    /**
+     * removes a receiver
+     */
+    void removeChild(Receiver receiver);
 
-	/**
-	 * lists receivers
-	 */
-	Collection<Receiver> getReceivers();
+    /**
+     * Instantiates (or reuses, depending on implementation) an index according to the given mask. Intended for internal
+     * use; clients should invoke through Library.accesProjectionIndexer() instead to enable reusing.
+     */
+    ProjectionIndexer constructIndex(TupleMask mask);
+
+    /**
+     * lists receivers
+     */
+    Collection<Receiver> getReceivers();
 
 }

@@ -12,7 +12,7 @@
 package org.eclipse.incquery.runtime.api;
 
 /**
- * A generic, abstract match processor for handling matches as arrays.  
+ * A generic, abstract match processor for handling matches as arrays.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
@@ -20,16 +20,18 @@ package org.eclipse.incquery.runtime.api;
  */
 public abstract class GenericMatchProcessor implements IMatchProcessor<IPatternMatch> {
 
-	@Override
-	public void process(IPatternMatch match) {
-		process(match.toArray());
-	}
+    @Override
+    public void process(IPatternMatch match) {
+        process(match.toArray());
+    }
 
-	/**
-	 * Defines the action that is to be executed on each match.
-	 * @param parameters a single match of the pattern that must be processed by the implementation of this method, 
-	 * represented as an array containing the values of each pattern parameter
-	 */
-	public abstract void process(Object[] parameters);
+    /**
+     * Defines the action that is to be executed on each match.
+     * 
+     * @param parameters
+     *            a single match of the pattern that must be processed by the implementation of this method, represented
+     *            as an array containing the values of each pattern parameter
+     */
+    public abstract void process(Object[] parameters);
 
 }

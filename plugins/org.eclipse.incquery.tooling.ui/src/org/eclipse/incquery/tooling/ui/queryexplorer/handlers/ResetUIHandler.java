@@ -22,25 +22,25 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 
 public class ResetUIHandler extends AbstractHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		QueryExplorer explorer = QueryExplorer.getInstance();
-		
-		if (explorer != null) {
-			for (ModelConnector connector : explorer.getModelConnectorMap().values()) {
-				connector.unloadModel();
-			}
-			for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
-				String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-				PatternRegistry.getInstance().unregisterPattern(pattern);
-				PatternRegistry.getInstance().removeActivePattern(pattern);
-				explorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
-			}
-		
-			//refresh selection
-			explorer.getPatternsViewerInput().getGenericPatternsRoot().updateSelection(explorer.getPatternsViewer());
-			explorer.getPatternsViewer().refresh();
-		}
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        QueryExplorer explorer = QueryExplorer.getInstance();
+
+        if (explorer != null) {
+            for (ModelConnector connector : explorer.getModelConnectorMap().values()) {
+                connector.unloadModel();
+            }
+            for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
+                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+                PatternRegistry.getInstance().unregisterPattern(pattern);
+                PatternRegistry.getInstance().removeActivePattern(pattern);
+                explorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
+            }
+
+            // refresh selection
+            explorer.getPatternsViewerInput().getGenericPatternsRoot().updateSelection(explorer.getPatternsViewer());
+            explorer.getPatternsViewer().refresh();
+        }
+        return null;
+    }
 }

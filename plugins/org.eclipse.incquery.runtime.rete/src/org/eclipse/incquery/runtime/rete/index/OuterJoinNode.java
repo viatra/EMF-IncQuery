@@ -22,84 +22,85 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * Performs a left outer join.
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public class OuterJoinNode extends DualInputNode {
-	final Tuple defaults;
+    final Tuple defaults;
 
-	/**
-	 * @param reteContainer
-	 * @param primarySlot
-	 * @param secondarySlot
-	 * @param complementerSecondaryMask
-	 * @param defaults the default line to use instead of missing elements if a left tuple has no match
-	 * 
-	 */
-	public OuterJoinNode(ReteContainer reteContainer,
-			IterableIndexer primarySlot, Indexer secondarySlot,
-			TupleMask complementerSecondaryMask, Tuple defaults) {
-		super(reteContainer, primarySlot, secondarySlot,
-				complementerSecondaryMask);
-		this.defaults = defaults;
-	}
+    /**
+     * @param reteContainer
+     * @param primarySlot
+     * @param secondarySlot
+     * @param complementerSecondaryMask
+     * @param defaults
+     *            the default line to use instead of missing elements if a left tuple has no match
+     * 
+     */
+    public OuterJoinNode(ReteContainer reteContainer, IterableIndexer primarySlot, Indexer secondarySlot,
+            TupleMask complementerSecondaryMask, Tuple defaults) {
+        super(reteContainer, primarySlot, secondarySlot, complementerSecondaryMask);
+        this.defaults = defaults;
+    }
 
-	@Override
-	public Tuple calibrate(Tuple primary, Tuple secondary) {
-		return unify(primary, secondary);
-	}
+    @Override
+    public Tuple calibrate(Tuple primary, Tuple secondary) {
+        return unify(primary, secondary);
+    }
 
-	@Override
-	public void notifyUpdate(Side side, Direction direction,
-			Tuple updateElement, Tuple signature, boolean change) {
-		Collection<Tuple> opposites = retrieveOpposites(side, signature);
-		switch (side) {
-		case PRIMARY:
-			if (opposites != null)
-				for (Tuple opposite : opposites) {
-					propagateUpdate(direction, unify(updateElement, opposite));
-				}
-			else 
-				propagateUpdate(direction, unifyWithDefaults(updateElement));
-			break;
-		case SECONDARY:
-			if (opposites != null)
-				for (Tuple opposite : opposites) {
-					propagateUpdate(direction, unify(opposite, updateElement));
-					if (change)
-						propagateUpdate(direction.opposite(), unifyWithDefaults(opposite));
-				}
-			break;
-		case BOTH:
-				for (Tuple opposite : opposites) {
-					propagateUpdate(direction, unify(updateElement, opposite));
-					if (updateElement.equals(opposite)) continue;
-					propagateUpdate(direction, unify(opposite, updateElement));
-				}
-				if (direction==Direction.REVOKE) // missed joining with itself
-					propagateUpdate(direction, unify(updateElement, updateElement));
-		}
-	}
+    @Override
+    public void notifyUpdate(Side side, Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+        Collection<Tuple> opposites = retrieveOpposites(side, signature);
+        switch (side) {
+        case PRIMARY:
+            if (opposites != null)
+                for (Tuple opposite : opposites) {
+                    propagateUpdate(direction, unify(updateElement, opposite));
+                }
+            else
+                propagateUpdate(direction, unifyWithDefaults(updateElement));
+            break;
+        case SECONDARY:
+            if (opposites != null)
+                for (Tuple opposite : opposites) {
+                    propagateUpdate(direction, unify(opposite, updateElement));
+                    if (change)
+                        propagateUpdate(direction.opposite(), unifyWithDefaults(opposite));
+                }
+            break;
+        case BOTH:
+            for (Tuple opposite : opposites) {
+                propagateUpdate(direction, unify(updateElement, opposite));
+                if (updateElement.equals(opposite))
+                    continue;
+                propagateUpdate(direction, unify(opposite, updateElement));
+            }
+            if (direction == Direction.REVOKE) // missed joining with itself
+                propagateUpdate(direction, unify(updateElement, updateElement));
+        }
+    }
 
-	@Override
+    @Override
     public void pullInto(Collection<Tuple> collector) {
-		reteContainer.flushUpdates();
+        reteContainer.flushUpdates();
 
-		for (Tuple signature : primarySlot.getSignatures()) {
-			Collection<Tuple> primaries = primarySlot.get(signature); // not null due to the contract of IterableIndex.getSignatures()
-			Collection<Tuple> opposites = secondarySlot.get(signature);
-			if (opposites != null)
-				for (Tuple ps: primaries) for (Tuple opposite : opposites) {
-					collector.add(unify(ps, opposite));
-				}
-			else
-				for (Tuple ps: primaries) {
-					collector.add(unifyWithDefaults(ps));
-				}
-		}
-	}
+        for (Tuple signature : primarySlot.getSignatures()) {
+            Collection<Tuple> primaries = primarySlot.get(signature); // not null due to the contract of
+                                                                      // IterableIndex.getSignatures()
+            Collection<Tuple> opposites = secondarySlot.get(signature);
+            if (opposites != null)
+                for (Tuple ps : primaries)
+                    for (Tuple opposite : opposites) {
+                        collector.add(unify(ps, opposite));
+                    }
+            else
+                for (Tuple ps : primaries) {
+                    collector.add(unifyWithDefaults(ps));
+                }
+        }
+    }
 
-	private Tuple unifyWithDefaults(Tuple ps) {
-		return unify(ps, defaults);
-	}
+    private Tuple unifyWithDefaults(Tuple ps) {
+        return unify(ps, defaults);
+    }
 
 }

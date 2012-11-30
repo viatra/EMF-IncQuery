@@ -22,20 +22,20 @@ import com.google.inject.Singleton;
  * Use this class to register components to be used within the IDE.
  */
 public class GeneratorModelUiModule extends AbstractGeneratorModelUiModule {
-	public GeneratorModelUiModule(AbstractUIPlugin plugin) {
-		super(plugin);
-	}
+    public GeneratorModelUiModule(AbstractUIPlugin plugin) {
+        super(plugin);
+    }
 
     private static final String loggerRoot = "org.eclipse.incquery";
 
-	@Provides
-	@Singleton
-	Logger provideLoggerImplementation() {
-		return Logger.getLogger(loggerRoot);
-	}
+    @Provides
+    @Singleton
+    Logger provideLoggerImplementation() {
+        return Logger.getLogger(loggerRoot);
+    }
 
-	@SingletonBinding(eager = true)
-	public Class<? extends GeneratorModelJavaValidator> bindGeneratorModelJavaValidator() {
-		return GenmodelProjectBasedValidation.class;
-	}
+    @SingletonBinding(eager = true)
+    public Class<? extends GeneratorModelJavaValidator> bindGeneratorModelJavaValidator() {
+        return GenmodelProjectBasedValidation.class;
+    }
 }

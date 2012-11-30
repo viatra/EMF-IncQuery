@@ -40,79 +40,74 @@ import com.google.inject.Inject;
 
 public class NewGenmodelWizard extends Wizard implements INewWizard {
 
-	private IWorkbench workbench;
-	private IStructuredSelection selection;
-	private SelectIncQueryProjectPage projectPage;
-	private NewEiqGenmodelPage genmodelPage;
+    private IWorkbench workbench;
+    private IStructuredSelection selection;
+    private SelectIncQueryProjectPage projectPage;
+    private NewEiqGenmodelPage genmodelPage;
 
-	@Inject
-	private IEiqGenmodelProvider genmodelProvider;
-	@Inject
-	private IResourceSetProvider resourceSetProvider;
-	@Inject
-	private Logger logger;
+    @Inject
+    private IEiqGenmodelProvider genmodelProvider;
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
+    @Inject
+    private Logger logger;
 
-	@Override
-	public void addPages() {
-		projectPage = new SelectIncQueryProjectPage(
-				"Select EMF-IncQuery project", selection, logger);
-		addPage(projectPage);
-		genmodelPage = new NewEiqGenmodelPage(false);
-		addPage(genmodelPage);
-	}
+    @Override
+    public void addPages() {
+        projectPage = new SelectIncQueryProjectPage("Select EMF-IncQuery project", selection, logger);
+        addPage(projectPage);
+        genmodelPage = new NewEiqGenmodelPage(false);
+        addPage(genmodelPage);
+    }
 
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.workbench = workbench;
-		this.selection = selection;
+    @Override
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        this.workbench = workbench;
+        this.selection = selection;
 
-	}
+    }
 
-	@Override
-	public boolean performFinish() {
-		IProject project = projectPage.getSelectedProject();
+    @Override
+    public boolean performFinish() {
+        IProject project = projectPage.getSelectedProject();
 
-		WorkspaceModifyOperation op = null;
-		List<String> genmodelDependencies = new ArrayList<String>();
-		for (GenModel model : genmodelPage.getSelectedGenmodels()) {
-			String modelPluginID = model.getModelPluginID();
-			if (!genmodelDependencies.contains(modelPluginID)) {
-				genmodelDependencies.add(modelPluginID);
-			}
-		}
-		WorkspaceModifyOperation projectOp = new EnsureProjectDependencies(
-				project, genmodelDependencies);
-		WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(
-				project, genmodelPage.getSelectedGenmodels(), genmodelProvider,
-				resourceSetProvider);
-		op = new CompositeWorkspaceModifyOperation(
-				new WorkspaceModifyOperation[] { projectOp, genmodelOp },
-				"Creating generator model");
+        WorkspaceModifyOperation op = null;
+        List<String> genmodelDependencies = new ArrayList<String>();
+        for (GenModel model : genmodelPage.getSelectedGenmodels()) {
+            String modelPluginID = model.getModelPluginID();
+            if (!genmodelDependencies.contains(modelPluginID)) {
+                genmodelDependencies.add(modelPluginID);
+            }
+        }
+        WorkspaceModifyOperation projectOp = new EnsureProjectDependencies(project, genmodelDependencies);
+        WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(project, genmodelPage.getSelectedGenmodels(),
+                genmodelProvider, resourceSetProvider);
+        op = new CompositeWorkspaceModifyOperation(new WorkspaceModifyOperation[] { projectOp, genmodelOp },
+                "Creating generator model");
 
-		try {
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			logger.error("Cannot initialize EMF-IncQuery generator model " + realException.getMessage(), realException);
-			MessageDialog.openError(getShell(), "Error",
-					realException.getMessage());
-			return false;
-		}
+        try {
+            getContainer().run(true, true, op);
+        } catch (InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            logger.error("Cannot initialize EMF-IncQuery generator model " + realException.getMessage(), realException);
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        }
 
-		IFile genmodelFile = (IFile) project.findMember(IncQueryNature.IQGENMODEL);
-		BasicNewProjectResourceWizard.selectAndReveal(genmodelFile,
-				workbench.getActiveWorkbenchWindow());
+        IFile genmodelFile = (IFile) project.findMember(IncQueryNature.IQGENMODEL);
+        BasicNewProjectResourceWizard.selectAndReveal(genmodelFile, workbench.getActiveWorkbenchWindow());
 
-		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-		
-		try {
-			page.openEditor(new FileEditorInput(genmodelFile), workbench.getEditorRegistry().getDefaultEditor(genmodelFile.getName()).getId());
-		} catch (PartInitException e) {
-			logger.error("Cannot open EMF-IncQuery generator model", e);
-		}
-		return true;
-	}
+        IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+
+        try {
+            page.openEditor(new FileEditorInput(genmodelFile),
+                    workbench.getEditorRegistry().getDefaultEditor(genmodelFile.getName()).getId());
+        } catch (PartInitException e) {
+            logger.error("Cannot open EMF-IncQuery generator model", e);
+        }
+        return true;
+    }
 
 }

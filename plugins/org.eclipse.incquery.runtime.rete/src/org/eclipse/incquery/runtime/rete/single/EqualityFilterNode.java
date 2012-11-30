@@ -16,28 +16,28 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 public class EqualityFilterNode extends FilterNode {
 
-	int[] indices;
-	int first;
+    int[] indices;
+    int first;
 
-	/**
-	 * @param reteContainer
-	 * @param indices
-	 *            indices of the Tuple that should hold equal values
-	 */
-	public EqualityFilterNode(ReteContainer reteContainer, int[] indices) {
-		super(reteContainer);
-		this.indices = indices;
-		first = indices[0];
-	}
+    /**
+     * @param reteContainer
+     * @param indices
+     *            indices of the Tuple that should hold equal values
+     */
+    public EqualityFilterNode(ReteContainer reteContainer, int[] indices) {
+        super(reteContainer);
+        this.indices = indices;
+        first = indices[0];
+    }
 
-	@Override
-	public boolean check(Tuple ps) {
-		Object firstElement = ps.get(first);
-		for (int i = 1 /* first is omitted */; i < indices.length; i++) {
-			if (!ps.get(indices[i]).equals(firstElement))
-				return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean check(Tuple ps) {
+        Object firstElement = ps.get(first);
+        for (int i = 1 /* first is omitted */; i < indices.length; i++) {
+            if (!ps.get(indices[i]).equals(firstElement))
+                return false;
+        }
+        return true;
+    }
 
 }

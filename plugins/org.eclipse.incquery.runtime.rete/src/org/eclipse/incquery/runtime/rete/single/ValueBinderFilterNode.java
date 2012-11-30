@@ -16,32 +16,31 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * A filter node that keeps only those tuples that contain a certain value at a certain position.
+ * 
  * @author Bergmann G�bor
- *
+ * 
  */
 public class ValueBinderFilterNode extends FilterNode {
 
-	int bindingIndex;
-	Object bindingValue;
-	
+    int bindingIndex;
+    Object bindingValue;
 
-	/**
-	 * @param reteContainer
-	 * @param bindingIndex the position in the tuple that should be bound
-	 * @param bindingValue the value to which the tuple has to be bound
-	 */
-	public ValueBinderFilterNode(ReteContainer reteContainer, int bindingIndex,
-			Object bindingValue) {
-		super(reteContainer);
-		this.bindingIndex = bindingIndex;
-		this.bindingValue = bindingValue;
-	}
+    /**
+     * @param reteContainer
+     * @param bindingIndex
+     *            the position in the tuple that should be bound
+     * @param bindingValue
+     *            the value to which the tuple has to be bound
+     */
+    public ValueBinderFilterNode(ReteContainer reteContainer, int bindingIndex, Object bindingValue) {
+        super(reteContainer);
+        this.bindingIndex = bindingIndex;
+        this.bindingValue = bindingValue;
+    }
 
-
-
-	@Override
-	public boolean check(Tuple ps) {
-		return bindingValue.equals(ps.get(bindingIndex));
-	}
+    @Override
+    public boolean check(Tuple ps) {
+        return bindingValue.equals(ps.get(bindingIndex));
+    }
 
 }

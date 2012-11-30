@@ -27,25 +27,26 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class GraphitiEditorLoadResourceHandler extends LoadModelHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-		
-		if (editorPart instanceof DiagramEditor) {
-			DiagramEditor providerEditor = (DiagramEditor) editorPart;
-			
-			PictogramElement[] selectedElements = providerEditor.getSelectedPictogramElements();
-			
-			if (selectedElements.length > 0) {
-				PictogramElement element = selectedElements[0];	
-				Resource resource = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource();
-				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resource);
-				ModelConnector contentModel = new GraphitiModelConnector(key);
-				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-				contentModel.loadModel();
-			}
-		}
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+
+        if (editorPart instanceof DiagramEditor) {
+            DiagramEditor providerEditor = (DiagramEditor) editorPart;
+
+            PictogramElement[] selectedElements = providerEditor.getSelectedPictogramElements();
+
+            if (selectedElements.length > 0) {
+                PictogramElement element = selectedElements[0];
+                Resource resource = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element)
+                        .eResource();
+                MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(providerEditor, resource);
+                ModelConnector contentModel = new GraphitiModelConnector(key);
+                QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
+                contentModel.loadModel();
+            }
+        }
+        return null;
+    }
 
 }

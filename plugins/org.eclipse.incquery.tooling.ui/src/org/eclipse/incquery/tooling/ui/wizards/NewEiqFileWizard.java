@@ -56,151 +56,150 @@ import com.google.inject.Injector;
  * A wizard implementation used to create new eiq files.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class NewEiqFileWizard extends Wizard implements INewWizard {
-	
-	private static final String NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE = "Create a new EMF-IncQuery Query Definition file.";
-	private NewEiqFileWizardContainerConfigurationPage page1;
-	private NewEiqFileWizardPatternConfigurationPage page2;
-	private ISelection selection;
-	private IWorkbench workbench;
-	private final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	private IPath filePath;
-	
-	@Inject
-	private IResourceSetProvider resourceSetProvider;
-	
-	@Inject
-	private Injector injector;
-	
-	public NewEiqFileWizard() {
-		super();
-		setNeedsProgressMonitor(true);
-	}
-	
-	@Override
-	public void addPages() {
-		page1 = new NewEiqFileWizardContainerConfigurationPage();
-		page1.init((IStructuredSelection) selection);
-		page1.setDescription(NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE);
-		page2 = new NewEiqFileWizardPatternConfigurationPage();
-		injector.injectMembers(page2);
-		addPage(page1);
-		addPage(page2);
-		setForcePreviousAndNextButtons(false);
-	}
 
-	@Override
-	public boolean performFinish() {
-		final String containerName = page1.getContainerName();
-		final String fileName = page1.getFileName();
-		
-		//replace dots with slash in the path
-		final String packageName = page1.getPackageName().replaceAll("\\.", "/");
-		final String patternName = page2.getPatternName();
-		final List<EPackage> imports = page2.getImports();
-		final List<ObjectParameter> parameters = page2.getParameters();
-		
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
+    private static final String NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE = "Create a new EMF-IncQuery Query Definition file.";
+    private NewEiqFileWizardContainerConfigurationPage page1;
+    private NewEiqFileWizardPatternConfigurationPage page2;
+    private ISelection selection;
+    private IWorkbench workbench;
+    private final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    private IPath filePath;
+
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
+
+    @Inject
+    private Injector injector;
+
+    public NewEiqFileWizard() {
+        super();
+        setNeedsProgressMonitor(true);
+    }
+
+    @Override
+    public void addPages() {
+        page1 = new NewEiqFileWizardContainerConfigurationPage();
+        page1.init((IStructuredSelection) selection);
+        page1.setDescription(NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE);
+        page2 = new NewEiqFileWizardPatternConfigurationPage();
+        injector.injectMembers(page2);
+        addPage(page1);
+        addPage(page2);
+        setForcePreviousAndNextButtons(false);
+    }
+
+    @Override
+    public boolean performFinish() {
+        final String containerName = page1.getContainerName();
+        final String fileName = page1.getFileName();
+
+        // replace dots with slash in the path
+        final String packageName = page1.getPackageName().replaceAll("\\.", "/");
+        final String patternName = page2.getPatternName();
+        final List<EPackage> imports = page2.getImports();
+        final List<ObjectParameter> parameters = page2.getParameters();
+
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(containerName, fileName, packageName, patternName, imports, parameters, monitor);
-				} catch (Exception e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(true, false, op);
-			IFile file = (IFile) root.findMember(filePath);
-			BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
-			IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
-		} catch (InterruptedException e) {
-			//This is never thrown as of false cancellable parameter of getContainer().run
-			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			IncQueryGUIPlugin.getDefault().logException(
-					"Cannot create Query Definition file: "
-							+ realException.getMessage(), realException);
-			MessageDialog.openError(getShell(), "Error",
-					realException.getMessage());
-			return false;
-		} catch (PartInitException e) {
-			IncQueryGUIPlugin.getDefault().logException("Cannot open editor: " + e.getMessage(), e);
-			MessageDialog.openError(getShell(), "Error", e.getMessage());
-		}
-		return true;
-	}
-	
-	private void doFinish(String containerName, String fileName, String packageName, String patternName, List<EPackage> imports, List<ObjectParameter> parameters, IProgressMonitor monitor) {
-		monitor.beginTask("Creating " + fileName, 1);
-		createEiqFile(containerName, fileName, packageName, patternName, imports, parameters);
-		monitor.worked(1);
-	}
+                try {
+                    doFinish(containerName, fileName, packageName, patternName, imports, parameters, monitor);
+                } catch (Exception e) {
+                    throw new InvocationTargetException(e);
+                } finally {
+                    monitor.done();
+                }
+            }
+        };
+        try {
+            getContainer().run(true, false, op);
+            IFile file = (IFile) root.findMember(filePath);
+            BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
+            IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
+        } catch (InterruptedException e) {
+            // This is never thrown as of false cancellable parameter of getContainer().run
+            return false;
+        } catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            IncQueryGUIPlugin.getDefault().logException(
+                    "Cannot create Query Definition file: " + realException.getMessage(), realException);
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        } catch (PartInitException e) {
+            IncQueryGUIPlugin.getDefault().logException("Cannot open editor: " + e.getMessage(), e);
+            MessageDialog.openError(getShell(), "Error", e.getMessage());
+        }
+        return true;
+    }
 
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
-		this.workbench = workbench;
-	}
-	
-	private void createEiqFile(String containerName, String fileName, String packageName, String patternName, List<EPackage> imports, List<ObjectParameter> parameters) {	
-		IResource containerResource = root.findMember(new Path(containerName));
-		ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
+    private void doFinish(String containerName, String fileName, String packageName, String patternName,
+            List<EPackage> imports, List<ObjectParameter> parameters, IProgressMonitor monitor) {
+        monitor.beginTask("Creating " + fileName, 1);
+        createEiqFile(containerName, fileName, packageName, patternName, imports, parameters);
+        monitor.worked(1);
+    }
 
-		filePath = containerResource.getFullPath().append(packageName+"/"+fileName);
-		String fullPath = filePath.toString();
-		
-		URI fileURI = URI.createPlatformResourceURI(fullPath, false);
-		Resource resource = resourceSet.createResource(fileURI);
+    @Override
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        this.selection = selection;
+        this.workbench = workbench;
+    }
 
-		PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+    private void createEiqFile(String containerName, String fileName, String packageName, String patternName,
+            List<EPackage> imports, List<ObjectParameter> parameters) {
+        IResource containerResource = root.findMember(new Path(containerName));
+        ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
 
-		//Setting package name
-		if (packageName != null && !packageName.isEmpty()) {
-			pm.setPackageName(packageName.replace("/", "."));
-		}
-		
-		//Setting imports
-		for (EPackage importedPackage : imports) {
-			PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
-			importDecl.setEPackage(importedPackage);
-			pm.getImportPackages().add(importDecl);
-		}
-		
-		//Creating pattern
-		if (patternName != null && patternName.length() > 0) {
-			Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
-			pattern.setName(patternName);
-			PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
-			pattern.getBodies().add(body);
-			
-			//Setting pattern parameters
-			for (ObjectParameter parameter : parameters) {
-				Variable var = PatternLanguageFactory.eINSTANCE.createVariable();
-				var.setName(parameter.getParameterName());
-				
-				ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
-				//it is enough to set only the class name for the class type
-				classType.setClassname(parameter.getObject());
-				var.setType(classType);
-				pattern.getParameters().add(var);
-			}
-			
-			pm.getPatterns().add(pattern);
-		}
-		resource.getContents().add(pm);
+        filePath = containerResource.getFullPath().append(packageName + "/" + fileName);
+        String fullPath = filePath.toString();
 
-		try {
-			resource.save(Collections.EMPTY_MAP);
-		} 
-		catch (IOException e) {
-			IncQueryGUIPlugin.getDefault().logException("Resource could not be saved", e);
-		}
-	}
+        URI fileURI = URI.createPlatformResourceURI(fullPath, false);
+        Resource resource = resourceSet.createResource(fileURI);
+
+        PatternModel pm = EMFPatternLanguageFactory.eINSTANCE.createPatternModel();
+
+        // Setting package name
+        if (packageName != null && !packageName.isEmpty()) {
+            pm.setPackageName(packageName.replace("/", "."));
+        }
+
+        // Setting imports
+        for (EPackage importedPackage : imports) {
+            PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
+            importDecl.setEPackage(importedPackage);
+            pm.getImportPackages().add(importDecl);
+        }
+
+        // Creating pattern
+        if (patternName != null && patternName.length() > 0) {
+            Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
+            pattern.setName(patternName);
+            PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
+            pattern.getBodies().add(body);
+
+            // Setting pattern parameters
+            for (ObjectParameter parameter : parameters) {
+                Variable var = PatternLanguageFactory.eINSTANCE.createVariable();
+                var.setName(parameter.getParameterName());
+
+                ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();
+                // it is enough to set only the class name for the class type
+                classType.setClassname(parameter.getObject());
+                var.setType(classType);
+                pattern.getParameters().add(var);
+            }
+
+            pm.getPatterns().add(pattern);
+        }
+        resource.getContents().add(pm);
+
+        try {
+            resource.save(Collections.EMPTY_MAP);
+        } catch (IOException e) {
+            IncQueryGUIPlugin.getDefault().logException("Resource could not be saved", e);
+        }
+    }
 }

@@ -17,29 +17,29 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Default configuration for DeltaMonitor.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public class DefaultDeltaMonitor extends DeltaMonitor<Tuple> {
 
-	/**
-	 * @param reteContainer
-	 */
-	public DefaultDeltaMonitor(ReteContainer reteContainer) {
-		super(reteContainer);
-	}
-	
-	/**
-	 * @param network
-	 */
-	public DefaultDeltaMonitor(Network network) {
-		super(network.getHeadContainer());
-	}
+    /**
+     * @param reteContainer
+     */
+    public DefaultDeltaMonitor(ReteContainer reteContainer) {
+        super(reteContainer);
+    }
 
+    /**
+     * @param network
+     */
+    public DefaultDeltaMonitor(Network network) {
+        super(network.getHeadContainer());
+    }
 
-	@Override
-	public Tuple statelessConvert(Tuple tuple) {
-		return tuple;
-	}
+    @Override
+    public Tuple statelessConvert(Tuple tuple) {
+        return tuple;
+    }
 
 }

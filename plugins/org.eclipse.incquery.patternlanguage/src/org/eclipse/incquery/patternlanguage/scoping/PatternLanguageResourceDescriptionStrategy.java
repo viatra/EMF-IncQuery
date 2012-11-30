@@ -26,35 +26,35 @@ import org.eclipse.xtext.util.IAcceptor;
 import com.google.common.collect.Constraint;
 
 /**
- * Custom strategy for computing ResourceDescription for eiq resources.
- * Adds user data for Pattern EObjectDescription about private modifier.
+ * Custom strategy for computing ResourceDescription for eiq resources. Adds user data for Pattern EObjectDescription
+ * about private modifier.
+ * 
  * @author Mark Czotter
- *
+ * 
  */
 public class PatternLanguageResourceDescriptionStrategy extends DefaultResourceDescriptionStrategy {
-	
-	@Override
-	public boolean createEObjectDescriptions(EObject eObject,
-			IAcceptor<IEObjectDescription> acceptor) {
-		if (eObject instanceof Pattern) {
-			boolean isPrivate = CorePatternLanguageHelper.isPrivate((Pattern)eObject);
-			QualifiedName qualifiedName = getQualifiedNameProvider().getFullyQualifiedName(eObject);
-			if (qualifiedName != null) {
-				acceptor.accept(EObjectDescription.create(qualifiedName, eObject, Collections.singletonMap("private", String.valueOf(isPrivate))));
-			}
-			return true;
-		} else if (eObject instanceof Variable
-				&& !(eObject.eContainer() instanceof Pattern)) {
-			// Internal variable - not usable from outside
-			return false;
-		} else if (eObject instanceof Constraint) {
-			// Constraints are not needed in the index
-			return false;
-		} else if (eObject instanceof PatternBody) {
-			// Pattern bodies are not needed in the index
-			return false;
-		}
-		return super.createEObjectDescriptions(eObject, acceptor);
-	}
+
+    @Override
+    public boolean createEObjectDescriptions(EObject eObject, IAcceptor<IEObjectDescription> acceptor) {
+        if (eObject instanceof Pattern) {
+            boolean isPrivate = CorePatternLanguageHelper.isPrivate((Pattern) eObject);
+            QualifiedName qualifiedName = getQualifiedNameProvider().getFullyQualifiedName(eObject);
+            if (qualifiedName != null) {
+                acceptor.accept(EObjectDescription.create(qualifiedName, eObject,
+                        Collections.singletonMap("private", String.valueOf(isPrivate))));
+            }
+            return true;
+        } else if (eObject instanceof Variable && !(eObject.eContainer() instanceof Pattern)) {
+            // Internal variable - not usable from outside
+            return false;
+        } else if (eObject instanceof Constraint) {
+            // Constraints are not needed in the index
+            return false;
+        } else if (eObject instanceof PatternBody) {
+            // Pattern bodies are not needed in the index
+            return false;
+        }
+        return super.createEObjectDescriptions(eObject, acceptor);
+    }
 
 }

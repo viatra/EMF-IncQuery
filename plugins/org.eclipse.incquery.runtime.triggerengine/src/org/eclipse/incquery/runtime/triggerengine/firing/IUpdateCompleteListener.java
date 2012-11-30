@@ -12,10 +12,10 @@ package org.eclipse.incquery.runtime.triggerengine.firing;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public interface IUpdateCompleteListener {
 
     void updateComplete();
-    
+
 }

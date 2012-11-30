@@ -18,18 +18,17 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 
 /**
  * @author Mark Czotter
- *
+ * 
  */
 public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
 
-	@Override
-	public Set<Pattern> getPatterns() {
-		return patterns(matcherFactories);
-	}
+    @Override
+    public Set<Pattern> getPatterns() {
+        return patterns(matcherFactories);
+    }
 
-	/**
-	 * Returns {@link IMatcherFactory} objects for handling them as a group. 
-	 * To be filled by constructors of subclasses.
-	 */
-	protected Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
+    /**
+     * Returns {@link IMatcherFactory} objects for handling them as a group. To be filled by constructors of subclasses.
+     */
+    protected Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
 }

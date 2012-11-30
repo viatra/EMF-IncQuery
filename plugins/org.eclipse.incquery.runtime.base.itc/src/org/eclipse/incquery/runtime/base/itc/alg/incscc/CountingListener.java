@@ -14,24 +14,24 @@ import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
 
 /**
  * @author Tamas Szabo
- *
+ * 
  */
 public class CountingListener<V> implements ITcObserver<V> {
 
-	private IncSCCAlg<V> alg;
-	
-	public CountingListener(IncSCCAlg<V> alg) {
-		this.alg = alg;
-	}
-	
-	@Override
-	public void tupleInserted(V source, V target) {
-		alg.notifyTcObservers(alg.sccs.setMap.get(source), alg.sccs.setMap.get(target), Direction.INSERT);
-	}
+    private IncSCCAlg<V> alg;
 
-	@Override
-	public void tupleDeleted(V source, V target) {
-		alg.notifyTcObservers(alg.sccs.setMap.get(source), alg.sccs.setMap.get(target), Direction.DELETE);
-	}
+    public CountingListener(IncSCCAlg<V> alg) {
+        this.alg = alg;
+    }
+
+    @Override
+    public void tupleInserted(V source, V target) {
+        alg.notifyTcObservers(alg.sccs.setMap.get(source), alg.sccs.setMap.get(target), Direction.INSERT);
+    }
+
+    @Override
+    public void tupleDeleted(V source, V target) {
+        alg.notifyTcObservers(alg.sccs.setMap.get(source), alg.sccs.setMap.get(target), Direction.DELETE);
+    }
 
 }

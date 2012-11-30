@@ -22,27 +22,29 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
 /**
  * @author Mark Czotter
- *
+ * 
  */
 public class SampleUIDialogCreator {
 
-	/**
-	 * Creates a dialog that shows the current matches of the matcher.
-	 * @param parent
-	 * @return
-	 */
-	public static final Dialog createDialog(IncQueryMatcher<? extends IPatternMatch> matcher) {
-		final String patternFqn = matcher.getPatternName();
-		final Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
-		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new PatternMatchDialogLabelProvider(), new PatternMatchDialogContentProvider(matcher, matches));
-		dialog.setTitle(String.format("Matchset of the pattern %s", patternFqn));
-		dialog.setMessage(DatabindingUtil.getMessage(matcher, matches.size(), patternFqn));
-		dialog.setEmptyListMessage("No matches!");
-		dialog.setAllowMultiple(false);
-		dialog.setDoubleClickSelects(false);
-		dialog.setInput(matcher);
-		return dialog;
-	}
-	
+    /**
+     * Creates a dialog that shows the current matches of the matcher.
+     * 
+     * @param parent
+     * @return
+     */
+    public static final Dialog createDialog(IncQueryMatcher<? extends IPatternMatch> matcher) {
+        final String patternFqn = matcher.getPatternName();
+        final Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
+        final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
+                new PatternMatchDialogLabelProvider(), new PatternMatchDialogContentProvider(matcher, matches));
+        dialog.setTitle(String.format("Matchset of the pattern %s", patternFqn));
+        dialog.setMessage(DatabindingUtil.getMessage(matcher, matches.size(), patternFqn));
+        dialog.setEmptyListMessage("No matches!");
+        dialog.setAllowMultiple(false);
+        dialog.setDoubleClickSelects(false);
+        dialog.setInput(matcher);
+        return dialog;
+    }
+
 }

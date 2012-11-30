@@ -16,7 +16,7 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public interface IQueryBasedFeatureHandler {
 

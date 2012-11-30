@@ -12,11 +12,9 @@ package org.eclipse.incquery.patternlanguage.emf.validation;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public enum PatternValidationStatus {
 
-	OK,
-	WARNING,
-	ERROR
+    OK, WARNING, ERROR
 }

@@ -21,11 +21,11 @@ import org.eclipse.incquery.runtime.triggerengine.api.IRule;
 import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy;
 
 /**
- * Utility class to prepare a rule in an agenda for an observable collection.
- * For use cases, see {@link ObservablePatternMatchSet} and {@link ObservablePatternMatchList}.
+ * Utility class to prepare a rule in an agenda for an observable collection. For use cases, see
+ * {@link ObservablePatternMatchSet} and {@link ObservablePatternMatchList}.
  * 
  * @author Abel Hegedus
- *
+ * 
  */
 public class ObservableCollectionHelper {
 
@@ -35,18 +35,25 @@ public class ObservableCollectionHelper {
     private ObservableCollectionHelper() {
         // TODO Auto-generated constructor stub
     }
-    
+
     /**
-     * Creates the rule used for updating the results in the given agenda. 
+     * Creates the rule used for updating the results in the given agenda.
      * 
-     * @param observableCollection the observable collection to handle
-     * @param factory the {@link IMatcherFactory} used to create the rule
-     * @param agenda an existing {@link Agenda} where the rule is created
+     * @param observableCollection
+     *            the observable collection to handle
+     * @param factory
+     *            the {@link IMatcherFactory} used to create the rule
+     * @param agenda
+     *            an existing {@link Agenda} where the rule is created
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(IObservablePatternMatchCollection<Match> observableCollection, IMatcherFactory<Matcher> factory, IAgenda agenda) {
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(
+            IObservablePatternMatchCollection<Match> observableCollection, IMatcherFactory<Matcher> factory,
+            IAgenda agenda) {
         IRule<Match> rule = agenda.createRule(factory, false, true);
-        ObservableCollectionProcessor<Match> insertProc = new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollection);
-        ObservableCollectionProcessor<Match> deleteProc = new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollection);
+        ObservableCollectionProcessor<Match> insertProc = new ObservableCollectionProcessor<Match>(Direction.INSERT,
+                observableCollection);
+        ObservableCollectionProcessor<Match> deleteProc = new ObservableCollectionProcessor<Match>(Direction.DELETE,
+                observableCollection);
         rule.setStateChangeProcessor(ActivationState.APPEARED, insertProc);
         rule.setStateChangeProcessor(ActivationState.DISAPPEARED, deleteProc);
         AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));

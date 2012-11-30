@@ -31,75 +31,74 @@ import org.eclipse.xtext.validation.Issue;
 import com.google.inject.Inject;
 
 public class GeneratorMarkerFeedback implements IErrorFeedback {
-	
-	@Inject
-	private MarkerCreator markerCreator;
-	@Inject
-	private ILocationInFileProvider locationProvider;
-	@Inject
-	private Logger logger;
 
-	@Override
-	public void reportError(EObject ctx, String message, String errorCode, Severity severity, String markerType) {
-		try {
-			Resource res = ctx.eResource();
-			if (res != null && res.getURI().isPlatformResource()) {
-				ITextRegion region = locationProvider
-						.getSignificantTextRegion(ctx);
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IFile file = root.getFile(new Path(res.getURI()
-						.toPlatformString(true)));
-				createMarker(message, errorCode, markerType, file, region, severity);
-			}
-		} catch (CoreException e) {
-			logger.error("Error while creating error marker", e);
-		}
-	}
+    @Inject
+    private MarkerCreator markerCreator;
+    @Inject
+    private ILocationInFileProvider locationProvider;
+    @Inject
+    private Logger logger;
 
-	@Override
-	public void reportErrorNoLocation(EObject ctx, String message, String errorCode, Severity severity, String markerType) {
-		try {
-			Resource res = ctx.eResource();
-			if (res != null && res.getURI().isPlatformResource()) {
-				ITextRegion region = ITextRegion.EMPTY_REGION;
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IFile file = root.getFile(new Path(res.getURI()
-						.toPlatformString(true)));
-				createMarker(message, errorCode, markerType, file, region, severity);
-			}
-		} catch (CoreException e) {
-			logger.error("Error while creating error marker", e);
-		}
-	}
+    @Override
+    public void reportError(EObject ctx, String message, String errorCode, Severity severity, String markerType) {
+        try {
+            Resource res = ctx.eResource();
+            if (res != null && res.getURI().isPlatformResource()) {
+                ITextRegion region = locationProvider.getSignificantTextRegion(ctx);
+                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                IFile file = root.getFile(new Path(res.getURI().toPlatformString(true)));
+                createMarker(message, errorCode, markerType, file, region, severity);
+            }
+        } catch (CoreException e) {
+            logger.error("Error while creating error marker", e);
+        }
+    }
 
-	@Override
-	public void reportError(IFile file, String message, String errorCode, Severity severity, String markerType) {
-		try {
-			ITextRegion region = ITextRegion.EMPTY_REGION;
-			createMarker(message, errorCode, markerType, file, region, severity);
-		} catch (CoreException e) {
-			logger.error("Error while creating error marker", e);
-		}
-	}
-	
-	private void createMarker(String message, String errorCode, String markerType, IFile file,
-			ITextRegion region, Severity severity) throws CoreException {
-		Issue.IssueImpl issue = new Issue.IssueImpl();
-		issue.setOffset(region.getOffset());
-		issue.setLength(region.getLength());
-		issue.setMessage(message);
-		issue.setCode(errorCode);
-		issue.setSeverity(severity);
-		issue.setType(CheckType.EXPENSIVE);
-		markerCreator.createMarker(issue, file, markerType);
-	}
-	@Override
-	public void clearMarkers(IResource resource, String markerType) {
-		try {
-			resource.deleteMarkers(markerType, true, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			logger.error("Error while clearing markers", e);
-		}
-	}
+    @Override
+    public void reportErrorNoLocation(EObject ctx, String message, String errorCode, Severity severity,
+            String markerType) {
+        try {
+            Resource res = ctx.eResource();
+            if (res != null && res.getURI().isPlatformResource()) {
+                ITextRegion region = ITextRegion.EMPTY_REGION;
+                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                IFile file = root.getFile(new Path(res.getURI().toPlatformString(true)));
+                createMarker(message, errorCode, markerType, file, region, severity);
+            }
+        } catch (CoreException e) {
+            logger.error("Error while creating error marker", e);
+        }
+    }
+
+    @Override
+    public void reportError(IFile file, String message, String errorCode, Severity severity, String markerType) {
+        try {
+            ITextRegion region = ITextRegion.EMPTY_REGION;
+            createMarker(message, errorCode, markerType, file, region, severity);
+        } catch (CoreException e) {
+            logger.error("Error while creating error marker", e);
+        }
+    }
+
+    private void createMarker(String message, String errorCode, String markerType, IFile file, ITextRegion region,
+            Severity severity) throws CoreException {
+        Issue.IssueImpl issue = new Issue.IssueImpl();
+        issue.setOffset(region.getOffset());
+        issue.setLength(region.getLength());
+        issue.setMessage(message);
+        issue.setCode(errorCode);
+        issue.setSeverity(severity);
+        issue.setType(CheckType.EXPENSIVE);
+        markerCreator.createMarker(issue, file, markerType);
+    }
+
+    @Override
+    public void clearMarkers(IResource resource, String markerType) {
+        try {
+            resource.deleteMarkers(markerType, true, IResource.DEPTH_INFINITE);
+        } catch (CoreException e) {
+            logger.error("Error while clearing markers", e);
+        }
+    }
 
 }

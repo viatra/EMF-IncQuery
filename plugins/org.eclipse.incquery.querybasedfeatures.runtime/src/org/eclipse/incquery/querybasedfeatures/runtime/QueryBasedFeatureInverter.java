@@ -21,6 +21,7 @@ public interface QueryBasedFeatureInverter<ComputedType, StorageType> {
 
     /**
      * Validate the computed value to ensure that inverting is possible
+     * 
      * @param computedValue
      * @return
      */

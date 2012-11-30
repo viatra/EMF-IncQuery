@@ -57,6 +57,7 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
             validateParameterExpression(pattern, ref, value, validator);
         }
     }
+
     /**
      * @param pattern
      * @param ref
@@ -68,8 +69,8 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
         String[] tokens = expression.split("\\.");
         String featureName = "";
         if (expression.isEmpty() || tokens.length == 0) {
-            validator.error("Expression must not be empty.", ref,
-                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+            validator.error("Expression must not be empty.", ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
+                    GENERAL_ISSUE_CODE);
             return;
         } else if (tokens.length == 1) {
             featureName = "name";
@@ -95,9 +96,8 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
         }
         EClass classDef = (EClass) classifier;
         if (classDef.getEStructuralFeature(featureName) == null) {
-            validator.error(
-                    String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()), ref,
-                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
+            validator.error(String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()),
+                    ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
         }
     }
 

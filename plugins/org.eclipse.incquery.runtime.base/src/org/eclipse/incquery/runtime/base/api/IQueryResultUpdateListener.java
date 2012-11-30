@@ -12,30 +12,36 @@ package org.eclipse.incquery.runtime.base.api;
 
 /**
  * Listener interface for receiving notification from {@link QueryResultMultimap}
- *   
+ * 
  * @author Abel Hegedus
- *
+ * 
  * @param <KeyType>
  * @param <ValueType>
  */
-public interface IQueryResultUpdateListener<KeyType, ValueType>{
+public interface IQueryResultUpdateListener<KeyType, ValueType> {
     /**
      * This method is called by the query result multimap when a new key-value pair is put into the multimap
      * 
-     * <p> Only invoked if the contents of the multimap changed!
+     * <p>
+     * Only invoked if the contents of the multimap changed!
      * 
-     * @param key the key of the newly inserted pair
-     * @param value the value of the newly inserted pair
+     * @param key
+     *            the key of the newly inserted pair
+     * @param value
+     *            the value of the newly inserted pair
      */
     void notifyPut(KeyType key, ValueType value);
-    
+
     /**
      * This method is called by the query result multimap when key-value pair is removed from the multimap
      * 
-     * <p> Only invoked if the contents of the multimap changed!
+     * <p>
+     * Only invoked if the contents of the multimap changed!
      * 
-     * @param key the key of the removed pair
-     * @param value the value of the removed pair
+     * @param key
+     *            the key of the removed pair
+     * @param value
+     *            the value of the removed pair
      */
     void notifyRemove(KeyType key, ValueType value);
 }

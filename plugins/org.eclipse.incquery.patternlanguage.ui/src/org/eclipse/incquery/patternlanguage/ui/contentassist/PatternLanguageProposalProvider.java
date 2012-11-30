@@ -33,79 +33,68 @@ import com.google.inject.Inject;
  */
 public class PatternLanguageProposalProvider extends AbstractPatternLanguageProposalProvider {
 
-	@Inject
-	private PatternAnnotationProvider annotationProvider;
-	@Inject
-	private IScopeProvider scopeProvider;
-	@Inject
-	private ReferenceProposalCreator crossReferenceProposalCreator;
-	
-	@Override
-    public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		for (String annotationName : annotationProvider.getAllAnnotationNames()) {
-			String prefixedName = String.format("@%s", annotationName);
-			String prefix = context.getPrefix();
-			ContentAssistContext modifiedContext = context;
-			INode lastNode = context.getLastCompleteNode();
-			if ("".equals(prefix)
-					&& lastNode.getSemanticElement() instanceof Annotation) {
-				Annotation previousNode = (Annotation) lastNode
-						.getSemanticElement();
-				String annotationPrefix = previousNode.getName();
-				if (previousNode.getParameters().isEmpty()
-						&& !annotationProvider.getAllAnnotationNames()
-								.contains(annotationPrefix)) {
-					modifiedContext = context
-							.copy()
-							.setReplaceRegion(
-									new Region(lastNode.getOffset(), lastNode
-											.getLength() + prefix.length()))
-							.toContext();
-					prefixedName = annotationName;
-				}
-			}
-			ICompletionProposal proposal = createCompletionProposal(
-					prefixedName, prefixedName, null, modifiedContext);
-			if (proposal instanceof ConfigurableCompletionProposal) {
-				((ConfigurableCompletionProposal) proposal)
-						.setAdditionalProposalInfo(annotationProvider
-								.getAnnotationObject(annotationName));
-				((ConfigurableCompletionProposal) proposal)
-						.setHover(getHover());
-			}
-			acceptor.accept(proposal);
-		}
-	}
+    @Inject
+    private PatternAnnotationProvider annotationProvider;
+    @Inject
+    private IScopeProvider scopeProvider;
+    @Inject
+    private ReferenceProposalCreator crossReferenceProposalCreator;
 
-	@Override
-    public void complete_AnnotationParameter(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		if (model instanceof Annotation) {
-			Annotation annotation = (Annotation) model;
-			for (String paramName : annotationProvider.getAnnotationParameters(annotation.getName())){
-				String outputName = String.format("%s = ", paramName);
-				ICompletionProposal proposal = createCompletionProposal(outputName, paramName, null, context);
-				if (proposal instanceof ConfigurableCompletionProposal) {
-					((ConfigurableCompletionProposal) proposal)
-							.setAdditionalProposalInfo(annotationProvider
-									.getAnnotationParameter(
-											annotation.getName(), paramName));
-					((ConfigurableCompletionProposal) proposal)
-							.setHover(getHover());
-				}
-				acceptor.accept(proposal);
-			}
-		}
-	}
+    @Override
+    public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        for (String annotationName : annotationProvider.getAllAnnotationNames()) {
+            String prefixedName = String.format("@%s", annotationName);
+            String prefix = context.getPrefix();
+            ContentAssistContext modifiedContext = context;
+            INode lastNode = context.getLastCompleteNode();
+            if ("".equals(prefix) && lastNode.getSemanticElement() instanceof Annotation) {
+                Annotation previousNode = (Annotation) lastNode.getSemanticElement();
+                String annotationPrefix = previousNode.getName();
+                if (previousNode.getParameters().isEmpty()
+                        && !annotationProvider.getAllAnnotationNames().contains(annotationPrefix)) {
+                    modifiedContext = context.copy()
+                            .setReplaceRegion(new Region(lastNode.getOffset(), lastNode.getLength() + prefix.length()))
+                            .toContext();
+                    prefixedName = annotationName;
+                }
+            }
+            ICompletionProposal proposal = createCompletionProposal(prefixedName, prefixedName, null, modifiedContext);
+            if (proposal instanceof ConfigurableCompletionProposal) {
+                ((ConfigurableCompletionProposal) proposal).setAdditionalProposalInfo(annotationProvider
+                        .getAnnotationObject(annotationName));
+                ((ConfigurableCompletionProposal) proposal).setHover(getHover());
+            }
+            acceptor.accept(proposal);
+        }
+    }
 
-	@Override
-	public void complete_VariableReference(EObject model, RuleCall ruleCall,
-			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		IScope scope = scopeProvider.getScope(model, PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE);
-		crossReferenceProposalCreator.lookupCrossReference(scope, model,
-				PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
-				acceptor, Predicates.<IEObjectDescription> alwaysTrue(),
-				getProposalFactory(ruleCall.getRule().getName(), context));
-		
+    @Override
+    public void complete_AnnotationParameter(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        if (model instanceof Annotation) {
+            Annotation annotation = (Annotation) model;
+            for (String paramName : annotationProvider.getAnnotationParameters(annotation.getName())) {
+                String outputName = String.format("%s = ", paramName);
+                ICompletionProposal proposal = createCompletionProposal(outputName, paramName, null, context);
+                if (proposal instanceof ConfigurableCompletionProposal) {
+                    ((ConfigurableCompletionProposal) proposal).setAdditionalProposalInfo(annotationProvider
+                            .getAnnotationParameter(annotation.getName(), paramName));
+                    ((ConfigurableCompletionProposal) proposal).setHover(getHover());
+                }
+                acceptor.accept(proposal);
+            }
+        }
+    }
 
-	}
+    @Override
+    public void complete_VariableReference(EObject model, RuleCall ruleCall, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        IScope scope = scopeProvider.getScope(model, PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE);
+        crossReferenceProposalCreator.lookupCrossReference(scope, model,
+                PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE, acceptor,
+                Predicates.<IEObjectDescription> alwaysTrue(),
+                getProposalFactory(ruleCall.getRule().getName(), context));
+
+    }
 }

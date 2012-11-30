@@ -16,7 +16,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Use this class to register components to be used within the IDE.
  */
 public class PatternLanguageUiModule extends AbstractPatternLanguageUiModule {
-	public PatternLanguageUiModule(AbstractUIPlugin plugin) {
-		super(plugin);
-	}
+    public PatternLanguageUiModule(AbstractUIPlugin plugin) {
+        super(plugin);
+    }
 }

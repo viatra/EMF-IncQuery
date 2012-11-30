@@ -19,47 +19,47 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 
 public final class EMFPatternLanguageScopeHelper {
 
-	public static final String NOT_AN_ENUMERATION_REFERENCE_ERROR = "Not an enumeration reference";
-	
-	private EMFPatternLanguageScopeHelper(){}
+    public static final String NOT_AN_ENUMERATION_REFERENCE_ERROR = "Not an enumeration reference";
 
-	public static EEnum calculateEnumerationType(PathExpressionHead head) throws ResolutionException{
-		if (head.getTail() == null) {
-			throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
-		}
-		return calculateEnumerationType(head.getTail());
-	}
-	
-	public static EEnum calculateEnumerationType(PathExpressionTail tail) throws ResolutionException{
-		EClassifier classifier = calculateExpressionType(tail);
-		if (classifier instanceof EEnum) {
-			return (EEnum) classifier;
-		}
-		throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
-	}
-	
-	public static EClassifier calculateExpressionType(PathExpressionHead head) throws ResolutionException{
-		if (head.getTail() == null) {
-			throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
-		}
-		return calculateExpressionType(head.getTail());
-	}
+    private EMFPatternLanguageScopeHelper() {
+    }
 
-	public static EClassifier calculateExpressionType(PathExpressionTail tail)
-			throws ResolutionException {
-		if (tail.getTail() == null) {
-			Type type = tail.getType();
-			return ((ReferenceType)type).getRefname().getEType();
-		} else {
-			return calculateEnumerationType(tail.getTail());
-		}
-	}
-	
-	public static PathExpressionHead getExpressionHead(PathExpressionTail tail) {
-		if (tail.eContainer() instanceof PathExpressionHead) {
-			return (PathExpressionHead) tail.eContainer();
-		} else {
-			return getExpressionHead((PathExpressionTail) tail.eContainer());
-		}
-	}
+    public static EEnum calculateEnumerationType(PathExpressionHead head) throws ResolutionException {
+        if (head.getTail() == null) {
+            throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+        }
+        return calculateEnumerationType(head.getTail());
+    }
+
+    public static EEnum calculateEnumerationType(PathExpressionTail tail) throws ResolutionException {
+        EClassifier classifier = calculateExpressionType(tail);
+        if (classifier instanceof EEnum) {
+            return (EEnum) classifier;
+        }
+        throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+    }
+
+    public static EClassifier calculateExpressionType(PathExpressionHead head) throws ResolutionException {
+        if (head.getTail() == null) {
+            throw new ResolutionException(NOT_AN_ENUMERATION_REFERENCE_ERROR);
+        }
+        return calculateExpressionType(head.getTail());
+    }
+
+    public static EClassifier calculateExpressionType(PathExpressionTail tail) throws ResolutionException {
+        if (tail.getTail() == null) {
+            Type type = tail.getType();
+            return ((ReferenceType) type).getRefname().getEType();
+        } else {
+            return calculateEnumerationType(tail.getTail());
+        }
+    }
+
+    public static PathExpressionHead getExpressionHead(PathExpressionTail tail) {
+        if (tail.eContainer() instanceof PathExpressionHead) {
+            return (PathExpressionHead) tail.eContainer();
+        } else {
+            return getExpressionHead((PathExpressionTail) tail.eContainer());
+        }
+    }
 }

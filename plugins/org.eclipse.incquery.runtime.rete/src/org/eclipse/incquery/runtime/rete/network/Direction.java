@@ -12,23 +12,22 @@
 package org.eclipse.incquery.runtime.rete.network;
 
 /**
- * Indicates whether a propagated update event signals the insertion or deletion
- * of an element
+ * Indicates whether a propagated update event signals the insertion or deletion of an element
  * 
  * @author Gabor Bergmann
  * 
  */
 public enum Direction {
-	INSERT, REVOKE;
+    INSERT, REVOKE;
 
-	public Direction opposite() {
-		switch (this) {
-		case INSERT:
-			return REVOKE;
-		case REVOKE:
-			return INSERT;
-		default:
-			return INSERT;
-		}
-	}
+    public Direction opposite() {
+        switch (this) {
+        case INSERT:
+            return REVOKE;
+        case REVOKE:
+            return INSERT;
+        default:
+            return INSERT;
+        }
+    }
 }

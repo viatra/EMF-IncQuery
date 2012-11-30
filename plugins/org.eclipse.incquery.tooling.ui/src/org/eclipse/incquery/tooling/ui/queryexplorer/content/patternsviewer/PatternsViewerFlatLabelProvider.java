@@ -19,67 +19,63 @@ import org.eclipse.swt.graphics.Image;
 
 public class PatternsViewerFlatLabelProvider implements ILabelProvider {
 
-	protected PatternsViewerInput input;
-	
-	public PatternsViewerFlatLabelProvider(PatternsViewerInput input) {
-		this.input = input;
-	}
+    protected PatternsViewerInput input;
 
-	@Override
-	public void addListener(ILabelProviderListener listener) {
-		
-	}
+    public PatternsViewerFlatLabelProvider(PatternsViewerInput input) {
+        this.input = input;
+    }
 
-	@Override
-	public void dispose() {
-		
-	}
+    @Override
+    public void addListener(ILabelProviderListener listener) {
 
-	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
+    }
 
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-		
-	}
+    @Override
+    public void dispose() {
 
-	@Override
-	public Image getImage(Object element) {
-		ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
+    }
 
-		if (element instanceof PatternLeaf) {
-			return imageRegistry.get(IncQueryGUIPlugin.ICON_EIQ);
-		}
-		else if (element instanceof PatternComposite) {
-			if (!element.equals(input.getGeneratedPatternsRoot()) && !element.equals(input.getGenericPatternsRoot())) {
-				return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
-			}
-			else {
-				return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
-			}
-		}  
-		return null;
-	}
+    @Override
+    public boolean isLabelProperty(Object element, String property) {
+        return false;
+    }
 
-	@Override
-	public String getText(Object element) {
-		if (element instanceof PatternComposite) {
-			PatternComposite composite = (PatternComposite) element;
-			
-			if (composite.equals(input.getGeneratedPatternsRoot()) || composite.equals(input.getGenericPatternsRoot())) {
-				return composite.getPatternNameFragment();
-			}
-			else {
-				return composite.getFullPatternNamePrefix();
-			}
-		}
-		else if (element instanceof PatternLeaf) {
-			return ((PatternComponent) element).getPatternNameFragment();
-		}
-		
-		return null;
-	}
+    @Override
+    public void removeListener(ILabelProviderListener listener) {
+
+    }
+
+    @Override
+    public Image getImage(Object element) {
+        ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
+
+        if (element instanceof PatternLeaf) {
+            return imageRegistry.get(IncQueryGUIPlugin.ICON_EIQ);
+        } else if (element instanceof PatternComposite) {
+            if (!element.equals(input.getGeneratedPatternsRoot()) && !element.equals(input.getGenericPatternsRoot())) {
+                return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
+            } else {
+                return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getText(Object element) {
+        if (element instanceof PatternComposite) {
+            PatternComposite composite = (PatternComposite) element;
+
+            if (composite.equals(input.getGeneratedPatternsRoot()) || composite.equals(input.getGenericPatternsRoot())) {
+                return composite.getPatternNameFragment();
+            } else {
+                return composite.getFullPatternNamePrefix();
+            }
+        } else if (element instanceof PatternLeaf) {
+            return ((PatternComponent) element).getPatternNameFragment();
+        }
+
+        return null;
+    }
 
 }

@@ -12,6 +12,5 @@
 package org.eclipse.incquery.runtime.base.core;
 
 public enum NavigationHelperType {
-	REGISTER,
-	ALL
+    REGISTER, ALL
 }

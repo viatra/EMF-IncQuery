@@ -18,32 +18,36 @@ import org.eclipse.incquery.runtime.rete.construction.Stub;
 
 /**
  * Any constraint that can only be checked on certain stubs (e.g. those stubs that already contain some variables).
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
-public abstract class DeferredPConstraint<PatternDescription, StubHandle> extends BasePConstraint<PatternDescription, StubHandle> {
+public abstract class DeferredPConstraint<PatternDescription, StubHandle> extends
+        BasePConstraint<PatternDescription, StubHandle> {
 
-	public DeferredPConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Set<PVariable> affectedVariables) {
-		super(pSystem, affectedVariables);
-	}
+    public DeferredPConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Set<PVariable> affectedVariables) {
+        super(pSystem, affectedVariables);
+    }
 
-	public abstract boolean isReadyAt(Stub<StubHandle> stub);
-	
-	/**
-	 * @pre this.isReadyAt(stub);
-	 */
-	public Stub<StubHandle> checkOn(Stub<StubHandle> stub) throws RetePatternBuildException {
-		Stub<StubHandle> newStub = doCheckOn(stub);
-		newStub.addConstraint(this);
-		return newStub;
-	}
-	protected abstract Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException;
+    public abstract boolean isReadyAt(Stub<StubHandle> stub);
 
-	/**
-	 * Called when the constraint is not ready, but cannot be deferred further. 
-	 * @param stub
-	 * @throws RetePatternBuildException to indicate the error in detail.
-	 * PRE: !isReady(stub)
-	 */
-	public abstract void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException;
+    /**
+     * @pre this.isReadyAt(stub);
+     */
+    public Stub<StubHandle> checkOn(Stub<StubHandle> stub) throws RetePatternBuildException {
+        Stub<StubHandle> newStub = doCheckOn(stub);
+        newStub.addConstraint(this);
+        return newStub;
+    }
+
+    protected abstract Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException;
+
+    /**
+     * Called when the constraint is not ready, but cannot be deferred further.
+     * 
+     * @param stub
+     * @throws RetePatternBuildException
+     *             to indicate the error in detail. PRE: !isReady(stub)
+     */
+    public abstract void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException;
 }

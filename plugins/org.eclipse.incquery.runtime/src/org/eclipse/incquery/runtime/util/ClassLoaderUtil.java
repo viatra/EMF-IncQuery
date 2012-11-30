@@ -32,41 +32,37 @@ import org.eclipse.jdt.launching.JavaRuntime;
  */
 public class ClassLoaderUtil {
 
-	/**
-	 * Returns a {@link ClassLoader} that is capable of loading classes defined
-	 * in the project of the input file, or in any dependencies of that project.
-	 * 
-	 * @param file
-	 * @return {@link ClassLoader}
-	 * @throws CoreException
-	 * @throws MalformedURLException
-	 */
-	public static ClassLoader getClassLoader(IFile file) throws CoreException,
-			MalformedURLException {
-		if (file != null) {
-			IProject project = file.getProject();
-			IJavaProject jp = JavaCore.create(project);
-			String[] classPathEntries = JavaRuntime
-					.computeDefaultRuntimeClassPath(jp);
-			List<URL> classURLs = getClassesAsURLs(classPathEntries);
-			URL[] urls = (URL[]) classURLs.toArray(new URL[classURLs.size()]);
-			URLClassLoader loader = URLClassLoader.newInstance(urls, jp
-					.getClass().getClassLoader());
-			return loader;
-		}
-		return null;
-	}
+    /**
+     * Returns a {@link ClassLoader} that is capable of loading classes defined in the project of the input file, or in
+     * any dependencies of that project.
+     * 
+     * @param file
+     * @return {@link ClassLoader}
+     * @throws CoreException
+     * @throws MalformedURLException
+     */
+    public static ClassLoader getClassLoader(IFile file) throws CoreException, MalformedURLException {
+        if (file != null) {
+            IProject project = file.getProject();
+            IJavaProject jp = JavaCore.create(project);
+            String[] classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(jp);
+            List<URL> classURLs = getClassesAsURLs(classPathEntries);
+            URL[] urls = (URL[]) classURLs.toArray(new URL[classURLs.size()]);
+            URLClassLoader loader = URLClassLoader.newInstance(urls, jp.getClass().getClassLoader());
+            return loader;
+        }
+        return null;
+    }
 
-	private static List<URL> getClassesAsURLs(String[] classPathEntries)
-			throws MalformedURLException {
-		List<URL> urlList = new ArrayList<URL>();
-		for (int i = 0; i < classPathEntries.length; i++) {
-			String entry = classPathEntries[i];
-			IPath path = new Path(entry);
-			URL url = path.toFile().toURI().toURL();
-			urlList.add(url);
-		}
-		return urlList;
-	}
+    private static List<URL> getClassesAsURLs(String[] classPathEntries) throws MalformedURLException {
+        List<URL> urlList = new ArrayList<URL>();
+        for (int i = 0; i < classPathEntries.length; i++) {
+            String entry = classPathEntries[i];
+            IPath path = new Path(entry);
+            URL url = path.toFile().toURI().toURL();
+            urlList.add(url);
+        }
+        return urlList;
+    }
 
 }

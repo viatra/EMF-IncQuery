@@ -34,28 +34,34 @@ import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 public final class QueryBasedFeatureHelper {
 
     /**
-     * Weak hash map for keeping the created 
+     * Weak hash map for keeping the created
      */
     private static final Map<Notifier, Map<EStructuralFeature, WeakReference<IQueryBasedFeatureHandler>>> FEATURE_MAP = new WeakHashMap<Notifier, Map<EStructuralFeature, WeakReference<IQueryBasedFeatureHandler>>>();
 
     /**
-	 * Constructor hidden for static utility class
-	 */
+     * Constructor hidden for static utility class
+     */
     private QueryBasedFeatureHelper() {
     }
 
     /**
-     * Decide what {@link Notifier} to use as the scope of the {@link IncQueryMatcher} underlying the created {@link IQueryBasedFeatureHandler}.
+     * Decide what {@link Notifier} to use as the scope of the {@link IncQueryMatcher} underlying the created
+     * {@link IQueryBasedFeatureHandler}.
      * 
-     * <p> Optimally, the {@link ResourceSet} is reachable and most other matchers will use it as well.
+     * <p>
+     * Optimally, the {@link ResourceSet} is reachable and most other matchers will use it as well.
      * 
-     * <p> Otherwise, the {@link Resource} is used if the model is not inside a resource set.
+     * <p>
+     * Otherwise, the {@link Resource} is used if the model is not inside a resource set.
      * 
-     * <p> If none of the above are reachable, the container hierarchy is traversed for a top element.
+     * <p>
+     * If none of the above are reachable, the container hierarchy is traversed for a top element.
      * 
-     * <p> Finally, the source itself is returned.
+     * <p>
+     * Finally, the source itself is returned.
      * 
-     * @param source the source object that initializes the handler
+     * @param source
+     *            the source object that initializes the handler
      * @return the topmost reachable Notifier from the source
      */
     private static Notifier prepareNotifierForSource(EObject source) {
@@ -70,7 +76,7 @@ public final class QueryBasedFeatureHelper {
                 }
             } else {
                 EObject top = source;
-                while(top.eContainer() != null) {
+                while (top.eContainer() != null) {
                     top = top.eContainer();
                 }
                 return prepareNotifierForSource(top);
@@ -80,18 +86,27 @@ public final class QueryBasedFeatureHelper {
     }
 
     /**
-     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} in the given {@link Notifier}.
-     *  If the handler does not exist yet, it is also initialized, before being returned.
+     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} in the given
+     * {@link Notifier}. If the handler does not exist yet, it is also initialized, before being returned.
      * 
-     * <p> The required matcher is initialized using the pattern fully qualified name passed as a parameter.
+     * <p>
+     * The required matcher is initialized using the pattern fully qualified name passed as a parameter.
      * 
-     * @param notifier the exact notifier to use for the handler initialization
-     * @param feature the feature that is managed by the handler
-     * @param patternFQN the fully qualified name of the pattern used by the handler
-     * @param sourceParamName the name of the parameter in the pattern that represents the source end of the feature
-     * @param targetParamName the name of the parameter in the pattern that represents the target end of the feature
-     * @param kind the {@link QueryBasedFeatureKind} that is used by the handler
-     * @param keepCache specifies whether the handler uses an internal cache for feature values. Only possible with single and many reference kinds
+     * @param notifier
+     *            the exact notifier to use for the handler initialization
+     * @param feature
+     *            the feature that is managed by the handler
+     * @param patternFQN
+     *            the fully qualified name of the pattern used by the handler
+     * @param sourceParamName
+     *            the name of the parameter in the pattern that represents the source end of the feature
+     * @param targetParamName
+     *            the name of the parameter in the pattern that represents the target end of the feature
+     * @param kind
+     *            the {@link QueryBasedFeatureKind} that is used by the handler
+     * @param keepCache
+     *            specifies whether the handler uses an internal cache for feature values. Only possible with single and
+     *            many reference kinds
      * @return the query-based feature handler that manages the feature values
      */
     public static IQueryBasedFeatureHandler getQueryBasedFeatureHandler(Notifier notifier, EStructuralFeature feature,
@@ -132,21 +147,30 @@ public final class QueryBasedFeatureHelper {
         return newDerivedFeature;
     }
 
-
     /**
-     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} in the given {@link Notifier}.
-     *  If the handler does not exist yet, it is also initialized, before being returned.
+     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} in the given
+     * {@link Notifier}. If the handler does not exist yet, it is also initialized, before being returned.
      * 
-     * <p> The required matcher is initialized using the pattern fully qualified name passed as a parameter.
+     * <p>
+     * The required matcher is initialized using the pattern fully qualified name passed as a parameter.
      * 
-     * <p> Calls {@link #getQueryBasedFeatureHandler(Notifier, EStructuralFeature, String, String, String, QueryBasedFeatureKind, boolean)} with keepCache = true.
+     * <p>
+     * Calls
+     * {@link #getQueryBasedFeatureHandler(Notifier, EStructuralFeature, String, String, String, QueryBasedFeatureKind, boolean)}
+     * with keepCache = true.
      * 
-     * @param notifier the exact notifier to use for the handler initialization
-     * @param feature the feature that is managed by the handler
-     * @param patternFQN the fully qualified name of the pattern used by the handler
-     * @param sourceParamName the name of the parameter in the pattern that represents the source end of the feature
-     * @param targetParamName the name of the parameter in the pattern that represents the target end of the feature
-     * @param kind the {@link QueryBasedFeatureKind} that is used by the handler
+     * @param notifier
+     *            the exact notifier to use for the handler initialization
+     * @param feature
+     *            the feature that is managed by the handler
+     * @param patternFQN
+     *            the fully qualified name of the pattern used by the handler
+     * @param sourceParamName
+     *            the name of the parameter in the pattern that represents the source end of the feature
+     * @param targetParamName
+     *            the name of the parameter in the pattern that represents the target end of the feature
+     * @param kind
+     *            the {@link QueryBasedFeatureKind} that is used by the handler
      * @return the query-based feature handler that manages the feature values
      */
     public static IQueryBasedFeatureHandler getQueryBasedFeatureHandlerOnNotifier(Notifier notifier,
@@ -156,21 +180,35 @@ public final class QueryBasedFeatureHelper {
     }
 
     /**
-     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature}  on the source or the topmost {@link Notifier}
-     *  reachable from the source. If the handler does not exist yet, it is also initialized, before being returned.
+     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} on the source or the
+     * topmost {@link Notifier} reachable from the source. If the handler does not exist yet, it is also initialized,
+     * before being returned.
      * 
-     * <p> The required matcher is initialized using the pattern fully qualified name passed as a parameter.
+     * <p>
+     * The required matcher is initialized using the pattern fully qualified name passed as a parameter.
      * 
-     * <p> Calls {@link #getQueryBasedFeatureHandler(Notifier, EStructuralFeature, String, String, String, QueryBasedFeatureKind, boolean)}.
+     * <p>
+     * Calls
+     * {@link #getQueryBasedFeatureHandler(Notifier, EStructuralFeature, String, String, String, QueryBasedFeatureKind, boolean)}.
      * 
-     * @param source the source object used for the handler initialization (used for determining the notifier for the underlying matcher)
-     * @param feature the feature that is managed by the handler
-     * @param patternFQN the fully qualified name of the pattern used by the handler
-     * @param sourceParamName the name of the parameter in the pattern that represents the source end of the feature
-     * @param targetParamName the name of the parameter in the pattern that represents the target end of the feature
-     * @param kind the {@link QueryBasedFeatureKind} that is used by the handler
-     * @param keepCache specifies whether the handler uses an internal cache for feature values. Only possible with single and many reference kinds
-     * @param useSourceAsNotifier if true, the source is used as the notifier for the matcher initialization
+     * @param source
+     *            the source object used for the handler initialization (used for determining the notifier for the
+     *            underlying matcher)
+     * @param feature
+     *            the feature that is managed by the handler
+     * @param patternFQN
+     *            the fully qualified name of the pattern used by the handler
+     * @param sourceParamName
+     *            the name of the parameter in the pattern that represents the source end of the feature
+     * @param targetParamName
+     *            the name of the parameter in the pattern that represents the target end of the feature
+     * @param kind
+     *            the {@link QueryBasedFeatureKind} that is used by the handler
+     * @param keepCache
+     *            specifies whether the handler uses an internal cache for feature values. Only possible with single and
+     *            many reference kinds
+     * @param useSourceAsNotifier
+     *            if true, the source is used as the notifier for the matcher initialization
      * @return the query-based feature handler that manages the feature values
      */
     public static IQueryBasedFeatureHandler getQueryBasedFeatureHandler(EObject source, EStructuralFeature feature,
@@ -185,19 +223,30 @@ public final class QueryBasedFeatureHelper {
     }
 
     /**
-     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} on the topmost {@link Notifier}
-     *  reachable from the source. If the handler does not exist yet, it is also initialized, before being returned.
+     * Returns the {@link IQueryBasedFeatureHandler} for the given {@link EStructuralFeature} on the topmost
+     * {@link Notifier} reachable from the source. If the handler does not exist yet, it is also initialized, before
+     * being returned.
      * 
-     * <p> The required matcher is initialized using the pattern fully qualified name passed as a parameter.
+     * <p>
+     * The required matcher is initialized using the pattern fully qualified name passed as a parameter.
      * 
-     * <p> Calls {@link #getQueryBasedFeatureHandler(EObject, EStructuralFeature, String, String, String, QueryBasedFeatureKind, boolean, boolean)}.
+     * <p>
+     * Calls
+     * {@link #getQueryBasedFeatureHandler(EObject, EStructuralFeature, String, String, String, QueryBasedFeatureKind, boolean, boolean)}.
      * 
-     * @param source the source object used for the handler initialization (used for determining the notifier for the underlying matcher)
-     * @param feature the feature that is managed by the handler
-     * @param patternFQN the fully qualified name of the pattern used by the handler
-     * @param sourceParamName the name of the parameter in the pattern that represents the source end of the feature
-     * @param targetParamName the name of the parameter in the pattern that represents the target end of the feature
-     * @param kind the {@link QueryBasedFeatureKind} that is used by the handler
+     * @param source
+     *            the source object used for the handler initialization (used for determining the notifier for the
+     *            underlying matcher)
+     * @param feature
+     *            the feature that is managed by the handler
+     * @param patternFQN
+     *            the fully qualified name of the pattern used by the handler
+     * @param sourceParamName
+     *            the name of the parameter in the pattern that represents the source end of the feature
+     * @param targetParamName
+     *            the name of the parameter in the pattern that represents the target end of the feature
+     * @param kind
+     *            the {@link QueryBasedFeatureKind} that is used by the handler
      * @return the query-based feature handler that manages the feature values
      */
     public static IQueryBasedFeatureHandler getQueryBasedFeatureHandler(EObject source, EStructuralFeature feature,

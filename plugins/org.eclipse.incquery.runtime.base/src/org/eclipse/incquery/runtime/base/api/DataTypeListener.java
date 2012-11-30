@@ -16,23 +16,27 @@ import org.eclipse.emf.ecore.EDataType;
  * Interface for observing insertion and deletion of instances of data types.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public interface DataTypeListener {
 
-	/**
-	 * Called when the given instance of the given type is inserted. 
-	 *  
-	 * @param type the {@link EDataType} instance
-	 * @param instance the instance of the data type
-	 */
-	public void dataTypeInstanceInserted(EDataType type, Object instance);
-	
-	/**
-	 * Called when the given instance of the given type is deleted. 
-	 *  
-	 * @param type the {@link EDataType} instance
-	 * @param instance the instance of the data type
-	 */
-	public void dataTypeInstanceDeleted(EDataType type, Object instance);
+    /**
+     * Called when the given instance of the given type is inserted.
+     * 
+     * @param type
+     *            the {@link EDataType} instance
+     * @param instance
+     *            the instance of the data type
+     */
+    public void dataTypeInstanceInserted(EDataType type, Object instance);
+
+    /**
+     * Called when the given instance of the given type is deleted.
+     * 
+     * @param type
+     *            the {@link EDataType} instance
+     * @param instance
+     *            the instance of the data type
+     */
+    public void dataTypeInstanceDeleted(EDataType type, Object instance);
 }

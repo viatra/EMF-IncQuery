@@ -20,21 +20,21 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * A specialized projection indexer that can be memory-less (relying on an external source of information).
  * 
  * @author Bergmann Gábor
- *
+ * 
  */
 public abstract class SpecializedProjectionIndexer extends StandardIndexer implements ProjectionIndexer {
-	
-	protected Node activeNode;
 
-	public SpecializedProjectionIndexer(ReteContainer reteContainer, TupleMask mask, Supplier parent, Node activeNode) {
-		super(reteContainer, mask);
-		this.parent = parent;
-		this.activeNode = activeNode;
-	}
+    protected Node activeNode;
 
-	@Override
-	public Node getActiveNode() {
-		return activeNode;
-	}
+    public SpecializedProjectionIndexer(ReteContainer reteContainer, TupleMask mask, Supplier parent, Node activeNode) {
+        super(reteContainer, mask);
+        this.parent = parent;
+        this.activeNode = activeNode;
+    }
+
+    @Override
+    public Node getActiveNode() {
+        return activeNode;
+    }
 
 }

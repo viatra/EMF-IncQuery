@@ -19,32 +19,31 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Bergmann GĂˇbor
- *
- * For a binary base pattern, computes the irreflexive transitive closure (base)+
+ * 
+ *         For a binary base pattern, computes the irreflexive transitive closure (base)+
  */
-public class BinaryTransitiveClosure<PatternDescription, StubHandle> 
-	extends KeyedEnumerablePConstraint<PatternDescription, PatternDescription, StubHandle> {
+public class BinaryTransitiveClosure<PatternDescription, StubHandle> extends
+        KeyedEnumerablePConstraint<PatternDescription, PatternDescription, StubHandle> {
 
-	/**
-	 * @param pSystem
-	 * @param variablesTuple
-	 * @param pattern
-	 */
-	public BinaryTransitiveClosure(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			Tuple variablesTuple, PatternDescription pattern) {
-		super(pSystem, variablesTuple, pattern);
-	}
+    /**
+     * @param pSystem
+     * @param variablesTuple
+     * @param pattern
+     */
+    public BinaryTransitiveClosure(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple,
+            PatternDescription pattern) {
+        super(pSystem, variablesTuple, pattern);
+    }
 
-	@Override
-	public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
-		Stub<StubHandle> patternProduction = buildable.patternCallStub(variablesTuple, supplierKey);
-		return buildable.buildTransitiveClosure(patternProduction);
-	}
+    @Override
+    public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
+        Stub<StubHandle> patternProduction = buildable.patternCallStub(variablesTuple, supplierKey);
+        return buildable.buildTransitiveClosure(patternProduction);
+    }
 
-	@Override
-	protected String keyToString() {
-		return pSystem.getContext().printType(supplierKey)+"+";
-	}
+    @Override
+    protected String keyToString() {
+        return pSystem.getContext().printType(supplierKey) + "+";
+    }
 
 }

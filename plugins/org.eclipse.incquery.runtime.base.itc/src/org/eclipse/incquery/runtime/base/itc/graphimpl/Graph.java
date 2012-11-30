@@ -23,157 +23,155 @@ import org.eclipse.incquery.runtime.base.itc.igraph.IGraphObserver;
 
 public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSource<V> {
 
-	private static final long serialVersionUID = 1L;
-	private Map<V,List<V>> edgeList;
-	private Map<V,List<V>> edgeListReversed;
-	private ArrayList<IGraphObserver<V>> observers;
-	
-	public Graph() {
-		this.edgeList = new HashMap<V, List<V>>();
-		this.edgeListReversed = new HashMap<V, List<V>>();
-		this.observers = new ArrayList<IGraphObserver<V>>();
-	}
-	
-	public void insertEdge(V source, V target) {
-		//insert nodes if necessary
-//		if (!edgeList.containsKey(source)) {
-//			this.insertNode(source);
-//		}
-//		if (!edgeList.containsKey(target)) {
-//			this.insertNode(target);
-//		}
-		
-		List<V> outgoingEdges = edgeList.get(source);
-		if (outgoingEdges == null) {
-			outgoingEdges = new ArrayList<V>();
-			outgoingEdges.add(target);
-			edgeList.put(source, outgoingEdges);
-		}
-		else {
-			outgoingEdges.add(target);
-		}
-		
-		List<V> incomingEdges = edgeListReversed.get(target);
-		if (incomingEdges == null) {
-			incomingEdges = new ArrayList<V>();
-			incomingEdges.add(source);
-			edgeListReversed.put(target, incomingEdges);
-		}
-		else {
-			incomingEdges.add(source);
-		}
+    private static final long serialVersionUID = 1L;
+    private Map<V, List<V>> edgeList;
+    private Map<V, List<V>> edgeListReversed;
+    private ArrayList<IGraphObserver<V>> observers;
 
-		for (IGraphObserver<V> go : this.observers) {
-			go.edgeInserted(source, target);
-		}
-	}
-		
-	public void deleteEdge(V source, V target) {
-		
-		boolean containedEdge = false;
-		List<V> incomingEdges = edgeListReversed.get(target);
-		if (incomingEdges != null) {
-			containedEdge = incomingEdges.remove(source);
-		}
-		
-		List<V> outgoingEdges = edgeList.get(source);
-		if (outgoingEdges != null) {
-			outgoingEdges.remove(target);
-		}
-		
-		if (containedEdge) {
-			for (IGraphObserver<V> go : this.observers) {
-				go.edgeDeleted(source, target);
-			}
-		}
-	}
-	
-	public void insertNode(V node) {
-		if (!edgeList.containsKey(node)) {
-			this.edgeList.put(node, null);
-		}
-		if (!edgeListReversed.containsKey(node)) {
-			this.edgeListReversed.put(node, null);
-		}
-		
-		for (IGraphObserver<V> go : this.observers) {
-			go.nodeInserted(node);
-		}
-	}
-	
-	public void deleteNode(V node) {
-		boolean containedNode = edgeList.containsKey(node);
-		List<V> incomingEdges = edgeListReversed.get(node);
-		List<V> outgoingEdges = edgeList.get(node);
-		
-		if (incomingEdges != null) {
-			List<V> tmp = new ArrayList<V>(incomingEdges);
-			
-			for (V s : tmp) {
-				this.deleteEdge(s, node);
-			}
-		}
-		if (outgoingEdges != null) {
-			List<V> tmp = new ArrayList<V>(outgoingEdges);
-			
-			for (V t : tmp) {
-				this.deleteEdge(node, t);
-			}
-		}
-		
-		if (containedNode) {
-			for (IGraphObserver<V> go : this.observers) {
-				go.nodeDeleted(node);
-			}
-		}
-	}
-	
-	public void attachObserver(IGraphObserver<V> go) {
-		this.observers.add(go);
-	}
-	
-	public void detachObserver(IGraphObserver<V> go) {
-		this.observers.remove(go);
-	}
+    public Graph() {
+        this.edgeList = new HashMap<V, List<V>>();
+        this.edgeListReversed = new HashMap<V, List<V>>();
+        this.observers = new ArrayList<IGraphObserver<V>>();
+    }
 
-	@Override
-	public Set<V> getAllNodes() {
-		return this.edgeList.keySet();
-	}
+    public void insertEdge(V source, V target) {
+        // insert nodes if necessary
+        // if (!edgeList.containsKey(source)) {
+        // this.insertNode(source);
+        // }
+        // if (!edgeList.containsKey(target)) {
+        // this.insertNode(target);
+        // }
 
-	@Override
-	public List<V> getTargetNodes(V source) {
-		return this.edgeList.get(source);
-	}
-	
-	@Override
-	public List<V> getSourceNodes(V target) {
-		return this.edgeListReversed.get(target);
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("nodes = ");
-		for (V n : this.edgeList.keySet()) {
-			sb.append(n.toString()+" ");
-		}
-		sb.append(" edges = ");
-		for (V source : this.edgeList.keySet()) {
-			if (edgeList.get(source) != null) {
-				for (V target : this.edgeList.get(source)) {
-					sb.append("("+source+","+target+") ");
-				}
-			}
-		}
-		return sb.toString();
-	}
+        List<V> outgoingEdges = edgeList.get(source);
+        if (outgoingEdges == null) {
+            outgoingEdges = new ArrayList<V>();
+            outgoingEdges.add(target);
+            edgeList.put(source, outgoingEdges);
+        } else {
+            outgoingEdges.add(target);
+        }
 
-	public Integer[] deleteRandomEdge() {
-		return null;
-	}
+        List<V> incomingEdges = edgeListReversed.get(target);
+        if (incomingEdges == null) {
+            incomingEdges = new ArrayList<V>();
+            incomingEdges.add(source);
+            edgeListReversed.put(target, incomingEdges);
+        } else {
+            incomingEdges.add(source);
+        }
 
-	public Integer[] insertRandomEdge() {
-		return null;
-	}
+        for (IGraphObserver<V> go : this.observers) {
+            go.edgeInserted(source, target);
+        }
+    }
+
+    public void deleteEdge(V source, V target) {
+
+        boolean containedEdge = false;
+        List<V> incomingEdges = edgeListReversed.get(target);
+        if (incomingEdges != null) {
+            containedEdge = incomingEdges.remove(source);
+        }
+
+        List<V> outgoingEdges = edgeList.get(source);
+        if (outgoingEdges != null) {
+            outgoingEdges.remove(target);
+        }
+
+        if (containedEdge) {
+            for (IGraphObserver<V> go : this.observers) {
+                go.edgeDeleted(source, target);
+            }
+        }
+    }
+
+    public void insertNode(V node) {
+        if (!edgeList.containsKey(node)) {
+            this.edgeList.put(node, null);
+        }
+        if (!edgeListReversed.containsKey(node)) {
+            this.edgeListReversed.put(node, null);
+        }
+
+        for (IGraphObserver<V> go : this.observers) {
+            go.nodeInserted(node);
+        }
+    }
+
+    public void deleteNode(V node) {
+        boolean containedNode = edgeList.containsKey(node);
+        List<V> incomingEdges = edgeListReversed.get(node);
+        List<V> outgoingEdges = edgeList.get(node);
+
+        if (incomingEdges != null) {
+            List<V> tmp = new ArrayList<V>(incomingEdges);
+
+            for (V s : tmp) {
+                this.deleteEdge(s, node);
+            }
+        }
+        if (outgoingEdges != null) {
+            List<V> tmp = new ArrayList<V>(outgoingEdges);
+
+            for (V t : tmp) {
+                this.deleteEdge(node, t);
+            }
+        }
+
+        if (containedNode) {
+            for (IGraphObserver<V> go : this.observers) {
+                go.nodeDeleted(node);
+            }
+        }
+    }
+
+    public void attachObserver(IGraphObserver<V> go) {
+        this.observers.add(go);
+    }
+
+    public void detachObserver(IGraphObserver<V> go) {
+        this.observers.remove(go);
+    }
+
+    @Override
+    public Set<V> getAllNodes() {
+        return this.edgeList.keySet();
+    }
+
+    @Override
+    public List<V> getTargetNodes(V source) {
+        return this.edgeList.get(source);
+    }
+
+    @Override
+    public List<V> getSourceNodes(V target) {
+        return this.edgeListReversed.get(target);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("nodes = ");
+        for (V n : this.edgeList.keySet()) {
+            sb.append(n.toString() + " ");
+        }
+        sb.append(" edges = ");
+        for (V source : this.edgeList.keySet()) {
+            if (edgeList.get(source) != null) {
+                for (V target : this.edgeList.get(source)) {
+                    sb.append("(" + source + "," + target + ") ");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public Integer[] deleteRandomEdge() {
+        return null;
+    }
+
+    public Integer[] insertRandomEdge() {
+        return null;
+    }
 }

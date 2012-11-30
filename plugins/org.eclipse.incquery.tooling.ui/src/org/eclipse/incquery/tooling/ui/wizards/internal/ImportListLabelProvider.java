@@ -24,68 +24,62 @@ import org.eclipse.swt.graphics.Image;
  * {@link ILabelProvider} implementation for the {@link ImportListAdapter}.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
-public class ImportListLabelProvider extends StyledCellLabelProvider implements
-		ILabelProvider {
+public class ImportListLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
-	private ImageRegistry imageRegistry;
-	
-	public ImportListLabelProvider() {
-		imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
-	}
+    private ImageRegistry imageRegistry;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
-	@Override
-	public Image getImage(Object element) {
-		if (element instanceof EPackage) {
-			return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
-		}
-		return null;
-	}
+    public ImportListLabelProvider() {
+        imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
-	@Override
-	public String getText(Object element) {
-		if (element instanceof EPackage) {
-			return ((EPackage) element).getNsURI();
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+     */
+    @Override
+    public Image getImage(Object element) {
+        if (element instanceof EPackage) {
+            return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
+        }
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.
-	 * jface.viewers.ViewerCell)
-	 */
-	@Override
-	public void update(ViewerCell cell) {
-		Object element = cell.getElement();
-		StyledString text = new StyledString();
-		if (element instanceof EPackage) {
-			EPackage ePackage = (EPackage) element;
-			text.append(ePackage.getNsURI());
-			if (ePackage.eResource().getURI().isPlatform()) {
-				text.append(
-						String.format(" (%s)", ePackage.eResource().getURI()),
-						StyledString.QUALIFIER_STYLER);
-			}
-			cell.setImage(imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE));
-		}
-		cell.setText(text.getString());
-		cell.setStyleRanges(text.getStyleRanges());
-		super.update(cell);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+     */
+    @Override
+    public String getText(Object element) {
+        if (element instanceof EPackage) {
+            return ((EPackage) element).getNsURI();
+        }
+        return null;
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse. jface.viewers.ViewerCell)
+     */
+    @Override
+    public void update(ViewerCell cell) {
+        Object element = cell.getElement();
+        StyledString text = new StyledString();
+        if (element instanceof EPackage) {
+            EPackage ePackage = (EPackage) element;
+            text.append(ePackage.getNsURI());
+            if (ePackage.eResource().getURI().isPlatform()) {
+                text.append(String.format(" (%s)", ePackage.eResource().getURI()), StyledString.QUALIFIER_STYLER);
+            }
+            cell.setImage(imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE));
+        }
+        cell.setText(text.getString());
+        cell.setStyleRanges(text.getStyleRanges());
+        super.update(cell);
+    }
 
 }

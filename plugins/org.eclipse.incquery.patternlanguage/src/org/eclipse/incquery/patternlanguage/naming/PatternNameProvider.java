@@ -24,24 +24,23 @@ import com.google.inject.Inject;
 
 public class PatternNameProvider extends XbaseQualifiedNameProvider {
 
-	@Inject
-	private IQualifiedNameConverter nameConverter;
-	
-	@Override
-	public QualifiedName getFullyQualifiedName(EObject obj) {
-		if (obj instanceof Pattern) {
-			Pattern pattern = (Pattern) obj;
-			return nameConverter.toQualifiedName(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
-		} else if (obj instanceof PatternBody) {
-			PatternBody patternBody = (PatternBody) obj;
-			Pattern pattern = (Pattern) patternBody.eContainer();
-			return getFullyQualifiedName(pattern).append(
-					Integer.toString(pattern.getBodies().indexOf(patternBody)));
-		} else if(obj instanceof Variable) {
-			Variable variable = (Variable) obj;
-			return getFullyQualifiedName(variable.eContainer()).append(variable.getName());
-		}
-		return super.getFullyQualifiedName(obj);
-	}
+    @Inject
+    private IQualifiedNameConverter nameConverter;
+
+    @Override
+    public QualifiedName getFullyQualifiedName(EObject obj) {
+        if (obj instanceof Pattern) {
+            Pattern pattern = (Pattern) obj;
+            return nameConverter.toQualifiedName(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+        } else if (obj instanceof PatternBody) {
+            PatternBody patternBody = (PatternBody) obj;
+            Pattern pattern = (Pattern) patternBody.eContainer();
+            return getFullyQualifiedName(pattern).append(Integer.toString(pattern.getBodies().indexOf(patternBody)));
+        } else if (obj instanceof Variable) {
+            Variable variable = (Variable) obj;
+            return getFullyQualifiedName(variable.eContainer()).append(variable.getName());
+        }
+        return super.getFullyQualifiedName(obj);
+    }
 
 }

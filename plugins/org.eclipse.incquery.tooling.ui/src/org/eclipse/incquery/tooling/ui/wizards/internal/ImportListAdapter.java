@@ -31,84 +31,80 @@ import org.eclipse.ui.PlatformUI;
  * An {@link IListAdapter} implementation for importing {@link EPackage}s.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class ImportListAdapter implements IListAdapter<EPackage> {
-	
-	private NewEiqFileWizardContainerConfigurationPage firstPage;
-	private IEiqGenmodelProvider metamodelProviderService;
-	private ILog logger = IncQueryGUIPlugin.getDefault().getLog(); 
-	
-	public ImportListAdapter(
-			NewEiqFileWizardContainerConfigurationPage firstPage,
-			IEiqGenmodelProvider metamodelProviderService) {
-		this.firstPage = firstPage;
-		this.metamodelProviderService = metamodelProviderService;
-	}
 
-	@Override
-	public void customButtonPressed(ListDialogField<EPackage> field, int index) {
-		//if Add button is pressed
-		if (index == 0) {	
-			ElementSelectionDialog listDialog = 
-					new ElementSelectionDialog(
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-							new ImportListLabelProvider(), 
-							"EPackage"
-					);
-			listDialog.setTitle("Select packages to import");
-			listDialog.setMessage("Select one or more package(s) (* = any string, ? = any char):");
-			Object[] input = getElements(field);
-			listDialog.setElements(input);
-			listDialog.open();
-			Object[] result = listDialog.getResult();
-			if (result != null && result.length > 0) {
-				for (Object obj : result) {
-					field.addElement((EPackage) obj);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Returns the available {@link EPackage}s.
-	 * 
-	 * @param field the {@link ListDialogField} instance to avoid duplicate importing
-	 * @return the array of {@link EPackage}s
-	 */
-	private Object[] getElements(ListDialogField<EPackage> field) {
-		List<EPackage> result = new ArrayList<EPackage>();
-		
-		try {
-			Collection<EPackage> packages = metamodelProviderService.getAllMetamodelObjects(firstPage.getProject());
-			for (EPackage ePackage : packages) {
-				if (!fieldContains(field, ePackage)) {
-					result.add(ePackage);
-				}
-			}
-		} 
-		catch (CoreException e) {
-			logger.log(new Status(IStatus.ERROR,
-					IncQueryGUIPlugin.PLUGIN_ID,
-					"Error during EPackage collecting: " + e.getCause().getMessage(), e.getCause()));
-		}
-		
-		return result.toArray();
-	}
-	
-	private boolean fieldContains(ListDialogField<EPackage> field, EPackage _package) {
-		for (EPackage _p : field.getElements()) {
-			if (_p.getNsURI().matches(_package.getNsURI())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private NewEiqFileWizardContainerConfigurationPage firstPage;
+    private IEiqGenmodelProvider metamodelProviderService;
+    private ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
-	@Override
-	public void selectionChanged(ListDialogField<EPackage> field) {}
+    public ImportListAdapter(NewEiqFileWizardContainerConfigurationPage firstPage,
+            IEiqGenmodelProvider metamodelProviderService) {
+        this.firstPage = firstPage;
+        this.metamodelProviderService = metamodelProviderService;
+    }
 
-	@Override
-	public void doubleClicked(ListDialogField<EPackage> field) {}
+    @Override
+    public void customButtonPressed(ListDialogField<EPackage> field, int index) {
+        // if Add button is pressed
+        if (index == 0) {
+            ElementSelectionDialog listDialog = new ElementSelectionDialog(PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getShell(), new ImportListLabelProvider(), "EPackage");
+            listDialog.setTitle("Select packages to import");
+            listDialog.setMessage("Select one or more package(s) (* = any string, ? = any char):");
+            Object[] input = getElements(field);
+            listDialog.setElements(input);
+            listDialog.open();
+            Object[] result = listDialog.getResult();
+            if (result != null && result.length > 0) {
+                for (Object obj : result) {
+                    field.addElement((EPackage) obj);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the available {@link EPackage}s.
+     * 
+     * @param field
+     *            the {@link ListDialogField} instance to avoid duplicate importing
+     * @return the array of {@link EPackage}s
+     */
+    private Object[] getElements(ListDialogField<EPackage> field) {
+        List<EPackage> result = new ArrayList<EPackage>();
+
+        try {
+            Collection<EPackage> packages = metamodelProviderService.getAllMetamodelObjects(firstPage.getProject());
+            for (EPackage ePackage : packages) {
+                if (!fieldContains(field, ePackage)) {
+                    result.add(ePackage);
+                }
+            }
+        } catch (CoreException e) {
+            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Error during EPackage collecting: "
+                    + e.getCause().getMessage(), e.getCause()));
+        }
+
+        return result.toArray();
+    }
+
+    private boolean fieldContains(ListDialogField<EPackage> field, EPackage _package) {
+        for (EPackage _p : field.getElements()) {
+            if (_p.getNsURI().matches(_package.getNsURI())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void selectionChanged(ListDialogField<EPackage> field) {
+    }
+
+    @Override
+    public void doubleClicked(ListDialogField<EPackage> field) {
+    }
 }

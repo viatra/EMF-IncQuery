@@ -17,9 +17,9 @@ package org.eclipse.incquery.runtime.rete.tuple;
  *         An instance of clearable pattern memory.
  */
 public interface Clearable {
-	/**
-	 * Clear all partial matchings stored in memory
-	 * 
-	 */
-	void clear();
+    /**
+     * Clear all partial matchings stored in memory
+     * 
+     */
+    void clear();
 }

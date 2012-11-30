@@ -20,55 +20,59 @@ import com.google.inject.Injector;
 
 public class IncQueryGeneratorPlugin implements BundleActivator {
 
-	private static BundleContext context;
-	private Injector injector;
-	public static IncQueryGeneratorPlugin INSTANCE;
+    private static BundleContext context;
+    private Injector injector;
+    public static IncQueryGeneratorPlugin INSTANCE;
     public static final String BUNDLE_ID = "org.eclipse.incquery.tooling.core";
 
-	public static BundleContext getContext() {
-		return context;
-	}
+    public static BundleContext getContext() {
+        return context;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
-	@Override
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     */
+    @Override
     public void start(BundleContext bundleContext) {
-		INSTANCE = this;
-		IncQueryGeneratorPlugin.context = bundleContext;
-	}
+        INSTANCE = this;
+        IncQueryGeneratorPlugin.context = bundleContext;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
     public void stop(BundleContext bundleContext) {
-		IncQueryGeneratorPlugin.context = null;
-		INSTANCE = null;
-	}
+        IncQueryGeneratorPlugin.context = null;
+        INSTANCE = null;
+    }
 
-	/**
-	 * Returns injector for the EMFPatternLanguage.
-	 * @return
-	 */
-	public Injector getInjector() {
-		if (injector == null) {
-			injector = createInjector();
-		}
-		return injector;
-	}
-	
-	protected Injector createInjector() {
-		return Guice.createInjector(getRuntimeModule());
-	}
+    /**
+     * Returns injector for the EMFPatternLanguage.
+     * 
+     * @return
+     */
+    public Injector getInjector() {
+        if (injector == null) {
+            injector = createInjector();
+        }
+        return injector;
+    }
 
-	/**
-	 * Return the runtime module for the pattern language project
-	 * @return
-	 */
-	public EMFPatternLanguageRuntimeModule getRuntimeModule() {
-		return new GeneratorModule();
-	}
+    protected Injector createInjector() {
+        return Guice.createInjector(getRuntimeModule());
+    }
+
+    /**
+     * Return the runtime module for the pattern language project
+     * 
+     * @return
+     */
+    public EMFPatternLanguageRuntimeModule getRuntimeModule() {
+        return new GeneratorModule();
+    }
 }

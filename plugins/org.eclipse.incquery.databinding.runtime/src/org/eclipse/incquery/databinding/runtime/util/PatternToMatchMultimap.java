@@ -21,32 +21,36 @@ import org.eclipse.incquery.runtime.triggerengine.qrm.TriggeredQueryResultMultim
  * Multimap for managing multiple patterns and related matches for a given notifier.
  * 
  * @author Abel Hegedus
- *
+ * 
  */
-public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends TriggeredQueryResultMultimap<MatchType, Pattern, MatchType> {
+public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends
+        TriggeredQueryResultMultimap<MatchType, Pattern, MatchType> {
 
     /**
      * Creates a new multimap for the given agenda.
      * 
-     * @param agenda the agenda to use
+     * @param agenda
+     *            the agenda to use
      */
     public PatternToMatchMultimap(Agenda agenda) {
         super(agenda);
     }
-    
+
     /**
      * Creates a new multimap for the given engine.
      * 
-     * @param engine the engine to use
+     * @param engine
+     *            the engine to use
      */
     public PatternToMatchMultimap(IncQueryEngine engine) {
         super(engine);
     }
-    
+
     /**
      * Creates a new multimap for the given notifier
      * 
-     * @param notifier the notifier to use
+     * @param notifier
+     *            the notifier to use
      */
     public PatternToMatchMultimap(Notifier notifier) {
         super(notifier);

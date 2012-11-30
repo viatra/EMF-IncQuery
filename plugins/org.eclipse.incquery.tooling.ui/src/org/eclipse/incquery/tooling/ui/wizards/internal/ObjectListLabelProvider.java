@@ -19,27 +19,26 @@ import org.eclipse.swt.graphics.Image;
  * {@link ITableLabelProvider} implementation for the {@link ObjectListAdapter}.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class ObjectListLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-	@Override
-	public Image getColumnImage(Object element, int columnIndex) {
-		return null;
-	}
+    @Override
+    public Image getColumnImage(Object element, int columnIndex) {
+        return null;
+    }
 
-	@Override
-	public String getColumnText(Object element, int columnIndex) {
-		if (element != null && element instanceof ObjectParameter) {
-			ObjectParameter parameter = (ObjectParameter) element;
-			if (columnIndex == 0) {
-				return parameter.getParameterName();
-			}
-			else {
-				return parameter.getObject() != null ? parameter.getObject().getName() : "";
-			}
-		}
-		return null;
-	}
+    @Override
+    public String getColumnText(Object element, int columnIndex) {
+        if (element != null && element instanceof ObjectParameter) {
+            ObjectParameter parameter = (ObjectParameter) element;
+            if (columnIndex == 0) {
+                return parameter.getParameterName();
+            } else {
+                return parameter.getObject() != null ? parameter.getObject().getName() : "";
+            }
+        }
+        return null;
+    }
 
 }

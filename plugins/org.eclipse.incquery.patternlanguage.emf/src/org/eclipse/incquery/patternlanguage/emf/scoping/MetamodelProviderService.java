@@ -37,82 +37,79 @@ import com.google.inject.Inject;
 
 public class MetamodelProviderService implements IMetamodelProvider {
 
-	@Inject
-	private Logger logger;
-	
-	@Inject
-	private IQualifiedNameConverter qualifiedNameConverter;
-	
-	private EcoreGenmodelRegistry genmodelRegistry; 
+    @Inject
+    private Logger logger;
 
-	protected EcoreGenmodelRegistry getGenmodelRegistry() {
-		if (genmodelRegistry == null)
-			genmodelRegistry = new EcoreGenmodelRegistry(logger);
-		return genmodelRegistry;
-	}
-	
-	@Override
-	public IScope getAllMetamodelObjects(EObject context) {
-		final Map<String, EPackage> metamodelMap = getMetamodelMap();
-		Set<String> packageURIs = new HashSet<String>(
-				metamodelMap.keySet());
-		Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
-				new Function<String, IEObjectDescription>() {
-					@Override
+    @Inject
+    private IQualifiedNameConverter qualifiedNameConverter;
+
+    private EcoreGenmodelRegistry genmodelRegistry;
+
+    protected EcoreGenmodelRegistry getGenmodelRegistry() {
+        if (genmodelRegistry == null)
+            genmodelRegistry = new EcoreGenmodelRegistry(logger);
+        return genmodelRegistry;
+    }
+
+    @Override
+    public IScope getAllMetamodelObjects(EObject context) {
+        final Map<String, EPackage> metamodelMap = getMetamodelMap();
+        Set<String> packageURIs = new HashSet<String>(metamodelMap.keySet());
+        Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
+                new Function<String, IEObjectDescription>() {
+                    @Override
                     public IEObjectDescription apply(String from) {
-						EPackage ePackage = metamodelMap.get(from);
-						// InternalEObject proxyPackage = (InternalEObject)
-						// EcoreFactory.eINSTANCE.createEPackage();
-						// proxyPackage.eSetProxyURI(URI.createURI(from));
-						QualifiedName qualifiedName = qualifiedNameConverter
-								.toQualifiedName(from);
-						// return EObjectDescription.create(qualifiedName,
-						// proxyPackage,
-						// Collections.singletonMap("nsURI", "true"));
-						return EObjectDescription.create(qualifiedName,
-								ePackage,
-								Collections.singletonMap("nsURI", "true"));
-					}
-				});
-		return new SimpleScope(IScope.NULLSCOPE, metamodels);
-	}
+                        EPackage ePackage = metamodelMap.get(from);
+                        // InternalEObject proxyPackage = (InternalEObject)
+                        // EcoreFactory.eINSTANCE.createEPackage();
+                        // proxyPackage.eSetProxyURI(URI.createURI(from));
+                        QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
+                        // return EObjectDescription.create(qualifiedName,
+                        // proxyPackage,
+                        // Collections.singletonMap("nsURI", "true"));
+                        return EObjectDescription.create(qualifiedName, ePackage,
+                                Collections.singletonMap("nsURI", "true"));
+                    }
+                });
+        return new SimpleScope(IScope.NULLSCOPE, metamodels);
+    }
 
-	protected Map<String, EPackage> getMetamodelMap(){
-		Map<String, EPackage> packageMap = Maps.newHashMap();
-		Set<String> nsURISet = Sets.newHashSet(EPackage.Registry.INSTANCE.keySet());
-		for (String key : nsURISet) {
-			packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
-		}
-		return packageMap;
+    protected Map<String, EPackage> getMetamodelMap() {
+        Map<String, EPackage> packageMap = Maps.newHashMap();
+        Set<String> nsURISet = Sets.newHashSet(EPackage.Registry.INSTANCE.keySet());
+        for (String key : nsURISet) {
+            packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
+        }
+        return packageMap;
 
-	}
-	
-	@Override
-	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-		if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
-			return EPackage.Registry.INSTANCE.getEPackage(packageUri);
-		}
-		URI uri = null;
-		try {
-			 uri = URI.createURI(packageUri);
-			if (uri.fragment() == null) {
-				Resource resource = resourceSet.getResource(uri, true);
-				return (EPackage) resource.getContents().get(0);
-			}
-			return (EPackage) resourceSet.getEObject(uri, true);
-		} catch(RuntimeException ex) {
-			if (uri != null && uri.isPlatformResource()) {
-				String platformString = uri.toPlatformString(true);
-				URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
-				return loadEPackage(platformPluginURI.toString(), resourceSet);
-			}
-			logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
-			return null;
-		}
-	}
+    }
 
-	@Override
-	public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-		return getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
-	}
+    @Override
+    public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
+        if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
+            return EPackage.Registry.INSTANCE.getEPackage(packageUri);
+        }
+        URI uri = null;
+        try {
+            uri = URI.createURI(packageUri);
+            if (uri.fragment() == null) {
+                Resource resource = resourceSet.getResource(uri, true);
+                return (EPackage) resource.getContents().get(0);
+            }
+            return (EPackage) resourceSet.getEObject(uri, true);
+        } catch (RuntimeException ex) {
+            if (uri != null && uri.isPlatformResource()) {
+                String platformString = uri.toPlatformString(true);
+                URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
+                return loadEPackage(platformPluginURI.toString(), resourceSet);
+            }
+            logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
+        return getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
+    }
 }

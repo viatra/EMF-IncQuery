@@ -22,30 +22,28 @@ import com.google.inject.Inject;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
-public class EMFPatternLanguageServiceProvider extends
-		ResourceServiceProviderImpl {
+public class EMFPatternLanguageServiceProvider extends ResourceServiceProviderImpl {
 
-	private final IResourceServiceProvider serviceProvider;
+    private final IResourceServiceProvider serviceProvider;
 
-	@Inject
-	public EMFPatternLanguageServiceProvider(Registry registry,
-			IResourceServiceProvider serviceProvider) {
-		super(registry, serviceProvider);
-		this.serviceProvider = serviceProvider;
-	}
+    @Inject
+    public EMFPatternLanguageServiceProvider(Registry registry, IResourceServiceProvider serviceProvider) {
+        super(registry, serviceProvider);
+        this.serviceProvider = serviceProvider;
+    }
 
-	@Override
-	public <T> T findService(EObject eObject, Class<T> serviceClazz) {
-		Resource res = eObject.eResource();
-		String nsURI = eObject.eClass().getEPackage().getNsURI();
-		if (res == null && (nsURI.equals(PatternLanguagePackage.eNS_URI) ||
-				nsURI.equals(EMFPatternLanguagePackage.eNS_URI))) {
-			T service = serviceProvider.get(serviceClazz);
-			return service;
-		} else {
-			return super.findService(eObject, serviceClazz);
-		}
-	}
+    @Override
+    public <T> T findService(EObject eObject, Class<T> serviceClazz) {
+        Resource res = eObject.eResource();
+        String nsURI = eObject.eClass().getEPackage().getNsURI();
+        if (res == null
+                && (nsURI.equals(PatternLanguagePackage.eNS_URI) || nsURI.equals(EMFPatternLanguagePackage.eNS_URI))) {
+            T service = serviceProvider.get(serviceClazz);
+            return service;
+        } else {
+            return super.findService(eObject, serviceClazz);
+        }
+    }
 }

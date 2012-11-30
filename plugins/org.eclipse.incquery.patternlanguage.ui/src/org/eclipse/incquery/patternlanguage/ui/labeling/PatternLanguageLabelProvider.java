@@ -22,20 +22,16 @@ import com.google.inject.Inject;
  */
 public class PatternLanguageLabelProvider extends DefaultEObjectLabelProvider {
 
-	@Inject
-	public PatternLanguageLabelProvider(AdapterFactoryLabelProvider delegate) {
-		super(delegate);
-	}
-
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(MyModel ele) {
-	  return "my "+ele.getName();
-	}
-	 
-    String image(MyModel ele) {
-      return "MyModel.gif";
+    @Inject
+    public PatternLanguageLabelProvider(AdapterFactoryLabelProvider delegate) {
+        super(delegate);
     }
-*/
+
+    /*
+     * //Labels and icons can be computed like this:
+     * 
+     * String text(MyModel ele) { return "my "+ele.getName(); }
+     * 
+     * String image(MyModel ele) { return "MyModel.gif"; }
+     */
 }

@@ -12,10 +12,10 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
 /**
  * @author Abel Hegedus
- *
+ * 
  */
 public class CommandConstants {
 
     public static String SHOW_LOCATION_COMMAND_ID = "org.eclipse.incquery.tooling.ui.showlocation";
-	
+
 }

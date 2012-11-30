@@ -20,38 +20,34 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
-public class TypeUnary<PatternDescription, StubHandle> 
-	extends KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> 
-	implements ITypeInfoProviderConstraint
-{
-	/**
-	 * @param buildable
-	 * @param variable
-	 * @param typeKey
-	 */
-	public TypeUnary(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			PVariable variable, Object typeKey) {
-		super(pSystem, new FlatTuple(variable), typeKey);
-	}
+public class TypeUnary<PatternDescription, StubHandle> extends
+        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
+    /**
+     * @param buildable
+     * @param variable
+     * @param typeKey
+     */
+    public TypeUnary(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable variable, Object typeKey) {
+        super(pSystem, new FlatTuple(variable), typeKey);
+    }
 
-	@Override
-	public Stub<StubHandle> doCreateStub() {	
-		return buildable.unaryTypeStub(variablesTuple, supplierKey);
-	}
-	
-	@Override
-	public Object getTypeInfo(PVariable variable) {
-		if (variable.equals(variablesTuple.get(0))) 
-			return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapUnary(supplierKey);
-		return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
-	}
-	
-	@Override
-	protected String keyToString() {
-		return pSystem.getContext().printType(supplierKey);
-	}
+    @Override
+    public Stub<StubHandle> doCreateStub() {
+        return buildable.unaryTypeStub(variablesTuple, supplierKey);
+    }
+
+    @Override
+    public Object getTypeInfo(PVariable variable) {
+        if (variable.equals(variablesTuple.get(0)))
+            return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapUnary(supplierKey);
+        return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
+    }
+
+    @Override
+    protected String keyToString() {
+        return pSystem.getContext().printType(supplierKey);
+    }
 
 }

@@ -16,12 +16,12 @@ import org.eclipse.incquery.validation.runtime.ValidationUtil;
 import org.eclipse.ui.IEditorPart;
 
 public class ValidationInitUtil {
-    
+
     /**
      * Constructor hidden for utility class
      */
     private ValidationInitUtil() {
-        
+
     }
 
     public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {

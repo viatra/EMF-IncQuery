@@ -22,51 +22,50 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
  * Base implementation of IMatcherFactory.
+ * 
  * @author Bergmann Gábor
- *
+ * 
  */
-public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> 
-	implements IMatcherFactory<Matcher> 
-{
+public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> implements
+        IMatcherFactory<Matcher> {
 
-	protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
-	
-	@Override
-	public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
-		IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(emfRoot);
-		return instantiate(engine);
-	}
+    protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
 
-	@Override
-	public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
-		return instantiate(engine);
-	}
+    @Override
+    public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
+        IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(emfRoot);
+        return instantiate(engine);
+    }
 
-	private String fullyQualifiedName;
+    @Override
+    public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
+        return instantiate(engine);
+    }
 
-	@Override
-	public String getPatternFullyQualifiedName() {
-		if (fullyQualifiedName == null) 
-			fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
-		return fullyQualifiedName;
-	}
+    private String fullyQualifiedName;
 
+    @Override
+    public String getPatternFullyQualifiedName() {
+        if (fullyQualifiedName == null)
+            fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
+        return fullyQualifiedName;
+    }
 
-// // EXPERIMENTAL	
-//	
-//	@Override
-//	public Matcher getMatcher(TransactionalEditingDomain trDomain) throws IncQueryRuntimeException {
-//		return getMatcher(trDomain, 0);
-//	}
-//
-//	@Override
-//	public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException {
-//		try {		
-//			IncQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
-//			return instantiate(engine);
-//		} catch (RetePatternBuildException e) {
-//			throw new IncQueryRuntimeException(e);
-//		}
-//	}
+    // // EXPERIMENTAL
+    //
+    // @Override
+    // public Matcher getMatcher(TransactionalEditingDomain trDomain) throws IncQueryRuntimeException {
+    // return getMatcher(trDomain, 0);
+    // }
+    //
+    // @Override
+    // public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException {
+    // try {
+    // IncQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
+    // return instantiate(engine);
+    // } catch (RetePatternBuildException e) {
+    // throw new IncQueryRuntimeException(e);
+    // }
+    // }
 
 }

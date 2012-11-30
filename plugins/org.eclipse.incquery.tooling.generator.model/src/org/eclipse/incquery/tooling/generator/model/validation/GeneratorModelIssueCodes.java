@@ -12,12 +12,11 @@ package org.eclipse.incquery.tooling.generator.model.validation;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public class GeneratorModelIssueCodes {
 
-	private final static String GENERATOR_MODEL_PREFIX = "eiqgen.";
+    private final static String GENERATOR_MODEL_PREFIX = "eiqgen.";
 
-	public final static String PACKAGE_OVERRIDE_CODE = GENERATOR_MODEL_PREFIX
-			+ "package_override";
+    public final static String PACKAGE_OVERRIDE_CODE = GENERATOR_MODEL_PREFIX + "package_override";
 }

@@ -33,79 +33,77 @@ import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 import com.google.inject.Inject;
 
 /**
- * Xmi Model Support for the BuilderParticipant. 
- * Builds an XMI model from an {@link IBuildContext}.
- * Gathers all relevant resources that is accessible from the classpath.
+ * Xmi Model Support for the BuilderParticipant. Builds an XMI model from an {@link IBuildContext}. Gathers all relevant
+ * resources that is accessible from the classpath.
  * 
- * @author Mark Czotter 
- *
+ * @author Mark Czotter
+ * 
  */
 public class XmiModelSupport {
 
-	@Inject 
-	private XmiModelBuilder xmiModelBuilder;
-	
-	@Inject
-	private ResourceDescriptionsProvider resourceDescriptionsProvider;
-	
-	@Inject
-	private IResourceServiceProvider resourceServiceProvider;
-	
-	@Inject
-	private IContainer.Manager containerManager;
-	@Inject
-	private Logger logger;
-	
-	/**
-	 * Builds a global XMI model with a {@link XmiModelBuilder} builder. Before
-	 * the actual build, finds all relevant eiq resources, so the XMI build is
-	 * performed on all currently available {@link PatternModel}.
-	 * 
-	 * @param baseDelta
-	 * @param context
-	 * @param monitor
-	 * @throws CoreException 
-	 */
-	public void build(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) {
-		// Normal CleanUp and codegen done on every delta, do XMI Model build
-		try {
-			monitor.beginTask("Building XMI model", 1);
-			internalBuild(baseDelta, context, monitor);
-		} catch (Exception e) {
-			logger.error("Exception during XMI Model Building Phase", e);
-		} finally {
-			monitor.worked(1);
-		}
-	}
-	
-	private void internalBuild(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) throws CoreException {
-		Resource deltaResource = context.getResourceSet().getResource(baseDelta.getUri(), true);
-		// create a resourcedescription for the input, 
-		// this way we can find all relevant EIQ file in the context of this input.
-		IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
-		IResourceDescription resDesc = index.getResourceDescription(deltaResource.getURI());
-		List<IContainer> visibleContainers = containerManager.getVisibleContainers(resDesc, index);
-		// load all visible resource to the resourceset of the input resource
-		for (IContainer container : visibleContainers) {
-			for (IResourceDescription rd : container.getResourceDescriptions()) {
-				if (resourceServiceProvider.canHandle(rd.getURI())) {
-					context.getResourceSet().getResource(rd.getURI(), true);
-				}
-			}
-		}
-		xmiModelBuilder.build(context.getResourceSet(), getXmiModelPath(context.getBuiltProject()));
-	}
+    @Inject
+    private XmiModelBuilder xmiModelBuilder;
 
-	private String getXmiModelPath(IProject project) throws CoreException {
-		IFolder folder = project.getFolder(XmiModelUtil.XMI_OUTPUT_FOLDER);
-		IFile file = folder.getFile(XmiModelUtil.GLOBAL_EIQ_FILENAME);
-		if (!folder.exists()) {
-			folder.create(IResource.DEPTH_INFINITE, false, null);
-		}
-		if (file.exists()) {
-			file.delete(true, null);
-		}
-		return file.getFullPath().toString();
-	}
-	
+    @Inject
+    private ResourceDescriptionsProvider resourceDescriptionsProvider;
+
+    @Inject
+    private IResourceServiceProvider resourceServiceProvider;
+
+    @Inject
+    private IContainer.Manager containerManager;
+    @Inject
+    private Logger logger;
+
+    /**
+     * Builds a global XMI model with a {@link XmiModelBuilder} builder. Before the actual build, finds all relevant eiq
+     * resources, so the XMI build is performed on all currently available {@link PatternModel}.
+     * 
+     * @param baseDelta
+     * @param context
+     * @param monitor
+     * @throws CoreException
+     */
+    public void build(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) {
+        // Normal CleanUp and codegen done on every delta, do XMI Model build
+        try {
+            monitor.beginTask("Building XMI model", 1);
+            internalBuild(baseDelta, context, monitor);
+        } catch (Exception e) {
+            logger.error("Exception during XMI Model Building Phase", e);
+        } finally {
+            monitor.worked(1);
+        }
+    }
+
+    private void internalBuild(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) throws CoreException {
+        Resource deltaResource = context.getResourceSet().getResource(baseDelta.getUri(), true);
+        // create a resourcedescription for the input,
+        // this way we can find all relevant EIQ file in the context of this input.
+        IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
+        IResourceDescription resDesc = index.getResourceDescription(deltaResource.getURI());
+        List<IContainer> visibleContainers = containerManager.getVisibleContainers(resDesc, index);
+        // load all visible resource to the resourceset of the input resource
+        for (IContainer container : visibleContainers) {
+            for (IResourceDescription rd : container.getResourceDescriptions()) {
+                if (resourceServiceProvider.canHandle(rd.getURI())) {
+                    context.getResourceSet().getResource(rd.getURI(), true);
+                }
+            }
+        }
+        xmiModelBuilder.build(context.getResourceSet(), getXmiModelPath(context.getBuiltProject()));
+    }
+
+    private String getXmiModelPath(IProject project) throws CoreException {
+        IFolder folder = project.getFolder(XmiModelUtil.XMI_OUTPUT_FOLDER);
+        IFile file = folder.getFile(XmiModelUtil.GLOBAL_EIQ_FILENAME);
+        if (!folder.exists()) {
+            folder.create(IResource.DEPTH_INFINITE, false, null);
+        }
+        if (file.exists()) {
+            file.delete(true, null);
+        }
+        return file.getFullPath().toString();
+    }
+
 }

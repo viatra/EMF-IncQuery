@@ -16,71 +16,71 @@ import org.eclipse.incquery.runtime.triggerengine.notification.AttributeMonitor;
 
 public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor<MatchType> {
 
-	private ChangeListener changeListener;
-	private Map<IObservableValue, MatchType> observableMap;
-	private Map<MatchType, List<IObservableValue>> observableMapReversed;
-	
-	public DefaultAttributeMonitor() {
-		super();
-		this.changeListener = new ChangeListener();
-		this.observableMap = new HashMap<IObservableValue, MatchType>();
-		this.observableMapReversed = new HashMap<MatchType, List<IObservableValue>>();
-	}
-	
-	private class ChangeListener implements IValueChangeListener {
-		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			IObservableValue val = event.getObservableValue();
-			if (val != null) {
-				notifyListeners(observableMap.get(val));
-			}
-		}
-	}
-	
-	@Override
-	public void registerFor(MatchType match) {
-		List<IObservableValue> values = new ArrayList<IObservableValue>();
-		for (String param : match.parameterNames()) {
-			Object location = match.get(param);
-			List<IObservableValue> observableValues = observeAllAttributes(changeListener, location);
-			values.addAll(observableValues);
-		}
+    private ChangeListener changeListener;
+    private Map<IObservableValue, MatchType> observableMap;
+    private Map<MatchType, List<IObservableValue>> observableMapReversed;
 
-		//inserting {observable,match} pairs
-		for (IObservableValue val : values) {
-			observableMap.put(val, match);
-		}
+    public DefaultAttributeMonitor() {
+        super();
+        this.changeListener = new ChangeListener();
+        this.observableMap = new HashMap<IObservableValue, MatchType>();
+        this.observableMapReversed = new HashMap<MatchType, List<IObservableValue>>();
+    }
 
-		//inserting {match, list(observable)} pairs
-		observableMapReversed.put(match, values);
-	}
+    private class ChangeListener implements IValueChangeListener {
+        @Override
+        public void handleValueChange(ValueChangeEvent event) {
+            IObservableValue val = event.getObservableValue();
+            if (val != null) {
+                notifyListeners(observableMap.get(val));
+            }
+        }
+    }
 
-	private List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
-		List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
-		if (object instanceof EObject) {
-			for (EStructuralFeature feature : ((EObject) object).eClass().getEAllStructuralFeatures()) {
-				IObservableValue val = EMFProperties.value(feature).observe(object);
-				affectedValues.add(val);
-				val.addValueChangeListener(changeListener);
-			}
-		}
-		return affectedValues;
-	}
-	
-	@Override
-	public void unregisterForAll() {
-		for (MatchType match : observableMapReversed.keySet()) {
-			unregisterFor(match);
-		}
-	}
-	
-	@Override
-	public void unregisterFor(MatchType match) {
-		List<IObservableValue> observables = observableMapReversed.get(match);
-		if (observables != null) {
-			for (IObservableValue val : observables) {
-				val.removeValueChangeListener(changeListener);
-			}
-		}
-	}
+    @Override
+    public void registerFor(MatchType match) {
+        List<IObservableValue> values = new ArrayList<IObservableValue>();
+        for (String param : match.parameterNames()) {
+            Object location = match.get(param);
+            List<IObservableValue> observableValues = observeAllAttributes(changeListener, location);
+            values.addAll(observableValues);
+        }
+
+        // inserting {observable,match} pairs
+        for (IObservableValue val : values) {
+            observableMap.put(val, match);
+        }
+
+        // inserting {match, list(observable)} pairs
+        observableMapReversed.put(match, values);
+    }
+
+    private List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
+        List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
+        if (object instanceof EObject) {
+            for (EStructuralFeature feature : ((EObject) object).eClass().getEAllStructuralFeatures()) {
+                IObservableValue val = EMFProperties.value(feature).observe(object);
+                affectedValues.add(val);
+                val.addValueChangeListener(changeListener);
+            }
+        }
+        return affectedValues;
+    }
+
+    @Override
+    public void unregisterForAll() {
+        for (MatchType match : observableMapReversed.keySet()) {
+            unregisterFor(match);
+        }
+    }
+
+    @Override
+    public void unregisterFor(MatchType match) {
+        List<IObservableValue> observables = observableMapReversed.get(match);
+        if (observables != null) {
+            for (IObservableValue val : observables) {
+                val.removeValueChangeListener(changeListener);
+            }
+        }
+    }
 }

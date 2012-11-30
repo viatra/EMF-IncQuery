@@ -20,151 +20,143 @@ import org.eclipse.swt.widgets.Listener;
 
 public final class FlyoutControlComposite extends Composite {
 
-	private final IFlyoutPreferences preferences;
-	private final FlyoutContainer flyoutContainer;
-	private int minWidth = 100;
-	private int validDockLocations = -1;
+    private final IFlyoutPreferences preferences;
+    private final FlyoutContainer flyoutContainer;
+    private int minWidth = 100;
+    private int validDockLocations = -1;
 
-	public FlyoutControlComposite(Composite parent, int style,
-			IFlyoutPreferences preferences) {
-		super(parent, style);
-		this.preferences = preferences;
+    public FlyoutControlComposite(Composite parent, int style, IFlyoutPreferences preferences) {
+        super(parent, style);
+        this.preferences = preferences;
 
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				if (getShell().getMinimized()) {
-					return;
-				}
-				layout();
-			}
-		});
-		
-		flyoutContainer = new FlyoutContainer(this, SWT.NO_BACKGROUND);
-	}
+        addListener(SWT.Resize, new Listener() {
+            public void handleEvent(Event event) {
+                if (getShell().getMinimized()) {
+                    return;
+                }
+                layout();
+            }
+        });
 
-	public Composite getFlyoutParent() {
-		return flyoutContainer;
-	}
+        flyoutContainer = new FlyoutContainer(this, SWT.NO_BACKGROUND);
+    }
 
-	public Composite getClientParent() {
-		return this;
-	}
+    public Composite getFlyoutParent() {
+        return flyoutContainer;
+    }
 
-	public void setValidDockLocations(int validDockLocations) {
-		this.validDockLocations = validDockLocations;
-	}
+    public Composite getClientParent() {
+        return this;
+    }
 
-	public void setMinWidth(int minWidth) {
-		this.minWidth = minWidth;
-	}
+    public void setValidDockLocations(int validDockLocations) {
+        this.validDockLocations = validDockLocations;
+    }
 
-	public void setTitleText(String text) {
-		flyoutContainer.setTitleText(text);
-	}
+    public void setMinWidth(int minWidth) {
+        this.minWidth = minWidth;
+    }
 
-	@Override
-	public void layout() {
-		Rectangle clientArea = getClientArea();
-		int state = preferences.getState();
-		Control client = getChildren()[1];
+    public void setTitleText(String text) {
+        flyoutContainer.setTitleText(text);
+    }
 
-		if (clientArea.width == 0 || clientArea.height == 0) {
-			return;
-		}
+    @Override
+    public void layout() {
+        Rectangle clientArea = getClientArea();
+        int state = preferences.getState();
+        Control client = getChildren()[1];
 
-		if (flyoutContainer.getControl() == null) {
-			flyoutContainer.setBounds(0, 0, 0, 0);
-			client.setBounds(clientArea);
-			return;
-		}
-		// prepare width to display
-		int width;
-		int offset;
-		if (state == IFlyoutPreferences.STATE_OPEN) {
-			width = preferences.getWidth();
-			// limit maximum value
-			if (isHorizontal()) {
-				width = Math.min(clientArea.width / 2, width);
-			} else {
-				width = Math.min(clientArea.height / 2, width);
-			}
-			// limit minimum value
-			width = Math.max(width, minWidth);
-			width = Math.max(width, 2 * flyoutContainer.getTitleHeight()
-					+ flyoutContainer.getTitleWidth());
-			// remember actual width
-			preferences.setWidth(width);
-			//
-			offset = width;
-		} else if (state == IFlyoutPreferences.STATE_EXPANDED) {
-			offset = flyoutContainer.getTitleHeight();
-			width = preferences.getWidth();
-		} else {
-			width = flyoutContainer.getTitleHeight();
-			offset = width;
-		}
-		// change bounds for flyout container and client control
-		{
-			if (isWest()) {
-				flyoutContainer.setBounds(0, 0, width, clientArea.height);
-				client.setBounds(offset, 0, clientArea.width - offset,
-						clientArea.height);
-			} else if (isEast()) {
-				flyoutContainer.setBounds(clientArea.width - width, 0, width,
-						clientArea.height);
-				client.setBounds(0, 0, clientArea.width - offset,
-						clientArea.height);
-			} else if (isNorth()) {
-				flyoutContainer.setBounds(0, 0, clientArea.width, width);
-				client.setBounds(0, offset, clientArea.width, clientArea.height
-						- offset);
-			} else if (isSouth()) {
-				flyoutContainer.setBounds(0, clientArea.height - width,
-						clientArea.width, width);
-				client.setBounds(0, 0, clientArea.width, clientArea.height
-						- offset);
-			}
-		}
-	}
+        if (clientArea.width == 0 || clientArea.height == 0) {
+            return;
+        }
 
-	public boolean isHorizontal() {
-		return isWest() || isEast();
-	}
+        if (flyoutContainer.getControl() == null) {
+            flyoutContainer.setBounds(0, 0, 0, 0);
+            client.setBounds(clientArea);
+            return;
+        }
+        // prepare width to display
+        int width;
+        int offset;
+        if (state == IFlyoutPreferences.STATE_OPEN) {
+            width = preferences.getWidth();
+            // limit maximum value
+            if (isHorizontal()) {
+                width = Math.min(clientArea.width / 2, width);
+            } else {
+                width = Math.min(clientArea.height / 2, width);
+            }
+            // limit minimum value
+            width = Math.max(width, minWidth);
+            width = Math.max(width, 2 * flyoutContainer.getTitleHeight() + flyoutContainer.getTitleWidth());
+            // remember actual width
+            preferences.setWidth(width);
+            //
+            offset = width;
+        } else if (state == IFlyoutPreferences.STATE_EXPANDED) {
+            offset = flyoutContainer.getTitleHeight();
+            width = preferences.getWidth();
+        } else {
+            width = flyoutContainer.getTitleHeight();
+            offset = width;
+        }
+        // change bounds for flyout container and client control
+        {
+            if (isWest()) {
+                flyoutContainer.setBounds(0, 0, width, clientArea.height);
+                client.setBounds(offset, 0, clientArea.width - offset, clientArea.height);
+            } else if (isEast()) {
+                flyoutContainer.setBounds(clientArea.width - width, 0, width, clientArea.height);
+                client.setBounds(0, 0, clientArea.width - offset, clientArea.height);
+            } else if (isNorth()) {
+                flyoutContainer.setBounds(0, 0, clientArea.width, width);
+                client.setBounds(0, offset, clientArea.width, clientArea.height - offset);
+            } else if (isSouth()) {
+                flyoutContainer.setBounds(0, clientArea.height - width, clientArea.width, width);
+                client.setBounds(0, 0, clientArea.width, clientArea.height - offset);
+            }
+        }
+    }
 
-	public boolean isWest() {
-		return getDockLocation() == IFlyoutPreferences.DOCK_WEST;
-	}
+    public boolean isHorizontal() {
+        return isWest() || isEast();
+    }
 
-	public boolean isEast() {
-		return getDockLocation() == IFlyoutPreferences.DOCK_EAST;
-	}
+    public boolean isWest() {
+        return getDockLocation() == IFlyoutPreferences.DOCK_WEST;
+    }
 
-	public boolean isNorth() {
-		return getDockLocation() == IFlyoutPreferences.DOCK_NORTH;
-	}
+    public boolean isEast() {
+        return getDockLocation() == IFlyoutPreferences.DOCK_EAST;
+    }
 
-	public boolean isSouth() {
-		return getDockLocation() == IFlyoutPreferences.DOCK_SOUTH;
-	}
+    public boolean isNorth() {
+        return getDockLocation() == IFlyoutPreferences.DOCK_NORTH;
+    }
 
-	public boolean isValidDockLocation(int location) {
-		return (location & validDockLocations) == location;
-	}
+    public boolean isSouth() {
+        return getDockLocation() == IFlyoutPreferences.DOCK_SOUTH;
+    }
 
-	public int getDockLocation() {
-		return preferences.getDockLocation();
-	}
-	
-	public int getValidDockLocations() {
-		return validDockLocations;
-	}
+    public boolean isValidDockLocation(int location) {
+        return (location & validDockLocations) == location;
+    }
 
-	public void setDockLocation(int dockLocation) {
-		preferences.setDockLocation(dockLocation);
-		layout();
-	}
-	
-	public IFlyoutPreferences getPreferences() {
-		return preferences;
-	}
+    public int getDockLocation() {
+        return preferences.getDockLocation();
+    }
+
+    public int getValidDockLocations() {
+        return validDockLocations;
+    }
+
+    public void setDockLocation(int dockLocation) {
+        preferences.setDockLocation(dockLocation);
+        layout();
+    }
+
+    public IFlyoutPreferences getPreferences() {
+        return preferences;
+    }
 }

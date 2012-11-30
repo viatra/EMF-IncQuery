@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Updated Eclipse LogAppender based on the implementation in org.eclipse.xtext.logger bundle.
+ * 
  * @author Peter Friese - Initial contribution and API
  * @author Sven Efftinge
  * @author Knut Wannheden - Refactored handling when used in non OSGi environment
@@ -27,83 +28,83 @@ import org.eclipse.core.runtime.Status;
  */
 public class EclipseLogAppender extends AppenderSkeleton {
 
-	private static final String LOG_PATTERN = "%m%n";
+    private static final String LOG_PATTERN = "%m%n";
 
-	private static final String BUNDLE_NAME = EMFPatternLanguageUIActivator.getInstance().getBundle().getSymbolicName();
+    private static final String BUNDLE_NAME = EMFPatternLanguageUIActivator.getInstance().getBundle().getSymbolicName();
 
-	private boolean initialized;
-	private ILog log;
+    private boolean initialized;
+    private ILog log;
 
-	public EclipseLogAppender() {
-		super();
-		layout = new PatternLayout(LOG_PATTERN);
-	}
+    public EclipseLogAppender() {
+        super();
+        layout = new PatternLayout(LOG_PATTERN);
+    }
 
-	public EclipseLogAppender(boolean isActive) {
-		super(isActive);
-		layout = new PatternLayout(LOG_PATTERN);		
-	}
+    public EclipseLogAppender(boolean isActive) {
+        super(isActive);
+        layout = new PatternLayout(LOG_PATTERN);
+    }
 
-	private synchronized void ensureInitialized() {
-		if (!initialized) {
-			log = Platform.getLog(Platform.getBundle(BUNDLE_NAME));
-			initialized = true;
-		}
-	}
+    private synchronized void ensureInitialized() {
+        if (!initialized) {
+            log = Platform.getLog(Platform.getBundle(BUNDLE_NAME));
+            initialized = true;
+        }
+    }
 
-	private ILog getLog() {
-		ensureInitialized();
-		return log;
-	}
+    private ILog getLog() {
+        ensureInitialized();
+        return log;
+    }
 
-	@Override
-	protected void append(LoggingEvent event) {
-		if (isDoLog(event.getLevel())) {
-			String logString = layout.format(event);
-			
-			ILog myLog = getLog();
-			if (myLog != null) {
-				String loggerName = event.getLoggerName();
-				int severity = mapLevel(event.getLevel());
-				final Throwable throwable = event.getThrowableInformation() != null ? event.getThrowableInformation()
-						.getThrowable() : null;
-				IStatus status = createStatus(severity, loggerName, logString, throwable);
-				getLog().log(status);
-			} 
-		}
-	}
+    @Override
+    protected void append(LoggingEvent event) {
+        if (isDoLog(event.getLevel())) {
+            String logString = layout.format(event);
 
-	private boolean isDoLog(Level level) {
-		return level.toInt() >= Priority.WARN_INT;
-	}
+            ILog myLog = getLog();
+            if (myLog != null) {
+                String loggerName = event.getLoggerName();
+                int severity = mapLevel(event.getLevel());
+                final Throwable throwable = event.getThrowableInformation() != null ? event.getThrowableInformation()
+                        .getThrowable() : null;
+                IStatus status = createStatus(severity, loggerName, logString, throwable);
+                getLog().log(status);
+            }
+        }
+    }
 
-	private int mapLevel(Level level) {
-		switch (level.toInt()) {
-			case Priority.DEBUG_INT:
-			case Priority.INFO_INT:
-				return IStatus.INFO;
+    private boolean isDoLog(Level level) {
+        return level.toInt() >= Priority.WARN_INT;
+    }
 
-			case Priority.WARN_INT:
-				return IStatus.WARNING;
+    private int mapLevel(Level level) {
+        switch (level.toInt()) {
+        case Priority.DEBUG_INT:
+        case Priority.INFO_INT:
+            return IStatus.INFO;
 
-			case Priority.ERROR_INT:
-			case Priority.FATAL_INT:
-				return IStatus.ERROR;
+        case Priority.WARN_INT:
+            return IStatus.WARNING;
 
-			default:
-				return IStatus.INFO;
-		}
-	}
+        case Priority.ERROR_INT:
+        case Priority.FATAL_INT:
+            return IStatus.ERROR;
 
-	private IStatus createStatus(int severity, String loggerName, String message, Throwable throwable) {
-		return new Status(severity, BUNDLE_NAME, message, throwable);
-	}
+        default:
+            return IStatus.INFO;
+        }
+    }
 
-	public void close() {
-	}
+    private IStatus createStatus(int severity, String loggerName, String message, Throwable throwable) {
+        return new Status(severity, BUNDLE_NAME, message, throwable);
+    }
 
-	public boolean requiresLayout() {
-		return true;
-	}
+    public void close() {
+    }
+
+    public boolean requiresLayout() {
+        return true;
+    }
 
 }

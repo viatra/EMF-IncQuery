@@ -16,19 +16,19 @@ import org.eclipse.incquery.runtime.rete.network.Node;
 
 /**
  * @author istvanrath
- *
+ * 
  */
 public abstract class DefaultIndexerListener implements IndexerListener {
 
-	WeakReference<Node> owner;
-	
-	public DefaultIndexerListener(Node owner) {
-		this.owner = new WeakReference<Node>(owner);
-	}
+    WeakReference<Node> owner;
 
-	@Override
-	public Node getOwner() {
-		return owner.get();
-	}
+    public DefaultIndexerListener(Node owner) {
+        this.owner = new WeakReference<Node>(owner);
+    }
+
+    @Override
+    public Node getOwner() {
+        return owner.get();
+    }
 
 }

@@ -17,37 +17,32 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public class Containment<PatternDescription, StubHandle> extends CoreModelRelationship<PatternDescription, StubHandle> {
 
-	/**
-	 * @param variablesTuple
-	 */
-	public Containment(
-			PSystem<PatternDescription, StubHandle, ?> pSystem, 
-			PVariable parent, 
-			PVariable child, 
-			boolean transitive) 
-	{
-		super(pSystem, parent, child, transitive);
-	}
+    /**
+     * @param variablesTuple
+     */
+    public Containment(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
+            boolean transitive) {
+        super(pSystem, parent, child, transitive);
+    }
 
-	/**
-	 * @return
-	 */
-	@Override
-	protected Stub<StubHandle> doCreateDirectStub() {
-		return buildable.containmentDirectStub(variablesTuple);
-	}
+    /**
+     * @return
+     */
+    @Override
+    protected Stub<StubHandle> doCreateDirectStub() {
+        return buildable.containmentDirectStub(variablesTuple);
+    }
 
-	/**
-	 * @return
-	 */
-	@Override
-	protected Stub<StubHandle> doCreateTransitiveStub() {
-		return buildable.containmentTransitiveStub(variablesTuple);
-	}
-	
-	
+    /**
+     * @return
+     */
+    @Override
+    protected Stub<StubHandle> doCreateTransitiveStub() {
+        return buildable.containmentTransitiveStub(variablesTuple);
+    }
+
 }

@@ -21,130 +21,136 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
  * 
  */
 public class Address<T extends Node> {
-	ReteContainer container;
-	Long nodeId;
-	/**
-	 * Feel free to leave null e.g. if node is in a separate JVM.
-	 */
-	T nodeCache; 
+    ReteContainer container;
+    Long nodeId;
+    /**
+     * Feel free to leave null e.g. if node is in a separate JVM.
+     */
+    T nodeCache;
 
-	/**
-	 * Address of local node (use only for containers in the same VM!)
-	 */
-	public static <N extends Node> Address<N> of(N node) {
-		return new Address<N>(node);
-	}
+    /**
+     * Address of local node (use only for containers in the same VM!)
+     */
+    public static <N extends Node> Address<N> of(N node) {
+        return new Address<N>(node);
+    }
 
-	/**
-	 * General constructor.
-	 * @param container
-	 * @param nodeId
-	 */
-	public Address(ReteContainer container, Long nodeId) {
-		super();
-		this.container = container;
-		this.nodeId = nodeId;
-	}	
-	/**
-	 * Local-only constructor. (use only for containers in the same VM!)
-	 * @param T the node to address
-	 */
-	public Address(T node) {
-		super();
-		this.nodeCache = node;
-		this.container = node.getContainer();
-		this.nodeId = node.getNodeId();
-	}
+    /**
+     * General constructor.
+     * 
+     * @param container
+     * @param nodeId
+     */
+    public Address(ReteContainer container, Long nodeId) {
+        super();
+        this.container = container;
+        this.nodeId = nodeId;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((container == null) ? 0 : container.hashCode());
-		result = prime * result + ((nodeId == null) ? 0 : nodeId.hashCode());
-		return result;
-	}
+    /**
+     * Local-only constructor. (use only for containers in the same VM!)
+     * 
+     * @param T
+     *            the node to address
+     */
+    public Address(T node) {
+        super();
+        this.nodeCache = node;
+        this.container = node.getContainer();
+        this.nodeId = node.getNodeId();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Address<?>))
-			return false;
-		final Address<?> other = (Address<?>) obj;
-		if (container == null) {
-			if (other.container != null)
-				return false;
-		} else if (!container.equals(other.container))
-			return false;
-		if (nodeId == null) {
-			if (other.nodeId != null)
-				return false;
-		} else if (!nodeId.equals(other.nodeId))
-			return false;
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((container == null) ? 0 : container.hashCode());
+        result = prime * result + ((nodeId == null) ? 0 : nodeId.hashCode());
+        return result;
+    }
 
-	/**
-	 * @return the container
-	 */
-	public ReteContainer getContainer() {
-		return container;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Address<?>))
+            return false;
+        final Address<?> other = (Address<?>) obj;
+        if (container == null) {
+            if (other.container != null)
+                return false;
+        } else if (!container.equals(other.container))
+            return false;
+        if (nodeId == null) {
+            if (other.nodeId != null)
+                return false;
+        } else if (!nodeId.equals(other.nodeId))
+            return false;
+        return true;
+    }
 
-	/**
-	 * @param container
-	 *            the container to set
-	 */
-	public void setContainer(ReteContainer container) {
-		this.container = container;
-	}
+    /**
+     * @return the container
+     */
+    public ReteContainer getContainer() {
+        return container;
+    }
 
-	/**
-	 * @return the nodeId
-	 */
-	public Long getNodeId() {
-		return nodeId;
-	}
+    /**
+     * @param container
+     *            the container to set
+     */
+    public void setContainer(ReteContainer container) {
+        this.container = container;
+    }
 
-	/**
-	 * @param nodeId
-	 *            the nodeId to set
-	 */
-	public void setNodeId(Long nodeId) {
-		this.nodeId = nodeId;
-	}
+    /**
+     * @return the nodeId
+     */
+    public Long getNodeId() {
+        return nodeId;
+    }
 
-	public T getNodeCache() {
-		return nodeCache;
-	}
+    /**
+     * @param nodeId
+     *            the nodeId to set
+     */
+    public void setNodeId(Long nodeId) {
+        this.nodeId = nodeId;
+    }
 
-	public void setNodeCache(T nodeCache) {
-		this.nodeCache = nodeCache;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		if (nodeCache==null)
-			return "A("+nodeId+" @ "+container+")";
-		else return "A("+nodeCache+")";
+    public T getNodeCache() {
+        return nodeCache;
+    }
 
-	}
+    public void setNodeCache(T nodeCache) {
+        this.nodeCache = nodeCache;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        if (nodeCache == null)
+            return "A(" + nodeId + " @ " + container + ")";
+        else
+            return "A(" + nodeCache + ")";
+
+    }
 
 }

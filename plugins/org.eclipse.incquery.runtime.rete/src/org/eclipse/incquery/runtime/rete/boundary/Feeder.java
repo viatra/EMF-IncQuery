@@ -21,64 +21,60 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public abstract class Feeder {
-	protected Address<? extends Receiver> receiver;
-	protected IPatternMatcherRuntimeContext<?> context;
-	protected Network network;
-	protected ReteBoundary<?> boundary;
+    protected Address<? extends Receiver> receiver;
+    protected IPatternMatcherRuntimeContext<?> context;
+    protected Network network;
+    protected ReteBoundary<?> boundary;
 
-	/**
-	 * @param receiver
-	 * @param context
-	 * @param network
-	 * @param boundary
-	 */
-	public Feeder(Address<? extends Receiver> receiver,
-			IPatternMatcherRuntimeContext<?> context, Network network,
-			ReteBoundary<?> boundary) {
-		super();
-		this.receiver = receiver;
-		this.context = context;
-		this.network = network;
-		this.boundary = boundary;
-	}
+    /**
+     * @param receiver
+     * @param context
+     * @param network
+     * @param boundary
+     */
+    public Feeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext<?> context, Network network,
+            ReteBoundary<?> boundary) {
+        super();
+        this.receiver = receiver;
+        this.context = context;
+        this.network = network;
+        this.boundary = boundary;
+    }
 
-	public abstract void feed();
-	
-	protected void emit(Tuple tuple) {
-		network.sendConstructionUpdate(receiver, Direction.INSERT, tuple);
-	}
-	
-	protected IPatternMatcherRuntimeContext.ModelElementCrawler unaryCrawler() {
-		return new IPatternMatcherRuntimeContext.ModelElementCrawler() {
-			public void crawl(Object element) {
-				emit(new FlatTuple(boundary.wrapElement(element)));
-			}
-		};
-	}
+    public abstract void feed();
 
-	protected IPatternMatcherRuntimeContext.ModelElementPairCrawler pairCrawler() {
-		return new IPatternMatcherRuntimeContext.ModelElementPairCrawler() {
-			public void crawl(Object first, Object second) {
-				emit(new FlatTuple(boundary.wrapElement(first), boundary.wrapElement(second)));
-			}
-		};
-	}
-	
-	protected IPatternMatcherRuntimeContext.ModelElementCrawler ternaryCrawler() {
-		return new IPatternMatcherRuntimeContext.ModelElementCrawler() {
-			public void crawl(Object element) {
-				Object relation = element;
-				Object from = context.ternaryEdgeSource(relation);					
-				Object to = context.ternaryEdgeTarget(relation);				
-				emit(new FlatTuple(
-						boundary.wrapElement(relation),
-						boundary.wrapElement(from), 
-						boundary.wrapElement(to)));
-			}
-		};
-	}
+    protected void emit(Tuple tuple) {
+        network.sendConstructionUpdate(receiver, Direction.INSERT, tuple);
+    }
+
+    protected IPatternMatcherRuntimeContext.ModelElementCrawler unaryCrawler() {
+        return new IPatternMatcherRuntimeContext.ModelElementCrawler() {
+            public void crawl(Object element) {
+                emit(new FlatTuple(boundary.wrapElement(element)));
+            }
+        };
+    }
+
+    protected IPatternMatcherRuntimeContext.ModelElementPairCrawler pairCrawler() {
+        return new IPatternMatcherRuntimeContext.ModelElementPairCrawler() {
+            public void crawl(Object first, Object second) {
+                emit(new FlatTuple(boundary.wrapElement(first), boundary.wrapElement(second)));
+            }
+        };
+    }
+
+    protected IPatternMatcherRuntimeContext.ModelElementCrawler ternaryCrawler() {
+        return new IPatternMatcherRuntimeContext.ModelElementCrawler() {
+            public void crawl(Object element) {
+                Object relation = element;
+                Object from = context.ternaryEdgeSource(relation);
+                Object to = context.ternaryEdgeTarget(relation);
+                emit(new FlatTuple(boundary.wrapElement(relation), boundary.wrapElement(from), boundary.wrapElement(to)));
+            }
+        };
+    }
 
 }

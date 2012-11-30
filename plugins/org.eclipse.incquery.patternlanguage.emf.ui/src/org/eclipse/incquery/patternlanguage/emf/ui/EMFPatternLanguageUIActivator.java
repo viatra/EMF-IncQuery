@@ -18,13 +18,13 @@ import com.google.inject.Module;
 
 public class EMFPatternLanguageUIActivator extends EMFPatternLanguageActivator {
 
-	@Override
-	protected Module getRuntimeModule(String grammar) {
-		if (ORG_ECLIPSE_INCQUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE.equals(grammar)) {
-			return IncQueryGeneratorPlugin.INSTANCE.getRuntimeModule();
-		}
-		
-		throw new IllegalArgumentException(grammar);
-	}
+    @Override
+    protected Module getRuntimeModule(String grammar) {
+        if (ORG_ECLIPSE_INCQUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE.equals(grammar)) {
+            return IncQueryGeneratorPlugin.INSTANCE.getRuntimeModule();
+        }
+
+        throw new IllegalArgumentException(grammar);
+    }
 
 }

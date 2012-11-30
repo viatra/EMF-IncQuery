@@ -25,35 +25,34 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Default Resource and EObject loader. 
+ * Default Resource and EObject loader.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class LoadResourceHandler extends LoadModelHandler {
-	
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-		
-		if (editorPart instanceof ISelectionProvider) {
-			ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
-			if (selectionProvider.getSelection() instanceof TreeSelection) {
-				Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
-				Resource resource = null;
-				if (object instanceof Resource) {
-					resource = (Resource) object;
-				}
-				else if (object instanceof EObject) {
-					resource = ((EObject) object).eResource();
-				}
-				MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resource);
-				ModelConnector contentModel = new EMFModelConnector(key);
-				QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-				contentModel.loadModel();
-			}
-		}
-		
-		return null;
-	}
+
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+
+        if (editorPart instanceof ISelectionProvider) {
+            ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
+            if (selectionProvider.getSelection() instanceof TreeSelection) {
+                Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
+                Resource resource = null;
+                if (object instanceof Resource) {
+                    resource = (Resource) object;
+                } else if (object instanceof EObject) {
+                    resource = ((EObject) object).eResource();
+                }
+                MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resource);
+                ModelConnector contentModel = new EMFModelConnector(key);
+                QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
+                contentModel.loadModel();
+            }
+        }
+
+        return null;
+    }
 }

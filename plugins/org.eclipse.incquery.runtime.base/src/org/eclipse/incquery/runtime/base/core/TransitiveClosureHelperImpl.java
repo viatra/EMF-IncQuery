@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.base.core;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,201 +30,193 @@ import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
 
 /**
- * Implementation class for the transitive closure.
- * The class is a wrapper for the tc algorithms on an emf model.
+ * Implementation class for the transitive closure. The class is a wrapper for the tc algorithms on an emf model.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
-public class TransitiveClosureHelperImpl extends EContentAdapter implements
-		TransitiveClosureHelper, ITcObserver<EObject> {
+public class TransitiveClosureHelperImpl extends EContentAdapter implements TransitiveClosureHelper,
+        ITcObserver<EObject> {
 
-	private IncSCCAlg<EObject> sccAlg;
-	private Set<EReference> refToObserv;
-	private EMFDataSource dataSource;
-	private ArrayList<ITcObserver<EObject>> observers;
-	private Notifier notifier;
-	
-	public TransitiveClosureHelperImpl(Notifier emfRoot,
-			Set<EReference> refToObserv) throws IncQueryBaseException {
-		this.refToObserv = refToObserv;
-		this.notifier = emfRoot;
-		this.observers = new ArrayList<ITcObserver<EObject>>();
-		
-		if (emfRoot instanceof EObject) {
-			dataSource = new EMFDataSource.ForEObject((EObject) emfRoot, refToObserv);
-		}
-		else if (emfRoot instanceof Resource) {
-			dataSource = new EMFDataSource.ForResource((Resource) emfRoot, refToObserv);
-		}
-		else if (emfRoot instanceof ResourceSet) {
-			dataSource = new EMFDataSource.ForResourceSet((ResourceSet) emfRoot, refToObserv);
-		}
-		else {
-			throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
-		}
+    private IncSCCAlg<EObject> sccAlg;
+    private Set<EReference> refToObserv;
+    private EMFDataSource dataSource;
+    private ArrayList<ITcObserver<EObject>> observers;
+    private Notifier notifier;
 
-		this.sccAlg = new IncSCCAlg<EObject>(dataSource);
-		this.sccAlg.attachObserver(this);
-		emfRoot.eAdapters().add(this);
-	}
+    public TransitiveClosureHelperImpl(Notifier emfRoot, Set<EReference> refToObserv) throws IncQueryBaseException {
+        this.refToObserv = refToObserv;
+        this.notifier = emfRoot;
+        this.observers = new ArrayList<ITcObserver<EObject>>();
 
-	/**
-	 * The method visits an {@link EObject} for the registered references in order to 
-	 * explore the potential nodes and edges that should be inserted and deleted. 
-	 * 
-	 * Multiple node deletion and insertion must be avoided!
-	 * 
-	 * @param source
-	 * @param isInsert
-	 */
-	private void visitObjectForEReference(EObject source, boolean isInsert) {
-		for (EReference ref : source.eClass().getEReferences()) {
-			if (refToObserv.contains(ref)) {
-				Object o = source.eGet(ref);
+        if (emfRoot instanceof EObject) {
+            dataSource = new EMFDataSource.ForEObject((EObject) emfRoot, refToObserv);
+        } else if (emfRoot instanceof Resource) {
+            dataSource = new EMFDataSource.ForResource((Resource) emfRoot, refToObserv);
+        } else if (emfRoot instanceof ResourceSet) {
+            dataSource = new EMFDataSource.ForResourceSet((ResourceSet) emfRoot, refToObserv);
+        } else {
+            throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
+        }
 
-				if (o instanceof EObjectEList<?>) {
-					@SuppressWarnings("unchecked")
-					List<EObject> list = (EObjectEList<EObject>) o;
-					Iterator<EObject> it = list.iterator();
+        this.sccAlg = new IncSCCAlg<EObject>(dataSource);
+        this.sccAlg.attachObserver(this);
+        emfRoot.eAdapters().add(this);
+    }
 
-					while (it.hasNext()) {
-						EObject target = it.next();
-						if (isInsert) {
-							if (!target.equals(source)) nodeInserted(target);
-							edgeInserted(source, target);
-						} else {
-							edgeDeleted(source, target);
-							if (!target.equals(source)) nodeDeleted(target);
-						}
-					}
-				} else {
-					EObject target = (EObject) o;
-					if (isInsert) {
-						if (!target.equals(source)) nodeInserted(target);
-						edgeInserted(source, target);
-					} else {
-						edgeDeleted(source, target);
-						if (!target.equals(source)) nodeDeleted(target);
-					}
-				}
-			}
-		}
-	}
+    /**
+     * The method visits an {@link EObject} for the registered references in order to explore the potential nodes and
+     * edges that should be inserted and deleted.
+     * 
+     * Multiple node deletion and insertion must be avoided!
+     * 
+     * @param source
+     * @param isInsert
+     */
+    private void visitObjectForEReference(EObject source, boolean isInsert) {
+        for (EReference ref : source.eClass().getEReferences()) {
+            if (refToObserv.contains(ref)) {
+                Object o = source.eGet(ref);
 
-	@Override
-	public void notifyChanged(Notification notification) {
-		super.notifyChanged(notification);
-		Object feature = notification.getFeature();
-		Object oldValue = notification.getOldValue();
-		Object newValue = notification.getNewValue();
-		Object notifier = notification.getNotifier();
-		
-		//System.out.println(notification);
-		if (feature instanceof EReference && 
-				(oldValue == null || oldValue instanceof EObject) && 
-				(newValue == null || newValue instanceof EObject) && 
-				(notifier == null || notifier instanceof EObject)) {
+                if (o instanceof EObjectEList<?>) {
+                    @SuppressWarnings("unchecked")
+                    List<EObject> list = (EObjectEList<EObject>) o;
+                    Iterator<EObject> it = list.iterator();
 
-			EReference ref = (EReference) feature;
-			EObject oldValueObj = (EObject) oldValue;
-			EObject newValueObj = (EObject) newValue;
-			EObject notifierObj = (EObject) notifier;
+                    while (it.hasNext()) {
+                        EObject target = it.next();
+                        if (isInsert) {
+                            if (!target.equals(source))
+                                nodeInserted(target);
+                            edgeInserted(source, target);
+                        } else {
+                            edgeDeleted(source, target);
+                            if (!target.equals(source))
+                                nodeDeleted(target);
+                        }
+                    }
+                } else {
+                    EObject target = (EObject) o;
+                    if (isInsert) {
+                        if (!target.equals(source))
+                            nodeInserted(target);
+                        edgeInserted(source, target);
+                    } else {
+                        edgeDeleted(source, target);
+                        if (!target.equals(source))
+                            nodeDeleted(target);
+                    }
+                }
+            }
+        }
+    }
 
-			if (ref.isContainment()) {
-				// Inserting nodes
-				if (notification.getEventType() == Notification.ADD
-						&& oldValueObj == null && newValueObj != null) {
-					nodeInserted(newValueObj);
-					visitObjectForEReference(newValueObj, true);
-				}
-				if (notification.getEventType() == Notification.REMOVE
-						&& newValueObj == null && oldValueObj != null) {
-					visitObjectForEReference(oldValueObj, false);
-					nodeDeleted(oldValueObj);
-				}
-			} else // Inserting edges (excusively -> edge or node modification)
-			if (refToObserv.contains(ref)) {
+    @Override
+    public void notifyChanged(Notification notification) {
+        super.notifyChanged(notification);
+        Object feature = notification.getFeature();
+        Object oldValue = notification.getOldValue();
+        Object newValue = notification.getNewValue();
+        Object notifier = notification.getNotifier();
 
-				if (notification.getEventType() == Notification.ADD
-						&& newValueObj != null) {
-					edgeInserted(notifierObj, newValueObj);
-				}
-				else if (notification.getEventType() == Notification.REMOVE
-						&& oldValueObj != null) {
-					edgeDeleted(notifierObj, oldValueObj);
-				}
-				else if (notification.getEventType() == Notification.SET) {
-					if (oldValueObj != null) {
-						edgeDeleted(notifierObj, oldValueObj);
-					}
+        // System.out.println(notification);
+        if (feature instanceof EReference && (oldValue == null || oldValue instanceof EObject)
+                && (newValue == null || newValue instanceof EObject)
+                && (notifier == null || notifier instanceof EObject)) {
 
-					if (newValueObj != null) {
-						edgeInserted(notifierObj, newValueObj);
-					}
-				}
-			}
-		}
-	}
+            EReference ref = (EReference) feature;
+            EObject oldValueObj = (EObject) oldValue;
+            EObject newValueObj = (EObject) newValue;
+            EObject notifierObj = (EObject) notifier;
 
-	private void edgeInserted(EObject source, EObject target) {
-		dataSource.notifyEdgeInserted(source, target);
-	}
+            if (ref.isContainment()) {
+                // Inserting nodes
+                if (notification.getEventType() == Notification.ADD && oldValueObj == null && newValueObj != null) {
+                    nodeInserted(newValueObj);
+                    visitObjectForEReference(newValueObj, true);
+                }
+                if (notification.getEventType() == Notification.REMOVE && newValueObj == null && oldValueObj != null) {
+                    visitObjectForEReference(oldValueObj, false);
+                    nodeDeleted(oldValueObj);
+                }
+            } else // Inserting edges (excusively -> edge or node modification)
+            if (refToObserv.contains(ref)) {
 
-	private void edgeDeleted(EObject source, EObject target) {
-		dataSource.notifyEdgeDeleted(source, target);
-	}
+                if (notification.getEventType() == Notification.ADD && newValueObj != null) {
+                    edgeInserted(notifierObj, newValueObj);
+                } else if (notification.getEventType() == Notification.REMOVE && oldValueObj != null) {
+                    edgeDeleted(notifierObj, oldValueObj);
+                } else if (notification.getEventType() == Notification.SET) {
+                    if (oldValueObj != null) {
+                        edgeDeleted(notifierObj, oldValueObj);
+                    }
 
-	private void nodeInserted(EObject node) {
-		dataSource.notifyNodeInserted(node);
-	}
+                    if (newValueObj != null) {
+                        edgeInserted(notifierObj, newValueObj);
+                    }
+                }
+            }
+        }
+    }
 
-	private void nodeDeleted(EObject node) {
-		dataSource.notifyNodeDeleted(node);
-	}
+    private void edgeInserted(EObject source, EObject target) {
+        dataSource.notifyEdgeInserted(source, target);
+    }
 
-	@Override
-	public void attachObserver(ITcObserver<EObject> to) {
-		this.observers.add(to);
-	}
+    private void edgeDeleted(EObject source, EObject target) {
+        dataSource.notifyEdgeDeleted(source, target);
+    }
 
-	@Override
-	public void detachObserver(ITcObserver<EObject> to) {
-		this.observers.remove(to);
-	}
+    private void nodeInserted(EObject node) {
+        dataSource.notifyNodeInserted(node);
+    }
 
-	@Override
-	public Set<EObject> getAllReachableTargets(EObject source) {
-		return this.sccAlg.getAllReachableTargets(source);
-	}
+    private void nodeDeleted(EObject node) {
+        dataSource.notifyNodeDeleted(node);
+    }
 
-	@Override
-	public Set<EObject> getAllReachableSources(EObject target) {
-		return this.sccAlg.getAllReachableSources(target);
-	}
+    @Override
+    public void attachObserver(ITcObserver<EObject> to) {
+        this.observers.add(to);
+    }
 
-	@Override
-	public boolean isReachable(EObject source, EObject target) {
-		return this.sccAlg.isReachable(source, target);
-	}
+    @Override
+    public void detachObserver(ITcObserver<EObject> to) {
+        this.observers.remove(to);
+    }
 
-	@Override
-	public void tupleInserted(EObject source, EObject target) {
-		for (ITcObserver<EObject> to : observers) {
-			to.tupleInserted(source, target);
-		}
-	}
+    @Override
+    public Set<EObject> getAllReachableTargets(EObject source) {
+        return this.sccAlg.getAllReachableTargets(source);
+    }
 
-	@Override
-	public void tupleDeleted(EObject source, EObject target) {
-		for (ITcObserver<EObject> to : observers) {
-			to.tupleDeleted(source, target);
-		}
-	}
+    @Override
+    public Set<EObject> getAllReachableSources(EObject target) {
+        return this.sccAlg.getAllReachableSources(target);
+    }
 
-	@Override
-	public void dispose() {
-		this.sccAlg.dispose();
-		this.notifier.eAdapters().remove(this);
-	}
+    @Override
+    public boolean isReachable(EObject source, EObject target) {
+        return this.sccAlg.isReachable(source, target);
+    }
+
+    @Override
+    public void tupleInserted(EObject source, EObject target) {
+        for (ITcObserver<EObject> to : observers) {
+            to.tupleInserted(source, target);
+        }
+    }
+
+    @Override
+    public void tupleDeleted(EObject source, EObject target) {
+        for (ITcObserver<EObject> to : observers) {
+            to.tupleDeleted(source, target);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        this.sccAlg.dispose();
+        this.notifier.eAdapters().remove(this);
+    }
 }

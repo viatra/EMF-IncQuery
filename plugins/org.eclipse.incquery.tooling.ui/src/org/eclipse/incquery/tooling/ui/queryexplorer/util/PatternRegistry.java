@@ -72,10 +72,11 @@ public class PatternRegistry {
     /**
      * Unregisters the given pattern from the registry.
      * 
-     * @param pattern the pattern instance to be unregistered
+     * @param pattern
+     *            the pattern instance to be unregistered
      */
     public void unregisterPattern(Pattern pattern) {
-    	String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         patternNameMap.remove(patternFqn);
     }
 

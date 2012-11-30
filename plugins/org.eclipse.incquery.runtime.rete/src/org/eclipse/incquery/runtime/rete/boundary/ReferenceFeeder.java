@@ -17,35 +17,33 @@ import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
-
 public class ReferenceFeeder extends Feeder {
 
-	protected Object typeObject;
+    protected Object typeObject;
 
-	/**
-	 * @param receiver
-	 * @param context
-	 * @param network
-	 * @param boundary
-	 * @param typeObject
-	 */
-	public ReferenceFeeder(Address<? extends Receiver> receiver,
-			IPatternMatcherRuntimeContext<?> context, Network network,
-			ReteBoundary<?> boundary, Object typeObject) {
-		super(receiver, context, network, boundary);
-		this.typeObject = typeObject;
-	}
+    /**
+     * @param receiver
+     * @param context
+     * @param network
+     * @param boundary
+     * @param typeObject
+     */
+    public ReferenceFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext<?> context,
+            Network network, ReteBoundary<?> boundary, Object typeObject) {
+        super(receiver, context, network, boundary);
+        this.typeObject = typeObject;
+    }
 
-	@Override
-	public void feed() {
-		if (typeObject != null) {
-			if (context.allowedGeneralizationQueryDirection() == GeneralizationQueryDirection.BOTH)			
-				context.enumerateDirectBinaryEdgeInstances(typeObject, pairCrawler());
-			else
-				context.enumerateAllBinaryEdgeInstances(typeObject, pairCrawler());		
-		} else {
-			context.enumerateAllBinaryEdges(pairCrawler());
-		}
-	}
-	
+    @Override
+    public void feed() {
+        if (typeObject != null) {
+            if (context.allowedGeneralizationQueryDirection() == GeneralizationQueryDirection.BOTH)
+                context.enumerateDirectBinaryEdgeInstances(typeObject, pairCrawler());
+            else
+                context.enumerateAllBinaryEdgeInstances(typeObject, pairCrawler());
+        } else {
+            context.enumerateAllBinaryEdges(pairCrawler());
+        }
+    }
+
 }

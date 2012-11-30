@@ -43,161 +43,147 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class SelectIncQueryProjectPage extends WizardPage {
-	private final static class ProjectColumnLabelProvider extends
-			ColumnLabelProvider {
-		private Color disabledColor;
-		
-		public ProjectColumnLabelProvider(Color disabledColor) {
-			super();
-			this.disabledColor = disabledColor;
-		}
+    private final static class ProjectColumnLabelProvider extends ColumnLabelProvider {
+        private Color disabledColor;
 
-		@Override
-		public String getText(Object element) {
-			if (element instanceof IProject) {
-				return ((IProject) element).getName();
-			}
-			return super.getText(element);
-		}
+        public ProjectColumnLabelProvider(Color disabledColor) {
+            super();
+            this.disabledColor = disabledColor;
+        }
 
-		@Override
-		public Color getForeground(Object element) {
-			if (element instanceof IProject
-					&& ((IProject) element)
-							.findMember(IncQueryNature.IQGENMODEL) != null) {
-				return disabledColor;
-			}
-			return super.getForeground(element);
-		}
+        @Override
+        public String getText(Object element) {
+            if (element instanceof IProject) {
+                return ((IProject) element).getName();
+            }
+            return super.getText(element);
+        }
 
-		@Override
-		public String getToolTipText(Object element) {
-			if (element instanceof IProject
-					&& ((IProject) element)
-							.findMember(IncQueryNature.IQGENMODEL) != null) {
-				return String
-						.format("Project %s has already defined an EMF-IncQuery Generator model.",
-								((IProject) element).getName());
-			}
-			return super.getToolTipText(element);
-		}
-	}
+        @Override
+        public Color getForeground(Object element) {
+            if (element instanceof IProject && ((IProject) element).findMember(IncQueryNature.IQGENMODEL) != null) {
+                return disabledColor;
+            }
+            return super.getForeground(element);
+        }
 
-	private final FormToolkit formToolkit = new FormToolkit(
-			Display.getDefault());
-	private IStructuredSelection selection;
-	private TableViewer viewer;
-	
-	private Logger logger;
+        @Override
+        public String getToolTipText(Object element) {
+            if (element instanceof IProject && ((IProject) element).findMember(IncQueryNature.IQGENMODEL) != null) {
+                return String.format("Project %s has already defined an EMF-IncQuery Generator model.",
+                        ((IProject) element).getName());
+            }
+            return super.getToolTipText(element);
+        }
+    }
 
-	/**
-	 * Create the wizard.
-	 */
-	public SelectIncQueryProjectPage(String title,
-			IStructuredSelection selection,
-			Logger logger) {
-		super("wizardPage");
-		this.selection = selection;
-		this.logger = logger;
-		setTitle(title);
-		setDescription("Select an EMF-IncQuery project without an EMF-IncQuery Generator model");
-	}
+    private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
+    private IStructuredSelection selection;
+    private TableViewer viewer;
 
-	/**
-	 * Create contents of the wizard.
-	 * 
-	 * @param parent
-	 */
-	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
+    private Logger logger;
 
-		setControl(container);
-		container.setLayout(new FillLayout(SWT.HORIZONTAL));
+    /**
+     * Create the wizard.
+     */
+    public SelectIncQueryProjectPage(String title, IStructuredSelection selection, Logger logger) {
+        super("wizardPage");
+        this.selection = selection;
+        this.logger = logger;
+        setTitle(title);
+        setDescription("Select an EMF-IncQuery project without an EMF-IncQuery Generator model");
+    }
 
-		Table table = formToolkit.createTable(container, SWT.NONE);
-		formToolkit.paintBordersFor(table);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+    /**
+     * Create contents of the wizard.
+     * 
+     * @param parent
+     */
+    public void createControl(Composite parent) {
+        Composite container = new Composite(parent, SWT.NULL);
 
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        setControl(container);
+        container.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-		viewer = new TableViewer(table);
-		viewer.setContentProvider(new ArrayContentProvider());
-		TableViewerColumn column = new TableViewerColumn(viewer, SWT.LEFT);
-		column.setLabelProvider(new ProjectColumnLabelProvider(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY)));
-		viewer.addFilter(new ViewerFilter() {
+        Table table = formToolkit.createTable(container, SWT.NONE);
+        formToolkit.paintBordersFor(table);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
 
-			@Override
-			public boolean select(Viewer viewer, Object parentElement,
-					Object element) {
-				if (element instanceof IProject) {
-					try {
-						IProject project = (IProject) element;
-						return project.exists() && project.isOpen()
-								&& project.hasNature(IncQueryNature.NATURE_ID);
-					} catch (CoreException e) {
-						// This exception shall not come forth
-						logger.error("Error while filtering project list", e);
-					}
-				}
-				return false;
-			}
-		});
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+        viewer = new TableViewer(table);
+        viewer.setContentProvider(new ArrayContentProvider());
+        TableViewerColumn column = new TableViewerColumn(viewer, SWT.LEFT);
+        column.setLabelProvider(new ProjectColumnLabelProvider(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY)));
+        viewer.addFilter(new ViewerFilter() {
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (getContainer().getCurrentPage() != null) {
-					getContainer().updateButtons();
-				}
-			}
-		});
+            @Override
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof IProject) {
+                    try {
+                        IProject project = (IProject) element;
+                        return project.exists() && project.isOpen() && project.hasNature(IncQueryNature.NATURE_ID);
+                    } catch (CoreException e) {
+                        // This exception shall not come forth
+                        logger.error("Error while filtering project list", e);
+                    }
+                }
+                return false;
+            }
+        });
 
-		viewer.setInput(root.getProjects());
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(100));
-		table.setLayout(layout);
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-		Iterator<?> it = selection.iterator();
-		while (it.hasNext()) {
-			Object obj = it.next();
-			if (obj instanceof IResource) {
-				IProject containerProject = ((IResource) obj).getProject();
-				setSelectedProject(viewer, containerProject);
-			} else if (obj instanceof IAdaptable) {
-				IProject containerProject = ((IResource) ((IAdaptable) obj)
-						.getAdapter(IResource.class)).getProject();
-				setSelectedProject(viewer, containerProject);
-			}
-		}
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                if (getContainer().getCurrentPage() != null) {
+                    getContainer().updateButtons();
+                }
+            }
+        });
 
-	}
+        viewer.setInput(root.getProjects());
+        TableLayout layout = new TableLayout();
+        layout.addColumnData(new ColumnWeightData(100));
+        table.setLayout(layout);
 
-	private void setSelectedProject(TableViewer viewer,
-			IProject containerProject) {
-		try {
-			if (containerProject.hasNature(IncQueryNature.NATURE_ID)) {
-				viewer.setSelection(new StructuredSelection(containerProject));
-			}
-		} catch (CoreException e) {
-			// This exception shall not come forth
-			logger.error("Error while selecting project " + containerProject.getName(), e);
-		}
-	}
+        Iterator<?> it = selection.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            if (obj instanceof IResource) {
+                IProject containerProject = ((IResource) obj).getProject();
+                setSelectedProject(viewer, containerProject);
+            } else if (obj instanceof IAdaptable) {
+                IProject containerProject = ((IResource) ((IAdaptable) obj).getAdapter(IResource.class)).getProject();
+                setSelectedProject(viewer, containerProject);
+            }
+        }
 
-	public IProject getSelectedProject() {
-		if (!viewer.getSelection().isEmpty()) {
-			return (IProject) ((IStructuredSelection) viewer.getSelection())
-					.getFirstElement();
-		}
-		return null;
-	}
+    }
 
-	@Override
-	public boolean isPageComplete() {
-		return !viewer.getSelection().isEmpty()
-				&& !(getSelectedProject().findMember(IncQueryNature.IQGENMODEL) != null);
-	}
+    private void setSelectedProject(TableViewer viewer, IProject containerProject) {
+        try {
+            if (containerProject.hasNature(IncQueryNature.NATURE_ID)) {
+                viewer.setSelection(new StructuredSelection(containerProject));
+            }
+        } catch (CoreException e) {
+            // This exception shall not come forth
+            logger.error("Error while selecting project " + containerProject.getName(), e);
+        }
+    }
+
+    public IProject getSelectedProject() {
+        if (!viewer.getSelection().isEmpty()) {
+            return (IProject) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isPageComplete() {
+        return !viewer.getSelection().isEmpty()
+                && !(getSelectedProject().findMember(IncQueryNature.IQGENMODEL) != null);
+    }
 
 }

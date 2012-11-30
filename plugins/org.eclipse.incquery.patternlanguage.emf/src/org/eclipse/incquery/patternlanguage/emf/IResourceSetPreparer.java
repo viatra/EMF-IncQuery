@@ -13,5 +13,5 @@ package org.eclipse.incquery.patternlanguage.emf;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 public interface IResourceSetPreparer {
-	void prepareResourceSet(ResourceSet set);
+    void prepareResourceSet(ResourceSet set);
 }

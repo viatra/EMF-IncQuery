@@ -21,39 +21,36 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 /**
- * This node delivers updates to a remote recipient; no updates are propagated
- * further in this network.
+ * This node delivers updates to a remote recipient; no updates are propagated further in this network.
  * 
  * @author Gabor Bergmann
  * 
  */
 public class RemoteReceiver extends SingleInputNode {
 
-	List<Address<? extends Receiver>> targets;
+    List<Address<? extends Receiver>> targets;
 
-	public RemoteReceiver(ReteContainer reteContainer) {
-		super(reteContainer);
-		targets = new ArrayList<Address<? extends Receiver>>();
-	}
+    public RemoteReceiver(ReteContainer reteContainer) {
+        super(reteContainer);
+        targets = new ArrayList<Address<? extends Receiver>>();
+    }
 
-	public void addTarget(Address<? extends Receiver> target) {
-		targets.add(target);
-	}
+    public void addTarget(Address<? extends Receiver> target) {
+        targets.add(target);
+    }
 
-	public void pullInto(Collection<Tuple> collector) {
-		propagatePullInto(collector);
-	}
+    public void pullInto(Collection<Tuple> collector) {
+        propagatePullInto(collector);
+    }
 
-	public Collection<Tuple> remotePull() {
-		return reteContainer.pullContents(this);
-	}
+    public Collection<Tuple> remotePull() {
+        return reteContainer.pullContents(this);
+    }
 
-	public void update(Direction direction, Tuple updateElement) {
-		for (Address<? extends Receiver> ad : targets)
-			reteContainer.sendUpdateToRemoteAddress(ad, direction,
-					updateElement);
-	}
+    public void update(Direction direction, Tuple updateElement) {
+        for (Address<? extends Receiver> ad : targets)
+            reteContainer.sendUpdateToRemoteAddress(ad, direction, updateElement);
+    }
 
 }

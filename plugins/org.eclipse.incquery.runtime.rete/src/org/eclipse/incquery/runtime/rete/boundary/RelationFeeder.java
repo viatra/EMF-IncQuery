@@ -17,39 +17,33 @@ import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
-
 public class RelationFeeder extends Feeder {
 
-	protected Object typeObject;
+    protected Object typeObject;
 
-	/**
-	 * @param receiver
-	 * @param context
-	 * @param network
-	 * @param boundary
-	 * @param typeObject
-	 */
-	public RelationFeeder(Address<? extends Receiver> receiver,
-			IPatternMatcherRuntimeContext<?> context, Network network,
-			ReteBoundary<?> boundary, Object typeObject) {
-		super(receiver, context, network, boundary);
-		this.typeObject = typeObject;
-	}
+    /**
+     * @param receiver
+     * @param context
+     * @param network
+     * @param boundary
+     * @param typeObject
+     */
+    public RelationFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext<?> context,
+            Network network, ReteBoundary<?> boundary, Object typeObject) {
+        super(receiver, context, network, boundary);
+        this.typeObject = typeObject;
+    }
 
-
-
-	@Override
-	public void feed() {
-		if (typeObject != null) {
-			if (context.allowedGeneralizationQueryDirection() == GeneralizationQueryDirection.BOTH)			
-				context.enumerateDirectTernaryEdgeInstances(typeObject, ternaryCrawler());
-			else 
-				context.enumerateAllTernaryEdgeInstances(typeObject, ternaryCrawler());
-		} else {
-			context.enumerateAllTernaryEdges(ternaryCrawler());
-		}
-	}
-	
-	
+    @Override
+    public void feed() {
+        if (typeObject != null) {
+            if (context.allowedGeneralizationQueryDirection() == GeneralizationQueryDirection.BOTH)
+                context.enumerateDirectTernaryEdgeInstances(typeObject, ternaryCrawler());
+            else
+                context.enumerateAllTernaryEdgeInstances(typeObject, ternaryCrawler());
+        } else {
+            context.enumerateAllTernaryEdges(ternaryCrawler());
+        }
+    }
 
 }

@@ -28,47 +28,40 @@ import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
 
-public class GenmodelBasedEMFPatternLanguageJavaValidator extends
-		EMFPatternLanguageJavaValidator {
+public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLanguageJavaValidator {
 
-	@Inject
-	private IEiqGenmodelProvider genmodelProvider;
-	@Inject
-	private IJavaProjectProvider projectProvider;
-	@Inject 
-	private Logger logger;
-	
-	@Check
-	public void checkImportDependency(PackageImport importDecl) {
-		Resource res = importDecl.eResource();
-		if (projectProvider == null || res == null) {
-			return;
-		}
-		IProject project = projectProvider.getJavaProject(
-					res.getResourceSet()).getProject();
-		GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, importDecl.getEPackage());
-		if (genPackage != null) {
-			final GenModel genmodel = genPackage.getGenModel();
-			if (genmodel != null) {
-				String modelPluginID = genmodel.getModelPluginID();
-				try {
-					if (modelPluginID != null
-							&& !modelPluginID.isEmpty()
-							&& !ProjectGenerationHelper.checkBundleDependency(
-									project, modelPluginID)) {
-						error(String
-								.format("To refer elements from the Package %s the bundle %s must be added as dependency",
-										importDecl.getEPackage().getNsURI(),
-										modelPluginID),
-								importDecl,
-								EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
-								EMFIssueCodes.IMPORT_DEPENDENCY_MISSING,
-								modelPluginID);
-					}
-				} catch (CoreException e) {
-					logger.error("Error while checking the dependencies of the import declaration", e);
-				}
-			}
-		}
-	}
+    @Inject
+    private IEiqGenmodelProvider genmodelProvider;
+    @Inject
+    private IJavaProjectProvider projectProvider;
+    @Inject
+    private Logger logger;
+
+    @Check
+    public void checkImportDependency(PackageImport importDecl) {
+        Resource res = importDecl.eResource();
+        if (projectProvider == null || res == null) {
+            return;
+        }
+        IProject project = projectProvider.getJavaProject(res.getResourceSet()).getProject();
+        GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, importDecl.getEPackage());
+        if (genPackage != null) {
+            final GenModel genmodel = genPackage.getGenModel();
+            if (genmodel != null) {
+                String modelPluginID = genmodel.getModelPluginID();
+                try {
+                    if (modelPluginID != null && !modelPluginID.isEmpty()
+                            && !ProjectGenerationHelper.checkBundleDependency(project, modelPluginID)) {
+                        error(String.format(
+                                "To refer elements from the Package %s the bundle %s must be added as dependency",
+                                importDecl.getEPackage().getNsURI(), modelPluginID), importDecl,
+                                EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
+                                EMFIssueCodes.IMPORT_DEPENDENCY_MISSING, modelPluginID);
+                    }
+                } catch (CoreException e) {
+                    logger.error("Error while checking the dependencies of the import declaration", e);
+                }
+            }
+        }
+    }
 }

@@ -23,88 +23,92 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 /**
  * This is a generic pattern matcher for any EMF-IncQuery pattern, with "interpretative" query execution.
  * 
- * <p>When available, consider using the pattern-specific generated matcher API instead.
+ * <p>
+ * When available, consider using the pattern-specific generated matcher API instead.
  * 
- * <p>Matches of the pattern will be represented as GenericPatternMatch. 
+ * <p>
+ * Matches of the pattern will be represented as GenericPatternMatch.
  * 
  * @author Bergmann Gábor
  * @see GenericPatternMatch
  * @see GenericMatcherFactory
  * @see GenericMatchProcessor
  */
-public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements IncQueryMatcher<GenericPatternMatch> {
+public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements
+        IncQueryMatcher<GenericPatternMatch> {
 
-	Pattern pattern;
-	
-	
-	/**
-	 * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
-	 * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
-	 * 
-	 * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
-	 * The match set will be incrementally refreshed upon updates from this scope.
-	 * 
-	 * <p>The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so 
-	 *   multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
-	 * 
-	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
-	 * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-	 * @throws IncQueryException if an error occurs during pattern matcher creation
-	 */
-	public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) 
-			throws IncQueryException 
-	{
-		this(pattern, EngineManager.getInstance().getIncQueryEngine(emfRoot));
-	}
-	
-	/**
-	 * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-	 * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
-	 * The match set will be incrementally refreshed upon updates.
-	 * @param pattern the EMF-IncQuery pattern for which the matcher is to be constructed.
-	 * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-	 * @throws IncQueryException if an error occurs during pattern matcher creation
-	 */
-	public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) 
-			throws IncQueryException 
-	{
-		super(engine, accessMatcher(pattern, engine), pattern);
-		this.pattern = pattern;		
-	}
-	
-	@Override
-	public Pattern getPattern() {
-		return pattern;
-	}
-	
-	private String fullyQualifiedName;
+    Pattern pattern;
 
-	@Override
-	public String getPatternName() {
-		if (fullyQualifiedName == null) 
-			fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
-		return fullyQualifiedName;
-	}
+    /**
+     * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
+     * matcher is already constructed with the same root, only a lightweight reference is created.
+     * 
+     * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
+     * The match set will be incrementally refreshed upon updates from this scope.
+     * 
+     * <p>
+     * The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so
+     * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
+     * 
+     * @param pattern
+     *            the EMF-IncQuery pattern for which the matcher is to be constructed.
+     * @param emfRoot
+     *            the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended:
+     *            Resource or ResourceSet.
+     * @throws IncQueryException
+     *             if an error occurs during pattern matcher creation
+     */
+    public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) throws IncQueryException {
+        this(pattern, EngineManager.getInstance().getIncQueryEngine(emfRoot));
+    }
 
-	@Override
-	public GenericPatternMatch arrayToMatch(Object[] parameters) {
-		return new GenericPatternMatch(this, parameters);
-	}
+    /**
+     * Initializes the pattern matcher within an existing EMF-IncQuery engine. If the pattern matcher is already
+     * constructed in the engine, only a lightweight reference is created. The match set will be incrementally refreshed
+     * upon updates.
+     * 
+     * @param pattern
+     *            the EMF-IncQuery pattern for which the matcher is to be constructed.
+     * @param engine
+     *            the existing EMF-IncQuery engine in which this matcher will be created.
+     * @throws IncQueryException
+     *             if an error occurs during pattern matcher creation
+     */
+    public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) throws IncQueryException {
+        super(engine, accessMatcher(pattern, engine), pattern);
+        this.pattern = pattern;
+    }
 
+    @Override
+    public Pattern getPattern() {
+        return pattern;
+    }
 
-	@Override
-	protected GenericPatternMatch tupleToMatch(Tuple t) {
-		return new GenericPatternMatch(this, t.getElements());
-	}
+    private String fullyQualifiedName;
 
-	private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) 
-		throws IncQueryException 
-	{
-		checkPattern(engine, pattern);
-		try {
-			return engine.getReteEngine().accessMatcher(pattern);
-		} catch (RetePatternBuildException e) {
-			throw new IncQueryException(e);
-		}
-	}
+    @Override
+    public String getPatternName() {
+        if (fullyQualifiedName == null)
+            fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
+        return fullyQualifiedName;
+    }
+
+    @Override
+    public GenericPatternMatch arrayToMatch(Object[] parameters) {
+        return new GenericPatternMatch(this, parameters);
+    }
+
+    @Override
+    protected GenericPatternMatch tupleToMatch(Tuple t) {
+        return new GenericPatternMatch(this, t.getElements());
+    }
+
+    private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) throws IncQueryException {
+        checkPattern(engine, pattern);
+        try {
+            return engine.getReteEngine().accessMatcher(pattern);
+        } catch (RetePatternBuildException e) {
+            throw new IncQueryException(e);
+        }
+    }
 }

@@ -52,15 +52,15 @@ public class ModelElementCellEditor extends CellEditor {
     private Text inputText;
     private Button dialogButton;
     private Button clearButton;
-	private KeyListener keyListener;
+    private KeyListener keyListener;
     private Object value = null;
     private Notifier root;
     private Table table;
     private ObservablePatternMatcher observableMatcher;
-    
+
     @Inject
     TableViewerUtil tableViewerUtil;
-        
+
     public ModelElementCellEditor(Table table, ObservablePatternMatcher observableMatcher) {
         super(table, SWT.NONE);
         this.root = observableMatcher.getParent().getNotifier();
@@ -69,23 +69,24 @@ public class ModelElementCellEditor extends CellEditor {
     }
 
     private class DialogCellLayout extends Layout {
-    	
+
         public void layout(Composite editor, boolean force) {
             Rectangle bounds = editor.getClientArea();
             Point dialogButtonSize = dialogButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             Point clearButtonSize = clearButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             if (contents != null) {
-				contents.setBounds(0, 0, bounds.width - dialogButtonSize.x - clearButtonSize.x, bounds.height);
-			}
-            
-            clearButton.setBounds(bounds.width - dialogButtonSize.x - clearButtonSize.x, 0, clearButtonSize.x, bounds.height);
+                contents.setBounds(0, 0, bounds.width - dialogButtonSize.x - clearButtonSize.x, bounds.height);
+            }
+
+            clearButton.setBounds(bounds.width - dialogButtonSize.x - clearButtonSize.x, 0, clearButtonSize.x,
+                    bounds.height);
             dialogButton.setBounds(bounds.width - dialogButtonSize.x, 0, dialogButtonSize.x, bounds.height);
         }
 
         public Point computeSize(Composite editor, int wHint, int hHint, boolean force) {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
-				return new Point(wHint, hHint);
-			}
+                return new Point(wHint, hHint);
+            }
             Point contentsSize = contents.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             Point buttonSize = dialogButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             // Just return the button width to ensure the button is not clipped
@@ -101,9 +102,9 @@ public class ModelElementCellEditor extends CellEditor {
         result.setText("...");
         return result;
     }
-    
+
     private Button createClearButton(Composite parent) {
-    	Button result = new Button(parent, SWT.DOWN);
+        Button result = new Button(parent, SWT.DOWN);
         result.setText("X");
         return result;
     }
@@ -131,7 +132,7 @@ public class ModelElementCellEditor extends CellEditor {
 
         clearButton = createClearButton(editor);
         clearButton.setFont(font);
-        
+
         dialogButton = createDialogButton(editor);
         dialogButton.setFont(font);
 
@@ -142,18 +143,20 @@ public class ModelElementCellEditor extends CellEditor {
                 }
             }
         });
-        
+
         dialogButton.addSelectionListener(new SelectionAdapter() {
-            /* (non-Javadoc)
+            /*
+             * (non-Javadoc)
+             * 
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             public void widgetSelected(SelectionEvent event) {
-            	TableItem selection = table.getSelection()[0];
-            	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
-            	if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {                    
-            		Object newValue = openDialogBox(editor, conf.getClazz());
+                TableItem selection = table.getSelection()[0];
+                MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
+                if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {
+                    Object newValue = openDialogBox(editor, conf.getClazz());
 
-                	if (newValue != null) {
+                    if (newValue != null) {
                         boolean newValidState = isCorrect(newValue);
                         if (newValidState) {
                             markDirty();
@@ -167,21 +170,21 @@ public class ModelElementCellEditor extends CellEditor {
                         }
                         fireApplyEditorValue();
                     }
-            	}
+                }
             }
         });
-        
+
         clearButton.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		TableItem selection = table.getSelection()[0];
-            	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
-        		inputText.setText("");
-        		value = "";
-        		conf.setFilter("");
-        		observableMatcher.setFilter(getFilter(table));
-        	}
-		});
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TableItem selection = table.getSelection()[0];
+                MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
+                inputText.setText("");
+                value = "";
+                conf.setFilter("");
+                observableMatcher.setFilter(getFilter(table));
+            }
+        });
 
         setValueValid(true);
 
@@ -189,65 +192,63 @@ public class ModelElementCellEditor extends CellEditor {
     }
 
     public void deactivate() {
-    	if (inputText != null && !inputText.isDisposed()) {
-    		inputText.removeKeyListener(getTextKeyListener());
-    	}
-    	
-		super.deactivate();
-	}
+        if (inputText != null && !inputText.isDisposed()) {
+            inputText.removeKeyListener(getTextKeyListener());
+        }
+
+        super.deactivate();
+    }
 
     protected Object doGetValue() {
         return value;
     }
 
     protected void doSetFocus() {
-    	TableItem selection = table.getSelection()[0];
-    	MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
-    	
-    	if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {
-    		inputText.setEditable(false);
-    	}
-    	else {
-    		inputText.setEditable(true);
-    	}
-    	
+        TableItem selection = table.getSelection()[0];
+        MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
+
+        if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {
+            inputText.setEditable(false);
+        } else {
+            inputText.setEditable(true);
+        }
+
         inputText.setFocus();
         inputText.addKeyListener(getTextKeyListener());
         inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     }
 
     private KeyListener getTextKeyListener() {
-    	if (keyListener == null) {
-    		keyListener = new KeyListener() {
-				
-				@Override
-				public void keyReleased(KeyEvent e) {
-					
-					String newValue = inputText.getText();
-					TableItem ti = table.getSelection()[0];
-					MatcherConfiguration conf = (MatcherConfiguration) ti.getData();
-					
-					if (tableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
-						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-						conf.setFilter(inputText.getText());
-						value = inputText.getText();
-						//set restriction for observable matcher
-						observableMatcher.setFilter(getFilter(table));
-					}
-					else {
-						inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					}
-				}
-				
-				@Override
-				public void keyPressed(KeyEvent e) {
-					
-				}
-			};
-    	}
-    	
-    	return keyListener;
-	}
+        if (keyListener == null) {
+            keyListener = new KeyListener() {
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+
+                    String newValue = inputText.getText();
+                    TableItem ti = table.getSelection()[0];
+                    MatcherConfiguration conf = (MatcherConfiguration) ti.getData();
+
+                    if (tableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
+                        inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+                        conf.setFilter(inputText.getText());
+                        value = inputText.getText();
+                        // set restriction for observable matcher
+                        observableMatcher.setFilter(getFilter(table));
+                    } else {
+                        inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+
+                }
+            };
+        }
+
+        return keyListener;
+    }
 
     protected void doSetValue(Object value) {
         this.value = value;
@@ -259,112 +260,107 @@ public class ModelElementCellEditor extends CellEditor {
     }
 
     protected Object openDialogBox(Control cellEditorWindow, String restriction) {
-    	ElementListSelectionDialog listDialog = 
-    			new ElementListSelectionDialog(
-    					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-    					new ModelElementListDialogLabelProvider()
-    			);
-    	listDialog.setTitle("Model element selection");
-    	listDialog.setMessage("Select a model element (* = any string, ? = any char):");
-    	Object[] input = getElements(this.root, restriction);
-    	listDialog.setElements(input);
-    	listDialog.open();
-    	Object[] result = listDialog.getResult();
-    	if (result != null && result.length > 0) {
-    		return result[0];
-    	}
+        ElementListSelectionDialog listDialog = new ElementListSelectionDialog(PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getShell(), new ModelElementListDialogLabelProvider());
+        listDialog.setTitle("Model element selection");
+        listDialog.setMessage("Select a model element (* = any string, ? = any char):");
+        Object[] input = getElements(this.root, restriction);
+        listDialog.setElements(input);
+        listDialog.open();
+        Object[] result = listDialog.getResult();
+        if (result != null && result.length > 0) {
+            return result[0];
+        }
         return null;
     }
 
     protected void updateContents(Object value) {
         if (inputText == null) {
-			return;
-		}
+            return;
+        }
 
         String text = "";//$NON-NLS-1$
         if (value != null) {
-			text = value.toString();
-		}
+            text = value.toString();
+        }
         inputText.setText(text);
     }
-    
-    private Object[] getFilter(Table table) {
-    	Object[] result = new Object[table.getItems().length];
-    	
-    	int i = 0;
-    	for (String parameterName : observableMatcher.getMatcher().getParameterNames()) {
-    		result[i++] = getParameterFilter(table, parameterName);
-    	}
-   	
-    	return result;
-    }
-    
-    private Object getParameterFilter(Table table, String parameterName) {
-    	for (int i = 0;i<table.getItems().length;i++) {
-    		MatcherConfiguration mc = (MatcherConfiguration) table.getItem(i).getData();
-    		if (mc.getParameterName().equals(parameterName)) {
-    			return tableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
-    		}
-    	}
-    	return null;
-    }
-    
-    private Object[] getElements(Object inputElement, String restrictionFqn) {
-		List<Object> result = new ArrayList<Object>();
-		TreeIterator<EObject> iterator = null;
-		EObject obj = null;
-		
-		if (root instanceof EObject) {
-			iterator = ((EObject) root).eAllContents();
-			
-			while (iterator.hasNext()) {
-				obj = iterator.next();
-				if (isOfType(obj.getClass(), restrictionFqn)) {
-					result.add(obj);
-				}
-			}
-		}
-		else if (root instanceof Resource) {
-			iterator = ((Resource) root).getAllContents();
-			
-			while (iterator.hasNext()) {
-				obj = iterator.next();
-				if (isOfType(obj.getClass(), restrictionFqn)) {
-					result.add(obj);
-				}
-			}
-		}
-		else if (root instanceof ResourceSet) {
-			for (Resource res : ((ResourceSet) root).getResources()) {
-				iterator = res.getAllContents();
-				while (iterator.hasNext()) {
-					obj = iterator.next();
-					if (isOfType(obj.getClass(), restrictionFqn)) {
-						result.add(obj);
-					}
-				}
-			}
-		}
-		
-		return result.toArray();
-    }
-    
-	private boolean isOfType(Class<?> clazz, String restrictionFqn) {
-    	List<String> classes = collectAllInterfaces(clazz);
-    	classes.add("java.lang.Object");
-    	return classes.contains(restrictionFqn);
-    }
-    
-    @SuppressWarnings("rawtypes")
-	private List<String> collectAllInterfaces(Class clazz) {
-    	List<String> result = new ArrayList<String>();
-    	Class[] interfaces = clazz.getInterfaces();
-    	
-    	for (Class i : interfaces) {
-    		result.add(i.getName());
-    		result.addAll(collectAllInterfaces(i));
-    	}
 
-    	return result;
+    private Object[] getFilter(Table table) {
+        Object[] result = new Object[table.getItems().length];
+
+        int i = 0;
+        for (String parameterName : observableMatcher.getMatcher().getParameterNames()) {
+            result[i++] = getParameterFilter(table, parameterName);
+        }
+
+        return result;
+    }
+
+    private Object getParameterFilter(Table table, String parameterName) {
+        for (int i = 0; i < table.getItems().length; i++) {
+            MatcherConfiguration mc = (MatcherConfiguration) table.getItem(i).getData();
+            if (mc.getParameterName().equals(parameterName)) {
+                return tableViewerUtil.createValue(mc.getClazz(), mc.getFilter());
+            }
+        }
+        return null;
+    }
+
+    private Object[] getElements(Object inputElement, String restrictionFqn) {
+        List<Object> result = new ArrayList<Object>();
+        TreeIterator<EObject> iterator = null;
+        EObject obj = null;
+
+        if (root instanceof EObject) {
+            iterator = ((EObject) root).eAllContents();
+
+            while (iterator.hasNext()) {
+                obj = iterator.next();
+                if (isOfType(obj.getClass(), restrictionFqn)) {
+                    result.add(obj);
+                }
+            }
+        } else if (root instanceof Resource) {
+            iterator = ((Resource) root).getAllContents();
+
+            while (iterator.hasNext()) {
+                obj = iterator.next();
+                if (isOfType(obj.getClass(), restrictionFqn)) {
+                    result.add(obj);
+                }
+            }
+        } else if (root instanceof ResourceSet) {
+            for (Resource res : ((ResourceSet) root).getResources()) {
+                iterator = res.getAllContents();
+                while (iterator.hasNext()) {
+                    obj = iterator.next();
+                    if (isOfType(obj.getClass(), restrictionFqn)) {
+                        result.add(obj);
+                    }
+                }
+            }
+        }
+
+        return result.toArray();
+    }
+
+    private boolean isOfType(Class<?> clazz, String restrictionFqn) {
+        List<String> classes = collectAllInterfaces(clazz);
+        classes.add("java.lang.Object");
+        return classes.contains(restrictionFqn);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private List<String> collectAllInterfaces(Class clazz) {
+        List<String> result = new ArrayList<String>();
+        Class[] interfaces = clazz.getInterfaces();
+
+        for (Class i : interfaces) {
+            result.add(i.getName());
+            result.addAll(collectAllInterfaces(i));
+        }
+
+        return result;
     }
 }

@@ -19,19 +19,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class EnsureProjectDependencies extends
-		WorkspaceModifyOperation {
-	private final IProject project;
-	private final List<String> dependencies;
+public class EnsureProjectDependencies extends WorkspaceModifyOperation {
+    private final IProject project;
+    private final List<String> dependencies;
 
-	public EnsureProjectDependencies(IProject project,
-			List<String> dependencies) {
-		this.project = project;
-		this.dependencies = dependencies;
-	}
+    public EnsureProjectDependencies(IProject project, List<String> dependencies) {
+        this.project = project;
+        this.dependencies = dependencies;
+    }
 
-	protected void execute(IProgressMonitor monitor)
-			throws CoreException {
-		ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
-	}
+    protected void execute(IProgressMonitor monitor) throws CoreException {
+        ProjectGenerationHelper.ensureBundleDependencies(project, dependencies);
+    }
 }

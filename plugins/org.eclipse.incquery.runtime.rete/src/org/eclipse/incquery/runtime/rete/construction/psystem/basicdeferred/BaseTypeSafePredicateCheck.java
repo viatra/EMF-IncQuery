@@ -25,87 +25,82 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPC
 
 /**
  * @author Bergmann Gábor
- *
+ * 
  */
 public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle> extends
-		VariableDeferredPConstraint<PatternDescription, StubHandle> 
-{
-	private Map<PVariable, Set<Object>> allTypeRestrictions;
+        VariableDeferredPConstraint<PatternDescription, StubHandle> {
+    private Map<PVariable, Set<Object>> allTypeRestrictions;
 
-	/**
-	 * @param buildable
-	 * @param affectedVariables
-	 */
-	public BaseTypeSafePredicateCheck(
-			PSystem<PatternDescription, StubHandle, ?> pSystem,
-			Set<PVariable> affectedVariables) {
-		super(pSystem, affectedVariables);
-	}
+    /**
+     * @param buildable
+     * @param affectedVariables
+     */
+    public BaseTypeSafePredicateCheck(PSystem<PatternDescription, StubHandle, ?> pSystem,
+            Set<PVariable> affectedVariables) {
+        super(pSystem, affectedVariables);
+    }
 
-	@Override
-	public Set<PVariable> getDeducedVariables() {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<PVariable> getDeducedVariables() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	protected Set<PVariable> getDeferringVariables() {
-		return getAffectedVariables();
-	}
+    @Override
+    protected Set<PVariable> getDeferringVariables() {
+        return getAffectedVariables();
+    }
 
-	@Override
-	public boolean isReadyAt(Stub<StubHandle> stub) {
-		if (super.isReadyAt(stub)) {
-			return checkTypeSafety(stub) == null;
-		}
-		return false;
-	}
+    @Override
+    public boolean isReadyAt(Stub<StubHandle> stub) {
+        if (super.isReadyAt(stub)) {
+            return checkTypeSafety(stub) == null;
+        }
+        return false;
+    }
 
-	/**
-	 * Checks whether all type restrictions are already enforced on affected variables. 
-	 * @param stub
-	 * @return a variable whose type safety is not enforced yet, or null if the stub is typesafe
-	 */
-	protected PVariable checkTypeSafety(Stub<StubHandle> stub) {
-		for (PVariable pVariable : getAffectedVariables()) {
-			Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
-			Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, stub.getAllEnforcedConstraints());
-			Set<Object> uncheckedTypeRestrictions = 
-				TypeHelper.subsumeTypes(
-						allTypeRestrictionsForVariable, 
-						checkedTypeRestrictions, 
-						this.pSystem.getContext());
-			if (!uncheckedTypeRestrictions.isEmpty()) return pVariable;
-		} 
-		return null;
-	}
+    /**
+     * Checks whether all type restrictions are already enforced on affected variables.
+     * 
+     * @param stub
+     * @return a variable whose type safety is not enforced yet, or null if the stub is typesafe
+     */
+    protected PVariable checkTypeSafety(Stub<StubHandle> stub) {
+        for (PVariable pVariable : getAffectedVariables()) {
+            Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
+            Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, stub.getAllEnforcedConstraints());
+            Set<Object> uncheckedTypeRestrictions = TypeHelper.subsumeTypes(allTypeRestrictionsForVariable,
+                    checkedTypeRestrictions, this.pSystem.getContext());
+            if (!uncheckedTypeRestrictions.isEmpty())
+                return pVariable;
+        }
+        return null;
+    }
 
-	/**
-	 * @return the allTypeRestrictions
-	 */
-	public Map<PVariable, Set<Object>> getAllTypeRestrictions() {
-		if (allTypeRestrictions == null) {
-			allTypeRestrictions = new HashMap<PVariable, Set<Object>>();
-			for (PVariable pVariable : getAffectedVariables()) {
-				allTypeRestrictions.put(
-						pVariable, 
-						TypeHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));
-			}		
-		}
-		return allTypeRestrictions;
-	}
+    /**
+     * @return the allTypeRestrictions
+     */
+    public Map<PVariable, Set<Object>> getAllTypeRestrictions() {
+        if (allTypeRestrictions == null) {
+            allTypeRestrictions = new HashMap<PVariable, Set<Object>>();
+            for (PVariable pVariable : getAffectedVariables()) {
+                allTypeRestrictions.put(pVariable,
+                        TypeHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));
+            }
+        }
+        return allTypeRestrictions;
+    }
 
-	@Override
-	public void raiseForeverDeferredError(Stub<StubHandle> stub)
-			throws RetePatternBuildException {
-		if (!super.isReadyAt(stub)) {
-			super.raiseForeverDeferredError(stub);
-		} else {
-			String[] args = {toString(), checkTypeSafety(stub).toString()};
-			String msg = "The checking of pattern constraint {1} cannot be deferred further, but variable {2} is still not type safe. " + 
-				"HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
-			String shortMsg = "Could not check all constraints due to undeducible type restrictions";
-			throw new RetePatternBuildException(msg, args, shortMsg, null);
-		}
-			
-	}
+    @Override
+    public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
+        if (!super.isReadyAt(stub)) {
+            super.raiseForeverDeferredError(stub);
+        } else {
+            String[] args = { toString(), checkTypeSafety(stub).toString() };
+            String msg = "The checking of pattern constraint {1} cannot be deferred further, but variable {2} is still not type safe. "
+                    + "HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
+            String shortMsg = "Could not check all constraints due to undeducible type restrictions";
+            throw new RetePatternBuildException(msg, args, shortMsg, null);
+        }
+
+    }
 }

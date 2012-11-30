@@ -20,12 +20,12 @@ import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
  */
 public class GeneratorModelRuntimeModule extends AbstractGeneratorModelRuntimeModule {
 
-	@Override
-	public Class<? extends ILinkingService> bindILinkingService() {
-		return GeneratorModelLinkingService.class;
-	}
+    @Override
+    public Class<? extends ILinkingService> bindILinkingService() {
+        return GeneratorModelLinkingService.class;
+    }
 
-	public Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
-		return GeneratorModelCrossRefSerializer.class;
-	}
+    public Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
+        return GeneratorModelCrossRefSerializer.class;
+    }
 }

@@ -42,61 +42,63 @@ import com.google.inject.name.Names;
  */
 public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageRuntimeModule {
 
-	@Provides
-	Logger provideLoggerImplementation() {
-		return Logger.getLogger(EMFPatternLanguageRuntimeModule.class);
-	}
-	
-	@Override
-	public Class<? extends ILinkingService> bindILinkingService() {
-		return EMFPatternLanguageLinkingService.class;
-	}
+    @Provides
+    Logger provideLoggerImplementation() {
+        return Logger.getLogger(EMFPatternLanguageRuntimeModule.class);
+    }
 
-	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-	@Override
-	public void configureIScopeProviderDelegate(Binder binder) {
-		binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(EMFPatternLanguageDeclarativeScopeProvider.class);
-		binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(XbaseImportedNamespaceScopeProvider.class);
-	}
-	
-	@Override
+    @Override
+    public Class<? extends ILinkingService> bindILinkingService() {
+        return EMFPatternLanguageLinkingService.class;
+    }
+
+    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+    @Override
+    public void configureIScopeProviderDelegate(Binder binder) {
+        binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE))
+                .to(EMFPatternLanguageDeclarativeScopeProvider.class);
+        binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE))
+                .to(XbaseImportedNamespaceScopeProvider.class);
+    }
+
+    @Override
     public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
-		return PatternLanguageResourceDescriptionStrategy.class;
-	}
-	
-	@Override
-	public Class<? extends IScopeProvider> bindIScopeProvider() {
-		return EMFPatternLanguageScopeProvider.class;
-	}
-	
-	// contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-	@Override
-	public Class<? extends ITypeProvider> bindITypeProvider() {
-		return EMFPatternTypeProvider.class;
-	}
-	
-	public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
-		return EMFPatternTypeProvider.class;
-	}
-	
-	public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
-		return MetamodelProviderService.class;
-	}
-	
-	public Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
-		return EMFPatternLanguageCrossRefSerializer.class;
-	}
-	
-	public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
-		return EMFPatternLanguageSyntaxErrorMessageProvider.class;
-	}
+        return PatternLanguageResourceDescriptionStrategy.class;
+    }
 
-	@Override
-	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
-		return EMFPatternLanguageQualifiedNameProvider.class;
-	}
-	
-	public Class<? extends IGlobalServiceProvider> bindIGlobalServiceProvider() {
-		return EMFPatternLanguageServiceProvider.class;
-	}
+    @Override
+    public Class<? extends IScopeProvider> bindIScopeProvider() {
+        return EMFPatternLanguageScopeProvider.class;
+    }
+
+    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+    @Override
+    public Class<? extends ITypeProvider> bindITypeProvider() {
+        return EMFPatternTypeProvider.class;
+    }
+
+    public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
+        return EMFPatternTypeProvider.class;
+    }
+
+    public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
+        return MetamodelProviderService.class;
+    }
+
+    public Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
+        return EMFPatternLanguageCrossRefSerializer.class;
+    }
+
+    public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
+        return EMFPatternLanguageSyntaxErrorMessageProvider.class;
+    }
+
+    @Override
+    public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+        return EMFPatternLanguageQualifiedNameProvider.class;
+    }
+
+    public Class<? extends IGlobalServiceProvider> bindIGlobalServiceProvider() {
+        return EMFPatternLanguageServiceProvider.class;
+    }
 }

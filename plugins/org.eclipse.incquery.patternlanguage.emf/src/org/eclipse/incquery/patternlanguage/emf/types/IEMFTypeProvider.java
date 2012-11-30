@@ -43,6 +43,5 @@ public interface IEMFTypeProvider {
      */
     public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable);
 
-    
     public EClassifier getClassifierForPatternParameterVariable(Variable variable);
 }

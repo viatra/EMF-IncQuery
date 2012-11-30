@@ -17,23 +17,22 @@ import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
-
 public abstract class TransformerNode extends SingleInputNode {
 
-	public TransformerNode(ReteContainer reteContainer) {
-		super(reteContainer);
-	}
+    public TransformerNode(ReteContainer reteContainer) {
+        super(reteContainer);
+    }
 
-	protected abstract Tuple transform(Tuple input);
+    protected abstract Tuple transform(Tuple input);
 
-	public void pullInto(Collection<Tuple> collector) {
-		for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
-			collector.add(transform(ps));
-		}
-	}
+    public void pullInto(Collection<Tuple> collector) {
+        for (Tuple ps : reteContainer.pullPropagatedContents(this)) {
+            collector.add(transform(ps));
+        }
+    }
 
-	public void update(Direction direction, Tuple updateElement) {
-		propagateUpdate(direction, transform(updateElement));
-	}
+    public void update(Direction direction, Tuple updateElement) {
+        propagateUpdate(direction, transform(updateElement));
+    }
 
 }
