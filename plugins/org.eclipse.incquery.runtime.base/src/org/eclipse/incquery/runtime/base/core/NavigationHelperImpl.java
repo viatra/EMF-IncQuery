@@ -258,7 +258,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (valMap != null) {
             for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
                 for (EObject source : entry.getValue()) {
-                    retSet.add(new NavigationHelperSetting(entry.getKey(), target, source));
+                    retSet.add(new NavigationHelperSetting(entry.getKey(), source, target));
                 }
             }
         }
@@ -275,7 +275,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             for (EReference ref : references) {
                 if (valMap.get(ref) != null) {
                     for (EObject source : valMap.get(ref)) {
-                        retSet.add(new NavigationHelperSetting(ref, target, source));
+                        retSet.add(new NavigationHelperSetting(ref, source, target));
                     }
                 }
             }
