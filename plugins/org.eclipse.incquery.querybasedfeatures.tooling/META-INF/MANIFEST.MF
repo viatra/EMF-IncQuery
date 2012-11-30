@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Derived Feature Code Generation
+Bundle-Name: IncQuery-based derived feature tooling (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.querybasedfeatures.tooling;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-ActivationPolicy: lazy

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery Validation Codegenerator
+Bundle-Name: IncQuery Validation Tooling (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.validation.tooling;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.7.0",

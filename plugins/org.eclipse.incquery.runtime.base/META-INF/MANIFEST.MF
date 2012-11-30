@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.incquery.runtime.base
+Bundle-Name: IncQuery Base Indexer (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.runtime.base;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-Activator: org.eclipse.incquery.runtime.base.IncQueryBasePlugin

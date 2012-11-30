@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery backed derived features
+Bundle-Name: EMF-IncQuery based derived features runtime (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.querybasedfeatures.runtime
 Bundle-Version: 0.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

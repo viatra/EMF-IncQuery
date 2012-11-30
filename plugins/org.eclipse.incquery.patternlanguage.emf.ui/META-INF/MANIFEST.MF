@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery Pattern Language UI Contributions
+Bundle-Name: EMF-IncQuery Pattern Language UI Contributions (Incubation)
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Groups
 Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.incquery.patternlanguage.emf.ui;singleton:=true
