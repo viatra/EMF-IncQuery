@@ -19,7 +19,7 @@
       </wizard>
       <wizard
             category="org.eclipse.incquery.tooling.ui.category"
-            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.uiwizards.NewEiqFileWizard"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.wizards.NewEiqFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.incquery.tooling.ui.neweiqfile"
