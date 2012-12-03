@@ -213,7 +213,7 @@
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
             class="org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.incquery.patternlanguage.emf.emfpatternlanguage.check.fast">
+            markerType="org.eclipse.incquery.patternlanguage.emf.ui.emfpatternlanguage.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -221,7 +221,7 @@
         </markerResolutionGenerator>
         <markerResolutionGenerator
             class="org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.incquery.patternlanguage.emf.emfpatternlanguage.check.normal">
+            markerType="org.eclipse.incquery.patternlanguage.emf.ui.emfpatternlanguage.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -229,7 +229,7 @@
         </markerResolutionGenerator>
         <markerResolutionGenerator
             class="org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.incquery.patternlanguage.emf.emfpatternlanguage.check.expensive">
+            markerType="org.eclipse.incquery.patternlanguage.emf.ui.emfpatternlanguage.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -283,15 +283,6 @@
 				</reference>
 			</activeWhen>
 		</handler>
-		<handler 
-			class="org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchyHandler"
-			commandId="org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchy">
-			<activeWhen>
-				<reference
-					definitionId="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution
@@ -299,16 +290,6 @@
 			<command commandId="org.eclipse.xtext.xbase.ui.hierarchy.OpenTypeHierarchy"
 				style="push"
 				tooltip="Open Type Hierarchy">
-				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage.Editor.opened"/>
-				</visibleWhen>
-			</command>
-		</menuContribution>
-		<menuContribution
-			locationURI="popup:#TextEditorContext?after=group.open">
-			<command commandId="org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchy"
-				style="push"
-				tooltip="Quick Type Hierarchy">
 				<visibleWhen checkEnabled="false">
 					<reference definitionId="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage.Editor.opened"/>
 				</visibleWhen>
