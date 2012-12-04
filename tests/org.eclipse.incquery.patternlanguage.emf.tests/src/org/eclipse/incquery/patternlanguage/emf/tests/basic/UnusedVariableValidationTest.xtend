@@ -23,7 +23,8 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.runner.RunWith
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
@@ -54,7 +55,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern.name(h, "");
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	
 	@Test
@@ -79,8 +80,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			}'
 		)
 		tester.validate(model).assertAll(
-			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
+			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
+			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 		)
 	}
 	
@@ -96,7 +97,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				neg find helper(p);
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
+		tester.validate(model).assertError(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
 	@Test
@@ -115,7 +116,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				h == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertError(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
+		tester.validate(model).assertError(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
 	
 	@Test
@@ -134,7 +135,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				h != p;
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING))
 	}
 	
 	@Test
@@ -168,7 +169,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}'
 		)
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	
 	@Test
@@ -184,7 +185,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				neg find helper(p);
 			}'
 		)
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	@Test
 	def testLocalVariableOneSingleUseNegativeReference() {
@@ -215,7 +216,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				h == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	
 	@Test
@@ -279,7 +280,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(_p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE), getErrorCode(EMFIssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE), getErrorCode(IssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	@Test
 	def testReadOnlyReference() {
@@ -292,7 +293,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				P != Q;
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::LOCAL_VARIABLE_READONLY), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_READONLY), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	
 	@Test
@@ -314,7 +315,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				neg find helper(p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	
 	@Test
@@ -334,7 +335,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				h == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 	
 	@Test
@@ -355,6 +356,6 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				i == count find helper(p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 }

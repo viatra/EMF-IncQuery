@@ -8,7 +8,7 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.patternlanguage.emf.validation;
+package org.eclipse.incquery.patternlanguage.validation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -127,7 +127,7 @@ public class UnionFindForVariables {
         List<Set<Variable>> resultList = new ArrayList<Set<Variable>>();
         Set<Integer> previousKeys = new HashSet<Integer>();
         for (Variable variableOuter : inputVariables) {
-            Integer currentID = unionIdArray[inputVariables.indexOf(variableOuter)];
+            int currentID = unionIdArray[inputVariables.indexOf(variableOuter)];
             if (!previousKeys.contains(currentID)) {
                 previousKeys.add(currentID);
                 Set<Variable> currentSet = new HashSet<Variable>();
@@ -142,4 +142,22 @@ public class UnionFindForVariables {
         return resultList;
     }
 
+    /**
+     * 
+     * @param var
+     * @return the set of variables in the partition of a selected variable
+     */
+    public Set<Variable> getPartitionOfVariable(Variable var) {
+        Set<Variable> set = new HashSet<Variable>();
+        set.add(var);
+        if (inputVariables.contains(var)) {
+            int id = unionIdArray[inputVariables.indexOf(var)];
+            for (Variable inner : inputVariables) {
+                if (id == unionIdArray[inputVariables.indexOf(inner)]) {
+                    set.add(inner);
+                }
+            }
+        }
+        return set;
+    }
 }

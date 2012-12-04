@@ -27,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -101,8 +102,8 @@ class VariableResolutionTest {
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
-		model.assertError(parameter.eClass, EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
-		model.assertWarning(constraint.getVar().eClass, EMFIssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE)
+		model.assertError(parameter.eClass, IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
+		model.assertWarning(constraint.getVar().eClass, IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE)
 		assertTrue(parameter.name != constraint.getVar().getVar())
 	}
 	
@@ -118,7 +119,7 @@ class VariableResolutionTest {
 		') as PatternModel
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
-		model.assertError(parameter.eClass, EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
+		model.assertError(parameter.eClass, IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
 		val constraint0 = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val constraint1 = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		assertTrue(parameter.name != constraint0.getVar().getVar())

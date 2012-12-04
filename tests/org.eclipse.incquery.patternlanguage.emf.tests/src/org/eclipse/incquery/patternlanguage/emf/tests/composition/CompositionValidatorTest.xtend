@@ -75,8 +75,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getErrorCode(EMFIssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
 		)
 	}	
 	@Test
