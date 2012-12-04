@@ -4,6 +4,7 @@
   <extension
          point="org.eclipse.incquery.patternlanguage.annotation">
       <annotation
+            additionalValidator="org.eclipse.incquery.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator"
             description="This annotation is used to mark a pattern as a query definition for a query-based feature."
             name="QueryBasedFeature">
          <annotationparameter

@@ -10,6 +10,25 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime;
 
+/**
+ * 
+ * @author Abel Hegedus
+ *
+ */
 public enum QueryBasedFeatureKind {
-    SUM, COUNTER, SINGLE_REFERENCE, MANY_REFERENCE, ITERATION
+    SINGLE_REFERENCE, MANY_REFERENCE, SUM, COUNTER, ITERATION;
+    
+    public static String getStringValue(QueryBasedFeatureKind kind) {
+        if(SINGLE_REFERENCE.equals(kind)) {
+            return "single";
+        } else if(MANY_REFERENCE.equals(kind)) {
+            return "many";
+        } else if(SUM.equals(kind)) {
+            return "sum";
+        } else if(COUNTER.equals(kind)) {
+            return "counter";
+        } else if(ITERATION.equals(kind)) {
+            return "iteration";
+        } else return null;
+    }
 }
