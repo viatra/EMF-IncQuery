@@ -85,7 +85,7 @@ public class QueryExplorer extends ViewPart {
     private static final String PATTERNS_VIEWER_FLYOUT_STATE = "patternsViewerFlyoutState";
     private static final String DETAILS_VIEW_FLYOUT_STATE = "detailsViewFlyoutState";
 
-    public static final String ID = "org.eclipse.incquery.queryexplorer.QueryExplorer";
+    public static final String ID = "org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer";
 
     private final Map<MatcherTreeViewerRootKey, ModelConnector> modelConnectorMap = new HashMap<MatcherTreeViewerRootKey, ModelConnector>();
 
