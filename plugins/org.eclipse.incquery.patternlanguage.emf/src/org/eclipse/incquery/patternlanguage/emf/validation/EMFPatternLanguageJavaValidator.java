@@ -473,8 +473,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     .getClassifierForLiteralAndComputationValueReference(leftValueReference);
             EClassifier rightClassifier = EMFPatternTypeUtil
                     .getClassifierForLiteralAndComputationValueReference(rightValueReference);
-            if (leftClassifier != null && rightClassifier != null
-                    && !leftClassifier.getInstanceClass().equals(rightClassifier.getInstanceClass())) {
+            if (!isCompatibleClassifiers(leftClassifier, rightClassifier)) {
                 error("The types of the literal/computational values are different: "
                         + leftClassifier.getInstanceClassName() + ", " + rightClassifier.getInstanceClassName() + ".",
                         compareConstraint, null, EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
@@ -498,8 +497,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     .getClassifierForLiteralAndComputationValueReference(valueReference);
             EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
-            if (inputClassifier != null && typeClassifier != null
-                    && !inputClassifier.getInstanceClass().equals(typeClassifier.getInstanceClass())) {
+            if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
                 error("The type infered from the path expression (" + typeClassifier.getInstanceClassName()
                         + ") is different from the input literal/computational value ("
                         + inputClassifier.getInstanceClassName() + ").", pathExpressionConstraint, null,
@@ -523,8 +521,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 EClassifier typeClassifier = emfTypeProvider.getClassifierForVariable(variable);
                 EClassifier inputClassifier = EMFPatternTypeUtil
                         .getClassifierForLiteralAndComputationValueReference(valueReference);
-                if (inputClassifier != null && typeClassifier != null
-                        && !inputClassifier.getInstanceClass().equals(typeClassifier.getInstanceClass())) {
+                if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
                     error("The type infered from the called pattern (" + typeClassifier.getInstanceClassName()
                             + ") is different from the input literal/computational value ("
                             + inputClassifier.getInstanceClassName() + ").", patternCall, null,
@@ -532,6 +529,50 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 }
             }
         }
+    }
+
+    private static boolean isCompatibleClassifiers(EClassifier classifierFirst, EClassifier classifierSecond) {
+        if (classifierFirst != null && classifierSecond != null) {
+            Class<?> firstInstanceClass = classifierFirst.getInstanceClass();
+            Class<?> secondInstanceClass = classifierSecond.getInstanceClass();
+            if (firstInstanceClass.equals(secondInstanceClass)) {
+                return true;
+            } else if (firstInstanceClass.isPrimitive() || secondInstanceClass.isPrimitive()) {
+                Class<?> firstWrapperClass = getWrapperClassForType(firstInstanceClass);
+                Class<?> secondWrapperClass = getWrapperClassForType(secondInstanceClass);
+                if (firstWrapperClass.equals(secondWrapperClass)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param typeClass
+     * @return The wrapper class if the input is primitive. If it is not, it returns with the input unchanged.
+     */
+    private static Class<?> getWrapperClassForType(Class<?> typeClass) {
+        if (typeClass != null && typeClass.isPrimitive()) {
+            if (typeClass == boolean.class) {
+                return java.lang.Boolean.class;
+            } else if (typeClass == byte.class) {
+                return java.lang.Byte.class;
+            } else if (typeClass == char.class) {
+                return java.lang.Character.class;
+            } else if (typeClass == double.class) {
+                return java.lang.Double.class;
+            } else if (typeClass == float.class) {
+                return java.lang.Float.class;
+            } else if (typeClass == int.class) {
+                return java.lang.Integer.class;
+            } else if (typeClass == long.class) {
+                return java.lang.Long.class;
+            } else if (typeClass == short.class) {
+                return java.lang.Short.class;
+            }
+        }
+        return typeClass;
     }
 
     /**
