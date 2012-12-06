@@ -223,7 +223,7 @@
       </handler>
       <handler
             class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.UnloadModelHandler"
-            commandId="org.eclipse.incquery.tooling.ui.unmodel">
+            commandId="org.eclipse.incquery.tooling.ui.unloadmodel">
       </handler>
       <handler
             class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PatternUnregistrationHandler"
@@ -322,7 +322,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eclipse.incquery.tooling.ui.unmodel"
+               commandId="org.eclipse.incquery.tooling.ui.unloadmodel"
                icon="icons/unload.gif"
                label="Unload model"
                style="push">
@@ -465,7 +465,7 @@
       </category>
       <command
             categoryId="org.eclipse.incquery.tooling.category"
-            id="org.eclipse.incquery.tooling.ui.unmodel"
+            id="org.eclipse.incquery.tooling.ui.unloadmodel"
             name="Unload model">
       </command>
       <command

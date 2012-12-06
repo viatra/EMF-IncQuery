@@ -239,7 +239,7 @@ public class QueryExplorer extends ViewPart {
         // Create menu for tree viewer
         Menu matcherTreeViewerMenu = matcherTreeViewerMenuManager.createContextMenu(matcherTreeViewer.getControl());
         matcherTreeViewer.getControl().setMenu(matcherTreeViewerMenu);
-        getSite().registerContextMenu("org.eclipse.incquery.queryexplorer.QueryExplorer.treeViewerMenu",
+        getSite().registerContextMenu("org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu",
                 matcherTreeViewerMenuManager, matcherTreeViewer);
 
         MenuManager patternsViewerMenuManager = new MenuManager();
@@ -253,7 +253,7 @@ public class QueryExplorer extends ViewPart {
         // Create menu for patterns viewer
         Menu patternsViewerMenu = patternsViewerMenuManager.createContextMenu(patternsTreeViewer.getControl());
         patternsTreeViewer.getControl().setMenu(patternsViewerMenu);
-        getSite().registerContextMenu("org.eclipse.incquery.queryexplorer.QueryExplorer.patternsViewerMenu",
+        getSite().registerContextMenu("org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.patternsViewerMenu",
                 patternsViewerMenuManager, patternsTreeViewer);
 
         // tableView configuration
