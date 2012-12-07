@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
@@ -98,6 +99,11 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
             listeners = new HashSet<IQueryResultUpdateListener<KeyType, ValueType>>();
         }
         listeners.add(listener);
+        if(fireNow) {
+            for (Entry<KeyType, ValueType> entry : cache.entries()) {
+                sendNotificationToListener(Direction.INSERT, entry.getKey(), entry.getValue(), listener);
+            }
+        }
     }
 
     /**
@@ -124,22 +130,29 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
      *            the value of the pair that changed
      */
     private void notifyListeners(Direction direction, KeyType key, ValueType value) {
-        for (IQueryResultUpdateListener<KeyType, ValueType> listener : listeners) {
-            try {
-                if (direction == Direction.INSERT) {
-                    listener.notifyPut(key, value);
-                } else {
-                    listener.notifyRemove(key, value);
-                }
-            } catch (Error e) { // NOPMD
-                throw e;
-            } catch (Throwable e) { // NOPMD
-                logger.warn(
-                        String.format(
-                                "The query result multimap encountered an error during executing a callback on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
-                                direction == Direction.INSERT ? "insertion" : "removal", key, value, e.getMessage(), e
-                                        .getClass().getSimpleName(), listener), e);
+        if(listeners != null) {
+            for (IQueryResultUpdateListener<KeyType, ValueType> listener : listeners) {
+                sendNotificationToListener(direction, key, value, listener);
             }
+        }
+    }
+
+    private void sendNotificationToListener(Direction direction, KeyType key, ValueType value,
+            IQueryResultUpdateListener<KeyType, ValueType> listener) throws Error {
+        try {
+            if (direction == Direction.INSERT) {
+                listener.notifyPut(key, value);
+            } else {
+                listener.notifyRemove(key, value);
+            }
+        } catch (Error e) { // NOPMD
+            throw e;
+        } catch (Throwable e) { // NOPMD
+            logger.warn(
+                    String.format(
+                            "The query result multimap encountered an error during executing a callback on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
+                            direction == Direction.INSERT ? "insertion" : "removal", key, value, e.getMessage(), e
+                                    .getClass().getSimpleName(), listener), e);
         }
     }
 
@@ -206,6 +219,13 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
      */
     protected void setCache(Multimap<KeyType, ValueType> cache) {
         this.cache = cache;
+    }
+
+    /**
+     * @return the logger
+     */
+    protected Logger getLogger() {
+        return logger;
     }
 
     // ======================= implemented Multimap methods ======================
@@ -556,7 +576,8 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         if (setter == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
-        Iterator<Entry<KeyType, ValueType>> iterator = cache.entries().iterator();
+        Collection<Entry<KeyType, ValueType>> entries = Lists.newArrayList(cache.entries());
+        Iterator<Entry<KeyType, ValueType>> iterator = entries.iterator();
         while (iterator.hasNext()) {
             Entry<KeyType, ValueType> entry = iterator.next();
             modifyThroughQueryResultSetter(entry.getKey(), entry.getValue(), Direction.DELETE);
