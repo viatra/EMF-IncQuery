@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.incquery.runtime.base.itc.test
-Bundle-SymbolicName: org.eclipse.incquery.runtime.base.itc.test
+Bundle-Name: org.eclipse.incquery.runtime.base.itc.tests
+Bundle-SymbolicName: org.eclipse.incquery.runtime.base.itc.tests
 Bundle-Version: 0.7.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
