@@ -171,12 +171,6 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                     PATTERN_ISSUE_CODE);
             return;
         }
-        if (classifier != targetClassifier) {
-            validator.error(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
-                    featureName, sourceClass.getName()), target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
-                    PATTERN_ISSUE_CODE);
-            return;
-        }
 
         // 5. "kind" (if set) is valid enum value
         QueryBasedFeatureKind kind = null;
@@ -217,6 +211,13 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                     kind = QueryBasedFeatureKind.ITERATION;
                 }
             }
+        }
+        
+        if (classifier != targetClassifier && (kind == QueryBasedFeatureKind.SINGLE_REFERENCE || kind == QueryBasedFeatureKind.MANY_REFERENCE)) {
+            validator.error(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
+                    featureName, sourceClass.getName()), target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
+                    PATTERN_ISSUE_CODE);
+            return;
         }
         // 6. keepCache (if set) is correct for the kind
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
