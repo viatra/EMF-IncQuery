@@ -24,6 +24,7 @@ import org.eclipse.viatra2.patternlanguage.core.patternLanguage.IntValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ListValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.LiteralValueReference;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.PathExpressionTail;
+import org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.Type;
 import org.eclipse.viatra2.patternlanguage.core.patternLanguage.ValueReference;
 import org.eclipse.viatra2.patternlanguage.eMFPatternLanguage.ClassType;
@@ -43,7 +44,7 @@ public class EMFPatternTypeUtil {
         if (valueReference instanceof LiteralValueReference) {
             if (valueReference instanceof IntValue) {
                 return EcorePackage.Literals.EINT;
-            } else if (valueReference instanceof org.eclipse.viatra2.patternlanguage.core.patternLanguage.StringValue) {
+            } else if (valueReference instanceof StringValue) {
                 return EcorePackage.Literals.ESTRING;
             } else if (valueReference instanceof BoolValue) {
                 return EcorePackage.Literals.EBOOLEAN;
