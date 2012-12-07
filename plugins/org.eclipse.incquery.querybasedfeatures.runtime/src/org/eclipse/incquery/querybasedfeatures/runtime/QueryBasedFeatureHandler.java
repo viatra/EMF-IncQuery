@@ -358,7 +358,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         Integer value = getIntValue(source);
         if (value <= Integer.MAX_VALUE - delta) {
             int tempMemory = value + delta;
-            notifications.add(new ENotificationImpl(source, Notification.SET, feature, (int) counterMemory.get(source),
+            notifications.add(new ENotificationImpl(source, Notification.SET, feature, getIntValue(source),
                     tempMemory));
             counterMemory.put(source, tempMemory);
         } else {
