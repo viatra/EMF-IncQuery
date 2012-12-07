@@ -9,6 +9,6 @@
 		<artifactId>org.eclipse.incquery.parent</artifactId>
 		<relativePath>../../releng/org.eclipse.incquery.parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>org.eclipse.incquery.runtime.base.itc.test</artifactId>
+	<artifactId>org.eclipse.incquery.runtime.base.itc.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 </project>
