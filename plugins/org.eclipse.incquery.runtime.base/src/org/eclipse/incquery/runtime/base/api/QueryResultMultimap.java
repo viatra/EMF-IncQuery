@@ -518,15 +518,17 @@ public abstract class QueryResultMultimap<KeyType, ValueType> implements Multima
         }
         Collection<ValueType> oldValues = removeAll(key);
         Iterator<? extends ValueType> iterator = values.iterator();
-        int inserted = cache.get(key).size();
+        Collection<ValueType> notInserted = Lists.newArrayList();
         while (iterator.hasNext()) {
-            modifyThroughQueryResultSetter(key, iterator.next(), Direction.INSERT);
-            inserted--;
+            ValueType value = iterator.next();
+            if(!modifyThroughQueryResultSetter(key, value, Direction.INSERT)) {
+                notInserted.add(value);
+            }
         }
-        if (inserted != 0) {
+        if (!notInserted.isEmpty()) {
             logger.warn(String
-                    .format("The query result multimap replaceValues on key %s did not insert all values. (Developer note: %s called from QueryResultMultimap)",
-                            key, setter));
+                    .format("The query result multimap replaceValues on key %s did not insert values %s. (Developer note: %s called from QueryResultMultimap)",
+                            key, notInserted.toString(), setter));
         }
         return oldValues;
     }
