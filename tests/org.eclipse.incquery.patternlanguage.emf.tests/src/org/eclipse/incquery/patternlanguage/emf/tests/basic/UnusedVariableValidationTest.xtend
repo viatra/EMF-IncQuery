@@ -139,6 +139,24 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
+	def testSymbolicVariablePositiveReferenceAsParameter() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern helper(p) = {
+				Pattern(p);
+			}
+
+			pattern testPattern(p : Pattern) = {
+				neg find helper(p);
+				Pattern(h);
+				h != p;
+			}'
+		)
+		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING))
+	}
+	
+	@Test
 	def testSymbolicVariableAllReferences() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
@@ -149,7 +167,6 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 
 			pattern testPattern(p) = {
 				Pattern(p);
-				neg Pattern.name(p, "");
 				neg find helper(p);
 				check(p == 0);
 				Pattern(h);
@@ -186,18 +203,6 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			}'
 		)
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
-	}
-	@Test
-	def testLocalVariableOneSingleUseNegativeReference() {
-		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-
-			pattern testPattern(c) = {
-				Pattern(c);
-				neg Pattern.name(_p, "");
-			}'
-		)
-		tester.validate(model).assertOK
 	}
 	
 	@Test
