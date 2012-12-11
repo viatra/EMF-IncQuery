@@ -571,7 +571,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     @Check
-    public void checkForInpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
+    public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
         XExpression xExpression = checkConstraint.getExpression();
         Set<String> elementsWithWarnings = new HashSet<String>();
         if (xExpression != null) {
