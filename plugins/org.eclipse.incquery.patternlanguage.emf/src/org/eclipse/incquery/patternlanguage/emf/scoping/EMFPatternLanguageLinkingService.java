@@ -34,8 +34,9 @@ import org.eclipse.xtext.nodemodel.INode;
 import com.google.inject.Inject;
 
 public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
-    private static final Logger LOG = Logger.getLogger(EMFPatternLanguageLinkingService.class);
 
+    @Inject
+    private Logger logger;
     @Inject
     private IValueConverterService valueConverterService;
     @Inject
@@ -105,7 +106,7 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
             return (String) valueConverterService.toValue(text.getText(),
                     getLinkingHelper().getRuleNameFrom(text.getGrammarElement()), text);
         } catch (ValueConverterException e) {
-            LOG.debug("Exception on leaf '" + text.getText() + "'", e);
+            logger.debug("Exception on leaf '" + text.getText() + "'", e);
             return null;
         }
     }

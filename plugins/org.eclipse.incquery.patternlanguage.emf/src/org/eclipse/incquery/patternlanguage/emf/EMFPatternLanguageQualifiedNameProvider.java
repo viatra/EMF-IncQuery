@@ -12,12 +12,12 @@ package org.eclipse.incquery.patternlanguage.emf;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
+import org.eclipse.incquery.patternlanguage.naming.PatternNameProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.xbase.scoping.XbaseQualifiedNameProvider;
 
 import com.google.inject.Inject;
 
@@ -25,7 +25,7 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  * 
  */
-public class EMFPatternLanguageQualifiedNameProvider extends XbaseQualifiedNameProvider {
+public class EMFPatternLanguageQualifiedNameProvider extends PatternNameProvider {
 
     @Inject
     IQualifiedNameConverter nameConverter;

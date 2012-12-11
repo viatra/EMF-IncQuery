@@ -98,8 +98,8 @@ public class PatternLanguageDeclarativeScopeProvider extends MyAbstractDeclarati
         EList<Variable> variables;
         if (body != null) {
             variables = body.getVariables();
-        } else if (it instanceof Pattern) {
-            Pattern pattern = (Pattern) it;
+        } else if (it != null) {
+            Pattern pattern = (Pattern) it; // If it is not null, this works
             variables = pattern.getParameters();
         } else {
             return IScope.NULLSCOPE;

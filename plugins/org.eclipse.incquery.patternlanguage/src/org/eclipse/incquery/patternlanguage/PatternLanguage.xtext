@@ -94,7 +94,7 @@ PatternCompositionConstraint returns Constraint:
 	//'count' 'find' patternRef=[Pattern] '(' (parameters+=ValueReference (','
 	//parameters+=ValueReference)*)? ')';
 PatternCall:
-	'find' patternRef=[Pattern] transitive?='+'? '(' (parameters+=ValueReference (',' parameters+=ValueReference)*)? ')';
+	'find' patternRef=[Pattern|QualifiedName] transitive?='+'? '(' (parameters+=ValueReference (',' parameters+=ValueReference)*)? ')';
 
 CompareConstraint returns Constraint:
 	{CompareConstraint} leftOperand = ValueReference feature=CompareFeature rightOperand = ValueReference 
