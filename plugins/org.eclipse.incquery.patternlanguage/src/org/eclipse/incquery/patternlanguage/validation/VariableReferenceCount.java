@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.validation;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 
 /**
@@ -40,6 +41,9 @@ class VariableReferenceCount {
         this.parameter = parameter;
         for (ReferenceType type : ReferenceType.values()) {
             counters.put(type, 0);
+        }
+        if (parameter && ((ParameterRef) variable).getReferredParam().getType() != null) {
+            counters.put(ReferenceType.POSITIVE, 1);
         }
     }
 

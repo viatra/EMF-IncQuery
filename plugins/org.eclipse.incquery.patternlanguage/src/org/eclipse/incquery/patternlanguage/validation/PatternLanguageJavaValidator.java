@@ -395,11 +395,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         Variable parameter = var.getReferredParam();
         if (refCounters.get(var).getReferenceCount() == 0) {
             error(String.format("Parameter '%s' is never referenced in body '%s'.", parameter.getName(),
-                    getPatternBodyName(body)), parameter, null, IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
+                    getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
+                    IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
         } else if (refCounters.get(var).getReferenceCount(ReferenceType.POSITIVE) == 0
                 && getReferenceCount(var, ReferenceType.POSITIVE, refCounters, variableUnions) == 0) {
             error(String.format("Parameter '%s' has no positive reference in body '%s'.", var.getName(),
-                    getPatternBodyName(body)), var, null, IssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
+                    getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
+                    IssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
         }
     }
 
@@ -410,10 +412,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 && !isUnnamedSingleUseVariable(var)) {
             warning(String.format(
                     "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
-                    var.getName()), var.getReferences().get(0), null, IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
+                    var.getName()), var.getReferences().get(0),
+                    PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
         } else if (refCounters.get(var).getReferenceCount() > 1 && isNamedSingleUse(var)) {
             for (VariableReference ref : var.getReferences()) {
-                error(String.format("Named single-use variable %s used multiple times.", var.getName()), ref, null,
+                error(String.format("Named single-use variable %s used multiple times.", var.getName()), ref,
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE);
 
             }
@@ -421,18 +425,21 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (refCounters.get(var).getReferenceCount(ReferenceType.NEGATIVE) == 0) {
                 error(String.format(
                         "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
-                        var.getName()), var.getReferences().get(0), null, IssueCodes.LOCAL_VARIABLE_READONLY);
+                        var.getName()), var.getReferences().get(0),
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, IssueCodes.LOCAL_VARIABLE_READONLY);
             } else if (refCounters.get(var).getReferenceCount(ReferenceType.NEGATIVE) == 1
                     && refCounters.get(var).getReferenceCount() == 1 && !isNamedSingleUse(var)
                     && !isUnnamedSingleUseVariable(var)) {
                 warning(String.format(
                         "Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
-                        var.getName()), var.getReferences().get(0), null,
+                        var.getName()), var.getReferences().get(0),
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
             } else if (refCounters.get(var).getReferenceCount() > 1) {
                 error(String.format(
                         "Local variable '%s' has no positive reference, thus its value cannot be determined.",
-                        var.getName()), var.getReferences().get(0), null,
+                        var.getName()), var.getReferences().get(0),
+                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);
             }
         }
