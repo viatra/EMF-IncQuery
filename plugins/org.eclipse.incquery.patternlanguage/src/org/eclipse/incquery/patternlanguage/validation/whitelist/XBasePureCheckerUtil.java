@@ -37,7 +37,7 @@ public class XBasePureCheckerUtil {
         String qualifiedName = jvmOperation.getQualifiedName();
         qualifiedName = qualifiedName.replace("." + jvmOperation.getSimpleName(), "");
         IConfigurationElement[] configurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-                "org.eclipse.incquery.patternlanguage.pureWhiteList");
+                "org.eclipse.incquery.patternlanguage.purewhitelist");
         for (IConfigurationElement configurationElement : configurationElements) {
             Object object = null;
             try {
