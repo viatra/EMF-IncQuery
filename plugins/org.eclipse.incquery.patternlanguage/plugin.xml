@@ -3,6 +3,7 @@
 
 <plugin>
    <extension-point id="annotation" name="Pattern Annotation" schema="schema/annotation.exsd"/>
+   <extension-point id="purewhitelist" name="EMF-IncQuery @Pure Whitelist extension" schema="schema/purewhitelist.exsd"/>
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
@@ -29,9 +30,11 @@
            package-nsUri="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage">
      </wellbehaving-derived-feature>
   </extension>
-
-
-
-
+  <extension
+        point="org.eclipse.incquery.patternlanguage.purewhitelist">
+     <whitelist
+           whitelistClass="org.eclipse.incquery.patternlanguage.validation.whitelist.JavaLangWhitelist">
+     </whitelist>
+  </extension>
 
 </plugin>

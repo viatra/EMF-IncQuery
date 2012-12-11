@@ -49,7 +49,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
-import org.eclipse.xtext.common.types.JvmAnnotationReference;
+import org.eclipse.incquery.patternlanguage.validation.whitelist.XBasePureCheckerUtil;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -57,7 +57,6 @@ import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
-import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.common.collect.ImmutableSet;
@@ -577,7 +576,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
                     if (jvmIdentifiableElement instanceof JvmOperation) {
                         JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
-                        if (isImpureElement(jvmOperation)) {
+                        if (XBasePureCheckerUtil.isImpureElement(jvmOperation)) {
                             elementsWithWarnings.add(jvmOperation.getQualifiedName());
                         }
                     }
@@ -599,23 +598,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                         IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
             }
         }
-    }
-
-    private boolean isImpureElement(JvmOperation jvmOperation) {
-        // First check if it is tagged with the @Pure annotation
-        if (!jvmOperation.getAnnotations().isEmpty()) {
-            for (JvmAnnotationReference jvmAnnotationReference : jvmOperation.getAnnotations()) {
-                if (Pure.class.getSimpleName().equals(jvmAnnotationReference.getAnnotation().getSimpleName())) {
-                    return false;
-                }
-            }
-        }
-        // Second, we consider the following packages pure by default: xbase.lib.*, java.lang.* and java.lang.math.*
-        String qualifiedName = jvmOperation.getQualifiedName();
-        if (qualifiedName.startsWith("xbase.lib.") || qualifiedName.startsWith("java.lang.")) {
-            return false;
-        }
-        return true;
     }
 
     @Override
