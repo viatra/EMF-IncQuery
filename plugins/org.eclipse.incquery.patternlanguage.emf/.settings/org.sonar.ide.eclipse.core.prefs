@@ -1,0 +1,7 @@
+analyseLocally=false
+eclipse.preferences.version=1
+projectArtifactId=org.eclipse.incquery.patternlanguage.emf
+projectBranch=
+projectGroupId=org.eclipse.incquery
+serverUrl=https\://build.inf.mit.bme.hu/sonar
+version=1
