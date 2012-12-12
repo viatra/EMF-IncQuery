@@ -445,15 +445,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
-    private int getReferenceCount(Variable var, Map<Variable, VariableReferenceCount> refCounters,
-            UnionFindForVariables variableUnions) {
-        int sum = 0;
-        for (Variable unionVar : variableUnions.getPartitionOfVariable(var)) {
-            sum += refCounters.get(unionVar).getReferenceCount();
-        }
-        return sum;
-    }
-
     private int getReferenceCount(Variable var, ReferenceType type, Map<Variable, VariableReferenceCount> refCounters,
             UnionFindForVariables variableUnions) {
         int sum = 0;

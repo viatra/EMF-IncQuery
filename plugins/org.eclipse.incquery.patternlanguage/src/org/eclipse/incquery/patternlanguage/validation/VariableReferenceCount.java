@@ -42,7 +42,7 @@ class VariableReferenceCount {
         for (ReferenceType type : ReferenceType.values()) {
             counters.put(type, 0);
         }
-        if (parameter && ((ParameterRef) variable).getReferredParam().getType() != null) {
+        if (variable instanceof ParameterRef && ((ParameterRef) variable).getReferredParam().getType() != null) {
             counters.put(ReferenceType.POSITIVE, 1);
         }
     }

@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 public class EMFPatternLanguageQualifiedNameProvider extends PatternNameProvider {
 
     @Inject
-    IQualifiedNameConverter nameConverter;
+    private IQualifiedNameConverter nameConverter;
 
     @Override
     public QualifiedName getFullyQualifiedName(EObject obj) {
@@ -38,12 +38,12 @@ public class EMFPatternLanguageQualifiedNameProvider extends PatternNameProvider
             return nameConverter.toQualifiedName("import.nsUri." + nsURI);
         } else if (obj instanceof Annotation) {
             Annotation annotation = (Annotation) obj;
-            String name = (annotation != null) ? annotation.getName() : "<none>";
+            String name = annotation.getName();
             return nameConverter.toQualifiedName("annotation." + name);
         } else if (obj instanceof AnnotationParameter) {
             AnnotationParameter parameter = (AnnotationParameter) obj;
             Annotation annotation = (Annotation) parameter.eContainer();
-            getFullyQualifiedName(annotation).append(parameter.getName());
+            return getFullyQualifiedName(annotation).append(parameter.getName());
         } else if (obj instanceof VariableReference) {
             VariableReference variableRef = (VariableReference) obj;
             QualifiedName containerName = getFullyQualifiedName(variableRef.eContainer());
