@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.validation.whitelist;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -17,11 +18,16 @@ import org.eclipse.xtext.common.types.JvmAnnotationReference;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.xbase.lib.Pure;
 
+import com.google.inject.Inject;
+
 /**
  * A utility class for checking the "purity" of the JvmOperations in XBase check expressions. It checks the @Pure
  * annotation and the whitelists as well.
  */
 public class XBasePureCheckerUtil {
+
+    @Inject
+    private static Logger logger;
 
     public static boolean isImpureElement(JvmOperation jvmOperation) {
         // First, check if it is tagged with the @Pure annotation
@@ -42,8 +48,8 @@ public class XBasePureCheckerUtil {
             Object object = null;
             try {
                 object = configurationElement.createExecutableExtension("whitelistClass");
-            } catch (CoreException e) {
-                e.printStackTrace();
+            } catch (CoreException coreException) {
+                logger.error("Whitelist extension point initialization failed.", coreException);
             }
             if (object != null && object instanceof IXBasePureWhitelist) {
                 IXBasePureWhitelist xbasePureWhitelist = (IXBasePureWhitelist) object;

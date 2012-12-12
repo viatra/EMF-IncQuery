@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -34,6 +35,7 @@ import org.eclipse.xtext.xbase.interpreter.IEvaluationResult;
 import org.eclipse.xtext.xbase.interpreter.IExpressionInterpreter;
 import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
@@ -42,6 +44,10 @@ import com.google.inject.Provider;
  */
 @SuppressWarnings("restriction")
 public class XBaseEvaluator extends AbstractEvaluator {
+    
+    @Inject
+    private Logger logger;
+    
     private final XExpression xExpression;
     private final Map<String, Integer> tupleNameMap;
     private final Pattern pattern;
@@ -73,8 +79,8 @@ public class XBaseEvaluator extends AbstractEvaluator {
                 Object object = null;
                 try {
                     object = configurationElement.createExecutableExtension("evaluatorClass");
-                } catch (CoreException e) {
-                    e.printStackTrace();
+                } catch (CoreException coreException) {
+                    logger.error("XBase Java evaluator extension point initialization failed.", coreException);
                 }
                 if (object != null && object instanceof IMatchChecker) {
                     matchChecker = (IMatchChecker) object;
@@ -91,10 +97,10 @@ public class XBaseEvaluator extends AbstractEvaluator {
                 if (classLoader != null) {
                     interpreter.setClassLoader(ClassLoaderUtil.getClassLoader(CheckExpressionUtil.getIFile(pattern)));
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (CoreException e) {
-                e.printStackTrace();
+            } catch (MalformedURLException malformedURLException) {
+                logger.error("XBase Java evaluator extension point initialization failed.", malformedURLException);
+            } catch (CoreException coreException) {
+                logger.error("XBase Java evaluator extension point initialization failed.", coreException);
             }
             contextProvider = injector.getProvider(IEvaluationContext.class);
         }

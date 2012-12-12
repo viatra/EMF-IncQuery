@@ -4,6 +4,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
@@ -29,8 +30,13 @@ import org.eclipse.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.junit.Test;
 
+import com.google.inject.Inject;
+
 public class EverythingDynamicTest {
 
+    @Inject
+    private Logger logger;
+    
     @SuppressWarnings("unchecked")
     @Test
     public void everythingDynamic() {
@@ -114,8 +120,8 @@ public class EverythingDynamicTest {
         try {
             GenericPatternMatcher matcher = new GenericPatternMatcher(pattern, bookStoreObject);
             matches = (List<GenericPatternMatch>) matcher.getAllMatches();
-        } catch (IncQueryException e) {
-            e.printStackTrace();
+        } catch (IncQueryException incQueryException) {
+            logger.error("Matcher initialization and matching failed in the testcase.", incQueryException);
         }
 
         Assert.assertNotNull(matches);
