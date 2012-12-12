@@ -39,7 +39,7 @@ public class PatternNameProvider extends XbaseQualifiedNameProvider {
         } else if (obj instanceof Variable) {
             Variable variable = (Variable) obj;
             QualifiedName parentName = getFullyQualifiedName(variable.eContainer());
-            if (parentName == null && parentName.isEmpty()) {
+            if (parentName == null || parentName.isEmpty()) {
                 return nameConverter.toQualifiedName(variable.getName());
             } else {
                 return parentName.append(variable.getName());
