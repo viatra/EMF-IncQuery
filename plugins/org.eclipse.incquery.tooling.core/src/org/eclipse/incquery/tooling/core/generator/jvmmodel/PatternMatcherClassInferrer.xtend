@@ -15,7 +15,6 @@ import com.google.inject.Inject
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.incquery.runtime.api.EngineManager
 import org.eclipse.incquery.runtime.api.IncQueryEngine
-import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
@@ -47,7 +46,6 @@ class PatternMatcherClassInferrer {
    			it.documentation = pattern.javadocMatcherClass.toString
 			//it.annotations += pattern.toAnnotation(typeof (SuppressWarnings), "unused")
    			it.superTypes += pattern.newTypeRef(typeof(BaseGeneratedMatcher), cloneWithProxies(matchClassRef))
-   			it.superTypes += pattern.newTypeRef(typeof(IncQueryMatcher), cloneWithProxies(matchClassRef))
    		]
    		matcherClass.inferFields(pattern)
    		matcherClass.inferConstructors(pattern)

@@ -153,10 +153,10 @@ class PatternMatcherClassMethodInferrer {
 			   				}
 		   				}
 		   				it.setBody([
-		   					serialize(typeOfVariable, pattern)
-		   					append(''' «variable.parameterName» = null;
-		   					''')
-		   					append('''return rawAccumulateAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+		   					append('''return rawAccumulateAllValuesOf«variable.name»(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«
+		   						if (p.parameterName == variable.parameterName) "null" else p.parameterName  
+		   						»«ENDFOR»});'''
+		   					)
 		   				])
 		   			]
 	   			}
