@@ -9,7 +9,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 
 /**
- * Pattern-specific match representation of the UnexpectedMatchRecord pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern, 
  * to be used in conjunction with UnexpectedMatchRecordMatcher.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
@@ -96,7 +96,7 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
   
   @Override
   public String patternName() {
-    return "UnexpectedMatchRecord";
+    return "org.eclipse.incquery.testing.queries.UnexpectedMatchRecord";
     
   }
   

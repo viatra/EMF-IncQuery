@@ -8,7 +8,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 
 /**
- * Pattern-specific match representation of the SubstitutionValue pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern, 
  * to be used in conjunction with SubstitutionValueMatcher.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
@@ -77,7 +77,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
   
   @Override
   public String patternName() {
-    return "SubstitutionValue";
+    return "org.eclipse.incquery.testing.queries.SubstitutionValue";
     
   }
   

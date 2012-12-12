@@ -5,7 +5,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
 
 /**
- * A match processor tailored for the SubstitutionValue pattern.
+ * A match processor tailored for the org.eclipse.incquery.testing.queries.SubstitutionValue pattern.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 

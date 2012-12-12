@@ -6,7 +6,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
 
 /**
- * A match processor tailored for the UnexpectedMatchRecord pattern.
+ * A match processor tailored for the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 

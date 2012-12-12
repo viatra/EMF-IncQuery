@@ -19,7 +19,7 @@ import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatc
 import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory;
 
 /**
- * Generated pattern matcher API of the UnexpectedMatchRecord pattern, 
+ * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern, 
  * providing pattern-specific query methods.
  * 
  * <p>Original source:

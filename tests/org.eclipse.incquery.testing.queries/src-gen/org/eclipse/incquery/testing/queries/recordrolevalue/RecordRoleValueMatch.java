@@ -8,7 +8,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 
 /**
- * Pattern-specific match representation of the RecordRoleValue pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
  * to be used in conjunction with RecordRoleValueMatcher.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
@@ -77,7 +77,7 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
   
   @Override
   public String patternName() {
-    return "RecordRoleValue";
+    return "org.eclipse.incquery.testing.queries.RecordRoleValue";
     
   }
   

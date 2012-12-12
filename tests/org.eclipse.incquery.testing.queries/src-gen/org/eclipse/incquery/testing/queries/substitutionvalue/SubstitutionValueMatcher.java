@@ -18,7 +18,7 @@ import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueM
 import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory;
 
 /**
- * Generated pattern matcher API of the SubstitutionValue pattern, 
+ * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern, 
  * providing pattern-specific query methods.
  * 
  * <p>Original source:

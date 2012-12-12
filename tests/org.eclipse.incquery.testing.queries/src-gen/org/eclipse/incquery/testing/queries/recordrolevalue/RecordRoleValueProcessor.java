@@ -5,7 +5,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
 
 /**
- * A match processor tailored for the RecordRoleValue pattern.
+ * A match processor tailored for the org.eclipse.incquery.testing.queries.RecordRoleValue pattern.
  * 
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 

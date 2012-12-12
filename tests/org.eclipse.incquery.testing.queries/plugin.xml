@@ -3,6 +3,54 @@
 <plugin>
 
    <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider"
+            id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider"
+            id="org.eclipse.incquery.testing.queries.RecordRoleValue">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider"
+            id="org.eclipse.incquery.testing.queries.SubstitutionValue">
+      </matcher>
+   </extension>
+   <extension
+         id="UnexpectedMatchRecord"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord"
+            factoryProvider="org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="RecordRoleValue"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            id="org.eclipse.incquery.testing.queries.RecordRoleValue"
+            factoryProvider="org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
+         id="SubstitutionValue"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            id="org.eclipse.incquery.testing.queries.SubstitutionValue"
+            factoryProvider="org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory$Provider">
+      </matcher>
+   </extension>
+   <extension
          id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord"
          point="org.eclipse.incquery.runtime.matcherfactory">
       <matcher

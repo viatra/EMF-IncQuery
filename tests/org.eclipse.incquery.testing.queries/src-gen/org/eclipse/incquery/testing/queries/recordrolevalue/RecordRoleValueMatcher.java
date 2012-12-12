@@ -18,7 +18,7 @@ import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch
 import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcherFactory;
 
 /**
- * Generated pattern matcher API of the RecordRoleValue pattern, 
+ * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
  * providing pattern-specific query methods.
  * 
  * <p>Original source:

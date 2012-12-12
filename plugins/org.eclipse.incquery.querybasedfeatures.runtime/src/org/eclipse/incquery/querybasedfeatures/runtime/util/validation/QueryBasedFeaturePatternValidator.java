@@ -167,9 +167,8 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         EClassifier targetClassifier = typeProvider.getClassifierForVariable(target);
         if (targetClassifier == null) {
-            validator.error("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
+            validator.warning("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
-            return;
         }
 
         // 5. "kind" (if set) is valid enum value
@@ -214,10 +213,9 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         
         if (classifier != targetClassifier && (kind == QueryBasedFeatureKind.SINGLE_REFERENCE || kind == QueryBasedFeatureKind.MANY_REFERENCE)) {
-            validator.error(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
+            validator.warning(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
                     featureName, sourceClass.getName()), target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
-            return;
         }
         // 6. keepCache (if set) is correct for the kind
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
