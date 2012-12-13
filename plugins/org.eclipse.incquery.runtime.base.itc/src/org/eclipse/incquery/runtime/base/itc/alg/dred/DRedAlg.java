@@ -258,23 +258,19 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         Set<V> modSet = null;
 
         // n -> target
-        if (set != null) {
-            modSet = new HashSet<V>(set);
+        modSet = new HashSet<V>(set);
 
-            for (V tn : modSet) {
-                this.tc.removeTuple(n, tn);
-            }
+        for (V tn : modSet) {
+            this.tc.removeTuple(n, tn);
         }
 
         // source -> n
         set = tc.getTupleStarts(n);
 
-        if (set != null) {
-            modSet = new HashSet<V>(set);
+        modSet = new HashSet<V>(set);
 
-            for (V sn : modSet) {
-                this.tc.removeTuple(sn, n);
-            }
+        for (V sn : modSet) {
+            this.tc.removeTuple(sn, n);
         }
     }
 
