@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
@@ -40,7 +41,7 @@ public class EMFPatternTypeUtil {
      * @return an {@link EClassifier} for the given input {@link ValueReference}. The ValueReference can be a
      *         {@link LiteralValueReference}, or a {@link ComputationValue}.
      */
-    public static EClassifier getClassifierForLiteralAndComputationValueReference(ValueReference valueReference) {
+    public static EClassifier getClassifierForLiteralComputationEnumValueReference(ValueReference valueReference) {
         if (valueReference instanceof LiteralValueReference) {
             if (valueReference instanceof IntValue) {
                 return EcorePackage.Literals.EINT;
@@ -53,13 +54,14 @@ public class EMFPatternTypeUtil {
             } else if (valueReference instanceof ListValue) {
                 return null;
             }
-        } else if (valueReference instanceof ComputationValue) {
-            if (valueReference instanceof AggregatedValue) {
-                AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-                if (aggregatedValue.getAggregator() instanceof CountAggregator) {
-                    return EcorePackage.Literals.EINT;
-                }
+        } else if (valueReference instanceof AggregatedValue) {
+            AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
+            if (aggregatedValue.getAggregator() instanceof CountAggregator) {
+                return EcorePackage.Literals.EINT;
             }
+        } else if (valueReference instanceof EnumValue) {
+            EnumValue enumValue = (EnumValue) valueReference;
+            return enumValue.getEnumeration();
         }
         return null;
     }

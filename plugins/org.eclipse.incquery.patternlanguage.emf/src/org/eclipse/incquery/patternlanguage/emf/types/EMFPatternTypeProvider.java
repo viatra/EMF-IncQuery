@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
@@ -316,8 +317,9 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     private EClassifier getClassifierForValueReference(ValueReference valueReference, PatternBody patternBody,
             Variable variable, int recursionCallingLevel, Variable injectiveVariablePair) {
-        if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
-            return EMFPatternTypeUtil.getClassifierForLiteralAndComputationValueReference(valueReference);
+        if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue
+                || valueReference instanceof EnumValue) {
+            return EMFPatternTypeUtil.getClassifierForLiteralComputationEnumValueReference(valueReference);
         } else if (valueReference instanceof VariableValue) {
             VariableValue variableValue = (VariableValue) valueReference;
             Variable newPossibleInjectPair = variableValue.getValue().getVariable();

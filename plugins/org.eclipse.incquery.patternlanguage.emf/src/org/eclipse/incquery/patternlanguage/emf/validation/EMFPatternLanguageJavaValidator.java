@@ -463,9 +463,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 || rightValueReference instanceof LiteralValueReference
                 || rightValueReference instanceof ComputationValue) {
             EClassifier leftClassifier = EMFPatternTypeUtil
-                    .getClassifierForLiteralAndComputationValueReference(leftValueReference);
+                    .getClassifierForLiteralComputationEnumValueReference(leftValueReference);
             EClassifier rightClassifier = EMFPatternTypeUtil
-                    .getClassifierForLiteralAndComputationValueReference(rightValueReference);
+                    .getClassifierForLiteralComputationEnumValueReference(rightValueReference);
             if (!isCompatibleClassifiers(leftClassifier, rightClassifier)) {
                 error("The types of the literal/computational values are different: "
                         + leftClassifier.getInstanceClassName() + ", " + rightClassifier.getInstanceClassName() + ".",
@@ -487,7 +487,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         ValueReference valueReference = pathExpressionHead.getDst();
         if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
             EClassifier inputClassifier = EMFPatternTypeUtil
-                    .getClassifierForLiteralAndComputationValueReference(valueReference);
+                    .getClassifierForLiteralComputationEnumValueReference(valueReference);
             EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
             if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
@@ -513,7 +513,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 Variable variable = pattern.getParameters().get(patternCall.getParameters().indexOf(valueReference));
                 EClassifier typeClassifier = emfTypeProvider.getClassifierForVariable(variable);
                 EClassifier inputClassifier = EMFPatternTypeUtil
-                        .getClassifierForLiteralAndComputationValueReference(valueReference);
+                        .getClassifierForLiteralComputationEnumValueReference(valueReference);
                 if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
                     error("The type infered from the called pattern (" + typeClassifier.getInstanceClassName()
                             + ") is different from the input literal/computational value ("
