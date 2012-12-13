@@ -36,23 +36,25 @@ public class InitValidatorsHandler extends AbstractHandler {
 
         ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
         Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-        if (firstElement != null && firstElement instanceof GraphicalEditPart) {
+        if (firstElement instanceof GraphicalEditPart) {
             GraphicalEditPart gep = (GraphicalEditPart) firstElement;
             Object model = gep.getModel();
-            if (model != null && model instanceof View) {
+            if (model instanceof View) {
                 View model2 = (View) model;
                 EObject element = model2.getElement();
                 if (element != null) {// && element instanceof Element) {
                     Resource resource = element.eResource();
-                    if (resource == null)
+                    if (resource == null) {
                         notifier = element;
-                    else
+                    } else {
                         notifier = resource;
+                    }
                 }
             }
         }
-        if (notifier == null)
+        if (notifier == null) {
             throw new ExecutionException("Must select a node or diagram representing an EMF model or model element.");
+        }
         // FIXME should go through ValidationInitUtil!
         ValidationUtil.addNotifier(activeEditor, notifier);
         activeEditor.getEditorSite().getPage().addPartListener(ValidationPartListener.getInstance());

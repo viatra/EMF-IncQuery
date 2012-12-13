@@ -25,7 +25,7 @@ public class MatcherConfigurationContentProvider implements IStructuredContentPr
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (newInput != null && newInput instanceof MatcherConfiguration[]) {
+        if (newInput instanceof MatcherConfiguration[]) {
             input = (MatcherConfiguration[]) newInput;
         }
     }

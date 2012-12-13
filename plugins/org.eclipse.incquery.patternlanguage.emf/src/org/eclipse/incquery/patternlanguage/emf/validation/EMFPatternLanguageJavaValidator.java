@@ -262,11 +262,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 }
             }
         }
-        if (realSubTypes.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !realSubTypes.isEmpty();
     }
 
     /**
@@ -449,10 +445,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     private static boolean isValueReferenceAggregated(ValueReference valueReference) {
-        if (valueReference != null && valueReference instanceof AggregatedValue) {
-            return true;
-        }
-        return false;
+        return valueReference instanceof AggregatedValue;
     }
 
     /**

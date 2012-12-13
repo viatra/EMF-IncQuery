@@ -30,7 +30,7 @@ public class PatternsViewerHierarchicalContentProvider implements ITreeContentPr
 
     @Override
     public Object[] getElements(Object inputElement) {
-        if (inputElement != null && inputElement instanceof PatternsViewerInput) {
+        if (inputElement instanceof PatternsViewerInput) {
             return ((PatternsViewerInput) inputElement).getChildren();
         }
         return null;
@@ -38,7 +38,7 @@ public class PatternsViewerHierarchicalContentProvider implements ITreeContentPr
 
     @Override
     public Object[] getChildren(Object parentElement) {
-        if (parentElement != null && parentElement instanceof PatternComposite) {
+        if (parentElement instanceof PatternComposite) {
             return ((PatternComposite) parentElement).getDirectChildren().toArray();
         }
         return null;
@@ -46,7 +46,7 @@ public class PatternsViewerHierarchicalContentProvider implements ITreeContentPr
 
     @Override
     public Object getParent(Object element) {
-        if (element != null && element instanceof PatternComponent) {
+        if (element instanceof PatternComponent) {
             return ((PatternComponent) element).getParent();
         }
         return null;
@@ -54,7 +54,7 @@ public class PatternsViewerHierarchicalContentProvider implements ITreeContentPr
 
     @Override
     public boolean hasChildren(Object element) {
-        if (element != null && element instanceof PatternComposite) {
+        if (element instanceof PatternComposite) {
             return ((PatternComposite) element).getDirectChildren().size() > 0;
         }
         return false;

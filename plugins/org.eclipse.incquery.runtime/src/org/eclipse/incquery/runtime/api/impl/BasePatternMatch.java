@@ -24,8 +24,9 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 public abstract class BasePatternMatch implements IPatternMatch {
 
     public static String prettyPrintValue(Object o) {
-        if (o == null)
+        if (o == null) {
             return "(null)";
+        }
         String name = prettyPrintFeature(o, "name");
         if (name != null) {
             return name;
@@ -39,12 +40,13 @@ public abstract class BasePatternMatch implements IPatternMatch {
     }
 
     public static String prettyPrintFeature(Object o, String featureName) {
-        if (o != null && o instanceof EObject) {
+        if (o instanceof EObject) {
             EStructuralFeature feature = ((EObject) o).eClass().getEStructuralFeature(featureName);
             if (feature != null) {
                 Object value = ((EObject) o).eGet(feature);
-                if (value != null)
+                if (value != null) {
                     return value.toString();
+                }
             }
         }
         return null;
@@ -62,10 +64,11 @@ public abstract class BasePatternMatch implements IPatternMatch {
 
     @Override
     public boolean set(int position, Object newValue) {
-        if (position >= 0 && position < parameterNames().length)
+        if (position >= 0 && position < parameterNames().length) {
             return set(parameterNames()[position], newValue);
-        else
+        } else {
             return false;
+        }
     }
 
     /*

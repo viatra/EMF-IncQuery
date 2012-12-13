@@ -30,7 +30,7 @@ public class ObjectListLabelProvider extends LabelProvider implements ITableLabe
 
     @Override
     public String getColumnText(Object element, int columnIndex) {
-        if (element != null && element instanceof ObjectParameter) {
+        if (element instanceof ObjectParameter) {
             ObjectParameter parameter = (ObjectParameter) element;
             if (columnIndex == 0) {
                 return parameter.getParameterName();

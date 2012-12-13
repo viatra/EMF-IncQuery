@@ -51,7 +51,7 @@ public class PatternMatchDialogContentProvider implements ITreeContentProvider {
      */
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (newInput != null && newInput instanceof IncQueryMatcher<?> && newInput != oldInput) {
+        if (newInput instanceof IncQueryMatcher<?> && newInput != oldInput) {
             this.matcher = (IncQueryMatcher<?>) newInput;
             this.matches = matcher.getAllMatches();
         }

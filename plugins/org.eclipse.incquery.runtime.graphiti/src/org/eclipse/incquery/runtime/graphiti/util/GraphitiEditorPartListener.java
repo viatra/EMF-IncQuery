@@ -33,7 +33,7 @@ public class GraphitiEditorPartListener extends BasePartListener {
 
     }
 
-    public synchronized static GraphitiEditorPartListener getInstance() {
+    public static synchronized GraphitiEditorPartListener getInstance() {
         if (instance == null) {
             instance = new GraphitiEditorPartListener();
         }
@@ -43,7 +43,7 @@ public class GraphitiEditorPartListener extends BasePartListener {
     @Override
     public void partClosed(IWorkbenchPart part) {
 
-        if (part != null && part instanceof IEditorPart) {
+        if (part instanceof IEditorPart) {
             IEditorPart closedEditor = (IEditorPart) part;
             if (closedEditor instanceof DiagramEditor) {
                 DiagramEditor providerEditor = (DiagramEditor) closedEditor;

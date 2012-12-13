@@ -30,16 +30,16 @@ import com.google.inject.Injector;
 public class RuntimeMatcherRegistrationHandler extends AbstractHandler {
 
     @Inject
-    Injector injector;
+    private Injector injector;
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IFile file = null;
         ISelection selection = HandlerUtil.getCurrentSelection(event);
 
-        if (selection != null && selection instanceof IStructuredSelection) {
+        if (selection instanceof IStructuredSelection) {
             Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-            if (firstElement != null && firstElement instanceof IFile) {
+            if (firstElement instanceof IFile) {
                 file = (IFile) firstElement;
             }
         } else {

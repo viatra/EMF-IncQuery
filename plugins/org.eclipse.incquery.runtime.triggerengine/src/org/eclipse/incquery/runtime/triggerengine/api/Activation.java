@@ -83,12 +83,12 @@ public abstract class Activation<MatchType extends IPatternMatch> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj == null || !(obj instanceof Activation)) {
-            return false;
-        } else {
+        } else if (obj instanceof Activation) {
             Activation<MatchType> other = (Activation<MatchType>) obj;
             return (other.fired == this.fired) && (other.rule.equals(this.rule))
                     && (other.patternMatch.equals(this.patternMatch)) && (other.state == this.state);
+        } else {
+            return false;
         }
     }
 

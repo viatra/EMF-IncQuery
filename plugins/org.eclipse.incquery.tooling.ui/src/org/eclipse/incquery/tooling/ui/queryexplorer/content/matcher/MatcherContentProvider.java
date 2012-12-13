@@ -18,10 +18,6 @@ public class MatcherContentProvider implements ITreeContentProvider {
 
     private MatcherTreeViewerRoot input;
 
-    public MatcherContentProvider() {
-
-    }
-
     @Override
     public void dispose() {
         input = null;
@@ -29,7 +25,7 @@ public class MatcherContentProvider implements ITreeContentProvider {
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (newInput != null && newInput instanceof MatcherTreeViewerRoot) {
+        if (newInput instanceof MatcherTreeViewerRoot) {
             input = (MatcherTreeViewerRoot) newInput;
         }
     }

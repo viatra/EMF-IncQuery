@@ -105,13 +105,11 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             tupStarts = tc.getTupleStarts(source);
             tupEnds = tc.getTupleEnds(target);
 
-            if (tupStarts != null && tupEnds != null) {
-                for (V s : tupStarts) {
-                    for (V t : tupEnds) {
-                        if (!s.equals(t)) {
-                            if (tc.addTuple(s, t)) {
-                                tuples.add(new Tuple<V>(s, t));
-                            }
+            for (V s : tupStarts) {
+                for (V t : tupEnds) {
+                    if (!s.equals(t)) {
+                        if (tc.addTuple(s, t)) {
+                            tuples.add(new Tuple<V>(s, t));
                         }
                     }
                 }
@@ -119,24 +117,20 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
             // (s, source) -> (source, target)
             // tupStarts = tc.getTupleStarts(source);
-            if (tupStarts != null) {
-                for (V s : tupStarts) {
-                    if (!s.equals(target)) {
-                        if (tc.addTuple(s, target)) {
-                            tuples.add(new Tuple<V>(s, target));
-                        }
+            for (V s : tupStarts) {
+                if (!s.equals(target)) {
+                    if (tc.addTuple(s, target)) {
+                        tuples.add(new Tuple<V>(s, target));
                     }
                 }
             }
 
             // (source, target) -> (target, t)
             // tupEnds = tc.getTupleEnds(target);
-            if (tupEnds != null) {
-                for (V t : tupEnds) {
-                    if (!source.equals(t)) {
-                        if (tc.addTuple(source, t)) {
-                            tuples.add(new Tuple<V>(source, t));
-                        }
+            for (V t : tupEnds) {
+                if (!source.equals(t)) {
+                    if (tc.addTuple(source, t)) {
+                        tuples.add(new Tuple<V>(source, t));
                     }
                 }
             }

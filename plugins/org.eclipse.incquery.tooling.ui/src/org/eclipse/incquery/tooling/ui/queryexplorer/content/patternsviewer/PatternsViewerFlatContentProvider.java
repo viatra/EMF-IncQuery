@@ -32,7 +32,7 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
 
     @Override
     public Object[] getElements(Object inputElement) {
-        if (inputElement != null && inputElement instanceof PatternsViewerInput) {
+        if (inputElement instanceof PatternsViewerInput) {
             return ((PatternsViewerInput) inputElement).getChildren();
         }
         return null;
@@ -40,7 +40,7 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
 
     @Override
     public Object[] getChildren(Object parentElement) {
-        if (parentElement != null && parentElement instanceof PatternComposite) {
+        if (parentElement instanceof PatternComposite) {
             return getLeavesOrComponentsWithLeaves((PatternComposite) parentElement).toArray();
         }
         return null;
@@ -49,9 +49,9 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
     // OK
     @Override
     public Object getParent(Object element) {
-        if (element != null && element instanceof PatternLeaf) {
+        if (element instanceof PatternLeaf) {
             return ((PatternComponent) element).getParent();
-        } else if (element != null && element instanceof PatternComposite) {
+        } else if (element instanceof PatternComposite) {
             return ((PatternComposite) element).getRoot();
         }
         return null;
@@ -60,7 +60,7 @@ public class PatternsViewerFlatContentProvider implements ITreeContentProvider {
     // OK
     @Override
     public boolean hasChildren(Object element) {
-        if (element != null && element instanceof PatternComposite) {
+        if (element instanceof PatternComposite) {
             return ((PatternComposite) element).getDirectLeaves().size() > 0;
         }
         return false;

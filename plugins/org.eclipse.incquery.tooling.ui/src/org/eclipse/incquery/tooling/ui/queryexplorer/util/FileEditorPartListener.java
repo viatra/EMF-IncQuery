@@ -25,15 +25,15 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public class FileEditorPartListener extends BasePartListener {
 
-    private final String dialogTitle = ".eiq file editor closing";
+    private final static String dialogTitle = ".eiq file editor closing";
 
     @Override
     public void partClosed(IWorkbenchPart part) {
-        if (part != null && part instanceof IEditorPart) {
+        if (part instanceof IEditorPart) {
             IEditorPart closedEditor = (IEditorPart) part;
             IEditorInput editorInput = closedEditor.getEditorInput();
 
-            if (editorInput != null && editorInput instanceof FileEditorInput) {
+            if (editorInput instanceof FileEditorInput) {
                 IFile file = ((FileEditorInput) editorInput).getFile();
 
                 if (file != null && file.getFileExtension().matches("eiq")

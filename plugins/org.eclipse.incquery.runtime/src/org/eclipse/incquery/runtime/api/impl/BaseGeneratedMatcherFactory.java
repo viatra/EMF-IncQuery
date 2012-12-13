@@ -91,8 +91,9 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
      * @return {@link Pattern} instance or null if not found.
      */
     private Pattern findPattern(PatternModel model, String patternName) {
-        if (model == null)
+        if (model == null) {
             return null;
+        }
         for (Pattern pattern : model.getPatterns()) {
             if (pattern.getName().equals(patternName)) {
                 return pattern;
@@ -110,8 +111,9 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
      *             if model loading was unsuccessful
      */
     public static PatternModel getModelRoot(String bundleName) throws IncQueryException {
-        if (bundleName == null || bundleName.isEmpty())
+        if (bundleName == null || bundleName.isEmpty()) {
             return null;
+        }
         if (bundleNameToPatternModelMap.get(bundleName) == null) {
             Resource bundleResource = bundleNameToResourceMap.get(bundleName);
             if (bundleResource == null) {
@@ -129,9 +131,9 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
 
     protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
         Throwable cause1 = err.getCause();
-        if (cause1 != null && cause1 instanceof RuntimeException) {
+        if (cause1 instanceof RuntimeException) {
             Throwable cause2 = ((RuntimeException) cause1).getCause();
-            if (cause2 != null && cause2 instanceof IncQueryException) {
+            if (cause2 instanceof IncQueryException) {
                 throw (IncQueryException) cause2;
             }
         }

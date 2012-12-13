@@ -29,7 +29,7 @@ public class ModelEditorPartListener extends BasePartListener {
 
     }
 
-    public synchronized static ModelEditorPartListener getInstance() {
+    public static synchronized ModelEditorPartListener getInstance() {
         if (instance == null) {
             instance = new ModelEditorPartListener();
         }
@@ -38,7 +38,7 @@ public class ModelEditorPartListener extends BasePartListener {
 
     @Override
     public void partClosed(IWorkbenchPart part) {
-        if (part != null && part instanceof IEditorPart) {
+        if (part instanceof IEditorPart) {
             IEditorPart editorPart = (IEditorPart) part;
             ResourceSet resourceSet = AdapterUtil.getResourceSetFromIEditorPart(editorPart);
             if (resourceSet != null && resourceSet.getResources().size() > 0) {
