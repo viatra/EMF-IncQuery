@@ -8,7 +8,6 @@
  * Contributors:
  *   Tamas Szabo, Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.runtime.base.core;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,10 +25,12 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -49,7 +50,12 @@ import com.google.common.collect.Table;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
-    public static final EClass eObjectClass = EcorePackage.eINSTANCE.getEObject();
+    public static final EClass EOBJECT_CLASS = EcorePackage.eINSTANCE.getEObject();
+
+    private final NavigationHelperImpl navigationHelper;
+
+    // since last run of after-update callbacks
+    private boolean isDirty = false;
 
     // value -> feature (attr or ref) -> holder(s)
     protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
@@ -58,7 +64,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     protected Map<EStructuralFeature, Multiset<EObject>> reversedFeatureMap;
 
     // eclass -> instance(s)
-    protected Map<EClass, Set<EObject>> instanceMap;
+    private final Map<String, Set<EObject>> instanceMap;
 
     // edatatype -> multiset of value(s)
     protected Map<EDataType, Map<Object, Integer>> dataTypeMap;
@@ -71,18 +77,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     // static for all eClasses whose instances were encountered at least once
     private static Set<EClass> knownClasses = new HashSet<EClass>();
+
     // static for eclass -> all subtypes in knownClasses
     protected static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
-
-    private NavigationHelperImpl navigationHelper;
-
-    // since last run of after-update callbacks
-    boolean isDirty = false;
 
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
         this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
-        this.instanceMap = new HashMap<EClass, Set<EObject>>();
+        this.instanceMap = new HashMap<String, Set<EObject>>();
         this.dataTypeMap = new HashMap<EDataType, Map<Object, Integer>>();
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
         this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
@@ -222,9 +224,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         navigationHelper.getLogger().fatal(
                 "EMF-IncQuery encountered an error in processing the EMF model. " + "This happened while trying to "
                         + task, ex);
-        // throw new
-        // IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR,
-        // ex);
     }
 
     protected EMFVisitor visitor(final boolean isInsertion) {
@@ -443,7 +442,24 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         // }
     }
 
-    public void insertInstanceTuple(EClass key, EObject value) {
+    private static String getUniqueIdentifier(EClassifier classifier) {
+        return classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+    }
+
+    private static String getUniqueIdentifier(ETypedElement typedElement) {
+        return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
+    }
+
+    public Set<EObject> getInstanceSet(EClass keyClass) {
+        return instanceMap.get(getUniqueIdentifier(keyClass));
+    }
+
+    public void removeInstanceSet(EClass keyClass) {
+        instanceMap.remove(getUniqueIdentifier(keyClass));
+    }
+
+    public void insertIntoInstanceSet(EClass keyClass, EObject value) {
+        String key = getUniqueIdentifier(keyClass);
         // if (navigationHelper.isObserved(key)) {
         if (instanceMap.containsKey(key)) {
             instanceMap.get(key).add(value);
@@ -454,11 +470,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
 
         isDirty = true;
-        notifyInstanceListeners(key, value, true);
+        // FIXME do it, is this keyclass ok here
+        notifyInstanceListeners(keyClass, value, true);
         // }
     }
 
-    void removeInstanceTuple(EClass key, EObject value) {
+    public void removeFromInstanceSet(EClass keyClass, EObject value) {
+        String key = getUniqueIdentifier(keyClass);
         // if (navigationHelper.isObserved(key)) {
         if (instanceMap.containsKey(key)) {
             instanceMap.get(key).remove(value);
@@ -468,7 +486,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
 
         isDirty = true;
-        notifyInstanceListeners(key, value, false);
+        // FIXME do it, is this keyclass ok here
+        notifyInstanceListeners(keyClass, value, false);
         // }
     }
 
@@ -500,7 +519,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             for (EClass superType : clazz.getEAllSuperTypes()) {
                 maintainTypeHierarhyInternal(clazz, superType);
             }
-            maintainTypeHierarhyInternal(clazz, eObjectClass);
+            maintainTypeHierarhyInternal(clazz, EOBJECT_CLASS);
         }
     }
 
@@ -612,44 +631,40 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         spreadToChildren(target, true);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.ecore.util.EContentAdapter#unsetTarget(org.eclipse.emf.ecore.EObject)
-     */
     @Override
     protected void unsetTarget(EObject target) {
         basicUnsetTarget(target);
         spreadToChildren(target, false);
     }
 
-    /**
-     * @param target
-     */
     protected void spreadToChildren(EObject target, boolean add) {
         final EList<EReference> features = target.eClass().getEAllReferences();
         for (EReference feature : features) {
-            if (!feature.isContainment())
+            if (!feature.isContainment()) {
                 continue;
-            if (!EMFModelComprehension.representable(feature))
+            }
+            if (!EMFModelComprehension.representable(feature)) {
                 continue;
+            }
             if (feature.isMany()) {
                 Collection<?> values = (Collection<?>) target.eGet(feature);
                 for (Object value : values) {
                     final Notifier notifier = (Notifier) value;
-                    if (add)
+                    if (add) {
                         addAdapter(notifier);
-                    else
+                    } else {
                         removeAdapter(notifier);
+                    }
                 }
             } else {
                 Object value = target.eGet(feature);
                 if (value != null) {
                     final Notifier notifier = (Notifier) value;
-                    if (add)
+                    if (add) {
                         addAdapter(notifier);
-                    else
+                    } else {
                         removeAdapter(notifier);
+                    }
                 }
             }
         }
@@ -662,32 +677,37 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             targetToVisitor = ArrayListMultimap.create();
             unresolvableProxyFeaturesMap.put(source, reference, targetToVisitor);
         }
-        if (isInsertion)
+        if (isInsertion) {
             targetToVisitor.put(target, visitor);
-        else
+        } else {
             targetToVisitor.remove(target, visitor);
-        if (targetToVisitor.isEmpty())
+        }
+        if (targetToVisitor.isEmpty()) {
             unresolvableProxyFeaturesMap.remove(source, reference);
+        }
     }
 
     public void suspendVisitorOnUnresolvableObject(EMFVisitor visitor, EObject source, boolean isInsertion) {
-        if (isInsertion)
+        if (isInsertion) {
             unresolvableProxyObjectsMap.put(source, visitor);
-        else
+        } else {
             unresolvableProxyObjectsMap.remove(source, visitor);
+        }
     }
 
-    List<EMFVisitor> popVisitorsSuspendedOnFeature(EObject source, EReference reference, EObject target) {
+    private List<EMFVisitor> popVisitorsSuspendedOnFeature(EObject source, EReference reference, EObject target) {
         ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
-        if (targetToVisitor == null)
+        if (targetToVisitor == null) {
             return Collections.emptyList();
+        }
         final List<EMFVisitor> result = targetToVisitor.removeAll(target);
-        if (targetToVisitor.isEmpty())
+        if (targetToVisitor.isEmpty()) {
             unresolvableProxyFeaturesMap.remove(source, reference);
+        }
         return result;
     }
 
-    List<EMFVisitor> popVisitorsSuspendedOnObject(EObject source) {
+    private List<EMFVisitor> popVisitorsSuspendedOnObject(EObject source) {
         return unresolvableProxyObjectsMap.removeAll(source);
     }
 

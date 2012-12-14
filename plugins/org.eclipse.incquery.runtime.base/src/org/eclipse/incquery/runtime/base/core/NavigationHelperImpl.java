@@ -8,7 +8,6 @@
  * Contributors:
  *   Tamas Szabo, Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.runtime.base.core;
 
 import java.lang.reflect.InvocationTargetException;
@@ -296,7 +295,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> getDirectInstances(EClass type) {
-        Set<EObject> valSet = contentAdapter.instanceMap.get(type);
+        Set<EObject> valSet = contentAdapter.getInstanceSet(type);
         if (valSet == null) {
             return Collections.emptySet();
         } else {
@@ -311,12 +310,12 @@ public class NavigationHelperImpl implements NavigationHelper {
         Set<EClass> valSet = contentAdapter.subTypeMap.get(type);
         if (valSet != null) {
             for (EClass c : valSet) {
-                final Set<EObject> instances = contentAdapter.instanceMap.get(c);
+                final Set<EObject> instances = contentAdapter.getInstanceSet(c);
                 if (instances != null)
                     retSet.addAll(instances);
             }
         }
-        final Set<EObject> instances = contentAdapter.instanceMap.get(type);
+        final Set<EObject> instances = contentAdapter.getInstanceSet(type);
         if (instances != null)
             retSet.addAll(instances);
 
@@ -584,7 +583,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             allObservedClasses = null;
             delayedClasses.removeAll(classes);
             for (EClass c : classes) {
-                contentAdapter.instanceMap.remove(c);
+                contentAdapter.removeInstanceSet(c);
             }
         }
     }

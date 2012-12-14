@@ -94,10 +94,10 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             if (observed == null) {
                 final EList<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
                 final boolean overApprox = newClasses.contains(eClass)
-                        || newClasses.contains(NavigationHelperContentAdapter.eObjectClass)
+                        || newClasses.contains(NavigationHelperContentAdapter.EOBJECT_CLASS)
                         || !Collections.disjoint(eAllSuperTypes, newClasses);
                 observed = overApprox && !oldClasses.contains(eClass)
-                        && !oldClasses.contains(NavigationHelperContentAdapter.eObjectClass)
+                        && !oldClasses.contains(NavigationHelperContentAdapter.EOBJECT_CLASS)
                         && Collections.disjoint(eAllSuperTypes, oldClasses);
                 classObservationMap.put(eClass, observed);
             }
@@ -203,9 +203,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         store.maintainTypeHierarchy(eClass);
         if (observesClass(eClass)) {
             if (isInsertion) {
-                store.insertInstanceTuple(eClass, source);
+                store.insertIntoInstanceSet(eClass, source);
             } else {
-                store.removeInstanceTuple(eClass, source);
+                store.removeFromInstanceSet(eClass, source);
             }
         }
     }
