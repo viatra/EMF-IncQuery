@@ -8,7 +8,6 @@
  * Contributors:
  *   Tamas Szabo, Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.runtime.base.core;
 
 import java.util.Collections;
@@ -88,8 +87,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesClass(EClass eClass) {
-            if (navigationHelper.isInWildcardMode())
+            if (navigationHelper.isInWildcardMode()) {
                 return true;
+            }
             Boolean observed = classObservationMap.get(eClass);
             if (observed == null) {
                 final EList<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
@@ -117,7 +117,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     }
 
     protected NavigationHelperImpl navigationHelper;
-    private NavigationHelperContentAdapter store;
+    private final NavigationHelperContentAdapter store;
     boolean isInsertion;
     boolean descendHierarchy;
 
@@ -178,13 +178,16 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
     @Override
     public boolean pruneFeature(EStructuralFeature feature) {
-        if (observesFeature(feature))
+        if (observesFeature(feature)) {
             return false;
-        if (feature instanceof EAttribute && observesDataType(((EAttribute) feature).getEAttributeType()))
+        }
+        if (feature instanceof EAttribute && observesDataType(((EAttribute) feature).getEAttributeType())) {
             return false;
+        }
         if (isInsertion && navigationHelper.isExpansionAllowed() && feature instanceof EReference
-                && !((EReference) feature).isContainment())
+                && !((EReference) feature).isContainment()) {
             return false;
+        }
         return true;
     }
 
@@ -197,8 +200,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     @Override
     public void visitElement(EObject source) {
         EClass eClass = source.eClass();
-        if (eClass.eIsProxy())
+        if (eClass.eIsProxy()) {
             eClass = (EClass) EcoreUtil.resolve(eClass, source);
+        }
 
         store.maintainTypeHierarchy(eClass);
         if (observesClass(eClass)) {
@@ -220,8 +224,13 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 store.removeFeatureTuple(feature, target, source);
             }
         }
-        if (observesDataType(eAttributeType))
-            store.dataTypeInstanceUpdate(eAttributeType, target, isInsertion);
+        if (observesDataType(eAttributeType)) {
+            if (isInsertion) {
+                store.insertIntoDataTypeMap(eAttributeType, target);
+            } else {
+                store.removeFromDataTypeMap(eAttributeType, target);
+            }
+        }
     };
 
     @Override
@@ -232,16 +241,18 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     @Override
     public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
         visitReference(source, feature, target);
-        if (isInsertion)
+        if (isInsertion) {
             navigationHelper.considerForExpansion(target);
+        }
     };
 
     private void visitReference(EObject source, EReference feature, EObject target) {
         if (observesFeature(feature)) {
-            if (isInsertion)
+            if (isInsertion) {
                 store.insertFeatureTuple(feature, target, source);
-            else
+            } else {
                 store.removeFeatureTuple(feature, target, source);
+            }
         }
     }
 

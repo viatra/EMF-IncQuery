@@ -103,10 +103,11 @@ public class NavigationHelperImpl implements NavigationHelper {
     <T extends EObject> Set<T> resolveAll(Set<T> a) {
         Set<T> result = new HashSet<T>(a);
         for (T t : a) {
-            if (t.eIsProxy())
+            if (t.eIsProxy()) {
                 result.add((T) EcoreUtil.resolve(t, (ResourceSet) null));
-            else
+            } else {
                 result.add(t);
+            }
         }
         return result;
     }
@@ -155,8 +156,9 @@ public class NavigationHelperImpl implements NavigationHelper {
         // if (this.navigationHelperType == NavigationHelperType.ALL) {
         // visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
         // }
-        if (emfRoot != null)
+        if (emfRoot != null) {
             addRootInternal(emfRoot);
+        }
     }
 
     public NavigationHelperContentAdapter getContentAdapter() {
@@ -180,7 +182,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<Object> getDataTypeInstances(EDataType type) {
-        Map<Object, Integer> valMap = contentAdapter.dataTypeMap.get(type);
+        Map<Object, Integer> valMap = contentAdapter.getDataTypeMap(type);
         if (valMap != null) {
             return Collections.unmodifiableSet(valMap.keySet());
         } else {
@@ -311,13 +313,15 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (valSet != null) {
             for (EClass c : valSet) {
                 final Set<EObject> instances = contentAdapter.getInstanceSet(c);
-                if (instances != null)
+                if (instances != null) {
                     retSet.addAll(instances);
+                }
             }
         }
         final Set<EObject> instances = contentAdapter.getInstanceSet(type);
-        if (instances != null)
+        if (instances != null) {
             retSet.addAll(instances);
+        }
 
         return retSet;
     }
@@ -462,8 +466,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     protected void expandToAdditionalRoot(Notifier root) {
         if (modelRoots.add(root)) {
-            if (root instanceof ResourceSet)
+            if (root instanceof ResourceSet) {
                 expansionAllowed = true;
+            }
             contentAdapter.addAdapter(root);
         }
     }
@@ -505,8 +510,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
-        if (inWildcardMode)
+        if (inWildcardMode) {
             throw new IllegalStateException();
+        }
         if (features != null) {
             features = resolveAll(features);
             if (delayTraversals) {
@@ -524,8 +530,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
-        if (inWildcardMode)
+        if (inWildcardMode) {
             throw new IllegalStateException();
+        }
         if (features != null) {
             features = resolveAll(features);
             observedFeatures.removeAll(features);
@@ -541,8 +548,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEClasses(Set<EClass> classes) {
-        if (inWildcardMode)
+        if (inWildcardMode) {
             throw new IllegalStateException();
+        }
         if (classes != null) {
             classes = resolveAll(classes);
             if (delayTraversals) {
@@ -575,8 +583,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEClasses(Set<EClass> classes) {
-        if (inWildcardMode)
+        if (inWildcardMode) {
             throw new IllegalStateException();
+        }
         if (classes != null) {
             classes = resolveAll(classes);
             directlyObservedClasses.removeAll(classes);
@@ -590,8 +599,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEDataTypes(Set<EDataType> dataTypes) {
-        if (inWildcardMode)
+        if (inWildcardMode) {
             throw new IllegalStateException();
+        }
         if (dataTypes != null) {
             dataTypes = resolveAll(dataTypes);
             if (delayTraversals) {
@@ -610,14 +620,15 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
-        if (inWildcardMode)
+        if (inWildcardMode) {
             throw new IllegalStateException();
+        }
         if (dataTypes != null) {
             dataTypes = resolveAll(dataTypes);
             observedDataTypes.removeAll(dataTypes);
             delayedDataTypes.removeAll(dataTypes);
-            for (EDataType dt : dataTypes) {
-                contentAdapter.dataTypeMap.remove(dt);
+            for (EDataType dataType : dataTypes) {
+                contentAdapter.removeDataTypeMap(dataType);
             }
         }
     }

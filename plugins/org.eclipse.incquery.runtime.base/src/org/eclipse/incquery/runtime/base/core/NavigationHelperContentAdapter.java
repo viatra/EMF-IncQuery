@@ -67,7 +67,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private final Map<String, Set<EObject>> instanceMap;
 
     // edatatype -> multiset of value(s)
-    protected Map<EDataType, Map<Object, Integer>> dataTypeMap;
+    private final Map<String, Map<Object, Integer>> dataTypeMap;
 
     // source -> feature -> proxy target -> delayed visitors
     protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
@@ -85,9 +85,25 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.navigationHelper = navigationHelper;
         this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
         this.instanceMap = new HashMap<String, Set<EObject>>();
-        this.dataTypeMap = new HashMap<EDataType, Map<Object, Integer>>();
+        this.dataTypeMap = new HashMap<String, Map<Object, Integer>>();
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
         this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
+    }
+
+    /**
+     * @param classifier
+     * @return A unique string id generated from the classifier's package nsuri and the name.
+     */
+    private static String getUniqueIdentifier(EClassifier classifier) {
+        return classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+    }
+
+    /**
+     * @param typedElement
+     * @return A unique string id generated from the typedelement's name and it's classifier type.
+     */
+    private static String getUniqueIdentifier(ETypedElement typedElement) {
+        return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
     }
 
     public Map<EStructuralFeature, Multiset<EObject>> getReversedFeatureMap() {
@@ -117,8 +133,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     featureUpdate(true, notifier, feature, newValue);
                     break;
                 case Notification.ADD_MANY:
-                    for (Object newElement : (Collection<?>) newValue)
+                    for (Object newElement : (Collection<?>) newValue) {
                         featureUpdate(true, notifier, feature, newElement);
+                    }
                     break;
                 case Notification.CREATE:
                     break;
@@ -128,8 +145,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     featureUpdate(false, notifier, feature, oldValue);
                     break;
                 case Notification.REMOVE_MANY:
-                    for (Object oldElement : (Collection<?>) oldValue)
+                    for (Object oldElement : (Collection<?>) oldValue) {
                         featureUpdate(false, notifier, feature, oldElement);
+                    }
                     break;
                 case Notification.REMOVING_ADAPTER:
                     break;
@@ -370,37 +388,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void addToDataTypeMap(EDataType type, Object value) {
-        Map<Object, Integer> valMap = dataTypeMap.get(type);
-        if (valMap == null) {
-            valMap = new HashMap<Object, Integer>();
-            dataTypeMap.put(type, valMap);
-        }
-        if (valMap.get(value) == null) {
-            valMap.put(value, Integer.valueOf(1));
-        } else {
-            Integer count = valMap.get(value);
-            valMap.put(value, ++count);
-        }
-    }
-
-    private void removeFromDataTypeMmap(EDataType type, Object value) {
-        Map<Object, Integer> valMap = dataTypeMap.get(type);
-        if (valMap != null) {
-            if (valMap.get(value) != null) {
-                Integer count = valMap.get(value);
-                if (--count == 0) {
-                    valMap.remove(value);
-                } else {
-                    valMap.put(value, count);
-                }
-            }
-            if (valMap.size() == 0) {
-                dataTypeMap.remove(type);
-            }
-        }
-    }
-
     public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
         // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
         // navigationHelper.getObservedFeatures().contains(feature)) {
@@ -429,27 +416,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         // }
     }
 
-    public void dataTypeInstanceUpdate(EDataType type, Object value, boolean isInsertion) {
-        // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
-        // navigationHelper.getObservedDataTypes().contains(type)) {
-        if (isInsertion) {
-            addToDataTypeMap(type, value);
-        } else {
-            removeFromDataTypeMmap(type, value);
-        }
-        isDirty = true;
-        notifyDataTypeListeners(type, value, isInsertion);
-        // }
-    }
-
-    private static String getUniqueIdentifier(EClassifier classifier) {
-        return classifier.getEPackage().getNsURI() + "##" + classifier.getName();
-    }
-
-    private static String getUniqueIdentifier(ETypedElement typedElement) {
-        return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
-    }
-
+    // START ********* InstanceSet *********
     public Set<EObject> getInstanceSet(EClass keyClass) {
         return instanceMap.get(getUniqueIdentifier(keyClass));
     }
@@ -470,7 +437,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
 
         isDirty = true;
-        // FIXME do it, is this keyclass ok here
+        // FIXME do it, is this key ok here?
         notifyInstanceListeners(keyClass, value, true);
         // }
     }
@@ -486,10 +453,64 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
 
         isDirty = true;
-        // FIXME do it, is this keyclass ok here
+        // FIXME do it, is this key ok here?
         notifyInstanceListeners(keyClass, value, false);
         // }
     }
+
+    // END ********* InstanceSet *********
+
+    // START ********* DataTypeMap *********
+    public Map<Object, Integer> getDataTypeMap(EDataType keyType) {
+        return dataTypeMap.get(getUniqueIdentifier(keyType));
+    }
+
+    public void removeDataTypeMap(EDataType keyType) {
+        dataTypeMap.remove(getUniqueIdentifier(keyType));
+    }
+
+    public void insertIntoDataTypeMap(EDataType keyType, Object value) {
+        String key = getUniqueIdentifier(keyType);
+        Map<Object, Integer> valMap = dataTypeMap.get(key);
+        if (valMap == null) {
+            valMap = new HashMap<Object, Integer>();
+            dataTypeMap.put(key, valMap);
+        }
+        if (valMap.get(value) == null) {
+            valMap.put(value, Integer.valueOf(1));
+        } else {
+            Integer count = valMap.get(value);
+            valMap.put(value, ++count);
+        }
+        
+      isDirty = true;
+      // FIXME do it, is this key ok here?
+      notifyDataTypeListeners(keyType, value, true);
+    }
+
+    public void removeFromDataTypeMap(EDataType keyType, Object value) {
+        String key = getUniqueIdentifier(keyType);
+        Map<Object, Integer> valMap = dataTypeMap.get(key);
+        if (valMap != null) {
+            if (valMap.get(value) != null) {
+                Integer count = valMap.get(value);
+                if (--count == 0) {
+                    valMap.remove(value);
+                } else {
+                    valMap.put(value, count);
+                }
+            }
+            if (valMap.size() == 0) {
+                dataTypeMap.remove(key);
+            }
+        }
+        
+        isDirty = true;
+        // FIXME do it, is this key ok here?
+        notifyDataTypeListeners(keyType, value, false);
+    }
+
+    // END ********* DataTypeMap *********
 
     /**
      * Returns true if sup is a supertype of sub.
