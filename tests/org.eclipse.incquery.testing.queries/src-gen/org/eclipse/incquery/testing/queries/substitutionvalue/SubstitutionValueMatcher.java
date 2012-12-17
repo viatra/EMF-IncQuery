@@ -8,7 +8,6 @@ import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -56,7 +55,7 @@ import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueM
  * @see SubstitutionValueProcessor
  * 
  */
-public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionValueMatch> implements IncQueryMatcher<SubstitutionValueMatch> {
+public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionValueMatch> {
   private final static int POSITION_SUBSTITUTION = 0;
   
   private final static int POSITION_VALUE = 1;
@@ -222,8 +221,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * 
    */
   public Set<MatchSubstitutionRecord> getAllValuesOfSubstitution(final Object pValue) {
-    MatchSubstitutionRecord pSubstitution = null;
-    return rawAccumulateAllValuesOfSubstitution(new Object[]{pSubstitution, pValue});
+    return rawAccumulateAllValuesOfSubstitution(new Object[]{null, pValue});
   }
   
   /**
@@ -261,8 +259,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * 
    */
   public Set<Object> getAllValuesOfValue(final MatchSubstitutionRecord pSubstitution) {
-    Object pValue = null;
-    return rawAccumulateAllValuesOfValue(new Object[]{pSubstitution, pValue});
+    return rawAccumulateAllValuesOfValue(new Object[]{pSubstitution, null});
   }
   
   @Override

@@ -8,7 +8,6 @@ import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -42,7 +41,7 @@ import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch
  * @see RecordRoleValueProcessor
  * 
  */
-public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValueMatch> implements IncQueryMatcher<RecordRoleValueMatch> {
+public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValueMatch> {
   private final static int POSITION_RECORD = 0;
   
   private final static int POSITION_ROLE = 1;
@@ -208,8 +207,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * 
    */
   public Set<MatchRecord> getAllValuesOfRecord(final Object pRole) {
-    MatchRecord pRecord = null;
-    return rawAccumulateAllValuesOfRecord(new Object[]{pRecord, pRole});
+    return rawAccumulateAllValuesOfRecord(new Object[]{null, pRole});
   }
   
   /**
@@ -247,8 +245,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * 
    */
   public Set<Object> getAllValuesOfRole(final MatchRecord pRecord) {
-    Object pRole = null;
-    return rawAccumulateAllValuesOfRole(new Object[]{pRecord, pRole});
+    return rawAccumulateAllValuesOfRole(new Object[]{pRecord, null});
   }
   
   @Override

@@ -8,7 +8,6 @@ import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -43,7 +42,7 @@ import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatc
  * @see UnexpectedMatchRecordProcessor
  * 
  */
-public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<UnexpectedMatchRecordMatch> implements IncQueryMatcher<UnexpectedMatchRecordMatch> {
+public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<UnexpectedMatchRecordMatch> {
   private final static int POSITION_ACTUALSET = 0;
   
   private final static int POSITION_EXPECTEDSET = 1;
@@ -219,8 +218,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * 
    */
   public Set<MatchSetRecord> getAllValuesOfActualSet(final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
-    MatchSetRecord pActualSet = null;
-    return rawAccumulateAllValuesOfActualSet(new Object[]{pActualSet, pExpectedSet, pRecord});
+    return rawAccumulateAllValuesOfActualSet(new Object[]{null, pExpectedSet, pRecord});
   }
   
   /**
@@ -258,8 +256,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * 
    */
   public Set<MatchSetRecord> getAllValuesOfExpectedSet(final MatchSetRecord pActualSet, final MatchRecord pRecord) {
-    MatchSetRecord pExpectedSet = null;
-    return rawAccumulateAllValuesOfExpectedSet(new Object[]{pActualSet, pExpectedSet, pRecord});
+    return rawAccumulateAllValuesOfExpectedSet(new Object[]{pActualSet, null, pRecord});
   }
   
   /**
@@ -297,8 +294,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * 
    */
   public Set<MatchRecord> getAllValuesOfRecord(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet) {
-    MatchRecord pRecord = null;
-    return rawAccumulateAllValuesOfRecord(new Object[]{pActualSet, pExpectedSet, pRecord});
+    return rawAccumulateAllValuesOfRecord(new Object[]{pActualSet, pExpectedSet, null});
   }
   
   @Override
