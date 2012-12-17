@@ -26,6 +26,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.junit.Before
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -59,5 +60,47 @@ class ImportValidationTest extends AbstractValidatorTest {
 		') as PatternModel
 		model.assertNoErrors
 		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT));
+	}
+	
+	@Test
+	def implicitJavaImport() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(D) = {			
+				EDouble(D);
+				check(Math::abs(D) > 10.5);
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def javaClassImport() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			import java.util.Calendar
+
+			pattern name(L) = {
+				ELong(L);
+				check(Calendar::getInstance().getTime().getTime() > L);
+			}
+		') as PatternModel
+		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+	}
+	
+	@Test
+	def javaPackageImport() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			import java.util.*
+
+			pattern name(L) = {
+				ELong(L);
+				check(Calendar::getInstance().getTime().getTime() > L);
+			}
+		') as PatternModel
+		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
 }

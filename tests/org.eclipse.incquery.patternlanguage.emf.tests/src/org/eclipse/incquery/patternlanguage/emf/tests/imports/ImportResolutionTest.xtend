@@ -23,6 +23,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import static org.junit.Assert.*
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -42,7 +43,7 @@ class ImportResolutionTest {
 			}
 		') as PatternModel
 		model.assertNoErrors
-		val importDecl = model.importPackages.get(0)
+		val importDecl = EMFPatternLanguageHelper::getAllPackageImports(model).get(0)
 		val ePackage = importDecl.EPackage
 		assertNotNull(ePackage)
 		assertEquals(ePackage.nsURI, "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage")
@@ -59,11 +60,12 @@ class ImportResolutionTest {
 			}
 		') as PatternModel
 		model.assertNoErrors
-		var importDecl = model.importPackages.get(0)
+		val imports = EMFPatternLanguageHelper::getAllPackageImports(model)
+		var importDecl = imports.get(0)
 		var ePackage = importDecl.EPackage
 		assertNotNull(ePackage)
 		assertEquals(ePackage.nsURI, "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage")
-		importDecl = model.importPackages.get(1)
+		importDecl = imports.get(1)
 		ePackage = importDecl.EPackage
 		assertNotNull(ePackage)
 		assertEquals(ePackage.nsURI, "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage")
