@@ -26,7 +26,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.incquery.patternlanguage.emf.ui.contentassist.AbstractEMFPatternLanguageProposalProvider;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionElement;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -186,7 +186,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         myContextBuilder.setPrefix(availablePrefix.toString());
 
         ContentAssistContext myContext = myContextBuilder.toContext();
-        for (PackageImport declaration : pModel.getImportPackages()) {
+        for (PackageImport declaration : EMFPatternLanguageHelper.getPackageImportsIterable(pModel)) {
             if (declaration.getEPackage() != null) {
                 createClassifierProposals(declaration, model, myContext, acceptor);
             }

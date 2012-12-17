@@ -33,6 +33,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
@@ -130,7 +131,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends PatternLanguageD
 
     protected IScope createReferencedPackagesScope(PatternModel model) {
         final Collection<EClassifier> allClassifiers = new ArrayList<EClassifier>();
-        for (PackageImport decl : model.getImportPackages()) {
+        for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
             if (decl.getEPackage() != null) {
                 allClassifiers.addAll(decl.getEPackage().getEClassifiers());
             }
@@ -150,7 +151,7 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends PatternLanguageD
     public IScope scope_EEnum(EnumValue ctx, EReference ref) {
         PatternModel model = (PatternModel) getRootContainer(ctx);
         final Collection<EEnum> enums = Lists.newArrayList();
-        for (PackageImport decl : model.getImportPackages()) {
+        for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
             if (decl.getEPackage() != null) {
                 Iterables.addAll(enums, Iterables.filter(decl.getEPackage().getEClassifiers(), EEnum.class));
             }

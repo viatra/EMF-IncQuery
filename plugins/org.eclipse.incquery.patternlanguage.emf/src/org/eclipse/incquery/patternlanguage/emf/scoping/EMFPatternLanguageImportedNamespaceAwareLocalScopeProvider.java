@@ -13,11 +13,14 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.JavaImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 import org.eclipse.xtext.xbase.scoping.XbaseImportedNamespaceScopeProvider;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author Zoltan Ujhelyi
@@ -39,6 +42,11 @@ public class EMFPatternLanguageImportedNamespaceAwareLocalScopeProvider extends 
             PatternModel model = EcoreUtil2.getContainerOfType(context, PatternModel.class);
             if (model != null && model.getPackageName() != null && !model.getPackageName().isEmpty()) {
                 result.add(createImportedNamespaceResolver(model.getPackageName() + ".*", ignoreCase));
+            }
+            for (JavaImport importDecl : Iterables.filter(model.getImportPackages(), JavaImport.class)) {
+                if (importDecl.getImportedNamespace() != null) {
+                    result.add(createImportedNamespaceResolver(importDecl.getImportedNamespace() + ".*", ignoreCase));
+                }
             }
         }
         return result;

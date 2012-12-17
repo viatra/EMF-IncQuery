@@ -28,6 +28,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
 import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
@@ -68,7 +69,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		val extensionList = newArrayList(p)
 		
 		val patternModel = pattern.eContainer as PatternModel;
-    for (imp : patternModel.importPackages) {
+    for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
       val pack = imp.EPackage;
       val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
       
@@ -127,7 +128,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
               }
               
               val patternModel = pattern.eContainer as PatternModel;
-              for (imp : patternModel.importPackages) {
+              for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
                 val pack = imp.EPackage;
                 val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
                 

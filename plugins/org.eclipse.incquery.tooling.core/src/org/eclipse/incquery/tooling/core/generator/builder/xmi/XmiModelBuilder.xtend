@@ -27,6 +27,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLan
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.xbase.XFeatureCall
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
 
 /**
  * @author Mark Czotter
@@ -55,7 +56,7 @@ class XmiModelBuilder {
 			for (r : resources) {
 				for (obj : r.contents) {
 					if (obj instanceof PatternModel && !obj.equals(xmiModelRoot)) {
-						for (importDecl : (obj as PatternModel).importPackages){
+						for (importDecl : EMFPatternLanguageHelper::getPackageImportsIterable(obj as PatternModel)){
 							if (!importDeclarations.contains(importDecl.EPackage)) {
 								importDeclarations.add(importDecl.EPackage)
 							}

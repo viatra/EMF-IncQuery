@@ -26,6 +26,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLan
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeUtil;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
@@ -82,10 +83,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Check
     public void checkDuplicatePackageImports(PatternModel patternModel) {
-        for (int i = 0; i < patternModel.getImportPackages().size(); ++i) {
-            EPackage leftPackage = patternModel.getImportPackages().get(i).getEPackage();
-            for (int j = i + 1; j < patternModel.getImportPackages().size(); ++j) {
-                EPackage rightPackage = patternModel.getImportPackages().get(j).getEPackage();
+        List<PackageImport> importPackages = EMFPatternLanguageHelper.getAllPackageImports(patternModel);
+        for (int i = 0; i < importPackages.size(); ++i) {
+            EPackage leftPackage = importPackages.get(i).getEPackage();
+            for (int j = i + 1; j < importPackages.size(); ++j) {
+                EPackage rightPackage = importPackages.get(j).getEPackage();
                 if (leftPackage.equals(rightPackage)) {
                     warning("Duplicate import of " + leftPackage.getNsURI(),
                             EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, i,
@@ -248,10 +250,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      *         search, all ecore packages referenced from the patternmodel's head, and it's subpackages will be searched
      *         for common subtype elements.
      */
-    private static boolean hasCommonSubType(PatternModel patternModel, Set<EClassifier> classifiers) {
+    private boolean hasCommonSubType(PatternModel patternModel, Set<EClassifier> classifiers) {
         Set<EClass> realSubTypes = new HashSet<EClass>();
         Set<EClassifier> probableSubTypes = new HashSet<EClassifier>();
-        for (PackageImport packageImport : patternModel.getImportPackages()) {
+        for (PackageImport packageImport : EMFPatternLanguageHelper.getPackageImportsIterable(patternModel)) {
             probableSubTypes.addAll(getAllEClassifiers(packageImport.getEPackage()));
         }
         for (EClassifier classifier : probableSubTypes) {
@@ -587,5 +589,6 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             }
         }
     }
+
 
 }

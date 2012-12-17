@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
@@ -232,7 +233,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             EObject obj = it.next();
             if (obj instanceof PatternModel) {
                 PatternModel patternModel = (PatternModel) obj;
-                for (PackageImport packageImport : patternModel.getImportPackages()) {
+                for (PackageImport packageImport : EMFPatternLanguageHelper.getPackageImportsIterable(patternModel)) {
                     GenPackage genPackage = genmodelProvider.findGenPackage(packageImport, packageImport.getEPackage());
                     if (genPackage != null) {
                         String modelPluginID = genPackage.getGenModel().getModelPluginID();

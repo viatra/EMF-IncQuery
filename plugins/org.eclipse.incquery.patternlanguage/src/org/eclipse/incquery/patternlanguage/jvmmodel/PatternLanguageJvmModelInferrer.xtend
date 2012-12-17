@@ -24,7 +24,7 @@ import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 class PatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
     /**
-     * conveninence API to build and initialize JvmTypes and their members.
+     * convenience API to build and initialize JvmTypes and their members.
      */
 	//@Inject extension JvmTypesBuilder
 
