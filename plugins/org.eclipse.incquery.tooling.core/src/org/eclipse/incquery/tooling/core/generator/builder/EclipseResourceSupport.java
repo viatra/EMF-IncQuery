@@ -26,6 +26,23 @@ import com.google.inject.Provider;
 
 public class EclipseResourceSupport {
 
+    private final static class EclipseResourceFileCallback implements EclipseResourceFileSystemAccess2.IFileCallback {
+        public boolean beforeFileDeletion(IFile file) {
+            return true;
+        }
+
+        public void afterFileUpdate(IFile file) {
+            handleFileAccess(file);
+        }
+
+        public void afterFileCreation(IFile file) {
+            handleFileAccess(file);
+        }
+
+        protected void handleFileAccess(IFile file) {
+        }
+    }
+
     @Inject
     private Provider<EclipseResourceFileSystemAccess2> fileSystemAccessProvider;
 
@@ -48,24 +65,7 @@ public class EclipseResourceSupport {
             outputs.put(conf.getName(), conf);
         }
         fsa.setOutputConfigurations(outputs);
-        fsa.setPostProcessor(new EclipseResourceFileSystemAccess2.IFileCallback() {
-
-            public boolean beforeFileDeletion(IFile file) {
-                return true;
-            }
-
-            public void afterFileUpdate(IFile file) {
-                handleFileAccess(file);
-            }
-
-            public void afterFileCreation(IFile file) {
-                handleFileAccess(file);
-            }
-
-            protected void handleFileAccess(IFile file) {
-            }
-
-        });
+        fsa.setPostProcessor(new EclipseResourceFileCallback());
         return fsa;
     }
 
