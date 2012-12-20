@@ -54,6 +54,7 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
+import org.eclipse.xtext.common.types.util.TypeConformanceComputer;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
@@ -93,6 +94,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private PatternAnnotationProvider annotationProvider;
     @Inject
     private ITypeProvider provider;
+    @Inject
+    private TypeConformanceComputer typeConformance;
     @Inject
     private Primitives primitives;
 
@@ -153,6 +156,16 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             .format(TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL, getFormattedPattern(patternRef), arity),
                             PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
+                } else {
+                    JvmTypeReference type1 = provider.getTypeForIdentifiable(patternRef.getParameters().get(0));
+                    JvmTypeReference type2 = provider.getTypeForIdentifiable(patternRef.getParameters().get(1));
+                    if (!typeConformance.isConformant(type1, type2) && !typeConformance.isConformant(type2, type1)) {
+                        error(String.format(
+                                "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
+                                type1.getSimpleName().toString(), type2.getSimpleName().toString()),
+                                PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
+                                IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
+                    }
                 }
             }
             if (eContainer != null
@@ -425,8 +438,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (refCounters.get(var).getReferenceCount(ReferenceType.NEGATIVE) == 0) {
                 error(String.format(
                         "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
-                        var.getName()), var.getReferences().get(0),
-                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, IssueCodes.LOCAL_VARIABLE_READONLY);
+                        var.getName()), var, PatternLanguagePackage.Literals.VARIABLE__NAME,
+                        IssueCodes.LOCAL_VARIABLE_READONLY);
             } else if (refCounters.get(var).getReferenceCount(ReferenceType.NEGATIVE) == 1
                     && refCounters.get(var).getReferenceCount() == 1 && !isNamedSingleUse(var)
                     && !isUnnamedSingleUseVariable(var)) {
