@@ -28,6 +28,8 @@ public final class IssueCodes {
     public static final String TRANSITIVE_PATTERNCALL_NOT_APPLICABLE = ISSUE_CODE_PREFIX
             + "transitive_patterncall_not_applicable";
     public static final String TRANSITIVE_PATTERNCALL_ARITY = ISSUE_CODE_PREFIX + "transitive_patterncall_wrong_arity";
+    public static final String TRANSITIVE_PATTERNCALL_TYPE = ISSUE_CODE_PREFIX
+            + "transitive_patterncall_incompatibletypes";
     public static final String PATTERN_BODY_EMPTY = ISSUE_CODE_PREFIX + "patternbody_empty";
 
     public static final String UNKNOWN_ANNOTATION = ISSUE_CODE_PREFIX + "unknown_annotation";
@@ -58,5 +60,6 @@ public final class IssueCodes {
             + "local_variable_no_positive_reference";
     public static final String ANONYM_VARIABLE_MULTIPLE_REFERENCE = ISSUE_CODE_PREFIX
             + "anonym_variable_multiple_reference";
+
 
 }
