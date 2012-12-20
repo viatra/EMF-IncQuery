@@ -157,19 +157,29 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		body.source = GenModelPackage::eNS_URI
 		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
 	        map.key = "body"
-	        map.value = 
-	           "	if (variable == null) {
-          InternalEObject container = this.eContainer;
-          while(container != null && !(container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody)){
-              container = container.eInternalContainer();
-          }
-          if(container != null) {
-              //The side-effect of this call initializes the variable
-              ((org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody) container).getVariables();
-          }
-      }  
-      
-      return variable;"
+	        map.value = '''	
+		if (variable == null) {
+			InternalEObject container = this.eContainer;
+			while (container != null
+			&& !(container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody 
+				|| container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.Pattern)) {
+			container = container.eInternalContainer();
+			}
+
+			if (container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody) {
+				//The side-effect of this call initializes the variable
+				((org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody) container).getVariables();
+			} else if (container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.Pattern) {
+				org.eclipse.incquery.patternlanguage.patternLanguage.Pattern pattern = 
+				(org.eclipse.incquery.patternlanguage.patternLanguage.Pattern) container;
+				for (org.eclipse.incquery.patternlanguage.patternLanguage.Variable var : pattern.getParameters()) {
+					if (var.getName().equals(getVar())) {
+						var.getReferences().add(this);
+					}
+				}
+			}  
+		}
+		return variable;'''
 	    body.details.add(map)
 	    op.EAnnotations += body
 		varRefClass.EOperations += op
