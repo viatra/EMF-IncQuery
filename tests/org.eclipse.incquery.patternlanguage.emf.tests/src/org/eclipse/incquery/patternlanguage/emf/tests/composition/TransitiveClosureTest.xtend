@@ -63,7 +63,8 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void wrongArityClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'''
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern, c) = {
 				Pattern.bodies.constraints(p1,c);
@@ -74,10 +75,27 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 				find patternDependency+(p,p2,c);	// p2 and c should be single variables, e.g. _p2, _s
 				Pattern(p2);						// Then these lines...
 				Constraint(c);						// ...can be deleted.
-			}'
+			}'''
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY));
-	}	
+	}
+	@Test
+	def void wrongTypedClosure() {
+		val model = parseHelper.parse(
+			'''
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			
+			pattern bodyOfPattern(p : Pattern, b : PatternBody) {
+				Pattern.bodies(p, b);
+			}
+			
+			pattern transitive(p : Pattern, b : PatternBody) {
+				find bodyOfPattern+(p, b);
+			}
+			'''
+		)
+		tester.validate(model).assertError(IssueCodes::TRANSITIVE_PATTERNCALL_TYPE)
+	} 
 	@Test
 	def void negatedClosure() {
 		val model = parseHelper.parse(
