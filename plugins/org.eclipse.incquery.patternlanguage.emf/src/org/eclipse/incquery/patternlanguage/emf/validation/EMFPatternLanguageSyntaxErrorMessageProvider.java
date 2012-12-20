@@ -29,7 +29,7 @@ public class EMFPatternLanguageSyntaxErrorMessageProvider extends SyntaxErrorMes
             if (exception.expecting >= 0 && exception.getUnexpectedType() >= 0) {
                 String expectingTokenTypeName = context.getTokenNames()[exception.expecting];
                 String unexpectedTokenTypeName = context.getTokenNames()[exception.getUnexpectedType()];
-                if ("RULE_ID".equals(expectingTokenTypeName)
+                if ("RULE_ID".equals(expectingTokenTypeName) && !unexpectedTokenTypeName.startsWith("RULE_")
                         && Character.isJavaIdentifierStart(unexpectedTokenTypeName.replace("'", "").charAt(0))) {
                     return new SyntaxErrorMessage(
                             "Keywords of the query language are to be prefixed with the ^ character when used as an identifier",
