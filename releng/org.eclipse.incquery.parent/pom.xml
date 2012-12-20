@@ -58,8 +58,8 @@
 		<module>../../releng/org.eclipse.incquery.update</module>
 	</modules>
 	<properties>
-		<tycho.version>0.16.0</tycho.version>
-		<tycho.extras.version>0.16.0</tycho.extras.version>
+		<tycho.version>0.17.0-SNAPSHOT</tycho.version>
+		<tycho.extras.version>0.17.0-SNAPSHOT</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://github.com/ujhelyiz/EMF-IncQuery.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -233,6 +233,10 @@
 			<url>
 			http://www.fornax-platform.org/m2/repository
 		</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
