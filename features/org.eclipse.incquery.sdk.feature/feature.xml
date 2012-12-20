@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.incquery.sdk.feature"
-      label="EMF-IncQuery SDK (Incubation)"
+      label="%label"
       version="0.7.0.qualifier"
       provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
       license-feature="org.eclipse.incquery.licence.feature"
