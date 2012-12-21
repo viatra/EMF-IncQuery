@@ -64,9 +64,9 @@
 		<tycho.scmUrl>scm:git:git://github.com/ujhelyiz/EMF-IncQuery.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
-		<jacoco.version>0.5.8.201207111220</jacoco.version>
+		<jacoco.version>0.6.0.201210061924</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.3.0</xtend.compiler.version>
+		<xtend.compiler.version>2.3.1</xtend.compiler.version>
 		<!-- Sonar -->
 		<sonar.version>2.14</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -240,7 +240,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
-		<connection>scm:git:git://github.com/ujhelyiz/EMF-IncQuery.git</connection>
+		<connection>${tycho.scmUrl}</connection>
 		<url>https://github.com/ujhelyiz/EMF-IncQuery</url>
 	</scm>
 	<ciManagement>
