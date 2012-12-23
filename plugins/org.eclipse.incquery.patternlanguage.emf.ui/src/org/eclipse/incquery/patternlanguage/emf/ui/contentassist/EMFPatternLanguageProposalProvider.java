@@ -38,7 +38,6 @@ import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.ILeafNode;
@@ -50,7 +49,6 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
-import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -69,36 +67,6 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     @Inject
     ReferenceProposalCreator crossReferenceProposalCreator;
 
-    public static class ClassifierPrefixMatcher extends PrefixMatcher {
-        private final PrefixMatcher delegate;
-
-        private final IQualifiedNameConverter qualifiedNameConverter;
-
-        public ClassifierPrefixMatcher(PrefixMatcher delegate, IQualifiedNameConverter qualifiedNameConverter) {
-            this.delegate = delegate;
-            this.qualifiedNameConverter = qualifiedNameConverter;
-        }
-
-        @Override
-        public boolean isCandidateMatchingPrefix(String name, String prefix) {
-            if (delegate.isCandidateMatchingPrefix(name, prefix))
-                return true;
-            QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(name);
-            QualifiedName qualifiedPrefix = qualifiedNameConverter.toQualifiedName(prefix);
-            if (qualifiedName.getSegmentCount() > 1) {
-                if (qualifiedPrefix.getSegmentCount() == 1)
-                    return delegate.isCandidateMatchingPrefix(qualifiedName.getSegment(1),
-                            qualifiedPrefix.getFirstSegment());
-                if (!delegate.isCandidateMatchingPrefix(qualifiedName.getFirstSegment(),
-                        qualifiedPrefix.getFirstSegment()))
-                    return false;
-                return delegate.isCandidateMatchingPrefix(qualifiedName.getSegment(1), qualifiedPrefix.getSegment(1));
-            }
-            return false;
-        }
-
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -106,7 +74,8 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
      * org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext,
      * org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor)
      */
-    @Override
+    @SuppressWarnings("restriction")
+	@Override
     public void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
             ICompletionProposalAcceptor acceptor) {
         // ignore keywords in FILTERED set
@@ -128,9 +97,17 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
                 if (typeClassifier instanceof EEnum) {
                     // In case of EEnums add Enum Literal constants
                     EEnum type = (EEnum) typeClassifier;
+                    
+                    ContentAssistContext.Builder myContextBuilder = context.copy();
+                	myContextBuilder.setMatcher(new EnumPrefixMatcher(type.getName()));
+                    
                     for (EEnumLiteral literal : type.getELiterals()) {
-                        acceptor.accept(createCompletionProposal("::" + literal.getName(), type.getName() + "::"
-                                + literal.getName(), null, context));
+                        ICompletionProposal completionProposal = 
+                        	createCompletionProposal("::" + literal.getName(), 
+                        							 type.getName() + "::" + literal.getName(), 
+                        							 null, 
+                        							 myContextBuilder.toContext());
+						acceptor.accept(completionProposal);
                     }
                 }
                 // XXX The following code re-specifies scoping instead of reusing the scope provider
@@ -193,7 +170,8 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         }
     }
 
-    private void createClassifierProposals(PackageImport declaration, EObject model, ContentAssistContext context,
+    @SuppressWarnings("restriction")
+	private void createClassifierProposals(PackageImport declaration, EObject model, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         // String alias = declaration.getAlias();
         // QualifiedName prefix = (!Strings.isEmpty(alias))
@@ -230,7 +208,8 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         return false;
     }
 
-    public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
+    @SuppressWarnings("restriction")
+	public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         IScope scope = scopeProvider.getScope(model.getTail(),
                 EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
