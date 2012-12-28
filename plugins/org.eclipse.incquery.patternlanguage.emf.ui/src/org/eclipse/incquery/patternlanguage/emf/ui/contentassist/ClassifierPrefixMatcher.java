@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Tamas Szabo - initial API and implementation
+ *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.ui.contentassist;
 
