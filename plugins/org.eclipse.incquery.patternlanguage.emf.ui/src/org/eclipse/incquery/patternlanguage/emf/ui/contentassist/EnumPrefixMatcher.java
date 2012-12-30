@@ -14,10 +14,10 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 
 /**
- * {@link PrefixMatcher} implementation for {@link EEnum} types. 
+ * A Prefix Matcher for {@link EEnum} types.
  * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class EnumPrefixMatcher extends PrefixMatcher {
    
@@ -29,12 +29,7 @@ public class EnumPrefixMatcher extends PrefixMatcher {
     
     @Override
     public boolean isCandidateMatchingPrefix(String name, String prefix) {
-    	//candidate is matching the prefix if the (1) EEnum's type name or (2) the candidate starts with the prefix
-    	if (typeName.startsWith(prefix) || name.startsWith(prefix)) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
+        // candidate is matching the prefix if the (1) EEnum's type name or (2) the candidate starts with the prefix
+        return (typeName.startsWith(prefix) || name.startsWith(prefix));
     }
 }
