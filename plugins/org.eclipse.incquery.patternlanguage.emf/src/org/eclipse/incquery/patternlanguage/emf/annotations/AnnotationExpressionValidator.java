@@ -39,7 +39,45 @@ public class AnnotationExpressionValidator {
     @Inject
     private IEMFTypeProvider typeProvider;
 
-    public void validateModelExpression(Pattern pattern, ValueReference ref, String expression, IIssueCallback validator) {
+    /**
+     * Validates a path expression referring to a simple pattern parameter
+     * 
+     * @param expression
+     *            the string representation of the path expression. Not inside '$' symbols.
+     * @param pattern
+     *            the containing pattern
+     * @param ref
+     *            a reference for the annotation parameter for error localization
+     * @param validator
+     *            the validator to report the found issues
+     */
+    public void validateParameterString(String expression, Pattern pattern, ValueReference ref, IIssueCallback validator) {
+        if (expression.contains(".")) {
+            validator.error("Expression must refer to a single parameter.", ref,
+                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+        }
+
+        Variable parameter = CorePatternLanguageHelper.getParameterByName(pattern, expression);
+        if (parameter == null) {
+            validator.error(String.format("Unknown parameter name %s", expression), ref,
+                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
+            return;
+        }
+    }
+
+    /**
+     * Validates a path expression starting with a parameter of the pattern.
+     * 
+     * @param expression
+     *            the string representation of the path expression. Not inside '$' symbols.
+     * @param pattern
+     *            the containing pattern
+     * @param ref
+     *            a reference for the annotation parameter for error localization
+     * @param validator
+     *            the validator to report the found issues
+     */
+    public void validateModelExpression(String expression, Pattern pattern, ValueReference ref, IIssueCallback validator) {
         String[] tokens = expression.split("\\.");
         String featureName = "";
         if (expression.isEmpty() || tokens.length == 0) {
@@ -82,7 +120,18 @@ public class AnnotationExpressionValidator {
     }
 
 
-    public void validateStringExpression(Pattern pattern, ValueReference ref, String expression,
+    /**
+     * Validates a string expression that may contain model references escaped inside '$' symbols.
+     * 
+     * @param expression
+     * @param pattern
+     *            the containing pattern
+     * @param ref
+     *            a reference for the annotation parameter for error localization
+     * @param validator
+     *            the validator to report the found issues
+     */
+    public void validateStringExpression(String expression, Pattern pattern, ValueReference ref,
             IIssueCallback validator) {
         StringTokenizer tokenizer = new StringTokenizer(expression, "$", true);
         if (expression.isEmpty() || tokenizer.countTokens() == 0) {
@@ -100,7 +149,7 @@ public class AnnotationExpressionValidator {
                     validator.error("Expression must not be empty.", ref,
                             PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
                 }
-                validateModelExpression(pattern, ref, token, validator);
+                validateModelExpression(token, pattern, ref, validator);
             }
         }
 
