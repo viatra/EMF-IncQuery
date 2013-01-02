@@ -47,6 +47,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionCo
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
+import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.xtext.validation.Check;
 
@@ -461,9 +462,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         // Equality and inequality (==, !=)
         ValueReference leftValueReference = compareConstraint.getLeftOperand();
         ValueReference rightValueReference = compareConstraint.getRightOperand();
-        if (leftValueReference instanceof LiteralValueReference || leftValueReference instanceof ComputationValue
-                || rightValueReference instanceof LiteralValueReference
-                || rightValueReference instanceof ComputationValue) {
+        if ((leftValueReference instanceof LiteralValueReference || leftValueReference instanceof ComputationValue
+                || rightValueReference instanceof LiteralValueReference || rightValueReference instanceof ComputationValue)
+                && !(leftValueReference instanceof VariableValue) && !(rightValueReference instanceof VariableValue)) {
             EClassifier leftClassifier = EMFPatternTypeUtil
                     .getClassifierForLiteralComputationEnumValueReference(leftValueReference);
             EClassifier rightClassifier = EMFPatternTypeUtil
@@ -589,6 +590,5 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             }
         }
     }
-
 
 }

@@ -43,5 +43,9 @@ public interface IEMFTypeProvider {
      */
     public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable);
 
+    /**
+     * @param variable
+     * @return the {@link EClassifier} for the given {@link Variable}. Returns null, if it fails.
+     */
     public EClassifier getClassifierForPatternParameterVariable(Variable variable);
 }
