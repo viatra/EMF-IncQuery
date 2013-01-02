@@ -11,6 +11,7 @@
 package org.eclipse.incquery.patternlanguage.emf;
 
 import org.apache.log4j.Logger;
+import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageImportedNamespaceAwareLocalScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkingService;
@@ -20,9 +21,11 @@ import org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService
 import org.eclipse.incquery.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.incquery.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
+import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
@@ -100,5 +103,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 
     public Class<? extends IGlobalServiceProvider> bindIGlobalServiceProvider() {
         return EMFPatternLanguageServiceProvider.class;
+    }
+
+    public Class<? extends AnnotationExpressionValidator> bindAnnotationExpressionValidator() {
+        return AnnotationExpressionValidator.class;
+    }
+
+    public Class<? extends IIssueCallback> bindIIssueCallback() {
+        return EMFPatternLanguageJavaValidator.class;
     }
 }

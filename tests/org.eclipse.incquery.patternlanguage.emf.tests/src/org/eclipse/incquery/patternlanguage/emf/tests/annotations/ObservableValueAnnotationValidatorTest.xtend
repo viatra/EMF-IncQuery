@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator
+import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator
 
 
 @RunWith(typeof(XtextRunner))
@@ -79,7 +80,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		) 
-		tester.validate(model).assertError(ObservableValuePatternValidator::GENERAL_ISSUE_CODE)
+		tester.validate(model).assertError(AnnotationExpressionValidator::GENERAL_ISSUE_CODE)
 	}
 	
 	@Test
@@ -92,7 +93,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		) 
-		tester.validate(model).assertAll(getWarningCode(ObservableValuePatternValidator::GENERAL_ISSUE_CODE),getErrorCode(ObservableValuePatternValidator::UNKNOWN_VARIABLE_CODE))
+		tester.validate(model).assertAll(getWarningCode(ObservableValuePatternValidator::GENERAL_ISSUE_CODE),getErrorCode(AnnotationExpressionValidator::UNKNOWN_VARIABLE_CODE))
 	}
 	
 	@Test
@@ -105,7 +106,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		) 
-		tester.validate(model).assertError(ObservableValuePatternValidator::UNKNOWN_VARIABLE_CODE)
+		tester.validate(model).assertError(AnnotationExpressionValidator::UNKNOWN_VARIABLE_CODE)
 	}
 	@Test
 	def void expressionInvalidParameter2() {
@@ -117,7 +118,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		) 
-		tester.validate(model).assertError(ObservableValuePatternValidator::UNKNOWN_VARIABLE_CODE)
+		tester.validate(model).assertError(AnnotationExpressionValidator::UNKNOWN_VARIABLE_CODE)
 	}
 	@Test
 	def void expressionInvalidFeature() {
@@ -129,6 +130,6 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		) 
-		tester.validate(model).assertError(ObservableValuePatternValidator::UNKNOWN_ATTRIBUTE_CODE)
+		tester.validate(model).assertError(AnnotationExpressionValidator::UNKNOWN_ATTRIBUTE_CODE)
 	}
 }

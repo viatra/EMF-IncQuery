@@ -5,6 +5,7 @@
    <extension
          point="org.eclipse.incquery.patternlanguage.annotation">
       <annotation
+            additionalValidator="org.eclipse.incquery.validation.runtime.annotation.ConstraintAnnotationValidator"
             description="This annotation is used to mark a pattern for use in the IncQuery validation framework."
             name="Constraint">
          <annotationparameter
