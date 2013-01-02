@@ -19,6 +19,7 @@ import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageH
 import org.eclipse.incquery.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
+import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 import org.eclipse.incquery.tooling.core.generator.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback;
 import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
@@ -124,6 +125,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     @SingletonBinding(eager = true)
     public Class<? extends EMFPatternLanguageJavaValidator> bindEMFPatternLanguageJavaValidator() {
+        return GenmodelBasedEMFPatternLanguageJavaValidator.class;
+    }
+
+    public Class<? extends IIssueCallback> bindIIssueCallback() {
         return GenmodelBasedEMFPatternLanguageJavaValidator.class;
     }
 }
