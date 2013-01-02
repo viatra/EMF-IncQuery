@@ -140,9 +140,14 @@ public class AnnotationExpressionValidator {
             return;
         }
         boolean inExpression = false;
+        boolean foundToken = false;
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             if (token.equals("$")) {
+                if (inExpression && !foundToken) {
+                    validator.error("Empty reference ($$) in message is not allowed.", ref,
+                            PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+                }
                 inExpression = !inExpression;
             } else if (inExpression) {
                 if (token == null || token.isEmpty()) {
@@ -150,6 +155,7 @@ public class AnnotationExpressionValidator {
                             PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
                 }
                 validateModelExpression(token, pattern, ref, validator);
+                foundToken = true;
             }
         }
 
