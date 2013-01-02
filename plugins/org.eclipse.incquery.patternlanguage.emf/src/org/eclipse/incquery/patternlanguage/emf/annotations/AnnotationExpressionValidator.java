@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.annotations;
 
+import java.util.StringTokenizer;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
@@ -44,14 +46,6 @@ public class AnnotationExpressionValidator {
             validator.error("Expression must not be empty.", ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
                     GENERAL_ISSUE_CODE);
             return;
-        } else if (tokens.length == 1) {
-            featureName = "name";
-        } else if (tokens.length == 2) {
-            featureName = tokens[1];
-        } else {
-            featureName = tokens[1];
-            validator.error("Only direct feature references are supported.", ref,
-                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
         }
 
         Variable parameter = CorePatternLanguageHelper.getParameterByName(pattern, tokens[0]);
@@ -60,23 +54,59 @@ public class AnnotationExpressionValidator {
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
             return;
         }
-        EClassifier classifier = typeProvider.getClassifierForPatternParameterVariable(parameter);
-        if (!(classifier instanceof EClass)) {
-            validator.error(String.format("Invalid parameter type %s", classifier.getName()), ref,
+        EClassifier classifier = typeProvider.getClassifierForVariable(parameter);
+
+        if (tokens.length == 1) {
+            featureName = "name";
+        } else if (tokens.length == 2) {
+            featureName = tokens[1];
+            if (classifier instanceof EClass) {
+                EClass classDef = (EClass) classifier;
+                if (classDef.getEStructuralFeature(featureName) == null) {
+                    validator.error(
+                            String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()),
+                            ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
+                }
+            } else if (classifier == null) {
+                return;
+            } else {
+                validator.error(String.format("Invalid parameter type %s", classifier.getName()), ref,
+                        PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+                return;
+            }
+        } else {
+            featureName = tokens[1];
+            validator.error("Only direct feature references are supported.", ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
-            return;
-        }
-        EClass classDef = (EClass) classifier;
-        if (classDef.getEStructuralFeature(featureName) == null) {
-            validator.error(String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()),
-                    ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
         }
     }
 
 
     public void validateStringExpression(Pattern pattern, ValueReference ref, String expression,
             IIssueCallback validator) {
-        // TODO Auto-generated method stub
+        StringTokenizer tokenizer = new StringTokenizer(expression, "$", true);
+        if (expression.isEmpty() || tokenizer.countTokens() == 0) {
+            validator.error("Expression must not be empty.", ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
+                    GENERAL_ISSUE_CODE);
+            return;
+        }
+        boolean inExpression = false;
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            if (token.equals("$")) {
+                inExpression = !inExpression;
+            } else if (inExpression) {
+                if (token == null || token.isEmpty()) {
+                    validator.error("Expression must not be empty.", ref,
+                            PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+                }
+                validateModelExpression(pattern, ref, token, validator);
+            }
+        }
 
+            if (inExpression) {
+            validator.error("Inconsistent model references - a $ character is missing.", ref,
+                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+        }
     }
 }
