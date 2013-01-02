@@ -98,21 +98,24 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService i
         Preconditions.checkNotNull(ctx, "Context is required");
         Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
         IncQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
-        for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
-            Iterable<IEObjectDescription> packages = Iterables.transform(
-                    getAllGenPackages(generatorModelReference.getGenmodel()),
-                    new Function<GenPackage, IEObjectDescription>() {
-                        @Override
-                        public IEObjectDescription apply(GenPackage from) {
-                            Preconditions.checkNotNull(from);
+        if (generatorModel != null) {
+            for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
+                Iterable<IEObjectDescription> packages = Iterables.transform(
+                        getAllGenPackages(generatorModelReference.getGenmodel()),
+                        new Function<GenPackage, IEObjectDescription>() {
+                            @Override
+                            public IEObjectDescription apply(GenPackage from) {
+                                Preconditions.checkNotNull(from);
 
-                            EPackage ePackage = from.getEcorePackage();
-                            QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(ePackage.getNsURI());
-                            return EObjectDescription.create(qualifiedName, ePackage,
-                                    Collections.singletonMap("nsURI", "true"));
-                        }
-                    });
-            referencedPackages = Iterables.concat(referencedPackages, packages);
+                                EPackage ePackage = from.getEcorePackage();
+                                QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(ePackage
+                                        .getNsURI());
+                                return EObjectDescription.create(qualifiedName, ePackage,
+                                        Collections.singletonMap("nsURI", "true"));
+                            }
+                        });
+                referencedPackages = Iterables.concat(referencedPackages, packages);
+            }
         }
         // The FilteringScope is used to ensure elements in eiq genmodel are not accidentally found in the parent
         // version
