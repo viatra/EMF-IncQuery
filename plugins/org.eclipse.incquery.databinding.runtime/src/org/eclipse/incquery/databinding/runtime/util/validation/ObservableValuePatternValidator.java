@@ -48,7 +48,7 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
                         PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
             }
 
-            expressionValidator.validateModelExpression(pattern, ref, value, validator);
+            expressionValidator.validateModelExpression(value, pattern, ref, validator);
         }
     }
 
