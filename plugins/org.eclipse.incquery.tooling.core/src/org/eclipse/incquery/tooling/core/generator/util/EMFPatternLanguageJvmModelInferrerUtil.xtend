@@ -29,6 +29,9 @@ import org.eclipse.jdt.core.JavaConventions
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.core.runtime.IStatus
 import java.util.regex.Matcher
+import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
+import org.eclipse.incquery.tooling.core.generator.builder.GeneratorIssueCodes
+import org.eclipse.xtext.diagnostics.Severity
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -43,6 +46,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject	IWorkspaceRoot workspaceRoot
 	@Inject ITypeProvider typeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
+	@Inject IErrorFeedback errorFeedback
 	
 	def bundleName(Pattern pattern) {
 		val project = workspaceRoot.getFile(
@@ -280,7 +284,13 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 //		val type = ctx.newTypeRef(clazz, typeArgs).type
 //		appendable.append(type)
 		//'''«type.simpleName»'''
-		appendable.serialize(ctx.newTypeRef(clazz, typeArgs), ctx)
+		val ref = ctx.newTypeRef(clazz, typeArgs)
+		if (ref != null) {
+			appendable.serialize(ref, ctx)
+		} else {
+			errorFeedback.reportError(ctx, '''Cannot resolve class «clazz.canonicalName». Check project dependencies.''', GeneratorIssueCodes::INVALID_TYPEREF_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
+			appendable.append(clazz.canonicalName)
+		}
 	}
 	
 	def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
