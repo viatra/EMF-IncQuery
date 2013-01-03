@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.scoping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -37,7 +38,7 @@ public class EMFPatternLanguageImportedNamespaceAwareLocalScopeProvider extends 
      */
     @Override
     protected List<ImportNormalizer> internalGetImportedNamespaceResolvers(EObject context, boolean ignoreCase) {
-        List<ImportNormalizer> result = super.internalGetImportedNamespaceResolvers(context, ignoreCase);
+        List<ImportNormalizer> result = new ArrayList(super.internalGetImportedNamespaceResolvers(context, ignoreCase));
         if (context instanceof PatternCall) {
             PatternModel model = EcoreUtil2.getContainerOfType(context, PatternModel.class);
             if (model != null && model.getPackageName() != null && !model.getPackageName().isEmpty()) {
