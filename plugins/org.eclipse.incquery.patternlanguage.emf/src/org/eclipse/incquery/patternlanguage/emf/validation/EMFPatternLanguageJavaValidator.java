@@ -203,11 +203,13 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     Set<String> classifierPackagesSet = new HashSet<String>();
                     for (EClassifier classifier : possibleClassifiers) {
                         classifierNamesSet.add(classifier.getName());
-                        classifierPackagesSet.add(classifier.getEPackage().getName());
+                        if (classifier.getEPackage() != null) {
+                            classifierPackagesSet.add(classifier.getEPackage().getName());
+                        }
                     }
                     // If the String sets contains only 1 elements than it is an error
                     // There is some element which is defined multiple types within the ecores
-                    if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() == 1) {
+                    if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() <= 1) {
                         error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
                                 .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                     } else {
@@ -583,7 +585,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(checkConstraint
                 .getExpression())) {
             EClassifier classifier = emfTypeProvider.getClassifierForVariable(variable);
-            if (!(classifier instanceof EDataType)) {
+            if (classifier != null && !(classifier instanceof EDataType)) {// null-check needed, otherwise code throws
+                                                                           // NPE for classifier.getName()
                 error("Only simple EDataTypes are allowed in check expressions. The variable " + variable.getName()
                         + "has a type of " + classifier.getName() + ".", checkConstraint, null,
                         EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
