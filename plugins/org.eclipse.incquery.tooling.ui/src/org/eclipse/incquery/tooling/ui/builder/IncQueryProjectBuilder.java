@@ -44,6 +44,7 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  * 
  */
+@SuppressWarnings("restriction")
 public class IncQueryProjectBuilder extends XtextBuilder {
 
     /**
