@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
@@ -105,5 +106,7 @@ public interface IEiqGenmodelProvider {
      * @return the corresponding {@link GenPackage} for the selected {@link EPackage}
      */
     GenPackage findGenPackage(EObject ctx, final String packageNsUri);
+
+    public abstract IPath getGeneratorModelPath(IProject project);
 
 }

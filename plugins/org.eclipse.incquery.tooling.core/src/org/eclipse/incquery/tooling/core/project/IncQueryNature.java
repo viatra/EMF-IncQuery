@@ -26,8 +26,7 @@ public class IncQueryNature implements IProjectNature {
      * The project nature identifier used for defining the project nature of an IncQuery project.
      */
     public static final String NATURE_ID = "org.eclipse.incquery.projectnature"; //$NON-NLS-1$
-    public static final String BUNDLE_ID = "org.eclipse.incquery.tooling.core"; //$NON-NLS-1$
-    public static final String BUILDER_ID = BUNDLE_ID + ".projectbuilder";//$NON-NLS-1$
+    public static final String BUILDER_ID = "org.eclipse.incquery.tooling.ui.projectbuilder";//$NON-NLS-1$
     public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
     public static final String SRC_DIR = "src/"; //$NON-NLS-1$
     public static final String EXECUTION_ENVIRONMENT = "JavaSE-1.6"; // $NON_NLS-1$

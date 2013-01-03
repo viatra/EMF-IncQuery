@@ -36,15 +36,5 @@
             value="true">
       </persistent>
    </extension>
-   <extension
-         id="projectbuilder"
-         name="EMF-IncQuery Project Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="org.eclipse.incquery.tooling.core.project.IncQueryProjectBuilder">
-         </run></builder>
-   </extension>
 
 </plugin>

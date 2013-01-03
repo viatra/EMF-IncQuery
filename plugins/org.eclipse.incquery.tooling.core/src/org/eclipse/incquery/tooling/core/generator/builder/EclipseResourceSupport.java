@@ -26,7 +26,7 @@ import com.google.inject.Provider;
 
 public class EclipseResourceSupport {
 
-    private final static class EclipseResourceFileCallback implements EclipseResourceFileSystemAccess2.IFileCallback {
+    private static final class EclipseResourceFileCallback implements EclipseResourceFileSystemAccess2.IFileCallback {
         public boolean beforeFileDeletion(IFile file) {
             return true;
         }

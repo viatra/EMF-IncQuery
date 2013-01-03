@@ -602,4 +602,15 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         id="org.eclipse.incquery.tooling.core.projectbuilder"
+         name="EMF-IncQuery Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory">
+               <parameter name="guicekey" value="org.eclipse.incquery.tooling.ui.builder.IncQueryProjectBuilder"/>
+         </run></builder>
+   </extension>
 </plugin>
