@@ -79,7 +79,6 @@ public class AnnotationExpressionValidator {
      */
     public void validateModelExpression(String expression, Pattern pattern, ValueReference ref, IIssueCallback validator) {
         String[] tokens = expression.split("\\.");
-        String featureName = "";
         if (expression.isEmpty() || tokens.length == 0) {
             validator.error("Expression must not be empty.", ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
                     GENERAL_ISSUE_CODE);
@@ -95,27 +94,40 @@ public class AnnotationExpressionValidator {
         EClassifier classifier = typeProvider.getClassifierForVariable(parameter);
 
         if (tokens.length == 1) {
-            featureName = "name";
+            checkClassifierFeature(classifier, "name", ref, validator);
         } else if (tokens.length == 2) {
-            featureName = tokens[1];
-            if (classifier instanceof EClass) {
-                EClass classDef = (EClass) classifier;
-                if (classDef.getEStructuralFeature(featureName) == null) {
-                    validator.error(
-                            String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()),
-                            ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
-                }
-            } else if (classifier == null) {
-                return;
-            } else {
-                validator.error(String.format("Invalid parameter type %s", classifier.getName()), ref,
-                        PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
-                return;
-            }
+            String featureName = tokens[1];
+            checkClassifierFeature(classifier, featureName, ref, validator);
         } else {
-            featureName = tokens[1];
             validator.error("Only direct feature references are supported.", ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+        }
+    }
+
+    /**
+     * Checks whether an {@link EClassifier} defines a feature with the selected name; if not, reports an error for the
+     * selected reference.
+     * 
+     * @param classifier
+     * @param featureName
+     * @param ref
+     * @param validator
+     */
+    private void checkClassifierFeature(EClassifier classifier, String featureName, ValueReference ref,
+            IIssueCallback validator) {
+        if (classifier instanceof EClass) {
+            EClass classDef = (EClass) classifier;
+            if (classDef.getEStructuralFeature(featureName) == null) {
+                validator.error(
+                        String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()),
+                        ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
+            }
+        } else if (classifier == null) {
+            return;
+        } else {
+            validator.error(String.format("Invalid parameter type %s", classifier.getName()), ref,
+                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+            return;
         }
     }
 
@@ -150,10 +162,6 @@ public class AnnotationExpressionValidator {
                 }
                 inExpression = !inExpression;
             } else if (inExpression) {
-                if (token == null || token.isEmpty()) {
-                    validator.error("Expression must not be empty.", ref,
-                            PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
-                }
                 validateModelExpression(token, pattern, ref, validator);
                 foundToken = true;
             }
