@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
@@ -291,8 +292,17 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService i
     }
 
     public boolean isGeneratorModelDefined(IProject project) {
-        IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+        IFile file = getGeneratorModelFile(project);
         return file.exists();
+    }
+
+    public IFile getGeneratorModelFile(IProject project) {
+        return project.getFile(IncQueryNature.IQGENMODEL);
+    }
+
+    @Override
+    public IPath getGeneratorModelPath(IProject project) {
+        return getGeneratorModelFile(project).getFullPath();
     }
 
     /**
@@ -303,7 +313,7 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService i
      * @return
      */
     public IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
-        IFile file = project.getFile(IncQueryNature.IQGENMODEL);
+        IFile file = getGeneratorModelFile(project);
         if (file.exists()) {
             return getGeneratorModel(project, set);
         } else {
