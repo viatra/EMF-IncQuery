@@ -78,5 +78,28 @@ class PatternValidationTest extends AbstractValidatorTest {
 		')
 		tester.validate(model).assertError(EMFIssueCodes::SINGLEUSE_PARAMETER)
 	}
-
+	
+	@Test
+	def dubiusSingleUseVariable() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			pattern unusedPrivatePattern(p) {
+				Pattern(p);
+				Pattern.name(p, _p);
+			}
+		''')
+		tester.validate(model).assertWarning(IssueCodes::DUBIUS_VARIABLE_NAME)
+	}
+	
+	@Test
+	def dubiusSingleUseVariableCapitalization() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			pattern unusedPrivatePattern(p) {
+				Pattern(p);
+				Pattern.name(p, _P);
+			}
+		''')
+		tester.validate(model).assertOK
+	}
 }

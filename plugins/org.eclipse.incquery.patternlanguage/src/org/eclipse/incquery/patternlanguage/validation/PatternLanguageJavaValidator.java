@@ -162,7 +162,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     if (!typeConformance.isConformant(type1, type2) && !typeConformance.isConformant(type2, type1)) {
                         error(String.format(
                                 "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
-                                type1.getSimpleName().toString(), type2.getSimpleName().toString()),
+                                type1.getSimpleName(), type2.getSimpleName()),
                                 PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
                                 IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
                     }
@@ -386,6 +386,20 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (!simpleName.equals("boolean")) {
                 error("Check expressions must return boolean instead of " + type.getSimpleName(), checkConstraint,
                         PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION, IssueCodes.CHECK_MUST_BE_BOOLEAN);
+            }
+        }
+    }
+
+    @Check
+    public void checkVariableNames(PatternBody body) {
+        for (Variable var1 : body.getVariables()) {
+            for (Variable var2 : body.getVariables()) {
+                if (isNamedSingleUse(var1) && var1.getSimpleName().substring(1).equals(var2.getName())) {
+                    warning(String.format(
+                            "Dubius variable naming: Single use variable %s shares its name with the variable %s",
+                            var1.getSimpleName(), var2.getSimpleName()), var1,
+                            PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.DUBIUS_VARIABLE_NAME);
+                }
             }
         }
     }
