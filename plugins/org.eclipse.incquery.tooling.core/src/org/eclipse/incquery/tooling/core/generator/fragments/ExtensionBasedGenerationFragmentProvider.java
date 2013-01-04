@@ -79,8 +79,7 @@ public class ExtensionBasedGenerationFragmentProvider implements IGenerationFrag
         if (fragments == null) {
             initializeFragments();
         }
-        HashSet<IGenerationFragment> fragmentSet = new HashSet<IGenerationFragment>(fragments.values());
-        return fragmentSet;
+        return new HashSet<IGenerationFragment>(fragments.values());
     }
 
     @Override

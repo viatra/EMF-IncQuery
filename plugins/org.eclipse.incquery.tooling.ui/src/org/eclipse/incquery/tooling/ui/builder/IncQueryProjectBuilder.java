@@ -53,7 +53,7 @@ public class IncQueryProjectBuilder extends XtextBuilder {
      * @author Zoltan Ujhelyi
      * 
      */
-    private final static class ChangeDetector implements IResourceDeltaVisitor {
+    private static final class ChangeDetector implements IResourceDeltaVisitor {
         /**
          * Sets the path to look for genmodel 
          * @param path
