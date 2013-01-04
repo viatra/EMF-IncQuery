@@ -60,6 +60,6 @@ public final class IssueCodes {
             + "local_variable_no_positive_reference";
     public static final String ANONYM_VARIABLE_MULTIPLE_REFERENCE = ISSUE_CODE_PREFIX
             + "anonym_variable_multiple_reference";
-
+    public static final String DUBIUS_VARIABLE_NAME = ISSUE_CODE_PREFIX + "dubius_variable_name";
 
 }
