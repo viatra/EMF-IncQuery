@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 public class XMIResourceURIHandler extends URIHandlerImpl {
 
     @Inject
-    IMetamodelProvider metamodelProvider;
+    private IMetamodelProvider metamodelProvider;
     private ResourceSet set;
 
     public XMIResourceURIHandler(ResourceSet set) {

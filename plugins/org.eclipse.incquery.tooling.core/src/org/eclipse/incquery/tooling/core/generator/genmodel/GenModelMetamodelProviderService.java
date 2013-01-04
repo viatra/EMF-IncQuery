@@ -57,15 +57,15 @@ import com.google.inject.Inject;
 
 public class GenModelMetamodelProviderService extends MetamodelProviderService implements IEiqGenmodelProvider {
 
-    private static final class ParentScopeFilter implements Predicate<IEObjectDescription> {
-        private final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
-            @Override
-            public QualifiedName apply(IEObjectDescription desc) {
-                Preconditions.checkNotNull(desc);
+    private static final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
+        @Override
+        public QualifiedName apply(IEObjectDescription desc) {
+            Preconditions.checkNotNull(desc);
 
-                return desc.getQualifiedName();
-            }
+            return desc.getQualifiedName();
         }
+    }
+    private static final class ParentScopeFilter implements Predicate<IEObjectDescription> {
 
         private final Iterable<IEObjectDescription> referencedPackages;
 
@@ -217,8 +217,9 @@ public class GenModelMetamodelProviderService extends MetamodelProviderService i
 
     @Override
     public GenPackage findGenPackage(EObject ctx, final EPackage ePackage) {
-        if (ePackage == null)
+        if (ePackage == null) {
             return null;
+        }
         return findGenPackage(ctx, ePackage.getNsURI());
     }
 

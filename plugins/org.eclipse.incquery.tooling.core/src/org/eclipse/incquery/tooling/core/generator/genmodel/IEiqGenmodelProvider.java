@@ -16,7 +16,6 @@ import java.util.Collection;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -72,7 +71,7 @@ public interface IEiqGenmodelProvider {
     Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException;
 
     /**
-     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The context object is used for
+     * Tries to find the EMF {@link GenPackage} for a selected {@link EPackage}. The context object is used for
      * determining the actual project.
      * 
      * @param ePackage
@@ -81,7 +80,7 @@ public interface IEiqGenmodelProvider {
     GenPackage findGenPackage(EObject context, EPackage ePackage);
 
     /**
-     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The resource set is expected to be the
+     * Tries to find the EMF {@link GenPackage} for a selected {@link EPackage}. The resource set is expected to be the
      * one Xtext assigns for a Java project.
      * 
      * @param packageNsUri
@@ -90,7 +89,7 @@ public interface IEiqGenmodelProvider {
     GenPackage findGenPackage(ResourceSet set, final String packageNsUri);
 
     /**
-     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The resource set is expected to be the
+     * Tries to find the EMF {@link GenPackage} for a selected {@link EPackage}. The resource set is expected to be the
      * one Xtext assigns for a Java project.
      * 
      * @param packageNsUri
@@ -99,7 +98,7 @@ public interface IEiqGenmodelProvider {
     GenPackage findGenPackage(ResourceSet set, final EPackage ePackage);
 
     /**
-     * Tries to find the EMF {@link GenModel} for a selected {@link EPackage}. The context object is used for
+     * Tries to find the EMF {@link GenPackage} for a selected {@link EPackage}. The context object is used for
      * determining the actual project.
      * 
      * @param packageNsUri
@@ -107,6 +106,13 @@ public interface IEiqGenmodelProvider {
      */
     GenPackage findGenPackage(EObject ctx, final String packageNsUri);
 
-    public abstract IPath getGeneratorModelPath(IProject project);
+    /**
+     * Calculates the path of the generator model from a selected project. If the project has no generator model
+     * defined, the method still returns the path where to look for the generator model.
+     * 
+     * @param project
+     * @return a non-empty path for the generator model. It is possible that no resource exists at this path.
+     */
+    IPath getGeneratorModelPath(IProject project);
 
 }
