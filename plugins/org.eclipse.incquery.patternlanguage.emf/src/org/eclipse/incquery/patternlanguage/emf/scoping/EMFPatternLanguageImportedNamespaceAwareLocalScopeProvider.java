@@ -38,15 +38,18 @@ public class EMFPatternLanguageImportedNamespaceAwareLocalScopeProvider extends 
      */
     @Override
     protected List<ImportNormalizer> internalGetImportedNamespaceResolvers(EObject context, boolean ignoreCase) {
-        List<ImportNormalizer> result = new ArrayList(super.internalGetImportedNamespaceResolvers(context, ignoreCase));
+        List<ImportNormalizer> result = new ArrayList<ImportNormalizer>(super.internalGetImportedNamespaceResolvers(
+                context, ignoreCase));
         if (context instanceof PatternCall) {
             PatternModel model = EcoreUtil2.getContainerOfType(context, PatternModel.class);
-            if (model != null && model.getPackageName() != null && !model.getPackageName().isEmpty()) {
-                result.add(createImportedNamespaceResolver(model.getPackageName() + ".*", ignoreCase));
-            }
-            for (JavaImport importDecl : Iterables.filter(model.getImportPackages(), JavaImport.class)) {
-                if (importDecl.getImportedNamespace() != null) {
-                    result.add(createImportedNamespaceResolver(importDecl.getImportedNamespace() + ".*", ignoreCase));
+            if (model != null) {
+                if (model.getPackageName() != null && !model.getPackageName().isEmpty()) {
+                    result.add(createImportedNamespaceResolver(model.getPackageName() + ".*", ignoreCase));
+                }
+                for (JavaImport importDecl : Iterables.filter(model.getImportPackages(), JavaImport.class)) {
+                    if (importDecl.getImportedNamespace() != null) {
+                        result.add(createImportedNamespaceResolver(importDecl.getImportedNamespace() + ".*", ignoreCase));
+                    }
                 }
             }
         }
