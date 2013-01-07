@@ -124,10 +124,6 @@ public class AnnotationExpressionValidator {
             }
         } else if (classifier == null) {
             return;
-        } else {
-            validator.error(String.format("Invalid parameter type %s", classifier.getName()), ref,
-                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
-            return;
         }
     }
 
