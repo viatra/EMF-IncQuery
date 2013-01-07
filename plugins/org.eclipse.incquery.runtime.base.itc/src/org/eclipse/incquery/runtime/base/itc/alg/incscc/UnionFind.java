@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.base.itc.alg.incscc;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,11 +49,33 @@ public class UnionFind<V> {
     public V makeSet(V[] nodes) {
         if (nodes.length > 1) {
             V root = makeSet(nodes[0]);
-            for (int i = 1; i < nodes.length; i++)
+            for (int i = 1; i < nodes.length; i++) {
                 root = union(nodes[i], root);
+            }
             return root;
         } else if (nodes.length == 1) {
             return makeSet(nodes[0]);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Creates a new set from a collection of elements.
+     * 
+     * @param nodes
+     *            the collection of elements
+     * @return the root element
+     */
+    public V makeSet(Collection<V> nodes) {
+        if (nodes.size() > 1) {
+            V root = makeSet(nodes.iterator().next());
+            for (V node : nodes) {
+                root = union(node, root);
+            }
+            return root;
+        } else if (nodes.size() == 1) {
+            return makeSet(nodes.iterator().next());
         } else {
             return null;
         }
