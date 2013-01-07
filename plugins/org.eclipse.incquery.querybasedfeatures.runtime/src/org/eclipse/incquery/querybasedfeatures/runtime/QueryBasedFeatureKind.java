@@ -29,6 +29,8 @@ public enum QueryBasedFeatureKind {
             return "counter";
         } else if(ITERATION.equals(kind)) {
             return "iteration";
-        } else return null;
+        } else {
+            return null;
+        }
     }
 }
