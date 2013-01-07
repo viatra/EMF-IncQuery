@@ -75,7 +75,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         Set<Set<V>> _sccs = _sccres.getSccs();
 
         for (Set<V> _set : _sccs) {
-            sccs.makeSet((V[]) _set.toArray());
+            sccs.makeSet(_set);
         }
 
         // init reduced graph
@@ -263,7 +263,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
                 // add new nodes and edges to the reduced graph
                 for (Set<V> _scc : newSccs) {
-                    V newRoot = sccs.makeSet((V[]) _scc.toArray());
+                    V newRoot = sccs.makeSet(_scc);
                     reducedGraph.insertNode(newRoot);
                     roots.add(newRoot);
                 }
