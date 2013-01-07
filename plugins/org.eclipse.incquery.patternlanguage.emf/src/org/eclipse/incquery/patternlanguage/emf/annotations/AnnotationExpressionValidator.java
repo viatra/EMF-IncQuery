@@ -94,10 +94,10 @@ public class AnnotationExpressionValidator {
         EClassifier classifier = typeProvider.getClassifierForVariable(parameter);
 
         if (tokens.length == 1) {
-            checkClassifierFeature(classifier, "name", ref, validator);
+            checkClassifierFeature(classifier, "name", ref, validator, false);
         } else if (tokens.length == 2) {
             String featureName = tokens[1];
-            checkClassifierFeature(classifier, featureName, ref, validator);
+            checkClassifierFeature(classifier, featureName, ref, validator, true);
         } else {
             validator.error("Only direct feature references are supported.", ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
@@ -112,15 +112,23 @@ public class AnnotationExpressionValidator {
      * @param featureName
      * @param ref
      * @param validator
+     * @param userSpecified TODO
      */
     private void checkClassifierFeature(EClassifier classifier, String featureName, ValueReference ref,
-            IIssueCallback validator) {
+            IIssueCallback validator, boolean userSpecified) {
         if (classifier instanceof EClass) {
             EClass classDef = (EClass) classifier;
             if (classDef.getEStructuralFeature(featureName) == null) {
+                if (userSpecified) {
                 validator.error(
                         String.format("Invalid feature type %s in EClass %s", featureName, classifier.getName()),
                         ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_ATTRIBUTE_CODE);
+                } else {
+                    validator.warning(String.format(
+                                            "EClass %s does not define a name attribute, so the string representation might be inconvinient to use. Perhaps a feature qualifier is missing?",
+                            classifier.getName()), ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
+                            UNKNOWN_ATTRIBUTE_CODE);
+                }
             }
         } else if (classifier == null) {
             return;
