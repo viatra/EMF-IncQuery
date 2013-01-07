@@ -20,21 +20,21 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface IQueryBasedFeatureHandler {
 
-    public abstract Object getValue(Object source);
+    Object getValue(Object source);
 
-    public abstract int getIntValue(Object source);
+    int getIntValue(Object source);
 
-    public abstract Object getSingleReferenceValue(Object source);
+    Object getSingleReferenceValue(Object source);
 
-    public abstract List<?> getManyReferenceValue(Object source);
+    List<?> getManyReferenceValue(Object source);
 
-    public abstract EList getManyReferenceValueAsEList(Object source);
+    EList getManyReferenceValueAsEList(Object source);
 
     /**
      * Called when getValue method is called for Iteration kind
      * 
      * @return the value of the feature
      */
-    public abstract Object getValueIteration(Object source);
+    Object getValueIteration(Object source);
 
 }

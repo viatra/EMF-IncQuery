@@ -116,7 +116,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
     public QueryBasedFeatureHandler(EStructuralFeature feature) {
         // this.source = source;
         this.feature = feature;
-        if (feature.isMany() && targetParamName != null) {
+        if (feature.isMany()) {
             kind = QueryBasedFeatureKind.MANY_REFERENCE;
         } else {
             kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
@@ -262,7 +262,6 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
 
                 @Override
                 public void process(IPatternMatch match) {
-                    // TODO Auto-generated method stub
                     values.add(match.get(targetParamName));
                 }
             });
@@ -448,7 +447,8 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
                     .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
         } else if (value >= delta) {
             int tempMemory = value - delta;
-            notifications.add(new ENotificationImpl(source, Notification.SET, feature, (int) value, tempMemory));
+            int oldValue = value;
+            notifications.add(new ENotificationImpl(source, Notification.SET, feature, oldValue, tempMemory));
             counterMemory.put(source, tempMemory);
         } else {
             throw new IncQueryException(String.format("The counter of %s for feature %s cannot go below zero!", source,

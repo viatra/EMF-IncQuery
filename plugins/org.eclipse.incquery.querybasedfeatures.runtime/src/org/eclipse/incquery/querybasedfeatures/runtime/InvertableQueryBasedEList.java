@@ -130,10 +130,11 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
     @Override
     public boolean addAllUnique(int index, Collection<? extends ComputedType> collection) {
         int oldSize = storageEList.size();
+        int tempIndex = index;
         for (ComputedType source : collection) {
             StorageType newTarget = inverter.invert(source);
-            storageEList.add(index, newTarget);
-            index++;
+            storageEList.add(tempIndex, newTarget);
+            tempIndex++;
         }
         return oldSize < storageEList.size();
     }
@@ -162,11 +163,12 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
     @Override
     public boolean addAllUnique(int index, Object[] objects, int start, int end) {
         int oldSize = storageEList.size();
+        int tempIndex = index;
         for (int i = start; i <= end; i++) {
             @SuppressWarnings("unchecked")
             StorageType newTarget = inverter.invert((ComputedType) objects[i]);
-            storageEList.add(index, newTarget);
-            index++;
+            storageEList.add(tempIndex, newTarget);
+            tempIndex++;
         }
         return oldSize < storageEList.size();
     }
@@ -191,10 +193,10 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
      */
     @Override
     public ComputedType move(int targetIndex, int sourceIndex) {
-        ComputedType t_source = get(sourceIndex);
-        StorageType t_target = inverter.invert(t_source);
-        storageEList.move(targetIndex, t_target);
-        return t_source;
+        ComputedType tSource = get(sourceIndex);
+        StorageType tTarget = inverter.invert(tSource);
+        storageEList.move(targetIndex, tTarget);
+        return tSource;
     }
 
     /*
