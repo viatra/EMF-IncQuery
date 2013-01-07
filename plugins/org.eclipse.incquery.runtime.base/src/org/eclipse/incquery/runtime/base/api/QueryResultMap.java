@@ -55,7 +55,11 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
     @Override
     protected boolean internalCachePut(KeyType key, ValueType value) {
         ValueType put = cache.put(key, value);
-        return !put.equals(value);
+        if(put == null) {
+            return value != null;
+        } else {
+            return !put.equals(value);
+        }
     }
     
     /* (non-Javadoc)
