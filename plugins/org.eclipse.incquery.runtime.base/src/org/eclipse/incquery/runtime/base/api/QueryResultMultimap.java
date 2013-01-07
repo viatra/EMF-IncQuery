@@ -60,7 +60,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
      */
     protected QueryResultMultimap(Logger logger) {
         cache = HashMultimap.create();
-        this.logger = logger;
+        setLogger(logger);
     }
 
     /* (non-Javadoc)
@@ -250,7 +250,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
      */
     @Override
     public boolean put(KeyType key, ValueType value) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         return modifyThroughQueryResultSetter(key, value, Direction.INSERT);
@@ -265,7 +265,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
     @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Object key, Object value) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         // if it contains the entry, the types MUST be correct
@@ -283,7 +283,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
      */
     @Override
     public boolean putAll(KeyType key, Iterable<? extends ValueType> values) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         boolean changed = false;
@@ -301,7 +301,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
      */
     @Override
     public boolean putAll(Multimap<? extends KeyType, ? extends ValueType> multimap) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         boolean changed = false;
@@ -322,7 +322,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
      */
     @Override
     public Collection<ValueType> replaceValues(KeyType key, Iterable<? extends ValueType> values) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         Collection<ValueType> oldValues = removeAll(key);
@@ -335,9 +335,9 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
             }
         }
         if (!notInserted.isEmpty()) {
-            logger.warn(String
+            getLogger().warn(String
                     .format("The query result multimap replaceValues on key %s did not insert values %s. (Developer note: %s called from QueryResultMultimap)",
-                            key, notInserted.toString(), setter));
+                            key, notInserted.toString(), getSetter()));
         }
         return oldValues;
     }
@@ -354,7 +354,7 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
     @SuppressWarnings("unchecked")
     @Override
     public Collection<ValueType> removeAll(Object key) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         // if it contains the key, the type MUST be correct
@@ -367,9 +367,9 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
             }
             if (cache.containsKey(key)) {
                 Collection<ValueType> newValues = cache.get((KeyType) key);
-                logger.warn(String
+                getLogger().warn(String
                         .format("The query result multimap removeAll on key %s did not remove all values (the following remained: %s). (Developer note: %s called from QueryResultMultimap)",
-                                key, newValues, setter));
+                                key, newValues, getSetter()));
             }
             return output;
         }

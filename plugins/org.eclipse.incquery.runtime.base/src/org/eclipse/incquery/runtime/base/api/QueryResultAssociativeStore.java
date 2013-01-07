@@ -33,16 +33,51 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
     /**
      * Logger that can be used for reporting errors during runtime
      */
-    protected Logger logger;
+    private Logger logger;
     /**
      * The collection of listeners registered for this result associative store
      */
-    protected Collection<IQueryResultUpdateListener<KeyType, ValueType>> listeners;
+    private Collection<IQueryResultUpdateListener<KeyType, ValueType>> listeners;
 
     /**
      * The setter registered for changing the contents of the associative store
      */
-    protected IQueryResultSetter<KeyType, ValueType> setter;
+    private IQueryResultSetter<KeyType, ValueType> setter;
+
+    /**
+     * @return the listeners
+     */
+    protected Collection<IQueryResultUpdateListener<KeyType, ValueType>> getListeners() {
+        return listeners;
+    }
+
+    /**
+     * @param listeners the listeners to set
+     */
+    protected void setListeners(Collection<IQueryResultUpdateListener<KeyType, ValueType>> listeners) {
+        this.listeners = listeners;
+    }
+
+    /**
+     * @return the setter
+     */
+    protected IQueryResultSetter<KeyType, ValueType> getSetter() {
+        return setter;
+    }
+
+    /**
+     * @param setter the setter to set
+     */
+    protected void setSetter(IQueryResultSetter<KeyType, ValueType> setter) {
+        this.setter = setter;
+    }
+
+    /**
+     * @param logger the logger to set
+     */
+    protected void setLogger(Logger logger) {
+        this.logger = logger;
+    }
 
     /**
      * Returns the entries in the cache as a collection.
@@ -107,7 +142,7 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
     }
 
     private void sendNotificationToListener(Direction direction, KeyType key, ValueType value,
-            IQueryResultUpdateListener<KeyType, ValueType> listener) throws Error {
+            IQueryResultUpdateListener<KeyType, ValueType> listener) {
         try {
             if (direction == Direction.INSERT) {
                 listener.notifyPut(key, value);

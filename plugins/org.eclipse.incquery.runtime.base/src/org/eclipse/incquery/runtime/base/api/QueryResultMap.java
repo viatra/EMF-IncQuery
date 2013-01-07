@@ -38,7 +38,7 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
      */
     protected QueryResultMap(Logger logger) {
         cache = new HashMap<KeyType, ValueType>();
-        this.logger = logger;
+        setLogger(logger);
     }
     
     /* (non-Javadoc)
@@ -55,7 +55,7 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
     @Override
     protected boolean internalCachePut(KeyType key, ValueType value) {
         ValueType put = cache.put(key, value);
-        return put != value;
+        return !put.equals(value);
     }
     
     /* (non-Javadoc)
@@ -172,7 +172,7 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
      */
     @Override
     public ValueType put(KeyType key, ValueType value) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         ValueType oldValue = cache.get(key);
@@ -188,7 +188,7 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
      */
     @Override
     public void putAll(Map<? extends KeyType, ? extends ValueType> map) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         for (Entry<? extends KeyType, ? extends ValueType> entry : map.entrySet()) {
@@ -206,7 +206,7 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
     @SuppressWarnings("unchecked")
     @Override
     public ValueType remove(Object key) {
-        if (setter == null) {
+        if (getSetter() == null) {
             throw new UnsupportedOperationException(NOT_ALLOW_MODIFICATIONS);
         }
         // if it contains the entry, the types MUST be correct
