@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.incquery.databinding.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.databinding.runtime.feature" version="0.7.0.qualifier">
-      <category name="org.eclipse.incquery"/>
-   </feature>
-   <feature url="features/org.eclipse.incquery.querybasedfeatures.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.querybasedfeatures.runtime.feature" version="0.7.0.qualifier">
-      <category name="org.eclipse.incquery"/>
-   </feature>
-   <feature url="features/org.eclipse.incquery.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.feature" version="0.7.0.qualifier">
-      <category name="org.eclipse.incquery"/>
-   </feature>
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="0.7.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
@@ -16,9 +7,6 @@
       <category name="org.eclipse.incquery"/>
    </feature>
    <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.7.0.qualifier">
-      <category name="org.eclipse.incquery"/>
-   </feature>
-   <feature url="features/org.eclipse.incquery.validation.runtime.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.validation.runtime.feature" version="0.7.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.7.0.qualifier">
