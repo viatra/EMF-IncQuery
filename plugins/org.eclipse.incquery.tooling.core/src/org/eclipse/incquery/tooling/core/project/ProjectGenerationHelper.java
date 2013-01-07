@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
@@ -104,7 +103,7 @@ public abstract class ProjectGenerationHelper {
      * @param proj
      * @param monitor
      * @throws CoreException
-     * @throws OperationCanceledException
+     * @throws CoreException
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
