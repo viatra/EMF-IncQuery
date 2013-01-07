@@ -393,12 +393,25 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Check
     public void checkVariableNames(PatternBody body) {
         for (Variable var1 : body.getVariables()) {
+            Variable otherVar = null;
             for (Variable var2 : body.getVariables()) {
                 if (isNamedSingleUse(var1) && var1.getSimpleName().substring(1).equals(var2.getName())) {
+                    otherVar = var2;
+                }
+            }
+            if (otherVar != null) {
+                if (var1.eContainer() instanceof PatternBody && !var1.getReferences().isEmpty()) {
+                    // Local variables do not have source location
                     warning(String.format(
                             "Dubius variable naming: Single use variable %s shares its name with the variable %s",
-                            var1.getSimpleName(), var2.getSimpleName()), var1,
-                            PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.DUBIUS_VARIABLE_NAME);
+                            var1.getSimpleName(), otherVar.getSimpleName()), var1.getReferences().get(0),
+                            PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
+                            IssueCodes.DUBIUS_VARIABLE_NAME);
+                } else {
+                warning(String.format(
+                        "Dubius variable naming: Single use variable %s shares its name with the variable %s",
+                        var1.getSimpleName(), otherVar.getSimpleName()), var1,
+                        PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.DUBIUS_VARIABLE_NAME);
                 }
             }
         }
