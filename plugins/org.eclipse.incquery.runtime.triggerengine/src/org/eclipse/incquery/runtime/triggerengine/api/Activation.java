@@ -11,8 +11,8 @@
 
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * An {@link Activation} is a created for a {@link AbstractRule} when the preconditions (LHS) are fully satisfied with
@@ -26,40 +26,43 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * 
  * @author Tamas Szabo
  * 
- * @param <MatchType>
+ * @param <Match>
  *            the type of the pattern match
  */
-public abstract class Activation<MatchType extends IPatternMatch> {
+public abstract class Activation<Match extends IPatternMatch> {
 
-    protected MatchType patternMatch;
-    protected boolean fired;
-    protected ActivationState state;
-    protected AbstractRule<MatchType> rule;
+    private Match patternMatch;
+    private ActivationState state;
+    private RuleInstance<Match, IncQueryMatcher<Match>> rule;
     private int cachedHash = -1;
 
-    public Activation(AbstractRule<MatchType> rule, MatchType patternMatch) {
+    public Activation(RuleInstance<Match, IncQueryMatcher<Match>> rule, Match patternMatch) {
         this.patternMatch = patternMatch;
-        this.fired = false;
+        this.state = ActivationState.APPEARED;
         this.rule = rule;
     }
 
-    public void setFired(boolean fired) {
-        this.fired = fired;
-    }
-
-    public boolean isFired() {
-        return this.fired;
-    }
-
-    public MatchType getPatternMatch() {
+    public Match getPatternMatch() {
         return patternMatch;
     }
 
     public ActivationState getState() {
         return state;
     }
+    
+    /**
+     * @return the rule
+     */
+    public RuleInstance<Match, IncQueryMatcher<Match>> getRule() {
+        return rule;
+    }
 
-    public void setState(ActivationState state) {
+    /**
+     * Should be only set through {@link RuleInstance#activationStateTransition}
+     * 
+     * @param state
+     */
+    protected void setState(ActivationState state) {
         this.state = state;
     }
 
@@ -67,15 +70,7 @@ public abstract class Activation<MatchType extends IPatternMatch> {
      * The activation will be fired; the appropriate job of the rule will be executed based on the activation state.
      */
     public void fire() {
-        IMatchProcessor<MatchType> processor = rule.getStateChangeProcessor(this.state);
-        if (processor != null) {
-            processor.process(patternMatch);
-        }
-
-        if (!rule.getAgenda().isAllowMultipleFiring()) {
-            this.fired = true;
-            this.rule.activationFired(this);
-        }
+        rule.fire(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -84,9 +79,9 @@ public abstract class Activation<MatchType extends IPatternMatch> {
         if (this == obj) {
             return true;
         } else if (obj instanceof Activation) {
-            Activation<MatchType> other = (Activation<MatchType>) obj;
-            return (other.fired == this.fired) && (other.rule.equals(this.rule))
-                    && (other.patternMatch.equals(this.patternMatch)) && (other.state == this.state);
+            Activation<Match> other = (Activation<Match>) obj;
+            return (other.rule.equals(this.rule)) && (other.patternMatch.equals(this.patternMatch))
+                    && (other.state == this.state);
         } else {
             return false;
         }

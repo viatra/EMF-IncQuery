@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.triggerengine.api.Activation;
  */
 public abstract class ActivationNotificationProvider implements IActivationNotificationProvider {
 
-    protected Set<IActivationNotificationListener> activationNotificationListeners;
+    private Set<IActivationNotificationListener> activationNotificationListeners;
 
     public ActivationNotificationProvider() {
         this.activationNotificationListeners = new HashSet<IActivationNotificationListener>();

@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.triggerengine.firing;
+package org.eclipse.incquery.runtime.triggerengine.update;
 
 import java.util.HashSet;
 import java.util.Set;

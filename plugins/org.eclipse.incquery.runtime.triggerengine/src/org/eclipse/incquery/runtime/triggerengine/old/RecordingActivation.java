@@ -18,6 +18,10 @@ import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 
 public class RecordingActivation<MatchType extends IPatternMatch> extends Activation<MatchType> {
 
+    /**
+     * 
+     */
+    public static final String RECORDING_ACTIVATION = "RecordingActivation";
     private RecordingRule<MatchType> rule;
 
     public RecordingActivation(RecordingRule<MatchType> rule, MatchType patternMatch) {
@@ -70,7 +74,7 @@ public class RecordingActivation<MatchType extends IPatternMatch> extends Activa
                     fire();
                 }
             };
-            command.setLabel("RecordingActivation");
+            command.setLabel(RECORDING_ACTIVATION);
             domain.getCommandStack().execute(command);
 
             return command;

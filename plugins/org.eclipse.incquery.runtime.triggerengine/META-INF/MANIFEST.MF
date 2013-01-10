@@ -12,8 +12,8 @@ Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.7.0",
  org.eclipse.core.databinding.property,
  org.eclipse.emf.workspace;bundle-version="1.5.1"
 Export-Package: org.eclipse.incquery.runtime.triggerengine.api,
- org.eclipse.incquery.runtime.triggerengine.firing,
  org.eclipse.incquery.runtime.triggerengine.notification,
  org.eclipse.incquery.runtime.triggerengine.qrm,
- org.eclipse.incquery.runtime.triggerengine.specific
+ org.eclipse.incquery.runtime.triggerengine.specific,
+ org.eclipse.incquery.runtime.triggerengine.update
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

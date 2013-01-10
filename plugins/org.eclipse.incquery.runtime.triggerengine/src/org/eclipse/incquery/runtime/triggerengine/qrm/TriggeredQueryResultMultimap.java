@@ -11,52 +11,53 @@
 package org.eclipse.incquery.runtime.triggerengine.qrm;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
-import org.eclipse.incquery.runtime.triggerengine.api.IRule;
-import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
-import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy;
+import org.eclipse.incquery.runtime.triggerengine.api.Job;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
  * 
  */
-public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMatch, KeyType, ValueType> extends
+public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, KeyType, ValueType> extends
         QueryResultMultimap<KeyType, ValueType> {
 
-    private IMatchProcessor<MatchType> appearanceProcessor;
-    private IMatchProcessor<MatchType> disappearanceProcessor;
+    private IMatchProcessor<Match> appearanceProcessor;
+    private IMatchProcessor<Match> disappearanceProcessor;
 
-    private IAgenda agenda;
+    private TriggerEngine engine;
 
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultimap(IAgenda agenda) {
-        super(agenda.getLogger());
-        this.agenda = agenda;
+    protected TriggeredQueryResultMultimap(TriggerEngine engine) {
+        super(engine.getLogger());
+        this.engine = engine;
 
-        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-        agenda.addUpdateCompleteListener(firingStrategy, true);
-
-        appearanceProcessor = new IMatchProcessor<MatchType>() {
+        appearanceProcessor = new IMatchProcessor<Match>() {
             @Override
-            public void process(MatchType match) {
+            public void process(Match match) {
                 KeyType key = getKeyFromMatch(match);
                 ValueType value = getValueFromMatch(match);
                 internalPut(key, value);
             }
         };
 
-        disappearanceProcessor = new IMatchProcessor<MatchType>() {
+        disappearanceProcessor = new IMatchProcessor<Match>() {
             @Override
-            public void process(MatchType match) {
+            public void process(Match match) {
                 KeyType key = getKeyFromMatch(match);
                 ValueType value = getValueFromMatch(match);
                 internalRemove(key, value);
@@ -64,25 +65,34 @@ public abstract class TriggeredQueryResultMultimap<MatchType extends IPatternMat
         };
     }
 
+    /**
+     * 
+     */
     protected TriggeredQueryResultMultimap(IncQueryEngine engine) {
-        this(RuleEngine.getInstance().getOrCreateAgenda(engine));
+        this(new TriggerEngine(engine));
     }
-
-    protected TriggeredQueryResultMultimap(Notifier notifier) {
-        this(RuleEngine.getInstance().getOrCreateAgenda(notifier));
+    
+    /**
+     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
+     * 
+     */
+    protected TriggeredQueryResultMultimap(Notifier notifier) throws IncQueryException {
+        this(EngineManager.getInstance().getIncQueryEngine(notifier));
     }
-
-    public <Matcher extends IncQueryMatcher<MatchType>> void addMatcherToMultimapResults(
+    
+    
+    @SuppressWarnings("unchecked")
+    public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             IMatcherFactory<Matcher> factory) {
-        IRule<MatchType> newRule = agenda.createRule(factory, false, true);
-        if (newRule != null) {
-            newRule.setStateChangeProcessor(ActivationState.APPEARED, appearanceProcessor);
-            newRule.setStateChangeProcessor(ActivationState.DISAPPEARED, disappearanceProcessor);
-        }
+        Job<Match> appearJob = new Job<Match>(ActivationState.APPEARED, appearanceProcessor);
+        Job<Match> disappearJob = new Job<Match>(ActivationState.DISAPPEARED, disappearanceProcessor);
+
+        engine.addRuleSpecification(new RuleSpecification<Match, Matcher>(
+                factory, DefaultActivationLifeCycle.getDEFAULT_NO_UPDATE(), Sets.newHashSet(appearJob, disappearJob)));
     }
 
-    protected abstract KeyType getKeyFromMatch(MatchType match);
+    protected abstract KeyType getKeyFromMatch(Match match);
 
-    protected abstract ValueType getValueFromMatch(MatchType match);
+    protected abstract ValueType getValueFromMatch(Match match);
 
 }
