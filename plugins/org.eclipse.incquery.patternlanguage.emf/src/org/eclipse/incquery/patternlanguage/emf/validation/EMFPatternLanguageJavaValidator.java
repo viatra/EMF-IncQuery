@@ -360,15 +360,19 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
                 PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
                 ValueReference valueReference = pathExpressionHead.getDst();
+                Variable pathExpressionHeadSourceVariable = null;
+                if (pathExpressionHead.getSrc() != null) {
+                    pathExpressionHeadSourceVariable = pathExpressionHead.getSrc().getVariable();
+                }
                 if (!isValueReferenceAggregated(valueReference)) {
                     positiveVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
-                    positiveVariables.add(pathExpressionHead.getSrc().getVariable());
+                    positiveVariables.add(pathExpressionHeadSourceVariable);
                     generalVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
-                    generalVariables.add(pathExpressionHead.getSrc().getVariable());
+                    generalVariables.add(pathExpressionHeadSourceVariable);
                 } else {
                     isSecondRunNeeded = true;
                     generalVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
-                    generalVariables.add(pathExpressionHead.getSrc().getVariable());
+                    generalVariables.add(pathExpressionHeadSourceVariable);
                 }
             } else if (constraint instanceof CheckConstraint) {
                 // Variables used together in check expression, always negative
@@ -424,7 +428,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     // Normal attribute-reference constraint, with aggregates in it
                     PathExpressionConstraint pathExpressionConstraint = (PathExpressionConstraint) constraint;
                     PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-                    positiveVariables.add(pathExpressionHead.getSrc().getVariable());
+                    Variable pathExpressionHeadSourceVariable = null;
+                    if (pathExpressionHead.getSrc() != null) {
+                        pathExpressionHeadSourceVariable = pathExpressionHead.getSrc().getVariable();
+                    }
+                    positiveVariables.add(pathExpressionHeadSourceVariable);
                     ValueReference valueReference = pathExpressionHead.getDst();
                     Set<Variable> actualVariables = CorePatternLanguageHelper
                             .getVariablesFromValueReference(valueReference);
