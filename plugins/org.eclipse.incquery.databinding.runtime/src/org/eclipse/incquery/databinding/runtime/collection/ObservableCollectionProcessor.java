@@ -15,7 +15,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 
 /**
- * Match processor that can be parameterized with a {@link Direction} and an {@link IObservablePatternMatchCollection}.
+ * Match processor that can be parameterized with a {@link Direction} and an {@link IObservablePatternMatchCollectionUpdate}.
  * It can be registered for rules that take care of keeping the observable collection up-to-date (see
  * {@link ObservableCollectionHelper#createRuleInAgenda}).
  * 
@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 public class ObservableCollectionProcessor<Match extends IPatternMatch> implements IMatchProcessor<Match> {
 
     private final Direction direction;
-    private final IObservablePatternMatchCollection<Match> collection;
+    private final IObservablePatternMatchCollectionUpdate<Match> collection;
 
     /**
      * Creates a processor with the given direction and observable collection.
@@ -34,9 +34,9 @@ public class ObservableCollectionProcessor<Match extends IPatternMatch> implemen
      * @param direction
      *            the {@link Direction} of updates that are handled
      * @param collection
-     *            the {@link IObservablePatternMatchCollection} to manage
+     *            the {@link IObservablePatternMatchCollectionUpdate} to manage
      */
-    public ObservableCollectionProcessor(Direction direction, IObservablePatternMatchCollection<Match> collection) {
+    public ObservableCollectionProcessor(Direction direction, IObservablePatternMatchCollectionUpdate<Match> collection) {
         this.direction = direction;
         this.collection = collection;
     }

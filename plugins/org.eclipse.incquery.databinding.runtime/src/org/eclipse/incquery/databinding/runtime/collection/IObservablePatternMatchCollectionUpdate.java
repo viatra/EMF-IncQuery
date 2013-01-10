@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * @author Abel Hegedus
  * 
  */
-public interface IObservablePatternMatchCollection<Match extends IPatternMatch> {
+public interface IObservablePatternMatchCollectionUpdate<Match extends IPatternMatch> {
 
     /**
      * Can be called to indicate that a match appeared and should be added to the collection.

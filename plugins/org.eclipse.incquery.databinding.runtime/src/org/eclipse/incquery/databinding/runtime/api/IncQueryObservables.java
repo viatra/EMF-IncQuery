@@ -26,7 +26,9 @@ import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatc
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
  * Utility class for observing EMF-IncQuery related objects, such as match sets, match parameters.
@@ -58,9 +60,10 @@ public class IncQueryObservables {
      * @param notifier
      *            the notifier to use for the matcher
      * @return an observable list of matches
+     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
-            IMatcherFactory<Matcher> factory, Notifier notifier) {
+            IMatcherFactory<Matcher> factory, Notifier notifier) throws IncQueryException {
         return new ObservablePatternMatchList<Match>(factory, notifier);
     }
 
@@ -76,9 +79,10 @@ public class IncQueryObservables {
      * @param notifier
      *            the notifier to use for the matcher
      * @return an observable set of matches
+     * @throws IncQueryException 
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
-            IMatcherFactory<Matcher> factory, Notifier notifier) {
+            IMatcherFactory<Matcher> factory, Notifier notifier) throws IncQueryException {
         return new ObservablePatternMatchSet<Match>(factory, notifier);
     }
 

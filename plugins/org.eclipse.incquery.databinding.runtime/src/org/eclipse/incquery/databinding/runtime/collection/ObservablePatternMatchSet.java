@@ -19,14 +19,18 @@ import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
-import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
-import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
+import org.eclipse.incquery.runtime.triggerengine.specific.UpdateCompleteBasedScheduler;
 
 import com.google.common.collect.Sets;
 
@@ -35,17 +39,17 @@ import com.google.common.collect.Sets;
  * {@link IncQueryMatcher} are not ordered by default).
  * 
  * <p>
- * This implementation uses the {@link RuleEngine} to get notifications for match set changes, and can be instantiated
+ * This implementation uses the {@link TriggerEngine} to get notifications for match set changes, and can be instantiated
  * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a {@link Notifier},
  * {@link IncQueryEngine} or {@link Agenda}.
  * 
  * @author Abel Hegedus
  * 
  */
-public class ObservablePatternMatchSet<Match extends IPatternMatch> extends AbstractObservableSet implements
-        IObservablePatternMatchCollection<Match> {
+public class ObservablePatternMatchSet<Match extends IPatternMatch> extends AbstractObservableSet {
 
     private final Set<Match> cache = Collections.synchronizedSet(new HashSet<Match>());
+    private final SetCollectionUpdate updater = new SetCollectionUpdate();
 
     /**
      * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
@@ -55,13 +59,12 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      * 
      * @param matcher
      *            the {@link IncQueryMatcher} to use as the source of the observable set
+     * @throws IncQueryException if the {@link IncQueryEngine} base index is not available
      */
     @SuppressWarnings("unchecked")
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) {
-        IMatcherFactory<Matcher> matcherFactory = (IMatcherFactory<Matcher>) MatcherFactoryRegistry
-                .getOrCreateMatcherFactory(matcher.getPattern());
-        ObservableCollectionHelper.createRuleInAgenda(this, matcherFactory,
-                RuleEngine.getInstance().getOrCreateAgenda(matcher.getEngine()));
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) throws IncQueryException {
+        this((IMatcherFactory<Matcher>) MatcherFactoryRegistry
+                .getOrCreateMatcherFactory(matcher.getPattern()), matcher.getEngine());
     }
 
     /**
@@ -75,10 +78,11 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      *            the {@link IMatcherFactory} used to create a matcher
      * @param notifier
      *            the {@link Notifier} on which the matcher is created
+     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
-            Notifier notifier) {
-        this(factory, RuleEngine.getInstance().getOrCreateAgenda(notifier));
+            Notifier notifier) throws IncQueryException {
+        this(factory, EngineManager.getInstance().getIncQueryEngine(notifier));
     }
 
     /**
@@ -92,10 +96,14 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      *            the {@link IMatcherFactory} used to create a matcher
      * @param engine
      *            the {@link IncQueryEngine} on which the matcher is created
+     * @throws IncQueryException if the {@link IncQueryEngine} base index is not available
      */
+    @SuppressWarnings("rawtypes")
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
-            IncQueryEngine engine) {
-        this(factory, RuleEngine.getInstance().getOrCreateAgenda(engine));
+            IncQueryEngine engine) throws IncQueryException {
+        RuleSpecification specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        TriggerEngineUtil.createTriggerEngine(engine,
+                UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine), Sets.newHashSet(specification));
     }
 
     /**
@@ -111,9 +119,10 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      *            an existing {@link Agenda} that specifies the used model
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
-            IAgenda agenda) {
+            TriggerEngine engine) {
         super();
-        ObservableCollectionHelper.createRuleInAgenda(this, factory, agenda);
+        RuleSpecification<Match, Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        engine.addRuleSpecification(specification);
     }
 
     /*
@@ -136,20 +145,24 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         return cache;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void addMatch(Match match) {
-        cache.add(match);
-        SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(match), Collections.EMPTY_SET);
-        fireSetChange(diff);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void removeMatch(Match match) {
-        cache.remove(match);
-        SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(match));
-        fireSetChange(diff);
+    public class SetCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match>{
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public void addMatch(Match match) {
+            cache.add(match);
+            SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(match), Collections.EMPTY_SET);
+            fireSetChange(diff);
+        }
+    
+        @SuppressWarnings("unchecked")
+        @Override
+        public void removeMatch(Match match) {
+            cache.remove(match);
+            SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(match));
+            fireSetChange(diff);
+        }
+    
     }
 
 }

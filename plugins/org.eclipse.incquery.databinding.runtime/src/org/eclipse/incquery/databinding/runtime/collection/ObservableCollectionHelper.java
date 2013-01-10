@@ -16,9 +16,11 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
-import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
-import org.eclipse.incquery.runtime.triggerengine.api.IRule;
-import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy;
+import org.eclipse.incquery.runtime.triggerengine.api.Job;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
+import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
+
+import com.google.common.collect.Sets;
 
 /**
  * Utility class to prepare a rule in an agenda for an observable collection. For use cases, see
@@ -27,37 +29,35 @@ import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy
  * @author Abel Hegedus
  * 
  */
-public class ObservableCollectionHelper {
+public final class ObservableCollectionHelper {
 
     /**
      * Constructor hidden for utility class
      */
     private ObservableCollectionHelper() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
      * Creates the rule used for updating the results in the given agenda.
      * 
-     * @param observableCollection
+     * @param observableCollectionUpdate
      *            the observable collection to handle
      * @param factory
      *            the {@link IMatcherFactory} used to create the rule
      * @param agenda
      *            an existing {@link Agenda} where the rule is created
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void createRuleInAgenda(
-            IObservablePatternMatchCollection<Match> observableCollection, IMatcherFactory<Matcher> factory,
-            IAgenda agenda) {
-        IRule<Match> rule = agenda.createRule(factory, false, true);
-        ObservableCollectionProcessor<Match> insertProc = new ObservableCollectionProcessor<Match>(Direction.INSERT,
-                observableCollection);
-        ObservableCollectionProcessor<Match> deleteProc = new ObservableCollectionProcessor<Match>(Direction.DELETE,
-                observableCollection);
-        rule.setStateChangeProcessor(ActivationState.APPEARED, insertProc);
-        rule.setStateChangeProcessor(ActivationState.DISAPPEARED, deleteProc);
-        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-        agenda.addUpdateCompleteListener(firingStrategy, true);
+    @SuppressWarnings("unchecked")
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match, Matcher> createRuleSpecification(
+            IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
+
+        Job<Match> insertJob = new Job<Match>(ActivationState.APPEARED, new ObservableCollectionProcessor<Match>(
+                Direction.INSERT, observableCollectionUpdate));
+        Job<Match> deleteJob = new Job<Match>(ActivationState.DISAPPEARED, new ObservableCollectionProcessor<Match>(
+                Direction.DELETE, observableCollectionUpdate));
+
+        return new RuleSpecification<Match, Matcher>(factory, new DefaultActivationLifeCycle(), Sets.newHashSet(
+                insertJob, deleteJob));
     }
 
 }

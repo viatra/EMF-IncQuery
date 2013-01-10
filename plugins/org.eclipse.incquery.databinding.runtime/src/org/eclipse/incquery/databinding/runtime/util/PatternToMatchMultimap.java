@@ -14,7 +14,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.qrm.TriggeredQueryResultMultimap;
 
 /**
@@ -25,16 +25,6 @@ import org.eclipse.incquery.runtime.triggerengine.qrm.TriggeredQueryResultMultim
  */
 public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends
         TriggeredQueryResultMultimap<MatchType, Pattern, MatchType> {
-
-    /**
-     * Creates a new multimap for the given agenda.
-     * 
-     * @param agenda
-     *            the agenda to use
-     */
-    public PatternToMatchMultimap(Agenda agenda) {
-        super(agenda);
-    }
 
     /**
      * Creates a new multimap for the given engine.
@@ -51,8 +41,9 @@ public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends
      * 
      * @param notifier
      *            the notifier to use
+     * @throws IncQueryException  if the {@link IncQueryEngine} creation fails on the {@link Notifier}
      */
-    public PatternToMatchMultimap(Notifier notifier) {
+    public PatternToMatchMultimap(Notifier notifier) throws IncQueryException {
         super(notifier);
     }
 
