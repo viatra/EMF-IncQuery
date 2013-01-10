@@ -12,19 +12,31 @@
 package org.eclipse.incquery.validation.runtime;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.IAgenda;
-import org.eclipse.incquery.runtime.triggerengine.api.IRule;
-import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
-import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy;
+import org.eclipse.incquery.runtime.triggerengine.api.Job;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
+import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
+import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.triggerengine.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.ui.IEditorPart;
+
+import com.google.common.collect.Sets;
 
 /**
  * The constraint adapter class is used to collect the constraints and deal with their maintenance for a given EMF
@@ -36,23 +48,38 @@ import org.eclipse.ui.IEditorPart;
 public class ConstraintAdapter {
 
     private Map<IPatternMatch, IMarker> markerMap;
-    private IAgenda agenda;
+    private TriggerEngine engine;
 
+    @SuppressWarnings("unchecked")
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
 
-        this.agenda = RuleEngine.getInstance().getOrCreateAgenda(notifier);
+        @SuppressWarnings("rawtypes")
+        Set<RuleSpecification> rules = new HashSet<RuleSpecification>();
 
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
-            IRule<IPatternMatch> rule = agenda.createRule(constraint.getMatcherFactory(), true, true);
-            rule.setStateChangeProcessor(ActivationState.APPEARED, new MarkerPlacerJob(this, constraint, logger));
-            rule.setStateChangeProcessor(ActivationState.DISAPPEARED, new MarkerEraserJob(this, logger));
-            rule.setStateChangeProcessor(ActivationState.UPDATED, new MarkerUpdaterJob(this, constraint, logger));
+
+            Job<IPatternMatch> placerJob = new Job<IPatternMatch>(ActivationState.APPEARED, new MarkerPlacerJob(this,
+                    constraint, logger));
+            Job<IPatternMatch> eraserJob = new Job<IPatternMatch>(ActivationState.DISAPPEARED, new MarkerEraserJob(
+                    this, logger));
+            Job<IPatternMatch> updaterJob = new Job<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
+                    constraint, logger));
+
+            rules.add(new RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
+                    (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) constraint.getMatcherFactory(),
+                    DefaultActivationLifeCycle.getDEFAULT(), Sets.newHashSet(placerJob, eraserJob, updaterJob)));
         }
 
-        AutomaticFiringStrategy firingStrategy = new AutomaticFiringStrategy(agenda.newActivationMonitor(true));
-        agenda.addUpdateCompleteListener(firingStrategy, true);
+        try {
+            IncQueryEngine incQueryEngine = EngineManager.getInstance().getIncQueryEngine(notifier);
+            ISchedulerFactory schedulerFactory = UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(incQueryEngine);
+            this.engine = TriggerEngineUtil.createTriggerEngine(incQueryEngine, schedulerFactory, rules);
+        } catch (IncQueryException e) {
+            IncQueryEngine.getDefaultLogger().error(
+                    String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
+        }
     }
 
     public void dispose() {
@@ -60,11 +87,11 @@ public class ConstraintAdapter {
             try {
                 marker.delete();
             } catch (CoreException e) {
-                agenda.getLogger().error(
+                engine.getLogger().error(
                         String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
             }
         }
-        agenda.dispose();
+        engine.dispose();
     }
 
     public IMarker getMarker(IPatternMatch match) {

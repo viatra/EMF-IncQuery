@@ -36,7 +36,7 @@ public class MarkerPlacerJob implements IMatchProcessor<IPatternMatch> {
 
     private Constraint<IPatternMatch> constraint;
     private Logger logger;
-    ConstraintAdapter adapter;
+    private ConstraintAdapter adapter;
 
     public MarkerPlacerJob(ConstraintAdapter adapter, Constraint<IPatternMatch> constraint, Logger logger) {
         this.constraint = constraint;
