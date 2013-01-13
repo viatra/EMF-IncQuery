@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
-import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
 /**
@@ -33,49 +32,54 @@ import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
  * @author Abel Hegedus
  * 
  */
-public class DefaultActivationLifeCycle extends ActivationLifeCycle {
+public final class DefaultActivationLifeCycle extends UnmodifiableActivationLifeCycle {
 
-    private static DefaultActivationLifeCycle DEFAULT; 
-    private static DefaultActivationLifeCycle DEFAULT_NO_UPDATE; 
-    private static DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR; 
+    private static DefaultActivationLifeCycle DEFAULT;
+    private static DefaultActivationLifeCycle DEFAULT_NO_UPDATE;
+    private static DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR;
     private static DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-    
+
     /**
      * Creates an activation life cycle with the default state transition map.
-     *
-     * @param updateStateUsed if set, the Updated activation state is also used
-     * @param disappearedStateUsed if set, the Disappeared activations state is also used
+     * 
+     * @param updateStateUsed
+     *            if set, the Updated activation state is also used
+     * @param disappearedStateUsed
+     *            if set, the Disappeared activations state is also used
      */
     public DefaultActivationLifeCycle(boolean updateStateUsed, boolean disappearedStateUsed) {
 
-        addStateTransition(ActivationState.INACTIVE, ActivationLifeCycleEvent.MATCH_APPEARS, ActivationState.APPEARED);
+        internalAddStateTransition(ActivationState.INACTIVE, ActivationLifeCycleEvent.MATCH_APPEARS,
+                ActivationState.APPEARED);
 
-        addStateTransition(ActivationState.APPEARED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
+        internalAddStateTransition(ActivationState.APPEARED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
                 ActivationState.INACTIVE);
-        addStateTransition(ActivationState.APPEARED, ActivationLifeCycleEvent.ACTIVATION_FIRES, ActivationState.FIRED);
+        internalAddStateTransition(ActivationState.APPEARED, ActivationLifeCycleEvent.ACTIVATION_FIRES,
+                ActivationState.FIRED);
 
         if (updateStateUsed) {
-            addStateTransition(ActivationState.FIRED, ActivationLifeCycleEvent.MATCH_UPDATES, ActivationState.UPDATED);
-            addStateTransition(ActivationState.UPDATED, ActivationLifeCycleEvent.ACTIVATION_FIRES,
+            internalAddStateTransition(ActivationState.FIRED, ActivationLifeCycleEvent.MATCH_UPDATES,
+                    ActivationState.UPDATED);
+            internalAddStateTransition(ActivationState.UPDATED, ActivationLifeCycleEvent.ACTIVATION_FIRES,
                     ActivationState.FIRED);
             if (disappearedStateUsed) {
-                addStateTransition(ActivationState.UPDATED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
+                internalAddStateTransition(ActivationState.UPDATED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
                         ActivationState.DISAPPEARED);
             } else {
-                addStateTransition(ActivationState.UPDATED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
+                internalAddStateTransition(ActivationState.UPDATED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
                         ActivationState.INACTIVE);
             }
         }
 
         if (disappearedStateUsed) {
-            addStateTransition(ActivationState.FIRED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
+            internalAddStateTransition(ActivationState.FIRED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
                     ActivationState.DISAPPEARED);
-            addStateTransition(ActivationState.DISAPPEARED, ActivationLifeCycleEvent.MATCH_APPEARS,
+            internalAddStateTransition(ActivationState.DISAPPEARED, ActivationLifeCycleEvent.MATCH_APPEARS,
                     ActivationState.FIRED);
-            addStateTransition(ActivationState.DISAPPEARED, ActivationLifeCycleEvent.ACTIVATION_FIRES,
+            internalAddStateTransition(ActivationState.DISAPPEARED, ActivationLifeCycleEvent.ACTIVATION_FIRES,
                     ActivationState.INACTIVE);
         } else {
-            addStateTransition(ActivationState.FIRED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
+            internalAddStateTransition(ActivationState.FIRED, ActivationLifeCycleEvent.MATCH_DISAPPEARS,
                     ActivationState.INACTIVE);
         }
 
@@ -92,7 +96,7 @@ public class DefaultActivationLifeCycle extends ActivationLifeCycle {
      * @return the dEFAULT
      */
     public static DefaultActivationLifeCycle getDEFAULT() {
-        if(DEFAULT == null) {
+        if (DEFAULT == null) {
             DEFAULT = new DefaultActivationLifeCycle();
         }
         return DEFAULT;
@@ -102,7 +106,7 @@ public class DefaultActivationLifeCycle extends ActivationLifeCycle {
      * @return the dEFAULT_NO_UPDATE
      */
     public static DefaultActivationLifeCycle getDEFAULT_NO_UPDATE() {
-        if(DEFAULT_NO_UPDATE == null) {
+        if (DEFAULT_NO_UPDATE == null) {
             DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
         }
         return DEFAULT_NO_UPDATE;
@@ -112,7 +116,7 @@ public class DefaultActivationLifeCycle extends ActivationLifeCycle {
      * @return the dEFAULT_NO_DISAPPEAR
      */
     public static DefaultActivationLifeCycle getDEFAULT_NO_DISAPPEAR() {
-        if(DEFAULT_NO_DISAPPEAR == null) {
+        if (DEFAULT_NO_DISAPPEAR == null) {
             DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
         }
         return DEFAULT_NO_DISAPPEAR;
@@ -122,10 +126,10 @@ public class DefaultActivationLifeCycle extends ActivationLifeCycle {
      * @return the dEFAULT_NO_UPDATE_AND_DISAPPEAR
      */
     public static DefaultActivationLifeCycle getDEFAULT_NO_UPDATE_AND_DISAPPEAR() {
-        if(DEFAULT_NO_UPDATE_AND_DISAPPEAR == null) {
+        if (DEFAULT_NO_UPDATE_AND_DISAPPEAR == null) {
             DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
         }
         return DEFAULT_NO_UPDATE_AND_DISAPPEAR;
     }
-    
+
 }

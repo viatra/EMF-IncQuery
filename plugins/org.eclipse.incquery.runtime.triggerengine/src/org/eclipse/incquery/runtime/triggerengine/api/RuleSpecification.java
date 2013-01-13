@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.triggerengine.TriggerEngineConstants;
+import org.eclipse.incquery.runtime.triggerengine.specific.UnmodifiableActivationLifeCycle;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -38,6 +39,7 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
 
     private final IMatcherFactory<Matcher> factory;
     private final ActivationLifeCycle lifeCycle;
+    private UnmodifiableActivationLifeCycle cachedUnmodifiableLifeCycle;
     private final Multimap<ActivationState, Job<Match>> jobs;
     private final Comparator<Match> comparator;
     
@@ -52,7 +54,7 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         Preconditions.checkNotNull(factory);
         Preconditions.checkNotNull(lifeCycle);
         this.factory = factory;
-        this.lifeCycle = lifeCycle;
+        this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
         this.jobs = HashMultimap.create();
         if(jobs != null && !jobs.isEmpty()) {
             for (Job<Match> job : jobs) {
@@ -82,7 +84,10 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         if(TriggerEngineConstants.ALLOW_RUNTIME_LIFECYCLE_CHANGES) {
             return lifeCycle;
         } else {
-            return ActivationLifeCycle.copyOf(lifeCycle);
+            if(cachedUnmodifiableLifeCycle == null) {
+                cachedUnmodifiableLifeCycle = UnmodifiableActivationLifeCycle.copyOf(lifeCycle);
+            }
+            return cachedUnmodifiableLifeCycle;
         }
     }
     

@@ -65,4 +65,11 @@ public class ActivationLifeCycle {
         lc.stateTransitionTable = HashBasedTable.create(lifeCycle.stateTransitionTable);
         return lc;
     }
+    
+    /**
+     * @return the stateTransitionTable
+     */
+    public Table<ActivationState, ActivationLifeCycleEvent, ActivationState> getStateTransitionTable() {
+        return HashBasedTable.create(stateTransitionTable);
+    }
 }

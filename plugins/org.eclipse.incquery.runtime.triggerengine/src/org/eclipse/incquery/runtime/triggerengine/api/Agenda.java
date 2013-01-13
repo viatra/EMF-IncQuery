@@ -174,9 +174,9 @@ public class Agenda {
      * @return
      */
     public Collection<Activation<?>> getAllActivations() {
-        if (TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+        if (TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
             return activations.values();
-        } else if (TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+        } else if (TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
             return Collections.unmodifiableCollection(activations.values());
         } else {
             return ImmutableList.copyOf(activations.values());
@@ -184,9 +184,9 @@ public class Agenda {
     }
 
     public Collection<Activation<?>> getActivations(ActivationState state) {
-        if (TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+        if (TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
             return activations.get(state);
-        } else if (TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+        } else if (TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
             return Collections.unmodifiableCollection(activations.get(state));
         } else {
             if (activations instanceof SetMultimap) {
@@ -201,9 +201,9 @@ public class Agenda {
      * @return the activations
      */
     public Multimap<ActivationState, Activation<?>> getActivations() {
-        if (TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+        if (TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
             return activations;
-        } else if (TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+        } else if (TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
             return Multimaps.unmodifiableMultimap(activations);
         } else {
             return ImmutableMultimap.copyOf(activations);

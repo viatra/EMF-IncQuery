@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Multimap;
 
 /**
  * @author Abel Hegedus
@@ -42,6 +43,8 @@ public class TriggerEngine {
 
     protected void schedule() {
         // TODO implement default scheduling
+        Multimap<ActivationState, Activation<?>> activations = agenda.getActivations();
+        
     }
     
     /**

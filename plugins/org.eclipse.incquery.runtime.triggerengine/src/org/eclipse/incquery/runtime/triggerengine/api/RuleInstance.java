@@ -271,9 +271,9 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @return
      */
     public Collection<Activation<Match>> getActivations() {
-        if(TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+        if(TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
             return activations.values();
-        } else if(TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+        } else if(TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
             return Collections.unmodifiableCollection(activations.values());
         } else {
             return ImmutableSet.copyOf(activations.values());
@@ -286,9 +286,9 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @return
      */
     public Collection<Activation<Match>> getActivations(ActivationState state) {
-        if(TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+        if(TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
             return activations.row(state).values();
-        } else if(TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+        } else if(TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
             return Collections.unmodifiableCollection(activations.row(state).values());
         } else {
             return ImmutableSet.copyOf(activations.row(state).values());

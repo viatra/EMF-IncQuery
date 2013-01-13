@@ -16,10 +16,21 @@ package org.eclipse.incquery.runtime.triggerengine;
  */
 public class TriggerEngineConstants {
 
-    public static boolean MODIFIABLE_ACTIVATIONLISTS = false;
+    /**
+     * If true, activation collections returned by methods are modifiable
+     * (addition and deletion is allowed).
+     */
+    public static boolean MODIFIABLE_ACTIVATION_COLLECTIONS = false;
     
-    public static boolean MUTABLE_ACTIVATIONLISTS = false;
+    /**
+     * If true, activation collections returned by methods are mutable
+     * (they present a live view).
+     */
+    public static boolean MUTABLE_ACTIVATION_COLLECTIONS = false;
     
+    /**
+     * If true, the lifecycle of 
+     */
     public static boolean ALLOW_RUNTIME_LIFECYCLE_CHANGES = false;
     
     public static boolean MUTABLE_JOBLISTS = false;
