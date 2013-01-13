@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,6 +23,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.MatchUpdateAdapter;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.triggerengine.TriggerEngineConstants;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.ActivationNotificationProvider;
 import org.eclipse.incquery.runtime.triggerengine.notification.AttributeMonitor;
@@ -263,12 +266,38 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         return activationNotificationProvider.removeActivationNotificationListener(listener);
     }
 
-    public Set<Activation<Match>> getActivations() {
-        return ImmutableSet.copyOf(activations.values());
+    /**
+     * The returned set is immutable
+     * TODO should it be unmodifiable instead?
+     * 
+     * @return
+     */
+    public Collection<Activation<Match>> getActivations() {
+        if(TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+            return activations.values();
+        } else if(TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+            return Collections.unmodifiableCollection(activations.values());
+        } else {
+            return ImmutableSet.copyOf(activations.values());
+        }
     }
 
-    public Set<Activation<Match>> getActivations(ActivationState state) {
-        return ImmutableSet.copyOf(activations.row(state).values());
+    /**
+     * /**
+     * The returned set is immutable
+     * TODO should it be unmodifiable instead?
+     * 
+     * @param state
+     * @return
+     */
+    public Collection<Activation<Match>> getActivations(ActivationState state) {
+        if(TriggerEngineConstants.MODIFIABLE_ACTIVATIONLISTS) {
+            return activations.row(state).values();
+        } else if(TriggerEngineConstants.MUTABLE_ACTIVATIONLISTS) {
+            return Collections.unmodifiableCollection(activations.row(state).values());
+        } else {
+            return ImmutableSet.copyOf(activations.row(state).values());
+        }
     }
 
     public void dispose() {

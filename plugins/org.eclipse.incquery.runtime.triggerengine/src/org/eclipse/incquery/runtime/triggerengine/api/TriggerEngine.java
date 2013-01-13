@@ -18,6 +18,8 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author Abel Hegedus
  *
@@ -33,9 +35,9 @@ public class TriggerEngine {
     private Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> ruleSpecifications;
     
     public TriggerEngine(IncQueryEngine engine) {
+        Preconditions.checkNotNull(engine);
         this.engine = engine;
-        // TODO create Agenda and other stuff
-        
+        this.agenda = new Agenda(engine);
     }
 
     protected void schedule() {
@@ -50,21 +52,38 @@ public class TriggerEngine {
     }
     
     @SuppressWarnings("unchecked")
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match,Matcher> addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
         // TODO implement rule instantiation
         if(ruleSpecifications == null) {
             ruleSpecifications = new HashSet<RuleSpecification<IPatternMatch,IncQueryMatcher<IPatternMatch>>>();
         }
-        ruleSpecifications.add((RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>) specification);
+        boolean added = ruleSpecifications.add((RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>) specification);
+        RuleInstance<Match,Matcher> instance = null;
+        if(added) {
+            instance = agenda.instantiateRule(specification);
+        }
+        return instance;
         
     }
+    
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRuleSpecification(RuleSpecification<Match, Matcher> specification) {
+        // TODO implement rule instantiation
+        if(ruleSpecifications != null) {
+            boolean removed = ruleSpecifications.remove(specification);
+            if(removed) {
+                agenda.removeRule(specification);
+                return true;
+            }
+        }
+        return false;
+    } 
     
     public Logger getLogger() {
         return engine.getLogger();
     }
     
     public void dispose() {
-        // TODO implement disposal
+        this.agenda.dispose();
     }
     
 }

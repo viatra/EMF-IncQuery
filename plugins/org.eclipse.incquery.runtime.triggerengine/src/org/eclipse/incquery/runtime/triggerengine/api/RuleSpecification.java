@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.triggerengine.TriggerEngineConstants;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -73,21 +75,35 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
     }
     
     /**
+     * TODO clients can modify lifecycle, could be trouble!
+     * 
      * @return the lifeCycle
      */
     public ActivationLifeCycle getLifeCycle() {
-        return lifeCycle;
+        if(TriggerEngineConstants.ALLOW_RUNTIME_LIFECYCLE_CHANGES) {
+            return lifeCycle;
+        } else {
+            return ActivationLifeCycle.copyOf(lifeCycle);
+        }
     }
     
     public Set<Job<Match>> getJobs(ActivationState state){
-        return ImmutableSet.copyOf(jobs.get(state));
+        if(TriggerEngineConstants.MUTABLE_JOBLISTS) {
+            return Collections.unmodifiableSet((Set<Job<Match>>) jobs.get(state));
+        } else {
+            return ImmutableSet.copyOf(jobs.get(state));
+        }
     }
     
     /**
      * @return the jobs
      */
     public Multimap<ActivationState, Job<Match>> getJobs() {
-        return ImmutableMultimap.copyOf(jobs);
+        if(TriggerEngineConstants.MUTABLE_JOBLISTS) {
+            return jobs;
+        } else {
+            return ImmutableMultimap.copyOf(jobs);
+        }
     }
     
     /**

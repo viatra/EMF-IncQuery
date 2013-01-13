@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -58,4 +59,10 @@ public class ActivationLifeCycle {
         return stateTransitionTable.containsValue(state);
     }
     
+    public static ActivationLifeCycle copyOf(ActivationLifeCycle lifeCycle) {
+        Preconditions.checkNotNull(lifeCycle);
+        ActivationLifeCycle lc = new ActivationLifeCycle();
+        lc.stateTransitionTable = HashBasedTable.create(lifeCycle.stateTransitionTable);
+        return lc;
+    }
 }
