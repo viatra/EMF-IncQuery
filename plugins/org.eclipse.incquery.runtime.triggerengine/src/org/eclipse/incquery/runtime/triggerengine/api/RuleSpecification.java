@@ -75,7 +75,6 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
     }
     
     /**
-     * TODO clients can modify lifecycle, could be trouble!
      * 
      * @return the lifeCycle
      */

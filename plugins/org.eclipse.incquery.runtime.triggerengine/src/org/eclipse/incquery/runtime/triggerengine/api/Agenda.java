@@ -170,7 +170,6 @@ public class Agenda {
     }
 
     /**
-     * /** The returned collection is immutable TODO should it be unmodifiable instead?
      * 
      * @return
      */

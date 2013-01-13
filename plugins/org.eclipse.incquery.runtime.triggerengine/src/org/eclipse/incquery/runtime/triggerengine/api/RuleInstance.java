@@ -136,7 +136,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     private AttributeMonitor<Match> attributeMonitor;
 
     /**
-     * TODO created only through a RuleSpec
+     * created only through a RuleSpec
      * 
      * @param specification
      * @param engine
@@ -267,8 +267,6 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     }
 
     /**
-     * The returned set is immutable
-     * TODO should it be unmodifiable instead?
      * 
      * @return
      */
@@ -283,9 +281,6 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     }
 
     /**
-     * /**
-     * The returned set is immutable
-     * TODO should it be unmodifiable instead?
      * 
      * @param state
      * @return

@@ -23,7 +23,7 @@ import com.google.common.base.Preconditions;
 /**
  * @author Abel Hegedus
  *
- * TODO implement triggering mechanism
+ * triggering mechanism
  *  - allows the execution of activations
  *  - move everything form Agenda that is not strictly related to managing the activation set
  *  - possibly allow an Activation Ordering (Comparator<Activation>?)
@@ -53,7 +53,6 @@ public class TriggerEngine {
     
     @SuppressWarnings("unchecked")
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match,Matcher> addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
-        // TODO implement rule instantiation
         if(ruleSpecifications == null) {
             ruleSpecifications = new HashSet<RuleSpecification<IPatternMatch,IncQueryMatcher<IPatternMatch>>>();
         }
@@ -67,7 +66,6 @@ public class TriggerEngine {
     }
     
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRuleSpecification(RuleSpecification<Match, Matcher> specification) {
-        // TODO implement rule instantiation
         if(ruleSpecifications != null) {
             boolean removed = ruleSpecifications.remove(specification);
             if(removed) {

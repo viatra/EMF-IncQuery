@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 /**
  * @author Abel Hegedus
  * 
- *         TODO define Scheduler interface for trigger engine "ticks" - similar to firing strategy - doesn't have
+ *         define Scheduler interface for trigger engine "ticks" - similar to firing strategy - doesn't have
  *         activation monitor - has trigger engine - automatic scheduler may work with update complete listener
  */
 public abstract class Scheduler {
