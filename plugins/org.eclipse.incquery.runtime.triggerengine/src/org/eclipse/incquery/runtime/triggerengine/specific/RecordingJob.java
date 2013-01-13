@@ -23,6 +23,8 @@ import org.eclipse.incquery.runtime.triggerengine.api.IActivationExecutionResult
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
 
 /**
+ * TODO write documentation
+ * 
  * @author Abel Hegedus
  *
  */
@@ -30,9 +32,10 @@ public class RecordingJob<Match extends IPatternMatch> extends Job<Match>{
 
     public static final String RECORDING_JOB = "RecordingJobExecution";
     
-    public class CommandExecutionResult implements IActivationExecutionResult{
+    public static class CommandExecutionResult implements IActivationExecutionResult{
 
         private Command result;
+        
         
         /**
          * 
@@ -45,11 +48,10 @@ public class RecordingJob<Match extends IPatternMatch> extends Job<Match>{
          * @see org.eclipse.incquery.runtime.triggerengine.api.IActivationExecutionResult#getResult()
          */
         @Override
-        public Object getResult() {
+        public Command getResult() {
             return result;
         }
-        
-        
+
     }
     
     /**
@@ -58,6 +60,10 @@ public class RecordingJob<Match extends IPatternMatch> extends Job<Match>{
      */
     public RecordingJob(ActivationState activationState, IMatchProcessor<Match> matchProcessor) {
         super(activationState, matchProcessor);
+    }
+    
+    public static CommandExecutionResult createCommandExecutionResult(Command command){
+        return new CommandExecutionResult(command);
     }
 
     /* (non-Javadoc)

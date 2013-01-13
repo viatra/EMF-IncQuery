@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
 /**
  * Classes implement this interface to provide notifications about the changes in the collection of activations within
@@ -48,15 +50,10 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
         return this.activationNotificationListeners.remove(listener);
     }
 
-    public void notifyActivationAppearance(Activation<? extends IPatternMatch> activation) {
+    public void notifyActivationChanged(Activation<? extends IPatternMatch> activation, ActivationState oldState, ActivationLifeCycleEvent event) {
         for (IActivationNotificationListener listener : this.activationNotificationListeners) {
-            listener.activationAppeared(activation);
+            listener.activationChanged(activation, oldState, event);
         }
     }
 
-    public void notifyActivationDisappearance(Activation<? extends IPatternMatch> activation) {
-        for (IActivationNotificationListener listener : this.activationNotificationListeners) {
-            listener.activationDisappeared(activation);
-        }
-    }
 }

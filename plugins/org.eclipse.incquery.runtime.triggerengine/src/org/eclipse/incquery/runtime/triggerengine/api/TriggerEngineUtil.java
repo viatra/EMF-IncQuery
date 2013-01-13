@@ -26,6 +26,7 @@ import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactor
  */
 public class TriggerEngineUtil {
 
+    @SuppressWarnings("rawtypes")
     public static TriggerEngine createTriggerEngine(IncQueryEngine engine, ISchedulerFactory schedulerFactory, Set<RuleSpecification> ruleSpecifications) {
         // create TriggerEngine and Agenda for engine
         // initialize rules form ruleSpecifications

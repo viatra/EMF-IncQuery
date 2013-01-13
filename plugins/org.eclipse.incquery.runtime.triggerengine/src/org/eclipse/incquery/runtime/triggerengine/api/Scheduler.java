@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author Abel Hegedus
  * 
@@ -27,6 +29,7 @@ public abstract class Scheduler {
     private TriggerEngine engine;
 
     protected Scheduler(TriggerEngine engine) {
+        Preconditions.checkNotNull(engine);
         this.engine = engine;
     }
 
@@ -34,9 +37,7 @@ public abstract class Scheduler {
      * Notifies engine of "tick". Subclasses should call this method to generate "ticks".
      */
     protected void schedule() {
-        if (engine != null) {
-            engine.schedule();
-        }
+        engine.schedule();
     }
     
     

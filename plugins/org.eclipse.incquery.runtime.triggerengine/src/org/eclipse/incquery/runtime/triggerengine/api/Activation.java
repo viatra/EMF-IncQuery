@@ -24,21 +24,23 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
  * one may set whether the Disappeared and Upgraded states will be used during the lifecycle of the Activation. If
  * multiple firing is allowed for the Activation then only the Appeared state will be used.
  * 
+ * TODO rewrite documentation
+ * 
  * @author Tamas Szabo
  * 
  * @param <Match>
  *            the type of the pattern match
  */
-public abstract class Activation<Match extends IPatternMatch> {
+public class Activation<Match extends IPatternMatch> {
 
     private Match patternMatch;
     private ActivationState state;
-    private RuleInstance<Match, IncQueryMatcher<Match>> rule;
+    private RuleInstance<Match, ? extends IncQueryMatcher<Match>> rule;
     private int cachedHash = -1;
 
-    public Activation(RuleInstance<Match, IncQueryMatcher<Match>> rule, Match patternMatch) {
+    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match, Matcher> rule, Match patternMatch) {
         this.patternMatch = patternMatch;
-        this.state = ActivationState.APPEARED;
+        this.state = ActivationState.INACTIVE;
         this.rule = rule;
     }
 
@@ -53,7 +55,7 @@ public abstract class Activation<Match extends IPatternMatch> {
     /**
      * @return the rule
      */
-    public RuleInstance<Match, IncQueryMatcher<Match>> getRule() {
+    public RuleInstance<Match, ? extends IncQueryMatcher<Match>> getRule() {
         return rule;
     }
 

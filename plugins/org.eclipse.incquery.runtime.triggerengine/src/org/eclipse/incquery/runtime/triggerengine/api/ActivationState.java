@@ -11,6 +11,13 @@
 
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+/**
+ * 
+ * TODO documentation
+ * 
+ * @author Abel Hegedus
+ *
+ */
 public enum ActivationState {
     INACTIVE, APPEARED, FIRED, UPDATED, DISAPPEARED
 }

@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import org.eclipse.incquery.runtime.triggerengine.specific.RecordingJob;
+
 
 /**
+ * TODO document rationale behind interface (see {@link RecordingJob})
+ * 
  * @author Abel Hegedus
- *
+ * 
  */
 public interface IActivationExecutionResult {
 

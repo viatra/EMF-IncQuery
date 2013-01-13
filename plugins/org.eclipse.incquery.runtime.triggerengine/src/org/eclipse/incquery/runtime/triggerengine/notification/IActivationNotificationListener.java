@@ -13,6 +13,8 @@ package org.eclipse.incquery.runtime.triggerengine.notification;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
 
 /**
@@ -26,8 +28,6 @@ import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
  */
 public interface IActivationNotificationListener {
 
-    void activationAppeared(Activation<? extends IPatternMatch> activation);
-
-    void activationDisappeared(Activation<? extends IPatternMatch> activation);
+    void activationChanged(Activation<? extends IPatternMatch> activation, ActivationState oldState, ActivationLifeCycleEvent event);
 
 }

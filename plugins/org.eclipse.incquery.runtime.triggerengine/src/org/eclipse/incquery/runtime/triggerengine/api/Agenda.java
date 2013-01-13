@@ -23,10 +23,12 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.triggerengine.old.AutomaticFiringStrategy;
 import org.eclipse.incquery.runtime.triggerengine.old.TimedFiringStrategy;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 /**
@@ -44,10 +46,16 @@ import com.google.common.collect.Sets;
  * state of development.
  * 
  * <p>
+ * 
  * One may define whether multiple firing of the same activation is allowed; that is, only the Appeared state will be
  * used from the lifecycle of {@link Activation}s and consecutive firing of a previously applied {@link Activation} is
  * possible. For more information on the lifecycle see {@link Activation}. Multiple firing is used for example in Design
  * Space Exploration scenarios.
+ * 
+ * TODO rewrite code comments
+ *  - multiple firing is implicitly allowed by defining a job that wokrs in the Fired state
+ *  - life-cycle is defined separately (see {@link ActivationLifeCycle})
+ *  - {@link Scheduler} and {@link TriggerEngine} are separated from Agenda
  * 
  * @author Tamas Szabo
  * 
@@ -66,6 +74,7 @@ public class Agenda {
      *            the {@link IncQueryEngine} instance
      */
     protected Agenda(IncQueryEngine iqEngine) {
+        Preconditions.checkNotNull(iqEngine);
         this.iqEngine = iqEngine;
         this.ruleInstances = new HashSet<RuleInstance<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
         this.activations = new HashSet<Activation<?>>();
@@ -73,13 +82,11 @@ public class Agenda {
         this.activationListener = new IActivationNotificationListener() {
 
             @Override
-            public void activationDisappeared(Activation<? extends IPatternMatch> activation) {
-                activations.remove(activation);
-            }
-
-            @Override
-            public void activationAppeared(Activation<? extends IPatternMatch> activation) {
-                activations.add(activation);
+            public void activationChanged(Activation<? extends IPatternMatch> activation, ActivationState oldState,
+                    ActivationLifeCycleEvent event) {
+                // TODO handle state changes
+                if(ActivationLifeCycleEvent.MATCH_DISAPPEARS.equals(event)){
+                }
             }
         };
 
@@ -90,7 +97,7 @@ public class Agenda {
     }
 
     @SuppressWarnings("unchecked")
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match, Matcher> createRule(
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match, Matcher> instantiateRule(
             RuleSpecification<Match, Matcher> specification) {
         RuleInstance<Match, Matcher> rule = specification.instantiateRule(iqEngine);
         rule.addActivationNotificationListener(activationListener, true);

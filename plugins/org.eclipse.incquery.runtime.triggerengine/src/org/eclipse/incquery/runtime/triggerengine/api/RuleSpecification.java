@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import java.util.Comparator;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
@@ -17,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -25,29 +27,40 @@ import com.google.common.collect.Multimap;
 /**
  * @author Abel Hegedus
  *
- * TODO implement rule specification
+ * implement rule specification
  *  - Activation Life Cycle
  *  - Jobs related to Activation State
  *  - create Rule Instance with Matcher(Factory)/Pattern
  */
 public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> {
 
-    private IMatcherFactory<Matcher> factory;
-    private ActivationLifeCycle lifeCycle;
-    private Multimap<ActivationState, Job<Match>> jobs;
+    private final IMatcherFactory<Matcher> factory;
+    private final ActivationLifeCycle lifeCycle;
+    private final Multimap<ActivationState, Job<Match>> jobs;
+    private final Comparator<Match> comparator;
     
     public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<Job<Match>> jobs) {
+        this(factory, lifeCycle, jobs, null);
+    }
+    
+    /**
+     * 
+     */
+    public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<Job<Match>> jobs, Comparator<Match> comparator) {
+        Preconditions.checkNotNull(factory);
+        Preconditions.checkNotNull(lifeCycle);
         this.factory = factory;
         this.lifeCycle = lifeCycle;
+        this.jobs = HashMultimap.create();
         if(jobs != null && !jobs.isEmpty()) {
-            this.jobs = HashMultimap.create();
             for (Job<Match> job : jobs) {
                 this.jobs.put(job.getActivationState(), job);
             }
         }
+        this.comparator = comparator;
     }
     
-    public RuleInstance<Match, Matcher> instantiateRule(IncQueryEngine engine) {
+    protected RuleInstance<Match, Matcher> instantiateRule(IncQueryEngine engine) {
         RuleInstance<Match,Matcher> instance = new RuleInstance<Match, Matcher>(this, engine);
         return instance;
     }
@@ -75,5 +88,12 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
      */
     public Multimap<ActivationState, Job<Match>> getJobs() {
         return ImmutableMultimap.copyOf(jobs);
+    }
+    
+    /**
+     * @return the comparator
+     */
+    public Comparator<Match> getComparator() {
+        return comparator;
     }
 }

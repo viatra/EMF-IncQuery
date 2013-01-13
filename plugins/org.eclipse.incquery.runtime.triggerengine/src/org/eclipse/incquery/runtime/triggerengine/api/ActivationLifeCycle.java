@@ -14,12 +14,13 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 /**
- * @author Abel Hegedus
- * 
  * TODO implement life cycle management
  *  - handle events that may cause activation state changes
  *  - match appear/disappear/update, activation firing
  *  - does NOT include functionality related to jobs or triggering!
+ *  
+ * @author Abel Hegedus
+ * 
  */
 public class ActivationLifeCycle {
 
@@ -47,6 +48,14 @@ public class ActivationLifeCycle {
             stateTransitionTable.put(from, event, to);
             return true;
         }
+    }
+
+    public boolean containsFrom(ActivationState state) {
+        return stateTransitionTable.containsRow(state);
+    }
+    
+    public boolean containsTo(ActivationState state) {
+        return stateTransitionTable.containsValue(state);
     }
     
 }
