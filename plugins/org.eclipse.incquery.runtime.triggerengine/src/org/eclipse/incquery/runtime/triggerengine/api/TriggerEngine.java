@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -19,6 +21,8 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -31,20 +35,44 @@ import com.google.common.collect.Multimap;
  */
 public class TriggerEngine {
 
-    private IncQueryEngine engine;
     private Agenda agenda;
     private Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> ruleSpecifications;
     
     public TriggerEngine(IncQueryEngine engine) {
         Preconditions.checkNotNull(engine);
-        this.engine = engine;
-        this.agenda = new Agenda(engine);
+        agenda = new Agenda(engine);
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public TriggerEngine(IncQueryEngine engine, Comparator<RuleSpecification> comparator) {
+        this(engine);
+        this.ruleSpecifications = new TreeSet<RuleSpecification<IPatternMatch,IncQueryMatcher<IPatternMatch>>>(comparator);
     }
 
     protected void schedule() {
-        // TODO implement default scheduling
-        Multimap<ActivationState, Activation<?>> activations = agenda.getActivations();
         
+        for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> spec : ruleSpecifications) {
+            Set<ActivationState> enabledStates = spec.getEnabledStates();
+            Multimap<ActivationState, Activation<IPatternMatch>> activations = HashMultimap.create();
+            RuleInstance<IPatternMatch,IncQueryMatcher<IPatternMatch>> instance = agenda.getInstance(spec);
+            // only activations of enabled states are gathered
+            for (ActivationState state : enabledStates) {
+                // ensures that each activation keeps its state until it is fired
+                activations.putAll(state, instance.getActivations(state));
+            }
+            
+            if(!activations.isEmpty()) {
+                // hashmap is not ordered, so we use the natural ordering of states
+                for (ActivationState activationState : enabledStates) {
+                    for (Activation<IPatternMatch> activation : activations.get(activationState)) {
+                        // ensure that an earlier firing did not cause this activation to alter its state
+                        if(activation.getState().equals(activationState)) {
+                            activation.fire();
+                        }
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -79,12 +107,19 @@ public class TriggerEngine {
         return false;
     } 
     
+    /**
+     * @return the ruleSpecifications
+     */
+    public Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getRuleSpecifications() {
+        return ImmutableSet.copyOf(ruleSpecifications);
+    }
+    
     public Logger getLogger() {
-        return engine.getLogger();
+        return agenda.getLogger();
     }
     
     public void dispose() {
-        this.agenda.dispose();
+        agenda.dispose();
     }
     
 }

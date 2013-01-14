@@ -71,8 +71,8 @@ public class Activation<Match extends IPatternMatch> {
     /**
      * The activation will be fired; the appropriate job of the rule will be executed based on the activation state.
      */
-    public void fire() {
-        rule.fire(this);
+    public IActivationExecutionResult fire() {
+        return rule.fire(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,6 +91,7 @@ public class Activation<Match extends IPatternMatch> {
 
     @Override
     public int hashCode() {
+        
         if (cachedHash == -1) {
             final int prime = 31;
             cachedHash = 1;

@@ -37,6 +37,8 @@ public abstract class Scheduler {
      * Notifies engine of "tick". Subclasses should call this method to generate "ticks".
      */
     protected void schedule() {
+        // TODO return results from engine
+        // TODO session in TriggerEngine
         engine.schedule();
     }
     

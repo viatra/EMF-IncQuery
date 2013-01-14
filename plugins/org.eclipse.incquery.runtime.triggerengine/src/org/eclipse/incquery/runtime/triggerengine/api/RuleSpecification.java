@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -42,6 +43,7 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
     private UnmodifiableActivationLifeCycle cachedUnmodifiableLifeCycle;
     private final Multimap<ActivationState, Job<Match>> jobs;
     private final Comparator<Match> comparator;
+    private final Set<ActivationState> enabledStates; 
     
     public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<Job<Match>> jobs) {
         this(factory, lifeCycle, jobs, null);
@@ -56,11 +58,15 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         this.factory = factory;
         this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
         this.jobs = HashMultimap.create();
+        Set<ActivationState> states = new TreeSet<ActivationState>();
         if(jobs != null && !jobs.isEmpty()) {
             for (Job<Match> job : jobs) {
-                this.jobs.put(job.getActivationState(), job);
+                ActivationState state = job.getActivationState();
+                this.jobs.put(state, job);
+                states.add(state);
             }
         }
+        this.enabledStates = ImmutableSet.copyOf(states);
         this.comparator = comparator;
     }
     
@@ -89,6 +95,13 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
             }
             return cachedUnmodifiableLifeCycle;
         }
+    }
+    
+    /**
+     * @return the enabledStates
+     */
+    public Set<ActivationState> getEnabledStates() {
+        return enabledStates;
     }
     
     public Set<Job<Match>> getJobs(ActivationState state){

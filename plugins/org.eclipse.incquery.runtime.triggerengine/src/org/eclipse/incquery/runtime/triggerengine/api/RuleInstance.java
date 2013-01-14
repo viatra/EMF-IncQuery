@@ -170,7 +170,6 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
                     String.format("Could not initialize matcher %s in engine %s", specification.getFactory()
                             .getPatternFullyQualifiedName(), engine.getEmfRoot().toString()), e);
         }
-        Preconditions.checkNotNull(this.matcher);
     }
 
     protected ActivationNotificationProvider prepareActivationNotificationProvider() {
