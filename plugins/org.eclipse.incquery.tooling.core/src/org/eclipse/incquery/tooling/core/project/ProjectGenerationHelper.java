@@ -633,7 +633,7 @@ public abstract class ProjectGenerationHelper {
             IExtensions readExtension = plugin.getExtensions();
             for (final IPluginExtension extension : readExtension.getExtensions()) {
                 String id = getExtensionId(extension, project);
-                if (!isRemovableExtension(id, extension.getPoint(), removableExtensionIdentifiers)) {
+                if (id != null && !isRemovableExtension(id, extension.getPoint(), removableExtensionIdentifiers)) {
                     // XXX cloning extensions to remove project name prefixes
                     IPluginExtension cloneExtension = fModel.createExtension();
                     cloneExtension.setId(id);
