@@ -27,12 +27,12 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
 import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
 import org.eclipse.incquery.runtime.triggerengine.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.ui.IEditorPart;
 
@@ -60,11 +60,11 @@ public class ConstraintAdapter {
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
 
-            Job<IPatternMatch> placerJob = new Job<IPatternMatch>(ActivationState.APPEARED, new MarkerPlacerJob(this,
+            StatelessJob<IPatternMatch> placerJob = new StatelessJob<IPatternMatch>(ActivationState.APPEARED, new MarkerPlacerJob(this,
                     constraint, logger));
-            Job<IPatternMatch> eraserJob = new Job<IPatternMatch>(ActivationState.DISAPPEARED, new MarkerEraserJob(
+            StatelessJob<IPatternMatch> eraserJob = new StatelessJob<IPatternMatch>(ActivationState.DISAPPEARED, new MarkerEraserJob(
                     this, logger));
-            Job<IPatternMatch> updaterJob = new Job<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
+            StatelessJob<IPatternMatch> updaterJob = new StatelessJob<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
                     constraint, logger));
 
             rules.add(new RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
