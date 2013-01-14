@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -19,8 +22,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.IActivationExecutionResult;
-import org.eclipse.incquery.runtime.triggerengine.api.Job;
+import org.eclipse.incquery.runtime.triggerengine.api.Session;
 
 /**
  * TODO write documentation
@@ -28,28 +30,45 @@ import org.eclipse.incquery.runtime.triggerengine.api.Job;
  * @author Abel Hegedus
  *
  */
-public class RecordingJob<Match extends IPatternMatch> extends Job<Match>{
+public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Match>{
 
     public static final String RECORDING_JOB = "RecordingJobExecution";
+    public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.incquery.triggerengine.specific.RecordingJob.SessionData";
     
-    public static class CommandExecutionResult implements IActivationExecutionResult{
+    public static class RecordingJobExecutionResult<Match extends IPatternMatch> {
 
-        private Command result;
-        
+        private RecordingJob<Match> job;
+        private Activation<Match> activation;
+        private Command command;
         
         /**
          * 
          */
-        public CommandExecutionResult(Command command) {
-            this.result = command;
+        public RecordingJobExecutionResult(RecordingJob<Match> job, Activation<Match> activation, Command command) {
+            this.job = job;
+            this.activation = activation;
+            this.command = command;
         }
         
-        /* (non-Javadoc)
-         * @see org.eclipse.incquery.runtime.triggerengine.api.IActivationExecutionResult#getResult()
+        /**
+         * @return the activation
          */
-        @Override
-        public Command getResult() {
-            return result;
+        public Activation<Match> getActivation() {
+            return activation;
+        }
+        
+        /**
+         * @return the command
+         */
+        public Command getCommand() {
+            return command;
+        }
+        
+        /**
+         * @return the job
+         */
+        public RecordingJob<Match> getJob() {
+            return job;
         }
 
     }
@@ -61,31 +80,41 @@ public class RecordingJob<Match extends IPatternMatch> extends Job<Match>{
     public RecordingJob(ActivationState activationState, IMatchProcessor<Match> matchProcessor) {
         super(activationState, matchProcessor);
     }
-    
-    public static CommandExecutionResult createCommandExecutionResult(Command command){
-        return new CommandExecutionResult(command);
-    }
 
     /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.triggerengine.api.Job#execute(org.eclipse.incquery.runtime.triggerengine.api.Activation)
+     * @see org.eclipse.incquery.runtime.triggerengine.api.StatelessJob#execute(org.eclipse.incquery.runtime.triggerengine.api.Activation)
      */
     @Override
-    public IActivationExecutionResult execute(final Activation<Match> activation) {
+    public void execute(final Activation<Match> activation, final Session session) {
         IncQueryEngine engine = activation.getRule().getMatcher().getEngine();
         TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(engine.getEmfRoot());
         if (domain == null) {
-            return super.execute(activation);
+            super.execute(activation, session);
         } else {
             final RecordingCommand command = new RecordingCommand(domain) {
                 @Override
                 protected void doExecute() {
-                    RecordingJob.super.execute(activation);
+                    RecordingJob.super.execute(activation, session);
                 }
             };
             command.setLabel(RECORDING_JOB);
             domain.getCommandStack().execute(command);
+            
+            updateSessionData(activation, session, command);
+        }
+    }
 
-            return new CommandExecutionResult(command);
+    @SuppressWarnings("unchecked")
+    private void updateSessionData(final Activation<Match> activation, final Session session, final RecordingCommand command) {
+        RecordingJobExecutionResult<Match> result = new RecordingJobExecutionResult<Match>(RecordingJob.this, activation, command);
+        Object data = session.get(RECORDING_JOB_SESSION_DATA_KEY);
+        if(data instanceof Collection<?>) {
+            Collection<RecordingJobExecutionResult<IPatternMatch>> dataColl = (Collection<RecordingJobExecutionResult<IPatternMatch>>) data;
+            dataColl.add((RecordingJobExecutionResult<IPatternMatch>) result);
+        } else {
+            HashSet<RecordingJobExecutionResult<IPatternMatch>> dataColl = new HashSet<RecordingJob.RecordingJobExecutionResult<IPatternMatch>>();
+            dataColl.add((RecordingJobExecutionResult<IPatternMatch>) result);
+            session.put(RECORDING_JOB_SESSION_DATA_KEY, dataColl);
         }
     }
     

@@ -20,10 +20,10 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
 
 import com.google.common.collect.Sets;
 
@@ -84,8 +84,8 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             IMatcherFactory<Matcher> factory) {
-        Job<Match> appearJob = new Job<Match>(ActivationState.APPEARED, appearanceProcessor);
-        Job<Match> disappearJob = new Job<Match>(ActivationState.DISAPPEARED, disappearanceProcessor);
+        StatelessJob<Match> appearJob = new StatelessJob<Match>(ActivationState.APPEARED, appearanceProcessor);
+        StatelessJob<Match> disappearJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, disappearanceProcessor);
 
         engine.addRuleSpecification(new RuleSpecification<Match, Matcher>(
                 factory, DefaultActivationLifeCycle.getDEFAULT_NO_UPDATE(), Sets.newHashSet(appearJob, disappearJob)));

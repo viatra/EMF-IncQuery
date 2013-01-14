@@ -71,8 +71,8 @@ public class Activation<Match extends IPatternMatch> {
     /**
      * The activation will be fired; the appropriate job of the rule will be executed based on the activation state.
      */
-    public IActivationExecutionResult fire() {
-        return rule.fire(this);
+    public void fire(Session session) {
+        rule.fire(this, session);
     }
 
     @SuppressWarnings("unchecked")

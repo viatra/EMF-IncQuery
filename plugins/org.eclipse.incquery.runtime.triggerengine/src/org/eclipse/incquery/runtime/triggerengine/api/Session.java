@@ -10,17 +10,34 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import org.eclipse.incquery.runtime.triggerengine.specific.RecordingJob;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * TODO document rationale behind interface (see {@link RecordingJob})
- * 
  * @author Abel Hegedus
- * 
+ *
  */
-public interface IActivationExecutionResult {
+public class Session {
 
-    Object getResult();
+    private Map<String, Object> sessionData;
     
+    public Session() {
+        this.sessionData = new HashMap<String, Object>();
+    }
+    
+    public Object get(String key) {
+        return sessionData.get(key);
+    }
+    
+    public Object put(String key, Object value) {
+        return sessionData.put(key, value);
+    }
+    
+    public Object remove(String key) {
+        return sessionData.remove(key);
+    }
+    
+    public void clear() {
+        sessionData.clear();
+    }
 }

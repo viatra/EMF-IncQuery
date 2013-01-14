@@ -37,10 +37,17 @@ public class TriggerEngine {
 
     private Agenda agenda;
     private Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> ruleSpecifications;
+    private Session session;
     
     public TriggerEngine(IncQueryEngine engine) {
+        this(engine, new Session());
+    }
+
+    public TriggerEngine(IncQueryEngine engine, Session session) {
         Preconditions.checkNotNull(engine);
+        Preconditions.checkNotNull(session);
         agenda = new Agenda(engine);
+        this.session = session;
     }
     
     @SuppressWarnings("rawtypes")
@@ -67,7 +74,7 @@ public class TriggerEngine {
                     for (Activation<IPatternMatch> activation : activations.get(activationState)) {
                         // ensure that an earlier firing did not cause this activation to alter its state
                         if(activation.getState().equals(activationState)) {
-                            activation.fire();
+                            activation.fire(session);
                         }
                     }
                 }

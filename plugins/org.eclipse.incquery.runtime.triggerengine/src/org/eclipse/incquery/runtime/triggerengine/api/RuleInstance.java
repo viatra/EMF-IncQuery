@@ -30,6 +30,7 @@ import org.eclipse.incquery.runtime.triggerengine.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.triggerengine.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultAttributeMonitor;
+import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -188,33 +189,23 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         return new DefaultAttributeMonitorListener();
     }
     
-    public IActivationExecutionResult fire(Activation<Match> activation) {
+    public void fire(Activation<Match> activation, Session session) {
         Preconditions.checkNotNull(activation);
         ActivationState activationState = activation.getState();
         Match patternMatch = activation.getPatternMatch();
 
-        return doFire(activation, activationState, patternMatch);
+        doFire(activation, activationState, patternMatch, session);
     }
 
-    protected IActivationExecutionResult doFire(Activation<Match> activation, ActivationState activationState, Match patternMatch) {
-        Job.CompositeResult result = null;
+    protected void doFire(Activation<Match> activation, ActivationState activationState, Match patternMatch, Session session) {
         if (activations.contains(activationState, patternMatch)) {
-            Set<Job<Match>> jobs = specification.getJobs(activationState);
-            for (Job<Match> job : jobs) {
-                IActivationExecutionResult executionResult = job.execute(activation);
-                if(result == null) {
-                    result = Job.createCompositeResult(executionResult);
-                } else {
-                    result.addSubResult(executionResult);
-                }
+            Set<StatelessJob<Match>> jobs = specification.getJobs(activationState);
+            for (StatelessJob<Match> job : jobs) {
+                job.execute(activation, session);
             }
             activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
             
         }
-        if(result.getResult().size() == 1) {
-            return result.getResult().iterator().next();
-        } 
-        return result;
     }
 
 
