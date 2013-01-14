@@ -70,7 +70,6 @@ public class PatternSetValidator {
         for (org.eclipse.emf.common.util.Diagnostic diag : chain.getChildren()) {
             converter.convertValidatorDiagnostic(diag, collectedIssues);
         }
-        System.out.println("Validator finished");
         return collectedIssues;
     }
 
