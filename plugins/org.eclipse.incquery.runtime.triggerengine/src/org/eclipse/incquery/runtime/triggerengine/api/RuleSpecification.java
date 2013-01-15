@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,13 +19,9 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.triggerengine.TriggerEngineConstants;
-import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
-import org.eclipse.incquery.runtime.triggerengine.specific.UnmodifiableActivationLifeCycle;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
@@ -41,19 +37,18 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
 
     private final IMatcherFactory<Matcher> factory;
     private final ActivationLifeCycle lifeCycle;
-    private UnmodifiableActivationLifeCycle cachedUnmodifiableLifeCycle;
-    private final Multimap<ActivationState, StatelessJob<Match>> jobs;
+    private final Multimap<ActivationState, Job<Match>> jobs;
     private final Comparator<Match> comparator;
     private final Set<ActivationState> enabledStates; 
     
-    public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<StatelessJob<Match>> jobs) {
+    public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<Job<Match>> jobs) {
         this(factory, lifeCycle, jobs, null);
     }
     
     /**
      * 
      */
-    public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<StatelessJob<Match>> jobs, Comparator<Match> comparator) {
+    public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<Job<Match>> jobs, Comparator<Match> comparator) {
         Preconditions.checkNotNull(factory);
         Preconditions.checkNotNull(lifeCycle);
         this.factory = factory;
@@ -61,7 +56,7 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         this.jobs = HashMultimap.create();
         Set<ActivationState> states = new TreeSet<ActivationState>();
         if(jobs != null && !jobs.isEmpty()) {
-            for (StatelessJob<Match> job : jobs) {
+            for (Job<Match> job : jobs) {
                 ActivationState state = job.getActivationState();
                 this.jobs.put(state, job);
                 states.add(state);
@@ -88,14 +83,7 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
      * @return the lifeCycle
      */
     public ActivationLifeCycle getLifeCycle() {
-        if(TriggerEngineConstants.ALLOW_RUNTIME_LIFECYCLE_CHANGES) {
-            return lifeCycle;
-        } else {
-            if(cachedUnmodifiableLifeCycle == null) {
-                cachedUnmodifiableLifeCycle = UnmodifiableActivationLifeCycle.copyOf(lifeCycle);
-            }
-            return cachedUnmodifiableLifeCycle;
-        }
+        return lifeCycle;
     }
     
     /**
@@ -105,23 +93,15 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         return enabledStates;
     }
     
-    public Set<StatelessJob<Match>> getJobs(ActivationState state){
-        if(TriggerEngineConstants.MUTABLE_JOBLISTS) {
-            return Collections.unmodifiableSet((Set<StatelessJob<Match>>) jobs.get(state));
-        } else {
-            return ImmutableSet.copyOf(jobs.get(state));
-        }
+    public Collection<Job<Match>> getJobs(ActivationState state){
+        return jobs.get(state);
     }
     
     /**
      * @return the jobs
      */
-    public Multimap<ActivationState, StatelessJob<Match>> getJobs() {
-        if(TriggerEngineConstants.MUTABLE_JOBLISTS) {
-            return jobs;
-        } else {
-            return ImmutableMultimap.copyOf(jobs);
-        }
+    public Multimap<ActivationState, Job<Match>> getJobs() {
+        return jobs;
     }
     
     /**

@@ -27,9 +27,10 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
+import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
 import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineFacade;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
@@ -48,7 +49,7 @@ import com.google.common.collect.Sets;
 public class ConstraintAdapter {
 
     private Map<IPatternMatch, IMarker> markerMap;
-    private TriggerEngine engine;
+    private TriggerEngineFacade engine;
 
     @SuppressWarnings("unchecked")
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
@@ -60,11 +61,11 @@ public class ConstraintAdapter {
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
 
-            StatelessJob<IPatternMatch> placerJob = new StatelessJob<IPatternMatch>(ActivationState.APPEARED, new MarkerPlacerJob(this,
+            Job<IPatternMatch> placerJob = new StatelessJob<IPatternMatch>(ActivationState.APPEARED, new MarkerPlacerJob(this,
                     constraint, logger));
-            StatelessJob<IPatternMatch> eraserJob = new StatelessJob<IPatternMatch>(ActivationState.DISAPPEARED, new MarkerEraserJob(
+            Job<IPatternMatch> eraserJob = new StatelessJob<IPatternMatch>(ActivationState.DISAPPEARED, new MarkerEraserJob(
                     this, logger));
-            StatelessJob<IPatternMatch> updaterJob = new StatelessJob<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
+            Job<IPatternMatch> updaterJob = new StatelessJob<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
                     constraint, logger));
 
             rules.add(new RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
@@ -87,7 +88,7 @@ public class ConstraintAdapter {
             try {
                 marker.delete();
             } catch (CoreException e) {
-                engine.getLogger().error(
+                engine.getIncQueryEngine().getLogger().error(
                         String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
             }
         }

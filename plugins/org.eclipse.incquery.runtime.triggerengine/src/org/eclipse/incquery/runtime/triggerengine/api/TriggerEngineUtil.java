@@ -27,7 +27,7 @@ public final class TriggerEngineUtil {
     private TriggerEngineUtil() {}
     
     @SuppressWarnings("rawtypes")
-    public static TriggerEngine createTriggerEngine(IncQueryEngine engine, ISchedulerFactory schedulerFactory, Set<RuleSpecification> ruleSpecifications) {
+    public static TriggerEngineFacade createTriggerEngine(IncQueryEngine engine, ISchedulerFactory schedulerFactory, Set<RuleSpecification> ruleSpecifications) {
         // create TriggerEngine and Agenda for engine
         TriggerEngine triggerEngine = new TriggerEngine(engine);
         
@@ -39,7 +39,7 @@ public final class TriggerEngineUtil {
         // register TriggerEngine for scheduler
         schedulerFactory.prepareScheduler(triggerEngine);
         
-        return triggerEngine;
+        return TriggerEngineFacade.create(triggerEngine);
     }
-    
+
 }

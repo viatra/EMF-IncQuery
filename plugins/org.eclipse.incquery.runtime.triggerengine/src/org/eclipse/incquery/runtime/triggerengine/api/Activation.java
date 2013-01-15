@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Objects;
+
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
@@ -35,6 +39,7 @@ public class Activation<Match extends IPatternMatch> {
 
     private Match patternMatch;
     private ActivationState state;
+    private boolean enabled;
     private RuleInstance<Match, ? extends IncQueryMatcher<Match>> rule;
     private int cachedHash = -1;
 
@@ -52,6 +57,10 @@ public class Activation<Match extends IPatternMatch> {
         return state;
     }
     
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
     /**
      * @return the rule
      */
@@ -65,7 +74,9 @@ public class Activation<Match extends IPatternMatch> {
      * @param state
      */
     protected void setState(ActivationState state) {
-        this.state = state;
+        this.state = checkNotNull(state, "Activation state cannot be null!");
+        enabled = rule.getSpecification().getEnabledStates().contains(state);
+        cachedHash = -1;
     }
 
     /**
@@ -91,12 +102,8 @@ public class Activation<Match extends IPatternMatch> {
 
     @Override
     public int hashCode() {
-        
         if (cachedHash == -1) {
-            final int prime = 31;
-            cachedHash = 1;
-            cachedHash = prime * cachedHash + state.hashCode();
-            cachedHash = prime * cachedHash + patternMatch.hashCode();
+            cachedHash = Objects.hash(rule, patternMatch, state);
         }
         return cachedHash;
     }

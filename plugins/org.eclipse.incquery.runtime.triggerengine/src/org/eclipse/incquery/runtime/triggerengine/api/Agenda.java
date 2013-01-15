@@ -11,32 +11,29 @@
 
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.triggerengine.TriggerEngineConstants;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.triggerengine.old.AutomaticFiringStrategy;
 import org.eclipse.incquery.runtime.triggerengine.old.TimedFiringStrategy;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
 /**
@@ -72,6 +69,7 @@ public class Agenda {
     private final IncQueryEngine iqEngine;
     private final Map<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>,RuleInstance<IPatternMatch, IncQueryMatcher<IPatternMatch>>> ruleInstanceMap;
     private Multimap<ActivationState, Activation<?>> activations;
+    private Set<Activation<?>> enabledActivations;
     private final IActivationNotificationListener activationListener;
 
     /**
@@ -81,10 +79,11 @@ public class Agenda {
      *            the {@link IncQueryEngine} instance
      */
     protected Agenda(IncQueryEngine iqEngine) {
-        Preconditions.checkNotNull(iqEngine);
+        checkNotNull(iqEngine);
         this.iqEngine = iqEngine;
         this.ruleInstanceMap = new HashMap<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>,RuleInstance<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
         this.activations = HashMultimap.create();
+        this.enabledActivations = Sets.newHashSet();
 
         this.activationListener = new IActivationNotificationListener() {
 
@@ -98,6 +97,11 @@ public class Agenda {
                     // do nothing
                     break;
                 default:
+                    if(activation.isEnabled()) {
+                        enabledActivations.add(activation);
+                    } else {
+                        enabledActivations.remove(activation);
+                    }
                     activations.put(state, activation);
                     break;
                 }
@@ -147,10 +151,13 @@ public class Agenda {
         }
     }
 
-    public Logger getLogger() {
-        return iqEngine.getLogger();
+    /**
+     * @return the iqEngine
+     */
+    public IncQueryEngine getIncQueryEngine() {
+        return iqEngine;
     }
-
+    
     /**
      * @return the ruleInstanceMap
      */
@@ -175,27 +182,18 @@ public class Agenda {
      * @return the activations
      */
     public Multimap<ActivationState, Activation<?>> getActivations() {
-        if (TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
-            return activations;
-        } else if (TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
-            return Multimaps.unmodifiableMultimap(activations);
-        } else {
-            return ImmutableMultimap.copyOf(activations);
-        }
+         return activations;
+    }
+    
+    /**
+     * @return the enabledActivations
+     */
+    public Set<Activation<?>> getEnabledActivations() {
+        return enabledActivations;
     }
 
     public Collection<Activation<?>> getActivations(ActivationState state) {
-        if (TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
-            return activations.get(state);
-        } else if (TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
-            return Collections.unmodifiableCollection(activations.get(state));
-        } else {
-            if (activations instanceof SetMultimap) {
-                return ImmutableSet.copyOf(activations.get(state));
-            } else {
-                return ImmutableList.copyOf(activations.get(state));
-            }
-        }
+        return activations.get(state);
     }
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Collection<Activation<Match>> getActivations(RuleSpecification<Match, Matcher> ruleSpecification) {
@@ -212,13 +210,7 @@ public class Agenda {
      * @return
      */
     public Collection<Activation<?>> getAllActivations() {
-        if (TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
-            return activations.values();
-        } else if (TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
-            return Collections.unmodifiableCollection(activations.values());
-        } else {
-            return ImmutableList.copyOf(activations.values());
-        }
+        return activations.values();
     }
 
     protected void addActivationOrdering(Comparator<Activation<?>> activationComparator) {
@@ -226,6 +218,10 @@ public class Agenda {
             TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(null, activationComparator);
             newActivations.putAll(activations);
             activations = newActivations;
+            
+            TreeSet<Activation<?>> newEnabledActivations = Sets.newTreeSet(activationComparator);
+            newEnabledActivations.addAll(enabledActivations);
+            enabledActivations = newEnabledActivations;
         }
     }
 

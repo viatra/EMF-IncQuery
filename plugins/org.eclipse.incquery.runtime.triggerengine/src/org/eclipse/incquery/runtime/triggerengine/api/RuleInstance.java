@@ -11,10 +11,8 @@
 package org.eclipse.incquery.runtime.triggerengine.api;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
@@ -23,17 +21,14 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.MatchUpdateAdapter;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.triggerengine.TriggerEngineConstants;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.ActivationNotificationProvider;
 import org.eclipse.incquery.runtime.triggerengine.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.triggerengine.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultAttributeMonitor;
-import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 
@@ -199,8 +194,8 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
 
     protected void doFire(Activation<Match> activation, ActivationState activationState, Match patternMatch, Session session) {
         if (activations.contains(activationState, patternMatch)) {
-            Set<StatelessJob<Match>> jobs = specification.getJobs(activationState);
-            for (StatelessJob<Match> job : jobs) {
+            Collection<Job<Match>> jobs = specification.getJobs(activationState);
+            for (Job<Match> job : jobs) {
                 job.execute(activation, session);
             }
             activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
@@ -261,13 +256,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @return
      */
     public Collection<Activation<Match>> getActivations() {
-        if(TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
-            return activations.values();
-        } else if(TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
-            return Collections.unmodifiableCollection(activations.values());
-        } else {
-            return ImmutableSet.copyOf(activations.values());
-        }
+        return activations.values();
     }
 
     /**
@@ -276,13 +265,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @return
      */
     public Collection<Activation<Match>> getActivations(ActivationState state) {
-        if(TriggerEngineConstants.MODIFIABLE_ACTIVATION_COLLECTIONS) {
-            return activations.row(state).values();
-        } else if(TriggerEngineConstants.MUTABLE_ACTIVATION_COLLECTIONS) {
-            return Collections.unmodifiableCollection(activations.row(state).values());
-        } else {
-            return ImmutableSet.copyOf(activations.row(state).values());
-        }
+        return activations.row(state).values();
     }
 
     public void dispose() {

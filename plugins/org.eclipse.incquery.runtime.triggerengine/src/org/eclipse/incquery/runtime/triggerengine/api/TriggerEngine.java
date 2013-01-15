@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Abel Hegedus
@@ -44,10 +42,9 @@ public class TriggerEngine {
     }
 
     public TriggerEngine(IncQueryEngine engine, Session session) {
-        Preconditions.checkNotNull(engine);
-        Preconditions.checkNotNull(session);
+        checkNotNull(engine);
+        this.session = checkNotNull(session);
         agenda = new Agenda(engine);
-        this.session = session;
     }
     
     @SuppressWarnings("rawtypes")
@@ -58,10 +55,22 @@ public class TriggerEngine {
 
     protected void schedule() {
         
-        for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> spec : ruleSpecifications) {
-            Set<ActivationState> enabledStates = spec.getEnabledStates();
-            Multimap<ActivationState, Activation<IPatternMatch>> activations = HashMultimap.create();
+        Set<Activation<?>> enabledActivations = agenda.getEnabledActivations();
+        
+        if(!enabledActivations.isEmpty()) {
+            
+            Activation<?> activation = enabledActivations.iterator().next();
+            
+            while(activation != null) {
+                activation.fire(session);
+                
+                activation = enabledActivations.iterator().next();
+            }
+        }
+        
+        /*for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> spec : ruleSpecifications) {
             RuleInstance<IPatternMatch,IncQueryMatcher<IPatternMatch>> instance = agenda.getInstance(spec);
+            
             // only activations of enabled states are gathered
             for (ActivationState state : enabledStates) {
                 // ensures that each activation keeps its state until it is fired
@@ -79,7 +88,7 @@ public class TriggerEngine {
                     }
                 }
             }
-        }
+        }*/
     }
     
     /**
@@ -119,10 +128,6 @@ public class TriggerEngine {
      */
     public Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getRuleSpecifications() {
         return ImmutableSet.copyOf(ruleSpecifications);
-    }
-    
-    public Logger getLogger() {
-        return agenda.getLogger();
     }
     
     public void dispose() {

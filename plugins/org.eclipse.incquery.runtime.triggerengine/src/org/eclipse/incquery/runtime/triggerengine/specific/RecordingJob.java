@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -23,6 +20,9 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Session;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 /**
  * TODO write documentation
@@ -35,40 +35,22 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
     public static final String RECORDING_JOB = "RecordingJobExecution";
     public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.incquery.triggerengine.specific.RecordingJob.SessionData";
     
-    public static class RecordingJobExecutionResult<Match extends IPatternMatch> {
+    public static class RecordingJobSessionData {
 
-        private RecordingJob<Match> job;
-        private Activation<Match> activation;
-        private Command command;
+        private Table<RecordingJob<IPatternMatch>,Activation<IPatternMatch>,Command> table;
         
         /**
          * 
          */
-        public RecordingJobExecutionResult(RecordingJob<Match> job, Activation<Match> activation, Command command) {
-            this.job = job;
-            this.activation = activation;
-            this.command = command;
+        public RecordingJobSessionData() {
+            this.table = HashBasedTable.create();
         }
-        
+
         /**
-         * @return the activation
+         * @return the table
          */
-        public Activation<Match> getActivation() {
-            return activation;
-        }
-        
-        /**
-         * @return the command
-         */
-        public Command getCommand() {
-            return command;
-        }
-        
-        /**
-         * @return the job
-         */
-        public RecordingJob<Match> getJob() {
-            return job;
+        public Table<RecordingJob<IPatternMatch>, Activation<IPatternMatch>, Command> getTable() {
+            return table;
         }
 
     }
@@ -105,17 +87,18 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
     }
 
     @SuppressWarnings("unchecked")
-    private void updateSessionData(final Activation<Match> activation, final Session session, final RecordingCommand command) {
-        RecordingJobExecutionResult<Match> result = new RecordingJobExecutionResult<Match>(RecordingJob.this, activation, command);
+    private void updateSessionData(final Activation<Match> activation, final Session session, final Command command) {
         Object data = session.get(RECORDING_JOB_SESSION_DATA_KEY);
-        if(data instanceof Collection<?>) {
-            Collection<RecordingJobExecutionResult<IPatternMatch>> dataColl = (Collection<RecordingJobExecutionResult<IPatternMatch>>) data;
-            dataColl.add((RecordingJobExecutionResult<IPatternMatch>) result);
+        RecordingJobSessionData result = null;
+        if(data instanceof RecordingJobSessionData) {
+            result = (RecordingJobSessionData) data;
         } else {
-            HashSet<RecordingJobExecutionResult<IPatternMatch>> dataColl = new HashSet<RecordingJob.RecordingJobExecutionResult<IPatternMatch>>();
-            dataColl.add((RecordingJobExecutionResult<IPatternMatch>) result);
-            session.put(RECORDING_JOB_SESSION_DATA_KEY, dataColl);
+            result = new RecordingJobSessionData();
+            session.put(RECORDING_JOB_SESSION_DATA_KEY, result);
         }
+        RecordingJob<IPatternMatch> job = (RecordingJob<IPatternMatch>) this;
+        Activation<IPatternMatch> act = (Activation<IPatternMatch>) activation;
+        result.getTable().put(job, act, command);
     }
     
 }

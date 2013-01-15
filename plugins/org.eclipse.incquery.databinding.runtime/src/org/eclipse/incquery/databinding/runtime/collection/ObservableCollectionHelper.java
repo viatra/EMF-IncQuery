@@ -16,6 +16,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
+import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
@@ -51,9 +52,9 @@ public final class ObservableCollectionHelper {
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match, Matcher> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
 
-        StatelessJob<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED, new ObservableCollectionProcessor<Match>(
+        Job<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED, new ObservableCollectionProcessor<Match>(
                 Direction.INSERT, observableCollectionUpdate));
-        StatelessJob<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, new ObservableCollectionProcessor<Match>(
+        Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, new ObservableCollectionProcessor<Match>(
                 Direction.DELETE, observableCollectionUpdate));
 
         return new RuleSpecification<Match, Matcher>(factory, new DefaultActivationLifeCycle(), Sets.newHashSet(
