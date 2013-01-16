@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.emf.ui;
 
+import org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
 import org.eclipse.incquery.runtime.extensibility.IInjectorProvider;
 
 import com.google.inject.Injector;
@@ -19,8 +20,8 @@ public class UiPluginInjectorProvider implements IInjectorProvider {
 
     @Override
     public Injector getInjector() {
-        return EMFPatternLanguageUIActivator.getInstance().getInjector(
-                EMFPatternLanguageUIActivator.ORG_ECLIPSE_INCQUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
+        return EMFPatternLanguageActivator.getInstance().getInjector(
+                EMFPatternLanguageActivator.ORG_ECLIPSE_INCQUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
     }
 
 }

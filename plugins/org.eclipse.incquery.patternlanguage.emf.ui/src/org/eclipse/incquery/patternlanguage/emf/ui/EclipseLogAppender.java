@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
 
 /**
  * Updated Eclipse LogAppender based on the implementation in org.eclipse.xtext.logger bundle.
@@ -30,7 +31,7 @@ public class EclipseLogAppender extends AppenderSkeleton {
 
     private static final String LOG_PATTERN = "%m%n";
 
-    private static final String BUNDLE_NAME = EMFPatternLanguageUIActivator.getInstance().getBundle().getSymbolicName();
+    private static final String BUNDLE_NAME = EMFPatternLanguageActivator.getInstance().getBundle().getSymbolicName();
 
     private boolean initialized;
     private ILog log;
