@@ -32,4 +32,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.patternlanguage.emf.ui,
  org.eclipse.incquery.patternlanguage.emf.ui.contentassist,
  org.eclipse.incquery.patternlanguage.emf.ui.internal
-Bundle-Activator: org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageUIActivator
+Bundle-Activator: org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator
