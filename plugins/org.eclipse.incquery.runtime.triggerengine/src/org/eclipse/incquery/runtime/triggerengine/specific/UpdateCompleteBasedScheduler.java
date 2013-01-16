@@ -38,9 +38,14 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
         super(engine);
     }
 
-    public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(IncQueryEngine engine)
-            throws IncQueryException {
-        IQBaseCallbackUpdateCompleteProvider provider = new IQBaseCallbackUpdateCompleteProvider(engine.getBaseIndex());
+    public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(IncQueryEngine engine) {
+        IQBaseCallbackUpdateCompleteProvider provider;
+        try {
+            provider = new IQBaseCallbackUpdateCompleteProvider(engine.getBaseIndex());
+        } catch (IncQueryException e) {
+            engine.getLogger().error("Base index not available in engine", e);
+            return null;
+        }
         return new UpdateCompleteBasedSchedulerFactory(provider);
     }
     

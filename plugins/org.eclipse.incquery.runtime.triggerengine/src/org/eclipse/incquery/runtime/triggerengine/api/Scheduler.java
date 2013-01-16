@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Abel Hegedus
@@ -29,8 +29,7 @@ public abstract class Scheduler {
     private TriggerEngine engine;
 
     protected Scheduler(TriggerEngine engine) {
-        Preconditions.checkNotNull(engine);
-        this.engine = engine;
+        this.engine = checkNotNull(engine, "Cannot create scheduler with null IncQuery Engine!");
     }
 
     /**

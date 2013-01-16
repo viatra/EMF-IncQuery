@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Preconditions;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
  * @author Abel Hegedus
@@ -33,9 +33,7 @@ public abstract class Job<Match extends IPatternMatch> {
      * 
      */
     public Job(ActivationState activationState) {
-        Preconditions.checkNotNull(activationState);
-        this.activationState = activationState;
-
+        this.activationState = checkNotNull(activationState, "Cannot create job with null activation state!");
     }
     
     public abstract void execute(final Activation<Match> activation, Session session);

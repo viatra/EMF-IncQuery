@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.Session;
-
-import com.google.common.base.Preconditions;
 
 /**
  * TODO write documentation
@@ -38,13 +38,12 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     
     public StatelessJob(ActivationState activationState, IMatchProcessor<Match> matchProcessor){
         super(activationState);
-        Preconditions.checkNotNull(matchProcessor);
-        this.matchProcessor = matchProcessor;
+        this.matchProcessor = checkNotNull(matchProcessor, "StatelessJob cannot be instantiated with null match processor");
     }
     
     @Override
     public void execute(final Activation<Match> activation, Session session){
-        Preconditions.checkNotNull(activation);
+        checkNotNull(activation, "Job cannot be executed on null activation");
         matchProcessor.process(activation.getPatternMatch());
     }
 }

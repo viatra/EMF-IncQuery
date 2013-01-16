@@ -22,9 +22,11 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineFacade;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
+import org.eclipse.incquery.runtime.triggerengine.specific.UpdateCompleteBasedScheduler;
 
 import com.google.common.collect.Sets;
 
@@ -38,13 +40,13 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     private IMatchProcessor<Match> appearanceProcessor;
     private IMatchProcessor<Match> disappearanceProcessor;
 
-    private TriggerEngine engine;
+    private TriggerEngineFacade engine;
 
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultimap(TriggerEngine engine) {
-        super(engine.getAgenda().getIncQueryEngine().getLogger());
+    protected TriggeredQueryResultMultimap(TriggerEngineFacade engine) {
+        super(engine.getIncQueryEngine().getLogger());
         this.engine = engine;
 
         appearanceProcessor = new IMatchProcessor<Match>() {
@@ -67,10 +69,11 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     }
 
     /**
+     * @throws IncQueryException 
      * 
      */
     protected TriggeredQueryResultMultimap(IncQueryEngine engine) {
-        this(new TriggerEngine(engine));
+        this(TriggerEngineUtil.createTriggerEngine(engine, UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine), null));
     }
     
     /**

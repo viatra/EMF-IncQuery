@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Table.Cell;
 
 /**
@@ -38,7 +39,7 @@ public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
         if(lifeCycle instanceof UnmodifiableActivationLifeCycle) {
             return (UnmodifiableActivationLifeCycle) lifeCycle;
         } else {
-            Preconditions.checkNotNull(lifeCycle);
+            checkNotNull(lifeCycle,"Null life cycle cannot be copied!");
             UnmodifiableActivationLifeCycle lc = new UnmodifiableActivationLifeCycle();
             for (Cell<ActivationState, ActivationLifeCycleEvent, ActivationState> cell : lifeCycle.getStateTransitionTable().cellSet()) {
                 lc.internalAddStateTransition(cell.getRowKey(), cell.getColumnKey(), cell.getValue());

@@ -79,8 +79,7 @@ public class Agenda {
      *            the {@link IncQueryEngine} instance
      */
     protected Agenda(IncQueryEngine iqEngine) {
-        checkNotNull(iqEngine);
-        this.iqEngine = iqEngine;
+        this.iqEngine = checkNotNull(iqEngine, "Cannot create Agenda with null IncQueryEngine");
         this.ruleInstanceMap = new HashMap<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>,RuleInstance<IPatternMatch, IncQueryMatcher<IPatternMatch>>>();
         this.activations = HashMultimap.create();
         this.enabledActivations = Sets.newHashSet();
@@ -201,7 +200,7 @@ public class Agenda {
         if(instance == null) {
             return Collections.emptySet();
         } else {
-            return instance.getActivations();
+            return instance.getAllActivations();
         }
     }
 

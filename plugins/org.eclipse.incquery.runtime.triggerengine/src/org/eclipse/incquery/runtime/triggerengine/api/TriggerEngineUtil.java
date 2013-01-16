@@ -27,13 +27,15 @@ public final class TriggerEngineUtil {
     private TriggerEngineUtil() {}
     
     @SuppressWarnings("rawtypes")
-    public static TriggerEngineFacade createTriggerEngine(IncQueryEngine engine, ISchedulerFactory schedulerFactory, Set<RuleSpecification> ruleSpecifications) {
+    public static TriggerEngineFacade createTriggerEngine(final IncQueryEngine engine, final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> ruleSpecifications) {
         // create TriggerEngine and Agenda for engine
         TriggerEngine triggerEngine = new TriggerEngine(engine);
         
-        // initialize rules form ruleSpecifications
-        for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> ruleSpecification : ruleSpecifications) {
-            triggerEngine.addRuleSpecification(ruleSpecification);
+        if(ruleSpecifications != null) {
+            // initialize rules form ruleSpecifications
+            for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> ruleSpecification : ruleSpecifications) {
+                triggerEngine.addRuleSpecification(ruleSpecification);
+            }
         }
         
         // register TriggerEngine for scheduler

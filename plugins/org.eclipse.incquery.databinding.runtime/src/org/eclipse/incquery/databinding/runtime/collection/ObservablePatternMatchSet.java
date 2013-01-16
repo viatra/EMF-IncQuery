@@ -100,7 +100,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     @SuppressWarnings("rawtypes")
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
-            IncQueryEngine engine) throws IncQueryException {
+            IncQueryEngine engine) {
         RuleSpecification specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
         TriggerEngineUtil.createTriggerEngine(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine), Sets.newHashSet(specification));

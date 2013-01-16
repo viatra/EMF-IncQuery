@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +31,6 @@ import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotifi
 import org.eclipse.incquery.runtime.triggerengine.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultAttributeMonitor;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 
@@ -53,7 +55,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         @Override
         protected void listenerAdded(IActivationNotificationListener listener, boolean fireNow) {
             if (fireNow) {
-                for (Activation<Match> activation : getActivations()) {
+                for (Activation<Match> activation : getAllActivations()) {
                     listener.activationChanged(activation, null, ActivationLifeCycleEvent.MATCH_APPEARS);
                 }
             }
@@ -70,7 +72,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
          */
         @Override
         public void process(Match match) {
-            Preconditions.checkNotNull(match);
+            checkNotNull(match,"Cannot process null match!");
             Map<ActivationState, Activation<Match>> column = activations.column(match);
             if(column.size() > 0) {
                 for (Entry<ActivationState, Activation<Match>> entry : column.entrySet()) {
@@ -96,7 +98,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
          */
         @Override
         public void process(Match match) {
-            Preconditions.checkNotNull(match);
+            checkNotNull(match,"Cannot process null match!");
             Map<ActivationState, Activation<Match>> column = activations.column(match);
             if(column.size() > 0) {
                 for (Entry<ActivationState, Activation<Match>> entry : column.entrySet()) {
@@ -113,9 +115,9 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     public final class DefaultAttributeMonitorListener implements IAttributeMonitorListener<Match> {
         @Override
         public void notifyUpdate(Match match) {
-            Preconditions.checkNotNull(match);
+            checkNotNull(match,"Cannot process null match!");
             Map<ActivationState, Activation<Match>> column = activations.column(match);
-            Preconditions.checkArgument(column.size() == 1);
+            checkArgument(column.size() == 1, "Multiple activations in the same state for the same match");
             for (Entry<ActivationState, Activation<Match>> entry : column.entrySet()) {
                 activationStateTransition(entry.getValue(), ActivationLifeCycleEvent.MATCH_UPDATES);
             }
@@ -138,24 +140,18 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @param engine
      */
     protected RuleInstance(RuleSpecification<Match, Matcher> specification, IncQueryEngine engine) {
-        Preconditions.checkNotNull(specification);
-        Preconditions.checkNotNull(engine);
-        this.specification = specification;
+        this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
+        checkNotNull(engine, "Cannot create rule instance for null IncQuery Engine!");
         this.activations = TreeBasedTable.create(null, specification.getComparator());
-        this.activationNotificationProvider = prepareActivationNotificationProvider();
-        Preconditions.checkNotNull(this.activationNotificationProvider);
+        this.activationNotificationProvider = checkNotNull(prepareActivationNotificationProvider(), "Prepared activation notification provider is null!");
 
-        IMatchProcessor<Match> matchAppearProcessor = prepareMatchAppearProcessor();
-        Preconditions.checkNotNull(matchAppearProcessor);
-        IMatchProcessor<Match> matchDisppearProcessor = prepareMatchDisppearProcessor();
-        Preconditions.checkNotNull(matchDisppearProcessor);
+        IMatchProcessor<Match> matchAppearProcessor = checkNotNull(prepareMatchAppearProcessor(), "Prepared match appearance processor is null!");
+        IMatchProcessor<Match> matchDisppearProcessor = checkNotNull(prepareMatchDisppearProcessor(), "Prepared match disappearance processor is null!");
         this.matchUpdateListener = new MatchUpdateAdapter<Match>(matchAppearProcessor,
                 matchDisppearProcessor);
 
-        this.attributeMonitorListener = prepareAttributeMonitorListener();
-        Preconditions.checkNotNull(this.attributeMonitorListener);
-        this.attributeMonitor = prepareAttributeMonitor();
-        Preconditions.checkNotNull(this.attributeMonitor);
+        this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
+        this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         this.attributeMonitor.addCallbackOnMatchUpdate(attributeMonitorListener);
         
         try {
@@ -185,7 +181,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     }
     
     public void fire(Activation<Match> activation, Session session) {
-        Preconditions.checkNotNull(activation);
+        checkNotNull(activation, "Cannot fire null activation!");
         ActivationState activationState = activation.getState();
         Match patternMatch = activation.getPatternMatch();
 
@@ -205,8 +201,8 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
 
 
     protected ActivationState activationStateTransition(Activation<Match> activation, ActivationLifeCycleEvent event) {
-        Preconditions.checkNotNull(activation);
-        Preconditions.checkNotNull(event);
+        checkNotNull(activation, "Cannot perform state transition on null activation!");
+        checkNotNull(event, "Cannot perform state transition with null event!");
         ActivationState activationState = activation.getState();
         ActivationState nextActivationState = specification.getLifeCycle().nextActivationState(activationState, event);
         Match patternMatch = activation.getPatternMatch();
@@ -251,11 +247,17 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         return activationNotificationProvider.removeActivationNotificationListener(listener);
     }
 
+    
+    public Table<ActivationState, Match, Activation<Match>> getActivations() {
+        return activations;
+    }
+    
+    
     /**
      * 
      * @return
      */
-    public Collection<Activation<Match>> getActivations() {
+    public Collection<Activation<Match>> getAllActivations() {
         return activations.values();
     }
 

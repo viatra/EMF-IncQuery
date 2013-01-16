@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -60,7 +61,7 @@ public class ActivationLifeCycle {
     }
     
     public static ActivationLifeCycle copyOf(ActivationLifeCycle lifeCycle) {
-        Preconditions.checkNotNull(lifeCycle);
+        checkNotNull(lifeCycle,"Null life cycle cannot be copied!");
         ActivationLifeCycle lc = new ActivationLifeCycle();
         lc.stateTransitionTable = HashBasedTable.create(lifeCycle.stateTransitionTable);
         return lc;

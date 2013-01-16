@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
@@ -20,7 +22,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -49,10 +50,8 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
      * 
      */
     public RuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifeCycle, Set<Job<Match>> jobs, Comparator<Match> comparator) {
-        Preconditions.checkNotNull(factory);
-        Preconditions.checkNotNull(lifeCycle);
-        this.factory = factory;
-        this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
+        this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
+        this.lifeCycle = checkNotNull(ActivationLifeCycle.copyOf(lifeCycle), "Cannot create rule specification with null life cycle!");
         this.jobs = HashMultimap.create();
         Set<ActivationState> states = new TreeSet<ActivationState>();
         if(jobs != null && !jobs.isEmpty()) {

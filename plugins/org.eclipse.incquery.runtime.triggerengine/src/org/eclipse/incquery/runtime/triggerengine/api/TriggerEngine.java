@@ -37,35 +37,32 @@ public class TriggerEngine {
     private Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> ruleSpecifications;
     private Session session;
     
-    public TriggerEngine(IncQueryEngine engine) {
-        this(engine, new Session());
+    protected TriggerEngine(IncQueryEngine engine) {
+        this(engine, new Session(), null);
     }
 
-    public TriggerEngine(IncQueryEngine engine, Session session) {
-        checkNotNull(engine);
-        this.session = checkNotNull(session);
-        agenda = new Agenda(engine);
+    protected TriggerEngine(IncQueryEngine engine, Session session) {
+        this(engine, session, null);
     }
     
     @SuppressWarnings("rawtypes")
-    public TriggerEngine(IncQueryEngine engine, Comparator<RuleSpecification> comparator) {
-        this(engine);
+    protected TriggerEngine(IncQueryEngine engine, Comparator<RuleSpecification> comparator) {
+        this(engine, new Session(), comparator);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected TriggerEngine(IncQueryEngine engine, Session session, Comparator<RuleSpecification> comparator) {
+        this.session = checkNotNull(session, "Cannot create trigger engine with null session!");
+        agenda = new Agenda(engine);
         this.ruleSpecifications = new TreeSet<RuleSpecification<IPatternMatch,IncQueryMatcher<IPatternMatch>>>(comparator);
     }
 
     protected void schedule() {
         
         Set<Activation<?>> enabledActivations = agenda.getEnabledActivations();
-        
-        if(!enabledActivations.isEmpty()) {
-            
+        while(!enabledActivations.isEmpty()) {
             Activation<?> activation = enabledActivations.iterator().next();
-            
-            while(activation != null) {
-                activation.fire(session);
-                
-                activation = enabledActivations.iterator().next();
-            }
+            activation.fire(session);
         }
         
         /*for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> spec : ruleSpecifications) {
