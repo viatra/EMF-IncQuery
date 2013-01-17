@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;
@@ -44,7 +45,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
                 // mask ()/2
                 return getSignatures();
             } else if (mask.indices.length == 1) {
-                Set<Tuple> retSet = new HashSet<Tuple>();
+                Set<Tuple> retSet = CollectionsFactory.getSet();//new HashSet<Tuple>();
 
                 // mask (0)/2
                 if (mask.indices[0] == 0) {
@@ -92,7 +93,7 @@ public class TransitiveClosureNodeIndexer extends StandardIndexer implements Ite
 
     private Collection<Tuple> asTupleCollection(
             Collection<org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple<Object>> tuples) {
-        Set<Tuple> retSet = new HashSet<Tuple>();
+        Set<Tuple> retSet = CollectionsFactory.getSet();//new HashSet<Tuple>();
         for (org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple<Object> tuple : tuples) {
             retSet.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
         }

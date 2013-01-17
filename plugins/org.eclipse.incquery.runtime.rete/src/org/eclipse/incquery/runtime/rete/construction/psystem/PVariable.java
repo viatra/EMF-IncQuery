@@ -11,8 +11,9 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 
 /**
  * @author Bergmann Gábor
@@ -60,7 +61,7 @@ public class PVariable {
         this.name = name;
         this.virtual = virtual;
         // this.exportedParameter = false;
-        this.referringConstraints = new HashSet<PConstraint>();
+        this.referringConstraints = CollectionsFactory.getSet();//new HashSet<PConstraint>();
         this.unifiedInto = null;
         this.deducable = false;
     }
@@ -89,7 +90,7 @@ public class PVariable {
             else
                 replacement.deducable = null;
             Set<PConstraint> snapshotConstraints = // avoid ConcurrentModificationX
-            new HashSet<PConstraint>(this.referringConstraints);
+                    CollectionsFactory.getSet(this.referringConstraints);//new HashSet<PConstraint>(this.referringConstraints);
             for (PConstraint constraint : snapshotConstraints) {
                 constraint.replaceVariable(this, replacement);
             }
@@ -183,7 +184,7 @@ public class PVariable {
     @SuppressWarnings("unchecked")
     public <ConstraintType> Set<ConstraintType> getReferringConstraintsOfType(Class<ConstraintType> constraintClass) {
         replacementCheck();
-        Set<ConstraintType> result = new HashSet<ConstraintType>();
+        Set<ConstraintType> result = CollectionsFactory.getSet();//new HashSet<ConstraintType>();
         for (PConstraint pConstraint : referringConstraints) {
             if (constraintClass.isInstance(pConstraint))
                 result.add((ConstraintType) pConstraint);

@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.CountNode;
 import org.eclipse.incquery.runtime.rete.index.ExistenceNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
@@ -80,20 +81,21 @@ public class Library {
         super();
         this.reteContainer = reteContainer;
 
-        projectionIndexers = new HashMap<Tuple, ProjectionIndexer>();
-        joinNodes = new HashMap<Tuple, JoinNode>();
-        existenceNodes = new HashMap<Tuple, ExistenceNode>();
-        ineqFilters = new HashMap<Tuple, InequalityFilterNode>();
-        eqFilters = new HashMap<Tuple, EqualityFilterNode>();
-        valueBinderFilters = new HashMap<Tuple, ValueBinderFilterNode>();
-        trimmers = new HashMap<Tuple, TrimmerNode>();
-        transparentNodes = new HashMap<Supplier, TransparentNode>();
-        constantNodes = new HashMap<Tuple, ConstantNode>();
-        countNodes = new HashMap<Tuple, CountNode>();
-        tcNodes = new HashMap<Tuple, TransitiveClosureNode>();
+        projectionIndexers = //new HashMap<Tuple, ProjectionIndexer>();
+                CollectionsFactory.getMap();
+        joinNodes = CollectionsFactory.getMap();//new HashMap<Tuple, JoinNode>();
+        existenceNodes = CollectionsFactory.getMap();//new HashMap<Tuple, ExistenceNode>();
+        ineqFilters = CollectionsFactory.getMap();//new HashMap<Tuple, InequalityFilterNode>();
+        eqFilters = CollectionsFactory.getMap();//new HashMap<Tuple, EqualityFilterNode>();
+        valueBinderFilters = CollectionsFactory.getMap();//new HashMap<Tuple, ValueBinderFilterNode>();
+        trimmers = CollectionsFactory.getMap();//new HashMap<Tuple, TrimmerNode>();
+        transparentNodes = CollectionsFactory.getMap();//new HashMap<Supplier, TransparentNode>();
+        constantNodes = CollectionsFactory.getMap();//new HashMap<Tuple, ConstantNode>();
+        countNodes = CollectionsFactory.getMap();//new HashMap<Tuple, CountNode>();
+        tcNodes = CollectionsFactory.getMap();//new HashMap<Tuple, TransitiveClosureNode>();
 
-        remoteReceivers = new HashMap<Supplier, RemoteReceiver>();
-        remoteSuppliers = new HashMap<Address<? extends Supplier>, RemoteSupplier>();
+        remoteReceivers = CollectionsFactory.getMap();//new HashMap<Supplier, RemoteReceiver>();
+        remoteSuppliers = CollectionsFactory.getMap();//new HashMap<Address<? extends Supplier>, RemoteSupplier>();
     }
 
     synchronized RemoteReceiver accessRemoteReceiver(Address<? extends Supplier> address) {
@@ -433,7 +435,7 @@ public class Library {
         return address;
     }
 
-    public synchronized Address<? extends Production> newProductionNode(HashMap<Object, Integer> posMapping, Object tag) {
+    public synchronized Address<? extends Production> newProductionNode(Map<Object, Integer> posMapping, Object tag) {
         DefaultProductionNode node = new DefaultProductionNode(reteContainer, posMapping);
         node.setTag(tag);
         Address<? extends Production> address = reteContainer.makeAddress(node);

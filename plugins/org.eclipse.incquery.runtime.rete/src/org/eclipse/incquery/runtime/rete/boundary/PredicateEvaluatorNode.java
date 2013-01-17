@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
@@ -85,10 +86,10 @@ public class PredicateEvaluatorNode extends SingleInputNode {
         this.tupleWidth = tupleWidth;
         this.evaluator = evaluator;
 
-        this.elementOccurences = new HashMap<Object, Collection<Tuple>>();
-        this.outgoing = new HashSet<Tuple>();
-        this.invoker2traces = new HashMap<Tuple, Set<Tuple>>();
-        this.trace2invokers = new HashMap<Tuple, Set<Tuple>>();
+        this.elementOccurences = CollectionsFactory.getMap();//new HashMap<Object, Collection<Tuple>>();
+        this.outgoing = CollectionsFactory.getSet();//new HashSet<Tuple>();
+        this.invoker2traces = CollectionsFactory.getMap();//new HashMap<Tuple, Set<Tuple>>();
+        this.trace2invokers = CollectionsFactory.getMap();//new HashMap<Tuple, Set<Tuple>>();
         // extractASMFunctions();
         this.asmFunctionTraceNotifier = Address.of(new ASMFunctionTraceNotifierNode(reteContainer));
         this.elementChangeNotifier = Address.of(new ElementChangeNotifierNode(reteContainer));
@@ -272,7 +273,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
             for (Tuple trace : traces) {
                 Set<Tuple> invokers = trace2invokers.get(trace);
                 if (invokers == null) {
-                    invokers = new HashSet<Tuple>();
+                    invokers = CollectionsFactory.getSet();//new HashSet<Tuple>();
                     trace2invokers.put(trace, invokers);
                     engine.geTraceListener().registerSensitiveTrace(trace, this);
                 }

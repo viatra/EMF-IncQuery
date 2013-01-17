@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.runtime.rete.boundary,
+ org.eclipse.incquery.runtime.rete.collections,
  org.eclipse.incquery.runtime.rete.construction,
  org.eclipse.incquery.runtime.rete.construction.basiclinear,
  org.eclipse.incquery.runtime.rete.construction.helpers,
@@ -24,3 +25,4 @@ Export-Package: org.eclipse.incquery.runtime.rete.boundary,
  org.eclipse.incquery.runtime.rete.single,
  org.eclipse.incquery.runtime.rete.tuple,
  org.eclipse.incquery.runtime.rete.util
+Bundle-ClassPath: .

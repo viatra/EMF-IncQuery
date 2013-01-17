@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+
 /**
  * @author Gabor Bergmann
  * 
@@ -63,7 +65,7 @@ public abstract class Tuple {
      */
     @SuppressWarnings("unchecked")
     public <T> Set<T> getDistinctElements() {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = CollectionsFactory.getSet();//new HashSet<T>();
         Object[] elements = getElements();
         for (Object object : elements) {
             result.add((T) object);
@@ -92,7 +94,8 @@ public abstract class Tuple {
      * @return the inverted index mapping each element of this pattern to its index in the array
      */
     public Map<Object, Integer> invertIndex() {
-        Map<Object, Integer> result = new HashMap<Object, Integer>();
+        Map<Object, Integer> result = //new HashMap<Object, Integer>();
+                CollectionsFactory.getMap();
         for (int i = 0; i < getSize(); i++)
             result.put(get(i), i);
         return result;
@@ -105,7 +108,8 @@ public abstract class Tuple {
      * @return the inverted index mapping each element of this pattern to its index in the array
      */
     public Map<Object, List<Integer>> invertIndexWithMupliplicity() {
-        Map<Object, List<Integer>> result = new HashMap<Object, List<Integer>>();
+        Map<Object, List<Integer>> result = //new HashMap<Object, List<Integer>>();
+                CollectionsFactory.getMap();
         for (int i = 0; i < getSize(); i++) {
             Object value = get(i);
             List<Integer> indices = result.get(value);

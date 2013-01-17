@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.rete.construction;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
@@ -36,7 +37,7 @@ public interface IRetePatternBuilder<PatternDescription, StubHandle, Collector> 
     /**
      * Extract the position mapping of the graph pattern.
      */
-    HashMap<Object, Integer> getPosMapping(PatternDescription gtPattern);
+    Map<Object, Integer> getPosMapping(PatternDescription gtPattern);
 
     // /**
     // * Extends the rete network beyond a production node to

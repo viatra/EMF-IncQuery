@@ -22,6 +22,7 @@ import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
@@ -92,7 +93,8 @@ public class ReteEngine<PatternDescription> {
         this.reteNet = new Network(reteThreads, context);
         this.boundary = new ReteBoundary<PatternDescription>(this); // prerequisite: network
 
-        this.matchers = new HashMap<PatternDescription, RetePatternMatcher>();
+        this.matchers = //new HashMap<PatternDescription, RetePatternMatcher>();
+                CollectionsFactory.getMap();
         /* this.matchersScoped = new HashMap<PatternDescription, Map<Map<Integer,Scope>,RetePatternMatcher>>(); */
 
         // prerequisite: network, framework, boundary, disconnectables

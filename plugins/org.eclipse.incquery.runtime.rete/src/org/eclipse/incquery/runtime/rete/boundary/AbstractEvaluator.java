@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.rete.boundary;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
@@ -27,7 +28,7 @@ public abstract class AbstractEvaluator {
      * Each tuple represents a trace of the activity during evaluation. Change notifications received on these traces
      * will be used to trigger re-evaluation.
      */
-    Set<Tuple> traces = new HashSet<Tuple>();
+    Set<Tuple> traces = CollectionsFactory.getSet();//new HashSet<Tuple>();
 
     public abstract Object doEvaluate(Tuple tuple) throws Throwable;
 

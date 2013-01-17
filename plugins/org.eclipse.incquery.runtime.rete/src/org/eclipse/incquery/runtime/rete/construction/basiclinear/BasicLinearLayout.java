@@ -12,9 +12,9 @@
 package org.eclipse.incquery.runtime.rete.construction.basiclinear;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.Buildable;
 import org.eclipse.incquery.runtime.rete.construction.IReteLayoutStrategy;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
@@ -68,7 +68,7 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
             // stub = BuildHelper.naturalJoin(buildable, stub, sideStub);
             // }
 
-            Set<PConstraint> pQueue = new HashSet<PConstraint>(pSystem.getConstraints()); // TreeSet<PConstraint>(new
+            Set<PConstraint> pQueue = CollectionsFactory.getSet();//new HashSet<PConstraint>(pSystem.getConstraints()); // TreeSet<PConstraint>(new
                                                                                           // OrderingHeuristics());
             // pQueue.addAll(pSystem.getConstraintsOfType(EnumerablePConstraint.class));
             // pQueue.addAll(pSystem.getConstraintsOfType(DeferredPConstraint.class));

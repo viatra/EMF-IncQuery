@@ -12,9 +12,9 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
@@ -41,7 +41,7 @@ public class Equality<PatternDescription, StubHandle> extends DeferredPConstrain
     }
 
     private static Set<PVariable> buildSet(PVariable who, PVariable withWhom) {
-        Set<PVariable> set = new HashSet<PVariable>();
+        Set<PVariable> set = CollectionsFactory.getSet();//new HashSet<PVariable>();
         set.add(who);
         set.add(withWhom);
         return set;

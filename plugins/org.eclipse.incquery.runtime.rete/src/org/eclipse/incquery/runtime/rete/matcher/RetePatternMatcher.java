@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
@@ -35,8 +36,9 @@ public class RetePatternMatcher extends TransformerNode {
     protected ReteEngine<?> engine;
     protected ReteBoundary<?> boundary;
     protected Production productionNode;
-    protected HashMap<Object, Integer> posMapping;
-    protected Map<Object, Receiver> taggedChildren = new HashMap<Object, Receiver>();
+    protected Map<Object, Integer> posMapping;
+    protected Map<Object, Receiver> taggedChildren = //new HashMap<Object, Receiver>();
+            CollectionsFactory.getMap();
     protected boolean connected = false; // is rete-wise connected to the
                                          // production node?
 
@@ -176,7 +178,7 @@ public class RetePatternMatcher extends TransformerNode {
     /**
      * @return the posMapping
      */
-    public HashMap<Object, Integer> getPosMapping() {
+    public Map<Object, Integer> getPosMapping() {
         return posMapping;
     }
 

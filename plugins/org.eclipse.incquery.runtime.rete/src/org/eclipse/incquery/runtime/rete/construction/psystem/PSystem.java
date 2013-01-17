@@ -11,11 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.Buildable;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
@@ -44,10 +43,10 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
         this.pattern = pattern;
         this.context = context;
         this.buildable = buildable;
-        allVariables = new HashSet<PVariable>();
-        uniqueVariables = new HashSet<PVariable>();
-        variablesByName = new HashMap<Object, PVariable>();
-        constraints = new HashSet<PConstraint>();
+        allVariables = CollectionsFactory.getSet();//new HashSet<PVariable>();
+        uniqueVariables = CollectionsFactory.getSet();//new HashSet<PVariable>();
+        variablesByName = CollectionsFactory.getMap();//new HashMap<Object, PVariable>();
+        constraints = CollectionsFactory.getSet();//new HashSet<PConstraint>();
     }
 
     /**
@@ -86,7 +85,7 @@ public class PSystem<PatternDescription, StubHandle, Collector> {
 
     @SuppressWarnings("unchecked")
     public <ConstraintType> Set<ConstraintType> getConstraintsOfType(Class<ConstraintType> constraintClass) {
-        Set<ConstraintType> result = new HashSet<ConstraintType>();
+        Set<ConstraintType> result = CollectionsFactory.getSet();//new HashSet<ConstraintType>();
         for (PConstraint pConstraint : constraints) {
             if (constraintClass.isInstance(pConstraint))
                 result.add((ConstraintType) pConstraint);

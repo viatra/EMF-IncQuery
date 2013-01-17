@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.helpers.TypeHelper;
@@ -81,7 +82,7 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
      */
     public Map<PVariable, Set<Object>> getAllTypeRestrictions() {
         if (allTypeRestrictions == null) {
-            allTypeRestrictions = new HashMap<PVariable, Set<Object>>();
+            allTypeRestrictions = CollectionsFactory.getMap();//new HashMap<PVariable, Set<Object>>();
             for (PVariable pVariable : getAffectedVariables()) {
                 allTypeRestrictions.put(pVariable,
                         TypeHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));

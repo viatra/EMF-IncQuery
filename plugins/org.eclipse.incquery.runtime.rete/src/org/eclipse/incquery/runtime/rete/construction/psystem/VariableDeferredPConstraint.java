@@ -12,9 +12,9 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 
@@ -46,7 +46,7 @@ public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle
 
     @Override
     public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
-        Set<PVariable> missing = new HashSet<PVariable>(getDeferringVariables());
+        Set<PVariable> missing = CollectionsFactory.getSet(getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
         missing.removeAll(stub.getVariablesIndex().keySet());
         String[] args = { toString(), Arrays.toString(missing.toArray()) };
         String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. "

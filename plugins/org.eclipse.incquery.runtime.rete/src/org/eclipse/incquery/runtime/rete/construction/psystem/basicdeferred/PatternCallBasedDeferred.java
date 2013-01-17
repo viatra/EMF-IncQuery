@@ -12,9 +12,9 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
@@ -59,7 +59,7 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> e
     }
 
     private static Set<PVariable> union(Set<PVariable> a, Set<PVariable> b) {
-        Set<PVariable> result = new HashSet<PVariable>();
+        Set<PVariable> result = CollectionsFactory.getSet();//new HashSet<PVariable>();
         result.addAll(a);
         result.addAll(b);
         return result;
@@ -68,7 +68,7 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> e
     @Override
     protected Set<PVariable> getDeferringVariables() {
         if (deferringVariables == null) {
-            deferringVariables = new HashSet<PVariable>();
+            deferringVariables = CollectionsFactory.getSet();//new HashSet<PVariable>();
             for (PVariable var : getCandidateQuantifiedVariables()) {
                 if (var.isDeducable())
                     deferringVariables.add(var);

@@ -20,6 +20,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
@@ -61,8 +62,8 @@ public class Network {
         nextContainer = firstContainer;
 
         if (threads > 0) {
-            globalTerminationCriteria = new HashMap<ReteContainer, Long>();
-            reportedClocks = new HashMap<ReteContainer, Long>();
+            globalTerminationCriteria = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
+            reportedClocks = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
             ReadWriteLock rwl = new ReentrantReadWriteLock();
             updateLock = rwl.readLock();
             structuralChangeLock = rwl.writeLock();

@@ -13,11 +13,10 @@ package org.eclipse.incquery.runtime.rete.boundary;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
@@ -107,13 +106,13 @@ public class ReteBoundary<PatternDescription> {
 
         this.context = engine.getContext();
         this.generalizationQueryDirection = this.context.allowedGeneralizationQueryDirection();
-        this.parentStubsOfReceiver = new HashMap<Address<? extends Receiver>, Set<Stub<Address<? extends Supplier>>>>();
+        this.parentStubsOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<Stub<Address<? extends Supplier>>>>();
 
-        unaryRoots = new HashMap<Object, Address<? extends Tunnel>>();
-        ternaryEdgeRoots = new HashMap<Object, Address<? extends Tunnel>>();
-        binaryEdgeRoots = new HashMap<Object, Address<? extends Tunnel>>();
+        unaryRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
+        ternaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
+        binaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
 
-        productions = new HashMap<PatternDescription, Address<? extends Production>>();
+        productions = CollectionsFactory.getMap();//new HashMap<PatternDescription, Address<? extends Production>>();
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();
 
         containmentRoot = null;
@@ -479,7 +478,7 @@ public class ReteBoundary<PatternDescription> {
                     "Duplicate RETE production node.", gtPattern);
         }
 
-        HashMap<Object, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
+        Map<Object, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
         Address<? extends Production> pn = headContainer.getLibrary().newProductionNode(posMapping, gtPattern);
         productions.put(gtPattern, pn);
         context.reportPatternDependency(gtPattern);
@@ -636,7 +635,7 @@ public class ReteBoundary<PatternDescription> {
             Stub<Address<? extends Supplier>> parentStub) {
         Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
         if (parents == null) {
-            parents = new HashSet<Stub<Address<? extends Supplier>>>();
+            parents = CollectionsFactory.getSet();//new HashSet<Stub<Address<? extends Supplier>>>();
             parentStubsOfReceiver.put(receiver, parents);
         }
         parents.add(parentStub);
