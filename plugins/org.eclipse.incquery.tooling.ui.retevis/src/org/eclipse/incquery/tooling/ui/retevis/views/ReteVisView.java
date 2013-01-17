@@ -15,10 +15,9 @@ import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.HorizontalShiftAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
@@ -95,9 +94,9 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
                             // graphViewer.setInput( pm.getMatcher().getEngine().getReteEngine().getBoundary() );
                             SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
                             HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
-                            graphViewer.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
-                                    sugiyamaAlgorithm, shiftAlgorithm }));
-                            // graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
+                            //graphViewer.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
+                             //       sugiyamaAlgorithm, shiftAlgorithm }));
+                             graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
                             // graphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
                             // graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
                             // graphViewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
