@@ -480,10 +480,4 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         };
     }
 
-    // /**
-    // * Consider expanding the notification scope to this object and surroundings.
-    // * Hack added primarily to handle EPackage instances referenced by nsUri
-    // * @param obj
-    // */
-    // public abstract void considerForExpansion(EObject obj);
 }

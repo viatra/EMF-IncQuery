@@ -61,7 +61,7 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
              */
             if (event.getTransaction() instanceof EMFOperationTransaction) {
                 EMFOperationTransaction transaction = (EMFOperationTransaction) event.getTransaction();
-                // FIXME this is a really ugly hack!
+                // FIXME this is a really ugly workaround!
                 if (transaction.getCommand().getLabel().equals("RecordingActivation")) {
                     needsNotification = false;
                 }
