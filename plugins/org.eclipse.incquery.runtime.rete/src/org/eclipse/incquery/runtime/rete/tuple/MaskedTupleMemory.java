@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+
 /**
  * @author Gabor Bergmann
  * 
@@ -42,7 +44,7 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
     public MaskedTupleMemory(TupleMask mask) {
         super();
         this.mask = mask;
-        matchings = new HashMap<Tuple, Collection<Tuple>>();
+        matchings = CollectionsFactory.getMap();//new HashMap<Tuple, Collection<Tuple>>();
     }
 
     /**

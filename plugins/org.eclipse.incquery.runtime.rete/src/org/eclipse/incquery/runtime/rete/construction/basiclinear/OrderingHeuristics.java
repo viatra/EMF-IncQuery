@@ -12,9 +12,9 @@
 package org.eclipse.incquery.runtime.rete.construction.basiclinear;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.EnumerablePConstraint;
@@ -75,7 +75,7 @@ public class OrderingHeuristics<PatternDescription, StubHandle, Collector> imple
     }
 
     Set<PVariable> boundVariables(PConstraint o) {
-        Set<PVariable> boundVariables = new HashSet<PVariable>(o.getAffectedVariables());
+        Set<PVariable> boundVariables = CollectionsFactory.getSet();//new HashSet<PVariable>(o.getAffectedVariables());
         boundVariables.retainAll(stub.getVariablesIndex().keySet());
         return boundVariables;
     }

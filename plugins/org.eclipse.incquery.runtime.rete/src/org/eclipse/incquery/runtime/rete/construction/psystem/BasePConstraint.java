@@ -11,9 +11,9 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.Buildable;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 
@@ -33,7 +33,7 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
         super();
         this.pSystem = pSystem;
         this.buildable = pSystem.getBuildable();
-        this.affectedVariables = new HashSet<PVariable>(affectedVariables);
+        this.affectedVariables = CollectionsFactory.getSet(affectedVariables);//new HashSet<PVariable>(affectedVariables);
 
         for (PVariable pVariable : affectedVariables) {
             pVariable.refer(this);

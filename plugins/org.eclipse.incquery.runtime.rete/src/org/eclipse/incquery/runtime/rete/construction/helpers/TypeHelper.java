@@ -12,9 +12,9 @@
 package org.eclipse.incquery.runtime.rete.construction.helpers;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
@@ -36,7 +36,7 @@ public class TypeHelper {
      *            the set of constraints to extract type info from
      */
     public static Set<Object> inferTypes(PVariable pVariable, Set<PConstraint> constraints) {
-        Set<Object> inferredTypes = new HashSet<Object>();
+        Set<Object> inferredTypes = CollectionsFactory.getSet();//new HashSet<Object>();
         for (PConstraint pConstraint : constraints) {
             if (pConstraint instanceof ITypeInfoProviderConstraint) {
                 Object typeInfo = ((ITypeInfoProviderConstraint) pConstraint).getTypeInfo(pVariable);
@@ -53,10 +53,10 @@ public class TypeHelper {
      * @return the set of all types in typesToClose and all their direct and indirect supertypes
      */
     public static Set<Object> typeClosure(Set<Object> typesToClose, IPatternMatcherContext<?> context) {
-        Set<Object> closure = new HashSet<Object>(typesToClose);
+        Set<Object> closure = CollectionsFactory.getSet();//new HashSet<Object>(typesToClose);
         Set<Object> delta = closure;
         while (!delta.isEmpty()) {
-            Set<Object> newTypes = new HashSet<Object>();
+            Set<Object> newTypes = CollectionsFactory.getSet();//new HashSet<Object>();
             for (Object deltaType : delta) {
                 if (deltaType instanceof ITypeInfoProviderConstraint.TypeInfoSpecials)
                     continue;
@@ -89,7 +89,7 @@ public class TypeHelper {
     public static Set<Object> subsumeTypes(Set<Object> subsumableTypes, Set<Object> subsumingTypes,
             IPatternMatcherContext<?> context) {
         Set<Object> closure = typeClosure(subsumingTypes, context);
-        Set<Object> subsumed = new HashSet<Object>(subsumableTypes);
+        Set<Object> subsumed = CollectionsFactory.getSet();//new HashSet<Object>(subsumableTypes);
         subsumed.removeAll(closure);
         return subsumed;
     }

@@ -11,8 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.single;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  */
 public class DefaultProductionNode extends UniquenessEnforcerNode implements Production {
 
-    protected HashMap<Object, Integer> posMapping;
+    protected Map<Object, Integer> posMapping;
 
     // protected HashMap<TupleMask, Indexer> projections;
 
@@ -33,7 +33,7 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
      * @param reteContainer
      * @param posMapping
      */
-    public DefaultProductionNode(ReteContainer reteContainer, HashMap<Object, Integer> posMapping) {
+    public DefaultProductionNode(ReteContainer reteContainer, Map<Object, Integer> posMapping) {
         super(reteContainer, posMapping.size());
         this.posMapping = posMapping;
         // this.projections= new HashMap<TupleMask, Indexer>();
@@ -42,7 +42,7 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
     /**
      * @return the posMapping
      */
-    public HashMap<Object, Integer> getPosMapping() {
+    public Map<Object, Integer> getPosMapping() {
         return posMapping;
     }
 

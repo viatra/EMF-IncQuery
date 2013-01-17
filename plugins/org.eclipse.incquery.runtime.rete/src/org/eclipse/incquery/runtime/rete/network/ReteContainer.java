@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.Clearable;
@@ -54,12 +55,12 @@ public final class ReteContainer {
     public ReteContainer(Network network, boolean threaded) {
         super();
         this.network = network;
-        nodesById = new HashMap<Long, Node>();
+        nodesById = CollectionsFactory.getMap();//new HashMap<Long, Node>();
         clearables = new LinkedList<Clearable>();
         library = new Library(this);
 
         if (threaded) {
-            terminationCriteria = new HashMap<ReteContainer, Long>();
+            terminationCriteria = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
             consumerThread = new Thread("Rete thread of " + ReteContainer.super.toString()) {
                 @Override
                 public void run() {
@@ -381,7 +382,7 @@ public final class ReteContainer {
      * Proxies for the getPosMapping() of Production nodes. Retrieves the posmapping of a remote or local Production to
      * a remote or local caller.
      */
-    public HashMap<Object, Integer> remotePosMapping(Address<? extends Production> production) {
+    public Map<Object, Integer> remotePosMapping(Address<? extends Production> production) {
         if (!isLocal(production))
             return production.getContainer().remotePosMapping(production);
         return resolveLocal(production).getPosMapping();

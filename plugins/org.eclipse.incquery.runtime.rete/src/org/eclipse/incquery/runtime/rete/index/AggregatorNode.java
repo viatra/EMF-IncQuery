@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -49,7 +50,8 @@ public abstract class AggregatorNode extends StandardNode {
     public AggregatorNode(ReteContainer reteContainer, ProjectionIndexer projection) {
         super(reteContainer);
         this.me = this;
-        mainAggregates = new HashMap<Tuple, Object>();
+        mainAggregates = //new HashMap<Tuple, Object>();
+                CollectionsFactory.getMap();
         this.projection = projection;
         this.sourceWidth = projection.getMask().indices.length;
         for (Tuple signature : projection.getSignatures()) {

@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+
 /**
  * @author Gabor Bergmann
  * 
@@ -33,10 +35,11 @@ public class UnionFind<T> implements Map<T, T> {
         }
     }
 
-    protected HashMap<T, Node> nodes;
+    protected Map<T, Node> nodes;
 
     public UnionFind() {
-        nodes = new HashMap<T, Node>();
+        nodes = //new HashMap<T, Node>();
+                CollectionsFactory.getMap();
     }
 
     protected Node find(Node n) {

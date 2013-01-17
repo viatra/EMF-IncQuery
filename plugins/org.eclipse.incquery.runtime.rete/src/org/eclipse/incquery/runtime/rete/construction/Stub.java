@@ -11,10 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
@@ -38,7 +38,7 @@ public class Stub<HandleType> {
         this.variablesIndex = variablesIndex;
         this.variablesTuple = variablesTuple;
         this.handle = handle;
-        this.constraints = new HashSet<PConstraint>();
+        this.constraints = CollectionsFactory.getSet();//new HashSet<PConstraint>();
     }
 
     public Stub(Tuple variablesTuple, HandleType handle) {
@@ -122,7 +122,7 @@ public class Stub<HandleType> {
      * @return the new constraints enforced at this handle, that aren't yet enforced at parents
      */
     public Set<PConstraint> getDeltaEnforcedConstraints() {
-        Set<PConstraint> result = new HashSet<PConstraint>(constraints);
+        Set<PConstraint> result = CollectionsFactory.getSet();//new HashSet<PConstraint>(constraints);
         if (primaryParentStub != null)
             result.removeAll(primaryParentStub.getAllEnforcedConstraints());
         if (secondaryParentStub != null)

@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.network;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
@@ -25,7 +25,7 @@ public interface Production extends Tunnel, Iterable<Tuple> {
     /**
      * @return the position mapping of this particular pattern that maps members of the tuple type to their positions
      */
-    HashMap<Object, Integer> getPosMapping();
+    Map<Object, Integer> getPosMapping();
 
     // /**
     // * Removes all parents of the production node,

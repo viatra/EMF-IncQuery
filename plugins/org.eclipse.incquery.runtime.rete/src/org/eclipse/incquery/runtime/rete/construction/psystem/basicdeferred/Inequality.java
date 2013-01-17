@@ -13,10 +13,10 @@ package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
@@ -48,7 +48,7 @@ public class Inequality<PatternDescription, StubHandle> extends
 
     public Inequality(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable who, PVariable withWhom,
             boolean weak) {
-        super(pSystem, new HashSet<PVariable>(Arrays.asList(new PVariable[] { who, withWhom })));
+        super(pSystem, CollectionsFactory.getSet(Arrays.asList(new PVariable[] { who, withWhom }) ));
         // this(pSystem, who, Collections.singleton(withWhom));
         this.who = who;
         this.withWhom = withWhom;

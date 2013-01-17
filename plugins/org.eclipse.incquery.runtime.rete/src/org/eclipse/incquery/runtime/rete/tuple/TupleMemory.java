@@ -12,9 +12,10 @@
 package org.eclipse.incquery.runtime.rete.tuple;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 
 /**
  * Multiset for tuples. Can contain duplicate occurrences of the same matching.
@@ -33,7 +34,8 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 	 */
     public TupleMemory() {
         super();
-        occurences = new HashMap<Tuple, Integer>();
+        occurences = //new HashMap<Tuple, Integer>();
+                CollectionsFactory.getMap();
     }
 
     /**
@@ -144,7 +146,8 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
 
     @Override
     public Object[] toArray() {
-        return toArray(new Object[0]);
+        //return toArray(new Object[0]);
+        return toArray(new Object[occurences.size()]);
     }
 
     // @SuppressWarnings("unchecked")

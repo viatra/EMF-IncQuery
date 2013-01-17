@@ -12,8 +12,10 @@
 package org.eclipse.incquery.runtime.rete.construction;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 // TODO Output contents of builderCode into files, accompany with PosMapping
@@ -32,7 +34,7 @@ public class CodegenRecordingCoordinator<PatternDescription> {
     public String stubType; /**/
     public String collectorType; /**/
     public String buildableType; /**/
-    HashMap<PatternDescription, StringBuilder> builderCode; /**/
+    Map<PatternDescription, StringBuilder> builderCode; /**/
     // HashMap<PatternDescription, String> collectors; /**/
     // LinkedHashSet<PatternDescription> unbuilt; /**/
     public IPatternMatcherContext<PatternDescription> targetContext; /**/
@@ -46,7 +48,7 @@ public class CodegenRecordingCoordinator<PatternDescription> {
         this.collectorType = collectorType;
         this.buildableType = buildableType;
 
-        this.builderCode = new HashMap<PatternDescription, StringBuilder>();
+        this.builderCode = CollectionsFactory.getMap();//new HashMap<PatternDescription, StringBuilder>();
         // this.collectors = new HashMap<PatternDescription, String>();
         // this.unbuilt = new LinkedHashSet<PatternDescription>();
 
