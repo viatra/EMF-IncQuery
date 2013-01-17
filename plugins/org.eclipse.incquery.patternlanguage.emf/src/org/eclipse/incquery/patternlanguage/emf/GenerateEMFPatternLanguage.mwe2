@@ -142,4 +142,10 @@ Workflow {
             }
         }
     }
+    
+    //XXX Overriding UI activator - removing old activator; assuming no other file is generated into the specified package
+    component = DirectoryCleaner {
+        directory = "${runtimeProject}.ui/src-gen/org/eclipse/incquery/patternlanguage/emf/ui/internal"
+        
+    }
 }
