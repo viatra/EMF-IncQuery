@@ -14,6 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,6 +32,9 @@ import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotifi
 import org.eclipse.incquery.runtime.triggerengine.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultAttributeMonitor;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 
@@ -56,7 +60,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         protected void listenerAdded(IActivationNotificationListener listener, boolean fireNow) {
             if (fireNow) {
                 for (Activation<Match> activation : getAllActivations()) {
-                    listener.activationChanged(activation, null, ActivationLifeCycleEvent.MATCH_APPEARS);
+                    listener.activationChanged(activation, ActivationState.INACTIVE, ActivationLifeCycleEvent.MATCH_APPEARS);
                 }
             }
         }
@@ -142,7 +146,16 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     protected RuleInstance(RuleSpecification<Match, Matcher> specification, IncQueryEngine engine) {
         this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
         checkNotNull(engine, "Cannot create rule instance for null IncQuery Engine!");
-        this.activations = TreeBasedTable.create(null, specification.getComparator());
+        
+        
+        Comparator<Match> columnComparator = specification.getComparator();
+        Ordering<ActivationState> rowComparator = Ordering.natural();
+        if(columnComparator != null) {
+            this.activations = TreeBasedTable.create(rowComparator, columnComparator);
+        } else {
+            this.activations = HashBasedTable.create();
+        }
+        
         this.activationNotificationProvider = checkNotNull(prepareActivationNotificationProvider(), "Prepared activation notification provider is null!");
 
         IMatchProcessor<Match> matchAppearProcessor = checkNotNull(prepareMatchAppearProcessor(), "Prepared match appearance processor is null!");
@@ -180,19 +193,19 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         return new DefaultAttributeMonitorListener();
     }
     
-    public void fire(Activation<Match> activation, Session session) {
+    public void fire(Activation<Match> activation, Context context) {
         checkNotNull(activation, "Cannot fire null activation!");
         ActivationState activationState = activation.getState();
         Match patternMatch = activation.getPatternMatch();
 
-        doFire(activation, activationState, patternMatch, session);
+        doFire(activation, activationState, patternMatch, context);
     }
 
-    protected void doFire(Activation<Match> activation, ActivationState activationState, Match patternMatch, Session session) {
+    protected void doFire(Activation<Match> activation, ActivationState activationState, Match patternMatch, Context context) {
         if (activations.contains(activationState, patternMatch)) {
             Collection<Job<Match>> jobs = specification.getJobs(activationState);
             for (Job<Match> job : jobs) {
-                job.execute(activation, session);
+                job.execute(activation, context);
             }
             activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
             
@@ -274,5 +287,13 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         this.attributeMonitor.removeCallbackOnMatchUpdate(attributeMonitorListener);
         this.attributeMonitor.dispose();
         this.matcher.removeCallbackOnMatchUpdate(matchUpdateListener);
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("spec",specification).add("activations",activations).toString();
     }
 }

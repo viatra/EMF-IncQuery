@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.Session;
+import org.eclipse.incquery.runtime.triggerengine.api.Context;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -67,34 +67,34 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
      * @see org.eclipse.incquery.runtime.triggerengine.api.StatelessJob#execute(org.eclipse.incquery.runtime.triggerengine.api.Activation)
      */
     @Override
-    public void execute(final Activation<Match> activation, final Session session) {
+    public void execute(final Activation<Match> activation, final Context context) {
         IncQueryEngine engine = activation.getRule().getMatcher().getEngine();
         TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(engine.getEmfRoot());
         if (domain == null) {
-            super.execute(activation, session);
+            super.execute(activation, context);
         } else {
             final RecordingCommand command = new RecordingCommand(domain) {
                 @Override
                 protected void doExecute() {
-                    RecordingJob.super.execute(activation, session);
+                    RecordingJob.super.execute(activation, context);
                 }
             };
             command.setLabel(RECORDING_JOB);
             domain.getCommandStack().execute(command);
             
-            updateSessionData(activation, session, command);
+            updateSessionData(activation, context, command);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void updateSessionData(final Activation<Match> activation, final Session session, final Command command) {
-        Object data = session.get(RECORDING_JOB_SESSION_DATA_KEY);
+    private void updateSessionData(final Activation<Match> activation, final Context context, final Command command) {
+        Object data = context.get(RECORDING_JOB_SESSION_DATA_KEY);
         RecordingJobSessionData result = null;
         if(data instanceof RecordingJobSessionData) {
             result = (RecordingJobSessionData) data;
         } else {
             result = new RecordingJobSessionData();
-            session.put(RECORDING_JOB_SESSION_DATA_KEY, result);
+            context.put(RECORDING_JOB_SESSION_DATA_KEY, result);
         }
         RecordingJob<IPatternMatch> job = (RecordingJob<IPatternMatch>) this;
         Activation<IPatternMatch> act = (Activation<IPatternMatch>) activation;

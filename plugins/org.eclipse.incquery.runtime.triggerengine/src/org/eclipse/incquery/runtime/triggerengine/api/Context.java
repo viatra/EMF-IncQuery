@@ -17,11 +17,11 @@ import java.util.Map;
  * @author Abel Hegedus
  *
  */
-public class Session {
+public class Context {
 
     private Map<String, Object> sessionData;
     
-    public Session() {
+    public Context() {
         this.sessionData = new HashMap<String, Object>();
     }
     

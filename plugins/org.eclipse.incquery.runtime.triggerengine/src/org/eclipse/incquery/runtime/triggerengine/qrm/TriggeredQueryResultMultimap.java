@@ -22,7 +22,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineFacade;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
@@ -40,12 +40,12 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     private IMatchProcessor<Match> appearanceProcessor;
     private IMatchProcessor<Match> disappearanceProcessor;
 
-    private TriggerEngineFacade engine;
+    private TriggerEngine engine;
 
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultimap(TriggerEngineFacade engine) {
+    protected TriggeredQueryResultMultimap(TriggerEngine engine) {
         super(engine.getIncQueryEngine().getLogger());
         this.engine = engine;
 

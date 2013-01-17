@@ -22,13 +22,13 @@ public abstract class Scheduler {
     
     public interface ISchedulerFactory{
         
-        Scheduler prepareScheduler(TriggerEngine engine);
+        Scheduler prepareScheduler(Executor engine);
 
     }
 
-    private TriggerEngine engine;
+    private Executor engine;
 
-    protected Scheduler(TriggerEngine engine) {
+    protected Scheduler(Executor engine) {
         this.engine = checkNotNull(engine, "Cannot create scheduler with null IncQuery Engine!");
     }
 
@@ -37,7 +37,7 @@ public abstract class Scheduler {
      */
     protected void schedule() {
         // TODO return results from engine
-        // TODO session in TriggerEngine
+        // TODO session in Executor
         engine.schedule();
     }
     

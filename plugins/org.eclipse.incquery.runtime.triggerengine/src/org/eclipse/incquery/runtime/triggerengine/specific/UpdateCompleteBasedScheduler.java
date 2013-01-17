@@ -14,7 +14,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.Scheduler;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.Executor;
 import org.eclipse.incquery.runtime.triggerengine.update.IQBaseCallbackUpdateCompleteProvider;
 import org.eclipse.incquery.runtime.triggerengine.update.IUpdateCompleteListener;
 import org.eclipse.incquery.runtime.triggerengine.update.IUpdateCompleteProvider;
@@ -34,7 +34,7 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
     /**
      * 
      */
-    protected UpdateCompleteBasedScheduler(TriggerEngine engine) {
+    protected UpdateCompleteBasedScheduler(Executor engine) {
         super(engine);
     }
 
@@ -83,7 +83,7 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
          * @see org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory#prepareScheduler()
          */
         @Override
-        public Scheduler prepareScheduler(TriggerEngine engine) {
+        public Scheduler prepareScheduler(Executor engine) {
             UpdateCompleteBasedScheduler scheduler = new UpdateCompleteBasedScheduler(engine);
             provider.addUpdateCompleteListener(scheduler, true);
             return scheduler;

@@ -22,6 +22,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -108,5 +109,13 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
      */
     public Comparator<Match> getComparator() {
         return comparator;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName()).add("lifecycle", lifeCycle).add("jobs", jobs).add("comparator", comparator).toString();
     }
 }

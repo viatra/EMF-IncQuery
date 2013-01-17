@@ -36,6 +36,6 @@ public abstract class Job<Match extends IPatternMatch> {
         this.activationState = checkNotNull(activationState, "Cannot create job with null activation state!");
     }
     
-    public abstract void execute(final Activation<Match> activation, Session session);
+    public abstract void execute(final Activation<Match> activation, Context context);
     
 }

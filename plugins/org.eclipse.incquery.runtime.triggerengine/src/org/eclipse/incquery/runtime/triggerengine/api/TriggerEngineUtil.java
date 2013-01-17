@@ -27,21 +27,21 @@ public final class TriggerEngineUtil {
     private TriggerEngineUtil() {}
     
     @SuppressWarnings("rawtypes")
-    public static TriggerEngineFacade createTriggerEngine(final IncQueryEngine engine, final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> ruleSpecifications) {
-        // create TriggerEngine and Agenda for engine
-        TriggerEngine triggerEngine = new TriggerEngine(engine);
+    public static TriggerEngine createTriggerEngine(final IncQueryEngine engine, final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> ruleSpecifications) {
+        // create Executor and Agenda for engine
+        Executor executor = new Executor(engine);
         
         if(ruleSpecifications != null) {
             // initialize rules form ruleSpecifications
             for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> ruleSpecification : ruleSpecifications) {
-                triggerEngine.addRuleSpecification(ruleSpecification);
+                executor.addRuleSpecification(ruleSpecification);
             }
         }
         
-        // register TriggerEngine for scheduler
-        schedulerFactory.prepareScheduler(triggerEngine);
+        // register Executor for scheduler
+        schedulerFactory.prepareScheduler(executor);
         
-        return TriggerEngineFacade.create(triggerEngine);
+        return TriggerEngine.create(executor);
     }
 
 }

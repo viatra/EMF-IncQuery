@@ -17,7 +17,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
-import org.eclipse.incquery.runtime.triggerengine.api.Session;
+import org.eclipse.incquery.runtime.triggerengine.api.Context;
 
 /**
  * TODO write documentation
@@ -42,7 +42,7 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     }
     
     @Override
-    public void execute(final Activation<Match> activation, Session session){
+    public void execute(final Activation<Match> activation, Context context){
         checkNotNull(activation, "Job cannot be executed on null activation");
         matchProcessor.process(activation.getPatternMatch());
     }

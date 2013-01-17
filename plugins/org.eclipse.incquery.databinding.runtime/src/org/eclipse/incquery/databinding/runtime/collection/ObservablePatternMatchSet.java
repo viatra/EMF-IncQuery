@@ -28,7 +28,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.Executor;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.UpdateCompleteBasedScheduler;
 
@@ -39,7 +39,7 @@ import com.google.common.collect.Sets;
  * {@link IncQueryMatcher} are not ordered by default).
  * 
  * <p>
- * This implementation uses the {@link TriggerEngine} to get notifications for match set changes, and can be instantiated
+ * This implementation uses the {@link Executor} to get notifications for match set changes, and can be instantiated
  * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a {@link Notifier},
  * {@link IncQueryEngine} or {@link Agenda}.
  * 
@@ -119,7 +119,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      *            an existing {@link Agenda} that specifies the used model
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
-            TriggerEngine engine) {
+            Executor engine) {
         super();
         RuleSpecification<Match, Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
         engine.addRuleSpecification(specification);

@@ -30,7 +30,7 @@ import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
 import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineFacade;
+import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
@@ -49,7 +49,7 @@ import com.google.common.collect.Sets;
 public class ConstraintAdapter {
 
     private Map<IPatternMatch, IMarker> markerMap;
-    private TriggerEngineFacade engine;
+    private TriggerEngine engine;
 
     @SuppressWarnings("unchecked")
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {

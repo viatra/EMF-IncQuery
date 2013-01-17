@@ -58,7 +58,7 @@ import com.google.common.collect.TreeMultimap;
  * Space Exploration scenarios.
  * 
  * TODO rewrite code comments - multiple firing is implicitly allowed by defining a job that wokrs in the Fired state -
- * life-cycle is defined separately (see {@link ActivationLifeCycle}) - {@link Scheduler} and {@link TriggerEngine} are
+ * life-cycle is defined separately (see {@link ActivationLifeCycle}) - {@link Scheduler} and {@link Executor} are
  * separated from Agenda
  * 
  * @author Tamas Szabo
@@ -89,11 +89,12 @@ public class Agenda {
             @Override
             public void activationChanged(Activation<? extends IPatternMatch> activation, ActivationState oldState,
                     ActivationLifeCycleEvent event) {
+                Agenda.this.iqEngine.getLogger().error(String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
                 activations.remove(oldState, activation);
                 ActivationState state = activation.getState();
                 switch (state) {
                 case INACTIVE:
-                    // do nothing
+                    enabledActivations.remove(activation);
                     break;
                 default:
                     if(activation.isEnabled()) {

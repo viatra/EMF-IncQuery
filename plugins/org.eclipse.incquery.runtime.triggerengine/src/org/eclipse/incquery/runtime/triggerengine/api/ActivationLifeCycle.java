@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -72,5 +73,13 @@ public class ActivationLifeCycle {
      */
     public Table<ActivationState, ActivationLifeCycleEvent, ActivationState> getStateTransitionTable() {
         return HashBasedTable.create(stateTransitionTable);
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("table", stateTransitionTable).toString();
     }
 }

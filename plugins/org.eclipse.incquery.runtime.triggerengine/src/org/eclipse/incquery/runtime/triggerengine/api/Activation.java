@@ -76,25 +76,23 @@ public class Activation<Match extends IPatternMatch> {
     protected void setState(ActivationState state) {
         this.state = checkNotNull(state, "Activation state cannot be null!");
         enabled = rule.getSpecification().getEnabledStates().contains(state);
-        cachedHash = -1;
     }
 
     /**
      * The activation will be fired; the appropriate job of the rule will be executed based on the activation state.
      */
-    public void fire(Session session) {
-        rule.fire(this, session);
+    public void fire(Context context) {
+        rule.fire(this, context);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj instanceof Activation) {
-            Activation<Match> other = (Activation<Match>) obj;
-            return (other.rule.equals(this.rule)) && (other.patternMatch.equals(this.patternMatch))
-                    && (other.state == this.state);
+            Activation<?> other = (Activation<?>) obj;
+            return (other.rule.equals(this.rule)) && (other.patternMatch.equals(this.patternMatch)
+                    /*&& (other.state == this.state*/);
         } else {
             return false;
         }
@@ -103,8 +101,18 @@ public class Activation<Match extends IPatternMatch> {
     @Override
     public int hashCode() {
         if (cachedHash == -1) {
-            cachedHash = Objects.hash(rule, patternMatch, state);
+            cachedHash = Objects.hash(rule, patternMatch/*, state*/);
         }
         return cachedHash;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this).
+                add("match",patternMatch).
+                add("state",state).toString();
     }
 }

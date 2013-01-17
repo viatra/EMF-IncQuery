@@ -11,7 +11,7 @@
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
 import org.eclipse.incquery.runtime.triggerengine.api.Scheduler;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
+import org.eclipse.incquery.runtime.triggerengine.api.Executor;
 
 /**
  * A timed scheduler is similar to the {@link UpdateCompleteBasedScheduler} but it schedules in a periodic manner.
@@ -25,7 +25,7 @@ public class TimedScheduler extends Scheduler {
     private volatile boolean interrupted = false;
     private FiringThread firingThread;
     
-    public TimedScheduler(TriggerEngine engine, long interval) {
+    public TimedScheduler(Executor engine, long interval) {
         super(engine);
         this.interval = interval;
         this.firingThread = new FiringThread();
@@ -80,7 +80,7 @@ public class TimedScheduler extends Scheduler {
          * @see org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory#prepareScheduler()
          */
         @Override
-        public Scheduler prepareScheduler(TriggerEngine engine) {
+        public Scheduler prepareScheduler(Executor engine) {
             return new TimedScheduler(engine, interval);
         }
         
