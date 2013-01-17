@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq"
+            name="Register All EIQ">
+      </command>
+      <command
+            id="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq"
+            name="Register Single EIQ">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq"
+               label="Register all EIQ files"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="selection">
+                  <iterate
+                        operator="and">
+                     <instanceof
+                           value="org.eclipse.core.resources.IProjectNature">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq"
+               label="Register EIQ file"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="selection">
+                  <iterate
+                        operator="and">
+                     <instanceof
+                           value="org.eclipse.core.resources.IFile">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.incquery.tooling.ui.patternregistry.PatternRegistryExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.patternregistry.handlers.RegisterAllHandler"
+            commandId="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq">
+      </handler>
+      <handler
+            class="org.eclipse.incquery.tooling.ui.patternregistry.PatternRegistryExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.patternregistry.handlers.RegisterSingleHandler"
+            commandId="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.incquery.tooling.ui"
+            class="org.eclipse.incquery.tooling.ui.patternregistry.views.PatternRegistryViewPart"
+            icon="icons/iqlogo.png"
+            id="org.eclipse.incquery.tooling.ui.patternregistry.view"
+            name="Pattern Registry"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
