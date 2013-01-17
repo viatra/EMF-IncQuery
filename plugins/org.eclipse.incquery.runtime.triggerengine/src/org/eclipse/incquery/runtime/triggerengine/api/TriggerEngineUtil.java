@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 
 import java.util.Set;
 
+import org.apache.log4j.Level;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -26,11 +27,15 @@ public final class TriggerEngineUtil {
 
     private TriggerEngineUtil() {}
     
+    private static boolean debug = true;
+    
     @SuppressWarnings("rawtypes")
     public static TriggerEngine createTriggerEngine(final IncQueryEngine engine, final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> ruleSpecifications) {
         // create Executor and Agenda for engine
         Executor executor = new Executor(engine);
-        
+        if(debug) {
+            engine.getLogger().setLevel((Level) Level.DEBUG);
+        }
         if(ruleSpecifications != null) {
             // initialize rules form ruleSpecifications
             for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> ruleSpecification : ruleSpecifications) {

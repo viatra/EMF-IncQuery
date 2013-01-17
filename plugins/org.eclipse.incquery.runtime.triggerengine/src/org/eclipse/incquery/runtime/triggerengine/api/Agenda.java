@@ -89,7 +89,7 @@ public class Agenda {
             @Override
             public void activationChanged(Activation<? extends IPatternMatch> activation, ActivationState oldState,
                     ActivationLifeCycleEvent event) {
-                Agenda.this.iqEngine.getLogger().error(String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
+                Agenda.this.iqEngine.getLogger().debug(String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
                 activations.remove(oldState, activation);
                 ActivationState state = activation.getState();
                 switch (state) {

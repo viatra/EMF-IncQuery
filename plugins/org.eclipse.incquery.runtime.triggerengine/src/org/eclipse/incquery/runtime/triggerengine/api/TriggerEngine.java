@@ -18,20 +18,19 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Abel Hegedus
  * 
  */
-public class TriggerEngine {
+public class TriggerEngine extends RuleEngine{
 
     private Executor engine;
 
-    private TriggerEngine(Executor engine) {
-        this.engine = checkNotNull(engine, "Cannot create trigger engine facade with null trigger engine!");
+    protected TriggerEngine(Executor engine) {
+        super(checkNotNull(engine, "Cannot create trigger engine with null executor!").getAgenda());
+        this.engine = engine;
     }
 
     public static TriggerEngine create(Executor engine) {
@@ -56,28 +55,6 @@ public class TriggerEngine {
         checkNotNull(specification, "Rule specification must be specified!");
         return engine.removeRuleSpecification(specification);
     }*/
-    
-    public Multimap<ActivationState, Activation<?>> getActivations() {
-        return ImmutableMultimap.copyOf(engine.getAgenda().getActivations());
-    }
-
-    public Set<Activation<?>> getActivations(ActivationState state) {
-        checkNotNull(state, "Activation state must be specified!");
-        return ImmutableSet.copyOf(engine.getAgenda().getActivations(state));
-    }
-
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Set<Activation<Match>> getActivations(
-            RuleSpecification<Match, Matcher> specification) {
-        checkNotNull(specification, "Rule specification must be specified!");
-        return ImmutableSet.copyOf(engine.getAgenda().getActivations(specification));
-    }
-    
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Set<Activation<Match>> getActivations(
-            RuleSpecification<Match, Matcher> specification, ActivationState state) {
-        checkNotNull(specification, "Rule specification must be specified!");
-        checkNotNull(state, "Activation state must be specified!");
-        return ImmutableSet.copyOf(engine.getAgenda().getInstance(specification).getActivations(state));
-    }
 
     public void dispose() {
         engine.dispose();

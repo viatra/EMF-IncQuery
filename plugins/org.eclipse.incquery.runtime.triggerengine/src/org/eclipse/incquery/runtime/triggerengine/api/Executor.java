@@ -98,6 +98,13 @@ public class Executor {
         return agenda;
     }
     
+    /**
+     * @return the context
+     */
+    public Context getContext() {
+        return context;
+    }
+    
     @SuppressWarnings("unchecked")
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match,Matcher> addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
         boolean added = ruleSpecifications.add((RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>) specification);
