@@ -21,8 +21,8 @@ import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
@@ -40,12 +40,12 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     private IMatchProcessor<Match> appearanceProcessor;
     private IMatchProcessor<Match> disappearanceProcessor;
 
-    private TriggerEngine engine;
+    private RuleEngine engine;
 
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultimap(TriggerEngine engine) {
+    protected TriggeredQueryResultMultimap(RuleEngine engine) {
         super(engine.getIncQueryEngine().getLogger());
         this.engine = engine;
 
@@ -91,7 +91,7 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
         Job<Match> appearJob = new StatelessJob<Match>(ActivationState.APPEARED, appearanceProcessor);
         Job<Match> disappearJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, disappearanceProcessor);
 
-        engine.addRuleSpecification(new RuleSpecification<Match, Matcher>(
+        engine.addRule(new RuleSpecification<Match, Matcher>(
                 factory, DefaultActivationLifeCycle.getDEFAULT_NO_UPDATE(), Sets.newHashSet(appearJob, disappearJob)));
     }
 

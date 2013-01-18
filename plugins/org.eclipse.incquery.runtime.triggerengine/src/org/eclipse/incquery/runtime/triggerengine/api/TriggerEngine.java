@@ -12,13 +12,6 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
-
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Abel Hegedus
@@ -26,40 +19,26 @@ import com.google.common.collect.ImmutableSet;
  */
 public class TriggerEngine extends RuleEngine{
 
-    private Executor engine;
+    private Scheduler scheduler;
 
-    protected TriggerEngine(Executor engine) {
-        super(checkNotNull(engine, "Cannot create trigger engine with null executor!").getAgenda());
-        this.engine = engine;
+    protected TriggerEngine(Scheduler scheduler) {
+        super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecutor().getAgenda());
+        this.scheduler = scheduler;
     }
 
-    public static TriggerEngine create(Executor engine) {
-        return new TriggerEngine(engine);
+    public static RuleEngine create(Scheduler scheduler) {
+        return new TriggerEngine(scheduler);
     }
-
-    public IncQueryEngine getIncQueryEngine() {
-        return engine.getAgenda().getIncQueryEngine();
-    }
-
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
-        checkNotNull(specification, "Rule specification must be specified!");
-        RuleInstance<Match,Matcher> instance = engine.addRuleSpecification(specification);
-        return instance != null;
-    }
-    
-    public Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getRuleSpecifications() {
-        return ImmutableSet.copyOf(engine.getRuleSpecifications());
-    }
-
-    /*public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRuleSpecification(RuleSpecification<Match, Matcher> specification) {
-        checkNotNull(specification, "Rule specification must be specified!");
-        return engine.removeRuleSpecification(specification);
-    }*/
 
     public void dispose() {
-        engine.dispose();
+        scheduler.dispose();
     }
 
-    
+    /**
+     * @return the scheduler
+     */
+    protected Scheduler getScheduler() {
+        return scheduler;
+    }
     
 }

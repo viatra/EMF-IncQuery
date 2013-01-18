@@ -15,8 +15,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Abel Hegedus
  * 
- *         define Scheduler interface for trigger engine "ticks" - similar to firing strategy - doesn't have
- *         activation monitor - has trigger engine - automatic scheduler may work with update complete listener
+ *         define Scheduler interface for trigger executor "ticks" - similar to firing strategy - doesn't have
+ *         activation monitor - has trigger executor - automatic scheduler may work with update complete listener
  */
 public abstract class Scheduler {
     
@@ -26,20 +26,28 @@ public abstract class Scheduler {
 
     }
 
-    private Executor engine;
+    private Executor executor;
 
     protected Scheduler(Executor engine) {
-        this.engine = checkNotNull(engine, "Cannot create scheduler with null IncQuery Engine!");
+        this.executor = checkNotNull(engine, "Cannot create scheduler with null IncQuery Engine!");
     }
 
     /**
-     * Notifies engine of "tick". Subclasses should call this method to generate "ticks".
+     * Notifies executor of "tick". Subclasses should call this method to generate "ticks".
      */
     protected void schedule() {
-        // TODO return results from engine
-        // TODO session in Executor
-        engine.schedule();
+        executor.schedule();
     }
     
+    /**
+     * @return the executor
+     */
+    protected Executor getExecutor() {
+        return executor;
+    }
+    
+    protected void dispose() {
+        executor.dispose();
+    }
     
 }

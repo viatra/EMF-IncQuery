@@ -283,7 +283,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         return activations.row(state).values();
     }
 
-    public void dispose() {
+    protected void dispose() {
         this.attributeMonitor.removeCallbackOnMatchUpdate(attributeMonitorListener);
         this.attributeMonitor.dispose();
         this.matcher.removeCallbackOnMatchUpdate(matchUpdateListener);

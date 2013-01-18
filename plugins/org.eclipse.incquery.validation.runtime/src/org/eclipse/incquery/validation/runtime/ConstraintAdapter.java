@@ -12,7 +12,6 @@
 package org.eclipse.incquery.validation.runtime;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,9 +27,9 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Job;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
 import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactory;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
 import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
 import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
@@ -49,14 +48,13 @@ import com.google.common.collect.Sets;
 public class ConstraintAdapter {
 
     private Map<IPatternMatch, IMarker> markerMap;
-    private TriggerEngine engine;
+    private RuleEngine engine;
 
     @SuppressWarnings("unchecked")
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
 
-        @SuppressWarnings("rawtypes")
-        Set<RuleSpecification> rules = new HashSet<RuleSpecification>();
+        Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> rules = Sets.newHashSet();
 
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {

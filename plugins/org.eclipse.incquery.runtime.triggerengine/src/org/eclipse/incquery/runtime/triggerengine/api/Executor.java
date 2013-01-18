@@ -12,15 +12,9 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Comparator;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -33,31 +27,15 @@ import com.google.common.collect.Sets;
 public class Executor {
 
     private Agenda agenda;
-    private Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> ruleSpecifications;
     private Context context;
     
     protected Executor(IncQueryEngine engine) {
-        this(engine, new Context(), null);
+        this(engine, Context.create());
     }
 
     protected Executor(IncQueryEngine engine, Context context) {
-        this(engine, context, null);
-    }
-    
-    @SuppressWarnings("rawtypes")
-    protected Executor(IncQueryEngine engine, Comparator<RuleSpecification> comparator) {
-        this(engine, new Context(), comparator);
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected Executor(IncQueryEngine engine, Context context, Comparator<RuleSpecification> comparator) {
         this.context = checkNotNull(context, "Cannot create trigger engine with null context!");
         agenda = new Agenda(engine);
-        if(comparator != null) {
-            this.ruleSpecifications = Sets.newTreeSet(comparator);
-        } else {
-            this.ruleSpecifications = Sets.newHashSet();
-        }
     }
 
     protected void schedule() {
@@ -105,7 +83,8 @@ public class Executor {
         return context;
     }
     
-    @SuppressWarnings("unchecked")
+/*
+
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match,Matcher> addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
         boolean added = ruleSpecifications.add((RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>) specification);
         RuleInstance<Match,Matcher> instance = null;
@@ -130,11 +109,12 @@ public class Executor {
     /**
      * @return the ruleSpecifications
      */
-    public Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getRuleSpecifications() {
+    /*public Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getRuleSpecifications() {
         return ImmutableSet.copyOf(ruleSpecifications);
     }
+    */
     
-    public void dispose() {
+    protected void dispose() {
         agenda.dispose();
     }
     

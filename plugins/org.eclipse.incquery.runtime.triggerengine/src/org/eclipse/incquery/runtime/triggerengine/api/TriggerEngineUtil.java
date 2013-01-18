@@ -25,28 +25,37 @@ import org.eclipse.incquery.runtime.triggerengine.api.Scheduler.ISchedulerFactor
  */
 public final class TriggerEngineUtil {
 
-    private TriggerEngineUtil() {}
-    
-    private static boolean debug = true;
-    
-    @SuppressWarnings("rawtypes")
-    public static TriggerEngine createTriggerEngine(final IncQueryEngine engine, final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> ruleSpecifications) {
-        // create Executor and Agenda for engine
-        Executor executor = new Executor(engine);
-        if(debug) {
-            engine.getLogger().setLevel((Level) Level.DEBUG);
-        }
-        if(ruleSpecifications != null) {
-            // initialize rules form ruleSpecifications
-            for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> ruleSpecification : ruleSpecifications) {
-                executor.addRuleSpecification(ruleSpecification);
-            }
-        }
-        
-        // register Executor for scheduler
-        schedulerFactory.prepareScheduler(executor);
-        
-        return TriggerEngine.create(executor);
+    private TriggerEngineUtil() {
     }
 
+    private static boolean debug = true;
+
+    public static RuleEngine createTriggerEngine(final IncQueryEngine engine,
+            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleSpecifications) {
+        Executor executor = new Executor(engine);
+        if (debug) {
+            engine.getLogger().setLevel((Level) Level.DEBUG);
+        }
+        if (ruleSpecifications != null) {
+            Agenda agenda = executor.getAgenda();
+            for (RuleSpecification<?, ?> ruleSpecification : ruleSpecifications) {
+                agenda.instantiateRule(ruleSpecification);
+            }
+        }
+        Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
+        return TriggerEngine.create(scheduler);
+    }
+
+    public static RuleEngine createRuleEngine(final IncQueryEngine engine,
+            final Set<RuleSpecification<?, ?>> ruleSpecifications) {
+        Agenda agenda = new Agenda(engine);
+
+        if (ruleSpecifications != null) {
+            for (RuleSpecification<?, ?> ruleSpecification : ruleSpecifications) {
+                agenda.instantiateRule(ruleSpecification);
+            }
+        }
+
+        return RuleEngine.create(agenda);
+    }
 }

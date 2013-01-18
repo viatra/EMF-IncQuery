@@ -21,8 +21,12 @@ public class Context {
 
     private Map<String, Object> sessionData;
     
-    public Context() {
+    protected Context() {
         this.sessionData = new HashMap<String, Object>();
+    }
+    
+    public static Context create() {
+        return new Context();
     }
     
     public Object get(String key) {
@@ -37,7 +41,7 @@ public class Context {
         return sessionData.remove(key);
     }
     
-    public void clear() {
+    protected void clear() {
         sessionData.clear();
     }
 }

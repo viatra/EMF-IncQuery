@@ -145,6 +145,7 @@ public class Agenda {
         }
         return false;
     }
+    
     protected void dispose() {
         for (RuleInstance<IPatternMatch, IncQueryMatcher<IPatternMatch>> rule : ruleInstanceMap.values()) {
             rule.dispose();
